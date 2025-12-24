@@ -1,6 +1,6 @@
 class ChallengesController < ApplicationController
-  before_action :set_challenge, only: [:show, :join, :leave]
-  before_action :require_login, only: [:new, :create, :join, :leave]
+  before_action :set_challenge, only: [ :show, :join, :leave ]
+  before_action :require_login, only: [ :new, :create, :join, :leave ]
 
   def index
     @challenges = Challenge.online_challenges.order(created_at: :desc)
@@ -72,7 +72,7 @@ class ChallengesController < ApplicationController
       :mission_frequency, :mission_is_late_detection_enabled,
       :mission_allow_exceptions, :mission_is_consecutive,
       days: [],
-      meeting_info_attributes: [:place_name, :address, :meeting_time, :description, :max_attendees]
+      meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
     )
   end
 end

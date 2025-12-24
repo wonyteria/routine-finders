@@ -2,7 +2,7 @@ module Api
   module V1
     class PersonalRoutinesController < BaseController
       before_action :require_login
-      before_action :set_routine, only: [:show, :update, :destroy, :toggle]
+      before_action :set_routine, only: [ :show, :update, :destroy, :toggle ]
 
       def index
         routines = current_user.personal_routines.order(created_at: :desc)

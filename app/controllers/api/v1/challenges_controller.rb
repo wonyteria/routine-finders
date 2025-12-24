@@ -1,8 +1,8 @@
 module Api
   module V1
     class ChallengesController < BaseController
-      before_action :set_challenge, only: [:show, :update, :destroy, :join, :leave]
-      before_action :require_login, only: [:create, :update, :destroy, :join, :leave]
+      before_action :set_challenge, only: [ :show, :update, :destroy, :join, :leave ]
+      before_action :require_login, only: [ :create, :update, :destroy, :join, :leave ]
 
       def index
         challenges = Challenge.all
@@ -23,8 +23,8 @@ module Api
 
       def show
         render json: @challenge.as_json(
-          include: [:meeting_info, :staffs],
-          methods: [:mission_config]
+          include: [ :meeting_info, :staffs ],
+          methods: [ :mission_config ]
         )
       end
 
@@ -95,7 +95,7 @@ module Api
           :mission_frequency, :mission_is_late_detection_enabled,
           :mission_allow_exceptions, :mission_is_consecutive,
           days: [],
-          meeting_info_attributes: [:place_name, :address, :meeting_time, :description, :max_attendees]
+          meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
         )
       end
     end

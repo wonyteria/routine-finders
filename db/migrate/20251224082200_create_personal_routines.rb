@@ -14,6 +14,6 @@ class CreatePersonalRoutines < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :personal_routines, [:user_id, :title]
+    add_index :personal_routines, [ :user_id, :title ]
   end
 end

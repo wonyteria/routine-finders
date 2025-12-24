@@ -1,6 +1,6 @@
 class PersonalRoutinesController < ApplicationController
   before_action :require_login
-  before_action :set_routine, only: [:toggle, :destroy]
+  before_action :set_routine, only: [ :toggle, :destroy ]
 
   def create
     @routine = current_user.personal_routines.build(routine_params)

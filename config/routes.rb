@@ -8,9 +8,9 @@ Rails.application.routes.draw do
   root "home#index"
 
   # Authentication routes
-  resource :session, only: [:create, :destroy]
-  resource :registration, only: [:create]
-  
+  resource :session, only: [ :create, :destroy ]
+  resource :registration, only: [ :create ]
+
   # Email verification
   get "verify_email", to: "email_verifications#show"
   post "resend_email_verification", to: "email_verifications#resend"
@@ -27,17 +27,17 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :gatherings, only: [:index]
+  resources :gatherings, only: [ :index ]
 
-  resources :personal_routines, only: [:create, :destroy] do
+  resources :personal_routines, only: [ :create, :destroy ] do
     member do
       post :toggle
     end
   end
 
-  resource :profile, only: [:show]
+  resource :profile, only: [ :show ]
 
-  resources :notifications, only: [:index] do
+  resources :notifications, only: [ :index ] do
     member do
       post :mark_as_read
     end
@@ -61,7 +61,7 @@ Rails.application.routes.draw do
           post :join
           delete :leave
         end
-        resources :verification_logs, only: [:index, :create]
+        resources :verification_logs, only: [ :index, :create ]
       end
 
       # Personal Routines
@@ -72,7 +72,7 @@ Rails.application.routes.draw do
       end
 
       # Notifications
-      resources :notifications, only: [:index] do
+      resources :notifications, only: [ :index ] do
         member do
           post :mark_as_read
         end

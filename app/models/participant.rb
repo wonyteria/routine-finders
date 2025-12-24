@@ -28,7 +28,7 @@ class Participant < ApplicationRecord
 
     update(
       current_streak: streak,
-      max_streak: [max_streak, streak].max
+      max_streak: [ max_streak, streak ].max
     )
   end
 

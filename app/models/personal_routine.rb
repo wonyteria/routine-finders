@@ -17,8 +17,8 @@ class PersonalRoutine < ApplicationRecord
       # 완료 취소
       update(
         last_completed_date: nil,
-        current_streak: [0, current_streak - 1].max,
-        total_completions: [0, total_completions - 1].max
+        current_streak: [ 0, current_streak - 1 ].max,
+        total_completions: [ 0, total_completions - 1 ].max
       )
     else
       # 완료 처리

@@ -18,7 +18,7 @@ class CreateParticipants < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :participants, [:user_id, :challenge_id], unique: true
+    add_index :participants, [ :user_id, :challenge_id ], unique: true
     add_index :participants, :status
   end
 end

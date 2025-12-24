@@ -14,7 +14,7 @@ class CreateVerificationLogs < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :verification_logs, [:challenge_id, :created_at]
+    add_index :verification_logs, [ :challenge_id, :created_at ]
     add_index :verification_logs, :status
   end
 end
