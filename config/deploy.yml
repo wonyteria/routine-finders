@@ -24,8 +24,6 @@ servers:
 proxy:
   ssl: true
   host: www.routinefinders.life
-  deploy_timeout: 120s
-  drain_timeout: 60s
 
 # Where you keep your container images.
 registry:
