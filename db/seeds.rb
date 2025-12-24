@@ -7,15 +7,18 @@ puts "Seeding database..."
 # Create users
 admin = User.find_or_create_by!(email: "admin@routinefinders.com") do |u|
   u.nickname = "관리자"
+  u.password = "password123"
   u.role = :admin
   u.profile_image = "https://picsum.photos/seed/admin/200/200"
   u.level = 10
   u.total_exp = 5000
   u.wallet_balance = 500_000
+  u.email_verified = true
 end
 
 user1 = User.find_or_create_by!(email: "routine@example.com") do |u|
   u.nickname = "루틴매니아"
+  u.password = "password123"
   u.profile_image = "https://picsum.photos/seed/u1/200/200"
   u.level = 5
   u.total_exp = 1250
@@ -27,14 +30,17 @@ user1 = User.find_or_create_by!(email: "routine@example.com") do |u|
   u.host_total_participants = 1250
   u.host_avg_completion_rate = 88.0
   u.host_completed_challenges = 5
+  u.email_verified = true
 end
 
 user2 = User.find_or_create_by!(email: "health@example.com") do |u|
   u.nickname = "헬스왕"
+  u.password = "password123"
   u.profile_image = "https://picsum.photos/seed/u2/200/200"
   u.level = 7
   u.total_exp = 2100
   u.wallet_balance = 280_000
+  u.email_verified = true
 end
 
 # Helper for creating challenges

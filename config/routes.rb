@@ -7,7 +7,15 @@ Rails.application.routes.draw do
   # Root path
   root "home#index"
 
-  # Session routes (로그인/로그아웃)
+  # Authentication routes
+  resource :session, only: [:create, :destroy]
+  resource :registration, only: [:create]
+  
+  # Email verification
+  get "verify_email", to: "email_verifications#show"
+  post "resend_email_verification", to: "email_verifications#resend"
+
+  # Legacy routes for compatibility
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
 

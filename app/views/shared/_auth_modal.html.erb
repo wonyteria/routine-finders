@@ -1,0 +1,47 @@
+<!-- 모달 백그라운드 -->
+<div id="auth_modal" 
+     data-modal-target="container"
+     data-action="click->modal#closeOnBackground"
+     class="hidden fixed inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <!-- 모달 컨텐츠 -->
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+       data-controller="auth-tabs"
+       data-auth-tabs-active-class="border-indigo-500 text-indigo-600"
+       data-auth-tabs-inactive-class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+    
+    <!-- 헤더 -->
+    <div class="flex justify-between items-center px-6 pt-6">
+      <h2 class="text-xl font-bold text-gray-900">루틴파인더스</h2>
+      <button data-action="modal#close" 
+              class="text-gray-400 hover:text-gray-600 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 탭 -->
+    <div class="flex border-b border-gray-200 px-6 mt-4">
+      <button data-auth-tabs-target="loginTab"
+              data-action="click->auth-tabs#showLogin"
+              class="flex-1 py-3 text-sm font-medium border-b-2 transition-colors">
+        로그인
+      </button>
+      <button data-auth-tabs-target="registerTab"
+              data-action="click->auth-tabs#showRegister"
+              class="flex-1 py-3 text-sm font-medium border-b-2 transition-colors">
+        회원가입
+      </button>
+    </div>
+
+    <!-- 로그인 패널 -->
+    <div data-auth-tabs-target="loginPanel" class="p-6">
+      <%= render "shared/login_form" %>
+    </div>
+
+    <!-- 회원가입 패널 -->
+    <div data-auth-tabs-target="registerPanel" class="p-6 hidden">
+      <%= render "shared/register_form" %>
+    </div>
+  </div>
+</div>

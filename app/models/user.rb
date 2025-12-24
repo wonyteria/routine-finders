@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_secure_password
+
   # Enums
   enum :role, { user: 0, admin: 1 }
 
@@ -13,8 +15,30 @@ class User < ApplicationRecord
   # Validations
   validates :nickname, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :password, length: { minimum: 8 }, if: -> { password.present? }
 
-  # Methods
+  # Email verification methods
+  def generate_email_verification_token!
+    update!(
+      email_verification_token: SecureRandom.urlsafe_base64(32),
+      email_verification_sent_at: Time.current
+    )
+  end
+
+  def verify_email!
+    update!(
+      email_verified: true,
+      email_verification_token: nil,
+      email_verification_sent_at: nil
+    )
+  end
+
+  def email_verification_token_valid?
+    return false if email_verification_token.blank? || email_verification_sent_at.blank?
+    email_verification_sent_at > 24.hours.ago
+  end
+
+  # Wallet methods
   def wallet
     { balance: wallet_balance, total_refunded: total_refunded }
   end

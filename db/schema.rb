@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_24_082203) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
   create_table "challenges", force: :cascade do |t|
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
@@ -133,12 +133,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_082203) do
     t.integer "completed_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.string "email", null: false
+    t.datetime "email_verification_sent_at"
+    t.string "email_verification_token"
+    t.boolean "email_verified", default: false, null: false
     t.decimal "host_avg_completion_rate", precision: 5, scale: 2, default: "0.0"
     t.integer "host_completed_challenges", default: 0
     t.integer "host_total_participants", default: 0
     t.integer "level", default: 1, null: false
     t.string "nickname", null: false
     t.integer "ongoing_count", default: 0, null: false
+    t.string "password_digest"
     t.string "profile_image"
     t.integer "role", default: 0, null: false
     t.integer "total_exp", default: 0, null: false
@@ -146,6 +150,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_082203) do
     t.datetime "updated_at", null: false
     t.integer "wallet_balance", default: 0, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["email_verification_token"], name: "index_users_on_email_verification_token", unique: true
     t.index ["nickname"], name: "index_users_on_nickname"
   end
 

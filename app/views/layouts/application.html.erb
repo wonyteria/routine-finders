@@ -38,7 +38,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-[#F8FAFC]">
+  <body class="min-h-screen bg-[#F8FAFC]" data-controller="modal">
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,9 +94,10 @@
                 <img src="<%= current_user.profile_image %>" alt="Profile" class="w-9 h-9 rounded-full ring-2 ring-indigo-50 object-cover">
               <% end %>
             <% else %>
-              <%= button_to login_path, method: :post, class: "px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg text-sm hover:bg-indigo-700 transition-all" do %>
+              <button data-action="modal#open"
+                      class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg text-sm hover:bg-indigo-700 transition-all">
                 로그인
-              <% end %>
+              </button>
             <% end %>
           </div>
         </div>
@@ -129,6 +130,11 @@
       <%= link_to new_challenge_path, class: "fixed bottom-10 right-10 w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all z-[60]" do %>
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
       <% end %>
+    <% end %>
+
+    <!-- Auth Modal -->
+    <% unless current_user %>
+      <%= render "shared/auth_modal" %>
     <% end %>
   </body>
 </html>

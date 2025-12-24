@@ -1,0 +1,29 @@
+<div id="auth_modal" class="relative z-50">
+  <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden p-8 text-center">
+      <!-- 성공 아이콘 -->
+      <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+
+      <h2 class="text-xl font-bold text-gray-900 mb-2">가입이 완료되었습니다!</h2>
+      <p class="text-gray-600 mb-6">
+        입력하신 이메일로 인증 링크를 발송했습니다.<br>
+        이메일을 확인하여 인증을 완료해주세요.
+      </p>
+
+      <div class="bg-gray-50 rounded-lg p-4 mb-6">
+        <p class="text-sm text-gray-500">
+          이메일이 도착하지 않았나요?<br>
+          스팸 폴더를 확인하거나, 잠시 후 다시 시도해주세요.
+        </p>
+      </div>
+
+      <a href="/" class="inline-block w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        확인
+      </a>
+    </div>
+  </div>
+</div>
