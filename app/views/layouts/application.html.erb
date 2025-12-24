@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Routine Finders" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="<%= content_for(:description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Routine Finders">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4F46E5">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Open Graph / SNS 공유 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= content_for(:title) || "Routine Finders" %>">
+    <meta property="og:description" content="<%= content_for(:description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
+    <meta property="og:image" content="<%= request.base_url %>/og-image.png">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:site_name" content="Routine Finders">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:title) || "Routine Finders" %>">
+    <meta name="twitter:description" content="<%= content_for(:description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
+    <meta name="twitter:image" content="<%= request.base_url %>/og-image.png">
+
+    <%= yield :head %>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-[#F8FAFC]">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center gap-8">
+            <%= link_to root_path, class: "flex items-center gap-2 cursor-pointer" do %>
+              <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <svg class="text-white w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                  <path stroke-width="2" d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+              <span class="font-black text-xl tracking-tight text-slate-900 hidden sm:block">Routine Finders</span>
+            <% end %>
+            <div class="hidden lg:flex items-center gap-1">
+              <%= link_to root_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(root_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 0 0 1 1h3m10-11 2 2m-2-2v10a1 1 0 0 1-1 1h-3m-6 0a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1m-6 0h6"/></svg>
+                  홈
+                </div>
+              <% end %>
+              <%= link_to challenges_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(challenges_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="m9 12 2 2 4-4"/></svg>
+                  챌린지
+                </div>
+              <% end %>
+              <%= link_to gatherings_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(gatherings_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
+                <div class="flex items-center gap-2">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                  모임
+                </div>
+              <% end %>
+              <% if current_user %>
+                <%= link_to profile_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(profile_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z"/></svg>
+                    마이페이지
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <% if current_user %>
+              <%= link_to notifications_path, class: "p-3 text-slate-400 hover:bg-slate-50 rounded-2xl relative transition-all" do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg>
+                <% if current_user.unread_notifications_count > 0 %>
+                  <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center ring-2 ring-white"><%= current_user.unread_notifications_count %></span>
+                <% end %>
+              <% end %>
+              <%= link_to profile_path, class: "flex items-center gap-3 pl-2 cursor-pointer" do %>
+                <img src="<%= current_user.profile_image %>" alt="Profile" class="w-9 h-9 rounded-full ring-2 ring-indigo-50 object-cover">
+              <% end %>
+            <% else %>
+              <%= button_to login_path, method: :post, class: "px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg text-sm hover:bg-indigo-700 transition-all" do %>
+                로그인
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <% if notice %>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-green-50 border border-green-200 text-green-800 rounded-2xl p-4 font-medium">
+          <%= notice %>
+        </div>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 font-medium">
+          <%= alert %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <%= yield %>
+    </main>
+
+    <!-- FAB Button for logged-in users -->
+    <% if current_user %>
+      <%= link_to new_challenge_path, class: "fixed bottom-10 right-10 w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all z-[60]" do %>
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      <% end %>
+    <% end %>
+  </body>
+</html>

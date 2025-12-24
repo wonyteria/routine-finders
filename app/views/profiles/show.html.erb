@@ -1,0 +1,121 @@
+<div class="space-y-12 pb-32">
+  <!-- Profile Card -->
+  <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col lg:flex-row">
+    <!-- Profile Info -->
+    <div class="lg:w-1/3 p-12 flex flex-col items-center justify-center text-center bg-gradient-to-br from-slate-50 to-white border-b lg:border-b-0 lg:border-r border-slate-100">
+      <div class="relative mb-8 group">
+        <img src="<%= @user.profile_image %>" class="w-40 h-40 rounded-[48px] border-8 border-white shadow-2xl object-cover transition-transform group-hover:scale-105" alt="">
+        <% if @user.admin? %>
+          <div class="absolute -top-4 -right-4 w-12 h-12 bg-indigo-600 rounded-3xl border-4 border-white flex items-center justify-center text-white shadow-xl">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+        <% end %>
+      </div>
+      <h2 class="text-3xl font-black text-slate-900 tracking-tight"><%= @user.nickname %></h2>
+      <div class="mt-4 flex flex-col items-center gap-2">
+        <span class="px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <%= @user.admin? ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-white' %>">
+          <%= @user.role.upcase %>
+        </span>
+        <p class="text-xs font-bold text-slate-400"><%= @user.email %></p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="flex-1 p-12 lg:p-20 grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div class="space-y-4">
+        <p class="text-slate-400 text-xs font-black uppercase tracking-[0.2em]">Asset Wallet</p>
+        <div class="bg-indigo-50 p-8 rounded-[40px] border border-indigo-100 flex flex-col justify-between h-[160px] group hover:bg-white hover:shadow-xl transition-all">
+          <div class="flex items-center justify-between">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          </div>
+          <div>
+            <p class="text-3xl font-black text-slate-900"><%= number_with_delimiter(@user.wallet_balance) %>원</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Available Balance</p>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <p class="text-slate-400 text-xs font-black uppercase tracking-[0.2em]">Summary</p>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-6 rounded-[32px] border border-slate-100">
+            <svg class="w-5 h-5 text-indigo-600 mb-3" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <p class="text-2xl font-black"><%= @participations.count %></p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Ongoing</p>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-[32px] border border-slate-100">
+            <svg class="w-5 h-5 text-yellow-500 mb-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <p class="text-2xl font-black"><%= @user.level %></p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">User Level</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Access -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
+    <section class="space-y-6">
+      <h3 class="text-xs font-black text-slate-400 uppercase ml-4 tracking-[0.3em]">Quick Access</h3>
+      <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <% if @user.admin? %>
+          <a href="#" class="flex items-center gap-5 p-6 hover:bg-indigo-50 transition-all group text-left border-b border-slate-100">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:bg-white transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-black text-slate-900">관리자 대시보드</p>
+              <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">System Master Control</p>
+            </div>
+            <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        <% end %>
+        <a href="#" class="flex items-center gap-5 p-6 hover:bg-slate-50 transition-all group text-left border-b border-slate-100">
+          <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-white transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-black text-slate-900">결제 및 환급 내역</p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Payment History</p>
+          </div>
+          <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <%= button_to logout_path, method: :delete, class: "flex items-center gap-5 p-6 hover:bg-red-50 transition-all group text-left w-full", data: { turbo_confirm: "로그아웃 하시겠습니까?" } do %>
+          <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-white transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-black text-red-600">로그아웃</p>
+            <p class="text-[10px] text-red-400 font-bold uppercase mt-1">Safe Exit</p>
+          </div>
+          <svg class="w-5 h-5 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- My Participations -->
+    <section class="lg:col-span-2 space-y-6">
+      <h3 class="text-xs font-black text-slate-400 uppercase ml-4 tracking-[0.3em]">참여 중인 챌린지</h3>
+      <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+        <% if @participations.any? %>
+          <% @participations.each do |participation| %>
+            <%= link_to challenge_path(participation.challenge), class: "flex items-center gap-5 p-6 hover:bg-slate-50 transition-all group border-b border-slate-100 last:border-b-0" do %>
+              <img src="<%= participation.challenge.thumbnail %>" class="w-16 h-16 rounded-2xl object-cover" alt="">
+              <div class="flex-1">
+                <p class="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors"><%= participation.challenge.title %></p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">달성률 <%= participation.completion_rate.to_i %>% · 🔥 <%= participation.current_streak %>일 연속</p>
+              </div>
+              <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="p-12 text-center">
+            <p class="text-slate-400 font-bold">아직 참여 중인 챌린지가 없습니다.</p>
+            <%= link_to challenges_path, class: "inline-block mt-4 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all" do %>
+              챌린지 둘러보기
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</div>

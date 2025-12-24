@@ -1,0 +1,176 @@
+<% unless @current_user %>
+  <!-- Landing Page for non-logged-in users -->
+  <div class="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-8 p-6">
+    <div class="w-32 h-32 bg-indigo-600 rounded-[48px] flex items-center justify-center shadow-2xl animate-bounce">
+      <svg class="text-white w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+        <path stroke-width="2" d="m9 12 2 2 4-4"/>
+      </svg>
+    </div>
+    <div class="space-y-4">
+      <h1 class="text-6xl lg:text-8xl font-black text-slate-900 leading-tight tracking-tighter">
+        루틴이 모여<br/><span class="text-indigo-600">당신이 됩니다.</span>
+      </h1>
+      <p class="text-xl text-slate-500 font-bold">오프라인 모임부터 온라인 챌린지까지, 루틴 파인더스</p>
+    </div>
+    <%= button_to login_path, method: :post, class: "px-16 py-7 bg-slate-900 text-white rounded-[32px] font-black text-2xl hover:scale-105 transition-all shadow-2xl flex items-center gap-4" do %>
+      갓생 시작하기
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    <% end %>
+  </div>
+<% else %>
+  <div class="space-y-24 pb-40">
+    <!-- Hero Banner -->
+    <section class="relative h-[480px] lg:h-[500px] rounded-[64px] overflow-hidden shadow-2xl shadow-indigo-100">
+      <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-85 z-10"></div>
+      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover" alt="">
+      <div class="relative z-20 h-full flex flex-col justify-center px-16 lg:px-24 space-y-6 text-white">
+        <h1 class="text-5xl lg:text-7xl font-black leading-[1.1] whitespace-pre-line tracking-tight">함께해서 더 강력한<br/>습관의 힘</h1>
+        <p class="text-lg lg:text-xl text-white/80 font-medium max-w-lg leading-relaxed">평균 달성률 92%의 보증금 시스템으로<br/>작심삼일을 끝내고 진정한 변화를 경험하세요.</p>
+        <%= link_to challenges_path, class: "w-fit px-10 py-5 bg-white text-slate-900 rounded-[28px] font-black text-lg hover:scale-105 transition-all shadow-xl" do %>
+          챌린지 둘러보기
+        <% end %>
+      </div>
+    </section>
+
+    <!-- My Achievements Section -->
+    <section class="bg-white rounded-[60px] border border-slate-200 shadow-sm p-10 lg:p-14 space-y-12">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 px-2">
+        <div class="space-y-3">
+          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-4">
+            나의 성취 지도
+            <span class="text-orange-500 text-3xl">🔥</span>
+          </h2>
+          <p class="text-slate-500 font-bold text-lg">당신이 쌓아온 매일의 노력들이 지도로 그려집니다.</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-6 px-8 py-4 bg-slate-50 rounded-[32px]">
+            <div class="text-center">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p>
+              <p class="text-xl font-black text-indigo-600"><%= @verification_logs.count %>회</p>
+            </div>
+            <div class="w-px h-8 bg-slate-200"></div>
+            <div class="text-center">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Streak</p>
+              <p class="text-xl font-black text-orange-600"><%= @participations.map(&:current_streak).max || 0 %>일</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- My Routines Section -->
+    <% if @personal_routines.any? %>
+      <section class="space-y-10 px-4">
+        <div class="flex items-end justify-between">
+          <div class="space-y-2">
+            <h2 class="text-4xl font-black text-slate-900">나의 루틴</h2>
+            <p class="text-slate-500 font-bold">오늘도 작은 습관을 실천해보세요</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <% @personal_routines.each do |routine| %>
+            <div class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+              <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 <%= routine.color %> rounded-2xl flex items-center justify-center text-2xl">
+                  <%= routine.icon %>
+                </div>
+                <%= button_to toggle_personal_routine_path(routine), method: :post, class: "w-8 h-8 rounded-full flex items-center justify-center transition-all #{routine.completed_today? ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400 hover:bg-green-100'}" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <% end %>
+              </div>
+              <h4 class="font-black text-slate-900 text-sm line-clamp-2"><%= routine.title %></h4>
+              <p class="text-xs text-slate-400 mt-2">🔥 <%= routine.current_streak %>일 연속</p>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <!-- Online Challenges Section -->
+    <section class="space-y-10 px-4">
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-3">
+            추천 온라인 챌린지
+            <span class="text-indigo-600 text-3xl">⚡</span>
+          </h2>
+          <p class="text-slate-500 font-bold">함께 보증금을 걸고 강력한 습관을 만듭니다.</p>
+        </div>
+        <%= link_to new_challenge_path, class: "px-8 py-4 bg-indigo-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          새 챌린지 개최
+        <% end %>
+      </div>
+
+      <div class="flex overflow-x-auto no-scrollbar gap-8 pb-8 px-2">
+        <% @online_challenges.each do |challenge| %>
+          <%= link_to challenge_path(challenge), class: "min-w-[300px] md:min-w-[340px] bg-white rounded-[48px] overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl transition-all cursor-pointer group" do %>
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
+              <div class="absolute top-5 left-5">
+                <span class="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[9px] font-black uppercase text-slate-900"><%= challenge.category %></span>
+              </div>
+            </div>
+            <div class="p-8 space-y-4">
+              <h4 class="font-black text-slate-900 text-xl group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-400 border-t border-slate-50 pt-4">
+                <span class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                  <%= challenge.current_participants %>명 참여
+                </span>
+                <span class="text-indigo-600"><%= number_with_delimiter(challenge.amount) %>원</span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Offline Gatherings Section -->
+    <section class="space-y-10 px-4">
+      <div class="flex items-end justify-between">
+        <div class="space-y-2">
+          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-3">
+            인기 오프라인 모임
+            <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+          </h2>
+          <p class="text-slate-500 font-bold">직접 만나서 시너지를 나누는 오프라인 성장의 장</p>
+        </div>
+        <%= link_to new_challenge_path(mode: "offline"), class: "px-8 py-4 bg-orange-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          새 모임 개최
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% @offline_gatherings.each do |gathering| %>
+          <%= link_to challenge_path(gathering), class: "bg-white p-10 rounded-[48px] border border-slate-200 shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col gap-6 border-b-8 border-b-orange-500" do %>
+            <div class="flex justify-between items-start">
+              <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <div class="text-right">
+                <p class="text-[10px] font-black text-orange-600 uppercase tracking-widest">Category</p>
+                <p class="font-black text-slate-900 text-lg"><%= gathering.category %></p>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-2xl font-black text-slate-900 group-hover:text-orange-600 transition-colors"><%= gathering.title %></h4>
+              <% if gathering.meeting_info %>
+                <p class="text-slate-400 font-bold text-sm mt-2 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                  <%= gathering.meeting_info.place_name %> · <%= gathering.meeting_info.meeting_time %>
+                </p>
+              <% end %>
+            </div>
+            <div class="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
+              <span class="text-xs font-black text-slate-400"><%= gathering.current_participants %> / <%= gathering.max_participants %> 모집 중</span>
+              <svg class="w-6 h-6 text-orange-200 group-hover:text-orange-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  </div>
+<% end %>

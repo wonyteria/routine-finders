@@ -1,0 +1,42 @@
+<div class="space-y-12 pb-32">
+  <!-- Header -->
+  <div class="space-y-2">
+    <h1 class="text-5xl font-black text-slate-900"><%= @title %></h1>
+    <p class="text-xl text-slate-500 font-bold"><%= @description %></p>
+  </div>
+
+  <!-- Challenge Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <% @challenges.each do |challenge| %>
+      <%= link_to challenge_path(challenge), class: "bg-white rounded-[48px] overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl transition-all cursor-pointer group" do %>
+        <div class="relative aspect-[4/3] overflow-hidden">
+          <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
+          <div class="absolute top-5 left-5 flex gap-2">
+            <span class="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[9px] font-black uppercase text-slate-900"><%= challenge.category %></span>
+            <% if challenge.is_official %>
+              <span class="bg-indigo-600 px-4 py-1.5 rounded-full text-[9px] font-black uppercase text-white">Official</span>
+            <% end %>
+          </div>
+          <% if challenge.offline? %>
+            <div class="absolute bottom-5 left-5">
+              <span class="bg-orange-600 px-4 py-1.5 rounded-full text-[9px] font-black uppercase text-white">OFFLINE</span>
+            </div>
+          <% end %>
+        </div>
+        <div class="p-8 space-y-4">
+          <h4 class="font-black text-slate-900 text-xl group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
+          <p class="text-sm text-slate-500 line-clamp-2"><%= challenge.summary %></p>
+          <div class="flex items-center justify-between text-xs font-bold text-slate-400 border-t border-slate-50 pt-4">
+            <span class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              <%= challenge.current_participants %>명 참여
+            </span>
+            <span class="<%= challenge.offline? ? 'text-orange-600' : 'text-indigo-600' %>">
+              <%= number_with_delimiter(challenge.amount) %>원
+            </span>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
