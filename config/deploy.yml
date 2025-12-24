@@ -4,6 +4,9 @@ service: routine_finders
 # Name of the container image (use your-user/app-name on external registries).
 image: cyberneum/routine-finders
 
+# How long to wait for a container to become ready (default 30)
+deploy_timeout: 120
+
 # Deploy to these servers.
 servers:
   web:
