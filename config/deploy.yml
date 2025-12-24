@@ -44,6 +44,9 @@ env:
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
 
+    # Email URL host (www 필수 - SSL 인증서가 www 도메인에만 적용됨)
+    APP_HOST: www.routinefinders.life
+
     # Set number of processes dedicated to Solid Queue (default: 1)
     # JOB_CONCURRENCY: 3
 

@@ -57,7 +57,8 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # Set host to be used by links generated in mailer templates.
-  app_host = Rails.application.credentials.dig(:app_host) || ENV.fetch("APP_HOST", "www.routinefinders.life")
+  # 환경변수 우선 (SSL 인증서가 www 도메인에만 적용됨)
+  app_host = ENV.fetch("APP_HOST") { Rails.application.credentials.dig(:app_host) || "www.routinefinders.life" }
   config.action_mailer.default_url_options = { host: app_host, protocol: "https" }
 
   # Use Resend for email delivery in production
