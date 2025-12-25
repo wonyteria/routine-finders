@@ -1,0 +1,109 @@
+<% content_for :page_title, "챌린지 상세" %>
+
+<div class="space-y-6">
+  <!-- Back Button -->
+  <div>
+    <%= link_to admin_challenges_path, class: "inline-flex items-center gap-2 text-slate-600 hover:text-slate-900" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      <span>목록으로</span>
+    <% end %>
+  </div>
+
+  <!-- Challenge Info Card -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <div class="flex items-start justify-between">
+      <div>
+        <div class="flex items-center gap-3">
+          <h2 class="text-2xl font-bold text-slate-900"><%= @challenge.title %></h2>
+          <% if @challenge.is_official %>
+            <span class="px-3 py-1 text-sm font-semibold rounded-full bg-amber-100 text-amber-700">공식</span>
+          <% end %>
+        </div>
+        <p class="text-slate-500 mt-2"><%= @challenge.description %></p>
+        <div class="flex items-center gap-4 mt-4">
+          <span class="px-3 py-1 text-sm font-semibold rounded-full <%= @challenge.online? ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700' %>">
+            <%= @challenge.online? ? '온라인' : '오프라인' %>
+          </span>
+          <span class="text-slate-500">호스트: <strong><%= @challenge.host_name %></strong></span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= link_to edit_admin_challenge_path(@challenge), class: "px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition-colors" do %>
+          수정
+        <% end %>
+        <%= button_to admin_challenge_path(@challenge), method: :delete, data: { turbo_confirm: "정말 이 챌린지를 삭제하시겠습니까?" }, class: "px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors" do %>
+          삭제
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Info Grid -->
+    <div class="grid grid-cols-4 gap-6 mt-8 pt-6 border-t border-slate-200">
+      <div>
+        <p class="text-sm text-slate-500">기간</p>
+        <p class="font-medium text-slate-900 mt-1"><%= @challenge.start_date.strftime('%Y-%m-%d') %> ~ <%= @challenge.end_date.strftime('%Y-%m-%d') %></p>
+      </div>
+      <div>
+        <p class="text-sm text-slate-500">입장 방식</p>
+        <p class="font-medium text-slate-900 mt-1"><%= @challenge.entry_type_season? ? '시즌제' : '상시' %></p>
+      </div>
+      <div>
+        <p class="text-sm text-slate-500">비용 유형</p>
+        <p class="font-medium text-slate-900 mt-1"><%= { free: '무료', fee: '유료', deposit: '보증금' }[@challenge.cost_type.to_sym] %></p>
+      </div>
+      <div>
+        <p class="text-sm text-slate-500">인증 방식</p>
+        <p class="font-medium text-slate-900 mt-1"><%= { simple: '단순', metric: '수치', photo: '사진', url: 'URL', complex: '복합' }[@challenge.verification_type.to_sym] %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Participants -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
+    <div class="px-6 py-4 border-b border-slate-200">
+      <h3 class="font-bold text-slate-900">참가자 (<%= @participants.count %>)</h3>
+    </div>
+    <% if @participants.any? %>
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">참가자</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">달성률</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">연속 성공</th>
+            <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">참가일</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-slate-200">
+          <% @participants.each do |participant| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3">
+                  <img src="<%= participant.user.profile_image %>" alt="" class="w-8 h-8 rounded-full object-cover">
+                  <span class="font-medium text-slate-900"><%= participant.user.nickname %></span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <div class="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-600 rounded-full" style="width: <%= participant.completion_rate %>%"></div>
+                  </div>
+                  <span class="text-sm text-slate-600"><%= participant.completion_rate %>%</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-slate-600">
+                <%= participant.current_streak %>일
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                <%= participant.created_at.in_time_zone('Asia/Seoul').strftime('%Y-%m-%d') %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="px-6 py-8 text-center text-slate-500">참가자가 없습니다.</div>
+    <% end %>
+  </div>
+</div>

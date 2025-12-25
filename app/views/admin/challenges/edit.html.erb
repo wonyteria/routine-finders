@@ -1,0 +1,94 @@
+<% content_for :page_title, "챌린지 수정" %>
+
+<div class="space-y-6">
+  <!-- Back Button -->
+  <div>
+    <%= link_to admin_challenge_path(@challenge), class: "inline-flex items-center gap-2 text-slate-600 hover:text-slate-900" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      <span>상세로 돌아가기</span>
+    <% end %>
+  </div>
+
+  <!-- Edit Form -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <h2 class="text-xl font-bold text-slate-900 mb-6">챌린지 수정</h2>
+
+    <%= form_with model: [:admin, @challenge], class: "space-y-6" do |f| %>
+      <% if @challenge.errors.any? %>
+        <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4">
+          <ul class="list-disc list-inside">
+            <% @challenge.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div class="col-span-2">
+          <%= f.label :title, "제목", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.text_field :title, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div class="col-span-2">
+          <%= f.label :description, "설명", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.text_area :description, rows: 4, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :purpose, "목적", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.text_field :purpose, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :max_participants, "최대 참가자", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.number_field :max_participants, min: 1, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :start_date, "시작일", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.date_field :start_date, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :end_date, "종료일", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.date_field :end_date, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :mode, "모드", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :mode, [["온라인", "online"], ["오프라인", "offline"]], {}, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :entry_type, "입장 방식", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :entry_type, [["시즌제", "season"], ["상시", "regular"]], {}, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :cost_type, "비용 유형", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :cost_type, [["무료", "free"], ["유료", "fee"], ["보증금", "deposit"]], {}, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :verification_type, "인증 방식", class: "block text-sm font-medium text-slate-700 mb-2" %>
+          <%= f.select :verification_type, [["단순", "simple"], ["수치", "metric"], ["사진", "photo"], ["URL", "url"], ["복합", "complex"]], {}, class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div class="col-span-2">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <%= f.check_box :is_official, class: "w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+            <span class="text-sm font-medium text-slate-700">공식 챌린지로 설정</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-4 pt-6 border-t border-slate-200">
+        <%= link_to "취소", admin_challenge_path(@challenge), class: "px-6 py-2 text-slate-600 hover:text-slate-900" %>
+        <%= f.submit "저장", class: "px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

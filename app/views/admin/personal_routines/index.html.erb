@@ -1,0 +1,72 @@
+<% content_for :page_title, "개인 루틴 관리" %>
+
+<div class="space-y-6">
+  <!-- Search -->
+  <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+    <%= form_with url: admin_personal_routines_path, method: :get, class: "flex gap-4" do %>
+      <div class="flex-1">
+        <%= text_field_tag :q, params[:q], placeholder: "루틴 제목으로 검색...", class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+      </div>
+      <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        검색
+      </button>
+    <% end %>
+  </div>
+
+  <!-- Personal Routines Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-200">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">루틴</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">사용자</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">연속 달성</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">총 완료</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">마지막 완료</th>
+          <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">작업</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-slate-200">
+        <% @personal_routines.each do |routine| %>
+          <tr class="hover:bg-slate-50">
+            <td class="px-6 py-4">
+              <div class="font-medium text-slate-900"><%= routine.title %></div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <img src="<%= routine.user.profile_image %>" alt="" class="w-8 h-8 rounded-full object-cover">
+                <span class="text-slate-600"><%= routine.user.nickname %></span>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-sm font-semibold <%= routine.current_streak > 0 ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700' %> rounded-full">
+                <%= routine.current_streak %>일
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-slate-600">
+              <%= routine.total_completions %>회
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+              <%= routine.last_completed_date&.strftime('%Y-%m-%d') || '-' %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right">
+              <div class="flex items-center justify-end gap-2">
+                <%= link_to admin_personal_routine_path(routine), class: "p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                <% end %>
+                <%= button_to admin_personal_routine_path(routine), method: :delete, data: { turbo_confirm: "정말 이 개인 루틴을 삭제하시겠습니까?" }, class: "p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

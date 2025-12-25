@@ -1,0 +1,70 @@
+<% content_for :page_title, "개인 루틴 상세" %>
+
+<div class="space-y-6">
+  <!-- Back Button -->
+  <div>
+    <%= link_to admin_personal_routines_path, class: "inline-flex items-center gap-2 text-slate-600 hover:text-slate-900" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      <span>목록으로</span>
+    <% end %>
+  </div>
+
+  <!-- Routine Info Card -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <div class="flex items-start justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900"><%= @personal_routine.title %></h2>
+        <div class="flex items-center gap-3 mt-4">
+          <img src="<%= @personal_routine.user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
+          <div>
+            <p class="font-medium text-slate-900"><%= @personal_routine.user.nickname %></p>
+            <p class="text-sm text-slate-500"><%= @personal_routine.user.email %></p>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <%= link_to admin_user_path(@personal_routine.user), class: "px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition-colors" do %>
+          사용자 보기
+        <% end %>
+        <%= button_to admin_personal_routine_path(@personal_routine), method: :delete, data: { turbo_confirm: "정말 이 개인 루틴을 삭제하시겠습니까?" }, class: "px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors" do %>
+          삭제
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-4 gap-6 mt-8 pt-6 border-t border-slate-200">
+      <div class="text-center">
+        <p class="text-3xl font-bold text-slate-900"><%= @personal_routine.current_streak %></p>
+        <p class="text-sm text-slate-500 mt-1">연속 달성 (일)</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-slate-900"><%= @personal_routine.total_completions %></p>
+        <p class="text-sm text-slate-500 mt-1">총 완료 횟수</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-slate-900"><%= @personal_routine.last_completed_date&.strftime('%m/%d') || '-' %></p>
+        <p class="text-sm text-slate-500 mt-1">마지막 완료일</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold text-slate-900"><%= @personal_routine.created_at.in_time_zone('Asia/Seoul').strftime('%Y-%m-%d') %></p>
+        <p class="text-sm text-slate-500 mt-1">생성일</p>
+      </div>
+    </div>
+
+    <% if @personal_routine.days.present? %>
+      <div class="mt-6 pt-6 border-t border-slate-200">
+        <p class="text-sm font-medium text-slate-700 mb-3">설정된 요일</p>
+        <div class="flex gap-2">
+          <% %w[일 월 화 수 목 금 토].each_with_index do |day, index| %>
+            <span class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium <%= @personal_routine.days&.include?(index.to_s) ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400' %>">
+              <%= day %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

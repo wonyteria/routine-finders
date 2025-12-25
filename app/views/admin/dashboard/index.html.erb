@@ -1,0 +1,142 @@
+<% content_for :page_title, "대시보드" %>
+
+<div class="space-y-8">
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Users -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">전체 사용자</p>
+          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:total_users] %></p>
+        </div>
+        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center gap-4 text-sm">
+        <span class="text-slate-500">관리자: <span class="font-semibold text-slate-700"><%= @stats[:admin_users] %></span></span>
+        <span class="text-slate-500">인증됨: <span class="font-semibold text-slate-700"><%= @stats[:verified_users] %></span></span>
+      </div>
+    </div>
+
+    <!-- Challenges -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">전체 챌린지</p>
+          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:total_challenges] %></p>
+        </div>
+        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+            <path stroke-width="2" d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4 flex items-center gap-4 text-sm">
+        <span class="text-slate-500">온라인: <span class="font-semibold text-slate-700"><%= @stats[:online_challenges] %></span></span>
+        <span class="text-slate-500">오프라인: <span class="font-semibold text-slate-700"><%= @stats[:offline_challenges] %></span></span>
+      </div>
+    </div>
+
+    <!-- Active Challenges -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">진행 중 챌린지</p>
+          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:active_challenges] %></p>
+        </div>
+        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="mt-4 text-sm">
+        <span class="text-slate-500">참가자: <span class="font-semibold text-slate-700"><%= @stats[:total_participants] %></span></span>
+      </div>
+    </div>
+
+    <!-- Personal Routines -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-slate-500">개인 루틴</p>
+          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:total_personal_routines] %></p>
+        </div>
+        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Users -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h2 class="font-bold text-slate-900">최근 가입 사용자</h2>
+        <%= link_to "전체 보기", admin_users_path, class: "text-sm text-indigo-600 hover:text-indigo-700 font-medium" %>
+      </div>
+      <div class="divide-y divide-slate-100">
+        <% @recent_users.each do |user| %>
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="<%= user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
+              <div>
+                <p class="font-medium text-slate-900"><%= user.nickname %></p>
+                <p class="text-sm text-slate-500"><%= user.email %></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if user.admin? %>
+                <span class="px-2 py-1 text-xs font-semibold bg-indigo-100 text-indigo-700 rounded-full">관리자</span>
+              <% end %>
+              <%= link_to admin_user_path(user), class: "text-slate-400 hover:text-slate-600" do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Recent Challenges -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h2 class="font-bold text-slate-900">최근 생성된 챌린지</h2>
+        <%= link_to "전체 보기", admin_challenges_path, class: "text-sm text-indigo-600 hover:text-indigo-700 font-medium" %>
+      </div>
+      <div class="divide-y divide-slate-100">
+        <% @recent_challenges.each do |challenge| %>
+          <div class="px-6 py-4 flex items-center justify-between">
+            <div>
+              <p class="font-medium text-slate-900"><%= challenge.title %></p>
+              <p class="text-sm text-slate-500">
+                <%= challenge.host_name %> · <%= challenge.online? ? '온라인' : '오프라인' %>
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if challenge.is_official %>
+                <span class="px-2 py-1 text-xs font-semibold bg-amber-100 text-amber-700 rounded-full">공식</span>
+              <% end %>
+              <%= link_to admin_challenge_path(challenge), class: "text-slate-400 hover:text-slate-600" do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

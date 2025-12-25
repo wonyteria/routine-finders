@@ -1,0 +1,79 @@
+<% content_for :page_title, "사용자 관리" %>
+
+<div class="space-y-6">
+  <!-- Search -->
+  <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+    <%= form_with url: admin_users_path, method: :get, class: "flex gap-4" do %>
+      <div class="flex-1">
+        <%= text_field_tag :q, params[:q], placeholder: "닉네임 또는 이메일로 검색...", class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+      </div>
+      <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        검색
+      </button>
+    <% end %>
+  </div>
+
+  <!-- Users Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-200">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">사용자</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">이메일</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">역할</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">레벨</th>
+          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">가입일</th>
+          <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">작업</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-slate-200">
+        <% @users.each do |user| %>
+          <tr class="hover:bg-slate-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <img src="<%= user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
+                <div class="font-medium text-slate-900"><%= user.nickname %></div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-600"><%= user.email %></span>
+                <% if user.email_verified %>
+                  <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                <% end %>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full <%= user.admin? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700' %>">
+                <%= user.admin? ? '관리자' : '사용자' %>
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-slate-600">
+              Lv.<%= user.level %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">
+              <%= user.created_at.in_time_zone('Asia/Seoul').strftime('%Y-%m-%d') %>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right">
+              <div class="flex items-center justify-end gap-2">
+                <%= link_to admin_user_path(user), class: "p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                <% end %>
+                <%= link_to edit_admin_user_path(user), class: "p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

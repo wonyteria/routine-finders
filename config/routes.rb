@@ -19,6 +19,18 @@ Rails.application.routes.draw do
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
 
+  # Admin routes
+  namespace :admin do
+    root to: "dashboard#index"
+    resources :users, only: [ :index, :show, :edit, :update, :destroy ] do
+      member do
+        patch :toggle_role
+      end
+    end
+    resources :challenges, only: [ :index, :show, :edit, :update, :destroy ]
+    resources :personal_routines, only: [ :index, :show, :destroy ]
+  end
+
   # Web routes
   resources :challenges do
     member do
