@@ -37,7 +37,17 @@ Rails.application.routes.draw do
       post :join
       delete :leave
     end
+    resources :verification_logs, only: [ :create ] do
+      member do
+        post :approve
+        post :reject
+      end
+    end
+    resources :participants, only: [ :index, :update, :destroy ], controller: "challenge_participants"
   end
+
+  # 호스트 전용 챌린지 관리
+  resources :hosted_challenges, only: [ :index, :show ]
 
   resources :gatherings, only: [ :index ]
 

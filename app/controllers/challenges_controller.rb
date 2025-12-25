@@ -11,6 +11,20 @@ class ChallengesController < ApplicationController
   def show
     @is_joined = current_user&.participations&.exists?(challenge: @challenge)
     @participant = current_user&.participations&.find_by(challenge: @challenge)
+    @is_host = current_user&.id == @challenge.host_id
+    @tab = params[:tab] || "info"
+
+    # 인증 로그 (참가자 또는 호스트인 경우)
+    if @is_joined || @is_host
+      @verification_logs = @challenge.verification_logs.includes(participant: :user).order(created_at: :desc).limit(50)
+      @today_verified = @participant&.verification_logs&.today&.exists?
+    end
+
+    # 호스트인 경우 추가 정보
+    if @is_host
+      @participants = @challenge.participants.includes(:user).order(created_at: :desc)
+      @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user)
+    end
   end
 
   def new

@@ -1,102 +1,73 @@
-<div class="space-y-12 pb-32">
-  <!-- Back Button -->
+<div class="space-y-8 pb-32">
+  <!-- Back Button & Host Badge -->
   <div class="flex items-center justify-between">
     <%= link_to "javascript:history.back()", class: "p-4 bg-white border border-slate-200 rounded-3xl text-slate-500 hover:text-indigo-600 shadow-sm transition-all" do %>
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
     <% end %>
+    <% if @is_host %>
+      <div class="flex items-center gap-3">
+        <span class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-bold">호스트</span>
+        <%= link_to hosted_challenge_path(@challenge), class: "px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-bold hover:bg-indigo-700 transition-all" do %>
+          관리 대시보드
+        <% end %>
+      </div>
+    <% end %>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
-    <!-- Main Content -->
-    <div class="lg:col-span-8 space-y-10">
-      <div class="bg-white rounded-[48px] overflow-hidden border border-slate-200 shadow-sm">
-        <!-- Hero Image -->
-        <div class="relative aspect-video">
-          <img src="<%= @challenge.thumbnail %>" class="w-full h-full object-cover" alt="">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          <div class="absolute bottom-10 left-10">
-            <div class="flex gap-2 mb-4">
-              <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl <%= @challenge.offline? ? 'bg-orange-600 text-white' : 'bg-indigo-600 text-white' %>">
-                <%= @challenge.offline? ? 'OFFLINE MEETING' : 'ONLINE ROUTINE' %>
-              </span>
-            </div>
-            <h1 class="text-4xl lg:text-5xl font-black text-white"><%= @challenge.title %></h1>
-          </div>
-        </div>
-
-        <div class="p-10 lg:p-14 space-y-10">
-          <!-- Offline Meeting Info -->
-          <% if @challenge.offline? && @challenge.meeting_info %>
-            <div class="bg-orange-50 rounded-[32px] border border-orange-100 p-8 space-y-6">
-              <h2 class="text-xl font-black text-orange-900 flex items-center gap-2">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
-                오프라인 모임 안내
-              </h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-1">
-                  <p class="text-[10px] font-black text-orange-600/60 uppercase tracking-widest">장소</p>
-                  <p class="text-lg font-black text-orange-900"><%= @challenge.meeting_info.place_name %></p>
-                  <p class="text-sm font-medium text-orange-800 mt-2"><%= @challenge.meeting_info.address %></p>
-                </div>
-                <div class="space-y-1">
-                  <p class="text-[10px] font-black text-orange-600/60 uppercase tracking-widest">일시</p>
-                  <p class="text-lg font-black text-orange-900"><%= @challenge.meeting_info.meeting_time %></p>
-                </div>
-              </div>
-              <div class="h-px bg-orange-100 w-full"></div>
-              <p class="text-sm font-medium text-orange-800 leading-relaxed italic">
-                "<%= @challenge.meeting_info.description %>"
-              </p>
-            </div>
+  <!-- Hero Card -->
+  <div class="bg-white rounded-[48px] overflow-hidden border border-slate-200 shadow-sm">
+    <!-- Hero Image -->
+    <div class="relative aspect-[21/9]">
+      <img src="<%= @challenge.thumbnail %>" class="w-full h-full object-cover" alt="">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <div class="absolute bottom-8 left-8 right-8">
+        <div class="flex gap-2 mb-4">
+          <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl <%= @challenge.offline? ? 'bg-orange-600 text-white' : 'bg-indigo-600 text-white' %>">
+            <%= @challenge.offline? ? 'OFFLINE' : 'ONLINE' %>
+          </span>
+          <% if @challenge.is_official %>
+            <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl bg-amber-500 text-white">
+              OFFICIAL
+            </span>
           <% end %>
-
-          <!-- Description -->
-          <div class="space-y-6">
-            <h2 class="text-2xl font-black text-slate-900">챌린지 소개</h2>
-            <p class="text-slate-500 font-medium text-lg leading-relaxed"><%= @challenge.description %></p>
-          </div>
         </div>
+        <h1 class="text-3xl lg:text-4xl font-black text-white"><%= @challenge.title %></h1>
+        <p class="text-white/70 font-medium mt-2">호스트: <%= @challenge.host_name %></p>
       </div>
     </div>
 
-    <!-- Sidebar -->
-    <div class="lg:col-span-4 space-y-8">
-      <div class="bg-white rounded-[40px] p-10 border border-slate-200 shadow-2xl shadow-indigo-50 space-y-8 sticky top-28">
-        <div class="grid grid-cols-2 gap-4">
-          <div class="bg-slate-50 p-5 rounded-3xl text-center">
-            <svg class="w-5 h-5 text-indigo-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            <p class="text-2xl font-black"><%= @challenge.current_participants %>명</p>
-            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">참여 인원</p>
-          </div>
-          <div class="bg-slate-50 p-5 rounded-3xl text-center">
-            <svg class="w-5 h-5 text-emerald-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <p class="text-lg font-black"><%= @challenge.start_date.strftime("%m월 %d일") %></p>
-            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">시작 예정</p>
-          </div>
-        </div>
-
-        <div class="space-y-6 pt-8 border-t border-slate-100">
-          <div class="flex flex-col">
-            <span class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-1">Required Deposit</span>
-            <span class="text-4xl font-black text-indigo-600"><%= number_with_delimiter(@challenge.amount) %><span class="text-lg ml-1">원</span></span>
-          </div>
-
-          <% if @is_joined %>
-            <%= button_to leave_challenge_path(@challenge), method: :delete, class: "w-full py-6 rounded-2xl font-black text-xl shadow-xl transition-all bg-slate-100 text-slate-400", data: { turbo_confirm: "정말 탈퇴하시겠습니까?" } do %>
-              참여 중 (탈퇴하기)
-            <% end %>
-          <% else %>
-            <%= button_to join_challenge_path(@challenge), method: :post, class: "w-full py-6 rounded-2xl font-black text-xl shadow-xl transition-all bg-indigo-600 text-white hover:bg-indigo-700" do %>
-              지금 신청하기
+    <!-- Tab Navigation -->
+    <div class="border-b border-slate-200">
+      <nav class="flex gap-0 px-8">
+        <%= link_to challenge_path(@challenge, tab: "info"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'info' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+          정보
+        <% end %>
+        <% if @is_joined || @is_host %>
+          <%= link_to challenge_path(@challenge, tab: "verifications"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'verifications' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+            인증 피드
+            <% if @is_host && @pending_verifications&.any? %>
+              <span class="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full"><%= @pending_verifications.count %></span>
             <% end %>
           <% end %>
-        </div>
+          <% if @is_host %>
+            <%= link_to challenge_path(@challenge, tab: "participants"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'participants' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+              참가자 (<%= @challenge.current_participants %>)
+            <% end %>
+          <% end %>
+        <% end %>
+      </nav>
+    </div>
 
-        <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl">
-          <svg class="w-5 h-5 text-emerald-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-          <p class="text-[11px] font-bold text-slate-400 leading-relaxed">신청 시 보증금이 즉시 예치되며, 모임 완료 후 정산됩니다.</p>
-        </div>
-      </div>
+    <!-- Tab Content -->
+    <div class="p-8 lg:p-10">
+      <% case @tab %>
+      <% when "info" %>
+        <%= render "challenges/tabs/info", challenge: @challenge, is_joined: @is_joined, participant: @participant, is_host: @is_host %>
+      <% when "verifications" %>
+        <%= render "challenges/tabs/verifications", challenge: @challenge, verification_logs: @verification_logs, participant: @participant, today_verified: @today_verified, is_host: @is_host, pending_verifications: @pending_verifications %>
+      <% when "participants" %>
+        <%= render "challenges/tabs/participants", challenge: @challenge, participants: @participants %>
+      <% end %>
     </div>
   </div>
 </div>

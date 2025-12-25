@@ -50,6 +50,10 @@ class Challenge < ApplicationRecord
     offline?
   end
 
+  def thumbnail
+    self[:thumbnail].presence || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800"
+  end
+
   private
 
   def end_date_after_start_date

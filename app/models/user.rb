@@ -63,4 +63,8 @@ class User < ApplicationRecord
   def unread_notifications_count
     notifications.where(is_read: false).count
   end
+
+  def profile_image
+    self[:profile_image].presence || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{id}"
+  end
 end

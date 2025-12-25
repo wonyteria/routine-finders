@@ -1,0 +1,83 @@
+<div class="space-y-10 pb-32">
+  <!-- Header -->
+  <div class="flex items-end justify-between">
+    <div>
+      <h1 class="text-4xl font-black text-slate-900">내가 개최한 챌린지</h1>
+      <p class="text-slate-500 font-medium mt-2">총 <%= @hosted_challenges.count %>개의 챌린지를 운영 중입니다</p>
+    </div>
+    <div class="flex gap-3">
+      <%= link_to new_challenge_path, class: "px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg hover:bg-indigo-700 transition-all" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        새 챌린지
+      <% end %>
+      <%= link_to new_challenge_path(mode: "offline"), class: "px-6 py-3 bg-orange-600 text-white rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg hover:bg-orange-700 transition-all" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+        새 모임
+      <% end %>
+    </div>
+  </div>
+
+  <% if @hosted_challenges.any? %>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <% @hosted_challenges.each do |challenge| %>
+        <%= link_to hosted_challenge_path(challenge), class: "bg-white rounded-[32px] border border-slate-200 shadow-sm hover:shadow-xl transition-all overflow-hidden group" do %>
+          <div class="flex">
+            <!-- Thumbnail -->
+            <div class="w-40 h-40 flex-shrink-0">
+              <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover" alt="">
+            </div>
+            
+            <!-- Content -->
+            <div class="flex-1 p-6 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase <%= challenge.offline? ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' %>">
+                    <%= challenge.offline? ? 'OFFLINE' : 'ONLINE' %>
+                  </span>
+                  <% if challenge.is_official %>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-700">OFFICIAL</span>
+                  <% end %>
+                </div>
+                <h3 class="text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h3>
+                <p class="text-sm text-slate-500 mt-1"><%= challenge.start_date.strftime('%m/%d') %> ~ <%= challenge.end_date.strftime('%m/%d') %></p>
+              </div>
+              
+              <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-1 text-sm">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span class="font-bold text-slate-600"><%= challenge.current_participants %>명</span>
+                  </div>
+                  <% pending_count = @pending_counts[challenge.id] || 0 %>
+                  <% if pending_count > 0 %>
+                    <div class="flex items-center gap-1 text-sm">
+                      <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      <span class="font-bold text-amber-600"><%= pending_count %>건 대기</span>
+                    </div>
+                  <% end %>
+                </div>
+                <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-[40px] border border-slate-200 p-16 text-center">
+      <div class="w-24 h-24 bg-slate-100 rounded-[32px] flex items-center justify-center mx-auto mb-6">
+        <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      </div>
+      <h3 class="text-xl font-black text-slate-900 mb-2">아직 개최한 챌린지가 없습니다</h3>
+      <p class="text-slate-500 mb-6">첫 번째 챌린지를 개최하고 함께 성장할 참가자를 모집해보세요!</p>
+      <div class="flex justify-center gap-3">
+        <%= link_to new_challenge_path, class: "px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold text-sm" do %>
+          온라인 챌린지 개최
+        <% end %>
+        <%= link_to new_challenge_path(mode: "offline"), class: "px-6 py-3 bg-orange-600 text-white rounded-2xl font-bold text-sm" do %>
+          오프라인 모임 개최
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,93 @@
+<div class="space-y-8 pb-32">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <%= link_to challenge_path(@challenge), class: "p-3 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-indigo-600 shadow-sm transition-all" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <% end %>
+    <h1 class="text-2xl font-black text-slate-900">참가자 관리</h1>
+    <div class="w-10"></div>
+  </div>
+
+  <!-- Challenge Info -->
+  <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm p-6 flex items-center gap-6">
+    <img src="<%= @challenge.thumbnail %>" class="w-20 h-20 rounded-2xl object-cover" alt="">
+    <div>
+      <h2 class="text-xl font-black text-slate-900"><%= @challenge.title %></h2>
+      <p class="text-slate-500 mt-1"><%= @challenge.current_participants %>명 참여 중</p>
+    </div>
+  </div>
+
+  <!-- Participants Table -->
+  <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+    <% if @participants.any? %>
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">참가자</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">달성률</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">연속 성공</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">실패 횟수</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">상태</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">오늘 인증</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">관리</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-slate-100">
+          <% @participants.each do |participant| %>
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3">
+                  <img src="<%= participant.user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
+                  <div>
+                    <p class="font-bold text-slate-900"><%= participant.user.nickname %></p>
+                    <p class="text-xs text-slate-400"><%= participant.joined_at.in_time_zone('Asia/Seoul').strftime('%Y-%m-%d') %> 참여</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <div class="w-20 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-600 rounded-full" style="width: <%= participant.completion_rate %>%"></div>
+                  </div>
+                  <span class="text-sm font-bold text-slate-600"><%= participant.completion_rate.to_i %>%</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm font-bold text-orange-600"><%= participant.current_streak %>일</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm font-bold <%= participant.total_failures > 0 ? 'text-red-600' : 'text-slate-400' %>"><%= participant.total_failures %>회</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% status_colors = { achieving: 'bg-green-100 text-green-700', lagging: 'bg-amber-100 text-amber-700', inactive: 'bg-slate-100 text-slate-600', failed: 'bg-red-100 text-red-700' } %>
+                <% status_labels = { achieving: '달성중', lagging: '부진', inactive: '비활성', failed: '실패' } %>
+                <span class="px-3 py-1 rounded-full text-xs font-bold <%= status_colors[participant.status.to_sym] || 'bg-slate-100 text-slate-600' %>">
+                  <%= status_labels[participant.status.to_sym] || participant.status %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if participant.today_verified %>
+                  <span class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center inline-flex">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                  </span>
+                <% else %>
+                  <span class="w-8 h-8 bg-slate-200 rounded-full inline-block"></span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <%= button_to challenge_participant_path(@challenge, participant), method: :delete, class: "px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-bold hover:bg-red-100 transition-all", data: { turbo_confirm: "#{participant.user.nickname}님을 강제 퇴장시키겠습니까?" } do %>
+                  강제퇴장
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="text-center py-16 text-slate-400">
+        <svg class="w-16 h-16 mx-auto mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <p class="font-bold">아직 참가자가 없습니다</p>
+      </div>
+    <% end %>
+  </div>
+</div>
