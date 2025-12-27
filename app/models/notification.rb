@@ -7,7 +7,8 @@ class Notification < ApplicationRecord
     approval: 3,
     rejection: 4,
     settlement: 5,
-    system: 6
+    system: 6,
+    application: 7
   }
 
   # Associations

@@ -1,0 +1,73 @@
+<div class="bg-white rounded-[32px] border border-slate-200 shadow-sm p-8">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-black text-slate-900">참가자 목록</h2>
+    <span class="text-sm font-bold text-slate-500"><%= participants.count %>명</span>
+  </div>
+
+  <% if participants.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-slate-200">
+            <th class="text-left py-4 px-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">참가자</th>
+            <th class="text-center py-4 px-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">달성률</th>
+            <th class="text-center py-4 px-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">연속</th>
+            <th class="text-center py-4 px-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">성공/실패</th>
+            <th class="text-center py-4 px-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">오늘</th>
+            <th class="text-center py-4 px-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">가입일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% participants.each do |participant| %>
+            <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+              <td class="py-4 px-2">
+                <div class="flex items-center gap-3">
+                  <img src="<%= participant.user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
+                  <div>
+                    <p class="font-bold text-slate-900"><%= participant.user.nickname %></p>
+                    <p class="text-xs text-slate-400"><%= participant.user.email %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="py-4 px-2 text-center">
+                <div class="inline-flex items-center gap-2">
+                  <div class="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-600 rounded-full" style="width: <%= participant.completion_rate.to_i %>%"></div>
+                  </div>
+                  <span class="font-bold text-sm text-slate-900"><%= participant.completion_rate.to_i %>%</span>
+                </div>
+              </td>
+              <td class="py-4 px-2 text-center">
+                <span class="font-bold text-indigo-600"><%= participant.current_streak %>일</span>
+              </td>
+              <td class="py-4 px-2 text-center">
+                <span class="text-green-600 font-bold"><%= participant.total_success %></span>
+                <span class="text-slate-400">/</span>
+                <span class="text-red-600 font-bold"><%= participant.total_failure %></span>
+              </td>
+              <td class="py-4 px-2 text-center">
+                <% if participant.today_verified %>
+                  <span class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                  </span>
+                <% else %>
+                  <span class="w-8 h-8 bg-slate-200 rounded-full block mx-auto"></span>
+                <% end %>
+              </td>
+              <td class="py-4 px-2 text-center text-sm text-slate-500">
+                <%= participant.joined_at&.strftime("%m/%d") %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="text-center py-16">
+      <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      </div>
+      <p class="text-lg font-bold text-slate-300">아직 참가자가 없습니다</p>
+    </div>
+  <% end %>
+</div>

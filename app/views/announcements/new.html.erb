@@ -1,0 +1,10 @@
+<div class="max-w-2xl mx-auto py-12 pb-32">
+  <div class="flex items-center gap-4 mb-10">
+    <%= link_to hosted_challenge_path(@challenge, tab: "announcements"), class: "p-2 rounded-xl hover:bg-slate-100 transition-colors" do %>
+      <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <h1 class="text-3xl font-black text-slate-900">공지 작성</h1>
+  </div>
+
+  <%= render "form", announcement: @announcement, challenge: @challenge %>
+</div>

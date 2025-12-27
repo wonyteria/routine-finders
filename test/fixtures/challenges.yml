@@ -1,0 +1,18 @@
+free_challenge:
+  title: Free Challenge
+  host: host
+  start_date: <%= Date.current %>
+  end_date: <%= Date.current + 30.days %>
+  mode: online
+  cost_type: free
+  admission_type: first_come
+
+paid_challenge:
+  title: Paid Challenge
+  host: host
+  start_date: <%= Date.current %>
+  end_date: <%= Date.current + 30.days %>
+  mode: online
+  cost_type: deposit
+  admission_type: approval
+  amount: 10000

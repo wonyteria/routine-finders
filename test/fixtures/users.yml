@@ -1,0 +1,11 @@
+host:
+  nickname: Host User
+  email: host@example.com
+  password_digest: <%= BCrypt::Password.create('password123') %>
+  email_verified: true
+
+participant:
+  nickname: Participant User
+  email: participant@example.com
+  password_digest: <%= BCrypt::Password.create('password123') %>
+  email_verified: true

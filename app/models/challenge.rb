@@ -14,6 +14,9 @@ class Challenge < ApplicationRecord
   has_many :participants, dependent: :destroy
   has_many :users, through: :participants
   has_many :verification_logs, dependent: :destroy
+  has_many :challenge_applications, dependent: :destroy
+  has_many :reviews, dependent: :destroy
+  has_many :announcements, dependent: :destroy
 
   # Validations
   validates :title, presence: true
@@ -26,9 +29,12 @@ class Challenge < ApplicationRecord
   scope :offline_gatherings, -> { where(mode: :offline) }
   scope :official, -> { where(is_official: true) }
   scope :active, -> { where("start_date <= ? AND end_date >= ?", Date.current, Date.current) }
+  scope :public_challenges, -> { where(is_private: false) }
+  scope :private_challenges, -> { where(is_private: true) }
 
   # Callbacks
   before_save :set_host_name
+  before_create :generate_invitation_code, if: :is_private?
 
   # Nested attributes
   accepts_nested_attributes_for :meeting_info, allow_destroy: true
@@ -54,6 +60,27 @@ class Challenge < ApplicationRecord
     self[:thumbnail].presence || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800"
   end
 
+  # Verification time window check
+  def within_verification_window?(time = Time.current)
+    return true if verification_start_time.blank? && verification_end_time.blank?
+
+    current_time_only = time.strftime("%H:%M:%S")
+    start_time = verification_start_time&.strftime("%H:%M:%S") || "00:00:00"
+    end_time = verification_end_time&.strftime("%H:%M:%S") || "23:59:59"
+
+    current_time_only >= start_time && current_time_only <= end_time
+  end
+
+  # Pending applications count
+  def pending_applications_count
+    challenge_applications.pending.count
+  end
+
+  # Check if user needs approval
+  def requires_approval?
+    admission_type_approval?
+  end
+
   private
 
   def end_date_after_start_date
@@ -63,5 +90,12 @@ class Challenge < ApplicationRecord
 
   def set_host_name
     self.host_name = host&.nickname if host_name.blank?
+  end
+
+  def generate_invitation_code
+    loop do
+      self.invitation_code = SecureRandom.alphanumeric(8).upcase
+      break unless Challenge.exists?(invitation_code: invitation_code)
+    end
   end
 end

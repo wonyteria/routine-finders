@@ -20,6 +20,9 @@
           <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase <%= @challenge.offline? ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' %>">
             <%= @challenge.offline? ? 'OFFLINE' : 'ONLINE' %>
           </span>
+          <% if @challenge.requires_approval? %>
+            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-700">승인제</span>
+          <% end %>
         </div>
         <h1 class="text-2xl font-black text-slate-900"><%= @challenge.title %></h1>
         <p class="text-slate-500 mt-1"><%= @challenge.start_date.strftime('%Y.%m.%d') %> ~ <%= @challenge.end_date.strftime('%Y.%m.%d') %></p>
@@ -27,10 +30,10 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-4 border-t border-slate-200">
+    <div class="grid grid-cols-5 border-t border-slate-200">
       <div class="p-6 text-center border-r border-slate-200">
         <p class="text-3xl font-black text-indigo-600"><%= @stats[:total_participants] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase mt-1">총 참가자</p>
+        <p class="text-xs font-bold text-slate-400 uppercase mt-1">참가자</p>
       </div>
       <div class="p-6 text-center border-r border-slate-200">
         <p class="text-3xl font-black text-green-600"><%= @stats[:active_today] %></p>
@@ -40,120 +43,56 @@
         <p class="text-3xl font-black text-slate-900"><%= @stats[:avg_completion_rate] %>%</p>
         <p class="text-xs font-bold text-slate-400 uppercase mt-1">평균 달성률</p>
       </div>
-      <div class="p-6 text-center">
-        <p class="text-3xl font-black <%= @stats[:pending_count] > 0 ? 'text-amber-600' : 'text-slate-300' %>"><%= @stats[:pending_count] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase mt-1">승인 대기</p>
+      <div class="p-6 text-center border-r border-slate-200">
+        <p class="text-3xl font-black <%= @stats[:pending_verifications] > 0 ? 'text-amber-600' : 'text-slate-300' %>"><%= @stats[:pending_verifications] %></p>
+        <p class="text-xs font-bold text-slate-400 uppercase mt-1">인증 대기</p>
       </div>
+      <div class="p-6 text-center">
+        <p class="text-3xl font-black <%= @stats[:pending_applications] > 0 ? 'text-red-600' : 'text-slate-300' %>"><%= @stats[:pending_applications] %></p>
+        <p class="text-xs font-bold text-slate-400 uppercase mt-1">신청 대기</p>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="border-t border-slate-200">
+      <nav class="flex gap-0 px-8">
+        <%= link_to hosted_challenge_path(@challenge, tab: "dashboard"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'dashboard' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+          대시보드
+        <% end %>
+        <% if @challenge.requires_approval? %>
+          <%= link_to hosted_challenge_path(@challenge, tab: "applications"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'applications' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+            신청 관리
+            <% if @stats[:pending_applications] > 0 %>
+              <span class="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full"><%= @stats[:pending_applications] %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+        <%= link_to hosted_challenge_path(@challenge, tab: "participants"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'participants' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+          참가자
+        <% end %>
+        <%= link_to hosted_challenge_path(@challenge, tab: "announcements"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'announcements' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+          공지사항
+        <% end %>
+        <%= link_to hosted_challenge_path(@challenge, tab: "reviews"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'reviews' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+          리뷰
+        <% end %>
+      </nav>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Pending Verifications -->
-    <div class="lg:col-span-2 space-y-6">
-      <% if @pending_verifications.any? %>
-        <div class="bg-amber-50 rounded-[32px] border border-amber-200 p-8">
-          <h2 class="text-xl font-black text-amber-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            승인 대기 중 (<%= @pending_verifications.count %>건)
-          </h2>
-          <div class="space-y-4">
-            <% @pending_verifications.each do |log| %>
-              <div class="bg-white rounded-2xl p-5 border border-amber-100">
-                <div class="flex items-start justify-between gap-4">
-                  <div class="flex items-center gap-4">
-                    <img src="<%= log.participant.user.profile_image %>" alt="" class="w-12 h-12 rounded-full object-cover">
-                    <div>
-                      <p class="font-bold text-slate-900"><%= log.participant.user.nickname %></p>
-                      <p class="text-sm text-slate-500"><%= log.created_at.in_time_zone('Asia/Seoul').strftime('%m/%d %H:%M') %></p>
-                      <% if log.value.present? %>
-                        <p class="text-sm text-slate-600 mt-1 bg-slate-50 px-3 py-1 rounded-lg inline-block"><%= log.value %></p>
-                      <% end %>
-                      <% if log.image_url.present? %>
-                        <img src="<%= log.image_url %>" alt="" class="mt-3 rounded-xl max-h-32 object-cover">
-                      <% end %>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <%= button_to approve_challenge_verification_log_path(@challenge, log), method: :post, class: "px-4 py-2 bg-green-500 text-white rounded-xl font-bold text-sm hover:bg-green-600 transition-all" do %>
-                      승인
-                    <% end %>
-                    <%= button_to reject_challenge_verification_log_path(@challenge, log), method: :post, class: "px-4 py-2 bg-red-100 text-red-600 rounded-xl font-bold text-sm hover:bg-red-200 transition-all", data: { turbo_confirm: "정말 거절하시겠습니까?" } do %>
-                      거절
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-
-      <!-- Recent Verifications -->
-      <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm p-8">
-        <h2 class="text-xl font-black text-slate-900 mb-6">최근 인증 기록</h2>
-        <% if @recent_verifications.any? %>
-          <div class="space-y-4">
-            <% @recent_verifications.each do |log| %>
-              <div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors">
-                <img src="<%= log.participant.user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
-                <div class="flex-1">
-                  <div class="flex items-center gap-2">
-                    <span class="font-bold text-slate-900"><%= log.participant.user.nickname %></span>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold <%= { pending: 'bg-amber-100 text-amber-700', approved: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700' }[log.status.to_sym] %>">
-                      <%= { pending: '대기', approved: '승인', rejected: '거절' }[log.status.to_sym] %>
-                    </span>
-                  </div>
-                  <p class="text-xs text-slate-400"><%= log.created_at.in_time_zone('Asia/Seoul').strftime('%m/%d %H:%M') %></p>
-                </div>
-                <% if log.value.present? %>
-                  <span class="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-lg"><%= truncate(log.value, length: 20) %></span>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="text-slate-400 text-center py-8">아직 인증 기록이 없습니다</p>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Participants List -->
-    <div class="space-y-6">
-      <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm p-8">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-black text-slate-900">참가자</h2>
-          <span class="text-sm text-slate-500"><%= @participants.count %>명</span>
-        </div>
-        <% if @participants.any? %>
-          <div class="space-y-3">
-            <% @participants.limit(10).each do |participant| %>
-              <div class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition-colors">
-                <div class="flex items-center gap-3">
-                  <img src="<%= participant.user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
-                  <div>
-                    <p class="font-bold text-slate-900 text-sm"><%= participant.user.nickname %></p>
-                    <p class="text-xs text-slate-400"><%= participant.completion_rate.to_i %>% 달성</p>
-                  </div>
-                </div>
-                <% if participant.today_verified %>
-                  <span class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                  </span>
-                <% else %>
-                  <span class="w-6 h-6 bg-slate-200 rounded-full"></span>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-          <% if @participants.count > 10 %>
-            <%= link_to challenge_path(@challenge, tab: "participants"), class: "block text-center text-sm text-indigo-600 font-bold mt-4 hover:text-indigo-700" do %>
-              전체 보기 (<%= @participants.count %>명)
-            <% end %>
-          <% end %>
-        <% else %>
-          <p class="text-slate-400 text-center py-8">아직 참가자가 없습니다</p>
-        <% end %>
-      </div>
-    </div>
+  <!-- Tab Content -->
+  <div>
+    <% case @tab %>
+    <% when "dashboard" %>
+      <%= render "hosted_challenges/tabs/dashboard", challenge: @challenge, participants: @participants, pending_verifications: @pending_verifications, recent_verifications: @recent_verifications %>
+    <% when "applications" %>
+      <%= render "hosted_challenges/tabs/applications", challenge: @challenge, pending_applications: @pending_applications, processed_applications: @processed_applications %>
+    <% when "participants" %>
+      <%= render "hosted_challenges/tabs/participants", challenge: @challenge, participants: @participants %>
+    <% when "announcements" %>
+      <%= render "hosted_challenges/tabs/announcements", challenge: @challenge, announcements: @announcements %>
+    <% when "reviews" %>
+      <%= render "hosted_challenges/tabs/reviews", challenge: @challenge, reviews: @reviews %>
+    <% end %>
   </div>
 </div>

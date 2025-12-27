@@ -10,10 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_27_155941) do
+  create_table "announcements", force: :cascade do |t|
+    t.integer "challenge_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["challenge_id"], name: "index_announcements_on_challenge_id"
+  end
+
+  create_table "challenge_applications", force: :cascade do |t|
+    t.datetime "applied_at"
+    t.integer "challenge_id", null: false
+    t.datetime "created_at", null: false
+    t.string "depositor_name"
+    t.text "message"
+    t.text "reject_reason"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["challenge_id", "user_id"], name: "index_challenge_applications_on_challenge_id_and_user_id", unique: true
+    t.index ["challenge_id"], name: "index_challenge_applications_on_challenge_id"
+    t.index ["user_id"], name: "index_challenge_applications_on_user_id"
+  end
+
   create_table "challenges", force: :cascade do |t|
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
+    t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
     t.string "category"
     t.decimal "completion_rate", precision: 5, scale: 2, default: "0.0"
     t.integer "cost_type", default: 0, null: false
@@ -27,9 +52,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
     t.string "host_account"
     t.integer "host_id", null: false
     t.string "host_name"
+    t.string "invitation_code"
     t.boolean "is_official", default: false, null: false
+    t.boolean "is_private", default: false, null: false
     t.string "kakao_link"
+    t.integer "likes_count", default: 0, null: false
     t.integer "max_participants", default: 100, null: false
+    t.string "meeting_link"
     t.boolean "mission_allow_exceptions", default: false
     t.integer "mission_frequency", default: 0, null: false
     t.boolean "mission_is_consecutive", default: false
@@ -40,15 +69,20 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
     t.integer "mode", default: 0, null: false
     t.integer "penalty_per_failure", default: 0
     t.string "purpose"
+    t.boolean "re_verification_allowed", default: false, null: false
     t.string "refund_timing"
+    t.boolean "requires_application_message", default: false, null: false
     t.date "start_date", null: false
     t.text "summary"
     t.string "thumbnail"
     t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.time "verification_end_time"
+    t.time "verification_start_time"
     t.integer "verification_type", default: 0, null: false
     t.index ["category"], name: "index_challenges_on_category"
     t.index ["host_id"], name: "index_challenges_on_host_id"
+    t.index ["invitation_code"], name: "index_challenges_on_invitation_code", unique: true
     t.index ["is_official"], name: "index_challenges_on_is_official"
     t.index ["mode"], name: "index_challenges_on_mode"
   end
@@ -117,6 +151,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
     t.index ["user_id"], name: "index_personal_routines_on_user_id"
   end
 
+  create_table "reviews", force: :cascade do |t|
+    t.integer "challenge_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.integer "likes_count", default: 0, null: false
+    t.integer "rating", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["challenge_id", "user_id"], name: "index_reviews_on_challenge_id_and_user_id", unique: true
+    t.index ["challenge_id"], name: "index_reviews_on_challenge_id"
+    t.index ["user_id"], name: "index_reviews_on_user_id"
+  end
+
   create_table "staffs", force: :cascade do |t|
     t.integer "challenge_id", null: false
     t.datetime "created_at", null: false
@@ -130,6 +177,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
 
   create_table "users", force: :cascade do |t|
     t.decimal "avg_completion_rate", precision: 5, scale: 2, default: "0.0"
+    t.text "bio"
     t.integer "completed_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -145,6 +193,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
     t.string "password_digest"
     t.string "profile_image"
     t.integer "role", default: 0, null: false
+    t.string "saved_account_holder"
+    t.string "saved_account_number"
+    t.string "saved_bank_name"
+    t.json "sns_links", default: {}
     t.integer "total_exp", default: 0, null: false
     t.integer "total_refunded", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -172,12 +224,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_24_114347) do
     t.index ["status"], name: "index_verification_logs_on_status"
   end
 
+  add_foreign_key "announcements", "challenges"
+  add_foreign_key "challenge_applications", "challenges"
+  add_foreign_key "challenge_applications", "users"
   add_foreign_key "challenges", "users", column: "host_id"
   add_foreign_key "meeting_infos", "challenges"
   add_foreign_key "notifications", "users"
   add_foreign_key "participants", "challenges"
   add_foreign_key "participants", "users"
   add_foreign_key "personal_routines", "users"
+  add_foreign_key "reviews", "challenges"
+  add_foreign_key "reviews", "users"
   add_foreign_key "staffs", "challenges"
   add_foreign_key "staffs", "users"
   add_foreign_key "verification_logs", "challenges"

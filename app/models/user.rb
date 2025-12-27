@@ -11,6 +11,8 @@ class User < ApplicationRecord
   has_many :personal_routines, dependent: :destroy
   has_many :notifications, dependent: :destroy
   has_many :staffs, dependent: :destroy
+  has_many :challenge_applications, dependent: :destroy
+  has_many :reviews, dependent: :destroy
 
   # Validations
   validates :nickname, presence: true
@@ -66,5 +68,40 @@ class User < ApplicationRecord
 
   def profile_image
     self[:profile_image].presence || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{id}"
+  end
+
+  # SNS Links accessors
+  def instagram
+    sns_links&.dig("instagram")
+  end
+
+  def threads
+    sns_links&.dig("threads")
+  end
+
+  def blog
+    sns_links&.dig("blog")
+  end
+
+  def youtube
+    sns_links&.dig("youtube")
+  end
+
+  def twitter
+    sns_links&.dig("twitter")
+  end
+
+  # Saved account info
+  def saved_account
+    return nil if saved_bank_name.blank?
+    {
+      bank_name: saved_bank_name,
+      account_number: saved_account_number,
+      account_holder: saved_account_holder
+    }
+  end
+
+  def has_saved_account?
+    saved_bank_name.present? && saved_account_number.present?
   end
 end

@@ -44,6 +44,13 @@ Rails.application.routes.draw do
       end
     end
     resources :participants, only: [ :index, :update, :destroy ], controller: "challenge_participants"
+    resources :applications, only: [ :index, :new, :create ], controller: "challenge_applications" do
+      member do
+        post :approve
+        post :reject
+      end
+    end
+    resources :announcements, only: [ :new, :create, :edit, :update, :destroy ]
   end
 
   # 호스트 전용 챌린지 관리
