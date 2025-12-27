@@ -1,0 +1,8 @@
+participant_in_free:
+  user: participant
+  challenge: free_challenge
+  joined_at: <%= Time.current %>
+  status: achieving
+  completion_rate: 80.0
+  current_streak: 5
+  max_streak: 10

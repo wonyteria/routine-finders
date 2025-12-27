@@ -1,0 +1,28 @@
+<div class="max-w-2xl mx-auto space-y-8 pb-32">
+  <!-- Header -->
+  <div class="flex items-center gap-4">
+    <%= link_to challenge_path(@challenge), class: "w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-all" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <div>
+      <h1 class="text-2xl font-black text-slate-900">리뷰 작성</h1>
+      <p class="text-sm text-slate-400 mt-1">Write a Review</p>
+    </div>
+  </div>
+
+  <!-- Challenge Info -->
+  <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm p-6">
+    <div class="flex items-center gap-4">
+      <img src="<%= @challenge.thumbnail %>" class="w-16 h-16 rounded-2xl object-cover" alt="">
+      <div>
+        <h3 class="font-black text-slate-900"><%= @challenge.title %></h3>
+        <p class="text-sm text-slate-400 mt-1">호스트: <%= @challenge.host.nickname %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-8">
+    <%= render "form" %>
+  </div>
+</div>

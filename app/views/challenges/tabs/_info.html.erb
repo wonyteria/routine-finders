@@ -69,6 +69,82 @@
         </div>
       </div>
     </div>
+
+    <!-- Host Info -->
+    <div class="space-y-4">
+      <h2 class="text-xl font-black text-slate-900">호스트 정보</h2>
+      <%= link_to user_path(challenge.host), class: "flex items-center gap-4 p-5 bg-slate-50 rounded-[28px] hover:bg-slate-100 transition-all group" do %>
+        <img src="<%= challenge.host.profile_image %>" class="w-14 h-14 rounded-2xl object-cover" alt="">
+        <div class="flex-1">
+          <p class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors"><%= challenge.host.nickname %></p>
+          <p class="text-xs text-slate-400 mt-1">Lv.<%= challenge.host.level %> | 개최 챌린지 <%= challenge.host.hosted_challenges.count %>개</p>
+          <% if challenge.host.bio.present? %>
+            <p class="text-sm text-slate-500 mt-2 line-clamp-2"><%= challenge.host.bio %></p>
+          <% end %>
+        </div>
+        <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <% end %>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-black text-slate-900">리뷰</h2>
+        <%= link_to challenge_reviews_path(challenge), class: "text-sm text-indigo-600 font-bold hover:text-indigo-700" do %>
+          전체 보기
+        <% end %>
+      </div>
+
+      <% if challenge.reviews.any? %>
+        <div class="flex items-center gap-4 p-5 bg-amber-50 rounded-[24px]">
+          <div class="flex items-center gap-1">
+            <% (1..5).each do |star| %>
+              <svg class="w-5 h-5 <%= challenge.average_rating.to_f >= star ? 'text-amber-400' : 'text-slate-200' %>" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            <% end %>
+          </div>
+          <span class="text-2xl font-black text-amber-700"><%= challenge.average_rating&.round(1) || 0 %></span>
+          <span class="text-sm text-amber-600">(<%= challenge.reviews.count %>개의 리뷰)</span>
+        </div>
+
+        <div class="space-y-3">
+          <% challenge.reviews.recent.limit(3).each do |review| %>
+            <div class="p-5 bg-slate-50 rounded-[24px]">
+              <div class="flex items-start gap-3">
+                <%= link_to user_path(review.user), class: "shrink-0" do %>
+                  <img src="<%= review.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover" alt="">
+                <% end %>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-900"><%= review.user.nickname %></span>
+                    <div class="flex items-center gap-0.5">
+                      <% (1..5).each do |star| %>
+                        <svg class="w-3.5 h-3.5 <%= review.rating >= star ? 'text-amber-400' : 'text-slate-200' %>" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      <% end %>
+                    </div>
+                  </div>
+                  <% if review.content.present? %>
+                    <p class="text-sm text-slate-600 mt-2 line-clamp-2"><%= review.content %></p>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="p-8 bg-slate-50 rounded-[24px] text-center">
+          <p class="text-slate-400 font-bold">아직 리뷰가 없습니다</p>
+          <% if is_joined %>
+            <%= link_to new_challenge_review_path(challenge), class: "inline-block mt-3 px-5 py-2 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all" do %>
+              첫 리뷰 작성하기
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <!-- Sidebar -->

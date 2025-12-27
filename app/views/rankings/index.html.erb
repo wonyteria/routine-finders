@@ -1,0 +1,185 @@
+<div class="space-y-12 pb-32">
+  <!-- Header -->
+  <div class="text-center space-y-4">
+    <div class="inline-flex items-center justify-center w-20 h-20 rounded-[28px] bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-xl mb-4">
+      <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+    </div>
+    <h1 class="text-4xl font-black text-slate-900 tracking-tight">Ranking</h1>
+    <p class="text-slate-500 font-medium">꾸준함이 만드는 기적, 오늘도 인증하셨나요?</p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="flex justify-center" data-controller="tabs" data-tabs-default-value="weekly">
+    <div class="bg-slate-100 p-1.5 rounded-[20px] inline-flex">
+      <button type="button"
+              data-tabs-target="tab"
+              data-action="click->tabs#show"
+              data-tab="weekly"
+              class="px-8 py-3 rounded-[16px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-white data-[active]:shadow-md data-[active]:text-indigo-600 text-slate-500 hover:text-slate-700">
+        주간 랭킹
+      </button>
+      <button type="button"
+              data-tabs-target="tab"
+              data-action="click->tabs#show"
+              data-tab="halloffame"
+              class="px-8 py-3 rounded-[16px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-white data-[active]:shadow-md data-[active]:text-indigo-600 text-slate-500 hover:text-slate-700">
+        명예의 전당
+      </button>
+    </div>
+  </div>
+
+  <!-- Weekly Rankings -->
+  <div data-tabs-target="panel" data-panel="weekly" class="space-y-6">
+    <div class="flex items-center justify-between px-4">
+      <h2 class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">This Week's Top Performers</h2>
+      <span class="text-xs text-slate-400 font-bold"><%= Date.current.beginning_of_week.strftime('%m.%d') %> - <%= Date.current.end_of_week.strftime('%m.%d') %></span>
+    </div>
+
+    <% if @weekly_rankings.any? %>
+      <!-- Top 3 Podium -->
+      <% if @weekly_rankings.size >= 3 %>
+        <div class="grid grid-cols-3 gap-4 items-end">
+          <!-- 2nd Place -->
+          <div class="text-center space-y-4">
+            <div class="relative inline-block">
+              <img src="<%= @weekly_rankings[1].profile_image %>" class="w-20 h-20 rounded-[28px] border-4 border-slate-200 object-cover mx-auto" alt="">
+              <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-slate-400 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-lg">2</div>
+            </div>
+            <div>
+              <p class="font-black text-slate-900"><%= @weekly_rankings[1].nickname %></p>
+              <p class="text-sm text-slate-400 font-bold"><%= @weekly_rankings[1].weekly_count %>회 인증</p>
+            </div>
+            <div class="h-24 bg-gradient-to-t from-slate-200 to-slate-100 rounded-t-[24px]"></div>
+          </div>
+
+          <!-- 1st Place -->
+          <div class="text-center space-y-4">
+            <div class="relative inline-block">
+              <div class="absolute -top-8 left-1/2 -translate-x-1/2">
+                <svg class="w-10 h-10 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+              </div>
+              <img src="<%= @weekly_rankings[0].profile_image %>" class="w-28 h-28 rounded-[32px] border-4 border-amber-400 object-cover mx-auto shadow-xl" alt="">
+              <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center text-white font-black shadow-lg">1</div>
+            </div>
+            <div>
+              <p class="text-lg font-black text-slate-900"><%= @weekly_rankings[0].nickname %></p>
+              <p class="text-sm text-amber-600 font-bold"><%= @weekly_rankings[0].weekly_count %>회 인증</p>
+            </div>
+            <div class="h-32 bg-gradient-to-t from-amber-200 to-amber-100 rounded-t-[24px]"></div>
+          </div>
+
+          <!-- 3rd Place -->
+          <div class="text-center space-y-4">
+            <div class="relative inline-block">
+              <img src="<%= @weekly_rankings[2].profile_image %>" class="w-20 h-20 rounded-[28px] border-4 border-orange-200 object-cover mx-auto" alt="">
+              <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-400 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-lg">3</div>
+            </div>
+            <div>
+              <p class="font-black text-slate-900"><%= @weekly_rankings[2].nickname %></p>
+              <p class="text-sm text-slate-400 font-bold"><%= @weekly_rankings[2].weekly_count %>회 인증</p>
+            </div>
+            <div class="h-16 bg-gradient-to-t from-orange-200 to-orange-100 rounded-t-[24px]"></div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Rest of Rankings -->
+      <% remaining = @weekly_rankings.size >= 3 ? @weekly_rankings[3..] : @weekly_rankings %>
+      <% if remaining.any? %>
+        <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+          <% remaining.each_with_index do |user, index| %>
+            <% rank = @weekly_rankings.size >= 3 ? index + 4 : index + 1 %>
+            <div class="flex items-center gap-5 p-5 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition-all">
+              <span class="w-8 text-center font-black text-slate-400"><%= rank %></span>
+              <img src="<%= user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover" alt="">
+              <div class="flex-1">
+                <p class="font-bold text-slate-900"><%= user.nickname %></p>
+                <p class="text-xs text-slate-400">Lv.<%= user.level %></p>
+              </div>
+              <div class="text-right">
+                <p class="font-black text-indigo-600"><%= user.weekly_count %></p>
+                <p class="text-[10px] text-slate-400 uppercase font-bold">인증</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-16 text-center">
+        <div class="w-20 h-20 rounded-[28px] bg-slate-100 flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <p class="text-slate-500 font-bold mb-2">아직 이번 주 인증 기록이 없습니다</p>
+        <p class="text-sm text-slate-400">첫 번째 인증 챔피언이 되어보세요!</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Hall of Fame -->
+  <div data-tabs-target="panel" data-panel="halloffame" class="hidden space-y-6">
+    <div class="flex items-center justify-between px-4">
+      <h2 class="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">All-Time Legends</h2>
+      <span class="text-xs text-slate-400 font-bold">역대 누적 인증</span>
+    </div>
+
+    <% if @hall_of_fame.any? %>
+      <!-- Top 3 Legendary -->
+      <% if @hall_of_fame.size >= 3 %>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <% @hall_of_fame[0..2].each_with_index do |user, index| %>
+            <% colors = [
+              { bg: 'from-amber-400 to-orange-500', border: 'border-amber-400', text: 'text-amber-600' },
+              { bg: 'from-slate-300 to-slate-400', border: 'border-slate-300', text: 'text-slate-600' },
+              { bg: 'from-orange-300 to-orange-400', border: 'border-orange-300', text: 'text-orange-600' }
+            ][index] %>
+            <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-8 text-center relative overflow-hidden">
+              <div class="absolute top-0 left-0 right-0 h-24 bg-gradient-to-br <%= colors[:bg] %> opacity-10"></div>
+              <div class="relative">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br <%= colors[:bg] %> text-white font-black text-xl mb-4 shadow-lg">
+                  <%= index + 1 %>
+                </div>
+                <img src="<%= user.profile_image %>" class="w-24 h-24 rounded-[32px] border-4 <%= colors[:border] %> object-cover mx-auto mb-4" alt="">
+                <h3 class="text-xl font-black text-slate-900"><%= user.nickname %></h3>
+                <p class="text-sm text-slate-400 mt-1">Lv.<%= user.level %></p>
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                  <p class="text-3xl font-black <%= colors[:text] %>"><%= number_with_delimiter(user.total_count) %></p>
+                  <p class="text-xs text-slate-400 uppercase font-bold mt-1">Total Verifications</p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Rest of Hall of Fame -->
+      <% remaining_hof = @hall_of_fame.size >= 3 ? @hall_of_fame[3..] : @hall_of_fame %>
+      <% if remaining_hof.any? %>
+        <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+          <% remaining_hof.each_with_index do |user, index| %>
+            <% rank = @hall_of_fame.size >= 3 ? index + 4 : index + 1 %>
+            <div class="flex items-center gap-5 p-5 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition-all">
+              <span class="w-8 text-center font-black text-slate-400"><%= rank %></span>
+              <img src="<%= user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover" alt="">
+              <div class="flex-1">
+                <p class="font-bold text-slate-900"><%= user.nickname %></p>
+                <p class="text-xs text-slate-400">Lv.<%= user.level %></p>
+              </div>
+              <div class="text-right">
+                <p class="font-black text-indigo-600"><%= number_with_delimiter(user.total_count) %></p>
+                <p class="text-[10px] text-slate-400 uppercase font-bold">총 인증</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-16 text-center">
+        <div class="w-20 h-20 rounded-[28px] bg-slate-100 flex items-center justify-center mx-auto mb-6">
+          <svg class="w-10 h-10 text-slate-300" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+        </div>
+        <p class="text-slate-500 font-bold mb-2">아직 인증 기록이 없습니다</p>
+        <p class="text-sm text-slate-400">첫 번째 레전드가 되어보세요!</p>
+      </div>
+    <% end %>
+  </div>
+</div>

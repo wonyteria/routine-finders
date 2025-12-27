@@ -2,7 +2,12 @@
   <!-- Profile Card -->
   <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col lg:flex-row">
     <!-- Profile Info -->
-    <div class="lg:w-1/3 p-12 flex flex-col items-center justify-center text-center bg-gradient-to-br from-slate-50 to-white border-b lg:border-b-0 lg:border-r border-slate-100">
+    <div class="lg:w-1/3 p-12 flex flex-col items-center justify-center text-center bg-gradient-to-br from-slate-50 to-white border-b lg:border-b-0 lg:border-r border-slate-100 relative">
+      <!-- Edit Button -->
+      <%= link_to edit_profile_path, class: "absolute top-6 right-6 w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      <% end %>
+
       <div class="relative mb-8 group">
         <img src="<%= @user.profile_image %>" class="w-40 h-40 rounded-[48px] border-8 border-white shadow-2xl object-cover transition-transform group-hover:scale-105" alt="">
         <% if @user.admin? %>
@@ -18,6 +23,40 @@
         </span>
         <p class="text-xs font-bold text-slate-400"><%= @user.email %></p>
       </div>
+
+      <% if @user.bio.present? %>
+        <p class="mt-6 text-sm text-slate-600 leading-relaxed max-w-xs"><%= @user.bio %></p>
+      <% end %>
+
+      <% if @user.sns_links.present? && @user.sns_links.values.any?(&:present?) %>
+        <div class="mt-6 flex items-center gap-3">
+          <% if @user.instagram.present? %>
+            <%= link_to "https://instagram.com/#{@user.instagram}", target: "_blank", class: "w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            <% end %>
+          <% end %>
+          <% if @user.threads.present? %>
+            <%= link_to "https://threads.net/@#{@user.threads}", target: "_blank", class: "w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.17.408-2.253 1.332-3.05.857-.738 2.017-1.168 3.456-1.282.989-.078 1.998-.03 3.002.112v-.49c0-1.072-.249-1.896-.74-2.45-.51-.574-1.26-.867-2.232-.871h-.053c-.86.004-1.593.263-2.177.77a3.07 3.07 0 00-.942 1.323l-1.972-.532c.396-1.02 1.028-1.878 1.877-2.55 1.003-.793 2.227-1.196 3.64-1.196h.072c1.712.012 3.076.585 4.053 1.702.898 1.027 1.354 2.413 1.354 4.12v1.96c0 .104.002.21.005.318.012.432.025.876.025 1.322 0 .61-.027 1.178-.083 1.706a3.939 3.939 0 01-.234 1.004c.59.394 1.1.868 1.512 1.412.866 1.146 1.178 2.602.878 4.1-.401 2.004-1.61 3.666-3.404 4.678-1.446.816-3.21 1.229-5.25 1.229zm-.065-8.103c-.073 0-.145.002-.218.005-.94.05-1.666.326-2.158.82-.472.475-.69 1.073-.65 1.778.036.641.318 1.178.838 1.598.567.456 1.353.688 2.34.637 1.107-.06 1.965-.473 2.55-1.228.437-.564.728-1.305.866-2.205-.02-.01-.04-.018-.06-.027a7.966 7.966 0 00-3.508-.378z"/></svg>
+            <% end %>
+          <% end %>
+          <% if @user.youtube.present? %>
+            <%= link_to @user.youtube, target: "_blank", class: "w-9 h-9 rounded-xl bg-red-500 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            <% end %>
+          <% end %>
+          <% if @user.blog.present? %>
+            <%= link_to @user.blog, target: "_blank", class: "w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+            <% end %>
+          <% end %>
+          <% if @user.twitter.present? %>
+            <%= link_to "https://x.com/#{@user.twitter}", target: "_blank", class: "w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 
     <!-- Stats -->
@@ -189,6 +228,54 @@
               </div>
             <% end %>
           <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Challenge Applications Section -->
+  <% if @challenge_applications.any? %>
+    <section class="space-y-6">
+      <h3 class="text-xs font-black text-slate-400 uppercase ml-4 tracking-[0.3em]">챌린지 신청 내역</h3>
+      <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+        <% @challenge_applications.each do |application| %>
+          <div class="flex items-center gap-5 p-6 border-b border-slate-100 last:border-b-0">
+            <% if application.challenge %>
+              <img src="<%= application.challenge.thumbnail %>" class="w-14 h-14 rounded-2xl object-cover" alt="">
+            <% else %>
+              <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              </div>
+            <% end %>
+            <div class="flex-1">
+              <% if application.challenge %>
+                <%= link_to application.challenge.title, challenge_path(application.challenge), class: "text-sm font-black text-slate-900 hover:text-indigo-600 transition-colors" %>
+              <% else %>
+                <span class="text-sm font-black text-slate-400">삭제된 챌린지</span>
+              <% end %>
+              <div class="flex items-center gap-3 mt-1">
+                <span class="text-[10px] text-slate-400 font-bold uppercase">
+                  <%= application.created_at.in_time_zone('Asia/Seoul').strftime('%Y.%m.%d') %>
+                </span>
+                <% if application.depositor_name.present? %>
+                  <span class="text-[10px] text-slate-400">입금자명: <%= application.depositor_name %></span>
+                <% end %>
+              </div>
+            </div>
+            <% case application.status %>
+            <% when "pending" %>
+              <span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">승인 대기</span>
+            <% when "approved" %>
+              <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">승인됨</span>
+            <% when "rejected" %>
+              <div class="text-right">
+                <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">거절됨</span>
+                <% if application.reject_reason.present? %>
+                  <p class="text-[10px] text-red-400 mt-1 max-w-[150px] truncate" title="<%= application.reject_reason %>"><%= application.reject_reason %></p>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </div>
     </section>

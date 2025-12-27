@@ -1,0 +1,166 @@
+<div class="max-w-4xl mx-auto space-y-12 pb-32">
+  <!-- Profile Header Card -->
+  <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden">
+    <div class="relative h-32 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+      <div class="absolute inset-0 bg-black/10"></div>
+    </div>
+
+    <div class="px-8 pb-8 relative">
+      <!-- Profile Image -->
+      <div class="relative inline-block -mt-16 mb-4">
+        <img src="<%= @user.profile_image %>" class="w-32 h-32 rounded-[36px] border-4 border-white shadow-xl object-cover" alt="">
+        <% if @user.admin? %>
+          <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-indigo-600 rounded-xl border-4 border-white flex items-center justify-center text-white shadow-lg">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+        <!-- Name & Bio -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <h1 class="text-3xl font-black text-slate-900"><%= @user.nickname %></h1>
+            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-100 text-indigo-600">
+              Lv.<%= @user.level %>
+            </span>
+          </div>
+
+          <% if @user.bio.present? %>
+            <p class="text-slate-600 max-w-md"><%= @user.bio %></p>
+          <% end %>
+
+          <!-- SNS Links -->
+          <% if @user.sns_links.present? && @user.sns_links.values.any?(&:present?) %>
+            <div class="flex items-center gap-3 pt-2">
+              <% if @user.instagram.present? %>
+                <%= link_to "https://instagram.com/#{@user.instagram}", target: "_blank", class: "w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <% end %>
+              <% end %>
+              <% if @user.threads.present? %>
+                <%= link_to "https://threads.net/@#{@user.threads}", target: "_blank", class: "w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.96-.065-1.17.408-2.253 1.332-3.05.857-.738 2.017-1.168 3.456-1.282.989-.078 1.998-.03 3.002.112v-.49c0-1.072-.249-1.896-.74-2.45-.51-.574-1.26-.867-2.232-.871h-.053c-.86.004-1.593.263-2.177.77a3.07 3.07 0 00-.942 1.323l-1.972-.532c.396-1.02 1.028-1.878 1.877-2.55 1.003-.793 2.227-1.196 3.64-1.196h.072c1.712.012 3.076.585 4.053 1.702.898 1.027 1.354 2.413 1.354 4.12v1.96c0 .104.002.21.005.318.012.432.025.876.025 1.322 0 .61-.027 1.178-.083 1.706a3.939 3.939 0 01-.234 1.004c.59.394 1.1.868 1.512 1.412.866 1.146 1.178 2.602.878 4.1-.401 2.004-1.61 3.666-3.404 4.678-1.446.816-3.21 1.229-5.25 1.229zm-.065-8.103c-.073 0-.145.002-.218.005-.94.05-1.666.326-2.158.82-.472.475-.69 1.073-.65 1.778.036.641.318 1.178.838 1.598.567.456 1.353.688 2.34.637 1.107-.06 1.965-.473 2.55-1.228.437-.564.728-1.305.866-2.205-.02-.01-.04-.018-.06-.027a7.966 7.966 0 00-3.508-.378z"/></svg>
+                <% end %>
+              <% end %>
+              <% if @user.youtube.present? %>
+                <%= link_to @user.youtube, target: "_blank", class: "w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <% end %>
+              <% end %>
+              <% if @user.blog.present? %>
+                <%= link_to @user.blog, target: "_blank", class: "w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 5c7.18 0 13 5.82 13 13M6 11a7 7 0 017 7m-6 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>
+                <% end %>
+              <% end %>
+              <% if @user.twitter.present? %>
+                <%= link_to "https://x.com/#{@user.twitter}", target: "_blank", class: "w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white hover:scale-110 transition-transform" do %>
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-slate-50 p-5 rounded-[24px] border border-slate-100 text-center">
+            <p class="text-2xl font-black text-indigo-600"><%= number_with_delimiter(@stats[:total_verifications]) %></p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Total Verifications</p>
+          </div>
+          <div class="bg-slate-50 p-5 rounded-[24px] border border-slate-100 text-center">
+            <p class="text-2xl font-black text-slate-900"><%= @stats[:total_challenges] %></p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Challenges</p>
+          </div>
+          <div class="bg-slate-50 p-5 rounded-[24px] border border-slate-100 text-center">
+            <p class="text-2xl font-black text-orange-500"><%= @stats[:max_streak] %></p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Max Streak</p>
+          </div>
+          <div class="bg-slate-50 p-5 rounded-[24px] border border-slate-100 text-center">
+            <p class="text-2xl font-black text-amber-500">Lv.<%= @stats[:level] %></p>
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Level</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Participating Challenges -->
+    <section class="lg:col-span-2 space-y-6">
+      <h3 class="text-xs font-black text-slate-400 uppercase ml-4 tracking-[0.3em]">Participating Challenges</h3>
+      <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+        <% if @participations.any? %>
+          <% @participations.each do |participation| %>
+            <%= link_to challenge_path(participation.challenge), class: "flex items-center gap-5 p-5 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-b-0" do %>
+              <img src="<%= participation.challenge.thumbnail %>" class="w-14 h-14 rounded-2xl object-cover" alt="">
+              <div class="flex-1">
+                <p class="font-bold text-slate-900"><%= participation.challenge.title %></p>
+                <div class="flex items-center gap-3 mt-1">
+                  <span class="text-[10px] text-slate-400 font-bold uppercase">달성률 <%= participation.completion_rate.to_i %>%</span>
+                  <span class="text-[10px] text-orange-500 font-bold">🔥 <%= participation.current_streak %>일</span>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="p-12 text-center">
+            <p class="text-slate-400 font-bold">참여 중인 공개 챌린지가 없습니다.</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Hosted Challenges -->
+      <% if @hosted_challenges.any? %>
+        <h3 class="text-xs font-black text-slate-400 uppercase ml-4 tracking-[0.3em] mt-8">Hosted Challenges</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <% @hosted_challenges.each do |challenge| %>
+            <%= link_to challenge_path(challenge), class: "bg-white rounded-[28px] border border-slate-200 shadow-sm p-5 hover:shadow-xl transition-all group" do %>
+              <div class="flex items-start gap-4">
+                <img src="<%= challenge.thumbnail %>" class="w-12 h-12 rounded-xl object-cover" alt="">
+                <div class="flex-1">
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase <%= challenge.offline? ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' %>">
+                    <%= challenge.offline? ? 'OFFLINE' : 'ONLINE' %>
+                  </span>
+                  <h4 class="font-bold text-slate-900 mt-1 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
+                  <p class="text-xs text-slate-400 mt-1"><%= challenge.current_participants %>명 참여</p>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+
+    <!-- Recent Activity Feed -->
+    <section class="space-y-6">
+      <h3 class="text-xs font-black text-slate-400 uppercase ml-4 tracking-[0.3em]">Recent Activity</h3>
+      <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+        <% if @recent_verifications.any? %>
+          <% @recent_verifications.each do |log| %>
+            <div class="p-5 border-b border-slate-100 last:border-b-0">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-green-600 shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-slate-900 truncate"><%= log.challenge.title %></p>
+                  <p class="text-xs text-slate-400 mt-1"><%= log.created_at.in_time_zone('Asia/Seoul').strftime('%m.%d %H:%M') %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="p-12 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-7 h-7 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <p class="text-slate-400 font-bold text-sm">아직 활동 기록이 없습니다</p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</div>

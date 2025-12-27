@@ -51,6 +51,7 @@ Rails.application.routes.draw do
       end
     end
     resources :announcements, only: [ :new, :create, :edit, :update, :destroy ]
+    resources :reviews, only: [ :index, :new, :create, :edit, :update, :destroy ]
   end
 
   # 호스트 전용 챌린지 관리
@@ -64,7 +65,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :profile, only: [ :show ]
+  resource :profile, only: [ :show, :edit, :update ]
+
+  resources :rankings, only: [ :index ]
+
+  resources :users, only: [ :show ]
 
   resources :notifications, only: [ :index ] do
     member do

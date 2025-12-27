@@ -5,6 +5,7 @@ class ProfilesController < ApplicationController
     @user = current_user
     @participations = @user.participations.includes(:challenge)
     @hosted_challenges = @user.hosted_challenges.includes(:participants)
+    @challenge_applications = @user.challenge_applications.includes(:challenge).order(created_at: :desc)
 
     # 호스트 통계
     pending_count = VerificationLog.joins(:challenge).where(challenges: { host_id: @user.id }, status: :pending).count
@@ -20,5 +21,31 @@ class ProfilesController < ApplicationController
       .where(challenge_id: @hosted_challenges.pluck(:id), status: :pending)
       .group(:challenge_id)
       .count
+  end
+
+  def edit
+    @user = current_user
+  end
+
+  def update
+    @user = current_user
+
+    if @user.update(profile_params)
+      redirect_to profile_path, notice: "프로필이 업데이트되었습니다."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def profile_params
+    params.require(:user).permit(
+      :bio,
+      :saved_bank_name,
+      :saved_account_number,
+      :saved_account_holder,
+      sns_links: [ :instagram, :threads, :blog, :youtube, :twitter ]
+    )
   end
 end
