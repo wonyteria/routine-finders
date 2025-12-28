@@ -1,8 +1,10 @@
 class HomeController < ApplicationController
   def index
     @current_user = current_user
-    @online_challenges = Challenge.online_challenges.order(created_at: :desc).limit(10)
-    @offline_gatherings = Challenge.offline_gatherings.order(created_at: :desc).limit(10)
+    @pick_challenges = Challenge.online_challenges.where(is_featured: true).order(created_at: :desc).limit(6)
+    @popular_challenges = Challenge.online_challenges.where(is_featured: [false, nil]).order(current_participants: :desc, created_at: :desc).limit(6)
+    @recommended_gatherings = Challenge.offline_gatherings.order(created_at: :desc).limit(6)
+    @hot_gatherings = Challenge.offline_gatherings.order(current_participants: :desc).limit(6)
     @personal_routines = @current_user&.personal_routines || []
     @participations = @current_user&.participations&.includes(:challenge) || []
     @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []

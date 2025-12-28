@@ -33,55 +33,66 @@ end
 
 # 2. Create Challenges (Online)
 online_challenges = [
-  { title: "매일 경제 뉴스 1개 읽기", category: "학습", summary: "세상의 흐름을 읽는 습관을 만듭니다.", mode: 0, thumbnail: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=800" },
-  { title: "미라클 모닝 6AM 챌린지", category: "생활관습", summary: "나를 위한 고요한 아침 1시간.", mode: 0, thumbnail: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800" },
-  { title: "매일 물 2L 마시기", category: "건강", summary: "몸속 노폐물을 비워내는 가벼운 습관.", mode: 0, thumbnail: "https://images.unsplash.com/photo-1548919973-5cfe5d4fc474?auto=format&fit=crop&q=80&w=800" },
-  { title: "비전보드 작성 테라피", category: "심리", summary: "꿈을 시각화하고 에너지를 얻으세요.", mode: 0, thumbnail: "https://images.unsplash.com/photo-1518063319789-7217e6706b04?auto=format&fit=crop&q=80&w=800" }
+  { title: "매일 아침 6시 기상", category: "LIFE", summary: "나를 위한 고요한 아침 1시간.", is_featured: true, cost_type: :deposit, amount: 10000, thumbnail: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&q=80&w=800" },
+  { title: "하루 1만보 걷기", category: "HEALTH", summary: "가장 쉬운 건강 관리의 시작.", is_featured: true, cost_type: :deposit, amount: 10000, thumbnail: "https://images.unsplash.com/photo-1548919973-5cfe5d4fc474?auto=format&fit=crop&q=80&w=800" },
+  { title: "매일 독서 30분", category: "STUDY", summary: "지식의 복리 효과를 직접 체험하세요.", is_featured: true, cost_type: :fee, amount: 5000, thumbnail: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=800" },
+  { title: "플랭크 1분 버티기", category: "HEALTH", summary: "코어 근육을 깨우는 가장 정직한 시간.", is_featured: false, cost_type: :free, amount: 0, thumbnail: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" },
+  { title: "매일 경제 뉴스 1개 읽기", category: "STUDY", summary: "세상의 흐름을 읽는 습관을 만듭니다.", is_featured: false, cost_type: :deposit, amount: 30000, thumbnail: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=800" },
+  { title: "비전보드 작성 테라피", category: "MIND", summary: "꿈을 시각화하고 에너지를 얻으세요.", is_featured: false, cost_type: :fee, amount: 15000, thumbnail: "https://images.unsplash.com/photo-1518063319789-7217e6706b04?auto=format&fit=crop&q=80&w=800" }
 ]
 
 online_challenges.each do |c|
-  Challenge.create!(
-    title: c[:title],
-    category: c[:category],
-    summary: c[:summary],
-    description: "#{c[:title]}에 대한 상세 설명입니다. 함께해서 습관을 만들어봅시다!",
-    mode: c[:mode], # online
-    thumbnail: c[:thumbnail],
-    host: created_users.sample,
-    start_date: Date.current,
-    end_date: Date.current + 21.days,
-    admission_type: 0,
-    amount: [10000, 30000, 50000].sample
-  )
+  Challenge.find_or_initialize_by(title: c[:title]).tap do |challenge|
+    challenge.category = c[:category]
+    challenge.summary = c[:summary]
+    challenge.description = "#{c[:title]}에 대한 상세 설명입니다. 함께해서 습관을 만들어봅시다!"
+    challenge.mode = 0 # online
+    challenge.thumbnail = c[:thumbnail]
+    challenge.host = created_users.sample
+    challenge.start_date = Date.current
+    challenge.end_date = Date.current + 21.days
+    challenge.admission_type = 0
+    challenge.is_featured = c[:is_featured]
+    challenge.cost_type = c[:cost_type]
+    challenge.amount = c[:amount]
+    challenge.current_participants = rand(10..50)
+    challenge.save!
+  end
 end
 
 # 3. Create Offline Gatherings
 offline_gatherings = [
-  { title: "석촌호수 새벽 러닝 모임", category: "운동", summary: "함께 뛰면 기록이 단축됩니다.", mode: 1, thumbnail: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800" },
-  { title: "강남 북클럽: 부의 추월차선", category: "학습", summary: "돈의 흐름을 공부하는 모임입니다.", mode: 1, thumbnail: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=800" },
-  { title: "성수동 비건 쿠킹 클래스", category: "생활관습", summary: "건강한 한 끼를 직접 만듭니다.", mode: 1, thumbnail: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=800" }
+  { title: "강남역 독서 번개", category: "STUDY", place: "스타벅스 강남점", time: "토요일 오후 2시", participants: 15, max: 12 },
+  { title: "한강 아침 러닝", category: "HEALTH", place: "반포한강공원", time: "일요일 오전 7시", participants: 21, max: 12 },
+  { title: "성수동 출사 모임", category: "LIFE", place: "대림창고 앞", time: "토요일 오후 4시", participants: 7, max: 12 },
+  { title: "홍대 보드게임 밤", category: "LIFE", place: "모두의보드게임", time: "금요일 오후 7시", participants: 35, max: 12 },
+  { title: "성수동 카페 카공", category: "STUDY", place: "블루보틀 성수", time: "평일 오전 10시", participants: 28, max: 12 },
+  { title: "아침 테니스 한 게임", category: "HEALTH", place: "장충테니스장", time: "평일 오전 6시", participants: 22, max: 12 }
 ]
 
 offline_gatherings.each do |g|
-  challenge = Challenge.create!(
-    title: g[:title],
-    category: g[:category],
-    summary: g[:summary],
-    description: "#{g[:title]}에 현장 참여하세요!",
-    mode: g[:mode], # offline
-    thumbnail: g[:thumbnail],
-    host: created_users.sample,
-    start_date: Date.current + 1.day,
-    end_date: Date.current + 1.day,
-    admission_type: 0,
-    amount: 15000
-  )
-  MeetingInfo.create!(
-    challenge: challenge,
-    place_name: g[:title].split(' ')[0],
-    address: "서울특별시 어딘가",
-    meeting_time: "오후 2시"
-  )
+  challenge = Challenge.find_or_initialize_by(title: g[:title]).tap do |c|
+    c.category = g[:category]
+    c.summary = "#{g[:title]} 함께해요!"
+    c.description = "#{g[:title]}에 참여하여 새로운 인연과 습관을 만드세요."
+    c.mode = 1 # offline
+    c.thumbnail = "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&q=80&w=800"
+    c.host = created_users.sample
+    c.start_date = Date.current + 1.day
+    c.end_date = Date.current + 1.day
+    c.admission_type = 0
+    c.amount = 15000
+    c.current_participants = g[:participants]
+    c.max_participants = g[:max]
+    c.save!
+  end
+  
+  MeetingInfo.find_or_initialize_by(challenge: challenge).tap do |mi|
+    mi.place_name = g[:place]
+    mi.address = "서울특별시 어딘가"
+    mi.meeting_time = g[:time]
+    mi.save!
+  end
 end
 
 # 4. Award some badges to users

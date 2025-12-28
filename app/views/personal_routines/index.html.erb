@@ -1,0 +1,146 @@
+<div class="space-y-24 pb-40">
+  <!-- Routine Hero Section -->
+  <section class="relative h-[240px] rounded-[64px] overflow-hidden shadow-2xl shadow-emerald-100/50">
+    <div class="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 opacity-90 z-10"></div>
+    <img src="https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover" alt="">
+    <div class="relative z-20 h-full flex flex-col justify-center px-16 lg:px-24 space-y-3 text-white">
+      <h1 class="text-4xl lg:text-5xl font-black tracking-tight">당신의 성장을 돕는<br/>데일리 루틴</h1>
+      <p class="text-emerald-50/80 font-bold">매일의 작은 실천이 모여 위대한 내일을 만듭니다.</p>
+    </div>
+  </section>
+
+  <!-- My Routines Section -->
+  <section class="space-y-10 px-4">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
+      <div class="space-y-3">
+        <h2 class="text-4xl font-black text-slate-900 flex items-center gap-4">
+          나의 데일리 루틴
+          <span class="text-indigo-600 text-3xl">📅</span>
+        </h2>
+        <p class="text-slate-500 font-bold text-lg">오늘 달성해야 할 루틴들입니다.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="px-6 py-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
+          <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Today's Progress</span>
+          <div class="flex items-center gap-1.5">
+            <% total_routines = @personal_routines.count %>
+            <% completed_routines = @personal_routines.select { |r| r.completed_today? }.count %>
+            <p class="text-lg font-black text-indigo-600"><%= completed_routines %></p>
+            <p class="text-xs font-black text-slate-300">/</p>
+            <p class="text-lg font-black text-slate-400"><%= total_routines %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if @personal_routines.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <% @personal_routines.each do |routine| %>
+          <div class="group relative bg-white p-8 rounded-[48px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col gap-6 overflow-hidden">
+            <% if routine.completed_today? %>
+              <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-8 -mt-8 pointer-events-none"></div>
+            <% end %>
+            
+            <div class="flex justify-between items-start relative z-10">
+              <div class="w-16 h-16 <%= routine.completed_today? ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-900' %> rounded-[32px] flex items-center justify-center text-3xl transition-colors duration-500 shadow-inner">
+                <%= routine.icon %>
+              </div>
+              <div class="flex gap-2">
+                <%= button_to toggle_personal_routine_path(routine), method: :post, class: "w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-sm #{routine.completed_today? ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-slate-50 text-slate-300 hover:bg-emerald-50 hover:text-emerald-500'}" do %>
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                <% end %>
+                <%= button_to personal_routine_path(routine), method: :delete, class: "w-12 h-12 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center hover:bg-rose-50 hover:text-rose-500 transition-all shadow-sm", data: { confirm: "루틴을 삭제하시겠습니까?" } do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="space-y-2 relative z-10">
+              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest"><%= routine.category %></p>
+              <h4 class="text-lg font-black text-slate-900 line-clamp-1 <%= 'text-slate-300 line-through' if routine.completed_today? %> transition-all"><%= routine.title %></h4>
+              <div class="flex items-center gap-2 pt-2">
+                <span class="text-[10px] font-black <%= routine.completed_today? ? 'text-emerald-500' : 'text-orange-500' %> bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
+                  🔥 <%= routine.current_streak %>일 연속
+                </span>
+                <% if routine.completed_today? %>
+                  <span class="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2.5 py-1 rounded-full animate-bounce">
+                    COMPLETED
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[48px] p-20 text-center space-y-4">
+        <div class="text-5xl opacity-30">🚀</div>
+        <p class="text-slate-400 font-bold">아직 추가된 루틴이 없습니다.<br/>아래에서 추천 루틴을 골라보거나 나만의 루틴을 만들어보세요!</p>
+      </div>
+    <% end %>
+  </section>
+
+  <!-- Recommended Daily Routines Section -->
+  <section class="bg-slate-900 rounded-[64px] p-12 lg:p-16 space-y-12 shadow-2xl overflow-hidden relative group/section mx-4">
+    <!-- Glow Effect -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+      <div class="space-y-3">
+        <h2 class="text-4xl font-black text-white flex items-center gap-4">
+          추천 데일리 루틴
+          <span class="text-emerald-400 text-3xl animate-pulse">✨</span>
+        </h2>
+        <p class="text-slate-500 font-bold text-lg">작은 습관이 모여 위대한 내일을 만듭니다. 지금 바로 추가해보세요.</p>
+      </div>
+      
+      <details class="group/custom relative">
+        <summary class="list-none px-10 py-5 bg-emerald-500 text-white rounded-[28px] font-black text-lg hover:bg-emerald-400 transition-all shadow-xl flex items-center gap-3 cursor-pointer">
+          <svg class="w-6 h-6 group-open/custom:rotate-45 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+          커스텀 루틴 추가
+        </summary>
+        <div class="absolute top-full right-0 mt-4 w-80 bg-white rounded-[32px] p-8 shadow-2xl z-50 animate-in fade-in slide-in-from-top-4 duration-300">
+          <%= form_with model: PersonalRoutine.new, class: "space-y-4" do |f| %>
+            <div class="space-y-1.5 text-left">
+              <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Routine Title</label>
+              <%= f.text_field :title, placeholder: "예: 아침 명상 10분", required: true, class: "w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-slate-900 placeholder-slate-300 font-bold focus:ring-2 ring-emerald-500" %>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-left">
+              <div class="space-y-1.5">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Icon</label>
+                <%= f.select :icon, ["🔥", "⭐", "💪", "📖", "🥦", "🏃", "🎸", "🧘", "💊", "💧", "👀", "📝"], {}, class: "w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-slate-900 font-bold focus:ring-2 ring-emerald-500 appearance-none pointer-events-auto" %>
+              </div>
+              <div class="space-y-1.5">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Category</label>
+                <%= f.select :category, ["HEALTH", "LIFE", "MIND", "HOBBY", "STUDY"], {}, class: "w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-slate-900 font-bold focus:ring-2 ring-emerald-500 appearance-none pointer-events-auto" %>
+              </div>
+            </div>
+            <%= f.hidden_field :color, value: "bg-indigo-500" %>
+            <% [1,2,3,4,5,6,0].each do |d| %>
+              <%= hidden_field_tag "personal_routine[days][]", d %>
+            <% end %>
+            <%= f.submit "루틴 생성하기", class: "w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-emerald-500 transition-all shadow-lg cursor-pointer" %>
+          <% end %>
+        </div>
+      </details>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-6 relative z-10">
+      <% @recommended_routines.each do |routine| %>
+        <div class="bg-white/5 backdrop-blur-md rounded-[48px] p-8 border border-white/10 flex flex-col items-center justify-between gap-6 hover:bg-white/10 hover:border-white/20 transition-all group">
+          <div class="w-20 h-20 bg-slate-800/50 rounded-[32px] flex items-center justify-center text-4xl shadow-inner group-hover:scale-110 transition-transform">
+            <%= routine[:icon] %>
+          </div>
+          <div class="text-center space-y-1">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest"><%= routine[:category] %></p>
+            <h4 class="text-sm font-black text-white line-clamp-1"><%= routine[:title] %></h4>
+          </div>
+          <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], color: "bg-indigo-500", days: [1,2,3,4,5,6,0] }), method: :post, class: "w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-emerald-500 hover:scale-110 transition-all" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v12m6-6H6"/></svg>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

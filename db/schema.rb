@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_28_210602) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_28_210603) do
   create_table "announcements", force: :cascade do |t|
     t.integer "challenge_id", null: false
     t.text "content"
@@ -64,6 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_28_210602) do
     t.integer "host_id", null: false
     t.string "host_name"
     t.string "invitation_code"
+    t.boolean "is_featured"
     t.boolean "is_official", default: false, null: false
     t.boolean "is_private", default: false, null: false
     t.string "kakao_link"

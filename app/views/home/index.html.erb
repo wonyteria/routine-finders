@@ -19,92 +19,83 @@
     <% end %>
   </div>
 <% else %>
-  <div class="space-y-24 pb-40">
+  <div class="space-y-16 pb-40">
     <!-- Hero Banner -->
-    <section class="relative h-[480px] lg:h-[500px] rounded-[64px] overflow-hidden shadow-2xl shadow-indigo-100">
-      <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-85 z-10"></div>
-      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover" alt="">
-      <div class="relative z-20 h-full flex flex-col justify-center px-16 lg:px-24 space-y-6 text-white">
-        <h1 class="text-5xl lg:text-7xl font-black leading-[1.1] whitespace-pre-line tracking-tight">함께해서 더 강력한<br/>습관의 힘</h1>
-        <p class="text-lg lg:text-xl text-white/80 font-medium max-w-lg leading-relaxed">평균 달성률 92%의 보증금 시스템으로<br/>작심삼일을 끝내고 진정한 변화를 경험하세요.</p>
-        <%= link_to challenges_path, class: "w-fit px-10 py-5 bg-white text-slate-900 rounded-[28px] font-black text-lg hover:scale-105 transition-all shadow-xl" do %>
+    <section class="relative h-[420px] lg:h-[440px] rounded-[40px] overflow-hidden shadow-2xl shadow-indigo-100/50">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-10"></div>
+      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay" alt="">
+      <div class="relative z-20 h-full flex flex-col justify-center px-12 lg:px-20 space-y-6 text-white">
+        <div class="space-y-2">
+          <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase">Start your growth</span>
+          <h1 class="text-4xl lg:text-6xl font-black leading-tight tracking-tight">함께해서 더 강력한<br/>습관의 힘</h1>
+        </div>
+        <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed">평균 달성률 92%의 보증금 시스템으로<br/>진정한 변화를 경험하세요.</p>
+        <%= link_to challenges_path, class: "w-fit px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-base hover:shadow-2xl hover:-translate-y-1 transition-all" do %>
           챌린지 둘러보기
         <% end %>
       </div>
     </section>
 
     <!-- My Achievements Section -->
-    <section class="bg-white rounded-[60px] border border-slate-200 shadow-sm p-10 lg:p-14 space-y-12">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 px-2">
-        <div class="space-y-3">
-          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-4">
+    <section class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-8 lg:p-12 space-y-10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
+        <div class="space-y-1">
+          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
             나의 성취 지도
-            <span class="text-orange-500 text-3xl">🔥</span>
+            <span class="text-orange-500">🔥</span>
           </h2>
-          <p class="text-slate-500 font-bold text-lg">당신이 쌓아온 매일의 노력들이 지도로 그려집니다.</p>
+          <p class="text-slate-400 font-bold text-base">매일의 노력이 기록으로 남습니다.</p>
         </div>
-        <div class="flex items-center gap-6">
-          <div class="flex items-center gap-8 px-10 py-5 bg-slate-50 rounded-[32px] border border-slate-100">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-6 px-8 py-4 bg-slate-50/80 rounded-2xl border border-slate-100">
             <div class="text-center">
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p>
-              <p class="text-2xl font-black text-indigo-600"><%= @verification_logs.count %>회</p>
+              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total</p>
+              <p class="text-xl font-black text-slate-900"><%= @verification_logs.count %><span class="text-xs ml-0.5 text-slate-400">회</span></p>
             </div>
-            <div class="w-px h-10 bg-slate-200"></div>
+            <div class="w-px h-6 bg-slate-200"></div>
             <div class="text-center">
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Streak</p>
-              <p class="text-2xl font-black text-orange-600"><%= @participations.map(&:current_streak).max || 0 %>일</p>
+              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Streak</p>
+              <p class="text-xl font-black text-orange-600"><%= @participations.map(&:current_streak).max || 0 %><span class="text-xs ml-0.5 text-slate-400">일</span></p>
             </div>
           </div>
-          <%= link_to achievement_report_path, class: "w-16 h-16 bg-slate-900 rounded-[24px] flex items-center justify-center shadow-xl hover:rotate-6 transition-all cursor-pointer" do %>
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 12h-4l-3 9L9 3l-3 9H2" />
+          <%= link_to achievement_report_path, class: "w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg hover:bg-indigo-600 transition-all group" do %>
+            <svg class="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
           <% end %>
         </div>
       </div>
 
       <%
-        # Grass logic - Full Year (approx 53 weeks)
         activity_data = (@verification_logs || []).group_by { |log| log.created_at.to_date }.transform_values(&:count)
-        
         end_date = Date.current
-        # We want approx 53 weeks to cover a year
         start_date = end_date - 1.year + 1.day
-        # Adjust to the start of the week (Sunday)
         grid_start_date = start_date - start_date.wday
-        
-        # Group dates into weeks
         weeks = []
         iter_date = grid_start_date
         while iter_date <= end_date || weeks.size < 53
           week = []
-          7.times do
-            week << iter_date
-            iter_date += 1.day
-          end
+          7.times { week << iter_date; iter_date += 1.day }
           weeks << week
           break if iter_date > end_date && weeks.size >= 53
         end
       %>
 
-      <div class="bg-slate-50/50 rounded-[48px] p-10 border border-slate-100">
-        <div class="flex items-center justify-between mb-8">
-          <h3 class="text-base font-black text-slate-900">최근 1년의 활동 현황</h3>
-          <div class="flex items-center gap-3 text-[11px] font-black text-slate-400">
-            <span>Less</span>
-            <div class="flex gap-1.5 focus-within:ring-2 ring-indigo-500 ring-offset-2 rounded-sm transition-all">
-              <div class="w-3 h-3 rounded-sm bg-slate-100" title="No activity"></div>
-              <div class="w-3 h-3 rounded-sm bg-indigo-200" title="Low activity"></div>
-              <div class="w-3 h-3 rounded-sm bg-indigo-400" title="Medium activity"></div>
-              <div class="w-3 h-3 rounded-sm bg-indigo-600" title="High activity"></div>
+      <div class="bg-indigo-50/30 rounded-[32px] p-8 border border-indigo-100/50">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Activity Dashboard</h3>
+          <div class="flex items-center gap-4 text-[10px] font-black text-slate-400 uppercase">
+            <div class="flex items-center gap-2">
+              <div class="w-2.5 h-2.5 rounded-sm bg-slate-100"></div> No Activity
             </div>
-            <span>More</span>
+            <div class="flex items-center gap-2">
+              <div class="w-2.5 h-2.5 rounded-sm bg-indigo-600"></div> High Activity
+            </div>
           </div>
         </div>
 
         <div class="overflow-x-auto no-scrollbar">
           <div class="min-w-max flex gap-1">
-            <!-- Day Labels -->
             <div class="grid grid-rows-[20px_repeat(7,12px)] gap-1 text-[9px] font-black text-slate-300 pr-3 mt-[-1px]">
               <div class="h-[20px]"></div>
               <div class="h-[12px] flex items-center">SUN</div>
@@ -116,17 +107,14 @@
               <div class="h-[12px] flex items-center">SAT</div>
             </div>
 
-            <!-- Weeks -->
             <div class="flex justify-between w-full gap-[3px]">
               <% weeks.each do |week| %>
                 <div class="grid grid-rows-[20px_repeat(7,12px)] gap-1">
-                  <!-- Month Label -->
                   <div class="h-[20px] text-[9px] font-black text-slate-300 truncate">
                     <% if week.any? { |d| d.day == 1 } || week == weeks.first %>
                       <%= week.find { |d| d.day == 1 }&.strftime("%^b") || (week == weeks.first ? week.first.strftime("%^b") : "") %>
                     <% end %>
                   </div>
-                  
                   <% week.each do |date| %>
                     <% if date <= end_date %>
                       <% 
@@ -151,221 +139,263 @@
         </div>
       </div>
 
-      <!-- Top Achievers Section -->
-      <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-10 px-2 mt-8">
-        <div class="flex items-center gap-10">
-          <div class="space-y-1">
-            <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest leading-none">Hall of Fame</p>
-            <h3 class="text-xl font-black text-slate-900 leading-tight">가장 많은 배지를<br>획득한 파인더스</h3>
+      <div class="pt-8 border-t border-slate-100 space-y-10">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8 px-2">
+          <div class="flex items-center gap-8">
+            <div class="space-y-1">
+              <p class="text-[9px] font-black text-indigo-500 uppercase tracking-[0.2em]">Hall of Fame</p>
+              <h3 class="text-lg font-black text-slate-900 leading-tight">가장 많은 배지를<br>획득한 파인더스</h3>
+            </div>
+            <div class="flex -space-x-3">
+              <% @top_achievers.each_with_index do |user, index| %>
+                <div class="relative group">
+                  <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-md border-2 <%= index == 0 ? 'border-yellow-400' : (index == 1 ? 'border-slate-300' : 'border-amber-600') %> relative z-<%= 30 - index %> transition-all group-hover:-translate-y-1.5">
+                    <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-xl" alt="<%= user.nickname %>">
+                  </div>
+                </div>
+              <% end %>
+            </div>
           </div>
-          <div class="flex -space-x-4">
-            <% @top_achievers.each_with_index do |user, index| %>
-              <div class="relative group">
-                <div class="w-16 h-16 rounded-[24px] bg-white p-1 shadow-md border-2 <%= index == 0 ? 'border-yellow-400' : (index == 1 ? 'border-slate-300' : 'border-amber-600') %> relative z-<%= 30 - index %> transition-all group-hover:-translate-y-2">
-                  <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-[20px]" alt="<%= user.nickname %>">
-                  <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-indigo-600 text-white rounded-lg shadow-sm flex items-center justify-center font-black text-[10px] ring-2 ring-white">
-                    <%= user.badge_count %>
-                  </div>
-                </div>
-                <!-- Mini Tooltip -->
-                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-50">
-                  <div class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
-                    <%= user.nickname %> (<%= user.badge_count %>개)
-                  </div>
-                </div>
-              </div>
+          <%= link_to ranking_path, class: "group flex items-center gap-3 px-8 py-4 bg-indigo-50 text-indigo-600 rounded-2xl font-black text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-sm" do %>
+            전체 랭킹 보기
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          <% end %>
+        </div>
+
+        <!-- Integrated Routine Tracker -->
+        <div class="bg-indigo-600 rounded-[32px] p-8 shadow-xl shadow-indigo-200/50 flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div class="flex items-center gap-5">
+            <div class="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl">
+              📅
+            </div>
+            <div class="text-white">
+              <h4 class="text-lg font-black">오늘의 루틴 체크인</h4>
+              <p class="text-xs text-white/70 font-medium">당신의 성취 지도를 명확하게 그려보세요.</p>
+            </div>
+          </div>
+          
+          <div class="flex flex-wrap justify-center gap-2">
+            <% if @personal_routines.any? %>
+              <% @personal_routines.take(6).each do |routine| %>
+                <%= button_to toggle_personal_routine_path(routine), method: :post, class: "flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all #{routine.completed_today? ? 'bg-white border-white text-indigo-600 shadow-lg' : 'bg-transparent border-white/20 text-white hover:bg-white/10'}" do %>
+                  <span class="text-lg"><%= routine.icon %></span>
+                  <span class="text-xs font-bold leading-none"><%= routine.title.truncate(10) %></span>
+                <% end %>
+              <% end %>
+            <% else %>
+              <%= link_to personal_routines_path, class: "text-white/80 font-black text-sm hover:text-white underline" do %>
+                첫 번째 루틴을 시작해보세요! →
+              <% end %>
             <% end %>
           </div>
+
+          <%= link_to personal_routines_path, class: "px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:scale-105 transition-all shadow-md shrink-0" do %>
+            전체 관리
+          <% end %>
         </div>
-        <%= link_to ranking_path, class: "group flex items-center gap-3 px-8 py-4 bg-indigo-50 text-indigo-600 rounded-2xl font-black text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-sm" do %>
-          전체 랭킹 보기
-          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-        <% end %>
       </div>
     </section>
 
     <!-- People to Watch (Top Hosts) Section -->
-    <section class="space-y-10">
+    <section class="space-y-8">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
-        <div class="space-y-2">
-          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-3">
-            지금 주목해야 할 주최자
-            <span class="text-indigo-600">✨</span>
+        <div class="space-y-1">
+          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+            주목해야 할 주최자
+            <span class="text-indigo-600 text-2xl">✨</span>
           </h2>
-          <p class="text-slate-500 font-bold">성취의 길을 안내해줄 매력적인 가이드들을 만나보세요.</p>
+          <p class="text-slate-400 font-bold text-base">당신의 성장을 돕는 검증된 가이드입니다.</p>
         </div>
-        <%= link_to host_ranking_path, class: "flex items-center gap-2 text-slate-400 font-black text-sm hover:text-indigo-600 transition-colors group" do %>
-          주최자 랭킹 전체보기
+        <%= link_to host_ranking_path, class: "flex items-center gap-2 text-slate-400 font-black text-xs hover:text-indigo-600 transition-colors group" do %>
+          전체 랭킹 보기
           <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         <% end %>
       </div>
 
-      <div class="flex overflow-x-auto no-scrollbar gap-8 pb-8 px-2">
+      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
         <% @top_hosts.each do |host| %>
-          <div class="min-w-[300px] md:min-w-[340px] bg-white rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all p-8 flex flex-col items-center text-center space-y-6 relative overflow-hidden group">
+          <div class="min-w-[260px] bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all p-6 flex flex-col items-center text-center relative group">
             <% if host.is_featured_host? %>
-              <div class="absolute top-4 right-4 bg-indigo-600 text-white text-[9px] font-black px-3 py-1.5 rounded-full shadow-lg z-10 flex items-center gap-1">
-                <span class="animate-pulse">✨</span> PICK
+              <div class="absolute top-4 right-4 bg-indigo-600 text-white text-[8px] font-black px-2.5 py-1 rounded-full shadow-lg z-10">
+                PRO
               </div>
             <% end %>
 
-            <!-- Profile Image & Level -->
-            <div class="relative w-24 h-24">
-              <div class="w-full h-full rounded-[36px] bg-slate-50 p-1 border border-slate-100 overflow-hidden shadow-inner">
-                <img src="<%= host.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{host.nickname}" %>" class="w-full h-full object-cover rounded-[32px]" alt="">
+            <div class="relative w-20 h-20 mb-4 inline-block">
+              <div class="w-full h-full rounded-2xl bg-slate-50 p-0.5 border border-slate-100 overflow-hidden shadow-inner">
+                <img src="<%= host.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{host.nickname}" %>" class="w-full h-full object-cover rounded-[14px]" alt="">
               </div>
-              <div class="absolute -bottom-1 -right-1 bg-indigo-600 text-white font-black text-[9px] px-2 py-1 rounded-lg shadow-md ring-4 ring-white">
-                LV.<%= host.level || 1 %>
+              <div class="absolute -bottom-1 -right-1 bg-white text-indigo-600 font-black text-[8px] px-1.5 py-0.5 rounded-md shadow-sm border border-indigo-50">
+                Lvl.<%= host.level || 1 %>
               </div>
             </div>
 
-            <!-- Nickname & Bio -->
-            <div class="space-y-1.5">
-              <h4 class="text-lg font-black text-slate-900">
+            <div class="space-y-1 mb-4 flex-1">
+              <h4 class="text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">
                 <%= host.nickname %>
-                <span class="text-yellow-400 text-sm">★</span>
               </h4>
-              <p class="text-xs font-bold text-slate-400 line-clamp-2 leading-relaxed h-10">
-                <%= host.bio.present? ? host.bio : "최고의 루틴 가이드로서 당신과 성장을 함께합니다." %>
+              <p class="text-[11px] font-bold text-slate-400 line-clamp-2 leading-relaxed min-h-[2.5rem]">
+                <%= host.bio.present? ? host.bio : "당신의 성장을 응원하는 가이드입니다." %>
               </p>
             </div>
 
-            <!-- Host Stats Grid -->
-            <div class="w-full grid grid-cols-2 gap-4 pt-4 border-t border-slate-50">
-              <div class="space-y-1">
-                <p class="text-base font-black text-slate-900 leading-none"><%= number_with_delimiter(host.host_total_participants) %></p>
-                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Participants</p>
-              </div>
-              <div class="space-y-1 text-right">
-                <p class="text-base font-black text-indigo-600 leading-none truncate pl-1">
-                  <%= host.bio&.split&.find { |w| w.length > 2 }&.gsub(/[^\w\s]/, '') || "성장" %>
-                </p>
-                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Focus</p>
-              </div>
-            </div>
-
-            <!-- Profile Link Button -->
-            <%= link_to user_profile_path(host), class: "w-full py-4 bg-slate-50 group-hover:bg-slate-900 text-slate-400 group-hover:text-white rounded-[20px] font-black text-sm transition-all shadow-sm" do %>
-              프로필 구경하기
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </section>
-
-    <!-- My Routines Section -->
-    <% if @personal_routines.any? %>
-      <section class="space-y-10 px-4">
-        <div class="flex items-end justify-between">
-          <div class="space-y-2">
-            <h2 class="text-4xl font-black text-slate-900">나의 루틴</h2>
-            <p class="text-slate-500 font-bold">오늘도 작은 습관을 실천해보세요</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          <% @personal_routines.each do |routine| %>
-            <div class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm hover:shadow-lg transition-all">
-              <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 <%= routine.color %> rounded-2xl flex items-center justify-center text-2xl">
-                  <%= routine.icon %>
+            <div class="w-full space-y-4">
+              <div class="grid grid-cols-2 gap-2 pt-4 border-t border-slate-50">
+                <div class="text-left">
+                  <p class="text-xs font-black text-slate-900 leading-none"><%= number_with_delimiter(host.host_total_participants) %></p>
+                  <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Followers</p>
                 </div>
-                <%= button_to toggle_personal_routine_path(routine), method: :post, class: "w-8 h-8 rounded-full flex items-center justify-center transition-all #{routine.completed_today? ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400 hover:bg-green-100'}" do %>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                <% end %>
+                <div class="text-right">
+                  <p class="text-xs font-black text-indigo-600 leading-none truncate"><%= host.bio&.split&.find { |w| w.length > 2 }&.gsub(/[^\w\s]/, '') || "Growth" %></p>
+                  <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Topic</p>
+                </div>
               </div>
-              <h4 class="font-black text-slate-900 text-sm line-clamp-2"><%= routine.title %></h4>
-              <p class="text-xs text-slate-400 mt-2">🔥 <%= routine.current_streak %>일 연속</p>
-            </div>
-          <% end %>
-        </div>
-      </section>
-    <% end %>
 
-    <!-- Online Challenges Section -->
-    <section class="space-y-10 px-4">
-      <div class="flex items-end justify-between">
-        <div class="space-y-2">
-          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-3">
-            추천 온라인 챌린지
-            <span class="text-indigo-600 text-3xl">⚡</span>
-          </h2>
-          <p class="text-slate-500 font-bold">함께 보증금을 걸고 강력한 습관을 만듭니다.</p>
-        </div>
-        <%= link_to challenges_path, class: "px-8 py-4 bg-indigo-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-          챌린지 보기
-        <% end %>
-      </div>
-
-      <div class="flex overflow-x-auto no-scrollbar gap-8 pb-8 px-2">
-        <% @online_challenges.each do |challenge| %>
-          <%= link_to challenge_path(challenge), class: "min-w-[300px] md:min-w-[340px] bg-white rounded-[48px] overflow-hidden border border-slate-200 shadow-sm hover:shadow-2xl transition-all cursor-pointer group" do %>
-            <div class="relative aspect-[4/3] overflow-hidden">
-              <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
-              <div class="absolute top-5 left-5">
-                <span class="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[9px] font-black uppercase text-slate-900"><%= challenge.category %></span>
-              </div>
-            </div>
-            <div class="p-8 space-y-4">
-              <h4 class="font-black text-slate-900 text-xl group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
-              <div class="flex items-center justify-between text-xs font-bold text-slate-400 border-t border-slate-50 pt-4">
-                <span class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                  <%= challenge.current_participants %>명 참여
-                </span>
-                <span class="text-indigo-600"><%= number_with_delimiter(challenge.amount) %>원</span>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </section>
-
-    <!-- Offline Gatherings Section -->
-    <section class="space-y-10 px-4">
-      <div class="flex items-end justify-between">
-        <div class="space-y-2">
-          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-3">
-            인기 오프라인 모임
-            <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
-          </h2>
-          <p class="text-slate-500 font-bold">직접 만나서 시너지를 나누는 오프라인 성장의 장</p>
-        </div>
-        <%= link_to challenges_path(mode: "offline"), class: "px-8 py-4 bg-orange-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-          모임 보기
-        <% end %>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <% @offline_gatherings.each do |gathering| %>
-          <%= link_to challenge_path(gathering), class: "bg-white p-10 rounded-[48px] border border-slate-200 shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col gap-6 border-b-8 border-b-orange-500" do %>
-            <div class="flex justify-between items-start">
-              <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              </div>
-              <div class="text-right">
-                <p class="text-[10px] font-black text-orange-600 uppercase tracking-widest">Category</p>
-                <p class="font-black text-slate-900 text-lg"><%= gathering.category %></p>
-              </div>
-            </div>
-            <div>
-              <h4 class="text-2xl font-black text-slate-900 group-hover:text-orange-600 transition-colors"><%= gathering.title %></h4>
-              <% if gathering.meeting_info %>
-                <p class="text-slate-400 font-bold text-sm mt-2 flex items-center gap-2">
-                  <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
-                  <%= gathering.meeting_info.place_name %> · <%= gathering.meeting_info.meeting_time %>
-                </p>
+              <%= link_to user_profile_path(host), class: "w-full py-3 block bg-slate-50 text-slate-400 rounded-xl font-bold text-xs hover:bg-slate-900 hover:text-white transition-all shadow-sm group-hover:shadow-md" do %>
+                프로필 보기
               <% end %>
             </div>
-            <div class="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
-              <span class="text-xs font-black text-slate-400"><%= gathering.current_participants %> / <%= gathering.max_participants %> 모집 중</span>
-              <svg class="w-6 h-6 text-orange-200 group-hover:text-orange-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Routine Finders Pick Section -->
+    <section class="space-y-8 px-4">
+      <div class="flex items-end justify-between">
+        <div class="space-y-1">
+          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+            루틴 파인더스 Pick
+            <span class="text-indigo-600 text-2xl">🏆</span>
+          </h2>
+          <p class="text-slate-400 font-bold text-base">운영진이 엄선한 가장 탄탄한 습관 형성 챌린지</p>
+        </div>
+        <%= link_to challenges_path, class: "flex items-center gap-2 text-indigo-600 font-black text-xs hover:underline group" do %>
+          전체보기
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      </div>
+
+      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
+        <% @pick_challenges.each do |challenge| %>
+          <%= link_to challenge_path(challenge), class: "min-w-[280px] bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col" do %>
+            <div class="relative aspect-[1.6/1] overflow-hidden bg-slate-100 shrink-0">
+              <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="<%= challenge.title %>">
+              <div class="absolute top-3 left-3">
+                <span class="bg-indigo-600 text-white px-2.5 py-1 rounded-full text-[9px] font-black tracking-tight shadow-lg uppercase">RF PICK</span>
+              </div>
+            </div>
+            <div class="p-6 flex flex-col flex-1 justify-between gap-4">
+              <div class="space-y-2">
+                <h4 class="font-black text-slate-900 text-base leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2 min-h-[2.5rem]"><%= challenge.title %></h4>
+                <p class="text-[10px] font-bold text-slate-400">by <span class="text-slate-600"><%= challenge.host_name %></span></p>
+              </div>
+              <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+                <span class="flex items-center gap-1.5 text-[10px] font-black text-slate-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                  <%= challenge.current_participants %>명
+                </span>
+                <span class="text-indigo-600 font-black text-xs tracking-tighter">
+                  <% case challenge.cost_type when 'free' %>무료<% when 'fee' %>참가비 <%= number_with_delimiter(challenge.amount) %>원<% when 'deposit' %>보증금 <%= number_with_delimiter(challenge.amount) %>원<% end %>
+                </span>
+              </div>
             </div>
           <% end %>
         <% end %>
       </div>
     </section>
 
+    <!-- Popular Online Challenges Section -->
+    <section class="space-y-8 px-4">
+      <div class="flex items-end justify-between">
+        <div class="space-y-1">
+          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+            실시간 인기
+            <span class="text-emerald-500 text-2xl">📈</span>
+          </h2>
+          <p class="text-slate-400 font-bold text-base">지금 이 순간 많은 사람들이 도전하고 있어요</p>
+        </div>
+        <%= link_to challenges_path, class: "flex items-center gap-2 text-indigo-600 font-black text-xs hover:underline group" do %>
+          전체보기
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      </div>
+
+      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
+        <% @popular_challenges.each do |challenge| %>
+          <%= link_to challenge_path(challenge), class: "min-w-[280px] bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col" do %>
+            <div class="relative aspect-[1.6/1] overflow-hidden bg-slate-100 shrink-0">
+              <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="<%= challenge.title %>">
+              <div class="absolute top-3 left-3">
+                <span class="bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[8px] font-black uppercase text-slate-900 tracking-tight"><%= challenge.category %></span>
+              </div>
+            </div>
+            <div class="p-6 flex flex-col flex-1 justify-between gap-4">
+              <div class="space-y-2">
+                <h4 class="font-black text-slate-900 text-base leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2 min-h-[2.5rem]"><%= challenge.title %></h4>
+                <p class="text-[10px] font-bold text-slate-400">by <span class="text-slate-600"><%= challenge.host_name %></span></p>
+              </div>
+              <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+                <span class="flex items-center gap-1.5 text-[10px] font-black text-slate-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                  <%= challenge.current_participants %>명
+                </span>
+                <span class="text-indigo-600 font-black text-xs tracking-tighter">
+                  <% case challenge.cost_type when 'free' %>무료<% when 'fee' %>참가비 <%= number_with_delimiter(challenge.amount) %>원<% when 'deposit' %>보증금 <%= number_with_delimiter(challenge.amount) %>원<% end %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Consolidated Offline Section -->
+    <section class="space-y-8 px-4">
+      <div class="flex items-end justify-between">
+        <div class="space-y-1">
+          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+            함께 성장하는 오프라인 모임
+            <span class="text-orange-600 text-2xl">🔥</span>
+          </h2>
+          <p class="text-slate-400 font-bold text-base">직접 만나서 시너지를 나누는 성장의 장</p>
+        </div>
+        <%= link_to challenges_path(mode: "offline"), class: "flex items-center gap-2 text-orange-600 font-black text-xs hover:underline group" do %>
+          전체보기
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      </div>
+
+      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
+        <% (@hot_gatherings + @recommended_gatherings).uniq.take(8).each do |gathering| %>
+          <%= link_to challenge_path(gathering), class: "min-w-[280px] bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col group border-b-4 border-b-orange-500" do %>
+            <div class="relative aspect-[1.6/1] overflow-hidden bg-slate-100 shrink-0">
+              <img src="<%= gathering.thumbnail %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="<%= gathering.title %>">
+              <% if @hot_gatherings.include?(gathering) %>
+                <div class="absolute top-3 left-3">
+                  <span class="bg-orange-600 text-white px-2.5 py-1 rounded-full text-[9px] font-black tracking-tight shadow-md uppercase">HOT</span>
+                </div>
+              <% end %>
+            </div>
+            <div class="p-6 flex flex-col flex-1 justify-between gap-4">
+              <div class="space-y-2">
+                <h4 class="text-lg font-black text-slate-900 line-clamp-2 group-hover:text-orange-600 transition-colors min-h-[3.5rem] leading-snug"><%= gathering.title %></h4>
+                <% if gathering.meeting_info %>
+                  <p class="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 line-clamp-1">
+                    <span class="text-orange-500 uppercase font-black">@</span> <%= gathering.meeting_info.place_name %>
+                  </p>
+                <% end %>
+              </div>
+              <div class="mt-auto pt-4 flex items-center justify-between border-t border-slate-50">
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter"><%= gathering.current_participants %>명 모집 중</span>
+                <span class="text-orange-600 font-black text-xs tracking-tighter">
+                  <% case gathering.cost_type when 'free' %>무료<% when 'fee' %>참가비 <%= number_with_delimiter(gathering.amount) %>원<% when 'deposit' %>보증금 <%= number_with_delimiter(gathering.amount) %>원<% end %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
   </div>
 <% end %>
