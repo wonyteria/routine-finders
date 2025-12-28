@@ -19,7 +19,7 @@
     <% end %>
   </div>
 <% else %>
-  <div data-controller="achievement-report" class="space-y-24 pb-40">
+  <div class="space-y-24 pb-40">
     <!-- Hero Banner -->
     <section class="relative h-[480px] lg:h-[500px] rounded-[64px] overflow-hidden shadow-2xl shadow-indigo-100">
       <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-violet-600 opacity-85 z-10"></div>
@@ -55,11 +55,11 @@
               <p class="text-2xl font-black text-orange-600"><%= @participations.map(&:current_streak).max || 0 %>일</p>
             </div>
           </div>
-          <button data-action="click->achievement-report#open" class="w-16 h-16 bg-slate-900 rounded-[24px] flex items-center justify-center shadow-xl hover:rotate-6 transition-all cursor-pointer">
+          <%= link_to achievement_report_path, class: "w-16 h-16 bg-slate-900 rounded-[24px] flex items-center justify-center shadow-xl hover:rotate-6 transition-all cursor-pointer" do %>
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 12h-4l-3 9L9 3l-3 9H2" />
             </svg>
-          </button>
+          <% end %>
         </div>
       </div>
 
@@ -150,6 +150,106 @@
           </div>
         </div>
       </div>
+
+      <!-- Top Achievers Section -->
+      <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-10 px-2 mt-8">
+        <div class="flex items-center gap-10">
+          <div class="space-y-1">
+            <p class="text-[10px] font-black text-indigo-500 uppercase tracking-widest leading-none">Hall of Fame</p>
+            <h3 class="text-xl font-black text-slate-900 leading-tight">가장 많은 배지를<br>획득한 파인더스</h3>
+          </div>
+          <div class="flex -space-x-4">
+            <% @top_achievers.each_with_index do |user, index| %>
+              <div class="relative group">
+                <div class="w-16 h-16 rounded-[24px] bg-white p-1 shadow-md border-2 <%= index == 0 ? 'border-yellow-400' : (index == 1 ? 'border-slate-300' : 'border-amber-600') %> relative z-<%= 30 - index %> transition-all group-hover:-translate-y-2">
+                  <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-[20px]" alt="<%= user.nickname %>">
+                  <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-indigo-600 text-white rounded-lg shadow-sm flex items-center justify-center font-black text-[10px] ring-2 ring-white">
+                    <%= user.badge_count %>
+                  </div>
+                </div>
+                <!-- Mini Tooltip -->
+                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-50">
+                  <div class="bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl">
+                    <%= user.nickname %> (<%= user.badge_count %>개)
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <%= link_to ranking_path, class: "group flex items-center gap-3 px-8 py-4 bg-indigo-50 text-indigo-600 rounded-2xl font-black text-sm hover:bg-indigo-600 hover:text-white transition-all shadow-sm" do %>
+          전체 랭킹 보기
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- People to Watch (Top Hosts) Section -->
+    <section class="space-y-10">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
+        <div class="space-y-2">
+          <h2 class="text-4xl font-black text-slate-900 flex items-center gap-3">
+            지금 주목해야 할 주최자
+            <span class="text-indigo-600">✨</span>
+          </h2>
+          <p class="text-slate-500 font-bold">성취의 길을 안내해줄 매력적인 가이드들을 만나보세요.</p>
+        </div>
+        <%= link_to host_ranking_path, class: "flex items-center gap-2 text-slate-400 font-black text-sm hover:text-indigo-600 transition-colors group" do %>
+          주최자 랭킹 전체보기
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      </div>
+
+      <div class="flex overflow-x-auto no-scrollbar gap-8 pb-8 px-2">
+        <% @top_hosts.each do |host| %>
+          <div class="min-w-[300px] md:min-w-[340px] bg-white rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all p-8 flex flex-col items-center text-center space-y-6 relative overflow-hidden group">
+            <% if host.is_featured_host? %>
+              <div class="absolute top-4 right-4 bg-indigo-600 text-white text-[9px] font-black px-3 py-1.5 rounded-full shadow-lg z-10 flex items-center gap-1">
+                <span class="animate-pulse">✨</span> PICK
+              </div>
+            <% end %>
+
+            <!-- Profile Image & Level -->
+            <div class="relative w-24 h-24">
+              <div class="w-full h-full rounded-[36px] bg-slate-50 p-1 border border-slate-100 overflow-hidden shadow-inner">
+                <img src="<%= host.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{host.nickname}" %>" class="w-full h-full object-cover rounded-[32px]" alt="">
+              </div>
+              <div class="absolute -bottom-1 -right-1 bg-indigo-600 text-white font-black text-[9px] px-2 py-1 rounded-lg shadow-md ring-4 ring-white">
+                LV.<%= host.level || 1 %>
+              </div>
+            </div>
+
+            <!-- Nickname & Bio -->
+            <div class="space-y-1.5">
+              <h4 class="text-lg font-black text-slate-900">
+                <%= host.nickname %>
+                <span class="text-yellow-400 text-sm">★</span>
+              </h4>
+              <p class="text-xs font-bold text-slate-400 line-clamp-2 leading-relaxed h-10">
+                <%= host.bio.present? ? host.bio : "최고의 루틴 가이드로서 당신과 성장을 함께합니다." %>
+              </p>
+            </div>
+
+            <!-- Host Stats Grid -->
+            <div class="w-full grid grid-cols-2 gap-4 pt-4 border-t border-slate-50">
+              <div class="space-y-1">
+                <p class="text-base font-black text-slate-900 leading-none"><%= number_with_delimiter(host.host_total_participants) %></p>
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Participants</p>
+              </div>
+              <div class="space-y-1 text-right">
+                <p class="text-base font-black text-indigo-600 leading-none truncate pl-1">
+                  <%= host.bio&.split&.find { |w| w.length > 2 }&.gsub(/[^\w\s]/, '') || "성장" %>
+                </p>
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Focus</p>
+              </div>
+            </div>
+
+            <!-- Profile Link Button -->
+            <%= link_to user_profile_path(host), class: "w-full py-4 bg-slate-50 group-hover:bg-slate-900 text-slate-400 group-hover:text-white rounded-[20px] font-black text-sm transition-all shadow-sm" do %>
+              프로필 구경하기
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </section>
 
@@ -191,9 +291,9 @@
           </h2>
           <p class="text-slate-500 font-bold">함께 보증금을 걸고 강력한 습관을 만듭니다.</p>
         </div>
-        <%= link_to new_challenge_path, class: "px-8 py-4 bg-indigo-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          새 챌린지 개최
+        <%= link_to challenges_path, class: "px-8 py-4 bg-indigo-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          챌린지 보기
         <% end %>
       </div>
 
@@ -231,9 +331,9 @@
           </h2>
           <p class="text-slate-500 font-bold">직접 만나서 시너지를 나누는 오프라인 성장의 장</p>
         </div>
-        <%= link_to new_challenge_path(mode: "offline"), class: "px-8 py-4 bg-orange-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-          새 모임 개최
+        <%= link_to challenges_path(mode: "offline"), class: "px-8 py-4 bg-orange-600 text-white rounded-[24px] font-black text-sm flex items-center gap-2 shadow-xl hover:scale-105 transition-all" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          모임 보기
         <% end %>
       </div>
 
@@ -267,7 +367,5 @@
       </div>
     </section>
 
-    <!-- Achievement Analysis Report Modal -->
-    <%= render "achievement_report" %>
   </div>
 <% end %>

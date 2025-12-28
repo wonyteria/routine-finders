@@ -1,0 +1,429 @@
+<div data-controller="tabs" 
+     data-tabs-active-class="bg-slate-900 text-white shadow-lg" 
+     data-tabs-inactive-class="text-slate-400 hover:bg-slate-50"
+     class="space-y-6 md:space-y-12 max-w-[1400px] mx-auto pb-24 px-2 md:px-0">
+  <!-- Header & Tabs -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 pb-2">
+    <div class="space-y-2 md:space-y-3 px-2 md:px-0">
+      <p class="text-[10px] md:text-[12px] font-black text-indigo-500 uppercase tracking-[0.2em] md:tracking-[0.3em] mb-1">Detailed Routine Insight</p>
+      <h2 class="text-4xl md:text-7xl font-[900] text-slate-900 tracking-[-0.04em] leading-[1.0] md:leading-[0.9]">성취 분석 리포트</h2>
+    </div>
+    
+    <!-- Tab Switcher -->
+    <div class="bg-white border border-slate-200 p-1.5 rounded-2xl md:rounded-[32px] flex items-center gap-0.5 md:gap-1 shadow-sm h-fit overflow-x-auto no-scrollbar mx-2 md:mx-0">
+      <button data-tabs-target="tab" data-id="overview" data-action="click->tabs#change"
+              class="flex-1 md:flex-none px-6 md:px-10 py-2.5 md:py-4 rounded-xl md:rounded-[26px] text-[11px] md:text-[13px] font-black transition-all tracking-tight whitespace-nowrap">OVERVIEW</button>
+      <button data-tabs-target="tab" data-id="finance" data-action="click->tabs#change"
+              class="flex-1 md:flex-none px-6 md:px-10 py-2.5 md:py-4 rounded-xl md:rounded-[26px] text-[11px] md:text-[13px] font-black transition-all tracking-tight whitespace-nowrap">FINANCE</button>
+      <button data-tabs-target="tab" data-id="social" data-action="click->tabs#change"
+              class="flex-1 md:flex-none px-6 md:px-10 py-2.5 md:py-4 rounded-xl md:rounded-[26px] text-[11px] md:text-[13px] font-black transition-all tracking-tight whitespace-nowrap">SOCIAL</button>
+    </div>
+  </div>
+
+  <div class="pt-4 md:pt-8">
+    <!-- OVERVIEW PANEL -->
+    <div data-tabs-target="panel" data-id="overview" class="space-y-8 md:space-y-12 px-2 md:px-0">
+      <!-- Top Stats Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <% [
+          { icon: "item-activity", title: "누적 인증", value: "156회", sub: "+12%", color: "indigo", icon_path: "M22 12h-4l-3 9L9 3l-3 9H2", tip: "가입 후 현재까지 성공한 모든 인증의 총합입니다." },
+          { icon: "item-target", title: "평균 달성률", value: "94%", sub: "우수", color: "emerald", icon_path: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm0-10c-1.105 0-2 .895-2 2s.895 2 2 2 2-.895 2-2-.895-2-2-2z", tip: "참여한 모든 챌린지의 평균 성취도입니다." },
+          { icon: "item-fire", title: "최대 스트릭", value: "42일", sub: "진행중", color: "orange", icon_path: "M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.99 7.99 0 0120 13a7.98 7.98 0 01-2.343 5.657z", tip: "연속 달성 성공 시 기록되는 불꽃입니다." },
+          { icon: "item-badge", title: "보유 뱃지", value: "12개", sub: "상위 1%", color: "purple", icon_path: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", tip: "지표 달성에 따라 수여된 뱃지들의 총합입니다." }
+        ].each do |item| %>
+          <div class="bg-white p-6 md:p-8 rounded-[32px] md:rounded-[40px] border border-slate-100 shadow-sm transition-all group hover:shadow-xl hover:-translate-y-1">
+            <div class="flex items-center gap-4 md:gap-6">
+              <div class="w-12 h-12 md:w-14 md:h-14 bg-<%= item[:color] %>-50 text-<%= item[:color] %>-600 rounded-2xl flex items-center justify-center shrink-0">
+                <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= item[:icon_path] %>"/></svg>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 mb-1.5 whitespace-nowrap">
+                  <p class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest"><%= item[:title] %></p>
+                  <div class="group/tip relative flex items-center">
+                    <div class="w-4 h-4 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover/tip:bg-indigo-500 group-hover/tip:text-white transition-all cursor-help">
+                      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <!-- Tooltip -->
+                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 p-3 bg-slate-900 text-white text-[10px] md:text-[11px] font-bold rounded-xl shadow-2xl opacity-0 scale-90 group-hover/tip:opacity-100 group-hover/tip:scale-100 transition-all pointer-events-none z-50 leading-tight origin-bottom text-center">
+                      <%= item[:tip] %>
+                      <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
+                    </div>
+                  </div>
+                </div>
+                <h4 class="text-xl md:text-3xl font-[900] text-slate-900 tracking-tighter whitespace-nowrap"><%= item[:value] %></h4>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div class="lg:col-span-3 space-y-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Weekly Trend Chart -->
+            <div class="md:col-span-1 bg-white rounded-[40px] md:rounded-[60px] border border-slate-100 shadow-sm p-8 md:p-10 space-y-8 flex flex-col justify-between">
+              <div class="space-y-1">
+                <h4 class="text-xl md:text-2xl font-[900] text-slate-900 flex items-center gap-3 tracking-tight">
+                  <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                  주간 트렌드
+                </h4>
+                <p class="text-slate-400 font-bold text-sm">7일간의 성취 흐름</p>
+              </div>
+              
+              <div class="flex items-end justify-between h-40 px-2 gap-3">
+                <% [40, 60, 30, 85, 55, 95, 80].each_with_index do |val, i| %>
+                  <div class="flex-1 bg-slate-50 rounded-lg relative overflow-hidden h-full group/bar cursor-help" title="성취율: <%= val %>%">
+                    <div class="absolute bottom-0 left-0 w-full <%= i >= 5 ? 'bg-indigo-500' : 'bg-indigo-300' %> rounded-lg transition-all duration-700 shadow-sm group-hover/bar:brightness-110" style="height: <%= val %>%"></div>
+                  </div>
+                <% end %>
+              </div>
+              <div class="flex justify-between px-1 text-[10px] font-black text-slate-300 uppercase tracking-tighter">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span class="text-indigo-600">Sat</span><span class="text-indigo-600">Sun</span>
+              </div>
+            </div>
+
+            <!-- Monthly Achievement Bricks -->
+            <div class="md:col-span-2 bg-white rounded-[40px] md:rounded-[60px] border border-slate-100 shadow-sm p-8 md:p-14 space-y-10">
+              <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                  <h4 class="text-xl md:text-3xl font-[900] text-slate-900 flex items-center gap-3 md:gap-4 tracking-tight">
+                    <svg class="w-6 h-6 md:w-8 md:h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+                    성취 매트릭스
+                  </h4>
+                  <p class="text-slate-400 font-bold text-sm md:text-lg">챌린지와 루틴의 조화</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                <!-- Challenges Matrix -->
+                <div class="space-y-4 md:space-y-6">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] md:text-xs font-black text-indigo-500 uppercase tracking-widest flex items-center gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                      CHALLENGES
+                    </span>
+                    <span class="text-[10px] font-bold text-slate-400">88%</span>
+                  </div>
+                  <div class="flex gap-1.5 ">
+                    <% 4.times do |w| %>
+                      <div class="grid grid-rows-7 gap-1 flex-1">
+                        <% 7.times do |d| %>
+                          <% opacity = [0.1, 0.3, 0.6, 1.0].sample %>
+                          <div class="aspect-square rounded-[3px] bg-indigo-600 transition-all hover:scale-125 cursor-help ring-primary hover:ring-2 ring-offset-1" 
+                               style="opacity: <%= opacity %>"
+                               title="성취율: <%= (opacity * 100).to_i %>%"></div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <div class="grid grid-rows-7 gap-1 pl-1 text-[8px] font-black text-slate-300">
+                       <div>M</div><div class="opacity-0">T</div><div>W</div><div class="opacity-0">T</div><div>F</div><div class="opacity-0">S</div><div>S</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Routines Matrix -->
+                <div class="space-y-4 md:space-y-6">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] md:text-xs font-black text-purple-500 uppercase tracking-widest flex items-center gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                      ROUTINES
+                    </span>
+                    <span class="text-[10px] font-bold text-slate-400">72%</span>
+                  </div>
+                  <div class="flex gap-1.5 ">
+                    <% 4.times do |w| %>
+                      <div class="grid grid-rows-7 gap-1 flex-1">
+                        <% 7.times do |d| %>
+                          <% opacity = [0.1, 0.2, 0.4, 0.7, 0.9].sample %>
+                          <div class="aspect-square rounded-[3px] bg-purple-600 transition-all hover:scale-125 cursor-help ring-purple-400 hover:ring-2 ring-offset-1" 
+                               style="opacity: <%= opacity %>"
+                               title="성취율: <%= (opacity * 100).to_i %>%"></div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <div class="grid grid-rows-7 gap-1 pl-1 text-[8px] font-black text-slate-300">
+                      <div>M</div><div class="opacity-0">T</div><div>W</div><div class="opacity-0">T</div><div>F</div><div class="opacity-0">S</div><div>S</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Summary Card (Integrated Sidebar) -->
+        <div class="lg:col-span-1 bg-slate-950 rounded-[40px] md:rounded-[60px] p-8 md:p-10 text-white flex flex-col justify-between relative overflow-hidden shadow-2xl min-h-[400px]">
+          <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-[80px]"></div>
+          <div class="space-y-10 relative z-10 h-full flex flex-col justify-between">
+            <div class="space-y-10">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/10">
+                  <svg class="w-5 h-5 md:w-6 md:h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                </div>
+                <h4 class="text-lg font-black tracking-tight whitespace-nowrap">예상 자산 리포트</h4>
+              </div>
+
+              <div class="space-y-1">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-2">My Total Deposit</p>
+                <h4 class="text-3xl lg:text-4xl font-[900] tracking-tighter text-white whitespace-nowrap">240,000<span class="text-xl ml-1 text-slate-500 font-bold">원</span></h4>
+              </div>
+
+              <div class="bg-white/[0.03] backdrop-blur-md rounded-[32px] p-6 lg:p-8 space-y-6 border border-white/5 shadow-inner">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-slate-400 font-bold text-xs whitespace-nowrap">차감 예정</span>
+                  <span class="text-rose-400 font-black text-base whitespace-nowrap">-5,000원</span>
+                </div>
+                <div class="h-px bg-white/5"></div>
+                <div class="flex flex-col gap-2">
+                  <span class="text-slate-300 font-extrabold text-xs whitespace-nowrap">예상 환급 금액</span>
+                  <span class="text-indigo-400 font-[900] text-3xl whitespace-nowrap tracking-tighter">
+                    235,000<span class="text-lg ml-0.5 font-bold">원</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <a href="<%= achievement_report_path(tab: 'finance') %>" class="w-full py-5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[24px] font-black text-sm lg:text-base shadow-2xl transition-all mt-8 text-center block">
+              정산 내역 상세
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Badge Collection Section -->
+      <div class="bg-white rounded-[40px] md:rounded-[60px] border border-slate-100 shadow-sm p-6 md:p-14 space-y-8 md:space-y-12 mt-12">
+        <div class="flex items-center justify-between gap-4">
+          <h4 class="text-xl md:text-3xl font-[900] text-slate-900 flex items-center gap-3 md:gap-4 tracking-tight">
+            <div class="w-8 h-8 md:w-10 md:h-10 bg-purple-600 text-white rounded-lg md:rounded-xl flex items-center justify-center">
+              <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.382-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+            </div>
+            뱃지 로드맵
+          </h4>
+          <%= link_to badge_roadmap_path, class: "text-indigo-600 font-black text-xs md:text-lg whitespace-nowrap flex items-center gap-1 group" do %>
+            전체 보기
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <% end %>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-8">
+          <% Badge.order(level: :asc).group_by(&:badge_type).each do |type, badges| %>
+            <% 
+               user_badge_ids = current_user.badges.where(badge_type: type).pluck(:id)
+               latest_badge = Badge.where(badge_type: type, id: user_badge_ids).order(level: :desc).first
+               next_badge = Badge.where(badge_type: type).where("level > ?", latest_badge&.level || 0).order(level: :asc).first
+            %>
+            
+            <div class="flex flex-col items-center gap-4 text-center group bg-slate-50/50 p-6 rounded-[40px] border border-transparent hover:border-slate-100 hover:bg-white transition-all shadow-sm hover:shadow-xl">
+              <div class="relative">
+                <div class="w-16 h-16 md:w-24 md:h-24 <%= latest_badge ? 'bg-white shadow-lg' : 'bg-slate-100 opacity-30 grayscale' %> rounded-2xl md:rounded-[40px] flex items-center justify-center text-2xl md:text-5xl transition-all duration-500 relative z-10">
+                  <%= latest_badge&.icon_path || next_badge&.icon_path || "🔒" %>
+                </div>
+                <% if latest_badge %>
+                  <div class="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] md:text-xs font-black ring-4 ring-white z-20">
+                    L<%= latest_badge.level %>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="space-y-1">
+                <p class="text-[11px] md:text-[14px] font-black <%= latest_badge ? 'text-slate-900' : 'text-slate-400' %> truncate px-1">
+                  <%= latest_badge&.name || next_badge&.name || "미획득" %>
+                </p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                  <%= type.to_s.humanize %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCE PANEL -->
+    <div data-tabs-target="panel" data-id="finance" class="hidden space-y-8 md:space-y-12 px-2 md:px-0">
+      <div class="flex flex-col lg:grid lg:grid-cols-10 gap-6 md:gap-8">
+        <div class="lg:col-span-6 space-y-6 md:space-y-12">
+          <!-- Settlement Card -->
+          <div class="bg-white rounded-[32px] md:rounded-[60px] border border-slate-100 shadow-sm p-6 md:p-14 space-y-8 md:space-y-10">
+            <h4 class="text-xl md:text-3xl font-[900] text-slate-900 tracking-tight flex items-center gap-3">
+              <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              정산 대기 중
+            </h4>
+            <div class="bg-slate-50/50 border border-slate-100 rounded-[24px] md:rounded-[48px] p-10 md:p-20 text-center">
+              <p class="text-slate-400 font-bold text-sm md:text-lg">현재 정산 중인 내역이 없습니다.</p>
+            </div>
+          </div>
+
+          <!-- Transaction List -->
+          <div class="bg-white rounded-[32px] md:rounded-[60px] border border-slate-100 shadow-sm p-6 md:p-14 space-y-6 md:space-y-10">
+            <h4 class="text-xl md:text-3xl font-[900] text-slate-900 tracking-tight">입출금 히스토리</h4>
+            <div class="space-y-2 md:space-y-4">
+              <% [
+                { title: "물 마시기 환급", date: "05.15", amount: "+10,000원", color: "emerald", type: "in" },
+                { title: "러닝 모임 참가비", date: "05.14", amount: "-25,000원", color: "rose", type: "out" },
+                { title: "기상 챌린지 환급", date: "05.10", amount: "+50,000원", color: "emerald", type: "in" }
+              ].each do |item| %>
+                <div class="flex items-center justify-between p-4 md:p-8 hover:bg-slate-50 rounded-2xl md:rounded-[40px] transition-all group">
+                  <div class="flex items-center gap-4 md:gap-8">
+                    <div class="w-10 h-10 md:w-14 md:h-14 bg-<%= item[:color] %>-50 text-<%= item[:color] %>-600 rounded-lg md:rounded-2xl flex items-center justify-center shrink-0">
+                      <% if item[:type] == 'in' %>
+                        <svg class="w-5 h-5 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                      <% else %>
+                        <svg class="w-5 h-5 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                      <% end %>
+                    </div>
+                    <div class="min-w-0">
+                      <h5 class="text-sm md:text-xl font-black text-slate-900 truncate pr-2"><%= item[:title] %></h5>
+                      <p class="text-[10px] md:text-sm font-bold text-slate-400 mt-1"><%= item[:date] %></p>
+                    </div>
+                  </div>
+                  <span class="text-base md:text-2xl font-[900] text-<%= item[:color] %>-600 whitespace-nowrap ml-2"><%= item[:amount] %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Financial Sidebar Card -->
+        <div class="lg:col-span-4 bg-slate-950 rounded-[32px] md:rounded-[60px] p-8 md:p-14 text-white flex flex-col gap-10 md:gap-16 shadow-2xl overflow-hidden relative min-h-[400px]">
+          <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-[80px]"></div>
+          <div class="space-y-6 md:space-y-8 relative z-10">
+            <h4 class="text-lg md:text-2xl font-black text-indigo-400 tracking-tight">Financial Insights</h4>
+            <div class="bg-white/5 backdrop-blur-xl rounded-[28px] md:rounded-[48px] p-6 md:p-10 space-y-8 md:space-y-10 border border-white/5 h-full">
+              <div class="space-y-4">
+                <div class="flex justify-between text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  <span class="whitespace-nowrap">방어율</span>
+                  <span class="text-white">98%</span>
+                </div>
+                <div class="h-1.5 md:h-2 bg-white/5 rounded-full overflow-hidden">
+                  <div class="h-full bg-indigo-500 rounded-full" style="width: 98%"></div>
+                </div>
+              </div>
+              <p class="text-base md:text-xl text-slate-400 font-medium leading-relaxed italic">
+                벌금으로 사라질 뻔한 자산의 98%를 꾸준함으로 지켰습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-auto bg-white/[0.03] border border-white/5 rounded-[28px] md:rounded-[48px] p-8 md:p-10 space-y-4 md:space-y-6 relative z-10">
+            <p class="text-[10px] md:text-[12px] font-black text-indigo-400 uppercase tracking-[0.2em]">Total Savings</p>
+            <div class="flex items-baseline gap-2 md:gap-4 flex-wrap">
+              <h4 class="text-4xl md:text-6xl font-[900] tracking-tighter text-white whitespace-nowrap">450,000</h4>
+              <p class="text-sm md:text-lg font-black text-indigo-400/80 uppercase whitespace-nowrap">accumulated</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL PANEL -->
+    <div data-tabs-target="panel" data-id="social" class="hidden space-y-8 md:space-y-12 px-2 md:px-0">
+      <div class="flex flex-col lg:grid lg:grid-cols-10 gap-6 md:gap-8">
+        <div class="lg:col-span-6 space-y-8 md:space-y-12">
+          <!-- Social Metrics -->
+          <div class="bg-white rounded-[32px] md:rounded-[60px] border border-slate-100 shadow-sm p-6 md:p-14 space-y-10 md:space-y-14">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+              <h4 class="text-xl md:text-3xl font-[900] text-slate-900 tracking-tight flex items-center gap-3">
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                  <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                </div>
+                소셜 리액션
+              </h4>
+              <div class="flex gap-2 font-black">
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-rose-50 rounded-xl border border-rose-100 text-rose-600 text-[11px] md:text-sm">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 1,204
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 rounded-xl border border-indigo-100 text-indigo-600 text-[11px] md:text-sm">
+                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> 842
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              <% [
+                { icon: "item-heart", text: "428", sub: "받은 응원", color: "rose" },
+                { icon: "item-thumb", text: "1,052", sub: "보낸 응원", color: "indigo" },
+                { icon: "item-star", text: "5", sub: "베스트 루틴", color: "amber" },
+                { icon: "item-shield", text: "4.9", sub: "모임 평점", color: "emerald" }
+              ].each do |item| %>
+                <div class="bg-slate-50 border border-slate-100 rounded-[28px] md:rounded-[40px] p-6 md:p-8 text-center space-y-3 md:space-y-4">
+                  <div class="w-12 h-12 md:w-16 md:h-16 bg-<%= item[:color] %>-50 text-<%= item[:color] %>-500 rounded-xl md:rounded-3xl flex items-center justify-center mx-auto shadow-inner">
+                    <% case item[:icon] %>
+                    <% when "item-heart" %>
+                      <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    <% when "item-thumb" %>
+                      <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.757c1.27 0 2.22 1.157 1.889 2.384l-1.5 5.513C18.831 18.91 17.892 20 16.717 20H7v-9.513l3.5-3.5L10.5 4.5 12 6.5 12 10h2z"/></svg>
+                    <% when "item-star" %>
+                      <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.382-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                    <% when "item-shield" %>
+                      <svg class="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <% end %>
+                  </div>
+                  <div class="space-y-1">
+                    <h5 class="text-xl md:text-2xl font-[900] text-slate-900 leading-none"><%= item[:text] %></h5>
+                    <p class="text-[9px] md:text-[11px] font-black text-slate-400 uppercase tracking-tight whitespace-nowrap"><%= item[:sub] %></p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
+            <div class="bg-indigo-600 rounded-[32px] md:rounded-[48px] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 md:gap-12 shadow-2xl relative overflow-hidden group">
+              <div class="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-[80px]"></div>
+              <div class="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md rounded-2xl md:rounded-[32px] flex items-center justify-center shrink-0 border border-white/20 shadow-inner">
+                <svg class="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              </div>
+              <div class="space-y-2 md:space-y-3 text-center md:text-left relative z-10">
+                <h4 class="text-xl md:text-3xl font-black text-white tracking-tight leading-tight">동기부여의 아이콘!</h4>
+                <p class="text-indigo-100/90 text-sm md:text-lg font-medium leading-[1.6]">
+                  당신의 인증은 평균 <span class="text-white font-black">12명</span>에게 영감을 줍니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Sidebar -->
+        <div class="lg:col-span-4 space-y-8 md:space-y-12">
+          <!-- Hall of Fame -->
+          <div class="bg-white border border-slate-100 rounded-[32px] md:rounded-[60px] p-8 md:p-12 space-y-8 md:space-y-12 shadow-sm">
+            <h5 class="text-lg md:text-xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              <div class="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              </div>
+              명예의 전당
+            </h5>
+            <div class="space-y-4">
+              <% [
+                { name: "김코딩", streak: "452일", emoji: "🔥" },
+                { name: "나", streak: "128일", emoji: "✨", me: true },
+                { name: "새벽인간", streak: "92일", emoji: "☀️" }
+              ].each do |user| %>
+                <div class="bg-white <%= user[:me] ? 'ring-2 ring-indigo-500 shadow-xl' : 'shadow-sm' %> rounded-[24px] md:rounded-[32px] p-5 md:p-8 flex items-center justify-between transition-all border border-slate-50 overflow-hidden">
+                  <div class="flex items-center gap-4 md:gap-6 min-w-0">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-slate-50 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl shrink-0">
+                      <%= user[:emoji] %>
+                    </div>
+                    <div class="min-w-0">
+                      <h6 class="text-sm md:text-lg font-black text-slate-900 flex items-center gap-2 truncate whitespace-nowrap">
+                        <%= user[:name] %>
+                      </h6>
+                      <p class="text-[10px] md:text-sm font-bold text-slate-400 mt-1 whitespace-nowrap"><%= user[:streak] %> 연속</p>
+                    </div>
+                  </div>
+                  <svg class="w-5 h-5 text-slate-200 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>

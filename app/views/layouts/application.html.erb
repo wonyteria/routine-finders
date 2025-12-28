@@ -33,12 +33,18 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   </head>
 
-  <body class="min-h-screen bg-[#F8FAFC]" data-controller="modal">
+  <body class="min-h-screen bg-[#F8FAFC]" data-controller="modal" style="font-family: 'Outfit', sans-serif;">
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -136,5 +142,8 @@
     <% unless current_user %>
       <%= render "shared/auth_modal" %>
     <% end %>
+
+    <!-- Badge Award Modal -->
+    <%= render "shared/badge_award" if logged_in? %>
   </body>
 </html>

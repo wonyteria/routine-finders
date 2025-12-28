@@ -54,7 +54,7 @@ module Admin
     end
 
     def user_params
-      params.require(:user).permit(:nickname, :email, :level, :total_exp, :wallet_balance)
+      params.require(:user).permit(:nickname, :email, :level, :total_exp, :wallet_balance, :is_featured_host)
     end
   end
 end

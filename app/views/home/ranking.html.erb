@@ -1,0 +1,96 @@
+<div class="max-w-[1200px] mx-auto pb-40 space-y-16 px-4 md:px-0">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 pt-12">
+    <div class="space-y-4">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-full font-black text-xs uppercase tracking-widest">
+        🏆 Overall Ranking
+      </div>
+      <h2 class="text-4xl md:text-6xl font-[900] text-slate-900 tracking-tight leading-none italic">TOP ACHIEVERS</h2>
+      <p class="text-slate-500 font-bold text-lg md:text-xl italic">매일의 정직한 기록이 증명하는 상위 1%의 파인더스입니다.</p>
+    </div>
+  </div>
+
+  <!-- Ranking List -->
+  <div class="bg-white rounded-[60px] border border-slate-100 shadow-2xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b border-slate-50">
+            <th class="px-12 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest">Rank</th>
+            <th class="px-6 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest">Finder</th>
+            <th class="px-6 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Badges</th>
+            <th class="px-6 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">Collection</th>
+            <th class="px-12 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @rankings.each_with_index do |user, index| %>
+            <tr class="group hover:bg-slate-50/50 transition-all border-b border-slate-50/50 last:border-0">
+              <td class="px-12 py-8">
+                <div class="flex items-center gap-4">
+                  <span class="text-2xl font-[900] <%= index < 3 ? 'text-indigo-600' : 'text-slate-300' %>">
+                    <%= (index + 1).to_s.rjust(2, '0') %>
+                  </span>
+                  <% if index < 3 %>
+                    <span class="text-xl shrink-0"><%= index == 0 ? "🥇" : (index == 1 ? "🥈" : "🥉") %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="px-6 py-8">
+                <div class="flex items-center gap-5">
+                  <div class="w-14 h-14 rounded-[20px] bg-slate-100 p-0.5 shadow-sm border border-slate-200 shrink-0">
+                    <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-[18px]" alt="">
+                  </div>
+                  <div>
+                    <h4 class="text-lg font-black text-slate-900 leading-tight"><%= user.nickname %></h4>
+                    <p class="text-xs font-bold text-slate-400">Joined <%= user.created_at.strftime("%Y.%m") %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-8">
+                <div class="flex flex-col items-center">
+                  <span class="text-xl font-black text-slate-900 group-hover:scale-110 transition-transform"><%= user.badge_count %></span>
+                  <p class="text-[9px] font-black text-slate-400 uppercase mt-1 tracking-tighter text-center">Earned</p>
+                </div>
+              </td>
+              <td class="px-6 py-8">
+                <div class="flex justify-center -space-x-2">
+                  <% user.badges.limit(5).each do |badge| %>
+                    <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center text-sm" title="<%= badge.name %>">
+                      <%= badge.icon_path %>
+                    </div>
+                  <% end %>
+                  <% if user.badge_count > 5 %>
+                    <div class="w-8 h-8 rounded-lg bg-slate-900 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+                      +<%= user.badge_count - 5 %>
+                    </div>
+                  <% end %>
+                </div>
+              </td>
+              <td class="px-12 py-8 text-right">
+                <% percentage = (user.badge_count.to_f / Badge.count * 100).round %>
+                <div class="inline-flex flex-col items-end gap-1.5">
+                  <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest"><%= percentage %>% Mastered</span>
+                  <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-500 rounded-full" style="width: <%= percentage %>%"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <% if @rankings.empty? %>
+    <div class="py-32 text-center space-y-6 bg-slate-50 rounded-[60px] border-2 border-dashed border-slate-200">
+      <p class="text-6xl">🏜️</p>
+      <div class="space-y-2">
+        <h3 class="text-2xl font-black text-slate-900">아직 등록된 랭커가 없습니다</h3>
+        <p class="text-slate-400 font-bold text-lg">첫 번째 배지를 획득하고 주인공이 되어보세요!</p>
+      </div>
+    </div>
+  <% end %>
+</div>

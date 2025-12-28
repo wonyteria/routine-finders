@@ -42,6 +42,7 @@ class VerificationLog < ApplicationRecord
       completion_rate: calculate_completion_rate
     )
     participant.update_streak!
+    BadgeService.new(participant.user).check_and_award_all!
   end
 
   def calculate_completion_rate

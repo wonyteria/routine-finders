@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_27_155941) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_28_210602) do
   create_table "announcements", force: :cascade do |t|
     t.integer "challenge_id", null: false
     t.text "content"
@@ -18,6 +18,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_27_155941) do
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["challenge_id"], name: "index_announcements_on_challenge_id"
+  end
+
+  create_table "badges", force: :cascade do |t|
+    t.string "badge_type"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "icon_path"
+    t.integer "level"
+    t.string "name"
+    t.float "requirement_value"
+    t.datetime "updated_at", null: false
   end
 
   create_table "challenge_applications", force: :cascade do |t|
@@ -175,6 +186,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_27_155941) do
     t.index ["user_id"], name: "index_staffs_on_user_id"
   end
 
+  create_table "user_badges", force: :cascade do |t|
+    t.integer "badge_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "granted_at"
+    t.boolean "is_viewed", default: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["badge_id"], name: "index_user_badges_on_badge_id"
+    t.index ["user_id"], name: "index_user_badges_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.decimal "avg_completion_rate", precision: 5, scale: 2, default: "0.0"
     t.text "bio"
@@ -187,6 +209,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_27_155941) do
     t.decimal "host_avg_completion_rate", precision: 5, scale: 2, default: "0.0"
     t.integer "host_completed_challenges", default: 0
     t.integer "host_total_participants", default: 0
+    t.boolean "is_featured_host"
     t.integer "level", default: 1, null: false
     t.string "nickname", null: false
     t.integer "ongoing_count", default: 0, null: false
@@ -237,6 +260,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_27_155941) do
   add_foreign_key "reviews", "users"
   add_foreign_key "staffs", "challenges"
   add_foreign_key "staffs", "users"
+  add_foreign_key "user_badges", "badges"
+  add_foreign_key "user_badges", "users"
   add_foreign_key "verification_logs", "challenges"
   add_foreign_key "verification_logs", "participants"
 end

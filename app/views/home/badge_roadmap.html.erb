@@ -1,0 +1,123 @@
+<div class="max-w-[1200px] mx-auto pb-24 space-y-16 px-4 md:px-0">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 pt-8">
+    <div class="space-y-4">
+      <%= link_to achievement_report_path, class: "inline-flex items-center gap-2 text-indigo-600 font-black text-sm group" do %>
+        <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+        분석 리포트로 돌아가기
+      <% end %>
+      <h2 class="text-4xl md:text-6xl font-[900] text-slate-900 tracking-tight leading-none">뱃지 로드맵</h2>
+      <p class="text-slate-500 font-bold text-lg md:text-xl">루틴의 성장이 뱃지로 기록되는 도전의 여정입니다.</p>
+    </div>
+    
+    <div class="bg-indigo-600 rounded-[32px] p-8 text-white shadow-2xl shadow-indigo-200">
+      <p class="text-indigo-200 font-black text-[10px] uppercase tracking-widest mb-2">My Progression</p>
+      <div class="flex items-baseline gap-2">
+        <span class="text-4xl font-[900]"><%= @user_badge_ids.count %></span>
+        <span class="text-indigo-300 font-bold">/ <%= Badge.count %> 뱃지 획득</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roadmaps -->
+  <div class="space-y-24">
+    <% @badges_by_type.each do |type, badges| %>
+      <div class="space-y-10">
+        <div class="flex items-center gap-6">
+          <div class="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center text-2xl">
+            <%= case type 
+                when 'achievement_rate' then "🎯"
+                when 'verification_count' then "✨"
+                when 'max_streak' then "🔥"
+                else "🌟" end %>
+          </div>
+          <div>
+            <% 
+              tip_content = case type
+                when 'achievement_rate' then "참여한 모든 챌린지의 평균 성취도입니다.<br>높은 성적을 유지할수록 더 높은 등급의 배지를 얻을 수 있습니다."
+                when 'verification_count' then "전체 기간 동안 성공한 인증의 총합 기록입니다.<br>초기화 없이 평생 누적되는 명예로운 기록입니다."
+                when 'max_streak' then "연속 인증 성공 시 기록되는 불꽃입니다.<br>실패 시 0일로 리셋되더라도 배지는 역대 최고 기록으로 유지됩니다."
+                else "" end
+            %>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="text-2xl md:text-3xl font-[900] text-slate-900"><%= type.to_s.humanize %></h3>
+              <% if tip_content.present? %>
+                <div class="group/tip relative flex items-center">
+                  <div class="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover/tip:bg-indigo-500 group-hover/tip:text-white transition-all cursor-help border border-slate-200 shadow-sm">
+                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </div>
+                  <!-- Tooltip -->
+                  <div class="absolute bottom-full left-0 mb-3 w-max max-w-[400px] p-4 bg-slate-900 text-white text-[12px] font-bold rounded-2xl shadow-2xl opacity-0 scale-90 group-hover/tip:opacity-100 group-hover/tip:scale-100 transition-all pointer-events-none z-50 leading-relaxed origin-bottom-left whitespace-nowrap">
+                    <%= raw tip_content %>
+                    <div class="absolute top-full left-4 border-8 border-transparent border-t-slate-900"></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <p class="text-slate-400 font-bold text-sm uppercase tracking-widest"><%= badges.first.description.split(' ')[0..1].join(' ') %> 계열</p>
+          </div>
+        </div>
+
+        <div class="relative">
+          <!-- Connector Line Background -->
+          <div class="absolute top-1/2 left-0 w-full h-1 md:h-2 bg-slate-100 -translate-y-1/2 rounded-full hidden md:block"></div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-8 md:gap-4 relative z-10">
+            <% badges.each_with_index do |badge, index| %>
+              <% is_earned = @user_badge_ids.include?(badge.id) %>
+              <% is_next = !is_earned && (index == 0 || @user_badge_ids.include?(badges[index-1].id)) %>
+              
+              <div class="flex flex-col items-center gap-6 group">
+                <div class="relative">
+                  <!-- Active Connection Line -->
+                  <% if index > 0 && is_earned %>
+                    <div class="absolute right-full top-1/2 w-full h-1 md:h-2 bg-indigo-500 -translate-y-1/2 z-0 hidden md:block"></div>
+                  <% end %>
+                  
+                  <div class="w-20 h-20 md:w-28 md:h-28 rounded-[32px] md:rounded-[40px] flex items-center justify-center text-3xl md:text-5xl transition-all duration-500 relative z-10 
+                    <%= is_earned ? 'bg-white shadow-2xl shadow-indigo-100 ring-4 ring-indigo-500' : (is_next ? 'bg-indigo-50 border-2 border-dashed border-indigo-200' : 'bg-slate-50 opacity-30 grayscale') %>">
+                    <%= is_earned || is_next ? badge.icon_path : "🔒" %>
+                  </div>
+
+                  <% if is_earned %>
+                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="text-center space-y-2">
+                  <h4 class="text-base md:text-lg font-black <%= is_earned ? 'text-slate-900' : (is_next ? 'text-indigo-600' : 'text-slate-300') %>">
+                    <%= badge.name %>
+                  </h4>
+                  <div class="px-3 py-1 bg-white border border-slate-100 rounded-full inline-block shadow-sm">
+                    <p class="text-[10px] md:text-xs font-bold text-slate-400">Lv.<%= badge.level %> 요구치: <%= badge.requirement_value %></p>
+                  </div>
+                  <p class="text-[11px] md:text-sm font-medium text-slate-400 max-w-[150px] mx-auto leading-relaxed">
+                    <%= badge.description %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Legend -->
+  <div class="bg-slate-50 rounded-[40px] p-10 flex flex-col md:flex-row items-center justify-center gap-12 border border-slate-100">
+    <div class="flex items-center gap-4">
+      <div class="w-6 h-6 rounded-full bg-indigo-500 ring-4 ring-white shadow-md"></div>
+      <span class="text-slate-600 font-extrabold">달성 완료</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="w-6 h-6 rounded-lg bg-indigo-50 border-2 border-dashed border-indigo-200 shadow-md"></div>
+      <span class="text-slate-600 font-extrabold">다음 목표</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="w-6 h-6 rounded-lg bg-slate-100 opacity-30 grayscale shadow-md"></div>
+      <span class="text-slate-600 font-extrabold">잠금 상태</span>
+    </div>
+  </div>
+</div>

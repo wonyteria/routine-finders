@@ -8,7 +8,8 @@ class Notification < ApplicationRecord
     rejection: 4,
     settlement: 5,
     system: 6,
-    application: 7
+    application: 7,
+    badge_award: 8
   }
 
   # Associations

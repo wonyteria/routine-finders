@@ -6,6 +6,12 @@ Rails.application.routes.draw do
 
   # Root path
   root "home#index"
+  get "achievement_report", to: "home#achievement_report"
+  get "badge_roadmap", to: "home#badge_roadmap"
+  get "ranking", to: "home#ranking"
+  get "host_ranking", to: "home#host_ranking"
+  get "users/:id", to: "home#user_profile", as: :user_profile
+  post "mark_badges_viewed", to: "home#mark_badges_viewed"
 
   # Authentication routes
   resource :session, only: [ :create, :destroy ]
