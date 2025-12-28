@@ -1,0 +1,429 @@
+<div data-achievement-report-target="container" 
+     class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 lg:p-10 overflow-y-auto"
+     data-action="click->achievement-report#closeOnBackground">
+  
+  <div class="relative bg-white w-full max-w-6xl rounded-[60px] shadow-2xl overflow-hidden flex flex-col min-h-[90vh]">
+    <!-- Close Button -->
+    <button data-action="click->achievement-report#close" 
+            class="absolute top-8 right-12 w-12 h-12 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-slate-900 transition-all z-20 shadow-sm">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+
+    <!-- Header & Tabs -->
+    <div class="p-10 lg:p-16 pb-0 flex flex-col md:flex-row md:items-end justify-between gap-8 shrink-0">
+      <div class="space-y-4">
+        <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] mb-2">Detailed Routine Insight</p>
+        <h2 class="text-5xl font-[900] text-slate-900 tracking-tight">성취 분석 리포트</h2>
+      </div>
+      
+      <!-- Tab Switcher -->
+      <div class="bg-slate-50 border border-slate-100 p-1.5 rounded-[24px] flex items-center gap-1">
+        <button data-achievement-report-target="tab" data-tab="overview" data-action="click->achievement-report#switchTab"
+                class="px-8 py-2.5 rounded-[18px] text-xs font-black transition-all">OVERVIEW</button>
+        <button data-achievement-report-target="tab" data-tab="finance" data-action="click->achievement-report#switchTab"
+                class="px-8 py-2.5 rounded-[18px] text-xs font-black transition-all">FINANCE</button>
+        <button data-achievement-report-target="tab" data-tab="social" data-action="click->achievement-report#switchTab"
+                class="px-8 py-2.5 rounded-[18px] text-xs font-black transition-all">SOCIAL</button>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="flex-1 overflow-y-auto custom-scrollbar p-10 lg:p-16 pt-12">
+      
+      <!-- OVERVIEW PANEL -->
+      <div data-achievement-report-target="panel" data-panel="overview" class="space-y-12">
+        <!-- Top Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl transition-all space-y-4">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">누적 인증</p>
+              <h4 class="text-3xl font-black text-slate-900"><%= @verification_logs.count %>회</h4>
+              <p class="text-[11px] font-bold text-indigo-500 mt-2 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m13 7 5 5m0 0-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                지난 달 대비 +12%
+              </p>
+            </div>
+          </div>
+          
+          <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl transition-all space-y-4">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><circle cx="12" cy="12" r="6" stroke-width="2"/><circle cx="12" cy="12" r="2" stroke-width="2"/></svg>
+            </div>
+            <div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">평균 달성률</p>
+              <h4 class="text-3xl font-black text-slate-900">92%</h4>
+              <p class="text-[11px] font-bold text-emerald-500 mt-2 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m13 7 5 5m0 0-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                목표치 대비 우수
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl transition-all space-y-4">
+            <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.99 7.99 0 0120 13a7.98 7.98 0 01-2.343 5.657z"/></svg>
+            </div>
+            <div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">최대 연속 기록</p>
+              <h4 class="text-3xl font-black text-slate-900"><%= @participations.map(&:current_streak).max || 0 %>일</h4>
+              <p class="text-[11px] font-bold text-orange-500 mt-2 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m13 7 5 5m0 0-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                현재 진행 중 🔥
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm hover:shadow-xl transition-all space-y-4">
+            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0012 18.75c-1.03 0-1.9-.4-2.593-.853l-.548-.547z"/></svg>
+            </div>
+            <div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">보유 뱃지</p>
+              <h4 class="text-3xl font-black text-slate-900">8개</h4>
+              <p class="text-[11px] font-bold text-purple-500 mt-2 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="m13 7 5 5m0 0-5 5m5-5H6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                상위 1% 루틴러
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Weekly Trend Chart -->
+          <div class="lg:col-span-2 bg-white rounded-[50px] border border-slate-100 shadow-sm p-12 space-y-10">
+            <div class="flex items-center justify-between">
+              <div class="space-y-1">
+                <h4 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+                  <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                  주간 성취 트렌드
+                </h4>
+                <p class="text-slate-400 text-sm font-bold">최근 7일간 당신의 노력을 시각화했습니다.</p>
+              </div>
+              <div class="px-4 py-2 bg-slate-50 rounded-xl text-[10px] font-black text-slate-400">LAST 7 DAYS</div>
+            </div>
+            <div class="flex items-end justify-between h-48 px-4">
+              <!-- Bar Chart Placeholder -->
+              <% [("월"), ("화"), ("수"), ("목"), ("금"), ("토"), ("일")].each_with_index do |day, i| %>
+                <div class="flex flex-col items-center gap-4 group">
+                  <div class="w-12 <%= i == 6 ? 'bg-indigo-600' : 'bg-indigo-100 group-hover:bg-indigo-200' %> rounded-2xl transition-all" style="height: <%= [40, 60, 30, 80, 50, 90, 70][i] %>%"></div>
+                  <span class="text-[11px] font-black <%= i == 6 ? 'text-indigo-600' : 'text-slate-400' %>"><%= day %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Financial Summary Card -->
+          <div class="bg-slate-950 rounded-[50px] p-12 text-white flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-indigo-600/20 rounded-full blur-[80px]"></div>
+            <div class="space-y-8 relative">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                </div>
+                <div>
+                  <h4 class="text-lg font-black tracking-tight">예상 자산 리포트</h4>
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">Financial Summary</p>
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <p class="text-xs font-bold text-slate-400">현재 총 예치 보증금</p>
+                <h4 class="text-4xl font-black tracking-tighter">150,000원</h4>
+              </div>
+
+              <div class="bg-white/5 rounded-3xl p-6 space-y-4">
+                <div class="flex items-center justify-between text-sm">
+                  <span class="text-slate-400 font-bold">차감 예정 금액</span>
+                  <span class="text-rose-400 font-black">-5,000원</span>
+                </div>
+                <div class="h-px bg-white/5"></div>
+                <div class="flex items-center justify-between text-lg">
+                  <span class="text-slate-400 font-bold">예상 환급 금액</span>
+                  <span class="text-indigo-400 font-black">145,000원</span>
+                </div>
+              </div>
+            </div>
+            <button class="w-full py-5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[24px] font-black text-sm shadow-xl transition-all mt-10 relative">
+              정산 내역 상세 보기
+            </button>
+          </div>
+        </div>
+
+        <!-- Routine Status & Badge Section -->
+        <div class="space-y-8">
+          <div class="flex items-center gap-3">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <h4 class="text-2xl font-black text-slate-900">참여 루틴 상세 현황</h4>
+          </div>
+          
+          <div class="bg-indigo-50/30 rounded-[50px] p-12 border border-indigo-100 shadow-inner">
+            <div class="flex items-center justify-between mb-8">
+              <div class="space-y-1">
+                <h4 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                  뱃지 컬렉션 & 로드맵
+                </h4>
+                <p class="text-slate-400 text-sm font-bold">당신의 명예로운 기록들입니다.</p>
+              </div>
+              <button class="text-indigo-600 font-black text-sm flex items-center gap-2 hover:gap-3 transition-all">
+                전체 뱃지 보기
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+            
+            <div class="flex items-center justify-between gap-6 px-4">
+              <% [("🔥", "열정의 화신"), ("💎", "공식 챌린지 완주"), ("🚀", "얼리버드"), ("🌟", "모두의 친구"), ("👑", "루틴 킹"), ("💰", "수익왕")].each_with_index do |(emoji, title), i| %>
+                <div class="flex flex-col items-center gap-4 text-center group">
+                  <div class="w-16 h-16 <%= i < 2 ? 'bg-white' : 'bg-slate-100 opacity-40' %> rounded-[24px] flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-all">
+                    <%= emoji %>
+                  </div>
+                  <div class="space-y-2">
+                    <p class="text-[11px] font-black <%= i < 2 ? 'text-slate-900' : 'text-slate-400' %> line-clamp-1"><%= title %></p>
+                    <div class="w-10 h-1 mx-auto bg-slate-200 rounded-full overflow-hidden">
+                      <div class="h-full bg-indigo-500" style="width: <%= i < 2 ? '100' : (i == 2 ? '60' : '20') %>%"></div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANCE PANEL -->
+      <div data-achievement-report-target="panel" data-panel="finance" class="hidden space-y-12">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+          <div class="lg:col-span-3 space-y-10">
+            <!-- Settlement Card -->
+            <div class="bg-white rounded-[50px] border border-slate-100 shadow-sm p-12 space-y-8">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <h4 class="text-2xl font-black text-slate-900 tracking-tight">정산 대기 리스트</h4>
+              </div>
+              <div class="bg-slate-50 border border-slate-100/50 rounded-[32px] p-8 text-center">
+                <p class="text-slate-400 font-bold">현재 정산 진행 중인 루틴이 없습니다.</p>
+              </div>
+            </div>
+
+            <!-- Transaction List -->
+            <div class="bg-white rounded-[50px] border border-slate-100 shadow-sm p-12 space-y-8">
+              <h4 class="text-2xl font-black text-slate-900 tracking-tight">최근 입출금 내역</h4>
+              <div class="space-y-2">
+                <% [
+                  { title: "매일 물 마시기 환급", date: "2024.05.15", amount: "+10,000원", color: "emerald" },
+                  { title: "한강 러닝 모임 참가비", date: "2024.05.14", amount: "-25,000원", color: "rose" },
+                  { title: "기상 챌린지 환급", date: "2024.05.10", amount: "+50,000원", color: "emerald" }
+                ].each do |item| %>
+                  <div class="flex items-center justify-between p-6 hover:bg-slate-50 rounded-[32px] transition-all group">
+                    <div class="flex items-center gap-6">
+                      <div class="w-12 h-12 bg-<%= item[:color] %>-50 text-<%= item[:color] %>-600 rounded-2xl flex items-center justify-center">
+                        <% if item[:color] == 'emerald' %>
+                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                        <% else %>
+                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                        <% end %>
+                      </div>
+                      <div>
+                        <h5 class="font-black text-slate-900"><%= item[:title] %></h5>
+                        <p class="text-xs font-bold text-slate-400 mt-0.5"><%= item[:date] %></p>
+                      </div>
+                    </div>
+                    <span class="text-lg font-black text-<%= item[:color] %>-600 outline-none"><%= item[:amount] %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financial Sidebar Card -->
+          <div class="lg:col-span-2 bg-slate-900 rounded-[50px] p-12 text-white flex flex-col gap-10">
+            <div class="space-y-6">
+              <h4 class="text-2xl font-black text-indigo-400 tracking-tight">Financial Insights</h4>
+              <div class="bg-white/5 rounded-[40px] p-10 space-y-8">
+                <div class="space-y-3">
+                  <div class="flex justify-between text-xs font-bold uppercase tracking-widest text-slate-500">
+                    <span>보증금 방어율</span>
+                    <span class="text-white">98%</span>
+                  </div>
+                  <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div class="h-full bg-indigo-500" style="width: 98%"></div>
+                  </div>
+                </div>
+                <p class="text-sm text-slate-400 font-medium leading-relaxed italic">
+                  "당신은 벌금으로 사라질 뻔한 자산의 98%를 꾸준함으로 지켜냈습니다."
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-auto bg-indigo-600/20 border border-indigo-500/30 rounded-[40px] p-10 space-y-4">
+              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Total Savings</p>
+              <div class="flex items-baseline gap-2">
+                <h4 class="text-5xl font-black tracking-tighter">450,000원</h4>
+                <p class="text-xs font-bold text-indigo-400/60">accumulated</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOCIAL PANEL -->
+      <div data-achievement-report-target="panel" data-panel="social" class="hidden space-y-12">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+          <div class="lg:col-span-3 space-y-12">
+            <!-- Social Metrics -->
+            <div class="bg-white rounded-[50px] border border-slate-100 shadow-sm p-12 space-y-12">
+              <div class="flex items-center justify-between">
+                <h4 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                  <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  소셜 리액션 분석
+                </h4>
+                <div class="flex gap-4">
+                  <div class="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 border border-white"></span>
+                    1,204
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 border border-white"></span>
+                    842
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <% [
+                  { icon: "item-heart", text: "428회", sub: "내가 받은 응원", color: "rose" },
+                  { icon: "item-thumb", text: "1,052회", sub: "내가 보낸 응원", color: "indigo" },
+                  { icon: "item-star", text: "5회", sub: "베스트 루틴 선정", color: "amber" },
+                  { icon: "item-shield", text: "4.9/5.0", sub: "모임 평점", color: "emerald" }
+                ].each do |item| %>
+                  <div class="bg-slate-50/50 rounded-[40px] p-8 text-center space-y-4 hover:bg-white hover:shadow-xl transition-all cursor-default border border-transparent hover:border-slate-50">
+                    <div class="w-12 h-12 bg-<%= item[:color] %>-50 text-<%= item[:color] %>-500 rounded-2xl flex items-center justify-center mx-auto">
+                      <!-- Render appropriate icon based on item[:icon] -->
+                      <% case item[:icon] %>
+                      <% when "item-heart" %>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                      <% when "item-thumb" %>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.757c1.27 0 2.22 1.157 1.889 2.384l-1.5 5.513C18.831 18.91 17.892 20 16.717 20H7v-9.513l3.5-3.5L10.5 4.5 12 6.5 12 10h2z"/></svg>
+                      <% when "item-star" %>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.382-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                      <% when "item-shield" %>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                      <% end %>
+                    </div>
+                    <div>
+                      <h5 class="text-xl font-[900] text-slate-900 leading-none"><%= item[:text] %></h5>
+                      <p class="text-[10px] font-black text-slate-400 mt-1 uppercase tracking-tighter"><%= item[:sub] %></p>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="bg-indigo-600 rounded-[40px] p-10 flex flex-col md:flex-row items-center gap-10 shadow-2xl shadow-indigo-200">
+                <div class="w-20 h-20 bg-white/20 rounded-[32px] flex items-center justify-center shrink-0 shadow-inner">
+                  <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                </div>
+                <div class="space-y-2 text-center md:text-left">
+                  <h4 class="text-2xl font-black text-white">당신은 '동기부여의 아이콘'입니다!</h4>
+                  <p class="text-indigo-100/80 text-sm font-medium leading-relaxed">
+                    당신의 루틴 인증은 평균 12명의 다른 루틴러들에게 성취 영감을 주고 있습니다.<br/>
+                    지난 주, 당신의 응원으로 3명의 참가자가 부진 상태를 탈출했습니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ranking List -->
+            <div class="bg-white rounded-[50px] border border-slate-100 shadow-sm p-12 space-y-10">
+              <h4 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                <span class="text-3xl">🏆</span>
+                참여 그룹 내 나의 위치
+              </h4>
+              <div class="h-40 bg-slate-50 border border-dashed border-slate-200 rounded-[40px] flex items-center justify-center">
+                <p class="text-slate-400 font-bold">참여 데이터 기반 랭킹 분석 중...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Sidebar -->
+          <div class="lg:col-span-2 space-y-10">
+            <!-- Hall of Fame -->
+            <div class="bg-slate-50/50 rounded-[50px] border border-slate-100 p-10 space-y-10">
+              <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <h5 class="text-base font-black text-slate-900">명예의 전당 후보</h5>
+              </div>
+              <div class="space-y-4">
+                <% [
+                  { name: "김코딩", streak: "452일 연속 성취", emoji: "🔥" },
+                  { name: "루틴매니아 (나)", streak: "128일 연속 성취", emoji: "✨", me: true },
+                  { name: "새벽형인간", streak: "92일 연속 성취", emoji: "☀️" }
+                ].each do |user| %>
+                  <div class="bg-white <%= user[:me] ? 'ring-2 ring-indigo-500 shadow-lg' : 'shadow-sm' %> rounded-[24px] p-6 flex items-center justify-between group cursor-pointer hover:shadow-md transition-all">
+                    <div class="flex items-center gap-4">
+                      <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-xl overflow-hidden group-hover:scale-110 transition-transform">
+                        <%= user[:emoji] %>
+                      </div>
+                      <div>
+                        <h6 class="font-black text-slate-900 flex items-center gap-2">
+                          <%= user[:name] %>
+                          <% if user[:me] %>
+                            <span class="bg-indigo-600 text-[8px] font-black text-white px-2 py-0.5 rounded-full uppercase tracking-tighter">ME</span>
+                          <% end %>
+                        </h6>
+                        <p class="text-[11px] font-bold text-slate-400 mt-0.5"><%= user[:streak] %></p>
+                      </div>
+                    </div>
+                    <svg class="w-4 h-4 text-slate-200 group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                  </div>
+                <% end %>
+              </div>
+              <button class="w-full py-4 bg-white/50 border border-slate-100 text-slate-500 text-xs font-black rounded-2xl hover:bg-white hover:shadow-md transition-all">
+                전체 랭킹 확인하기
+              </button>
+            </div>
+
+            <!-- Recent Reactions -->
+            <div class="bg-white rounded-[50px] border border-slate-100 p-10 space-y-8">
+              <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                <h5 class="text-base font-black text-slate-900">최근 받은 리액션</h5>
+              </div>
+              <div class="space-y-6">
+                <% 3.times do %>
+                  <div class="flex gap-4">
+                    <div class="shrink-0 w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center text-lg">😊</div>
+                    <div class="bg-slate-50/80 rounded-[24px] p-5 text-xs font-medium text-slate-600 leading-relaxed">
+                      "오늘 기상 미션 대단해요! 저도 자극 받아서 일어났습니다 👍 "
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #E2E8F0;
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #CBD5E1;
+  }
+</style>
