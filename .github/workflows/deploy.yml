@@ -127,16 +127,5 @@ jobs:
           echo "  StrictHostKeyChecking no" >> ~/.ssh/config
           echo "  UserKnownHostsFile=/dev/null" >> ~/.ssh/config
 
-      - name: Debug secrets
-        run: |
-          echo "=== Environment variables ==="
-          echo "RAILS_MASTER_KEY length: ${#RAILS_MASTER_KEY}"
-          echo "RAILS_MASTER_KEY set: $([[ -n "$RAILS_MASTER_KEY" ]] && echo 'yes' || echo 'no')"
-          echo ""
-          echo "=== After sourcing .kamal/secrets ==="
-          source .kamal/secrets
-          echo "RAILS_MASTER_KEY length after source: ${#RAILS_MASTER_KEY}"
-          echo "First 4 chars: ${RAILS_MASTER_KEY:0:4}..."
-
       - name: Deploy with Kamal
         run: bin/kamal deploy
