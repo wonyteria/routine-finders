@@ -1,4 +1,6 @@
-class CreateUserBadges < ActiveRecord::Migration[8.0]
+# frozen_string_literal: true
+
+class CreateUserBadges < ActiveRecord::Migration[8.1]
   def change
     create_table :user_badges do |t|
       t.references :user, null: false, foreign_key: true

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Challenge < ApplicationRecord
   # Enums
   enum :entry_type, { season: 0, regular: 1 }, prefix: true
