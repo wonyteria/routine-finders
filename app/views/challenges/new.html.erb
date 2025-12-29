@@ -224,7 +224,7 @@
             </div>
 
             <div class="space-y-4">
-              <label class="p-5 bg-slate-50/50 rounded-[28px] flex items-center justify-between cursor-pointer group transition-all hover:bg-white ring-1 ring-slate-100 hover:ring-indigo-100" data-action="click->challenge-form#toggleCheckbox">
+              <div class="p-5 bg-slate-50/50 rounded-[28px] flex items-center justify-between group transition-all hover:bg-white ring-1 ring-slate-100 hover:ring-indigo-100">
                 <div class="flex items-center gap-4">
                   <div class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-indigo-500 shadow-sm ring-1 ring-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -235,12 +235,12 @@
                   </div>
                 </div>
                 <div class="relative inline-flex items-center">
-                  <%= f.check_box :re_verification_allowed, class: "sr-only peer" %>
-                  <div class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 shadow-inner"></div>
+                  <%= f.check_box :re_verification_allowed, class: "sr-only peer", id: "re_verification_allowed_cb" %>
+                  <label for="re_verification_allowed_cb" class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 shadow-inner cursor-pointer"></label>
                 </div>
-              </label>
+              </div>
 
-              <label class="p-5 bg-slate-50/50 rounded-[28px] flex items-center justify-between cursor-pointer group transition-all hover:bg-white ring-1 ring-slate-100 hover:ring-amber-100" data-action="click->challenge-form#toggleCheckbox">
+              <div class="p-5 bg-slate-50/50 rounded-[28px] flex items-center justify-between group transition-all hover:bg-white ring-1 ring-slate-100 hover:ring-amber-100">
                 <div class="flex items-center gap-4">
                   <div class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-amber-500 shadow-sm ring-1 ring-slate-100 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -251,10 +251,10 @@
                   </div>
                 </div>
                 <div class="relative inline-flex items-center">
-                  <%= f.check_box :mission_requires_host_approval, class: "sr-only peer" %>
-                  <div class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:bg-amber-500 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 shadow-inner"></div>
+                  <%= f.check_box :mission_requires_host_approval, class: "sr-only peer", id: "mission_requires_host_approval_cb" %>
+                  <label for="mission_requires_host_approval_cb" class="w-12 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:bg-amber-500 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 shadow-inner cursor-pointer"></label>
                 </div>
-              </label>
+              </div>
             </div>
 
 
@@ -277,26 +277,26 @@
                       data-action="click->challenge-form#selectOption" 
                       data-name="is_private" 
                       data-value="false"
-                      class="p-6 border-2 border-indigo-600 bg-indigo-50 rounded-[28px] text-center space-y-3 shadow-lg shadow-indigo-600/5 transition-all group" data-name="is_private" data-value="false">
+                      class="p-4 border-2 border-indigo-600 bg-indigo-50 rounded-[28px] text-center space-y-2 shadow-lg shadow-indigo-600/5 transition-all group">
                 <div class="option-icon text-indigo-600 mx-auto">
-                  <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
                 </div>
                 <div>
-                  <p class="font-black text-lg text-slate-900 line-clamp-1">공개 챌린지</p>
-                  <p class="text-[10px] font-bold text-slate-400 mt-0.5">모두 참여 가능</p>
+                  <p class="font-black text-base text-slate-900 line-clamp-1">공개 챌린지</p>
+                  <p class="text-[9px] font-bold text-slate-400 mt-0.5">모두 참여 가능</p>
                 </div>
               </button>
               <button type="button" 
                       data-action="click->challenge-form#selectOption" 
                       data-name="is_private" 
                       data-value="true"
-                      class="p-6 border-2 border-slate-100 bg-white rounded-[28px] text-center space-y-3 hover:border-indigo-200 transition-all group" data-name="is_private" data-value="true">
+                      class="p-4 border-2 border-slate-100 bg-white rounded-[28px] text-center space-y-2 hover:border-indigo-200 transition-all group">
                 <div class="option-icon text-slate-300 mx-auto group-hover:text-indigo-400">
-                  <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                  <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
                 </div>
                 <div>
-                  <p class="font-black text-lg text-slate-900 opacity-40 group-hover:opacity-100 transition-opacity line-clamp-1">비공개 챌린지</p>
-                  <p class="text-[10px] font-bold text-slate-300 mt-0.5">초대 코드 전용</p>
+                  <p class="font-black text-base text-slate-900 opacity-40 group-hover:opacity-100 transition-opacity line-clamp-1">비공개 챌린지</p>
+                  <p class="text-[9px] font-bold text-slate-300 mt-0.5">초대 코드 전용</p>
                 </div>
               </button>
               <%= f.hidden_field :is_private, value: false %>
@@ -310,9 +310,11 @@
                   <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest">생성된 초대 코드</p>
                   <p class="text-3xl font-black text-slate-900 tracking-wider mt-1" id="invitation_code_display">-</p>
                 </div>
-                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-amber-500 shadow-sm ring-1 ring-amber-100">
-                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-                </div>
+                <button type="button" 
+                        data-action="click->challenge-form#copyInvitationCode"
+                        class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-amber-500 shadow-sm ring-1 ring-amber-100 hover:bg-amber-50 transition-all active:scale-95">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                </button>
               </div>
               <%= f.hidden_field :invitation_code, id: "challenge_invitation_code" %>
             </div>
@@ -335,11 +337,11 @@
             <div class="space-y-8">
               <div class="flex items-center justify-between pl-2">
                 <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">최대 참여 인원</label>
-                <span id="max-participants-display" class="text-2xl font-black text-indigo-600 bg-indigo-50 px-6 py-2 rounded-2xl ring-1 ring-indigo-100">10명</span>
+                <span id="max-participants-display" class="text-xl font-black text-indigo-600 bg-indigo-50 px-5 py-1.5 rounded-xl ring-1 ring-indigo-100">10명</span>
               </div>
               <div class="px-2">
                 <%= f.range_field :max_participants, min: 2, max: 100, step: 1, value: 10, 
-                    class: "w-full h-2.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-indigo-600 shadow-inner",
+                    class: "w-full h-3.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-indigo-600 shadow-inner",
                     data: { action: "input->challenge-form#updateMaxParticipants" } %>
               </div>
             </div>
@@ -476,9 +478,9 @@
 
 <style>
   input[type='range'] {
-    background: linear-gradient(to right, #4f46e5 0%, #4f46e5 8%, #f1f5f9 8%, #f1f5f9 100%);
+    background: linear-gradient(to right, #4f46e5, #4f46e5) no-repeat;
     background-size: 8% 100%;
-    background-repeat: no-repeat;
+    background-color: #f1f5f9;
   }
   input[type='range']::-webkit-slider-runnable-track {
     -webkit-appearance: none;

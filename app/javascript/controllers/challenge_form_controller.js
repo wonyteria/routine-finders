@@ -213,6 +213,26 @@ export default class extends Controller {
         const max = event.target.max || 100
         const val = (value - min) / (max - min) * 100
         event.target.style.backgroundSize = val + '% 100%'
+
+        // Update the linear gradient dynamically if needed, 
+        // but background-size on a simple gradient is better.
+    }
+
+    copyInvitationCode() {
+        const code = this.element.querySelector("#challenge_invitation_code").value
+        if (!code || code === "-") return
+
+        navigator.clipboard.writeText(code).then(() => {
+            const display = this.element.querySelector("#invitation_code_display")
+            const originalText = display.textContent
+            display.textContent = "복제 완료!"
+            display.classList.add("text-indigo-600")
+
+            setTimeout(() => {
+                display.textContent = originalText
+                display.classList.remove("text-indigo-600")
+            }, 2000)
+        })
     }
 
     showSummary(event) {
@@ -284,15 +304,7 @@ export default class extends Controller {
         }
     }
 
-    toggleCheckbox(event) {
-        // Find the checkbox inside the clicked label
-        const checkbox = event.currentTarget.querySelector('input[type="checkbox"]')
-        if (checkbox && event.target !== checkbox) {
-            checkbox.checked = !checkbox.checked
-            // Trigger change event for any other listeners
-            checkbox.dispatchEvent(new Event('change', { bubbles: true }))
-        }
-    }
+    // Removed toggleCheckbox as it interfered with default label->checkbox behavior
 
     submitForm() {
         // Disable Turbo for this submission to ensure a clean redirect to the new challenge page
