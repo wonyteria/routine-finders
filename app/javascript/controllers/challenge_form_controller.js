@@ -223,40 +223,81 @@ export default class extends Controller {
             const end = this.element.querySelector("#challenge_end_date").value
             const costType = this.element.querySelector('input[name="challenge[cost_type]"]').value
             const amount = this.element.querySelector("#challenge_amount").value
+            const maxParticipants = this.element.querySelector("#max-participants-display").textContent
 
             let summaryHtml = `
-        <div class="space-y-4">
-          <div class="flex justify-between items-center py-3 border-b border-slate-100">
-            <span class="text-slate-400 text-xs font-bold">챌린지 명</span>
-            <span class="text-slate-900 font-black">${title || '제목 없음'}</span>
-          </div>
-          <div class="flex justify-between items-center py-3 border-b border-slate-100">
-            <span class="text-slate-400 text-xs font-bold">기간</span>
-            <span class="text-slate-900 font-bold">${start} ~ ${end}</span>
-          </div>
-          <div class="flex justify-between items-center py-3 border-b border-slate-100">
-            <span class="text-slate-400 text-xs font-bold">참여 비용</span>
-            <span class="text-indigo-600 font-black">${costType === 'free' ? '무료' : Number(amount).toLocaleString() + '원'}</span>
-          </div>
-          <div class="p-4 bg-indigo-50 rounded-2xl text-[11px] text-indigo-600 font-medium leading-relaxed">
-            게시물은 개설 후 즉시 노출됩니다. 입력하신 정보가 정확한지 다시 한번 확인해주세요!
-          </div>
-        </div>
-      `
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">챌린지 명</p>
+                        <p class="text-lg font-black text-slate-900">${title || '제목 없음'}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">진행 기간</p>
+                            <p class="text-sm font-bold text-slate-700">${start} ~ ${end}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">모집 인원</p>
+                            <p class="text-sm font-bold text-slate-700">${maxParticipants}</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 pt-2 border-t border-slate-100">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">참여 비용</p>
+                        <p class="text-xl font-black text-indigo-600">
+                            ${costType === 'free' ? '무료' : Number(amount).toLocaleString() + '원'}
+                            <span class="text-xs text-slate-400 font-bold ml-1">(${costType === 'deposit' ? '보증금' : '참가비'})</span>
+                        </p>
+                    </div>
+                </div>
+            `
             this.summaryContentTarget.innerHTML = summaryHtml
             this.summaryModalTarget.classList.remove("hidden")
             this.summaryModalTarget.classList.add("flex")
+
+            // For animation
+            setTimeout(() => {
+                const modal = this.summaryModalTarget.querySelector('div')
+                modal.classList.add('scale-100', 'opacity-100')
+                modal.classList.remove('scale-95', 'opacity-0')
+            }, 10)
         }
     }
 
     hideSummary() {
         if (this.hasSummaryModalTarget) {
-            this.summaryModalTarget.classList.add("hidden")
-            this.summaryModalTarget.classList.remove("flex")
+            const modal = this.summaryModalTarget.querySelector('div')
+            modal.classList.remove('scale-100', 'opacity-100')
+            modal.classList.add('scale-95', 'opacity-0')
+
+            setTimeout(() => {
+                this.summaryModalTarget.classList.add("hidden")
+                this.summaryModalTarget.classList.remove("flex")
+            }, 200)
+        }
+    }
+
+    handleModalClick(event) {
+        if (event.target === this.summaryModalTarget) {
+            this.hideSummary()
+        }
+    }
+
+    toggleCheckbox(event) {
+        // Find the checkbox inside the clicked label
+        const checkbox = event.currentTarget.querySelector('input[type="checkbox"]')
+        if (checkbox && event.target !== checkbox) {
+            checkbox.checked = !checkbox.checked
+            // Trigger change event for any other listeners
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }))
         }
     }
 
     submitForm() {
-        this.element.querySelector("form").submit()
+        // Disable Turbo for this submission to ensure a clean redirect to the new challenge page
+        const form = this.element.querySelector("form")
+        form.setAttribute("data-turbo", "false")
+        form.submit()
     }
 }
