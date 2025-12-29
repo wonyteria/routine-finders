@@ -11,6 +11,9 @@ class Challenge < ApplicationRecord
 
   # Associations
   belongs_to :host, class_name: "User"
+  belongs_to :original_challenge, class_name: "Challenge", optional: true
+  has_many :cloned_challenges, class_name: "Challenge", foreign_key: :original_challenge_id
+  has_one_attached :thumbnail_image
   has_one :meeting_info, dependent: :destroy
   has_many :staffs, dependent: :destroy
   has_many :participants, dependent: :destroy
@@ -19,6 +22,8 @@ class Challenge < ApplicationRecord
   has_many :challenge_applications, dependent: :destroy
   has_many :reviews, dependent: :destroy
   has_many :announcements, dependent: :destroy
+
+  attr_accessor :save_account_to_profile
 
   # Validations
   validates :title, presence: true
@@ -59,7 +64,11 @@ class Challenge < ApplicationRecord
   end
 
   def thumbnail
-    self[:thumbnail].presence || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800"
+    if thumbnail_image.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(thumbnail_image, only_path: true)
+    else
+      self[:thumbnail].presence || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800"
+    end
   end
 
   # Verification time window check

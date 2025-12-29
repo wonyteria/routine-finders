@@ -1,0 +1,53 @@
+<div class="space-y-10">
+  <div class="flex flex-col md:flex-row items-center gap-8 bg-slate-50 p-10 rounded-[48px] border border-slate-100">
+    <div class="relative shrink-0">
+      <img src="<%= host.profile_image %>" class="w-32 h-32 md:w-40 md:h-40 rounded-[40px] object-cover shadow-2xl shadow-indigo-200" alt="">
+      <div class="absolute -bottom-2 -right-2 bg-indigo-600 text-white px-4 py-1.5 rounded-2xl text-xs font-black shadow-lg">
+        Lv.<%= host.level %>
+      </div>
+    </div>
+    
+    <div class="flex-1 text-center md:text-left space-y-4">
+      <div class="space-y-1">
+        <h2 class="text-2xl font-black text-slate-900"><%= host.nickname %></h2>
+        <p class="text-slate-500 font-medium"><%= challenge.custom_host_bio.presence || host.bio || "함께 성장하는 즐거움을 나누는 호스트입니다." %></p>
+      </div>
+      
+      <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+        <% if host.is_featured_host %>
+          <span class="px-4 py-1.5 bg-amber-100 text-amber-700 rounded-full text-[10px] font-black tracking-widest uppercase">Featured Host</span>
+        <% end %>
+        <span class="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-500">개최 완료 <%= host.hosted_challenges.count %>회</span>
+        <span class="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-500">평균 달성률 94%</span>
+      </div>
+
+      <div class="flex items-center justify-center md:justify-start gap-4 pt-2">
+        <%= link_to user_path(host), class: "px-6 py-2.5 bg-indigo-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95" do %>
+          호스트 프로필 보기
+        <% end %>
+        <button class="p-2.5 bg-white border border-slate-200 rounded-2xl text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Host Stats Details -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="p-8 bg-white border border-slate-100 rounded-[32px] text-center space-y-2 group hover:border-indigo-100 transition-all">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ongoing</p>
+      <p class="text-3xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors">3</p>
+      <p class="text-xs text-slate-400 font-bold">진행 중인 챌린지</p>
+    </div>
+    <div class="p-8 bg-white border border-slate-100 rounded-[32px] text-center space-y-2 group hover:border-emerald-100 transition-all">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Participants</p>
+      <p class="text-3xl font-black text-slate-900 group-hover:text-emerald-500 transition-colors">1.2k+</p>
+      <p class="text-xs text-slate-400 font-bold">총 참여 인원</p>
+    </div>
+    <div class="p-8 bg-white border border-slate-100 rounded-[32px] text-center space-y-2 group hover:border-amber-100 transition-all">
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Rating</p>
+      <p class="text-3xl font-black text-slate-900 group-hover:text-amber-500 transition-colors">4.8</p>
+      <p class="text-xs text-slate-400 font-bold">호스트 평점</p>
+    </div>
+  </div>
+</div>

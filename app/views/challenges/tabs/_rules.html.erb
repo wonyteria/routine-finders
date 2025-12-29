@@ -1,0 +1,110 @@
+<div class="space-y-10">
+  <!-- Verification Rules -->
+  <div class="space-y-6">
+    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      인증 규칙
+    </h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">인증 방식</p>
+          <div class="flex flex-wrap gap-1">
+            <% methods = [] %>
+            <% methods << "사진 업로드" if challenge.v_photo? %>
+            <% methods << "단순 체크" if challenge.v_simple? %>
+            <% methods << "수치 입력" if challenge.v_metric? %>
+            <% methods << "URL 공유" if challenge.v_url? %>
+            <% if methods.any? %>
+              <p class="font-bold text-slate-900"><%= methods.join(", ") %></p>
+            <% else %>
+              <p class="font-bold text-slate-900"><%= { simple: '간단 완료 체크', metric: '수치 데이터 입력', photo: '사진 업로드 인증', url: '공유 URL 링크 인증', complex: '복합형 인증' }[challenge.verification_type.to_sym] %></p>
+            <% end %>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">지정된 모든 인증을 완료해야 인정됩니다.</p>
+        </div>
+      </div>
+
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">최대 실패 허용</p>
+          <p class="font-bold text-slate-900"><%= challenge.failure_tolerance %>회까지</p>
+          <p class="text-xs text-slate-500 mt-1">허용 횟수를 초과하면 보증금 환급이 불가할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">인증 승인 방식</p>
+          <p class="font-bold text-slate-900"><%= challenge.mission_requires_host_approval ? '호스트 직접 승인' : '시스템 자동 승인' %></p>
+          <p class="text-xs text-slate-500 mt-1"><%= challenge.mission_requires_host_approval ? '호스트가 인증 내용을 검토 후 최종 승인합니다.' : '인증 완료 시 즉시 인정됩니다.' %></p>
+        </div>
+      </div>
+
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">신청 및 공개</p>
+          <p class="font-bold text-slate-900"><%= challenge.admission_type_approval? ? '선별형 참여' : '자유 참여' %> | <%= challenge.is_private? ? '비공개 챌린지' : '공개 챌린지' %></p>
+          <p class="text-xs text-slate-500 mt-1"><%= challenge.admission_type_approval? ? '호스트의 거절 사유가 있을 수 있습니다.' : '누구나 즉시 참여할 수 있습니다.' %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit & Refund Rules -->
+  <div class="space-y-6">
+    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      보증금 및 환급 규칙
+    </h2>
+
+    <div class="space-y-4">
+      <div class="p-8 bg-emerald-50 rounded-[32px] border border-emerald-100 relative overflow-hidden">
+        <div class="relative z-10 space-y-6">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-bold text-emerald-800">보증금 환급 기준</span>
+            <span class="px-4 py-1.5 bg-white text-emerald-600 rounded-full text-[10px] font-black tracking-widest uppercase">Refund Standard</span>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div class="space-y-2">
+              <p class="text-xs text-emerald-600 font-bold">100% 달성 시</p>
+              <p class="text-lg font-black text-emerald-900">전액 환급 + 상금</p>
+            </div>
+            <div class="space-y-2 border-x border-emerald-200/50 px-4">
+              <p class="text-xs text-emerald-600 font-bold">85% 이상 달성 시</p>
+              <p class="text-lg font-black text-emerald-900">전액 환급</p>
+            </div>
+            <div class="space-y-2">
+              <p class="text-xs text-emerald-600 font-bold">85% 미만 달성 시</p>
+              <p class="text-lg font-black text-emerald-900">달성률만큼 환급</p>
+            </div>
+          </div>
+        </div>
+        <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-emerald-100 rounded-full opacity-30"></div>
+      </div>
+      
+      <p class="text-xs text-slate-400 font-medium px-4">
+        * 챌린지 종료 후 영업일 기준 3일 이내에 환급이 처리됩니다.<br>
+        * 벌금(환급되지 않은 금액)은 100% 달성자들을 위한 상금으로 사용됩니다.
+      </p>
+    </div>
+  </div>
+</div>

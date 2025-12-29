@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_29_091123) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_29_144006) do
   create_table "announcements", force: :cascade do |t|
     t.integer "challenge_id", null: false
     t.text "content"
@@ -55,12 +55,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_091123) do
     t.integer "cost_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.integer "current_participants", default: 0, null: false
+    t.text "custom_host_bio"
     t.json "days", default: []
     t.text "description"
     t.date "end_date", null: false
     t.integer "entry_type", default: 0, null: false
     t.integer "failure_tolerance", default: 3
     t.string "host_account"
+    t.string "host_account_holder"
+    t.string "host_bank"
     t.integer "host_id", null: false
     t.string "host_name"
     t.string "invitation_code"
@@ -79,6 +82,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_091123) do
     t.boolean "mission_requires_host_approval", default: false
     t.integer "mission_weekly_count"
     t.integer "mode", default: 0, null: false
+    t.integer "original_challenge_id"
     t.integer "penalty_per_failure", default: 0
     t.string "purpose"
     t.boolean "re_verification_allowed", default: false, null: false
@@ -89,6 +93,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_091123) do
     t.string "thumbnail"
     t.string "title", null: false
     t.datetime "updated_at", null: false
+    t.boolean "v_metric"
+    t.boolean "v_photo"
+    t.boolean "v_simple"
+    t.boolean "v_url"
     t.time "verification_end_time"
     t.time "verification_start_time"
     t.integer "verification_type", default: 0, null: false
@@ -97,6 +105,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_091123) do
     t.index ["invitation_code"], name: "index_challenges_on_invitation_code", unique: true
     t.index ["is_official"], name: "index_challenges_on_is_official"
     t.index ["mode"], name: "index_challenges_on_mode"
+    t.index ["original_challenge_id"], name: "index_challenges_on_original_challenge_id"
   end
 
   create_table "meeting_infos", force: :cascade do |t|
@@ -260,6 +269,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_091123) do
   add_foreign_key "announcements", "challenges"
   add_foreign_key "challenge_applications", "challenges"
   add_foreign_key "challenge_applications", "users"
+  add_foreign_key "challenges", "challenges", column: "original_challenge_id"
   add_foreign_key "challenges", "users", column: "host_id"
   add_foreign_key "meeting_infos", "challenges"
   add_foreign_key "notifications", "users"

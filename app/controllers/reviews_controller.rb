@@ -63,10 +63,12 @@ class ReviewsController < ApplicationController
       return
     end
 
-    # 챌린지에 참여했었는지 확인 (완료된 참가자만 리뷰 가능)
+    # 챌린지에 참여한지 7일이 지났는지 확인
     participation = @challenge.participants.find_by(user: current_user)
-    unless participation
+    if participation.nil?
       redirect_to challenge_path(@challenge), alert: "챌린지에 참여한 사용자만 리뷰를 작성할 수 있습니다."
+    elsif participation.joined_at > 7.days.ago
+      redirect_to challenge_path(@challenge), alert: "챌린지 참여 후 7일이 지나야 리뷰를 작성할 수 있습니다."
     end
   end
 

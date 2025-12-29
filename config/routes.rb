@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     member do
       post :join
       delete :leave
+      get :clone
     end
     resources :verification_logs, only: [ :create ] do
       member do
