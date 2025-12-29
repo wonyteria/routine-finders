@@ -65,7 +65,7 @@ Rails.application.routes.draw do
 
   resources :gatherings, only: [ :index ]
 
-  resources :personal_routines, only: [ :index, :create, :destroy ] do
+  resources :personal_routines, only: [ :index, :create, :edit, :update, :destroy ] do
     member do
       post :toggle
     end

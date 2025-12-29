@@ -86,7 +86,7 @@ offline_gatherings.each do |g|
     c.max_participants = g[:max]
     c.save!
   end
-  
+
   MeetingInfo.find_or_initialize_by(challenge: challenge).tap do |mi|
     mi.place_name = g[:place]
     mi.address = "서울특별시 어딘가"
@@ -138,7 +138,7 @@ routines.each do |r|
     pr.icon = r[:icon]
     pr.color = r[:color]
     pr.current_streak = rand(1..10)
-    pr.days = [1, 2, 3, 4, 5]
+    pr.days = [ 1, 2, 3, 4, 5 ]
   end
 end
 

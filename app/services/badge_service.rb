@@ -5,18 +5,18 @@ class BadgeService
 
   def check_and_award_all!
     new_badges = []
-    
+
     Badge.badge_types.each_key do |type|
       new_badges += check_and_award_by_type!(type)
     end
-    
+
     new_badges
   end
 
   def check_and_award_by_type!(badge_type)
     current_value = calculate_metric(badge_type)
     eligible_badges = Badge.where(badge_type: badge_type).where("requirement_value <= ?", current_value)
-    
+
     awarded = []
     eligible_badges.each do |badge|
       unless @user.badges.include?(badge)
