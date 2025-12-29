@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_28_210603) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_29_091123) do
   create_table "announcements", force: :cascade do |t|
     t.integer "challenge_id", null: false
     t.text "content"
@@ -147,6 +147,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_28_210603) do
     t.index ["user_id"], name: "index_participants_on_user_id"
   end
 
+  create_table "personal_routine_completions", force: :cascade do |t|
+    t.date "completed_on"
+    t.datetime "created_at", null: false
+    t.integer "personal_routine_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["completed_on"], name: "index_personal_routine_completions_on_completed_on"
+    t.index ["personal_routine_id"], name: "index_personal_routine_completions_on_personal_routine_id"
+  end
+
   create_table "personal_routines", force: :cascade do |t|
     t.string "category"
     t.string "color", default: "bg-indigo-500"
@@ -256,6 +265,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_28_210603) do
   add_foreign_key "notifications", "users"
   add_foreign_key "participants", "challenges"
   add_foreign_key "participants", "users"
+  add_foreign_key "personal_routine_completions", "personal_routines"
   add_foreign_key "personal_routines", "users"
   add_foreign_key "reviews", "challenges"
   add_foreign_key "reviews", "users"

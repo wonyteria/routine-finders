@@ -1,9 +1,17 @@
 class PersonalRoutinesController < ApplicationController
   before_action :require_login
-  before_action :set_routine, only: [ :toggle, :destroy ]
+  before_action :set_routine, only: [ :edit, :update, :toggle, :destroy ]
 
   def index
-    @personal_routines = current_user.personal_routines.order(created_at: :desc)
+    @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
+    @monthly_completions = current_user.personal_routines.joins(:completions)
+                                       .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
+                                       .select("personal_routines.id, personal_routine_completions.completed_on")
+
+    # 더 효율적인 방식: @personal_routines에서 이미 eager loading 했으므로 뷰에서 그대로 사용해도 되지만,
+    # 특정 범위만 가져오고 싶다면 별도 처리가 나을 수 있음.
+    # 여기서는 일단 includes(:completions)로 충분할 듯.
+
     @recommended_routines = [
       { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊", color: "text-rose-400" },
       { title: "물 2L 마시기", category: "HEALTH", icon: "💧", color: "text-blue-400" },
@@ -23,11 +31,25 @@ class PersonalRoutinesController < ApplicationController
 
     if @routine.save
       respond_to do |format|
-        format.html { redirect_to root_path, notice: "루틴이 추가되었습니다!" }
+        format.html { redirect_to personal_routines_path, notice: "루틴이 추가되었습니다!" }
         format.turbo_stream
       end
     else
-      redirect_to root_path, alert: "루틴 추가에 실패했습니다."
+      redirect_to personal_routines_path, alert: "루틴 추가에 실패했습니다."
+    end
+  end
+
+  def edit
+  end
+
+  def update
+    if @routine.update(routine_params)
+      respond_to do |format|
+        format.html { redirect_to personal_routines_path, notice: "루틴이 수정되었습니다!" }
+        format.turbo_stream
+      end
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -35,7 +57,7 @@ class PersonalRoutinesController < ApplicationController
     @routine.toggle_completion!
 
     respond_to do |format|
-      format.html { redirect_to root_path }
+      format.html { redirect_to personal_routines_path }
       format.turbo_stream
     end
   end
@@ -44,7 +66,7 @@ class PersonalRoutinesController < ApplicationController
     @routine.destroy
 
     respond_to do |format|
-      format.html { redirect_to root_path, notice: "루틴이 삭제되었습니다." }
+      format.html { redirect_to personal_routines_path, notice: "루틴이 삭제되었습니다." }
       format.turbo_stream
     end
   end
