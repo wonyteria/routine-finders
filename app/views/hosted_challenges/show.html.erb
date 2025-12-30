@@ -188,6 +188,23 @@
             <% end %>
           </div>
 
+          <!-- Deposit Refund Threshold (for deposit-type challenges) -->
+          <% if @challenge.cost_type_deposit? && @challenge.full_refund_threshold.present? %>
+            <div class="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[24px] border-2 border-emerald-100 space-y-3">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="text-xs font-black text-emerald-700 uppercase tracking-wider">전액 환급 기준</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-4xl font-black text-emerald-600"><%= (@challenge.full_refund_threshold * 100).to_i %></span>
+                <span class="text-2xl font-black text-emerald-600">%</span>
+              </div>
+              <p class="text-xs font-bold text-emerald-700/70">이 달성률 이상 시 보증금 100% 환급</p>
+            </div>
+          <% end %>
+
           <!-- Mission Goal -->
           <% if @challenge.certification_goal.present? || @challenge.daily_goals.present? %>
             <div class="p-6 bg-white rounded-[24px] border border-slate-200 space-y-3">

@@ -5,6 +5,7 @@ export default class extends Controller {
         const costType = event.target.value
         const costFields = document.querySelector('[data-cost-fields]')
         const penaltyField = document.querySelector('[data-penalty-field]')
+        const refundThreshold = document.querySelector('[data-refund-threshold]')
 
         if (costType === 'free') {
             costFields.classList.add('hidden')
@@ -13,8 +14,10 @@ export default class extends Controller {
 
             if (costType === 'deposit') {
                 penaltyField.classList.remove('hidden')
+                if (refundThreshold) refundThreshold.classList.remove('hidden')
             } else {
                 penaltyField.classList.add('hidden')
+                if (refundThreshold) refundThreshold.classList.add('hidden')
             }
         }
     }

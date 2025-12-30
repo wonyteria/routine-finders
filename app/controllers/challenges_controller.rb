@@ -64,7 +64,14 @@ class ChallengesController < ApplicationController
   end
 
   def create
-    @challenge = Challenge.new(challenge_params)
+    params_hash = challenge_params
+    
+    # Convert full_refund_threshold from percentage (0-100) to decimal (0-1)
+    if params_hash[:full_refund_threshold].present?
+      params_hash[:full_refund_threshold] = params_hash[:full_refund_threshold].to_f / 100.0
+    end
+    
+    @challenge = Challenge.new(params_hash)
     @challenge.host = current_user
 
     if @challenge.save
@@ -132,7 +139,7 @@ class ChallengesController < ApplicationController
       :is_private, :admission_type, :host_bank, :host_account, :host_account_holder,
       :v_photo, :v_simple, :v_metric, :v_url, :thumbnail_image, :save_account_to_profile,
       :certification_goal, :daily_goals, :reward_policy,
-      :full_refund_threshold, :bonus_threshold,
+      :full_refund_threshold,
       days: [],
       meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
     )

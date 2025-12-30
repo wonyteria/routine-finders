@@ -52,7 +52,32 @@ class HostedChallengesController < ApplicationController
 
   def update
     @challenge = current_user.hosted_challenges.find(params[:id])
-    if @challenge.update(challenge_params)
+    
+    params_hash = challenge_params
+    
+    # Convert percentage thresholds (0-100) to decimal (0-1)
+    if params_hash[:full_refund_threshold].present?
+      params_hash[:full_refund_threshold] = params_hash[:full_refund_threshold].to_f / 100.0
+    end
+    
+    if params_hash[:active_rate_threshold].present?
+      params_hash[:active_rate_threshold] = params_hash[:active_rate_threshold].to_f / 100.0
+    end
+    
+    if params_hash[:sluggish_rate_threshold].present?
+      params_hash[:sluggish_rate_threshold] = params_hash[:sluggish_rate_threshold].to_f / 100.0
+    end
+    
+    if @challenge.update(params_hash)
+      # Create announcement if requested
+      if params[:create_announcement] == "true" && params[:announcement_content].present?
+        @challenge.announcements.create(
+          title: "챌린지 설정 변경 안내",
+          content: params[:announcement_content],
+          author_name: current_user.nickname || current_user.email
+        )
+      end
+      
       redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), notice: "설정이 저장되었습니다."
     else
       redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), alert: "저장에 실패했습니다."
@@ -66,7 +91,7 @@ class HostedChallengesController < ApplicationController
       :title, :summary, :description, :custom_host_bio,
       :start_date, :end_date,
       :cost_type, :amount, :max_participants, :failure_tolerance, :penalty_per_failure,
-      :full_refund_threshold, :bonus_threshold,
+      :full_refund_threshold,
       :verification_start_time, :verification_end_time, :re_verification_allowed,
       :mission_requires_host_approval,
       :host_bank, :host_account, :host_account_holder,

@@ -9,7 +9,7 @@ export default class extends Controller {
         "thumbnailPreview", "thumbnailInput",
         "invitationCodeSection", "summaryModal", "summaryContent",
         "hostBio", "missionGoalType", "fixedGoalSection", "dailyGoalSection",
-        "disclaimerFields", "rewardHidden", "rewardsContainer"
+        "disclaimerFields", "rewardHidden", "rewardsContainer", "achievementThresholds"
     ]
 
     connect() {
@@ -188,6 +188,11 @@ export default class extends Controller {
         // Only show penalty amount for deposit-type challenges
         if (this.hasPenaltyAmountCardTarget) {
             this.penaltyAmountCardTarget.classList.toggle("hidden", type !== "deposit")
+        }
+
+        // Only show achievement thresholds for deposit-type challenges
+        if (this.hasAchievementThresholdsTarget) {
+            this.achievementThresholdsTarget.classList.toggle("hidden", type !== "deposit")
         }
 
         // Failure tolerance might be useful for all types besides maybe 'free'? 
@@ -557,5 +562,17 @@ export default class extends Controller {
                 this.penaltyHiddenTarget.value = numericValue
             }
         }
+    }
+
+    updateRefundThreshold(event) {
+        // Convert percentage (0-100) to decimal (0-1) for backend
+        const percentageValue = parseInt(event.target.value) || 0
+        const decimalValue = percentageValue / 100
+
+        // Update the actual field value that will be submitted
+        event.target.value = percentageValue
+
+        // Store the decimal value in a data attribute for form submission
+        event.target.dataset.decimalValue = decimalValue
     }
 }
