@@ -63,10 +63,19 @@ class HostedChallengesController < ApplicationController
 
   def challenge_params
     params.require(:challenge).permit(
+      :title, :summary, :description, :custom_host_bio,
+      :start_date, :end_date,
+      :cost_type, :amount, :max_participants, :failure_tolerance, :penalty_per_failure,
+      :full_refund_threshold, :bonus_threshold,
+      :verification_start_time, :verification_end_time, :re_verification_allowed,
+      :mission_requires_host_approval,
+      :host_bank, :host_account, :host_account_holder,
+      :certification_goal, :daily_goals, :reward_policy,
       :active_rate_threshold,
       :sluggish_rate_threshold,
       :non_participating_failures_threshold,
-      :failure_tolerance
+      :thumbnail_image,
+      days: []
     )
   end
 

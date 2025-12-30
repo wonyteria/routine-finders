@@ -1,0 +1,342 @@
+<div class="space-y-8">
+  <div class="bg-white rounded-[40px] border border-slate-200 shadow-xl shadow-slate-200/40 p-8 lg:p-12">
+    <div class="flex items-center gap-4 mb-8">
+      <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </div>
+      <div>
+        <h2 class="text-2xl font-black text-slate-900">챌린지 설정</h2>
+        <p class="text-sm font-medium text-slate-400">챌린지 정보를 수정하고 관리 설정을 조정하세요</p>
+      </div>
+    </div>
+
+    <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings"), method: :patch, class: "space-y-10", data: { controller: "cost-type" } do |f| %>
+      
+      <!-- Basic Information Section -->
+      <div class="space-y-6">
+        <div class="flex items-center gap-3 pb-4 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          </div>
+          <h3 class="text-lg font-black text-slate-900">기본 정보</h3>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6">
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">챌린지 제목</label>
+            <%= f.text_field :title, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold text-lg focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">한 줄 요약</label>
+            <%= f.text_field :summary, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">상세 설명</label>
+            <%= f.text_area :description, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[24px] font-medium focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none min-h-[200px]" %>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">호스트 소개</label>
+            <%= f.text_area :custom_host_bio, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[24px] font-medium focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none min-h-[120px]" %>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">대표 이미지</label>
+            <div class="relative">
+              <%= f.file_field :thumbnail_image, class: "w-full p-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[24px] font-medium focus:bg-white focus:border-indigo-500/20 transition-all outline-none file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schedule Section -->
+      <div class="space-y-6">
+        <div class="flex items-center gap-3 pb-4 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-lg font-black text-slate-900">일정 설정</h3>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">시작일</label>
+            <%= f.date_field :start_date, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all outline-none" %>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">종료일</label>
+            <%= f.date_field :end_date, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold focus:bg-white focus:border-emerald-500/20 focus:ring-4 focus:ring-emerald-500/5 transition-all outline-none" %>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">인증 요일</label>
+          <div class="flex flex-wrap gap-3">
+            <% ["월", "화", "수", "목", "금", "토", "일"].each do |day| %>
+              <label class="flex items-center gap-2 px-4 py-3 bg-slate-50 rounded-[16px] cursor-pointer hover:bg-indigo-50 transition-all">
+                <%= check_box_tag "challenge[days][]", day, challenge.days&.include?(day), class: "w-5 h-5 rounded-lg text-indigo-600 focus:ring-2 focus:ring-indigo-500" %>
+                <span class="font-bold text-sm text-slate-700"><%= day %></span>
+              </label>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Settings -->
+      <div class="space-y-6">
+        <div class="flex items-center gap-3 pb-4 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-black text-slate-900">인증 설정</h3>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">인증 시작 시간</label>
+            <%= f.time_field :verification_start_time, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold focus:bg-white focus:border-purple-500/20 focus:ring-4 focus:ring-purple-500/5 transition-all outline-none" %>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">인증 종료 시간</label>
+            <%= f.time_field :verification_end_time, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold focus:bg-white focus:border-purple-500/20 focus:ring-4 focus:ring-purple-500/5 transition-all outline-none" %>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="flex items-center justify-between p-5 bg-slate-50 rounded-[24px] cursor-pointer hover:bg-purple-50 transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-purple-600 group-hover:bg-purple-100 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </div>
+              <div>
+                <p class="font-black text-sm text-slate-900">재인증 허용</p>
+                <p class="text-xs font-medium text-slate-400">거절 시 당일 재시도 가능</p>
+              </div>
+            </div>
+            <%= f.check_box :re_verification_allowed, class: "w-12 h-6 rounded-full appearance-none bg-slate-200 checked:bg-purple-600 relative cursor-pointer transition-colors before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6" %>
+          </label>
+
+          <label class="flex items-center justify-between p-5 bg-slate-50 rounded-[24px] cursor-pointer hover:bg-amber-50 transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-amber-600 group-hover:bg-amber-100 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              </div>
+              <div>
+                <p class="font-black text-sm text-slate-900">호스트 승인제</p>
+                <p class="text-xs font-medium text-slate-400">인증물을 직접 검토 후 승인</p>
+              </div>
+            </div>
+            <%= f.check_box :mission_requires_host_approval, class: "w-12 h-6 rounded-full appearance-none bg-slate-200 checked:bg-amber-500 relative cursor-pointer transition-colors before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform checked:before:translate-x-6" %>
+          </label>
+        </div>
+      </div>
+
+      <!-- Cost & Account Settings -->
+      <div class="space-y-6">
+        <div class="flex items-center gap-3 pb-4 border-b border-slate-200">
+          <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-black text-slate-900">비용 설정</h3>
+        </div>
+
+        <!-- Cost Type Selector -->
+        <div class="space-y-3">
+          <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">참가 방식</label>
+          <div class="grid grid-cols-3 gap-4">
+            <% [
+              { id: "free", label: "무료", desc: "자유로운 참여", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
+              { id: "fee", label: "참가비", desc: "수익 창출형", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2" },
+              { id: "deposit", label: "보증금", desc: "동기 부여형", icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" }
+            ].each do |cost| %>
+              <label class="relative cursor-pointer">
+                <%= f.radio_button :cost_type, cost[:id], 
+                    class: "peer sr-only", 
+                    data: { action: "change->cost-type#toggle" } %>
+                <div class="p-6 border-2 border-slate-200 peer-checked:border-amber-500 peer-checked:bg-amber-50 rounded-[24px] text-center space-y-2 transition-all hover:border-amber-300 group">
+                  <div class="flex justify-center text-slate-300 peer-checked:text-amber-600 group-hover:text-amber-400 transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= cost[:icon] %>"/></svg>
+                  </div>
+                  <div>
+                    <p class="font-black text-sm text-slate-900"><%= cost[:label] %></p>
+                    <p class="text-xs font-medium text-slate-400"><%= cost[:desc] %></p>
+                  </div>
+                </div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Cost Fields (shown when not free) -->
+        <div class="space-y-6 <%= challenge.cost_type_free? ? 'hidden' : '' %>" data-cost-fields>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">참가 금액</label>
+              <%= f.number_field :amount, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold text-lg focus:bg-white focus:border-amber-500/20 focus:ring-4 focus:ring-amber-500/5 transition-all outline-none" %>
+            </div>
+
+            <div class="space-y-3">
+              <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">최대 실패 허용</label>
+              <%= f.number_field :failure_tolerance, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold text-lg focus:bg-white focus:border-amber-500/20 focus:ring-4 focus:ring-amber-500/5 transition-all outline-none" %>
+            </div>
+
+            <div class="space-y-3 <%= challenge.cost_type_deposit? ? '' : 'hidden' %>" data-penalty-field>
+              <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">실패 차감액</label>
+              <%= f.number_field :penalty_per_failure, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold text-lg focus:bg-white focus:border-amber-500/20 focus:ring-4 focus:ring-amber-500/5 transition-all outline-none" %>
+              <p class="text-xs font-medium text-slate-400 pl-2">보증금 타입에서만 사용됩니다</p>
+            </div>
+
+            <div class="space-y-3">
+              <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">최대 참여 인원</label>
+              <%= f.number_field :max_participants, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold text-lg focus:bg-white focus:border-amber-500/20 focus:ring-4 focus:ring-amber-500/5 transition-all outline-none" %>
+            </div>
+          </div>
+
+          <!-- Achievement Benefit Thresholds -->
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <h4 class="text-base font-black text-slate-900">달성 혜택 기준</h4>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Full Refund Threshold -->
+              <div class="p-5 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[24px] border border-emerald-100 space-y-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-emerald-500/30">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2"/></svg>
+                  </div>
+                  <p class="text-xs font-black text-emerald-700 uppercase tracking-wider">전액 환급</p>
+                </div>
+                <%= f.number_field :full_refund_threshold, 
+                    step: 0.01, 
+                    min: 0, 
+                    max: 1,
+                    value: challenge.full_refund_threshold || 0.8,
+                    class: "w-full p-3 bg-white border-2 border-emerald-200 rounded-xl font-black text-xl text-emerald-600 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-400/20 transition-all outline-none text-center" %>
+                <p class="text-[10px] font-medium text-slate-600 leading-relaxed">이 비율 이상 달성 시 전액 환급</p>
+              </div>
+
+              <!-- Bonus Threshold -->
+              <div class="p-5 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[24px] border border-indigo-100 space-y-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-xl bg-indigo-500 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-indigo-500/30">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                  </div>
+                  <p class="text-xs font-black text-indigo-700 uppercase tracking-wider">추가 상금</p>
+                </div>
+                <%= f.number_field :bonus_threshold, 
+                    step: 0.01, 
+                    min: 0, 
+                    max: 1,
+                    value: challenge.bonus_threshold || 1.0,
+                    class: "w-full p-3 bg-white border-2 border-indigo-200 rounded-xl font-black text-xl text-indigo-600 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-400/20 transition-all outline-none text-center" %>
+                <p class="text-[10px] font-medium text-slate-600 leading-relaxed">이 비율 이상 달성 시 추가 상금</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 bg-amber-50 rounded-[24px] border border-amber-100 space-y-4">
+            <p class="text-sm font-black text-amber-900">정산 계좌 정보</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-amber-700">은행명</label>
+                <%= f.text_field :host_bank, class: "w-full p-3 bg-white border border-amber-200 rounded-xl font-medium text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all outline-none" %>
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-amber-700">예금주</label>
+                <%= f.text_field :host_account_holder, class: "w-full p-3 bg-white border border-amber-200 rounded-xl font-medium text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all outline-none" %>
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold text-amber-700">계좌번호</label>
+                <%= f.text_field :host_account, class: "w-full p-3 bg-white border border-amber-200 rounded-xl font-medium text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all outline-none" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Participant Status Classification -->
+      <div class="space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-black text-slate-900">참가자 상태 분류 기준</h3>
+              <p class="text-xs font-medium text-slate-400">참가자 탭에서 자동으로 상태를 분류하는 기준을 설정합니다</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Classification Info -->
+        <div class="p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-[24px] border border-slate-200 space-y-4">
+          <p class="text-sm font-black text-slate-900">📊 상태 분류 로직</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="p-4 bg-white rounded-xl border border-orange-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">🔥</span>
+                <p class="text-sm font-black text-orange-600">달성 중</p>
+              </div>
+              <p class="text-xs font-medium text-slate-600">연속 실패 0회 & 달성률 ≥ 활발 기준</p>
+            </div>
+            <div class="p-4 bg-white rounded-xl border border-amber-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">⚠️</span>
+                <p class="text-sm font-black text-amber-600">부진</p>
+              </div>
+              <p class="text-xs font-medium text-slate-600">연속 실패 > 0 또는 달성률 < 활발 기준</p>
+            </div>
+            <div class="p-4 bg-white rounded-xl border border-slate-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">❌</span>
+                <p class="text-sm font-black text-slate-400">미참여</p>
+              </div>
+              <p class="text-xs font-medium text-slate-600">연속 실패 ≥ 미참여 기준 또는 달성률 < 부진 기준</p>
+            </div>
+            <div class="p-4 bg-white rounded-xl border border-red-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-lg">☠️</span>
+                <p class="text-sm font-black text-red-600">탈락</p>
+              </div>
+              <p class="text-xs font-medium text-slate-600">총 실패 횟수 ≥ 최대 실패 허용</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-3">
+            <label class="text-xs font-black text-orange-600 uppercase tracking-widest pl-2">🔥 달성 중 기준 (%)</label>
+            <%= f.number_field :active_rate_threshold, step: 0.01, value: challenge.active_rate_threshold || 0.8, class: "w-full p-5 bg-orange-50 border-2 border-orange-200 rounded-[24px] font-bold text-lg focus:bg-white focus:border-orange-500/40 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none" %>
+            <p class="text-xs font-medium text-slate-500 pl-2">이 달성률 이상이면 <span class="font-black text-orange-600">달성 중</span> 상태</p>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-amber-600 uppercase tracking-widest pl-2">⚠️ 부진 기준 (%)</label>
+            <%= f.number_field :sluggish_rate_threshold, step: 0.01, value: challenge.sluggish_rate_threshold || 0.4, class: "w-full p-5 bg-amber-50 border-2 border-amber-200 rounded-[24px] font-bold text-lg focus:bg-white focus:border-amber-500/40 focus:ring-4 focus:ring-amber-500/10 transition-all outline-none" %>
+            <p class="text-xs font-medium text-slate-500 pl-2">이 달성률 미만이면 <span class="font-black text-slate-600">미참여</span> 상태</p>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-xs font-black text-slate-600 uppercase tracking-widest pl-2">❌ 미참여 탈락 기준</label>
+            <%= f.number_field :non_participating_failures_threshold, value: challenge.non_participating_failures_threshold || 5, class: "w-full p-5 bg-slate-50 border-2 border-slate-200 rounded-[24px] font-bold text-lg focus:bg-white focus:border-slate-500/40 focus:ring-4 focus:ring-slate-500/10 transition-all outline-none" %>
+            <p class="text-xs font-medium text-slate-500 pl-2">연속 <span class="font-black text-slate-600">N회</span> 미인증 시 미참여 상태</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex items-center gap-4 pt-6">
+        <%= f.submit "변경사항 저장", class: "px-8 py-5 bg-indigo-600 text-white rounded-[24px] font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all cursor-pointer" %>
+        <%= link_to "취소", hosted_challenge_path(challenge, tab: "dashboard"), class: "px-8 py-5 bg-slate-100 text-slate-600 rounded-[24px] font-black text-lg hover:bg-slate-200 transition-all" %>
+      </div>
+    <% end %>
+  </div>
+</div>

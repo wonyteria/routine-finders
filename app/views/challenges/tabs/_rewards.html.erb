@@ -1,0 +1,125 @@
+<div class="space-y-8">
+  <% 
+    reward_policy_data = challenge.reward_policy.is_a?(String) ? (JSON.parse(challenge.reward_policy) rescue []) : challenge.reward_policy 
+  %>
+  
+  <% if reward_policy_data.present? && reward_policy_data.is_a?(Array) && reward_policy_data.any? %>
+    <!-- Rewards Section -->
+    <div class="space-y-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-slate-900">우승 혜택</h2>
+          <p class="text-sm font-medium text-slate-400">챌린지를 성공적으로 완료한 참여자에게 주어지는 보상</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <% reward_policy_data.each_with_index do |reward, index| %>
+          <div class="relative overflow-hidden group">
+            <div class="absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br from-amber-400/10 to-orange-400/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+            <div class="relative p-8 bg-gradient-to-br from-amber-50 to-orange-50 rounded-[32px] border border-amber-100 space-y-4 hover:shadow-xl hover:shadow-amber-500/10 transition-all">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center text-xl font-black shadow-lg shadow-amber-500/30">
+                  <%= index + 1 %>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-amber-600 uppercase tracking-wider">순위</p>
+                  <p class="text-lg font-black text-slate-900"><%= reward['rank'] %></p>
+                </div>
+              </div>
+              
+              <div class="pt-4 border-t border-amber-200/50">
+                <p class="text-xs font-bold text-amber-700 mb-2">혜택</p>
+                <p class="text-2xl font-black text-amber-600 mb-3"><%= reward['reward'] %></p>
+                <% if reward['description'].present? %>
+                  <p class="text-sm font-medium text-slate-600 leading-relaxed"><%= reward['description'] %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Reward Info -->
+    <div class="p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[32px] border border-indigo-100">
+      <div class="flex items-start gap-4">
+        <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-indigo-600 shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="space-y-3">
+          <p class="text-sm font-black text-indigo-900">혜택 지급 안내</p>
+          <ul class="space-y-2 text-sm font-medium text-slate-600">
+            <li class="flex items-start gap-2">
+              <span class="text-indigo-500 mt-0.5">•</span>
+              <span>우승 혜택은 챌린지 종료 후 호스트가 직접 지급합니다.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-indigo-500 mt-0.5">•</span>
+              <span>순위는 달성률, 연속 달성일 등을 종합하여 결정됩니다.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-indigo-500 mt-0.5">•</span>
+              <span>혜택 지급과 관련된 모든 책임은 호스트에게 있으며, Routine Finders는 개입하지 않습니다.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <!-- No Rewards -->
+    <div class="text-center py-20">
+      <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
+      </div>
+      <h3 class="text-xl font-black text-slate-900 mb-2">설정된 우승 혜택이 없습니다</h3>
+      <p class="text-sm font-medium text-slate-400">이 챌린지는 별도의 우승 혜택이 제공되지 않습니다.</p>
+    </div>
+  <% end %>
+
+  <!-- Achievement Benefits -->
+  <% unless challenge.cost_type_free? %>
+    <div class="space-y-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <h2 class="text-2xl font-black text-slate-900">달성 혜택</h2>
+          <p class="text-sm font-medium text-slate-400">목표 달성 시 받을 수 있는 기본 혜택</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[32px] border border-emerald-100">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black shadow-lg shadow-emerald-500/30">
+              <%= ((challenge.full_refund_threshold || 0.8) * 100).to_i %>%
+            </div>
+            <p class="text-lg font-black text-slate-900">달성 시</p>
+          </div>
+          <p class="text-3xl font-black text-emerald-600 mb-2">전액 환급</p>
+          <p class="text-sm font-medium text-slate-600">
+            <%= ((challenge.full_refund_threshold || 0.8) * 100).to_i %>% 이상 달성 시 참가 보증금을 100% 돌려받습니다
+          </p>
+        </div>
+
+        <div class="p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[32px] border border-indigo-100">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center font-black shadow-lg shadow-indigo-500/30">
+              <%= ((challenge.bonus_threshold || 1.0) * 100).to_i %>%
+            </div>
+            <p class="text-lg font-black text-slate-900">완벽 달성 시</p>
+          </div>
+          <p class="text-3xl font-black text-indigo-600 mb-2">추가 상금</p>
+          <p class="text-sm font-medium text-slate-600">
+            <%= ((challenge.bonus_threshold || 1.0) * 100).to_i %>% 달성 시 탈락자의 보증금을 분배받습니다
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
