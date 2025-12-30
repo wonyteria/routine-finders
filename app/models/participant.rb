@@ -46,6 +46,21 @@ class Participant < ApplicationRecord
     status == "failed"
   end
 
+  def status_badge_info
+    case status.to_sym
+    when :achieving
+      { label: "🔥 달성 중", class: "bg-orange-50 text-orange-600 border-orange-100" }
+    when :lagging
+      { label: "⚠️ 부진", class: "bg-amber-50 text-amber-600 border-amber-100" }
+    when :inactive
+      { label: "❌ 미참여", class: "bg-slate-50 text-slate-400 border-slate-100" }
+    when :failed
+      { label: "☠️ 탈락", class: "bg-red-50 text-red-600 border-red-100" }
+    else
+      { label: "알 수 없음", class: "bg-slate-50 text-slate-400 border-slate-100" }
+    end
+  end
+
   private
 
   def set_defaults
@@ -68,21 +83,6 @@ class Participant < ApplicationRecord
       update(status: :lagging)
     else
       update(status: :achieving)
-    end
-  end
-
-  def status_badge_info
-    case status.to_sym
-    when :achieving
-      { label: "🔥 달성 중", class: "bg-orange-50 text-orange-600 border-orange-100" }
-    when :lagging
-      { label: "⚠️ 부진", class: "bg-amber-50 text-amber-600 border-amber-100" }
-    when :inactive
-      { label: "❌ 미참여", class: "bg-slate-50 text-slate-400 border-slate-100" }
-    when :failed
-      { label: "☠️ 탈락", class: "bg-red-50 text-red-600 border-red-100" }
-    else
-      { label: "알 수 없음", class: "bg-slate-50 text-slate-400 border-slate-100" }
     end
   end
 end
