@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_29_153028) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_30_075436) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -75,15 +75,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_153028) do
   end
 
   create_table "challenges", force: :cascade do |t|
+    t.integer "active_rate_threshold", default: 80
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
     t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
     t.string "category"
+    t.text "certification_goal"
     t.decimal "completion_rate", precision: 5, scale: 2, default: "0.0"
     t.integer "cost_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.integer "current_participants", default: 0, null: false
     t.text "custom_host_bio"
+    t.json "daily_goals"
     t.json "days", default: []
     t.text "description"
     t.date "end_date", null: false
@@ -110,12 +113,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_153028) do
     t.boolean "mission_requires_host_approval", default: false
     t.integer "mission_weekly_count"
     t.integer "mode", default: 0, null: false
+    t.integer "non_participating_failures_threshold", default: 3
     t.integer "original_challenge_id"
     t.integer "penalty_per_failure", default: 0
     t.string "purpose"
     t.boolean "re_verification_allowed", default: false, null: false
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
+    t.json "reward_policy"
+    t.integer "sluggish_rate_threshold", default: 50
     t.date "start_date", null: false
     t.text "summary"
     t.string "thumbnail"

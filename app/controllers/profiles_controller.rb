@@ -37,6 +37,33 @@ class ProfilesController < ApplicationController
     end
   end
 
+  def save_account
+    @user = current_user
+    if @user.update(
+      saved_bank_name: params[:bank_name],
+      saved_account_number: params[:account_number],
+      saved_account_holder: params[:account_holder]
+    )
+      render json: { status: "success", message: "계좌 정보가 저장되었습니다." }
+    else
+      render json: { status: "error", message: "저장에 실패했습니다." }, status: :unprocessable_entity
+    end
+  end
+
+  def get_account
+    @user = current_user
+    if @user.has_saved_account?
+      render json: {
+        status: "success",
+        bank_name: @user.saved_bank_name,
+        account_number: @user.saved_account_number,
+        account_holder: @user.saved_account_holder
+      }
+    else
+      render json: { status: "error", message: "저장된 계좌 정보가 없습니다." }, status: :not_found
+    end
+  end
+
   private
 
   def profile_params

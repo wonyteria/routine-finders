@@ -1,5 +1,39 @@
 <div class="space-y-10">
   <!-- Main Description -->
+  <!-- Rewards & Benefits -->
+  <% if challenge.reward_policy.present? && JSON.parse(challenge.reward_policy).any? %>
+    <div class="space-y-6">
+      <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+        <div class="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
+        </div>
+        챌린지 우승 혜택
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% JSON.parse(challenge.reward_policy).each do |reward| %>
+          <div class="p-6 bg-white rounded-[32px] border border-slate-100 shadow-sm flex items-start gap-5 hover:shadow-md transition-all group">
+            <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center shrink-0 group-hover:bg-amber-50 transition-colors">
+              <% if reward["rank"].include?("1") || reward["rank"].downcase.include?("first") %>
+                <span class="text-2xl">🥇</span>
+              <% elsif reward["rank"].include?("2") || reward["rank"].downcase.include?("second") %>
+                <span class="text-2xl">🥈</span>
+              <% elsif reward["rank"].include?("3") || reward["rank"].downcase.include?("third") %>
+                <span class="text-2xl">🥉</span>
+              <% else %>
+                <span class="text-2xl">🎁</span>
+              <% end %>
+            </div>
+            <div class="space-y-1">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= reward["rank"] %></p>
+              <p class="text-lg font-black text-slate-900 line-clamp-2"><%= reward["prize"] %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="prose prose-slate max-w-none">
     <div class="space-y-6">
       <h2 class="text-2xl font-black text-slate-900">챌린지 상세 소개</h2>

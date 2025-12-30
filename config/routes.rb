@@ -62,7 +62,7 @@ Rails.application.routes.draw do
   end
 
   # 호스트 전용 챌린지 관리
-  resources :hosted_challenges, only: [ :index, :show ]
+  resources :hosted_challenges, only: [ :index, :show, :update ]
 
   resources :gatherings, only: [ :index ]
 
@@ -72,7 +72,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :profile, only: [ :show, :edit, :update ]
+  resource :profile, only: [ :show, :edit, :update ] do
+    collection do
+      post :save_account
+      get :get_account
+    end
+  end
 
   resources :rankings, only: [ :index ]
 

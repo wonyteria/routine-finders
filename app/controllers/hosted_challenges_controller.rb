@@ -27,7 +27,10 @@ class HostedChallengesController < ApplicationController
     @stats = {
       total_participants: @challenge.current_participants,
       active_today: @challenge.participants.where(today_verified: true).count,
+      unverified_today: @challenge.participants.where(today_verified: [ false, nil ]).count,
       avg_completion_rate: @challenge.participants.average(:completion_rate)&.round(1) || 0,
+      streak_keepers: @challenge.participants.where("current_streak > 0").count,
+      dropped_out: @challenge.participants.failed.count,
       pending_verifications: @challenge.verification_logs.pending.count,
       pending_applications: @challenge.challenge_applications.pending.count
     }
@@ -47,7 +50,25 @@ class HostedChallengesController < ApplicationController
     end
   end
 
+  def update
+    @challenge = current_user.hosted_challenges.find(params[:id])
+    if @challenge.update(challenge_params)
+      redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), notice: "설정이 저장되었습니다."
+    else
+      redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), alert: "저장에 실패했습니다."
+    end
+  end
+
   private
+
+  def challenge_params
+    params.require(:challenge).permit(
+      :active_rate_threshold,
+      :sluggish_rate_threshold,
+      :non_participating_failures_threshold,
+      :failure_tolerance
+    )
+  end
 
   def load_dashboard_data
     @participants = @challenge.participants.includes(:user, :verification_logs).order(created_at: :desc)
@@ -70,6 +91,21 @@ class HostedChallengesController < ApplicationController
   end
 
   def load_participants_data
-    @participants = @challenge.participants.includes(:user, :verification_logs).order(created_at: :desc)
+    @participants = @challenge.participants.includes(:user, :verification_logs)
+
+    # 필터
+    if params[:status].present?
+      @participants = @participants.where(status: params[:status])
+    end
+
+    # 정렬
+    case params[:sort]
+    when "achievement_low"
+      @participants = @participants.order(completion_rate: :asc)
+    when "missed_recent"
+      @participants = @participants.order(consecutive_failures: :desc)
+    else
+      @participants = @participants.order(created_at: :desc)
+    end
   end
 end

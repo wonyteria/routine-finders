@@ -30,26 +30,34 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-5 border-t border-slate-200">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border-t border-slate-200">
       <div class="p-6 text-center border-r border-slate-200">
         <p class="text-3xl font-black text-indigo-600"><%= @stats[:total_participants] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase mt-1">참가자</p>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">총 참가자</p>
       </div>
       <div class="p-6 text-center border-r border-slate-200">
-        <p class="text-3xl font-black text-green-600"><%= @stats[:active_today] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase mt-1">오늘 인증</p>
+        <div class="flex items-center justify-center gap-2">
+          <p class="text-2xl font-black text-green-600"><%= @stats[:active_today] %></p>
+          <span class="text-slate-300">/</span>
+          <p class="text-2xl font-black text-slate-400"><%= @stats[:unverified_today] %></p>
+        </div>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">오늘 완료/미완료</p>
       </div>
       <div class="p-6 text-center border-r border-slate-200">
         <p class="text-3xl font-black text-slate-900"><%= @stats[:avg_completion_rate] %>%</p>
-        <p class="text-xs font-bold text-slate-400 uppercase mt-1">평균 달성률</p>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">평균 달성률</p>
       </div>
       <div class="p-6 text-center border-r border-slate-200">
-        <p class="text-3xl font-black <%= @stats[:pending_verifications] > 0 ? 'text-amber-600' : 'text-slate-300' %>"><%= @stats[:pending_verifications] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase mt-1">인증 대기</p>
+        <p class="text-3xl font-black text-orange-500"><%= @stats[:streak_keepers] %></p>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">스트릭 유지</p>
+      </div>
+      <div class="p-6 text-center border-r border-slate-200">
+        <p class="text-3xl font-black text-red-600"><%= @stats[:dropped_out] %></p>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">탈락 인원</p>
       </div>
       <div class="p-6 text-center">
-        <p class="text-3xl font-black <%= @stats[:pending_applications] > 0 ? 'text-red-600' : 'text-slate-300' %>"><%= @stats[:pending_applications] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase mt-1">신청 대기</p>
+        <p class="text-3xl font-black <%= @stats[:pending_verifications] > 0 ? 'text-amber-600' : 'text-slate-300' %>"><%= @stats[:pending_verifications] %></p>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">인증 대기</p>
       </div>
     </div>
 
