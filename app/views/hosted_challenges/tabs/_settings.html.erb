@@ -1,4 +1,4 @@
-<div class="space-y-8">
+<div class="space-y-8" data-controller="challenge-settings">
   <div class="bg-white rounded-[40px] border border-slate-200 shadow-xl shadow-slate-200/40 p-8 lg:p-12">
     <div class="flex items-center gap-4 mb-8">
       <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings"), method: :patch, class: "space-y-10", data: { controller: "cost-type" } do |f| %>
+    <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings"), method: :patch, class: "space-y-10", data: { controller: "cost-type", challenge_settings_target: "form" } do |f| %>
       
       <!-- Basic Information Section -->
       <div class="space-y-6">
@@ -363,8 +363,72 @@
 
       <!-- Submit Button -->
       <div class="flex items-center gap-4 pt-6">
-        <%= f.submit "변경사항 저장", class: "px-8 py-5 bg-indigo-600 text-white rounded-[24px] font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all cursor-pointer" %>
+        <button type="button" 
+                data-action="click->challenge-settings#showSummary"
+                class="px-8 py-5 bg-indigo-600 text-white rounded-[24px] font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all cursor-pointer">
+          변경사항 저장
+        </button>
         <%= link_to "취소", hosted_challenge_path(challenge, tab: "dashboard"), class: "px-8 py-5 bg-slate-100 text-slate-600 rounded-[24px] font-black text-lg hover:bg-slate-200 transition-all" %>
+      </div>
+
+      <!-- Modal -->
+      <div class="fixed inset-0 z-[100] hidden bg-slate-900/40 backdrop-blur-md items-center justify-center p-6" 
+           data-challenge-settings-target="modal">
+        <div class="bg-white rounded-[40px] p-8 lg:p-12 max-w-2xl w-full shadow-2xl space-y-8 max-h-[90vh] overflow-y-auto custom-scrollbar">
+          <div class="text-center space-y-2">
+            <h3 class="text-2xl font-black text-slate-900">변경사항 요약</h3>
+            <p class="text-sm font-medium text-slate-400">수정된 내용을 확인하고 필요시 공지사항을 발송하세요.</p>
+          </div>
+
+          <!-- Changes List -->
+          <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100 space-y-4" 
+               data-challenge-settings-target="summaryContent">
+            <!-- Changes injected here -->
+          </div>
+
+          <!-- Announcement Section -->
+          <div class="space-y-4 pt-4 border-t border-slate-100">
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <input type="checkbox" 
+                     data-challenge-settings-target="announcementCheckbox"
+                     data-action="change->challenge-settings#toggleAnnouncementSection"
+                     class="w-6 h-6 rounded-lg text-indigo-600 border-2 border-slate-200 focus:ring-indigo-500 transition-all">
+              <span class="font-black text-slate-700 group-hover:text-indigo-600 transition-colors text-lg">참여자들에게 공지사항 보내기</span>
+            </label>
+
+            <div class="hidden space-y-4 animate-in fade-in slide-in-from-top-4 duration-300" 
+                 data-challenge-settings-target="announcementSection">
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">공지 제목</label>
+                <input type="text" 
+                       data-challenge-settings-target="announcementTitle"
+                       class="w-full p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-bold focus:bg-white focus:border-indigo-500/20 transition-all outline-none" 
+                       placeholder="공지 제목을 입력하세요">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">공지 내용</label>
+                <textarea data-challenge-settings-target="announcementContent"
+                          class="w-full p-5 bg-slate-50 border-2 border-transparent rounded-2xl font-medium focus:bg-white focus:border-indigo-500/20 transition-all outline-none min-h-[150px]" 
+                          placeholder="변경 내용에 대한 상세 공지를 작성하세요"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-4 pt-4">
+            <button type="button" 
+                    data-action="click->challenge-settings#hideModal"
+                    class="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black hover:bg-slate-200 transition-all">
+              돌아가기
+            </button>
+            <button type="button" 
+                    data-action="click->challenge-settings#submitWithAnnouncement"
+                    class="flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2">
+              저장 및 완료
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </button>
+          </div>
+        </div>
       </div>
     <% end %>
   </div>

@@ -2,40 +2,40 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "./application"
+import { application } from "controllers/application"
 
-import ApplicationFormController from "./application_form_controller"
+import ApplicationFormController from "controllers/application_form_controller"
 application.register("application-form", ApplicationFormController)
 
-import AuthTabsController from "./auth_tabs_controller"
+import AuthTabsController from "controllers/auth_tabs_controller"
 application.register("auth-tabs", AuthTabsController)
 
-import BadgeAwardController from "./badge_award_controller"
+import BadgeAwardController from "controllers/badge_award_controller"
 application.register("badge-award", BadgeAwardController)
 
-import ChallengeFormController from "./challenge_form_controller"
+import ChallengeFormController from "controllers/challenge_form_controller"
 application.register("challenge-form", ChallengeFormController)
 
-import ChallengeSettingsController from "./challenge_settings_controller"
-application.register("challenge-settings", ChallengeSettingsController)
-
-import CostTypeController from "./cost_type_controller"
+import CostTypeController from "controllers/cost_type_controller"
 application.register("cost-type", CostTypeController)
 
-import FlashController from "./flash_controller"
+import FlashController from "controllers/flash_controller"
 application.register("flash", FlashController)
 
-import HelloController from "./hello_controller"
+import HelloController from "controllers/hello_controller"
 application.register("hello", HelloController)
 
-import ModalController from "./modal_controller"
+import ModalController from "controllers/modal_controller"
 application.register("modal", ModalController)
 
-import RatingController from "./rating_controller"
+import RatingController from "controllers/rating_controller"
 application.register("rating", RatingController)
 
-import TabsController from "./tabs_controller"
+import TabsController from "controllers/tabs_controller"
 application.register("tabs", TabsController)
 
-import ThresholdInputController from "./threshold_input_controller"
+import ThresholdInputController from "controllers/threshold_input_controller"
 application.register("threshold-input", ThresholdInputController)
+
+import ChallengeSettingsController from "controllers/challenge_settings_controller"
+application.register("challenge-settings", ChallengeSettingsController)

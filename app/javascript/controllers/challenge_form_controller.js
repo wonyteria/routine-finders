@@ -375,7 +375,15 @@ export default class extends Controller {
         const hiddenInput = this.element.querySelector("#challenge_daily_goals_hidden")
 
         if (hiddenInput) {
-            let dailyGoals = JSON.parse(hiddenInput.value || "{}")
+            let dailyGoals = {}
+            try {
+                dailyGoals = JSON.parse(hiddenInput.value || "{}")
+                if (typeof dailyGoals === "string") {
+                    dailyGoals = JSON.parse(dailyGoals)
+                }
+            } catch (e) {
+                dailyGoals = {}
+            }
             dailyGoals[day] = value
             hiddenInput.value = JSON.stringify(dailyGoals)
         }
@@ -391,16 +399,28 @@ export default class extends Controller {
             const amount = this.element.querySelector("#challenge_amount").value
             const maxParticipants = this.element.querySelector("#max-participants-display").textContent
 
-            const missionGoal = this.element.querySelector("#challenge_certification_goal").value
-            const dailyGoalsHidden = this.element.querySelector("#challenge_daily_goals_hidden").value
-            const dailyGoals = JSON.parse(dailyGoalsHidden || "{}")
-            const hasDailyGoals = Object.values(dailyGoals).some(g => g.trim() !== "")
+            const missionGoal = this.element.querySelector("#challenge_certification_goal")?.value || ""
+            const dailyGoalsHidden = this.element.querySelector("#challenge_daily_goals_hidden")?.value || "{}"
+
+            let dailyGoals = {}
+            try {
+                dailyGoals = JSON.parse(dailyGoalsHidden)
+                // Handle potential double-encoding
+                if (typeof dailyGoals === "string") {
+                    dailyGoals = JSON.parse(dailyGoals)
+                }
+            } catch (e) {
+                dailyGoals = {}
+            }
+
+            const isDailyMode = this.hasDailyGoalSectionTarget && !this.dailyGoalSectionTarget.classList.contains("hidden")
+            const hasDailyGoals = isDailyMode && dailyGoals && typeof dailyGoals === 'object' && Object.values(dailyGoals).some(g => g && g.trim() !== "")
 
             let missionSummary = ""
             if (hasDailyGoals) {
                 missionSummary = `<div class="mt-1 flex flex-wrap gap-1">`
                 Object.entries(dailyGoals).forEach(([day, goal]) => {
-                    if (goal.trim()) {
+                    if (goal && goal.trim()) {
                         missionSummary += `<span class="px-2 py-1 bg-indigo-50 text-[10px] font-bold text-indigo-600 rounded-md">${day}: ${goal}</span>`
                     }
                 })
@@ -491,7 +511,17 @@ export default class extends Controller {
 
     getRewardsSummary() {
         if (!this.hasRewardHiddenTarget) return '<p class="text-xs text-slate-400">설정된 혜택 없음</p>'
-        const rewards = JSON.parse(this.rewardHiddenTarget.value || "[]")
+
+        let rewards = []
+        try {
+            rewards = JSON.parse(this.rewardHiddenTarget.value || "[]")
+            if (typeof rewards === "string") {
+                rewards = JSON.parse(rewards)
+            }
+        } catch (e) {
+            rewards = []
+        }
+
         if (!Array.isArray(rewards) || rewards.length === 0) return '<p class="text-xs text-slate-400">설정된 혜택 없음</p>'
 
         let html = ""

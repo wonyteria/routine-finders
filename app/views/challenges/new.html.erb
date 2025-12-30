@@ -191,7 +191,7 @@
                     <!-- Fixed Goal Section -->
                     <div class="space-y-4" data-challenge-form-target="fixedGoalSection">
                       <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">전체 기간 공통 목표</label>
-                      <%= f.text_field :certification_goal, placeholder: "예: 아침 7시 이전 기상 사진 찍기", class: "w-full text-lg font-black p-6 bg-slate-50 border-2 border-transparent rounded-[28px] focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+                      <%= f.text_field :certification_goal, placeholder: "예: 아침 7시 이전 기상 사진 찍기", class: "w-full text-lg font-black p-6 bg-slate-50 border-2 border-transparent rounded-[28px] focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", id: "challenge_certification_goal" %>
                     </div>
 
                     <!-- Daily Goal Section -->
@@ -212,7 +212,7 @@
                           </div>
                         <% end %>
                       </div>
-                      <%= f.hidden_field :daily_goals, id: "challenge_daily_goals_hidden", value: @challenge.daily_goals.to_json %>
+                      <%= f.hidden_field :daily_goals, id: "challenge_daily_goals_hidden" %>
                     </div>
                   </div>
                 </div>
@@ -652,7 +652,7 @@
                       <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">참가 금액</label>
                       <div class="flex items-center gap-4 p-6 bg-slate-50 rounded-[32px] border-2 border-transparent focus-within:bg-white focus-within:border-indigo-500/20 focus-within:ring-4 focus-within:ring-indigo-500/5 transition-all shadow-inner group">
                         <div class="flex-1 flex items-center gap-2 min-w-0 pl-2">
-                          <%= f.hidden_field :amount, value: @challenge.amount || 10000, data: { challenge_form_target: "amountHidden" } %>
+                          <%= f.hidden_field :amount, value: @challenge.amount || 10000, data: { challenge_form_target: "amountHidden" }, id: "challenge_amount" %>
                           <input type="text" 
                                  value="<%= number_with_delimiter(@challenge.amount || 10000) %>"
                                  class="w-full text-3xl font-black p-0 border-none bg-transparent focus:ring-0 placeholder:text-slate-200 text-slate-900"
@@ -823,7 +823,7 @@
 
                   <div class="grid grid-cols-1 gap-6">
                     <!-- Reward Hidden Field -->
-                    <%= f.hidden_field :reward_policy, value: @challenge.reward_policy.blank? ? [].to_json : @challenge.reward_policy.to_json, data: { challenge_form_target: "rewardHidden" } %>
+                    <%= f.hidden_field :reward_policy, data: { challenge_form_target: "rewardHidden" } %>
 
                     <!-- Dynamic Rewards Container -->
                     <div id="rewards-container" class="space-y-4" data-challenge-form-target="rewardsContainer">

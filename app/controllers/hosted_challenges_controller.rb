@@ -68,10 +68,47 @@ class HostedChallengesController < ApplicationController
       params_hash[:sluggish_rate_threshold] = params_hash[:sluggish_rate_threshold].to_f / 100.0
     end
     
-    if @challenge.update(params_hash)
+    success = false
+    error_message = nil
+
+    begin
+      ActiveRecord::Base.transaction do
+        if @challenge.update(params_hash)
+          if params[:create_announcement] == "true" && params[:announcement_title].present? && params[:announcement_content].present?
+            announcement = @challenge.announcements.create!(
+              title: params[:announcement_title],
+              content: params[:announcement_content]
+            )
+            
+            # Notify all participants
+            @challenge.participants.each do |participant|
+              Notification.create!(
+                user: participant.user,
+                title: "[공지] #{@challenge.title}",
+                content: announcement.title,
+                link: challenge_path(@challenge, tab: "announcements"),
+                notification_type: :announcement
+              )
+            end
+          end
+          success = true
+        else
+          error_message = @challenge.errors.full_messages.join(', ')
+          raise ActiveRecord::Rollback
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      success = false
+      error_message = e.record.errors.full_messages.join(', ')
+    rescue => e
+      success = false
+      error_message = e.message
+    end
+
+    if success
       redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), notice: "설정이 저장되었습니다."
     else
-      redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), alert: "저장에 실패했습니다."
+      redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), alert: "저장에 실패했습니다#{error_message ? ': ' + error_message : ''}"
     end
   end
 

@@ -58,13 +58,13 @@ class AnnouncementsController < ApplicationController
   end
 
   def notify_participants
-    @challenge.participants.includes(:user).find_each do |participant|
+    @challenge.participants.each do |participant|
       Notification.create!(
         user: participant.user,
         notification_type: :announcement,
-        title: "새 공지사항",
-        message: "'#{@challenge.title}'에 새 공지사항이 등록되었습니다: #{@announcement.title}",
-        data: { challenge_id: @challenge.id, announcement_id: @announcement.id }
+        title: "[공지] #{@challenge.title}",
+        content: @announcement.title,
+        link: challenge_path(@challenge, tab: "announcements")
       )
     end
   end
