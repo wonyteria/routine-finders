@@ -55,3 +55,4 @@ export default class extends Controller {
         }
     }
 }
+// Force reload
