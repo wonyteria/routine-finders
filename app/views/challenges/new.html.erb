@@ -722,7 +722,12 @@
                                 max: 100,
                                 value: ((@challenge.full_refund_threshold || 0.8) * 100).to_i,
                                 class: "w-full text-5xl font-black bg-transparent border-none focus:ring-0 text-emerald-600 text-center outline-none",
-                                data: { action: "input->challenge-form#updateRefundThreshold" } %>
+                                data: { 
+                                  controller: "threshold-input",
+                                  threshold_input_min_value: 0,
+                                  threshold_input_max_value: 100,
+                                  action: "input->threshold-input#enforce keydown->threshold-input#preventInvalid"
+                                } %>
                             <span class="text-3xl font-black text-emerald-600">%</span>
                           </div>
                         </div>

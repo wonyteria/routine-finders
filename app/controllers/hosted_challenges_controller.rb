@@ -69,15 +69,6 @@ class HostedChallengesController < ApplicationController
     end
     
     if @challenge.update(params_hash)
-      # Create announcement if requested
-      if params[:create_announcement] == "true" && params[:announcement_content].present?
-        @challenge.announcements.create(
-          title: "챌린지 설정 변경 안내",
-          content: params[:announcement_content],
-          author_name: current_user.nickname || current_user.email
-        )
-      end
-      
       redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), notice: "설정이 저장되었습니다."
     else
       redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), alert: "저장에 실패했습니다."

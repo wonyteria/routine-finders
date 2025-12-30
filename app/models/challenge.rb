@@ -26,7 +26,7 @@ class Challenge < ApplicationRecord
   attr_accessor :save_account_to_profile
   attribute :certification_goal, :string
   attribute :daily_goals, :json, default: -> { {} }
-  attribute :reward_policy, :json, default: -> { {} }
+  attribute :reward_policy, :json, default: -> { [] }
 
   # Validations
   validates :title, presence: true

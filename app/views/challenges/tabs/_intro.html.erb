@@ -1,7 +1,21 @@
 <div class="space-y-10">
   <!-- Main Description -->
   <!-- Rewards & Benefits -->
-  <% if challenge.reward_policy.present? && JSON.parse(challenge.reward_policy).any? %>
+  <% 
+    reward_policy_data = challenge.reward_policy
+    if reward_policy_data.is_a?(String)
+      begin
+        reward_policy_data = JSON.parse(reward_policy_data)
+        # Handle potential double-encoding
+        reward_policy_data = JSON.parse(reward_policy_data) if reward_policy_data.is_a?(String)
+      rescue
+        reward_policy_data = []
+      end
+    end
+    reward_policy_data = [] unless reward_policy_data.is_a?(Array)
+  %>
+
+  <% if reward_policy_data.any? %>
     <div class="space-y-6">
       <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
         <div class="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600">
@@ -11,7 +25,7 @@
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <% JSON.parse(challenge.reward_policy).each do |reward| %>
+        <% reward_policy_data.each do |reward| %>
           <div class="p-6 bg-white rounded-[32px] border border-slate-100 shadow-sm flex items-start gap-5 hover:shadow-md transition-all group">
             <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center shrink-0 group-hover:bg-amber-50 transition-colors">
               <% if reward["rank"].include?("1") || reward["rank"].downcase.include?("first") %>
