@@ -769,6 +769,34 @@
                         <label class="text-[9px] font-black text-indigo-600/40 uppercase tracking-widest pl-1">계좌번호 (-제외)</label>
                         <%= f.text_field :host_account, placeholder: "숫자만 입력", data: { challenge_form_target: "accountNumber" }, class: "w-full p-3.5 bg-white/80 border border-indigo-100/50 rounded-xl font-bold text-xs text-slate-900 focus:bg-white focus:border-indigo-500/20 transition-all outline-none" %>
                       </div>
+                      
+                      <div class="space-y-1.5 <%= (@challenge.cost_type || 'deposit') == 'deposit' ? '' : 'hidden' %>" data-challenge-form-target="refundDateField">
+                        <label class="text-[9px] font-black text-indigo-600/40 uppercase tracking-widest pl-1">환급 예정일</label>
+                        <div class="relative">
+                          <% 
+                            # Calculate default refund date
+                            default_refund_date = if @challenge.refund_date.present?
+                              @challenge.refund_date
+                            elsif @challenge.end_date.present?
+                              # Set to last day of the month of end_date
+                              @challenge.end_date.end_of_month
+                            else
+                              # Default to end of next month
+                              (Date.current + 1.month).end_of_month
+                            end
+                          %>
+                          <%= f.date_field :refund_date, 
+                              value: default_refund_date,
+                              id: "challenge_refund_date_input",
+                              class: "w-full p-3.5 pr-10 bg-white/80 border border-indigo-100/50 rounded-xl font-bold text-xs text-slate-900 focus:bg-white focus:border-indigo-500/20 focus:ring-2 focus:ring-indigo-500/10 transition-all outline-none cursor-pointer hover:border-indigo-200" %>
+                          <div class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" onclick="document.getElementById('challenge_refund_date_input').showPicker()">
+                            <svg class="w-4 h-4 text-indigo-400 hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                          </div>
+                        </div>
+                        <p class="text-[9px] font-medium text-indigo-900/40 pl-1">📅 클릭하여 날짜를 변경할 수 있습니다</p>
+                      </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 pt-1">

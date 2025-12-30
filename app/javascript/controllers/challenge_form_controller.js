@@ -9,7 +9,8 @@ export default class extends Controller {
         "thumbnailPreview", "thumbnailInput",
         "invitationCodeSection", "summaryModal", "summaryContent",
         "hostBio", "missionGoalType", "fixedGoalSection", "dailyGoalSection",
-        "disclaimerFields", "rewardHidden", "rewardsContainer", "achievementThresholds"
+        "disclaimerFields", "rewardHidden", "rewardsContainer", "achievementThresholds",
+        "refundDateField"
     ]
 
     connect() {
@@ -193,6 +194,11 @@ export default class extends Controller {
         // Only show achievement thresholds for deposit-type challenges
         if (this.hasAchievementThresholdsTarget) {
             this.achievementThresholdsTarget.classList.toggle("hidden", type !== "deposit")
+        }
+
+        // Only show refund date for deposit-type challenges
+        if (this.hasRefundDateFieldTarget) {
+            this.refundDateFieldTarget.classList.toggle("hidden", type !== "deposit")
         }
 
         // Failure tolerance might be useful for all types besides maybe 'free'? 

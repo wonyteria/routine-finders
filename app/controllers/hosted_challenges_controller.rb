@@ -119,7 +119,7 @@ class HostedChallengesController < ApplicationController
       :title, :summary, :description, :custom_host_bio,
       :start_date, :end_date,
       :cost_type, :amount, :max_participants, :failure_tolerance, :penalty_per_failure,
-      :full_refund_threshold,
+      :full_refund_threshold, :refund_date,
       :verification_start_time, :verification_end_time, :re_verification_allowed,
       :mission_requires_host_approval,
       :host_bank, :host_account, :host_account_holder,

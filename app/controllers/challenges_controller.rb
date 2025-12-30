@@ -139,7 +139,7 @@ class ChallengesController < ApplicationController
       :is_private, :admission_type, :host_bank, :host_account, :host_account_holder,
       :v_photo, :v_simple, :v_metric, :v_url, :thumbnail_image, :save_account_to_profile,
       :certification_goal, :daily_goals, :reward_policy,
-      :full_refund_threshold,
+      :full_refund_threshold, :refund_date,
       days: [],
       meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
     )

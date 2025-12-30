@@ -24,6 +24,7 @@ export default class extends Controller {
             "challenge[penalty_per_failure]": "실패 차감액",
             "challenge[max_participants]": "최대 참여 인원",
             "challenge[full_refund_threshold]": "전액 환급 기준",
+            "challenge[refund_date]": "환급 예정일",
             "challenge[active_rate_threshold]": "달성 중 기준",
             "challenge[sluggish_rate_threshold]": "부진 기준",
             "challenge[non_participating_failures_threshold]": "미참여 탈락 기준"

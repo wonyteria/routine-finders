@@ -1,14 +1,15 @@
 <div class="space-y-10">
   <!-- Verification Rules -->
   <div class="space-y-6">
-    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-      <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       </div>
       인증 규칙
     </h2>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Verification Method -->
       <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
         <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
           <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -31,6 +32,21 @@
         </div>
       </div>
 
+      <!-- Verification Time -->
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">인증 가능 시간</p>
+          <p class="font-bold text-slate-900">
+            <%= challenge.verification_start_time&.strftime('%H:%M') || '00:00' %> - <%= challenge.verification_end_time&.strftime('%H:%M') || '23:59' %>
+          </p>
+          <p class="text-xs text-slate-500 mt-1">지정된 시간 내에만 인증이 가능합니다.</p>
+        </div>
+      </div>
+
+      <!-- Failure Tolerance -->
       <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
         <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
           <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -38,10 +54,11 @@
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">최대 실패 허용</p>
           <p class="font-bold text-slate-900"><%= challenge.failure_tolerance %>회까지</p>
-          <p class="text-xs text-slate-500 mt-1">허용 횟수를 초과하면 보증금 환급이 불가할 수 있습니다.</p>
+          <p class="text-xs text-slate-500 mt-1">허용 횟수를 초과하면 챌린지에서 탈락합니다.</p>
         </div>
       </div>
 
+      <!-- Approval Method -->
       <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
         <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
           <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -53,65 +70,37 @@
         </div>
       </div>
 
+      <!-- Re-verification -->
       <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
         <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
         </div>
         <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">신청 및 공개</p>
-          <p class="font-bold text-slate-900"><%= challenge.admission_type_approval? ? '선별형 참여' : '자유 참여' %> | <%= challenge.is_private? ? '비공개 챌린지' : '공개 챌린지' %></p>
-          <p class="text-xs text-slate-500 mt-1"><%= challenge.admission_type_approval? ? '호스트의 거절 사유가 있을 수 있습니다.' : '누구나 즉시 참여할 수 있습니다.' %></p>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">재인증 허용</p>
+          <p class="font-bold text-slate-900"><%= challenge.re_verification_allowed ? '허용' : '불가' %></p>
+          <p class="text-xs text-slate-500 mt-1"><%= challenge.re_verification_allowed ? '거절 시 당일 재시도가 가능합니다.' : '거절 시 재시도가 불가능합니다.' %></p>
+        </div>
+      </div>
+
+      <!-- Entry Type -->
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </div>
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">참여 방식</p>
+          <p class="font-bold text-slate-900"><%= challenge.admission_type_approval? ? '선별형 참여' : '자유 참여' %> | <%= challenge.is_private? ? '비공개' : '공개' %></p>
+          <p class="text-xs text-slate-500 mt-1"><%= challenge.admission_type_approval? ? '호스트의 승인이 필요합니다.' : '누구나 즉시 참여할 수 있습니다.' %></p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Deposit & Refund Rules -->
+  <!-- Ranking Rules -->
   <div class="space-y-6">
-    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-      <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      </div>
-      보증금 및 환급 규칙
-    </h2>
-
-    <div class="space-y-4">
-      <div class="p-8 bg-emerald-50 rounded-[32px] border border-emerald-100 relative overflow-hidden">
-        <div class="relative z-10 space-y-6">
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-bold text-emerald-800">보증금 환급 기준</span>
-            <span class="px-4 py-1.5 bg-white text-emerald-600 rounded-full text-[10px] font-black tracking-widest uppercase">Refund Standard</span>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div class="space-y-2">
-              <p class="text-xs text-emerald-600 font-bold">100% 달성 시</p>
-              <p class="text-lg font-black text-emerald-900">전액 환급 + 상금</p>
-            </div>
-            <div class="space-y-2 border-x border-emerald-200/50 px-4">
-              <p class="text-xs text-emerald-600 font-bold">85% 이상 달성 시</p>
-              <p class="text-lg font-black text-emerald-900">전액 환급</p>
-            </div>
-            <div class="space-y-2">
-              <p class="text-xs text-emerald-600 font-bold">85% 미만 달성 시</p>
-              <p class="text-lg font-black text-emerald-900">달성률만큼 환급</p>
-            </div>
-          </div>
-        </div>
-        <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-emerald-100 rounded-full opacity-30"></div>
-      </div>
-      
-      <p class="text-xs text-slate-400 font-medium px-4">
-        * 챌린지 종료 후 영업일 기준 3일 이내에 환급이 처리됩니다.<br>
-        * 벌금(환급되지 않은 금액)은 100% 달성자들을 위한 상금으로 사용됩니다.
-      </p>
-    </div>
-  </div>
-  <!-- Ranking & Tie-breaking Rules -->
-  <div class="space-y-6">
-    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-      <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
+    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
       </div>
       순위 산정 규칙
     </h2>
@@ -151,6 +140,32 @@
         <p class="text-[11px] font-bold text-slate-400 italic">
           * 모든 지표가 동일할 경우, 챌린지에 먼저 참여 신청을 완료한 순서(선착순)에 따라 최종 순위가 확정됩니다.
         </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Important Notes -->
+  <div class="p-8 bg-gradient-to-br from-rose-50 to-orange-50 rounded-[40px] border border-rose-100">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-rose-600 shrink-0">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      <div class="space-y-3">
+        <p class="text-sm font-black text-rose-900">주의사항</p>
+        <ul class="space-y-2 text-sm font-medium text-slate-600">
+          <li class="flex items-start gap-2">
+            <span class="text-rose-500 mt-0.5">•</span>
+            <span>챌린지 시작 후에는 규칙 변경이 불가능합니다.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-rose-500 mt-0.5">•</span>
+            <span>부정 인증이 적발될 경우 즉시 탈락 처리되며, 보증금은 환급되지 않습니다.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-rose-500 mt-0.5">•</span>
+            <span>챌린지 중도 탈퇴 시 보증금은 환급되지 않으며, 이미 지불한 참가비는 반환되지 않습니다.</span>
+          </li>
+        </ul>
       </div>
     </div>
   </div>

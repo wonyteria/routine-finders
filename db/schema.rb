@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_30_134624) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_30_135941) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -120,6 +120,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_30_134624) do
     t.integer "penalty_per_failure", default: 0
     t.string "purpose"
     t.boolean "re_verification_allowed", default: false, null: false
+    t.date "refund_date"
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
     t.json "reward_policy"
