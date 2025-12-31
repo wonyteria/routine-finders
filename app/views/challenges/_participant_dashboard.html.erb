@@ -408,91 +408,74 @@
         </div>
 
         <!-- 성장 지표 -->
-        <div class="p-6 space-y-4">
-          <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Growth Metrics</h4>
-          
+        <div class="p-6 space-y-3">
           <!-- 주요 지표 카드 -->
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-2">
             <!-- 성장 에너지 -->
-            <div class="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center">
-                  <span class="text-lg">⚡</span>
-                </div>
-                <div class="flex-1">
-                  <p class="text-[9px] font-black text-indigo-400 uppercase tracking-tight">Energy</p>
-                  <p class="text-xl font-black text-indigo-700"><%= @participant.current_streak %></p>
+            <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100/50">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">⚡</span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[8px] font-black text-indigo-400 uppercase tracking-tight">Energy</p>
+                  <p class="text-lg font-black text-indigo-700"><%= @participant.current_streak %></p>
                 </div>
               </div>
-              <p class="text-[10px] font-bold text-indigo-600/60">연속 달성 일수</p>
             </div>
 
             <!-- 성취 점수 -->
-            <div class="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-8 h-8 bg-emerald-600 rounded-xl flex items-center justify-center">
-                  <span class="text-lg">🎯</span>
-                </div>
-                <div class="flex-1">
-                  <p class="text-[9px] font-black text-emerald-400 uppercase tracking-tight">Score</p>
-                  <p class="text-xl font-black text-emerald-700"><%= @participant.completion_rate.to_i %></p>
+            <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100/50">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🎯</span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[8px] font-black text-emerald-400 uppercase tracking-tight">Score</p>
+                  <p class="text-lg font-black text-emerald-700"><%= @participant.completion_rate.to_i %>%</p>
                 </div>
               </div>
-              <p class="text-[10px] font-bold text-emerald-600/60">전체 달성률 %</p>
             </div>
 
             <!-- 성장 레벨 -->
-            <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-8 h-8 bg-amber-600 rounded-xl flex items-center justify-center">
-                  <span class="text-lg">🌟</span>
-                </div>
-                <div class="flex-1">
-                  <p class="text-[9px] font-black text-amber-400 uppercase tracking-tight">Level</p>
-                  <p class="text-xl font-black text-amber-700"><%= @current_growth_stage[:stage] + 1 %></p>
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-100/50">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🌟</span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[8px] font-black text-amber-400 uppercase tracking-tight">Level</p>
+                  <p class="text-lg font-black text-amber-700"><%= @current_growth_stage[:stage] + 1 %></p>
                 </div>
               </div>
-              <p class="text-[10px] font-bold text-amber-600/60">식물 성장 단계</p>
             </div>
 
             <!-- 완료 미션 -->
-            <div class="p-4 bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl border border-rose-100">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-8 h-8 bg-rose-600 rounded-xl flex items-center justify-center">
-                  <span class="text-lg">✓</span>
-                </div>
-                <div class="flex-1">
-                  <p class="text-[9px] font-black text-rose-400 uppercase tracking-tight">Missions</p>
-                  <p class="text-xl font-black text-rose-700"><%= @completed_days %></p>
+            <div class="p-3 bg-rose-50 rounded-xl border border-rose-100/50">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">✓</span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[8px] font-black text-rose-400 uppercase tracking-tight">Missions</p>
+                  <p class="text-lg font-black text-rose-700"><%= @completed_days %></p>
                 </div>
               </div>
-              <p class="text-[10px] font-bold text-rose-600/60">완료한 미션 수</p>
             </div>
           </div>
 
           <!-- 이번 주 활동 -->
-          <div class="p-4 bg-slate-900 rounded-2xl">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
-                <span class="text-lg">📊</span>
-                <span class="text-xs font-black text-white uppercase tracking-tight">This Week</span>
+          <div class="p-3 bg-slate-900 rounded-xl">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-1.5">
+                <span class="text-base">📊</span>
+                <span class="text-[9px] font-black text-white uppercase tracking-tight">This Week</span>
               </div>
-              <span class="text-sm font-black text-indigo-400"><%= @this_week_completion_rate %>%</span>
+              <span class="text-xs font-black text-indigo-400"><%= @this_week_completion_rate %>%</span>
             </div>
-            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden mb-2">
+            <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
               <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000" style="width: <%= @this_week_completion_rate %>%;"></div>
             </div>
-            <p class="text-[10px] font-bold text-slate-400"><%= @this_week_count %> / 7 미션 완료</p>
           </div>
 
           <!-- 최고 기록 -->
-          <div class="flex items-center justify-between p-3 bg-gradient-to-r from-violet-50 to-fuchsia-50 rounded-xl border border-violet-100">
-            <div class="flex items-center gap-2">
-              <span class="text-2xl">🏆</span>
-              <div>
-                <p class="text-[9px] font-black text-violet-400 uppercase tracking-tight">Best Streak</p>
-                <p class="text-sm font-black text-violet-700">최고 <%= @participant.max_streak %>일 연속 달성</p>
-              </div>
+          <div class="flex items-center gap-2 p-2.5 bg-violet-50 rounded-xl border border-violet-100/50">
+            <span class="text-xl">🏆</span>
+            <div class="flex-1 min-w-0">
+              <p class="text-[8px] font-black text-violet-400 uppercase tracking-tight">Best Streak</p>
+              <p class="text-xs font-black text-violet-700">최고 <%= @participant.max_streak %>일 연속</p>
             </div>
           </div>
         </div>
