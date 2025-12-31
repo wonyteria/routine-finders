@@ -12,6 +12,9 @@ class ChallengesController < ApplicationController
       load_landing_data
     end
 
+    # Get user's joined challenge IDs for displaying badges
+    @joined_challenge_ids = current_user&.participations&.pluck(:challenge_id) || []
+
     @title = "챌린지 탐색"
     @description = "온라인으로 함께 습관을 만드는 챌린지"
   end

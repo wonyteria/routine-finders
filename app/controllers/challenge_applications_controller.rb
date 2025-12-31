@@ -23,11 +23,6 @@ class ChallengeApplicationsController < ApplicationController
       return redirect_to @challenge, alert: "이미 참여 중인 챌린지입니다."
     end
 
-    # Block applications for dummy challenges
-    if @challenge.id >= 10000
-      return redirect_to @challenge, alert: "데모용 챌린지는 신청할 수 없습니다. 직접 챌린지를 개설하여 테스트해보세요!"
-    end
-
     # Check for existing pending/approved application
     existing_application = @challenge.challenge_applications.find_by(user: current_user)
     if existing_application
@@ -45,11 +40,6 @@ class ChallengeApplicationsController < ApplicationController
 
   # POST /challenges/:challenge_id/applications
   def create
-    # Block applications for dummy challenges
-    if @challenge.id >= 10000
-      return redirect_to @challenge, alert: "데모용 챌린지는 신청할 수 없습니다. 직접 챌린지를 개설하여 테스트해보세요!"
-    end
-
     # First, handle re-application by cleaning up previous rejected application
     @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all
 
