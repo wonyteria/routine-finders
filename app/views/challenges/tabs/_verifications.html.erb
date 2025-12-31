@@ -1,6 +1,6 @@
 <div class="space-y-8">
   <!-- 오늘의 인증 (참가자인 경우) -->
-  <% if participant && !is_host %>
+  <% if participant && !is_host && !local_assigns[:hide_form] %>
     <div class="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-[32px] p-8 border border-indigo-100">
       <% if today_verified %>
         <div class="flex items-center gap-4">
@@ -48,14 +48,14 @@
   <% end %>
 
   <!-- 호스트: 대기 중인 인증 -->
-  <% if is_host && pending_verifications&.any? %>
+  <% if is_host && local_assigns[:pending_verifications]&.any? %>
     <div class="bg-amber-50 rounded-[32px] p-8 border border-amber-200">
       <h3 class="text-xl font-black text-amber-900 mb-6 flex items-center gap-2">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        승인 대기 중 (<%= pending_verifications.count %>건)
+        승인 대기 중 (<%= local_assigns[:pending_verifications].count %>건)
       </h3>
       <div class="space-y-4">
-        <% pending_verifications.each do |log| %>
+        <% local_assigns[:pending_verifications].each do |log| %>
           <div class="bg-white rounded-2xl p-5 border border-amber-100 flex items-center justify-between gap-4">
             <div class="flex items-center gap-4">
               <img src="<%= log.participant.user.profile_image %>" alt="" class="w-12 h-12 rounded-full object-cover">

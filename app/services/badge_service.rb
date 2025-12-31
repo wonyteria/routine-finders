@@ -6,37 +6,39 @@ class BadgeService
   def check_and_award_all!
     new_badges = []
 
-    Badge.badge_types.each_key do |type|
-      new_badges += check_and_award_by_type!(type)
+    Badge.all.each do |badge|
+      unless @user.badges.include?(badge)
+        current_value = calculate_metric(badge)
+        if current_value >= badge.requirement_value
+          @user.user_badges.create!(badge: badge, granted_at: Time.current)
+          new_badges << badge
+        end
+      end
     end
 
     new_badges
   end
 
-  def check_and_award_by_type!(badge_type)
-    current_value = calculate_metric(badge_type)
-    eligible_badges = Badge.where(badge_type: badge_type).where("requirement_value <= ?", current_value)
-
-    awarded = []
-    eligible_badges.each do |badge|
-      unless @user.badges.include?(badge)
-        @user.user_badges.create!(badge: badge, granted_at: Time.current)
-        awarded << badge
-      end
-    end
-    awarded
-  end
-
   private
 
-  def calculate_metric(badge_type)
-    case badge_type.to_sym
+  def calculate_metric(badge)
+    participations = @user.participations
+
+    # Target Type filtering
+    case badge.target_type.to_sym
+    when :challenge
+      participations = participations.joins(:challenge).where(challenges: { entry_type: :season })
+    when :routine
+      participations = participations.joins(:challenge).where(challenges: { entry_type: :regular })
+    end
+
+    case badge.badge_type.to_sym
     when :achievement_rate
-      @user.participations.average(:completion_rate) || 0.0
+      participations.average(:completion_rate) || 0.0
     when :verification_count
-      VerificationLog.joins(participant: :user).where(users: { id: @user.id }).count
+      VerificationLog.where(participant: participations).count
     when :max_streak
-      @user.participations.maximum(:current_streak) || 0
+      participations.maximum(:current_streak) || 0
     else
       0
     end

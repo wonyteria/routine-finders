@@ -25,11 +25,20 @@ class ReviewsController < ApplicationController
   end
 
   def edit
+    if @review.edit_count >= 2
+      redirect_to challenge_path(@challenge), alert: "리뷰는 최대 2회까지만 수정할 수 있습니다."
+    end
   end
 
   def update
+    if @review.edit_count >= 2
+      redirect_to challenge_path(@challenge), alert: "리뷰는 최대 2회까지만 수정할 수 있습니다."
+      return
+    end
+
     if @review.update(review_params)
-      redirect_to challenge_path(@challenge), notice: "리뷰가 수정되었습니다."
+      @review.increment!(:edit_count)
+      redirect_to challenge_path(@challenge), notice: "리뷰가 수정되었습니다. (남은 수정 횟수: #{2 - @review.edit_count}회)"
     else
       render :edit, status: :unprocessable_entity
     end

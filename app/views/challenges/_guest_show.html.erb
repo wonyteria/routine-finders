@@ -1,0 +1,242 @@
+<div class="space-y-8 pb-32" data-controller="modal">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <%= link_to "javascript:history.back()", class: "p-4 bg-white border border-slate-200 rounded-3xl text-slate-500 hover:text-indigo-600 shadow-sm transition-all" do %>
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <% end %>
+    <% if @is_host %>
+      <%= link_to hosted_challenge_path(@challenge), class: "px-5 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20 flex items-center gap-2" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        관리 대시보드
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Challenge Card -->
+  <div class="bg-white rounded-[48px] overflow-hidden border border-slate-200 shadow-xl shadow-slate-200/40">
+    <!-- Hero Image -->
+    <div class="relative aspect-[21/9]">
+      <% if @challenge.thumbnail_image.attached? %>
+        <%= image_tag @challenge.thumbnail_image, class: "w-full h-full object-cover" %>
+      <% else %>
+        <img src="<%= @challenge.thumbnail %>" class="w-full h-full object-cover" alt="">
+      <% end %>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+      
+      <!-- Invitation Code for Host -->
+      <% if @is_host && @challenge.is_private? %>
+        <div class="absolute top-8 right-8 flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20">
+          <p class="text-[10px] font-black text-white/60 uppercase tracking-widest">초대 코드</p>
+          <p class="text-sm font-black text-white selection:bg-indigo-500"><%= @challenge.invitation_code %></p>
+        </div>
+      <% end %>
+
+      <!-- Title & Badges -->
+      <div class="absolute bottom-8 left-8 right-8">
+        <div class="flex gap-2 mb-4">
+          <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl <%= @challenge.offline? ? 'bg-orange-600 text-white' : 'bg-indigo-600 text-white' %>">
+            <%= @challenge.offline? ? 'OFFLINE' : 'ONLINE' %>
+          </span>
+          <% if @challenge.is_official %>
+            <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl bg-amber-500 text-white">OFFICIAL</span>
+          <% end %>
+        </div>
+        <h1 class="text-3xl lg:text-4xl font-black text-white mb-2"><%= @challenge.title %></h1>
+        <p class="text-white/80 font-medium">호스트: <%= @challenge.host_name %></p>
+      </div>
+    </div>
+
+    <!-- Key Stats -->
+    <div class="grid grid-cols-3 border-b border-slate-200">
+      <div class="p-6 text-center border-r border-slate-200">
+        <p class="text-3xl font-black text-indigo-600 mb-1"><%= @participants_count %></p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">참여 인원</p>
+      </div>
+      <div class="p-6 text-center border-r border-slate-200">
+        <p class="text-3xl font-black text-emerald-600 mb-1"><%= (@challenge.end_date - @challenge.start_date).to_i + 1 %></p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">진행 일수</p>
+      </div>
+      <div class="p-6 text-center">
+        <p class="text-3xl font-black text-amber-600 mb-1"><%= @challenge.cost_type_free? ? '무료' : number_with_delimiter(@challenge.amount) %></p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest"><%= @challenge.cost_type_free? ? '참가비' : @challenge.cost_type_deposit? ? '보증금' : '참가비' %></p>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="border-b border-slate-200 bg-slate-50/50">
+      <nav class="flex overflow-x-auto no-scrollbar gap-0 px-8">
+        <% tabs = [
+          { id: "intro", label: "소개" },
+          { id: "rewards", label: "혜택" },
+          { id: "rules", label: "규칙" },
+          { id: "host", label: "호스트" },
+          { id: "participants", label: "참여자" },
+          { id: "reviews", label: "리뷰", count: @reviews.count }
+        ] %>
+
+        <% tabs.each do |tab_item| %>
+          <%= link_to challenge_path(@challenge, tab: tab_item[:id]), 
+                      class: "px-6 py-4 font-bold text-sm border-b-2 transition-all shrink-0 #{@tab == tab_item[:id] ? 'border-indigo-600 text-indigo-600 bg-white' : 'border-transparent text-slate-400 hover:text-slate-600'}" do %>
+            <%= tab_item[:label] %>
+            <% if tab_item[:count] %>
+              <span class="ml-1 text-xs opacity-50"><%= tab_item[:count] %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+      </nav>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="p-8 lg:p-12 min-h-[600px]">
+      <% case @tab %>
+      <% when "intro" %>
+        <%= render "challenges/tabs/intro", challenge: @challenge %>
+      <% when "rewards" %>
+        <%= render "challenges/tabs/rewards", challenge: @challenge %>
+      <% when "rules" %>
+        <%= render "challenges/tabs/rules", challenge: @challenge %>
+      <% when "host" %>
+        <%= render "challenges/tabs/host_info", host: @challenge.host, challenge: @challenge %>
+      <% when "reviews" %>
+        <%= render "challenges/tabs/reviews", challenge: @challenge, reviews: @reviews, can_write_review: @can_write_review %>
+      <% when "participants" %>
+        <%= render "challenges/tabs/participants", challenge: @challenge, participants: @participants %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Action Card (Sticky Bottom) -->
+  <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200 shadow-2xl z-50 lg:hidden">
+    <div class="max-w-4xl mx-auto">
+      <% if @is_host %>
+        <div class="p-4 bg-indigo-600 rounded-2xl text-center">
+          <p class="text-white font-black text-sm">내가 호스트인 챌린지입니다</p>
+        </div>
+      <% else %>
+        <% application = @challenge.challenge_applications.find_by(user: current_user) if current_user %>
+        <% if application&.pending? %>
+          <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-center">
+            <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
+            <p class="text-amber-600/70 text-xs mt-1">호스트의 승인을 기다리고 있어요</p>
+          </div>
+        <% elsif @challenge.requires_approval? %>
+          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
+            참여 신청하기
+          <% end %>
+        <% else %>
+          <button data-action="click->modal#open" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all">
+            지금 참여하기
+          </button>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Desktop Action Sidebar -->
+  <div class="hidden lg:block fixed right-8 bottom-8 w-80">
+    <div class="bg-white rounded-[32px] border border-slate-200 shadow-2xl shadow-slate-200/40 p-8 space-y-6">
+      <% if @is_host %>
+        <div class="p-6 bg-indigo-600 rounded-2xl text-center">
+          <p class="text-white font-black">내가 호스트인 챌린지입니다</p>
+        </div>
+        <%= link_to clone_challenge_path(@challenge), class: "block w-full py-4 bg-emerald-500 text-white rounded-2xl text-center font-black text-sm shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all" do %>
+          똑같은 챌린지 다시 개설하기
+        <% end %>
+      <% else %>
+        <% application = @challenge.challenge_applications.find_by(user: current_user) if current_user %>
+        <% if application&.pending? %>
+          <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100 text-center space-y-1">
+            <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
+            <p class="text-amber-600/70 text-xs">호스트의 승인을 기다리고 있어요</p>
+          </div>
+        <% elsif @challenge.requires_approval? %>
+          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
+            참여 신청하기
+          <% end %>
+        <% else %>
+          <button data-action="click->modal#open" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all">
+            지금 참여하기
+          </button>
+        <% end %>
+      <% end %>
+
+      <!-- Quick Info -->
+      <div class="pt-6 border-t border-slate-200 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-slate-400">진행 기간</p>
+            <p class="text-sm font-black text-slate-900"><%= @challenge.start_date.strftime('%m.%d') %> - <%= @challenge.end_date.strftime('%m.%d') %></p>
+          </div>
+        </div>
+        <% unless @challenge.cost_type_free? %>
+          <div class="p-4 bg-slate-50 rounded-xl">
+            <p class="text-xs font-bold text-slate-500 leading-relaxed">
+              참여 시 보증금이 예치되며, 챌린지 종료 후 <span class="text-indigo-600 font-black">달성률에 따라 환급</span>됩니다.
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Participation Confirmation Modal -->
+  <div data-modal-target="container" 
+       data-action="click->modal#closeOnBackground" 
+       class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl transform transition-all">
+      <div class="p-8 pb-0 flex justify-end">
+        <button data-action="click->modal#close" class="p-2 hover:bg-slate-100 rounded-xl transition-all">
+          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="p-10 pt-0 text-center space-y-8">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-indigo-50 rounded-[32px] text-4xl shadow-inner">
+          🌿
+        </div>
+        
+        <div class="space-y-4">
+          <h2 class="text-3xl font-black text-slate-900 tracking-tight">챌린지에 참여하시겠어요?</h2>
+          <div class="space-y-2">
+            <p class="text-slate-500 font-bold text-lg leading-relaxed">준비되셨나요? 성장의 기쁨을 느껴보세요!</p>
+            <div class="bg-slate-50 rounded-2xl p-5 text-left space-y-2 border border-slate-100">
+              <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                매일 정해진 시간에 인증을 완료해야 식물이 자라요.
+              </p>
+              <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                성실히 참여하면 루파 배지와 환급금을 받을 수 있어요.
+              </p>
+              <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                실패 횟수가 많아지면 탈락할 수 있으니 주의하세요!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 space-y-3">
+          <% if @challenge.is_private? %>
+            <%= form_with url: join_challenge_path(@challenge), method: :post, class: "space-y-4" do |f| %>
+              <div class="relative">
+                <%= f.text_field :invitation_code, placeholder: "초대 코드를 입력하세요", class: "w-full py-5 px-6 bg-slate-50 border-2 border-transparent rounded-2xl font-black text-center focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+              </div>
+              <%= f.submit "코드 입력 후 참여하기", class: "w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all cursor-pointer" %>
+            <% end %>
+          <% else %>
+            <%= button_to join_challenge_path(@challenge), method: :post, class: "w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
+              지금 바로 시작하기
+            <% end %>
+          <% end %>
+          <button data-action="click->modal#close" class="w-full py-4 text-slate-400 font-bold text-sm hover:text-slate-600 transition-all">
+            조금 더 둘러볼게요
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

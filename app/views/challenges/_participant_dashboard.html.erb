@@ -1,0 +1,396 @@
+<div class="max-w-6xl mx-auto space-y-6 pb-20 px-4">
+  <!-- 1. 상단 바 (대담한 스타일) -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+    <div class="flex items-center gap-4">
+      <div class="px-4 py-2 bg-indigo-600 text-white text-xs font-black tracking-widest rounded-2xl shadow-lg shadow-indigo-600/20">
+        <%= @d_day %>
+      </div>
+      <div>
+        <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
+          <%= @challenge.title %>
+          <% if @challenge.is_official %>
+            <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+          <% end %>
+        </h1>
+        <p class="text-xs text-slate-400 font-bold uppercase tracking-tight mt-0.5">
+          <%= @challenge.start_date.strftime('%Y.%m.%d') %> - <%= @challenge.end_date.strftime('%Y.%m.%d') %> ∙ <%= @challenge.host_name %>
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <%= link_to "javascript:history.back()", class: "p-3 bg-slate-50 text-slate-400 hover:text-indigo-600 rounded-2xl transition-all" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      <% end %>
+      <div class="h-8 w-px bg-slate-100 mx-2"></div>
+      <%= button_to leave_challenge_path(@challenge), method: :delete, class: "px-4 py-2 text-xs font-bold text-slate-400 hover:text-rose-500 transition-all", data: { turbo_confirm: "정말 탈퇴하시겠습니까?" } do %>
+        탈퇴하기
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 2. 메인 그리드 -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- 왼쪽: 미션 및 탭 영역 (8/12) -->
+    <div class="lg:col-span-8 space-y-6">
+      
+      <!-- 오늘의 미션 카드 -->
+      <div class="bg-slate-900 rounded-[32px] p-6 text-white shadow-xl">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h2 class="text-lg font-black italic">오늘의 미션</h2>
+          </div>
+          <% unless @today_verified %>
+            <% 
+              remaining_seconds = (Time.current.end_of_day - Time.current).to_i
+              hours = remaining_seconds / 3600
+              minutes = (remaining_seconds % 3600) / 60
+            %>
+            <div class="px-3 py-1 bg-rose-500/20 text-rose-300 rounded-xl text-[10px] font-black uppercase tracking-widest border border-rose-500/20 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>
+              마감까지 <%= hours %>시간 <%= minutes %>분
+            </div>
+          <% end %>
+        </div>
+
+        <% if @today_verified %>
+          <div class="flex items-center gap-6 py-2">
+            <div class="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30">
+              <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-black mb-1">오늘의 루틴 달성! 🎉</h3>
+              <p class="text-slate-400 text-xs font-medium">성공적으로 오늘의 성장을 기록했습니다.</p>
+            </div>
+          </div>
+        <% else %>
+          <div class="space-y-4">
+            <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+              <p class="text-sm font-bold text-slate-200">"<%= @challenge.summary %>"</p>
+            </div>
+            <%= form_with url: challenge_verification_logs_path(@challenge), method: :post, class: "flex flex-col sm:flex-row gap-2" do |f| %>
+              <div class="flex-1">
+                <% case @challenge.verification_type %>
+                <% when "metric" %>
+                  <%= f.text_field "verification_log[value]", placeholder: "수치 입력", class: "w-full bg-white/10 text-white px-5 py-3.5 rounded-2xl font-bold text-sm border-0 focus:ring-2 focus:ring-indigo-500 outline-none" %>
+                <% when "photo" %>
+                  <%= f.text_field "verification_log[image_url]", placeholder: "사진 URL", class: "w-full bg-white/10 text-white px-5 py-3.5 rounded-2xl font-bold text-sm border-0 focus:ring-2 focus:ring-indigo-500 outline-none" %>
+                <% when "url" %>
+                  <%= f.text_field "verification_log[value]", placeholder: "링크 입력", class: "w-full bg-white/10 text-white px-5 py-3.5 rounded-2xl font-bold text-sm border-0 focus:ring-2 focus:ring-indigo-500 outline-none" %>
+                <% else %>
+                  <%= f.hidden_field "verification_log[value]", value: "completed" %>
+                  <div class="h-full flex items-center px-4 text-slate-500 text-xs italic">인증하기 버튼을 눌러주세요</div>
+                <% end %>
+              </div>
+              <%= f.submit "인증하기", class: "px-8 py-3.5 bg-indigo-600 text-white rounded-2xl font-black text-sm shadow-lg hover:bg-indigo-500 transition-all cursor-pointer whitespace-nowrap" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- 메인 탭 영역 -->
+      <div class="bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-sm min-h-[500px]">
+        <!-- 탭 네비게이션 -->
+        <div class="flex items-center px-4 border-b border-slate-100 bg-slate-50/30 overflow-x-auto no-scrollbar">
+          <% [["records", "내 기록"], ["dashboard", "커뮤니티"], ["ranking", "랭킹"], ["announcements", "공지"], ["info", "소개"], ["reviews", "리뷰"]].each do |id, label| %>
+            <%= link_to challenge_path(@challenge, tab: id), 
+                        class: "px-5 py-4 text-xs font-black transition-all border-b-2 shrink-0 #{ @tab == id ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-400 hover:text-slate-600' }" do %>
+              <%= label %>
+              <% if id == "reviews" && @reviews.count > 0 %>
+                <span class="ml-1 text-[10px] opacity-40"><%= @reviews.count %></span>
+              <% end %>
+              <% if id == "announcements" && @announcements_all.to_a.count > 0 %>
+                <span class="ml-1 w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <!-- 탭 콘텐츠 -->
+        <div class="p-6">
+          <% case @tab %>
+          <% when "dashboard" %>
+            <div class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+              <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">참여자 현황</p>
+                <p class="text-sm font-bold text-slate-900">오늘 벌써 <span class="text-indigo-600"><%= @today_verified_count.to_i %>명</span>이 미션을 완료했어요! 🚀</p>
+              </div>
+              <div class="flex -space-x-2">
+                <% @participants_with_status.select{|p| p[:verified_today]}.first(5).each do |p| %>
+                  <img src="<%= p[:profile_image] %>" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                <% end %>
+                 <% if @today_verified_count.to_i > 5 %>
+                  <div class="w-8 h-8 bg-slate-200 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-500">+<%= @today_verified_count.to_i - 5 %></div>
+                <% end %>
+              </div>
+            </div>
+            <%= render "challenges/tabs/verifications", challenge: @challenge, verification_logs: @challenge.verification_logs.includes(participant: :user).recent, participant: @participant, today_verified: @today_verified, is_host: @is_host, pending_verifications: @pending_verifications, hide_form: true %>
+
+          <% when "records" %>
+            <div class="space-y-8">
+              <!-- 루틴 잔디 위젯 -->
+              <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-black text-slate-900 border-l-4 border-indigo-600 pl-3">나의 성취 지도</h3>
+                  <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1">
+                      <div class="w-3 h-3 bg-indigo-600 rounded-sm"></div>
+                      <span class="text-[9px] font-bold text-slate-400">달성</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <div class="w-3 h-3 bg-slate-200 rounded-sm"></div>
+                      <span class="text-[9px] font-bold text-slate-400">미인증</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="overflow-x-auto no-scrollbar">
+                  <div class="flex gap-1.5 min-w-max pb-2">
+                    <% all_dates = (@challenge.start_date..@challenge.end_date).to_a
+                       weeks = all_dates.in_groups_of(7, false) %>
+                    <% weeks.each_with_index do |week, w_idx| %>
+                      <div class="flex flex-col gap-1.5">
+                        <% week.each do |date| %>
+                          <% is_success = @daily_status_map[date]
+                             is_future = date > Date.current
+                             bg_color = is_success ? "bg-indigo-600" : (is_future ? "bg-slate-100 opacity-50" : "bg-slate-200") %>
+                          <div class="w-8 h-8 <%= bg_color %> rounded-lg flex flex-col items-center justify-center transition-all hover:scale-110 group relative" title="<%= date.strftime('%Y-%m-%d') %>">
+                            <span class="text-[8px] font-bold <%= is_success ? 'text-white' : 'text-slate-400' %>"><%= date.day %></span>
+                            <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                              <%= date.strftime('%m/%d') %>: <%= is_success ? '달성!' : (is_future ? '예정' : '미달성') %>
+                            </div>
+                          </div>
+                        <% end %>
+                        <p class="text-[10px] font-black text-slate-300 text-center mt-1"><%= w_idx + 1 %>주</p>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="space-y-4">
+                <h4 class="text-sm font-black text-slate-900">상세 기록</h4>
+                <% my_logs = @participant.verification_logs.recent %>
+                <% if my_logs.any? %>
+                  <div class="space-y-3">
+                    <% my_logs.each do |log| %>
+                      <div class="p-4 bg-white rounded-2xl border border-slate-100 flex gap-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100">
+                           <span class="text-xs font-black text-indigo-600"><%= log.created_at.strftime('%m/%d') %></span>
+                        </div>
+                        <div class="flex-1">
+                          <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] font-black <%= log.approved? ? 'text-emerald-500' : 'text-amber-500' %> uppercase tracking-widest"><%= log.status.upcase %></span>
+                            <span class="text-[10px] text-slate-400"><%= log.created_at.strftime('%H:%M') %></span>
+                          </div>
+                          <p class="text-sm font-medium text-slate-700"><%= log.value.presence || "인증을 완료했습니다." %></p>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% else %>
+                   <div class="py-20 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                    <p class="font-bold text-sm">아직 인증 기록이 없습니다.</p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+          <% when "ranking" %>
+            <div class="space-y-3">
+              <% @rankings.each_with_index do |p, idx| %>
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                  <div class="flex items-center gap-4">
+                    <span class="w-6 text-center font-black <%= idx == 0 ? 'text-amber-500' : 'text-slate-300' %>">#<%= idx + 1 %></span>
+                    <img src="<%= p.user.profile_image %>" class="w-8 h-8 rounded-full object-cover">
+                    <span class="text-sm font-bold text-slate-900"><%= p.nickname %></span>
+                  </div>
+                  <div class="flex items-center gap-4">
+                     <span class="text-[11px] font-black text-orange-500">🔥 <%= p.current_streak %>일</span>
+                     <span class="text-sm font-black text-indigo-600"><%= p.completion_rate.to_i %>%</span>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
+          <% when "announcements" %>
+            <div class="space-y-4">
+              <% if @announcements_all.present? && @announcements_all.any? %>
+                <% @announcements_all.each do |announcement| %>
+                  <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest"><%= announcement.created_at.strftime('%Y.%m.%d') %></span>
+                    </div>
+                    <h4 class="text-lg font-black text-slate-900 mb-2"><%= announcement.title %></h4>
+                    <div class="prose prose-sm prose-slate max-w-none text-slate-600">
+                      <%= simple_format announcement.content %>
+                    </div>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="py-20 text-center text-slate-400">
+                  <p class="font-bold">등록된 공지사항이 없습니다.</p>
+                </div>
+              <% end %>
+            </div>
+
+          <% when "info" %>
+            <div class="space-y-8">
+              <section class="prose prose-sm prose-slate max-w-none">
+                <h3 class="text-sm font-black text-slate-900 border-l-4 border-indigo-600 pl-3 mb-4 uppercase tracking-widest">챌린지 상세 소개</h3>
+                <%= simple_format @challenge.description %>
+                
+                <div class="mt-8">
+                   <h3 class="text-sm font-black text-slate-900 border-l-4 border-slate-900 pl-3 mb-4 uppercase tracking-widest">규칙 및 빈도</h3>
+                   <%= render "challenges/tabs/rules", challenge: @challenge %>
+                   <div class="grid grid-cols-2 gap-4 mt-4">
+                     <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                       <p class="text-[10px] font-black text-slate-400 uppercase tracking-tight">미션 빈도</p>
+                       <p class="text-sm font-bold text-slate-900"><%= @challenge.mission_frequency %></p>
+                     </div>
+                     <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                       <p class="text-[10px] font-black text-slate-400 uppercase tracking-tight">실패 허용</p>
+                       <p class="text-sm font-bold text-slate-900"><%= @challenge.failure_tolerance %>회</p>
+                     </div>
+                   </div>
+                </div>
+              </section>
+            </div>
+
+          <% when "reviews" %>
+            <div class="space-y-4">
+              <% if @user_review %>
+                <div class="p-5 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-center justify-between">
+                  <div>
+                    <p class="text-xs font-bold text-indigo-600">이미 리뷰를 작성하셨습니다.</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5">남은 수정 횟수: <span class="font-black text-slate-900"><%= 2 - @user_review.edit_count %>회</span> / 총 2회</p>
+                  </div>
+                  <% if @user_review.edit_count < 2 %>
+                    <%= link_to "리뷰 수정하기", edit_challenge_review_path(@challenge, @user_review), class: "px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-[10px] hover:bg-indigo-700 transition-all shadow-md" %>
+                  <% end %>
+                </div>
+              <% end %>
+              <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                <%= render "challenges/tabs/reviews", challenge: @challenge, reviews: @reviews, can_write_review: @can_write_review %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 루파 가든 및 대시보드 (4/12) -->
+    <div class="lg:col-span-4 space-y-6">
+      <!-- 나의 루파 가든 -->
+      <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-8 pb-4 text-center">
+          <h3 class="text-sm font-black text-indigo-600 uppercase tracking-widest mb-2">나의 루파 가든</h3>
+          <p class="text-xl font-black text-slate-900 leading-snug"><%= @current_growth_stage[:name] %></p>
+        </div>
+
+        <!-- 식물 영역 -->
+        <div class="px-6 pb-8">
+          <div class="aspect-square bg-emerald-50 rounded-[32px] border border-emerald-100 relative overflow-hidden group">
+            <!-- 식물 Sprite 이미지 (6단계) -->
+            <div class="absolute inset-6 bg-no-repeat bg-contain bg-center transition-all duration-700 group-hover:scale-105"
+                 style="background-image: url('/assets/images/roopa_plant_new.png'); background-size: 600% 100%; background-position: <%= @current_growth_stage[:stage] * 20 %>% 0%;">
+            </div>
+            <!-- 단계 표시 -->
+            <div class="absolute bottom-6 left-0 right-0 flex justify-center">
+              <div class="px-4 py-1.5 bg-white/80 backdrop-blur-md rounded-full border border-white/50 shadow-sm">
+                <p class="text-[10px] font-black text-slate-600 uppercase tracking-tighter">Growth Stage <%= @current_growth_stage[:stage] + 1 %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 주요 수치 -->
+        <div class="grid grid-cols-4 border-t border-slate-100 divide-x divide-slate-100 bg-slate-50/50">
+          <div class="p-4 text-center">
+            <p class="text-sm font-black text-slate-900"><%= @remaining_days %></p>
+            <p class="text-[9px] font-bold text-slate-400">남은 일수</p>
+          </div>
+          <div class="p-4 text-center">
+            <p class="text-sm font-black text-slate-900"><%= @completed_days %></p>
+            <p class="text-[9px] font-bold text-slate-400">인증 횟수</p>
+          </div>
+          <div class="p-4 text-center">
+            <p class="text-sm font-black text-slate-900"><%= @achieved_weeks %></p>
+            <p class="text-[9px] font-bold text-slate-400">달성 주차</p>
+          </div>
+          <div class="p-4 text-center">
+            <p class="text-sm font-black text-orange-600"><%= @participant.current_streak %></p>
+            <p class="text-[9px] font-bold text-slate-400">연속 달성</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 진행률 바 -->
+      <div class="bg-white rounded-[32px] p-6 border border-slate-200 shadow-sm space-y-6">
+        <div class="space-y-2">
+          <div class="flex justify-between items-end">
+            <span class="text-xs font-black text-slate-900 font-bold tracking-tight">전체 루틴 진행률</span>
+            <span class="text-sm font-black text-indigo-600"><%= @participant.completion_rate.to_i %>%</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-slate-900 rounded-full transition-all duration-1000" style="width: <%= @participant.completion_rate %>%;"></div>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between items-end">
+            <span class="text-xs font-black text-slate-900 font-bold tracking-tight">이번 주 성취도</span>
+            <span class="text-sm font-black text-indigo-500"><%= @this_week_completion_rate %>%</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-indigo-500 rounded-full transition-all duration-1000" style="width: <%= @this_week_completion_rate %>%;"></div>
+          </div>
+           <p class="text-[9px] text-slate-400 font-bold text-right"><%= @this_week_count %> / 7회 미션 완료</p>
+        </div>
+      </div>
+
+      <!-- 보증금/환급 정보 -->
+      <% if @challenge.cost_type_deposit? %>
+        <div class="bg-indigo-600 rounded-[32px] p-6 text-white shadow-xl shadow-indigo-600/20">
+          <p class="text-[10px] font-black text-indigo-100/60 uppercase tracking-widest mb-1">나의 환급 보증금</p>
+          <div class="flex items-end justify-between mb-6">
+            <h4 class="text-3xl font-black"><%= number_with_delimiter(((@participant.completion_rate / 100.0) * @participant.paid_amount).to_i) %><span class="text-sm font-bold ml-1 opacity-50">원</span></h4>
+          </div>
+          <% if @can_apply_refund %>
+            <%= button_to "환급 신청하기", "#", class: "w-full py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all shadow-md" %>
+          <% else %>
+             <div class="px-4 py-3 bg-white/10 rounded-2xl border border-white/10">
+               <p class="text-[10px] text-indigo-100/60 font-bold leading-tight">챌린지 종료 3일 전부터 환급 신청이 가능해집니다.</p>
+             </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- 소셜 그리드 (소형) -->
+      <div class="bg-white rounded-[32px] p-6 border border-slate-200 shadow-sm">
+        <h3 class="text-xs font-black text-slate-900 mb-4 flex justify-between items-center uppercase tracking-widest">
+          실시간 챌린저
+          <span class="text-[10px] text-slate-400 font-bold"><%= @participants_with_status.count %>명</span>
+        </h3>
+        <div class="grid grid-cols-4 gap-3">
+          <% @participants_with_status.sort_by { |p| p[:verified_today] ? 0 : 1 }.first(12).each do |p| %>
+            <div class="relative">
+              <img src="<%= p[:profile_image] %>" 
+                   class="w-full aspect-square rounded-xl object-cover transition-all <%= p[:verified_today] ? 'ring-2 ring-emerald-400 ring-offset-2 ring-offset-white' : 'grayscale opacity-30 shadow-none' %>"
+                   title="<%= p[:nickname] %>">
+              <% if p[:verified_today] %>
+                 <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full border border-white"></div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>

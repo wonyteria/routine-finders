@@ -9,6 +9,9 @@ class Badge < ApplicationRecord
   validates :level, presence: true
   validates :requirement_value, presence: true
 
+  attribute :target_type, :string, default: "all"
+
   enum :badge_type, { achievement_rate: "achievement_rate", verification_count: "verification_count", max_streak: "max_streak" }
   enum :level, { bronze: 1, silver: 2, gold: 3, platinum: 4, diamond: 5 }
+  enum :target_type, { all: "all", challenge: "challenge", routine: "routine" }, prefix: true
 end

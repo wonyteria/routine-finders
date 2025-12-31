@@ -12,21 +12,86 @@ class ChallengesController < ApplicationController
     @is_joined = current_user&.participations&.exists?(challenge: @challenge)
     @participant = current_user&.participations&.find_by(challenge: @challenge)
     @is_host = current_user&.id == @challenge.host_id
-    @tab = params[:tab] || "intro"
+    @tab = params[:tab] || (@is_joined ? "records" : "intro")
 
-    # Common data for all tabs
+    # Common data
     @participants_count = @challenge.current_participants
     @reviews = Review.where(challenge_id: [ @challenge.id, @challenge.original_challenge_id ].compact)
                      .recent.includes(:user)
+
+    if @is_joined
+      # Dashboard specific data
+      @remaining_days = (@challenge.end_date - Date.current).to_i
+      @d_day = @remaining_days.positive? ? "D-#{@remaining_days}" : (@remaining_days.zero? ? "D-Day" : "종료")
+      @today_verified = @participant.verification_logs.today.exists?
+      @recent_verifications = @challenge.verification_logs.includes(participant: :user).recent.limit(5)
+      @announcements = @challenge.announcements.order(is_pinned: :desc, created_at: :desc).limit(3)
+
+      # Participants with today's verification status
+      @participants_with_status = @challenge.participants.includes(:user).map do |p|
+        {
+          id: p.id,
+          nickname: p.nickname,
+          profile_image: p.profile_image,
+          is_me: p.user_id == current_user.id,
+          verified_today: p.verification_logs.today.exists?,
+          completion_rate: p.completion_rate
+        }
+      end.sort_by { |p| [ p[:is_me] ? 0 : 1, p[:verified_today] ? 0 : 1 ] }
+
+      # Rankings (top 5)
+      @rankings = @challenge.participants.includes(:user).order(completion_rate: :desc, current_streak: :desc).limit(5)
+
+      # Pending Verifications for Host
+      @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user) if @is_host
+
+      # Refund Eligibility (3 days before end date)
+      @can_apply_refund = @challenge.cost_type_deposit? && @remaining_days <= 3 && @remaining_days >= 0
+
+      # Common dashboard stats
+      @today_verified_count = @challenge.verification_logs.today.count
+
+      # User's existing review (for edit limit info)
+      @user_review = @challenge.reviews.find_by(user: current_user)
+
+      # Grass Data (Daily verification status map)
+      all_logs = @participant.verification_logs.approved.pluck(:created_at).map(&:to_date)
+      @daily_status_map = {}
+      (@challenge.start_date..@challenge.end_date).each do |date|
+        @daily_status_map[date] = all_logs.include?(date)
+      end
+
+      # 식물 성장 단계 (루파 열매 컨셉)
+      @growth_stages = [
+        { threshold: 100, name: "최고의 결실, 루파 열매 달성!", stage: 5 },
+        { threshold: 80, name: "드디어 꽃이 피어났어요!", stage: 4 },
+        { threshold: 60, name: "성취의 꽃이 필 준비 완료!", stage: 3 },
+        { threshold: 40, name: "푸른 성장이 눈에 띄어요!", stage: 2 },
+        { threshold: 20, name: "무럭무럭 자라나고 있어요!", stage: 1 },
+        { threshold: 0, name: "성공의 씨앗을 심었어요!", stage: 0 }
+      ]
+      @current_growth_stage = @growth_stages.find { |s| @participant.completion_rate >= s[:threshold] }
+
+      # Detailed Stats for Growth Dashboard
+      @completed_days = @participant.verification_logs.approved.count
+      @achieved_weeks = @participant.verification_logs.approved.pluck(:created_at).map { |d| d.to_date.strftime("%W") }.uniq.count
+
+      # This week's progress
+      start_of_week = Date.current.beginning_of_week
+      verifications_this_week = @participant.verification_logs.approved.where("created_at >= ?", start_of_week).count
+      @this_week_completion_rate = (verifications_this_week / 7.0 * 100).to_i
+      @this_week_count = verifications_this_week
+    end
 
     # Specific tab data
     case @tab
     when "participants"
       @participants = @challenge.participants.includes(:user).order(created_at: :desc)
+    when "announcements"
+      @announcements_all = @challenge.announcements.order(created_at: :desc)
     when "verifications"
       if @is_joined || @is_host
         @verification_logs = @challenge.verification_logs.includes(participant: :user).order(created_at: :desc).limit(50)
-        @today_verified = @participant&.verification_logs&.today&.exists?
         @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user) if @is_host
       end
     end
@@ -65,12 +130,12 @@ class ChallengesController < ApplicationController
 
   def create
     params_hash = challenge_params
-    
+
     # Convert full_refund_threshold from percentage (0-100) to decimal (0-1)
     if params_hash[:full_refund_threshold].present?
       params_hash[:full_refund_threshold] = params_hash[:full_refund_threshold].to_f / 100.0
     end
-    
+
     @challenge = Challenge.new(params_hash)
     @challenge.host = current_user
 
