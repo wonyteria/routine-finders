@@ -44,7 +44,10 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   </head>
 
-  <body class="min-h-screen bg-[#F8FAFC]" data-controller="modal" style="font-family: 'Outfit', sans-serif;">
+  <body class="min-h-screen bg-[#F8FAFC]" 
+        data-controller="modal" 
+        data-modal-auto-open-value="<%= alert == '로그인이 필요합니다.' %>"
+        style="font-family: 'Outfit', sans-serif;">
     <!-- Navigation -->
     <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

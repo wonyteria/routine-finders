@@ -104,6 +104,17 @@
                         </div>
                       </div>
                     </div>
+
+                    <div class="space-y-3">
+                      <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">커뮤니티 채팅방 링크 (선택)</label>
+                      <div class="relative group">
+                        <%= f.text_field :chat_link, placeholder: "예: 카카오톡 오픈채팅, 디스코드 링크 등", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] text-sm font-bold text-slate-900 placeholder:text-slate-300 focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+                        <div class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors pointer-events-none">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        </div>
+                      </div>
+                      <p class="text-[10px] font-bold text-slate-400 pl-2">💬 참여자들과 소통할 수 있는 채팅방 링크를 입력하면 '커뮤니티' 탭에 표시됩니다.</p>
+                    </div>
                   </div>
                 </div>
               </div>

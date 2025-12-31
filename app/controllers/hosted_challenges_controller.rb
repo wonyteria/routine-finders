@@ -143,6 +143,8 @@ class HostedChallengesController < ApplicationController
       :sluggish_rate_threshold,
       :non_participating_failures_threshold,
       :thumbnail_image,
+      :chat_link,
+      :recruitment_start_date, :recruitment_end_date,
       days: []
     )
   end

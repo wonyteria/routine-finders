@@ -9,7 +9,8 @@ class EmailVerificationsController < ApplicationController
     else
       user.verify_email!
       session[:user_id] = user.id
-      redirect_to root_path, notice: "이메일 인증이 완료되었습니다. 환영합니다!"
+      redirect_back_or root_path
+      flash[:notice] = "이메일 인증이 완료되었습니다. 환영합니다!"
     end
   end
 

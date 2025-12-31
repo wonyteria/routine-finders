@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_034220) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_073053) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -83,6 +83,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_034220) do
     t.decimal "bonus_threshold", precision: 5, scale: 2, default: "1.0"
     t.string "category"
     t.text "certification_goal"
+    t.string "chat_link"
     t.decimal "completion_rate", precision: 5, scale: 2, default: "0.0"
     t.integer "cost_type", default: 0, null: false
     t.datetime "created_at", null: false

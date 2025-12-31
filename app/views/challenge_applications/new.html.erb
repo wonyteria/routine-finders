@@ -6,6 +6,22 @@
     <h1 class="text-3xl font-black text-slate-900">챌린지 신청</h1>
   </div>
 
+  <!-- Rejection Alert -->
+  <% if @rejected_application %>
+    <div class="bg-rose-50 border border-rose-200 rounded-[32px] p-6 mb-8 flex items-start gap-4">
+      <div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center flex-shrink-0">
+        <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      <div>
+        <h3 class="text-rose-900 font-black mb-1">이전 신청이 거절되었습니다</h3>
+        <p class="text-rose-700 text-sm font-medium leading-relaxed">
+          거절 사유: <%= @rejected_application.reject_reason.present? ? @rejected_application.reject_reason : "사유가 입력되지 않았습니다." %>
+        </p>
+        <p class="text-rose-500 text-xs mt-2 font-bold">내용을 보완하여 다시 신청하실 수 있습니다.</p>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Challenge Info Card -->
   <div class="bg-slate-50 rounded-[32px] p-6 mb-8">
     <div class="flex items-center gap-4">

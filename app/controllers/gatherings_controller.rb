@@ -3,6 +3,7 @@ class GatheringsController < ApplicationController
     @challenges = Challenge.offline_gatherings.order(created_at: :desc)
     @title = "오프라인 모임"
     @description = "직접 만나서 시너지를 내는 오프라인 벙개"
+    @is_search_mode = true # 공유 뷰에서 '전체 목록' 모드로 동작하게 함
     render "challenges/index"
   end
 end

@@ -13,9 +13,9 @@ class ChallengeApplicationsController < ApplicationController
 
   # GET /challenges/:challenge_id/applications/new
   def new
-    # Check if already applied
-    if @challenge.challenge_applications.exists?(user: current_user)
-      return redirect_to @challenge, alert: "이미 신청한 챌린지입니다."
+    # Check if user is the host
+    if current_user.id == @challenge.host_id
+      return redirect_to @challenge, alert: "호스트는 신청할 수 없습니다."
     end
 
     # Check if already a participant
@@ -23,35 +23,53 @@ class ChallengeApplicationsController < ApplicationController
       return redirect_to @challenge, alert: "이미 참여 중인 챌린지입니다."
     end
 
+    # Check for existing pending/approved application
+    existing_application = @challenge.challenge_applications.find_by(user: current_user)
+    if existing_application
+      if existing_application.pending?
+        return redirect_to @challenge, alert: "이미 신청 후 승인 대기 중입니다."
+      elsif existing_application.approved?
+        return redirect_to @challenge, alert: "이미 승인된 신청입니다."
+      elsif existing_application.rejected?
+        @rejected_application = existing_application
+      end
+    end
+
     @application = @challenge.challenge_applications.build
   end
 
   # POST /challenges/:challenge_id/applications
   def create
+    # First, handle re-application by cleaning up previous rejected application
+    @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all
+
     @application = @challenge.challenge_applications.build(application_params)
     @application.user = current_user
 
     if @application.save
       # 승인제가 아닌 경우 즉시 참여 완료
       if !@challenge.requires_approval?
-        ActiveRecord::Base.transaction do
-          @application.approve!
+        begin
+          ActiveRecord::Base.transaction do
+            @application.approve!
 
-          # Create participant record
-          participant = @challenge.participants.create!(
-            user: current_user,
-            paid_amount: @challenge.total_payment_amount,
-            joined_at: Time.current
-          )
+            # Create participant record
+            @challenge.participants.create!(
+              user: current_user,
+              paid_amount: @challenge.total_payment_amount,
+              joined_at: Time.current
+            )
 
-          @challenge.increment!(:current_participants)
+            @challenge.increment!(:current_participants)
+          end
+          redirect_to @challenge, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
+        rescue => e
+          @application.destroy
+          redirect_to @challenge, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
         end
-
-        redirect_to @challenge, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
       else
         # 승인제인 경우 호스트에게 알림
         create_notification_for_host
-
         redirect_to @challenge, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
       end
     else

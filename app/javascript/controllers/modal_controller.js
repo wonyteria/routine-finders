@@ -1,10 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static values = { autoOpen: Boolean }
   static targets = ["container"]
 
   connect() {
     document.addEventListener("keydown", this.handleKeydown.bind(this))
+    if (this.autoOpenValue) {
+      this.open()
+    }
   }
 
   disconnect() {

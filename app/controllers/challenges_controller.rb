@@ -3,9 +3,9 @@ class ChallengesController < ApplicationController
   before_action :require_login, only: [ :new, :create, :join, :leave ]
 
   def index
-    # 검색 모드인지 확인 (키워드, 카테고리, 상태 필터가 하나라도 있으면 검색 모드)
-    @is_search_mode = params[:keyword].present? || params[:category].present? || params[:status].present?
-
+    # 검색어, 카테고리, 상태 필터가 있거나 '전체보기' 모드인 경우
+    @is_search_mode = params[:keyword].present? || params[:category].present? || params[:status].present? || params[:mode] == 'all'
+    
     if @is_search_mode
       search_challenges
     else
@@ -176,17 +176,18 @@ class ChallengesController < ApplicationController
       return redirect_to @challenge, alert: "모집 기간이 이미 종료된 챌린지입니다."
     end
 
-    participant = @challenge.participants.build(
-      user: current_user,
-      paid_amount: @challenge.total_payment_amount,
-      joined_at: Time.current
-    )
-
-    if participant.save
-      @challenge.increment!(:current_participants)
+    begin
+      ActiveRecord::Base.transaction do
+        participant = @challenge.participants.create!(
+          user: current_user,
+          paid_amount: @challenge.total_payment_amount,
+          joined_at: Time.current
+        )
+        @challenge.increment!(:current_participants)
+      end
       redirect_to @challenge, notice: "챌린지에 참여했습니다!"
-    else
-      redirect_to @challenge, alert: "참여에 실패했습니다."
+    rescue => e
+      redirect_to @challenge, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
     end
   end
 
@@ -227,17 +228,56 @@ class ChallengesController < ApplicationController
   private
 
   def search_challenges
-    @challenges = Challenge.online_challenges
+    @challenges = Challenge.online_challenges.public_challenges
     filter_by_keyword
     filter_by_category
     filter_by_status
     @challenges = @challenges.order(created_at: :desc)
+
+    # If no results in DB, fallback to dummy for development/demo
+    if @challenges.empty?
+      @challenges = generate_dummy_challenges
+      filter_dummies
+    end
+  end
+
+  def filter_dummies
+    return if @challenges.blank? || !@challenges.is_a?(Array)
+
+    if params[:keyword].present?
+      kw = params[:keyword]
+      @challenges = @challenges.select { |c| c.title.to_s.include?(kw) || c.summary.to_s.include?(kw) }
+    end
+
+    if params[:category].present?
+      @challenges = @challenges.select { |c| c.category.to_s == params[:category] }
+    end
+
+    if params[:status].present?
+      today = Date.current
+      case params[:status]
+      when "recruiting"
+        @challenges = @challenges.select do |c|
+          c.recruitment_start_date.present? && c.recruitment_end_date.present? &&
+          (c.recruitment_start_date..c.recruitment_end_date).cover?(today)
+        end
+      when "active"
+        @challenges = @challenges.select do |c|
+          c.start_date.present? && c.end_date.present? &&
+          (c.start_date..c.end_date).cover?(today)
+        end
+      when "ended"
+        @challenges = @challenges.select do |c|
+          c.end_date.present? && c.end_date < today
+        end
+      end
+    end
   end
 
   def filter_by_keyword
     return if params[:keyword].blank?
 
-    @challenges = @challenges.where("title LIKE ?", "%#{params[:keyword]}%")
+    @challenges = @challenges.where("title LIKE ? OR summary LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
   end
 
   def filter_by_category
@@ -254,7 +294,7 @@ class ChallengesController < ApplicationController
       when "active"
         @challenges = @challenges.active
       when "ended"
-        @challenges = @challenges.ended
+        @challenges = @challenges.status_ended
       end
     end
   end
@@ -264,10 +304,105 @@ class ChallengesController < ApplicationController
     if @featured_challenges.empty?
       @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail_image: nil).limit(4)
       @featured_challenges = Challenge.online_challenges.recruiting.limit(4) if @featured_challenges.empty?
+      @featured_challenges = generate_dummy_challenges.first(4) if @featured_challenges.empty? # Fallback to dummy
     end
 
     @hot_challenges = Challenge.online_challenges.recruiting.order(current_participants: :desc).limit(6)
+    @hot_challenges = generate_dummy_challenges.first(6) if @hot_challenges.empty? # Fallback to dummy
+
     @challenges = Challenge.online_challenges.recruiting.order(created_at: :desc).limit(12)
+    @challenges = generate_dummy_challenges if @challenges.empty? # Fallback to dummy
+  end
+
+  def generate_dummy_challenges
+    challenges = [
+      Challenge.new(
+        title: "☀️ 미라클 모닝 챌린지 1기", 
+        summary: "하루를 일찍 시작하는 습관, 미라클 모닝으로 인생의 주도권을 되찾으세요. 성공하는 사람들의 모닝 루틴.", 
+        category: "건강·운동", 
+        thumbnail: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=2070&auto=format&fit=crop", 
+        current_participants: 142, 
+        start_date: Date.current + 3.days, 
+        end_date: Date.current + 17.days,
+        recruitment_end_date: Date.current + 2.days,
+        recruitment_start_date: Date.current - 5.days,
+        status: :upcoming,
+        amount: 10000,
+        cost_type: :fee
+      ),
+      Challenge.new(
+        title: "💪 30일 홈트레이닝 챌린지", 
+        summary: "헬스장 갈 시간이 없다면? 집에서 시작하는 건강한 변화. 매일 30분, 내 몸을 위한 투자.", 
+        category: "건강·운동", 
+        thumbnail: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop", 
+        current_participants: 89, 
+        start_date: Date.current + 5.days, 
+        end_date: Date.current + 35.days,
+        recruitment_end_date: Date.current + 4.days,
+        recruitment_start_date: Date.current - 2.days,
+        status: :upcoming,
+        amount: 5000,
+        cost_type: :fee
+      ),
+      Challenge.new(
+        title: "📚 매일 독서 30분", 
+        summary: "바쁜 일상 속, 나를 성장시키는 시간. 하루 30분 독서로 생각의 깊이를 더해보세요.", 
+        category: "학습·자기계발", 
+        thumbnail: "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=2098&auto=format&fit=crop", 
+        current_participants: 215, 
+        start_date: Date.current + 7.days, 
+        end_date: Date.current + 21.days,
+        recruitment_end_date: Date.current + 6.days,
+        recruitment_start_date: Date.current - 10.days,
+        status: :upcoming,
+        amount: 0,
+        cost_type: :free
+      ),
+      Challenge.new(
+        title: "💰 가계부 쓰기 챌린지", 
+        summary: "부자가 되는 첫걸음, 내 돈의 흐름 파악하기. 매일 저녁 5분 투자로 경제적 자유를!", 
+        category: "재테크·부업", 
+        thumbnail: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2072&auto=format&fit=crop", 
+        current_participants: 56, 
+        start_date: Date.current + 2.days, 
+        end_date: Date.current + 30.days,
+        recruitment_end_date: Date.current + 1.days,
+        recruitment_start_date: Date.current - 15.days,
+        status: :upcoming,
+        amount: 30000,
+        cost_type: :fee
+      ),
+      Challenge.new(
+        title: "✍️ 1일 1블로그 포스팅", 
+        summary: "나만의 콘텐츠로 브랜드 만들기. 기록이 쌓이면 기회가 됩니다. 함께 성장하는 블로그.", 
+        category: "SNS·브랜딩", 
+        thumbnail: "https://images.unsplash.com/photo-1499750310159-52f09abd03b0?q=80&w=2070&auto=format&fit=crop", 
+        current_participants: 34, 
+        start_date: Date.current + 4.days, 
+        end_date: Date.current + 34.days,
+        recruitment_end_date: Date.current + 3.days,
+        recruitment_start_date: Date.current - 1.days,
+        status: :upcoming,
+        amount: 10000,
+        cost_type: :fee
+      ),
+      Challenge.new(
+        title: "🧘 하루 10분 명상", 
+        summary: "복잡한 마음을 비우고 온전히 나에게 집중하는 시간. 내면의 평화를 찾아보세요.", 
+        category: "멘탈·성찰", 
+        thumbnail: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2031&auto=format&fit=crop", 
+        current_participants: 72, 
+        start_date: Date.current + 6.days, 
+        end_date: Date.current + 20.days,
+        recruitment_end_date: Date.current + 5.days,
+        recruitment_start_date: Date.current - 3.days,
+        status: :upcoming,
+        amount: 0,
+        cost_type: :free
+      )
+    ]
+    challenges.each_with_index { |c, i| c.id = 10000 + i }
+    challenges
   end
 
 
@@ -287,6 +422,7 @@ class ChallengesController < ApplicationController
       :v_photo, :v_simple, :v_metric, :v_url, :thumbnail_image, :save_account_to_profile,
       :certification_goal, :daily_goals, :reward_policy,
       :full_refund_threshold, :refund_date, :recruitment_start_date, :recruitment_end_date,
+      :chat_link,
       days: [],
       meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
     )

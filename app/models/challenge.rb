@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Challenge < ApplicationRecord
+  include ActionView::Helpers::NumberHelper
   # Enums
   enum :entry_type, { season: 0, regular: 1 }, prefix: true
   enum :admission_type, { first_come: 0, approval: 1 }, prefix: true
@@ -127,11 +128,52 @@ class Challenge < ApplicationRecord
     parts.join(" + ")
   end
 
-  private
-
-  def number_with_delimiter(number)
-    number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+  # Thumbnail URL with fallback
+  def thumbnail_url
+    return thumbnail if thumbnail.present?
+    
+    # Default Placeholder
+    "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=2000"
   end
+
+  # Recruitment D-Day helper
+  def recruitment_d_day
+    return nil if recruitment_end_date.blank?
+    (recruitment_end_date - Date.current).to_i
+  end
+
+  # Status Label for View with safety checks
+  def status_label
+    today = Date.current
+    
+    # Check recruitment status first if dates exist
+    if recruitment_start_date.present? && today < recruitment_start_date
+      return { text: "모집 예정", class: "bg-slate-500 text-white" }
+    elsif recruitment_start_date.present? && recruitment_end_date.present? && today >= recruitment_start_date && today <= recruitment_end_date
+      return { text: "모집중", class: "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" }
+    elsif recruitment_end_date.present? && start_date.present? && today > recruitment_end_date && today < start_date
+      return { text: "모집 마감", class: "bg-amber-500 text-white" }
+    end
+
+    # Check challenge progress if dates exist
+    if start_date.present? && end_date.present?
+      if today >= start_date && today <= end_date
+        return { text: "진행중", class: "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" }
+      elsif today > end_date
+        return { text: "종료", class: "bg-slate-300 text-slate-600" }
+      end
+    end
+
+    # Fallback to DB status enum if dates are missing
+    case status
+    when "upcoming" then { text: "준비중", class: "bg-slate-400 text-white" }
+    when "active" then { text: "진행중", class: "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" }
+    when "ended" then { text: "종료", class: "bg-slate-300 text-slate-600" }
+    else { text: "확인불가", class: "bg-slate-400 text-white" }
+    end
+  end
+
+  private
 
   def end_date_after_start_date
     return if end_date.blank? || start_date.blank?

@@ -39,3 +39,7 @@ application.register("threshold-input", ThresholdInputController)
 
 import ChallengeSettingsController from "controllers/challenge_settings_controller"
 application.register("challenge-settings", ChallengeSettingsController)
+
+import ScrollNavController from "controllers/scroll_nav_controller"
+application.register("scroll-nav", ScrollNavController)
+

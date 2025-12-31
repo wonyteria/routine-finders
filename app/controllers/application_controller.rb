@@ -28,7 +28,17 @@ class ApplicationController < ActionController::Base
 
   def require_login
     unless current_user
+      store_location
       redirect_to root_path, alert: "로그인이 필요합니다."
     end
+  end
+
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get?
+  end
+
+  def redirect_back_or(default)
+    redirect_to(session[:forwarding_url] || default)
+    session.delete(:forwarding_url)
   end
 end
