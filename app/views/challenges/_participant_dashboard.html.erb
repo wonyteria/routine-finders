@@ -322,7 +322,7 @@
                 <h4 class="text-sm font-black text-slate-900 flex items-center gap-2">
                   <span>📝</span> 히스토리
                 </h4>
-                <% my_logs = @participant.verification_logs.includes(:user).where(status: [:approved, :completed]).order(created_at: :desc) %>
+                <% my_logs = @participant.verification_logs.where(status: :approved).order(created_at: :desc) %>
                 <% if my_logs.any? %>
                   <div class="relative pl-4 border-l-2 border-slate-100 space-y-8 ml-2">
                     <% my_logs.each do |log| %>
