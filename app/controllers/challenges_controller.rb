@@ -3,7 +3,31 @@ class ChallengesController < ApplicationController
   before_action :require_login, only: [ :new, :create, :join, :leave ]
 
   def index
-    @challenges = Challenge.online_challenges.order(created_at: :desc)
+    @challenges = Challenge.online_challenges
+
+    # 검색 및 필터링
+    if params[:keyword].present?
+      @challenges = @challenges.where("title LIKE ?", "%#{params[:keyword]}%")
+    end
+
+    if params[:category].present?
+      @challenges = @challenges.where(category: params[:category])
+    end
+
+    if params[:status].present?
+      case params[:status]
+      when 'recruiting'
+        @challenges = @challenges.where("recruitment_start_date <= ? AND recruitment_end_date >= ?", Date.current, Date.current)
+      when 'upcoming'
+        @challenges = @challenges.upcoming
+      when 'active'
+        @challenges = @challenges.active
+      when 'ended'
+        @challenges = @challenges.ended
+      end
+    end
+
+    @challenges = @challenges.order(created_at: :desc)
     @title = "챌린지 탐색"
     @description = "온라인으로 함께 습관을 만드는 챌린지"
   end
@@ -184,12 +208,13 @@ class ChallengesController < ApplicationController
 
   def leave
     participant = current_user.participations.find_by(challenge: @challenge)
+    return redirect_to @challenge, alert: "참여 정보가 없습니다." unless participant
 
-    if participant&.destroy
+    if participant.update(status: :abandoned, refund_amount: 0)
       @challenge.decrement!(:current_participants)
-      redirect_to challenges_path, notice: "챌린지에서 탈퇴했습니다."
+      redirect_to challenges_path, notice: "챌린지를 중도 포기했습니다."
     else
-      redirect_to @challenge, alert: "탈퇴에 실패했습니다."
+      redirect_to @challenge, alert: "탈퇴 처리에 실패했습니다."
     end
   end
 

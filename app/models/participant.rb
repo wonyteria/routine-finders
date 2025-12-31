@@ -1,6 +1,6 @@
 class Participant < ApplicationRecord
   # Enums
-  enum :status, { achieving: 0, lagging: 1, inactive: 2, failed: 3 }
+  enum :status, { achieving: 0, lagging: 1, inactive: 2, failed: 3, abandoned: 4 }
   attribute :refund_status, :integer, default: 0
   enum :refund_status, { refund_none: 0, refund_applied: 1, refund_completed: 2 }
 
@@ -58,6 +58,8 @@ class Participant < ApplicationRecord
       { label: "❌ 미참여", class: "bg-slate-50 text-slate-400 border-slate-100" }
     when :failed
       { label: "☠️ 탈락", class: "bg-red-50 text-red-600 border-red-100" }
+    when :abandoned
+      { label: "🏃 중도 포기", class: "bg-slate-100 text-slate-500 border-slate-200" }
     else
       { label: "알 수 없음", class: "bg-slate-50 text-slate-400 border-slate-100" }
     end

@@ -17,9 +17,12 @@ class ChallengeParticipantsController < ApplicationController
   end
 
   def destroy
-    @participant.destroy
-    @challenge.decrement!(:current_participants)
-    redirect_to challenge_participants_path(@challenge), notice: "참가자를 강제 퇴장시켰습니다."
+    if @participant.update(status: :failed, refund_amount: 0)
+      @challenge.decrement!(:current_participants)
+      redirect_to challenge_participants_path(@challenge), notice: "참가자를 강제 퇴장(탈락) 처리했습니다."
+    else
+      redirect_to challenge_participants_path(@challenge), alert: "탈락 처리에 실패했습니다."
+    end
   end
 
   private
