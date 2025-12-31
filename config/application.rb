@@ -21,7 +21,7 @@ module RoutineFinders
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Asia/Seoul"
-    # config.eager_load_paths << Rails.root.join("extras")
+    config.time_zone = "Asia/Seoul"
+    config.i18n.default_locale = :ko
   end
 end

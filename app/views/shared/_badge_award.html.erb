@@ -2,11 +2,13 @@
   <div id="badge-award-overlay" 
        data-controller="badge-award" 
        data-badge-award-badge-ids="<%= @unviewed_badges.map(&:id).to_json %>"
-       class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-500">
+       data-action="click->badge-award#handleBackdropClick"
+       class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
     
     <% @unviewed_badges.each_with_index do |ub, index| %>
       <div data-badge-award-target="container"
-           class="absolute bg-white rounded-[40px] md:rounded-[60px] p-10 md:p-16 text-center shadow-2xl max-w-lg w-full transform transition-all duration-700 ease-out <%= index == 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none' %>"
+           data-action="click->badge-award#preventClosing"
+           class="absolute bg-white rounded-[40px] md:rounded-[60px] p-10 md:p-16 text-center shadow-2xl max-w-lg w-full transform transition-all duration-300 ease-out <%= index == 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none' %>"
            style="z-index: <%= 100 - index %>;">
         
         <!-- Shine Effect -->
@@ -23,11 +25,18 @@
             <p class="text-slate-500 font-bold text-sm md:text-lg"><%= ub.badge.description %></p>
           </div>
 
-          <div class="pt-4">
-            <button data-action="click->badge-award#close" 
+          <div class="pt-4 flex flex-col gap-3">
+            <button data-action="click->badge-award#goToRoadmap" 
                     class="w-full py-4 md:py-6 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl md:rounded-[32px] font-black text-base md:text-xl shadow-xl transition-all active:scale-95">
-              <%= index == @unviewed_badges.size - 1 ? "놀라워요!" : "다음 배지 확인" %>
+              다음 배지 확인
             </button>
+            
+            <% if @unviewed_badges.size > 1 && index < @unviewed_badges.size - 1 %>
+              <button data-action="click->badge-award#next" 
+                      class="w-full py-3 text-slate-500 hover:text-indigo-600 font-bold text-sm md:text-base transition-colors">
+                다음 보상 보기 (<%= index + 1 %>/<%= @unviewed_badges.size %>)
+              </button>
+            <% end %>
           </div>
         </div>
       </div>

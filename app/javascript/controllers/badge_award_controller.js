@@ -11,7 +11,7 @@ export default class extends Controller {
     }
 
     fireConfetti() {
-        const duration = 3 * 1000
+        const duration = 1 * 1000 // 3초에서 1초로 단축
         const animationEnd = Date.now() + duration
         const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 }
 
@@ -36,43 +36,75 @@ export default class extends Controller {
                 particleCount,
                 origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
             })
-        }, 250)
+        }, 200) // 간격도 약간 단축
     }
 
-    close() {
+    preventClosing(e) {
+        e.stopPropagation()
+    }
+
+    handleBackdropClick(e) {
+        this.finishAll(true) // 배경 클릭 시 로드맵으로 이동
+    }
+
+    // 다음 배지 보기 (모달 내 전환)
+    next(e) {
+        if (e) e.stopPropagation()
+
         const currentCard = this.containerTargets[this.currentIndex]
         currentCard.classList.add("opacity-0", "scale-95", "pointer-events-none")
 
         this.currentIndex++
 
         if (this.currentIndex < this.containerTargets.length) {
-            // 다음 배지가 있으면 보여주기
             setTimeout(() => {
                 const nextCard = this.containerTargets[this.currentIndex]
                 nextCard.classList.remove("opacity-0", "scale-90", "pointer-events-none")
                 nextCard.classList.add("opacity-100", "scale-100")
                 this.fireConfetti()
-            }, 500)
+            }, 200)
         } else {
-            // 모든 배지를 확인했으면 오버레이 제거 및 새로고침
-            const overlay = document.getElementById("badge-award-overlay")
-            overlay.classList.add("opacity-0")
-
-            // 배지 확인 완료 처리 (서버 요청)
-            const badgeIds = JSON.parse(this.data.get("badgeIds"))
-            fetch("/mark_badges_viewed", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ badge_ids: badgeIds })
-            }).then(() => {
-                setTimeout(() => {
-                    overlay.remove()
-                    window.location.reload() // 원래 화면으로 확실히 돌아가기 위해 새로고침
-                }, 500)
-            })
+            this.finishAll(true)
         }
+    }
+
+    // 배지 로드맵으로 바로 가기
+    goToRoadmap(e) {
+        if (e) e.stopPropagation()
+        this.finishAll(true)
+    }
+
+    close(e) {
+        if (e) e.stopPropagation()
+        this.next(e)
+    }
+
+    finishAll(redirectToRoadmap = true) {
+        const overlay = document.getElementById("badge-award-overlay")
+        if (!overlay) return
+
+        overlay.classList.add("opacity-0")
+
+        // 배지 확인 완료 처리 (서버 요청)
+        const badgeIdsStr = this.element.getAttribute("data-badge-award-badge-ids")
+        const badgeIds = JSON.parse(badgeIdsStr)
+
+        fetch("/mark_badges_viewed", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({ badge_ids: badgeIds })
+        }).then(() => {
+            setTimeout(() => {
+                overlay.remove()
+                if (redirectToRoadmap) {
+                    window.location.href = "/badge_roadmap"
+                } else {
+                    window.location.reload()
+                }
+            }, 300)
+        })
     }
 }

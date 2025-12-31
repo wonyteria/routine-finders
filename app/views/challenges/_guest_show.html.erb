@@ -112,6 +112,10 @@
         <div class="p-4 bg-indigo-600 rounded-2xl text-center">
           <p class="text-white font-black text-sm">내가 호스트인 챌린지입니다</p>
         </div>
+      <% elsif @is_joined %>
+        <%= link_to challenge_path(@challenge, tab: 'records'), class: "block w-full py-5 bg-emerald-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-emerald-600/30 hover:bg-emerald-700 transition-all" do %>
+          참여중인 챌린지
+        <% end %>
       <% else %>
         <% application = @challenge.challenge_applications.find_by(user: current_user) if current_user %>
         <% if application&.pending? %>
@@ -152,6 +156,11 @@
         <%= link_to clone_challenge_path(@challenge), class: "block w-full py-4 bg-emerald-500 text-white rounded-2xl text-center font-black text-sm shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all" do %>
           똑같은 챌린지 다시 개설하기
         <% end %>
+      <% elsif @is_joined %>
+        <%= link_to challenge_path(@challenge, tab: 'records'), class: "block w-full py-5 bg-emerald-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-emerald-600/30 hover:bg-emerald-700 transition-all" do %>
+          참여중인 챌린지
+        <% end %>
+        <p class="text-center text-xs text-slate-400 mt-2">클릭하여 대시보드로 이동</p>
       <% else %>
         <% application = @challenge.challenge_applications.find_by(user: current_user) if current_user %>
         <% if application&.pending? %>

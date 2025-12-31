@@ -4,8 +4,8 @@ class ChallengesController < ApplicationController
 
   def index
     # 검색어, 카테고리, 상태 필터가 있거나 '전체보기' 모드인 경우
-    @is_search_mode = params[:keyword].present? || params[:category].present? || params[:status].present? || params[:mode] == 'all'
-    
+    @is_search_mode = params[:keyword].present? || params[:category].present? || params[:status].present? || params[:mode] == "all"
+
     if @is_search_mode
       search_challenges
     else
@@ -178,7 +178,7 @@ class ChallengesController < ApplicationController
 
     begin
       ActiveRecord::Base.transaction do
-        participant = @challenge.participants.create!(
+        @challenge.participants.create!(
           user: current_user,
           paid_amount: @challenge.total_payment_amount,
           joined_at: Time.current
@@ -236,7 +236,7 @@ class ChallengesController < ApplicationController
 
     # If no results in DB, fallback to dummy for development/demo
     if @challenges.empty?
-      @challenges = generate_dummy_challenges
+      @challenges = Challenge.generate_dummy_challenges
       filter_dummies
     end
   end
@@ -304,110 +304,27 @@ class ChallengesController < ApplicationController
     if @featured_challenges.empty?
       @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail_image: nil).limit(4)
       @featured_challenges = Challenge.online_challenges.recruiting.limit(4) if @featured_challenges.empty?
-      @featured_challenges = generate_dummy_challenges.first(4) if @featured_challenges.empty? # Fallback to dummy
+      @featured_challenges = Challenge.generate_dummy_challenges.first(4) if @featured_challenges.empty? # Fallback to dummy
     end
 
     @hot_challenges = Challenge.online_challenges.recruiting.order(current_participants: :desc).limit(6)
-    @hot_challenges = generate_dummy_challenges.first(6) if @hot_challenges.empty? # Fallback to dummy
+    @hot_challenges = Challenge.generate_dummy_challenges.first(6) if @hot_challenges.empty? # Fallback to dummy
 
     @challenges = Challenge.online_challenges.recruiting.order(created_at: :desc).limit(12)
-    @challenges = generate_dummy_challenges if @challenges.empty? # Fallback to dummy
+    @challenges = Challenge.generate_dummy_challenges if @challenges.empty? # Fallback to dummy
   end
 
-  def generate_dummy_challenges
-    challenges = [
-      Challenge.new(
-        title: "☀️ 미라클 모닝 챌린지 1기", 
-        summary: "하루를 일찍 시작하는 습관, 미라클 모닝으로 인생의 주도권을 되찾으세요. 성공하는 사람들의 모닝 루틴.", 
-        category: "건강·운동", 
-        thumbnail: "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=2070&auto=format&fit=crop", 
-        current_participants: 142, 
-        start_date: Date.current + 3.days, 
-        end_date: Date.current + 17.days,
-        recruitment_end_date: Date.current + 2.days,
-        recruitment_start_date: Date.current - 5.days,
-        status: :upcoming,
-        amount: 10000,
-        cost_type: :fee
-      ),
-      Challenge.new(
-        title: "💪 30일 홈트레이닝 챌린지", 
-        summary: "헬스장 갈 시간이 없다면? 집에서 시작하는 건강한 변화. 매일 30분, 내 몸을 위한 투자.", 
-        category: "건강·운동", 
-        thumbnail: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop", 
-        current_participants: 89, 
-        start_date: Date.current + 5.days, 
-        end_date: Date.current + 35.days,
-        recruitment_end_date: Date.current + 4.days,
-        recruitment_start_date: Date.current - 2.days,
-        status: :upcoming,
-        amount: 5000,
-        cost_type: :fee
-      ),
-      Challenge.new(
-        title: "📚 매일 독서 30분", 
-        summary: "바쁜 일상 속, 나를 성장시키는 시간. 하루 30분 독서로 생각의 깊이를 더해보세요.", 
-        category: "학습·자기계발", 
-        thumbnail: "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=2098&auto=format&fit=crop", 
-        current_participants: 215, 
-        start_date: Date.current + 7.days, 
-        end_date: Date.current + 21.days,
-        recruitment_end_date: Date.current + 6.days,
-        recruitment_start_date: Date.current - 10.days,
-        status: :upcoming,
-        amount: 0,
-        cost_type: :free
-      ),
-      Challenge.new(
-        title: "💰 가계부 쓰기 챌린지", 
-        summary: "부자가 되는 첫걸음, 내 돈의 흐름 파악하기. 매일 저녁 5분 투자로 경제적 자유를!", 
-        category: "재테크·부업", 
-        thumbnail: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2072&auto=format&fit=crop", 
-        current_participants: 56, 
-        start_date: Date.current + 2.days, 
-        end_date: Date.current + 30.days,
-        recruitment_end_date: Date.current + 1.days,
-        recruitment_start_date: Date.current - 15.days,
-        status: :upcoming,
-        amount: 30000,
-        cost_type: :fee
-      ),
-      Challenge.new(
-        title: "✍️ 1일 1블로그 포스팅", 
-        summary: "나만의 콘텐츠로 브랜드 만들기. 기록이 쌓이면 기회가 됩니다. 함께 성장하는 블로그.", 
-        category: "SNS·브랜딩", 
-        thumbnail: "https://images.unsplash.com/photo-1499750310159-52f09abd03b0?q=80&w=2070&auto=format&fit=crop", 
-        current_participants: 34, 
-        start_date: Date.current + 4.days, 
-        end_date: Date.current + 34.days,
-        recruitment_end_date: Date.current + 3.days,
-        recruitment_start_date: Date.current - 1.days,
-        status: :upcoming,
-        amount: 10000,
-        cost_type: :fee
-      ),
-      Challenge.new(
-        title: "🧘 하루 10분 명상", 
-        summary: "복잡한 마음을 비우고 온전히 나에게 집중하는 시간. 내면의 평화를 찾아보세요.", 
-        category: "멘탈·성찰", 
-        thumbnail: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2031&auto=format&fit=crop", 
-        current_participants: 72, 
-        start_date: Date.current + 6.days, 
-        end_date: Date.current + 20.days,
-        recruitment_end_date: Date.current + 5.days,
-        recruitment_start_date: Date.current - 3.days,
-        status: :upcoming,
-        amount: 0,
-        cost_type: :free
-      )
-    ]
-    challenges.each_with_index { |c, i| c.id = 10000 + i }
-    challenges
-  end
+  # Removed local generate_dummy_challenges as it's now in the model
 
 
   def set_challenge
-    @challenge = Challenge.find(params[:id])
+    challenge_id = params[:id].to_i
+    if challenge_id >= 10000
+      @challenge = Challenge.generate_dummy_challenges.find { |c| c.id == challenge_id }
+      raise ActiveRecord::RecordNotFound, "Couldn't find dummy Challenge with 'id'=#{params[:id]}" if @challenge.nil?
+    else
+      @challenge = Challenge.find(params[:id])
+    end
   end
 
   def challenge_params

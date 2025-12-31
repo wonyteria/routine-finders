@@ -1,0 +1,16 @@
+ko:
+  number:
+    currency:
+      format:
+        format: "%n%u"
+        unit: "원"
+        separator: "."
+        delimiter: ","
+        precision: 0
+        significant: false
+        strip_insignificant_zeros: true
+    format:
+      precision: 0
+      separator: "."
+      delimiter: ","
+      strip_insignificant_zeros: true

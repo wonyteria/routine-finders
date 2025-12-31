@@ -492,7 +492,7 @@ export default class extends Controller {
                 <div class="space-y-1 pt-2 border-t border-slate-100">
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">참여 비용</p>
                         <p class="text-xl font-black text-indigo-600">
-                            ${costType === 'free' ? '무료' : Number(amount).toLocaleString() + '원'}
+                            ${costType === 'free' ? '무료' : Number(amount).toLocaleString('ko-KR') + '원'}
                             <span class="text-xs text-slate-400 font-bold ml-1">(${costType === 'deposit' ? '보증금' : '참가비'})</span>
                         </p>
                     </div>
@@ -612,7 +612,7 @@ export default class extends Controller {
             event.target.value = ""
         } else {
             const numericValue = parseInt(value)
-            event.target.value = numericValue.toLocaleString()
+            event.target.value = numericValue.toLocaleString('ko-KR')
 
             // Update hidden field
             const targetName = event.target.dataset.targetInput
