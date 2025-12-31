@@ -4,13 +4,14 @@ export default class extends Controller {
     static targets = [
         "step", "nav", "progressBar", "dot",
         "costFields", "accountFields", "penaltyAmountCard", "failureToleranceCard",
-        "amountHidden", "penaltyHidden",
+        "amountHidden", "penaltyHidden", "participationFeeHidden",
         "bankName", "accountNumber", "accountHolder",
         "thumbnailPreview", "thumbnailInput",
         "invitationCodeSection", "summaryModal", "summaryContent",
         "hostBio", "missionGoalType", "fixedGoalSection", "dailyGoalSection",
         "disclaimerFields", "rewardHidden", "rewardsContainer", "achievementThresholds",
-        "refundDateField", "recruitmentStartDate", "recruitmentEndDate"
+        "refundDateField", "recruitmentStartDate", "recruitmentEndDate",
+        "feeSection", "depositSection", "addFeeCheckbox", "additionalFeeFields"
     ]
 
     connect() {
@@ -182,9 +183,25 @@ export default class extends Controller {
         this.updateCostFields(type)
     }
 
+
+    toggleAddFee(event) {
+        const isChecked = event.target.checked
+        if (this.hasAdditionalFeeFieldsTarget) {
+            this.additionalFeeFieldsTarget.classList.toggle("hidden", !isChecked)
+        }
+    }
+
     updateCostFields(type) {
         if (this.hasCostFieldsTarget) this.costFieldsTarget.classList.toggle("hidden", type === "free")
         if (this.hasAccountFieldsTarget) this.accountFieldsTarget.classList.toggle("hidden", type === "free")
+
+        // Show/hide fee and deposit sections based on cost type
+        if (this.hasFeeSectionTarget) {
+            this.feeSectionTarget.classList.toggle("hidden", type !== "fee")
+        }
+        if (this.hasDepositSectionTarget) {
+            this.depositSectionTarget.classList.toggle("hidden", type !== "deposit")
+        }
 
         // Only show penalty amount for deposit-type challenges
         if (this.hasPenaltyAmountCardTarget) {
@@ -603,6 +620,8 @@ export default class extends Controller {
                 this.amountHiddenTarget.value = numericValue
             } else if (targetName === "penaltyHidden" && this.hasPenaltyHiddenTarget) {
                 this.penaltyHiddenTarget.value = numericValue
+            } else if (targetName === "participationFeeHidden" && this.hasParticipationFeeHiddenTarget) {
+                this.participationFeeHiddenTarget.value = numericValue
             }
         }
     }

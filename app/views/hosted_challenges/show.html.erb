@@ -184,15 +184,39 @@
               <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               </div>
-              <p class="text-xs font-black text-slate-400 uppercase tracking-wider">
-                <%= @challenge.cost_type_free? ? '참가 비용' : @challenge.cost_type_deposit? ? '보증금' : '참가비' %>
-              </p>
+              <p class="text-xs font-black text-slate-400 uppercase tracking-wider">참가 비용</p>
             </div>
-            <p class="text-lg font-black text-slate-900">
-              <%= @challenge.cost_type_free? ? '무료' : "#{number_with_delimiter(@challenge.amount)}원" %>
-            </p>
-            <% if !@challenge.cost_type_free? && @challenge.penalty_per_failure.present? %>
-              <p class="text-xs font-bold text-amber-700/70">실패 시 <%= number_with_delimiter(@challenge.penalty_per_failure) %>원 차감</p>
+            <% if @challenge.cost_type_free? %>
+              <p class="text-lg font-black text-slate-900">무료</p>
+            <% else %>
+              <div class="space-y-2">
+                <% if @challenge.participation_fee.present? && @challenge.participation_fee > 0 %>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-slate-600">참가비</span>
+                    <span class="text-lg font-black text-slate-900"><%= number_with_delimiter(@challenge.participation_fee) %>원</span>
+                  </div>
+                <% end %>
+                <% if @challenge.cost_type_deposit? && @challenge.amount.present? && @challenge.amount > 0 %>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-slate-600">보증금</span>
+                    <span class="text-lg font-black text-slate-900"><%= number_with_delimiter(@challenge.amount) %>원</span>
+                  </div>
+                <% elsif @challenge.cost_type_fee? && @challenge.amount.present? && @challenge.amount > 0 %>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-slate-600">참가비</span>
+                    <span class="text-lg font-black text-slate-900"><%= number_with_delimiter(@challenge.amount) %>원</span>
+                  </div>
+                <% end %>
+                <% if (@challenge.participation_fee.present? && @challenge.participation_fee > 0) && (@challenge.amount.present? && @challenge.amount > 0) %>
+                  <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+                    <span class="text-xs font-black text-amber-600 uppercase">총 납부액</span>
+                    <span class="text-xl font-black text-amber-600"><%= number_with_delimiter(@challenge.total_payment_amount) %>원</span>
+                  </div>
+                <% end %>
+              </div>
+              <% if @challenge.cost_type_deposit? && @challenge.penalty_per_failure.present? %>
+                <p class="text-xs font-bold text-amber-700/70">실패 시 <%= number_with_delimiter(@challenge.penalty_per_failure) %>원 차감</p>
+              <% end %>
             <% end %>
           </div>
 

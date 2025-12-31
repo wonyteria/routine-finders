@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_021231) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_034220) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -118,6 +118,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_021231) do
     t.integer "mode", default: 0, null: false
     t.integer "non_participating_failures_threshold", default: 3
     t.integer "original_challenge_id"
+    t.integer "participation_fee"
     t.integer "penalty_per_failure", default: 0
     t.string "purpose"
     t.boolean "re_verification_allowed", default: false, null: false
@@ -129,6 +130,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_021231) do
     t.json "reward_policy"
     t.decimal "sluggish_rate_threshold", precision: 5, scale: 2, default: "0.5"
     t.date "start_date", null: false
+    t.integer "status", default: 0, null: false
     t.text "summary"
     t.string "thumbnail"
     t.string "title", null: false
@@ -146,6 +148,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_021231) do
     t.index ["is_official"], name: "index_challenges_on_is_official"
     t.index ["mode"], name: "index_challenges_on_mode"
     t.index ["original_challenge_id"], name: "index_challenges_on_original_challenge_id"
+    t.index ["status"], name: "index_challenges_on_status"
   end
 
   create_table "meeting_infos", force: :cascade do |t|
@@ -180,6 +183,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_021231) do
     t.integer "consecutive_failures", default: 0, null: false
     t.datetime "created_at", null: false
     t.integer "current_streak", default: 0, null: false
+    t.decimal "final_achievement_rate", precision: 5, scale: 2
     t.datetime "joined_at", null: false
     t.integer "max_streak", default: 0, null: false
     t.string "nickname"
@@ -187,6 +191,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_021231) do
     t.string "profile_image"
     t.string "refund_account_name"
     t.string "refund_account_number"
+    t.integer "refund_amount", default: 0
     t.datetime "refund_applied_at"
     t.string "refund_bank_name"
     t.integer "refund_status"

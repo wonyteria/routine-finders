@@ -8,6 +8,7 @@ class Challenge < ApplicationRecord
   enum :mode, { online: 0, offline: 1 }
   enum :cost_type, { free: 0, fee: 1, deposit: 2 }, prefix: true
   enum :mission_frequency, { daily: 0, weekly_n: 1 }, prefix: true
+  enum :status, { upcoming: 0, active: 1, ended: 2, archived: 3 }, prefix: true
 
   # Associations
   belongs_to :host, class_name: "User"
@@ -42,9 +43,13 @@ class Challenge < ApplicationRecord
   scope :active, -> { where("start_date <= ? AND end_date >= ?", Date.current, Date.current) }
   scope :public_challenges, -> { where(is_private: false) }
   scope :private_challenges, -> { where(is_private: true) }
+  scope :ongoing, -> { status_active }
+  scope :finished, -> { status_ended }
+  scope :needs_status_update, -> { where("(start_date <= ? AND status = ?) OR (end_date < ? AND status IN (?))", Date.current, statuses[:upcoming], Date.current, [statuses[:upcoming], statuses[:active]]) }
 
   # Callbacks
   before_save :set_host_name
+  before_save :update_status_based_on_dates
   before_create :generate_invitation_code, if: :is_private?
 
   # Nested attributes
@@ -96,7 +101,31 @@ class Challenge < ApplicationRecord
     admission_type_approval?
   end
 
+  # Calculate total payment amount (participation_fee + deposit)
+  def total_payment_amount
+    total = 0
+    total += participation_fee if participation_fee.present? && participation_fee > 0
+    total += amount if amount.present? && amount > 0
+    total
+  end
+
+  # Display text for cost type
+  def cost_display_text
+    return "무료" if cost_type_free?
+    
+    parts = []
+    parts << "참가비 #{number_with_delimiter(participation_fee)}원" if participation_fee.present? && participation_fee > 0
+    parts << "보증금 #{number_with_delimiter(amount)}원" if cost_type_deposit? && amount.present? && amount > 0
+    parts << "참가비 #{number_with_delimiter(amount)}원" if cost_type_fee? && amount.present? && amount > 0
+    
+    parts.join(" + ")
+  end
+
   private
+
+  def number_with_delimiter(number)
+    number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+  end
 
   def end_date_after_start_date
     return if end_date.blank? || start_date.blank?
@@ -117,6 +146,21 @@ class Challenge < ApplicationRecord
 
   def set_host_name
     self.host_name = host&.nickname if host_name.blank?
+  end
+
+  def update_status_based_on_dates
+    return if start_date.blank? || end_date.blank?
+    return if status_archived? # 보관된 챌린지는 상태 변경 안 함
+
+    today = Date.current
+
+    if today < start_date
+      self.status = :upcoming unless status_upcoming?
+    elsif today >= start_date && today <= end_date
+      self.status = :active unless status_active?
+    elsif today > end_date
+      self.status = :ended unless status_ended?
+    end
   end
 
   def generate_invitation_code

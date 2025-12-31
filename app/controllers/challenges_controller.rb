@@ -170,7 +170,7 @@ class ChallengesController < ApplicationController
 
     participant = @challenge.participants.build(
       user: current_user,
-      paid_amount: @challenge.amount,
+      paid_amount: @challenge.total_payment_amount,
       joined_at: Time.current
     )
 
@@ -225,7 +225,7 @@ class ChallengesController < ApplicationController
     params.require(:challenge).permit(
       :title, :summary, :description, :purpose, :category, :thumbnail, :custom_host_bio,
       :start_date, :end_date, :mode, :verification_type, :cost_type,
-      :amount, :max_participants, :failure_tolerance, :penalty_per_failure,
+      :amount, :participation_fee, :max_participants, :failure_tolerance, :penalty_per_failure,
       :mission_frequency, :mission_is_late_detection_enabled,
       :mission_allow_exceptions, :mission_is_consecutive, :mission_requires_host_approval,
       :verification_start_time, :verification_end_time, :re_verification_allowed,

@@ -296,7 +296,7 @@
                   <%= challenge.current_participants %>명
                 </span>
                 <span class="text-indigo-600 font-black text-xs tracking-tighter">
-                  <% case challenge.cost_type when 'free' %>무료<% when 'fee' %>참가비 <%= number_with_delimiter(challenge.amount) %>원<% when 'deposit' %>보증금 <%= number_with_delimiter(challenge.amount) %>원<% end %>
+                  <% if challenge.cost_type_free? %>무료<% else %><%= number_with_delimiter(challenge.total_payment_amount) %>원<% end %>
                 </span>
               </div>
             </div>
@@ -341,7 +341,7 @@
                   <%= challenge.current_participants %>명
                 </span>
                 <span class="text-indigo-600 font-black text-xs tracking-tighter">
-                  <% case challenge.cost_type when 'free' %>무료<% when 'fee' %>참가비 <%= number_with_delimiter(challenge.amount) %>원<% when 'deposit' %>보증금 <%= number_with_delimiter(challenge.amount) %>원<% end %>
+                  <% if challenge.cost_type_free? %>무료<% else %><%= number_with_delimiter(challenge.total_payment_amount) %>원<% end %>
                 </span>
               </div>
             </div>
@@ -389,7 +389,7 @@
               <div class="mt-auto pt-4 flex items-center justify-between border-t border-slate-50">
                 <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter"><%= gathering.current_participants %>명 모집 중</span>
                 <span class="text-orange-600 font-black text-xs tracking-tighter">
-                  <% case gathering.cost_type when 'free' %>무료<% when 'fee' %>참가비 <%= number_with_delimiter(gathering.amount) %>원<% when 'deposit' %>보증금 <%= number_with_delimiter(gathering.amount) %>원<% end %>
+                  <% if gathering.cost_type_free? %>무료<% else %><%= number_with_delimiter(gathering.total_payment_amount) %>원<% end %>
                 </span>
               </div>
             </div>

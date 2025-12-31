@@ -60,7 +60,7 @@ module Api
 
         participant = @challenge.participants.create!(
           user: current_user,
-          paid_amount: @challenge.amount,
+          paid_amount: @challenge.total_payment_amount,
           joined_at: Time.current
         )
 

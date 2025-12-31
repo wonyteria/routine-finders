@@ -32,10 +32,28 @@ class ChallengeApplicationsController < ApplicationController
     @application.user = current_user
 
     if @application.save
-      # Notify host about new application
-      create_notification_for_host
+      # 승인제가 아닌 경우 즉시 참여 완료
+      if !@challenge.requires_approval?
+        ActiveRecord::Base.transaction do
+          @application.approve!
 
-      redirect_to @challenge, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+          # Create participant record
+          participant = @challenge.participants.create!(
+            user: current_user,
+            paid_amount: @challenge.total_payment_amount,
+            joined_at: Time.current
+          )
+
+          @challenge.increment!(:current_participants)
+        end
+
+        redirect_to @challenge, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
+      else
+        # 승인제인 경우 호스트에게 알림
+        create_notification_for_host
+
+        redirect_to @challenge, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+      end
     else
       render :new, status: :unprocessable_entity
     end
@@ -49,7 +67,7 @@ class ChallengeApplicationsController < ApplicationController
       # Create participant record
       participant = @challenge.participants.create!(
         user: @application.user,
-        paid_amount: @challenge.amount,
+        paid_amount: @challenge.total_payment_amount,
         joined_at: Time.current
       )
 

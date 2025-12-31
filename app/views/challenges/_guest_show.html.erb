@@ -57,8 +57,8 @@
         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">진행 일수</p>
       </div>
       <div class="p-6 text-center">
-        <p class="text-3xl font-black text-amber-600 mb-1"><%= @challenge.cost_type_free? ? '무료' : number_with_delimiter(@challenge.amount) %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest"><%= @challenge.cost_type_free? ? '참가비' : @challenge.cost_type_deposit? ? '보증금' : '참가비' %></p>
+        <p class="text-3xl font-black text-amber-600 mb-1"><%= @challenge.cost_type_free? ? '무료' : number_with_delimiter(@challenge.total_payment_amount) %></p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">총 납부액</p>
       </div>
     </div>
 
@@ -127,7 +127,13 @@
           <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
             참여 신청하기
           <% end %>
+        <% elsif !@challenge.cost_type_free? %>
+          <!-- 유료 챌린지: 신청 페이지로 이동 -->
+          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
+            입금 정보 입력하고 참여하기
+          <% end %>
         <% else %>
+          <!-- 무료 챌린지: 모달 열기 -->
           <button data-action="click->modal#open" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all">
             지금 참여하기
           </button>
@@ -162,7 +168,14 @@
           <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
             참여 신청하기
           <% end %>
+        <% elsif !@challenge.cost_type_free? %>
+          <!-- 유료 챌린지: 신청 페이지로 이동 -->
+          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
+            입금 정보 입력하고 참여하기
+          <% end %>
+          <p class="text-center text-xs text-slate-400 mt-2">입금 확인 후 참여가 완료됩니다</p>
         <% else %>
+          <!-- 무료 챌린지: 모달 열기 -->
           <button data-action="click->modal#open" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all">
             지금 참여하기
           </button>
@@ -238,17 +251,26 @@
         </div>
 
         <div class="pt-4 space-y-3">
-          <% if @challenge.is_private? %>
-            <%= form_with url: join_challenge_path(@challenge), method: :post, class: "space-y-4" do |f| %>
-              <div class="relative">
-                <%= f.text_field :invitation_code, placeholder: "초대 코드를 입력하세요", class: "w-full py-5 px-6 bg-slate-50 border-2 border-transparent rounded-2xl font-black text-center focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
-              </div>
-              <%= f.submit "코드 입력 후 참여하기", class: "w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all cursor-pointer" %>
+          <% if @challenge.cost_type_free? %>
+            <!-- 무료 챌린지: 즉시 참여 -->
+            <% if @challenge.is_private? %>
+              <%= form_with url: join_challenge_path(@challenge), method: :post, class: "space-y-4" do |f| %>
+                <div class="relative">
+                  <%= f.text_field :invitation_code, placeholder: "초대 코드를 입력하세요", class: "w-full py-5 px-6 bg-slate-50 border-2 border-transparent rounded-2xl font-black text-center focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+                </div>
+                <%= f.submit "코드 입력 후 참여하기", class: "w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all cursor-pointer" %>
+              <% end %>
+            <% else %>
+              <%= button_to join_challenge_path(@challenge), method: :post, class: "w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
+                지금 바로 시작하기
+              <% end %>
             <% end %>
           <% else %>
-            <%= button_to join_challenge_path(@challenge), method: :post, class: "w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
-              지금 바로 시작하기
+            <!-- 유료 챌린지: 신청 페이지로 이동 -->
+            <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all text-center" do %>
+              입금 정보 입력하고 참여하기
             <% end %>
+            <p class="text-center text-xs text-slate-400 mt-2">입금 확인 후 참여가 완료됩니다</p>
           <% end %>
           <button data-action="click->modal#close" class="w-full py-4 text-slate-400 font-bold text-sm hover:text-slate-600 transition-all">
             조금 더 둘러볼게요

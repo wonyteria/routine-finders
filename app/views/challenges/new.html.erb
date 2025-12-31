@@ -665,18 +665,75 @@
                   </div>
 
                   <div class="grid grid-cols-1 gap-8 <%= (@challenge.cost_type || 'deposit') == 'free' ? 'hidden' : '' %>" data-challenge-form-target="costFields">
-                    <div class="space-y-4">
-                      <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">참가 금액</label>
-                      <div class="flex items-center gap-4 p-6 bg-slate-50 rounded-[32px] border-2 border-transparent focus-within:bg-white focus-within:border-indigo-500/20 focus-within:ring-4 focus-within:ring-indigo-500/5 transition-all shadow-inner group">
-                        <div class="flex-1 flex items-center gap-2 min-w-0 pl-2">
-                          <%= f.hidden_field :amount, value: @challenge.amount || 10000, data: { challenge_form_target: "amountHidden" }, id: "challenge_amount" %>
-                          <input type="text" 
-                                 value="<%= number_with_delimiter(@challenge.amount || 10000) %>"
-                                 class="w-full text-3xl font-black p-0 border-none bg-transparent focus:ring-0 placeholder:text-slate-200 text-slate-900"
-                                 data-action="input->challenge-form#formatCurrency"
-                                 data-target-input="amountHidden"
-                                 placeholder="0">
-                          <span class="flex-shrink-0 text-xl font-black text-slate-400">원</span>
+                    <!-- 참가비 섹션 (fee 선택 시) -->
+                    <div class="space-y-6 <%= (@challenge.cost_type || 'deposit') == 'fee' ? '' : 'hidden' %>" data-challenge-form-target="feeSection">
+                      <div class="space-y-4">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">참가비 금액</label>
+                        <div class="flex items-center gap-4 p-6 bg-slate-50 rounded-[32px] border-2 border-transparent focus-within:bg-white focus-within:border-indigo-500/20 focus-within:ring-4 focus-within:ring-indigo-500/5 transition-all shadow-inner group">
+                          <div class="flex-1 flex items-center gap-2 min-w-0 pl-2">
+                            <%= f.hidden_field :participation_fee, value: @challenge.participation_fee || 10000, data: { challenge_form_target: "participationFeeHidden" } %>
+                            <input type="text" 
+                                   value="<%= number_with_delimiter(@challenge.participation_fee || 10000) %>"
+                                   class="w-full text-3xl font-black p-0 border-none bg-transparent focus:ring-0 placeholder:text-slate-200 text-slate-900"
+                                   data-action="input->challenge-form#formatCurrency"
+                                   data-target-input="participationFeeHidden"
+                                   placeholder="0">
+                            <span class="flex-shrink-0 text-xl font-black text-slate-400">원</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 보증금 섹션 (deposit 선택 시) -->
+                    <div class="space-y-6 <%= (@challenge.cost_type || 'deposit') == 'deposit' ? '' : 'hidden' %>" data-challenge-form-target="depositSection">
+                      <div class="space-y-4">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">보증금 금액</label>
+                        <div class="flex items-center gap-4 p-6 bg-slate-50 rounded-[32px] border-2 border-transparent focus-within:bg-white focus-within:border-indigo-500/20 focus-within:ring-4 focus-within:ring-indigo-500/5 transition-all shadow-inner group">
+                          <div class="flex-1 flex items-center gap-2 min-w-0 pl-2">
+                            <%= f.hidden_field :amount, value: @challenge.amount || 10000, data: { challenge_form_target: "amountHidden" }, id: "challenge_amount" %>
+                            <input type="text" 
+                                   value="<%= number_with_delimiter(@challenge.amount || 10000) %>"
+                                   class="w-full text-3xl font-black p-0 border-none bg-transparent focus:ring-0 placeholder:text-slate-200 text-slate-900"
+                                   data-action="input->challenge-form#formatCurrency"
+                                   data-target-input="amountHidden"
+                                   placeholder="0">
+                            <span class="flex-shrink-0 text-xl font-black text-slate-400">원</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 참가비도 함께 받기 체크박스 -->
+                      <div class="p-6 bg-indigo-50/50 rounded-[28px] border border-indigo-100/50 space-y-4">
+                        <label class="flex items-center gap-4 cursor-pointer group">
+                          <div class="relative inline-flex items-center">
+                            <input type="checkbox" 
+                                   class="sr-only peer" 
+                                   data-challenge-form-target="addFeeCheckbox"
+                                   data-action="change->challenge-form#toggleAddFee">
+                            <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                          </div>
+                          <div class="flex-1">
+                            <p class="font-black text-sm text-slate-900">참가비도 함께 받기</p>
+                            <p class="text-[10px] font-bold text-slate-500 mt-0.5">보증금과 별도로 참가비를 추가로 받습니다</p>
+                          </div>
+                        </label>
+
+                        <div class="hidden space-y-4 pt-2" data-challenge-form-target="additionalFeeFields">
+                          <div class="space-y-3">
+                            <label class="text-[10px] font-black text-indigo-600 uppercase tracking-widest pl-2">참가비 금액</label>
+                            <div class="flex items-center gap-4 p-5 bg-white rounded-[24px] border-2 border-indigo-100">
+                              <div class="flex-1 flex items-center gap-2 min-w-0 pl-2">
+                                <%= f.hidden_field :participation_fee, value: @challenge.participation_fee || 5000, data: { challenge_form_target: "participationFeeHidden" } %>
+                                <input type="text" 
+                                       value="<%= number_with_delimiter(@challenge.participation_fee || 5000) %>"
+                                       class="w-full text-2xl font-black p-0 border-none bg-transparent focus:ring-0 text-slate-900"
+                                       data-action="input->challenge-form#formatCurrency"
+                                       data-target-input="participationFeeHidden"
+                                       placeholder="0">
+                                <span class="flex-shrink-0 text-lg font-black text-slate-400">원</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
