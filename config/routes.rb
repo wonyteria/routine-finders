@@ -69,7 +69,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :gatherings, only: [ :index ]
+  resources :gatherings, only: [ :index, :new, :create ]
 
   resources :personal_routines, only: [ :index, :create, :edit, :update, :destroy ] do
     member do

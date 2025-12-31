@@ -10,6 +10,7 @@ class Challenge < ApplicationRecord
   enum :cost_type, { free: 0, fee: 1, deposit: 2 }, prefix: true
   enum :mission_frequency, { daily: 0, weekly_n: 1 }, prefix: true
   enum :status, { upcoming: 0, active: 1, ended: 2, archived: 3 }, prefix: true
+  enum :meeting_type, { single: 0, regular: 1 }, prefix: true
 
   # Associations
   belongs_to :host, class_name: "User"

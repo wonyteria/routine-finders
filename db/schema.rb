@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_073053) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_103638) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -92,6 +92,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_073053) do
     t.json "daily_goals"
     t.json "days", default: []
     t.text "description"
+    t.integer "duration_minutes"
     t.date "end_date", null: false
     t.integer "entry_type", default: 0, null: false
     t.integer "failure_tolerance", default: 3
@@ -108,7 +109,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_073053) do
     t.string "kakao_link"
     t.integer "likes_count", default: 0, null: false
     t.integer "max_participants", default: 100, null: false
+    t.string "meeting_frequency"
     t.string "meeting_link"
+    t.integer "meeting_type"
+    t.integer "min_participants"
     t.boolean "mission_allow_exceptions", default: false
     t.integer "mission_frequency", default: 0, null: false
     t.boolean "mission_is_consecutive", default: false
@@ -118,9 +122,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_073053) do
     t.integer "mission_weekly_count"
     t.integer "mode", default: 0, null: false
     t.integer "non_participating_failures_threshold", default: 3
+    t.string "online_meeting_link"
     t.integer "original_challenge_id"
     t.integer "participation_fee"
     t.integer "penalty_per_failure", default: 0
+    t.text "preparation_items"
     t.string "purpose"
     t.boolean "re_verification_allowed", default: false, null: false
     t.date "recruitment_end_date"
