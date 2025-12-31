@@ -166,73 +166,195 @@
 
           <% when "records" %>
             <div class="space-y-8">
-              <!-- 루틴 잔디 위젯 -->
-              <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                <div class="flex items-center justify-between mb-4">
+              <!-- 루틴 잔디 위젯 (캘린더 스타일) -->
+              <div class="p-6 bg-white rounded-2xl border border-slate-100">
+                <div class="flex items-center justify-between mb-6">
                   <h3 class="text-sm font-black text-slate-900 border-l-4 border-indigo-600 pl-3">나의 성취 지도</h3>
-                  <div class="flex items-center gap-2">
-                    <div class="flex items-center gap-1">
-                      <div class="w-3 h-3 bg-indigo-600 rounded-sm"></div>
-                      <span class="text-[9px] font-bold text-slate-400">달성</span>
+                  <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1.5">
+                      <div class="w-2.5 h-2.5 bg-indigo-600 rounded-sm"></div>
+                      <span class="text-[10px] font-bold text-slate-500">성공</span>
                     </div>
-                    <div class="flex items-center gap-1">
-                      <div class="w-3 h-3 bg-slate-200 rounded-sm"></div>
-                      <span class="text-[9px] font-bold text-slate-400">미인증</span>
+                    <div class="flex items-center gap-1.5">
+                      <div class="w-2.5 h-2.5 bg-slate-100 rounded-sm"></div>
+                      <span class="text-[10px] font-bold text-slate-400">빈칸</span>
                     </div>
                   </div>
                 </div>
 
-                <div class="overflow-x-auto no-scrollbar">
-                  <div class="flex gap-1.5 min-w-max pb-2">
-                    <% all_dates = (@challenge.start_date..@challenge.end_date).to_a
-                       weeks = all_dates.in_groups_of(7, false) %>
-                    <% weeks.each_with_index do |week, w_idx| %>
-                      <div class="flex flex-col gap-1.5">
+                <% 
+                   start_date = @challenge.start_date
+                   end_date = @challenge.end_date
+                   calendar_start = start_date.beginning_of_week
+                   calendar_end = end_date.end_of_week
+                   all_weeks = (calendar_start..calendar_end).to_a.in_groups_of(7)
+                %>
+
+                <div class="w-full">
+                  <!-- 요일 헤더 -->
+                  <div class="grid grid-cols-7 mb-2">
+                    <% %w[월 화 수 목 금 토 일].each do |day| %>
+                       <div class="text-center text-[10px] font-black text-slate-300"><%= day %></div>
+                    <% end %>
+                  </div>
+                  
+                  <!-- 날짜 그리드 -->
+                  <div class="flex flex-col gap-1">
+                    <% all_weeks.each do |week| %>
+                      <div class="grid grid-cols-7 gap-1">
                         <% week.each do |date| %>
-                          <% is_success = @daily_status_map[date]
-                             is_future = date > Date.current
-                             bg_color = is_success ? "bg-indigo-600" : (is_future ? "bg-slate-100 opacity-50" : "bg-slate-200") %>
-                          <div class="w-8 h-8 <%= bg_color %> rounded-lg flex flex-col items-center justify-center transition-all hover:scale-110 group relative" title="<%= date.strftime('%Y-%m-%d') %>">
-                            <span class="text-[8px] font-bold <%= is_success ? 'text-white' : 'text-slate-400' %>"><%= date.day %></span>
-                            <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                              <%= date.strftime('%m/%d') %>: <%= is_success ? '달성!' : (is_future ? '예정' : '미달성') %>
-                            </div>
+                          <% 
+                             if date < start_date || date > end_date
+                               bg_class = "bg-transparent" # 챌린지 기간 외
+                               text_class = "text-slate-200 opacity-0"
+                             else
+                               is_success = @daily_status_map[date]
+                               is_future = date > Date.current
+                               
+                               if is_success
+                                 bg_class = "bg-indigo-600 shadow-sm"
+                                 text_class = "text-white"
+                               elsif is_future
+                                 bg_class = "bg-slate-50 border border-slate-100"
+                                 text_class = "text-slate-300"
+                               else
+                                 bg_class = "bg-slate-100"
+                                 text_class = "text-slate-400"
+                               end
+                             end
+                          %>
+                          <div class="aspect-square rounded-lg flex items-center justify-center relative group <%= bg_class %>">
+                            <span class="text-[10px] font-bold <%= text_class %>"><%= date.day %></span>
+                            <% if date >= start_date && date <= end_date %>
+                               <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
+                                 <%= date.strftime('%m/%d') %>: <%= is_success ? '달성 성공! 🎉' : (is_future ? '예정' : '달성 실패 😢') %>
+                               </div>
+                            <% end %>
                           </div>
                         <% end %>
-                        <p class="text-[10px] font-black text-slate-300 text-center mt-1"><%= w_idx + 1 %>주</p>
                       </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 통계 분석 섹션 -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 요일별 분석 -->
+                <div class="p-5 bg-white rounded-2xl border border-slate-100">
+                   <h4 class="text-xs font-black text-slate-900 mb-4 flex items-center gap-1">
+                     <span class="text-amber-500">📊</span> 요일별 달성률
+                   </h4>
+                   <div class="flex items-end justify-between h-24 gap-1">
+                     <% 
+                        day_stats = Hash.new { |h, k| h[k] = { total: 0, success: 0 } }
+                        (@challenge.start_date..[Date.current, @challenge.end_date].min).each do |date|
+                          wday = date.wday
+                          wday = 7 if wday == 0 # 일요일을 마지막으로
+                          day_stats[wday][:total] += 1
+                          day_stats[wday][:success] += 1 if @daily_status_map[date]
+                        end
+                     %>
+                     <% (1..7).each do |wday| %>
+                       <% 
+                          stat = day_stats[wday]
+                          rate = stat[:total] > 0 ? (stat[:success].to_f / stat[:total] * 100).to_i : 0
+                          height_class = rate == 0 ? "h-1 bg-slate-100" : "bg-indigo-500"
+                          opacity = rate > 0 ? (rate / 100.0).round(1) : 1
+                          bar_style = rate > 0 ? "height: #{rate}%; opacity: #{[opacity + 0.3, 1].min}" : ""
+                       %>
+                       <div class="flex-1 flex flex-col items-center gap-1 group relative">
+                         <div class="w-full rounded-t-sm <%= height_class %> transition-all duration-500 relative" style="<%= bar_style %>">
+                            <div class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 text-[9px] font-bold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"><%= rate %>%</div>
+                         </div>
+                         <span class="text-[9px] font-bold text-slate-400"><%= %w[월 화 수 목 금 토 일][wday-1] %></span>
+                       </div>
+                     <% end %>
+                   </div>
+                </div>
+
+                <!-- 활동 시간대 -->
+                <div class="p-5 bg-white rounded-2xl border border-slate-100">
+                  <h4 class="text-xs font-black text-slate-900 mb-4 flex items-center gap-1">
+                    <span class="text-rose-500">⏰</span> 주 활동 시간
+                  </h4>
+                  <div class="space-y-3">
+                    <% 
+                       time_slots = {
+                         "새벽 (05-09)" => 0,
+                         "오전 (09-12)" => 0,
+                         "오후 (12-18)" => 0,
+                         "저녁 (18-22)" => 0,
+                         "밤 (22-05)" => 0
+                       }
+                       @participant.verification_logs.where(status: :approved).each do |log|
+                         hour = log.created_at.hour
+                         case hour
+                         when 5..8 then time_slots["새벽 (05-09)"] += 1
+                         when 9..11 then time_slots["오전 (09-12)"] += 1
+                         when 12..17 then time_slots["오후 (12-18)"] += 1
+                         when 18..21 then time_slots["저녁 (18-22)"] += 1
+                         else time_slots["밤 (22-05)"] += 1
+                         end
+                       end
+                       max_count = time_slots.values.max.to_i
+                       max_count = 1 if max_count == 0
+                    %>
+                    <% time_slots.each do |label, count| %>
+                      <% next if count == 0 %>
+                      <div class="flex items-center gap-2">
+                        <span class="text-[9px] font-bold text-slate-400 w-16 shrink-0"><%= label.split('(').first %></span>
+                        <div class="flex-1 h-1.5 bg-slate-50 rounded-full overflow-hidden">
+                          <div class="h-full bg-rose-400 rounded-full" style="width: <%= (count.to_f / max_count * 100).to_i %>%;"></div>
+                        </div>
+                        <span class="text-[9px] font-black text-slate-900 w-4 text-right"><%= count %></span>
+                      </div>
+                    <% end %>
+                    <% if time_slots.values.sum == 0 %>
+                      <div class="py-4 text-center text-xs text-slate-400">아직 인증 기록이 없습니다.</div>
                     <% end %>
                   </div>
                 </div>
               </div>
               
+              <!-- 기록 타임라인 -->
               <div class="space-y-4">
-                <h4 class="text-sm font-black text-slate-900">상세 기록</h4>
-                <% my_logs = @participant.verification_logs.recent %>
+                <h4 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                  <span>📝</span> 히스토리
+                </h4>
+                <% my_logs = @participant.verification_logs.includes(:user).where(status: [:approved, :completed]).order(created_at: :desc) %>
                 <% if my_logs.any? %>
-                  <div class="space-y-3">
+                  <div class="relative pl-4 border-l-2 border-slate-100 space-y-8 ml-2">
                     <% my_logs.each do |log| %>
-                      <div class="p-4 bg-white rounded-2xl border border-slate-100 flex gap-4">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0 border border-indigo-100">
-                           <span class="text-xs font-black text-indigo-600"><%= log.created_at.strftime('%m/%d') %></span>
-                        </div>
-                        <div class="flex-1">
-                          <div class="flex items-center justify-between mb-1">
-                            <span class="text-[10px] font-black <%= log.approved? ? 'text-emerald-500' : 'text-amber-500' %> uppercase tracking-widest"><%= log.status.upcase %></span>
-                            <span class="text-[10px] text-slate-400"><%= log.created_at.strftime('%H:%M') %></span>
+                      <div class="relative">
+                        <!-- 타임라인 닷 -->
+                        <div class="absolute -left-[21px] top-1.5 w-3 h-3 bg-white border-2 border-indigo-200 rounded-full"></div>
+                        
+                        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm relative group hover:border-indigo-100 transition-colors">
+                          <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black text-slate-700"><%= log.created_at.strftime('%Y.%m.%d') %></span>
+                            <span class="text-[10px] font-bold text-slate-400"><%= log.created_at.strftime('%H:%M') %></span>
                           </div>
-                          <p class="text-sm font-medium text-slate-700"><%= log.value.presence || "인증을 완료했습니다." %></p>
+                          
+                          <% if log.image_url.present? %>
+                            <div class="w-20 h-20 rounded-lg overflow-hidden mb-2 bg-slate-50 border border-slate-100">
+                               <img src="<%= log.image_url %>" class="w-full h-full object-cover">
+                            </div>
+                          <% end %>
+
+                          <p class="text-sm font-medium text-slate-600"><%= log.value.presence || "인증을 완료했습니다." %></p>
                         </div>
                       </div>
                     <% end %>
                   </div>
                 <% else %>
-                   <div class="py-20 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                   <div class="py-12 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
                     <p class="font-bold text-sm">아직 인증 기록이 없습니다.</p>
                   </div>
                 <% end %>
               </div>
             </div>
+
 
           <% when "ranking" %>
             <div class="space-y-3">
