@@ -72,16 +72,15 @@
                       <div class="grid grid-cols-2 gap-6">
                         <label class="relative cursor-pointer group block">
                           <%= f.radio_button :meeting_type, 'single', 
-                              checked: true,
                               class: "peer sr-only", 
                               data: { action: "change->gathering-form#updateMeetingType" } %>
-                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] font-black text-lg flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50 peer-checked:shadow-lg peer-checked:shadow-orange-600/5">
-                            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center transition-all peer-checked:bg-orange-600 peer-checked:text-white">
-                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] font-black text-lg flex flex-col items-center gap-4 transition-all duration-300 hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center transition-all duration-500 peer-checked:bg-white/30 peer-checked:text-white">
+                              <svg class="w-7 h-7 peer-checked:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             </div>
                             <div class="text-center">
-                              <p class="font-black text-lg text-slate-900 peer-checked:text-orange-600">단발성 모임</p>
-                              <p class="text-[11px] font-bold text-slate-400 mt-1">한 번만 진행</p>
+                              <p class="font-black text-xl text-slate-900 transition-colors peer-checked:text-white">단발성 모임</p>
+                              <p class="text-xs font-bold text-slate-400 mt-1 transition-colors peer-checked:text-white peer-checked:opacity-80">한 번만 진행</p>
                             </div>
                           </div>
                         </label>
@@ -89,28 +88,54 @@
                           <%= f.radio_button :meeting_type, 'regular', 
                               class: "peer sr-only",
                               data: { action: "change->gathering-form#updateMeetingType" } %>
-                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] font-black text-lg flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50 peer-checked:shadow-lg peer-checked:shadow-orange-600/5">
-                            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center transition-all peer-checked:bg-orange-600 peer-checked:text-white">
-                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] font-black text-lg flex flex-col items-center gap-4 transition-all duration-300 hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center transition-all duration-500 peer-checked:bg-white/30 peer-checked:text-white">
+                              <svg class="w-7 h-7 peer-checked:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             </div>
                             <div class="text-center">
-                              <p class="font-black text-lg text-slate-900 peer-checked:text-orange-600">정기 모임</p>
-                              <p class="text-[11px] font-bold text-slate-400 mt-1">주기적으로 진행</p>
+                              <p class="font-black text-xl text-slate-900 transition-colors peer-checked:text-white">정기 모임</p>
+                              <p class="text-xs font-bold text-slate-400 mt-1 transition-colors peer-checked:text-white peer-checked:opacity-80">주기적으로 진행</p>
                             </div>
                           </div>
                         </label>
                       </div>
                     </div>
 
-                    <div class="space-y-3 hidden" data-gathering-form-target="regularFrequency">
-                      <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">모임 빈도</label>
-                      <%= f.text_field :meeting_frequency, placeholder: "예: 매주 토요일, 격주 수요일", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 focus:ring-4 focus:ring-orange-500/5 transition-all" %>
+                    <!-- 정기 모임 상세 설정 -->
+                    <div class="space-y-8 hidden p-8 bg-slate-50/50 rounded-[40px] border-2 border-slate-100 transition-all duration-500" data-gathering-form-target="regularFrequency">
+                      <div class="space-y-4">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">진행 주기</label>
+                        <div class="flex gap-3">
+                          <% [['매주', '매주'], ['격주', '격주'], ['매월', '매월']].each do |label, value| %>
+                            <label class="flex-1">
+                              <%= f.radio_button :meeting_frequency, value, class: "peer sr-only" %>
+                              <div class="py-4 text-center rounded-2xl border-2 border-white bg-white font-black text-sm text-slate-400 peer-checked:border-orange-600 peer-checked:text-white peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200 transition-all duration-300 cursor-pointer hover:border-orange-200 active:scale-95">
+                                <%= label %>
+                              </div>
+                            </label>
+                          <% end %>
+                        </div>
+                      </div>
+
+                      <div class="space-y-4">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">진행 요일</label>
+                        <div class="grid grid-cols-7 gap-2">
+                          <% [['월', '월'], ['화', '화'], ['수', '수'], ['목', '목'], ['금', '금'], ['토', '토'], ['일', '일']].each do |label, value| %>
+                            <label>
+                              <input type="checkbox" name="challenge[days][]" value="<%= value %>" class="peer sr-only">
+                              <div class="aspect-square flex items-center justify-center rounded-xl border-2 border-white bg-white font-black text-slate-400 peer-checked:border-orange-600 peer-checked:text-white peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200 transition-all duration-300 cursor-pointer hover:border-orange-200 active:scale-90">
+                                <%= label %>
+                              </div>
+                            </label>
+                          <% end %>
+                        </div>
+                      </div>
                     </div>
 
                     <div class="space-y-3">
                       <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">카테고리 선택</label>
                       <div class="relative group">
-                        <%= f.select :category, options_for_select(['건강·운동', '학습·자기계발', '재테크·부업', 'SNS·브랜딩', '취미·라이프', '네트워킹', '멘탈·성찰', '기타'], @gathering.category), { include_blank: "카테고리를 선택해주세요" }, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-black text-lg text-slate-900 outline-none appearance-none cursor-pointer focus:bg-white focus:border-orange-500/20 focus:ring-4 focus:ring-orange-500/5 transition-all" %>
+                        <%= f.select :category, options_for_select(['건강·운동', '학습·자기계발', '재테크·부업', 'SNS·브랜딩', '취미·라이프', '네트워킹', '멘탈·성찰', '기타'], @gathering.category), { include_blank: "카테고리를 선택해주세요" }, { required: true, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-black text-lg text-slate-900 outline-none appearance-none cursor-pointer focus:bg-white focus:border-orange-500/20 focus:ring-4 focus:ring-orange-500/5 transition-all" } %>
                         <svg class="w-5 h-5 absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                       </div>
                     </div>
@@ -127,7 +152,7 @@
 
                     <div class="space-y-3">
                       <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">상세 설명</label>
-                      <%= f.text_area :description, placeholder: "모임에 대해 자세히 설명해주세요", required: true, class: "w-full p-8 bg-slate-50 border-2 border-transparent rounded-[32px] text-sm font-medium text-slate-700 outline-none min-h-[400px] leading-relaxed focus:bg-white focus:border-orange-500/20 focus:ring-4 focus:ring-orange-500/5 transition-all" %>
+                      <%= f.text_area :description, placeholder: "모임에 대해 자세히 설명해주세요", required: true, class: "w-full p-8 bg-slate-50 border-2 border-transparent rounded-[32px] text-sm font-medium text-slate-700 outline-none min-h-[600px] leading-relaxed focus:bg-white focus:border-orange-500/20 focus:ring-4 focus:ring-orange-500/5 transition-all" %>
                     </div>
                   </div>
                 </div>
@@ -136,8 +161,13 @@
               <!-- Sidebar Content -->
               <div class="w-full lg:w-80 shrink-0 space-y-8 lg:sticky lg:top-8">
                 <div class="bg-orange-600 rounded-[40px] p-8 text-white shadow-2xl shadow-orange-200/50 space-y-6">
-                  <label class="text-xs font-black uppercase tracking-wider block mb-2">주최자 소개</label>
-                  <%= f.text_area :purpose, value: current_user.bio, class: "w-full p-5 bg-white/10 border border-white/20 rounded-2xl text-[13px] font-bold text-white placeholder:text-orange-200/50 focus:bg-white focus:text-slate-900 outline-none transition-all min-h-[140px]" %>
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </div>
+                    <label class="text-xs font-black uppercase tracking-wider">주최자 소개</label>
+                  </div>
+                  <%= f.text_area :purpose, value: current_user.bio, placeholder: "자기소개를 입력해주세요.", class: "w-full p-6 bg-white/10 border border-white/20 rounded-2xl text-[14px] font-bold text-white placeholder:text-orange-200/50 focus:bg-white focus:text-slate-900 outline-none transition-all min-h-[140px] shadow-inner" %>
                 </div>
 
                 <div class="bg-white rounded-[40px] p-8 border border-slate-100 shadow-xl shadow-slate-200/40 space-y-6">
@@ -178,16 +208,16 @@
                       <div class="grid grid-cols-2 gap-6">
                         <label class="relative cursor-pointer group block">
                           <input type="radio" name="location_type" value="offline" checked class="peer sr-only" data-action="change->gathering-form#updateLocationType">
-                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50">
-                            <span class="text-3xl">📍</span>
-                            <span class="font-black text-slate-900 peer-checked:text-orange-600">오프라인</span>
+                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                            <span class="text-4xl transition-transform group-hover:scale-110 peer-checked:grayscale-0">📍</span>
+                            <span class="font-black text-slate-900 transition-colors peer-checked:text-white">오프라인</span>
                           </div>
                         </label>
                         <label class="relative cursor-pointer group block">
                           <input type="radio" name="location_type" value="online" class="peer sr-only" data-action="change->gathering-form#updateLocationType">
-                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50">
-                            <span class="text-3xl">💻</span>
-                            <span class="font-black text-slate-900 peer-checked:text-orange-600">온라인</span>
+                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                            <span class="text-4xl transition-transform group-hover:scale-110 peer-checked:grayscale-0">💻</span>
+                            <span class="font-black text-slate-900 transition-colors peer-checked:text-white">온라인</span>
                           </div>
                         </label>
                       </div>
@@ -196,21 +226,21 @@
                     <div class="grid grid-cols-2 gap-6">
                       <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">시작일</label>
-                        <%= f.date_field :start_date, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all" %>
+                        <%= f.date_field :start_date, required: true, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all" %>
                       </div>
                       <div class="space-y-3">
                         <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">종료일</label>
-                        <%= f.date_field :end_date, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all" %>
+                        <%= f.date_field :end_date, required: true, class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all" %>
                       </div>
                     </div>
 
                     <div class="space-y-6" data-gathering-form-target="offlineLocation">
                       <div class="w-full h-px bg-slate-100"></div>
-                      <%= f.fields_for :meeting_info_attributes do |mf| %>
+                      <%= f.fields_for :meeting_info do |mf| %>
                         <div class="space-y-4">
                           <%= mf.text_field :place_name, placeholder: "장소명 (예: 강남 스터디카페)", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all" %>
                           <%= mf.text_field :address, placeholder: "주소 입력", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all" %>
-                          <%= mf.text_area :detail_location, placeholder: "상세 위치 설명", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-medium text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all min-h-[100px]" %>
+                          <%= mf.text_area :description, placeholder: "상세 위치 설명", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-medium text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all min-h-[100px]" %>
                         </div>
                       <% end %>
                     </div>
@@ -261,16 +291,16 @@
                       <div class="grid grid-cols-2 gap-6">
                         <label class="relative cursor-pointer group block">
                           <%= f.radio_button :admission_type, 'first_come', checked: true, class: "peer sr-only" %>
-                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50">
-                            <span class="text-3xl">⚡</span>
-                            <span class="font-black text-slate-900 peer-checked:text-orange-600">선착순</span>
+                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                            <span class="text-4xl transition-transform group-hover:scale-110 peer-checked:grayscale-0">⚡</span>
+                            <span class="font-black text-slate-900 transition-colors peer-checked:text-white">선착순</span>
                           </div>
                         </label>
                         <label class="relative cursor-pointer group block">
                           <%= f.radio_button :admission_type, 'approval', class: "peer sr-only" %>
-                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50">
-                            <span class="text-3xl">✋</span>
-                            <span class="font-black text-slate-900 peer-checked:text-orange-600">승인제</span>
+                          <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                            <span class="text-4xl transition-transform group-hover:scale-110 peer-checked:grayscale-0">✋</span>
+                            <span class="font-black text-slate-900 transition-colors peer-checked:text-white">승인제</span>
                           </div>
                         </label>
                       </div>
@@ -304,16 +334,16 @@
                     <div class="grid grid-cols-2 gap-6">
                       <label class="relative cursor-pointer group block">
                         <%= f.radio_button :cost_type, 'free', checked: true, class: "peer sr-only", data: { action: "change->gathering-form#updateCostType" } %>
-                        <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50">
-                          <span class="text-3xl">🎁</span>
-                          <span class="font-black text-slate-900 peer-checked:text-orange-600">무료</span>
+                        <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                          <span class="text-4xl transition-transform group-hover:scale-110 peer-checked:grayscale-0">🎁</span>
+                          <span class="font-black text-slate-900 transition-colors peer-checked:text-white">무료</span>
                         </div>
                       </label>
                       <label class="relative cursor-pointer group block">
                         <%= f.radio_button :cost_type, 'fee', class: "peer sr-only", data: { action: "change->gathering-form#updateCostType" } %>
-                        <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 peer-checked:border-orange-600 peer-checked:bg-orange-50">
-                          <span class="text-3xl">💰</span>
-                          <span class="font-black text-slate-900 peer-checked:text-orange-600">유료</span>
+                        <div class="p-8 h-full border-2 border-slate-200 bg-white rounded-[32px] flex flex-col items-center gap-4 transition-all hover:border-orange-200 hover:shadow-xl hover:-translate-y-1 active:scale-95 peer-checked:border-orange-600 peer-checked:bg-orange-600 peer-checked:shadow-xl peer-checked:shadow-orange-200">
+                          <span class="text-4xl transition-transform group-hover:scale-110 peer-checked:grayscale-0">💰</span>
+                          <span class="font-black text-slate-900 transition-colors peer-checked:text-white">유료</span>
                         </div>
                       </label>
                     </div>

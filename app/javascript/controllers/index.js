@@ -43,3 +43,6 @@ application.register("challenge-settings", ChallengeSettingsController)
 import ScrollNavController from "controllers/scroll_nav_controller"
 application.register("scroll-nav", ScrollNavController)
 
+import GatheringFormController from "controllers/gathering_form_controller"
+application.register("gathering-form", GatheringFormController)
+

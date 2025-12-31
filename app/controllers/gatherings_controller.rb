@@ -46,6 +46,7 @@ class GatheringsController < ApplicationController
   def new
     @gathering = Challenge.new(mode: :offline)
     @gathering.meeting_type = :single # Default to single event
+    @gathering.build_meeting_info
   end
 
   def create
@@ -54,11 +55,6 @@ class GatheringsController < ApplicationController
     @gathering.mode = :offline # Force offline mode for gatherings
 
     if @gathering.save
-      # Create meeting info if it's an offline gathering
-      if gathering_params[:meeting_info_attributes].present?
-        @gathering.create_meeting_info(gathering_params[:meeting_info_attributes])
-      end
-
       redirect_to challenge_path(@gathering), notice: "모임이 성공적으로 개설되었습니다!"
     else
       render :new, status: :unprocessable_entity
@@ -76,7 +72,7 @@ class GatheringsController < ApplicationController
       :bank_name, :account_number, :account_holder,
       :meeting_type, :meeting_frequency, :duration_minutes,
       :preparation_items, :online_meeting_link, :chat_link,
-      meeting_info_attributes: [ :place_name, :address, :detail_location, :latitude, :longitude ]
+      meeting_info_attributes: [ :place_name, :address, :description ]
     )
   end
 end

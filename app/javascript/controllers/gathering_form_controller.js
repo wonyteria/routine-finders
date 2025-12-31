@@ -13,7 +13,7 @@ export default class extends Controller {
         this.currentStep = 1
         this.totalSteps = 5
         this.showStep(1)
-        console.log("Gathering Form Controller Connected")
+        console.log("Gathering Form Controller Connected Successfully")
     }
 
     // Navigation
@@ -109,17 +109,26 @@ export default class extends Controller {
 
     validateCurrentStep() {
         const currentStepEl = this.stepTargets[this.currentStep - 1]
+        if (!currentStepEl) return true
+
         const requiredInputs = currentStepEl.querySelectorAll('[required]')
         let isValid = true
+
         requiredInputs.forEach(input => {
-            if (!input.value.trim() && input.offsetParent !== null) {
+            // Check if visible and empty
+            const isVisible = input.offsetParent !== null
+            if (isVisible && !input.value.trim()) {
                 isValid = false
                 input.classList.add('border-red-500', 'ring-2', 'ring-red-200')
+                console.log(`Validation failed for: ${input.name || input.id}`)
             } else {
                 input.classList.remove('border-red-500', 'ring-2', 'ring-red-200')
             }
         })
-        if (!isValid) alert("필수 항목을 모두 입력해주세요.")
+
+        if (!isValid) {
+            alert("필수 항목을 모두 입력해주세요.")
+        }
         return isValid
     }
 }
