@@ -12,10 +12,10 @@ namespace :challenges do
     challenges_to_update.find_each do |challenge|
       old_status = challenge.status
       challenge.save # before_save 콜백이 상태를 업데이트함
-      
+
       if challenge.status != old_status
         puts "  Updated Challenge ##{challenge.id} '#{challenge.title}': #{old_status} -> #{challenge.status}"
-        
+
         # 종료 상태로 변경된 경우 추가 처리
         if challenge.status_ended? && old_status != "ended"
           process_ended_challenge(challenge)
@@ -53,7 +53,7 @@ namespace :challenges do
 
     # 달성률 계산
     achievement_rate = (verified_count.to_f / total_days * 100).round(2)
-    
+
     # 환급액 계산 (보증금 챌린지인 경우만)
     refund_amount = 0
     if challenge.cost_type_deposit?
@@ -67,7 +67,7 @@ namespace :challenges do
         # 부분 환급: 보증금 - (실패 횟수 * 페널티)
         failed_count = total_days - verified_count
         penalty = (challenge.penalty_per_failure || 0) * failed_count
-        refund_amount = [deposit_amount - penalty, 0].max
+        refund_amount = [ deposit_amount - penalty, 0 ].max
       end
     end
 

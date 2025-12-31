@@ -512,42 +512,42 @@ puts "Creating Participants..."
 Challenge.all.each do |challenge|
   # 챌린지당 10-30명의 참여자 생성
   participant_count = rand(10..30)
-  
+
   # 사용 가능한 사용자 풀
   available_users = users.sample(participant_count)
-  
+
   available_users.each_with_index do |user, index|
     # 다양한 참여 상태 생성
-    days_since_start = [challenge.start_date, Date.current].max - challenge.start_date
-    days_since_start = [days_since_start, 0].max
-    
+    days_since_start = [ challenge.start_date, Date.current ].max - challenge.start_date
+    days_since_start = [ days_since_start, 0 ].max
+
     # 달성률: 20%는 높은 달성률(80-100%), 50%는 중간(50-80%), 30%는 낮음(20-50%)
     completion_rate = case rand(1..10)
-                      when 1..2 then rand(80..100).to_f
-                      when 3..7 then rand(50..80).to_f
-                      else rand(20..50).to_f
-                      end
-    
+    when 1..2 then rand(80..100).to_f
+    when 3..7 then rand(50..80).to_f
+    else rand(20..50).to_f
+    end
+
     # 현재 스트릭과 최대 스트릭
     max_streak = rand(1..days_since_start.to_i + 1)
     current_streak = rand(0..max_streak)
-    
+
     # 상태 결정: 달성률과 스트릭에 따라
     status = if completion_rate >= 80 && current_streak >= 5
                :achieving
-             elsif completion_rate >= 50 && current_streak >= 2
+    elsif completion_rate >= 50 && current_streak >= 2
                :achieving
-             elsif completion_rate >= 40 && current_streak >= 1
+    elsif completion_rate >= 40 && current_streak >= 1
                :lagging
-             elsif completion_rate < 30 || current_streak == 0
+    elsif completion_rate < 30 || current_streak == 0
                :inactive
-             else
+    else
                :lagging
-             end
-    
+    end
+
     # 일부는 탈락 상태로 (5%)
     status = :failed if rand(1..100) <= 5
-    
+
     Participant.create!(
       user: user,
       challenge: challenge,
@@ -559,15 +559,15 @@ Challenge.all.each do |challenge|
       status: status
     )
   end
-  
+
   puts "  ✓ #{challenge.title}에 #{participant_count}명의 참여자 추가"
 end
 
 # 특정 사용자들에게 추가 참여 보장
-[user1, user2, badge_master].each do |special_user|
+[ user1, user2, badge_master ].each do |special_user|
   Challenge.online_challenges.limit(5).each do |challenge|
     next if Participant.exists?(user: special_user, challenge: challenge)
-    
+
     Participant.create!(
       user: special_user,
       challenge: challenge,

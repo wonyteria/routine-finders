@@ -7,59 +7,9 @@ class ChallengesController < ApplicationController
     @is_search_mode = params[:keyword].present? || params[:category].present? || params[:status].present?
 
     if @is_search_mode
-      # === 검색 모드 로직 ===
-      @challenges = Challenge.online_challenges.recruiting # 기본적으로 모집중인 것만 검색? 아니면 전체? -> 요구사항에 따라 전체에서 필터링
-      # 검색 시엔 상태 필터가 없으면 '모집중/진행중' 위주로 보여주는게 좋지만, 일단 전체 베이스에서 필터링
-      @challenges = Challenge.online_challenges 
-
-      # 키워드 검색
-      if params[:keyword].present?
-        @challenges = @challenges.where("title LIKE ?", "%#{params[:keyword]}%")
-      end
-
-      # 카테고리 필터
-      if params[:category].present?
-        @challenges = @challenges.where(category: params[:category])
-      end
-
-      # 상태 필터
-      if params[:status].present?
-        case params[:status]
-        when 'recruiting'
-          # 모집중 (모집 기간 내)
-          @challenges = @challenges.where("recruitment_start_date <= ? AND recruitment_end_date >= ?", Date.current, Date.current)
-        when 'active'
-          # 진행중 (시작 ~ 종료)
-          @challenges = @challenges.active
-        when 'ended'
-          # 종료됨
-          @challenges = @challenges.ended
-        end
-      else
-        # 상태 필터가 없을 땐 기본적으로 모집중 + 진행중 + 예정 표시 (종료된 건 뒤로 밀거나 제외할 수도 있음)
-        # 여기서는 단순 최신순
-      end
-      
-      @challenges = @challenges.order(created_at: :desc)
-      
+      search_challenges
     else
-      # === 랜딩 페이지(기본) 모드 로직 ===
-      # 1. 추천 챌린지 (Official or Random Pick)
-      @featured_challenges = Challenge.online_challenges.official.limit(4)
-      if @featured_challenges.empty?
-        # Official이 없으면 썸네일이 있는 것 중 랜덤 4개 혹은 최신 4개
-        @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail_image: nil).limit(4)
-        if @featured_challenges.empty?
-           @featured_challenges = Challenge.online_challenges.recruiting.limit(4)
-        end
-      end
-
-      # 2. 핫한 챌린지 (참여자 많은 순 + 모집중)
-      @hot_challenges = Challenge.online_challenges.recruiting.order(current_participants: :desc).limit(6)
-
-      # 3. 그 외 챌린지 (전체 모집중인 챌린지 최신순)
-      # 상단에 노출된 것과 중복될 수 있으나, 탐색 영역에는 전체가 나오는 게 자연스러움
-      @challenges = Challenge.online_challenges.recruiting.order(created_at: :desc).limit(12)
+      load_landing_data
     end
 
     @title = "챌린지 탐색"
@@ -275,6 +225,51 @@ class ChallengesController < ApplicationController
   end
 
   private
+
+  def search_challenges
+    @challenges = Challenge.online_challenges
+    filter_by_keyword
+    filter_by_category
+    filter_by_status
+    @challenges = @challenges.order(created_at: :desc)
+  end
+
+  def filter_by_keyword
+    return if params[:keyword].blank?
+
+    @challenges = @challenges.where("title LIKE ?", "%#{params[:keyword]}%")
+  end
+
+  def filter_by_category
+    return if params[:category].blank?
+
+    @challenges = @challenges.where(category: params[:category])
+  end
+
+  def filter_by_status
+    if params[:status].present?
+      case params[:status]
+      when "recruiting"
+        @challenges = @challenges.recruiting
+      when "active"
+        @challenges = @challenges.active
+      when "ended"
+        @challenges = @challenges.ended
+      end
+    end
+  end
+
+  def load_landing_data
+    @featured_challenges = Challenge.online_challenges.official.limit(4)
+    if @featured_challenges.empty?
+      @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail_image: nil).limit(4)
+      @featured_challenges = Challenge.online_challenges.recruiting.limit(4) if @featured_challenges.empty?
+    end
+
+    @hot_challenges = Challenge.online_challenges.recruiting.order(current_participants: :desc).limit(6)
+    @challenges = Challenge.online_challenges.recruiting.order(created_at: :desc).limit(12)
+  end
+
 
   def set_challenge
     @challenge = Challenge.find(params[:id])

@@ -40,13 +40,18 @@ class Challenge < ApplicationRecord
   scope :online_challenges, -> { where(mode: :online) }
   scope :offline_gatherings, -> { where(mode: :offline) }
   scope :official, -> { where(is_official: true) }
-  scope :recruiting, -> { where("recruitment_start_date <= ? AND recruitment_end_date >= ?", Date.current, Date.current) }
+  scope :recruiting, lambda {
+    where("recruitment_start_date <= ? AND recruitment_end_date >= ?", Date.current, Date.current)
+  }
   scope :active, -> { where("start_date <= ? AND end_date >= ?", Date.current, Date.current) }
   scope :public_challenges, -> { where(is_private: false) }
   scope :private_challenges, -> { where(is_private: true) }
   scope :ongoing, -> { status_active }
   scope :finished, -> { status_ended }
-  scope :needs_status_update, -> { where("(start_date <= ? AND status = ?) OR (end_date < ? AND status IN (?))", Date.current, statuses[:upcoming], Date.current, [statuses[:upcoming], statuses[:active]]) }
+  scope :needs_status_update, lambda {
+    where("(start_date <= ? AND status = ?) OR (end_date < ? AND status IN (?))",
+          Date.current, statuses[:upcoming], Date.current, [ statuses[:upcoming], statuses[:active] ])
+  }
 
   # Callbacks
   before_save :set_host_name
@@ -113,12 +118,12 @@ class Challenge < ApplicationRecord
   # Display text for cost type
   def cost_display_text
     return "무료" if cost_type_free?
-    
+
     parts = []
     parts << "참가비 #{number_with_delimiter(participation_fee)}원" if participation_fee.present? && participation_fee > 0
     parts << "보증금 #{number_with_delimiter(amount)}원" if cost_type_deposit? && amount.present? && amount > 0
     parts << "참가비 #{number_with_delimiter(amount)}원" if cost_type_fee? && amount.present? && amount > 0
-    
+
     parts.join(" + ")
   end
 
