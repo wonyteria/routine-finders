@@ -4,44 +4,50 @@
     <div class="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-[32px] p-8 border border-indigo-100">
       <% if today_verified %>
         <div class="flex items-center gap-4">
-          <div class="w-16 h-16 bg-green-500 rounded-3xl flex items-center justify-center">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center shadow-lg shadow-emerald-200">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
           </div>
           <div>
-            <h3 class="text-xl font-black text-slate-900">오늘 인증 완료!</h3>
-            <p class="text-slate-500 font-medium">연속 <%= participant.current_streak %>일째 달성 중</p>
+            <h3 class="text-xl font-black text-slate-900"><%= challenge.offline? ? "오늘의 기록 공유 완료!" : "오늘 인증 완료!" %></h3>
+            <p class="text-slate-500 font-medium">
+              <% if challenge.offline? %>
+                성공적으로 기록을 남겼습니다.
+              <% else %>
+                연속 <%= participant.current_streak %>일째 달성 중
+              <% end %>
+            </p>
           </div>
         </div>
       <% else %>
-        <h3 class="text-xl font-black text-slate-900 mb-6">오늘의 인증하기</h3>
+        <h3 class="text-xl font-black text-slate-900 mb-6"><%= challenge.offline? ? "오늘의 추억 공유하기" : "오늘의 인증하기" %></h3>
         <%= form_with url: challenge_verification_logs_path(challenge), method: :post, class: "space-y-4" do |f| %>
           <% case challenge.verification_type %>
           <% when "simple" %>
-            <p class="text-slate-500 text-sm">버튼을 눌러 오늘의 인증을 완료하세요.</p>
+            <p class="text-slate-500 text-sm"><%= challenge.offline? ? "참여를 기록하고 소중한 추억을 공유하세요." : "버튼을 눌러 오늘의 인증을 완료하세요." %></p>
             <%= f.hidden_field "verification_log[value]", value: "completed" %>
           <% when "metric" %>
             <div class="space-y-2">
-              <label class="text-sm font-bold text-slate-700">수치 입력</label>
-              <%= f.text_field "verification_log[value]", placeholder: "예: 5km, 30분 등", class: "w-full bg-white border border-slate-200 rounded-2xl p-4 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
+              <label class="text-sm font-bold text-slate-700"><%= challenge.offline? ? "추가 정보 입력" : "수치 입력" %></label>
+              <%= f.text_field "verification_log[value]", placeholder: challenge.offline? ? "남기고 싶은 수치나 기록을 입력하세요" : "예: 5km, 30분 등", class: "w-full bg-white border border-slate-200 rounded-2xl p-4 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
             </div>
           <% when "photo" %>
             <div class="space-y-2">
-              <label class="text-sm font-bold text-slate-700">사진 URL 입력</label>
-              <%= f.text_field "verification_log[image_url]", placeholder: "이미지 URL을 입력하세요", class: "w-full bg-white border border-slate-200 rounded-2xl p-4 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
-              <p class="text-xs text-slate-400">* 이미지 호스팅 서비스에 업로드 후 URL을 입력해주세요</p>
+              <label class="text-sm font-bold text-slate-700">추억 사진 공유</label>
+              <%= f.text_field "verification_log[image_url]", placeholder: "사진 URL을 입력하세요", class: "w-full bg-white border border-slate-200 rounded-2xl p-4 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
+              <p class="text-xs text-slate-400">* 모임에서 찍은 즐거운 사진을 공유해주세요</p>
             </div>
           <% when "url" %>
             <div class="space-y-2">
-              <label class="text-sm font-bold text-slate-700">URL 입력</label>
+              <label class="text-sm font-bold text-slate-700">링크 공유 (블로그/SNS 등)</label>
               <%= f.text_field "verification_log[value]", placeholder: "https://...", class: "w-full bg-white border border-slate-200 rounded-2xl p-4 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
             </div>
           <% else %>
             <div class="space-y-2">
-              <label class="text-sm font-bold text-slate-700">인증 내용</label>
-              <%= f.text_area "verification_log[value]", placeholder: "인증 내용을 입력하세요", rows: 3, class: "w-full bg-white border border-slate-200 rounded-2xl p-4 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
+              <label class="text-sm font-bold text-slate-700"><%= challenge.offline? ? "오늘의 한 줄 소감" : "인증 내용" %></label>
+              <%= f.text_area "verification_log[value]", placeholder: challenge.offline? ? "오늘 모임은 어떠셨나요? 즐거웠던 소감을 남겨주세요." : "인증 내용을 입력하세요", rows: 3, class: "w-full bg-white border border-slate-200 rounded-2xl p-4 font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent" %>
             </div>
           <% end %>
-          <%= f.submit "인증하기", class: "w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-indigo-700 transition-all cursor-pointer" %>
+          <%= f.submit (challenge.offline? ? "기록 남기기" : "인증하기"), class: "w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-indigo-700 transition-all cursor-pointer" %>
         <% end %>
       <% end %>
     </div>
@@ -86,7 +92,7 @@
 
   <!-- 인증 피드 -->
   <div>
-    <h3 class="text-xl font-black text-slate-900 mb-6">인증 피드</h3>
+    <h3 class="text-xl font-black text-slate-900 mb-6"><%= challenge.offline? ? "모임 기록 피드" : "인증 피드" %></h3>
     <% if verification_logs&.any? %>
       <div class="space-y-4">
         <% verification_logs.each do |log| %>
@@ -99,9 +105,11 @@
                     <span class="font-bold text-slate-900"><%= log.participant.user.nickname %></span>
                     <span class="text-sm text-slate-400 ml-2"><%= log.created_at.in_time_zone('Asia/Seoul').strftime('%m/%d %H:%M') %></span>
                   </div>
-                  <span class="px-3 py-1 rounded-full text-xs font-bold <%= { pending: 'bg-amber-100 text-amber-700', approved: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700' }[log.status.to_sym] %>">
-                    <%= { pending: '대기중', approved: '승인됨', rejected: '거절됨' }[log.status.to_sym] %>
-                  </span>
+                  <% unless challenge.offline? %>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold <%= { pending: 'bg-amber-100 text-amber-700', approved: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700' }[log.status.to_sym] %>">
+                      <%= { pending: '대기중', approved: '승인됨', rejected: '거절됨' }[log.status.to_sym] %>
+                    </span>
+                  <% end %>
                 </div>
                 <% if log.value.present? %>
                   <p class="text-slate-600 mt-2"><%= log.value %></p>
@@ -109,7 +117,7 @@
                 <% if log.image_url.present? %>
                   <img src="<%= log.image_url %>" alt="" class="mt-3 rounded-xl max-h-64 object-cover">
                 <% end %>
-                <% if log.rejected? && log.reject_reason.present? %>
+                <% if !challenge.offline? && log.rejected? && log.reject_reason.present? %>
                   <p class="text-red-500 text-sm mt-2">거절 사유: <%= log.reject_reason %></p>
                 <% end %>
               </div>
@@ -120,7 +128,7 @@
     <% else %>
       <div class="text-center py-12 text-slate-400">
         <svg class="w-16 h-16 mx-auto mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <p class="font-bold">아직 인증 기록이 없습니다</p>
+        <p class="font-bold"><%= challenge.offline? ? "아직 공유된 기록이 없습니다" : "아직 인증 기록이 없습니다" %></p>
       </div>
     <% end %>
   </div>

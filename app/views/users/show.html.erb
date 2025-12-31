@@ -93,11 +93,20 @@
       <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
         <% if @participations.any? %>
           <% @participations.each do |participation| %>
-            <%= link_to challenge_path(participation.challenge), class: "flex items-center gap-5 p-5 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-b-0" do %>
-              <img src="<%= participation.challenge.thumbnail %>" class="w-14 h-14 rounded-2xl object-cover" alt="">
+            <%= link_to challenge_path(participation.challenge), class: "flex items-center gap-5 p-5 hover:bg-slate-50 transition-all border-b border-slate-100 last:border-b-0 group" do %>
+              <% 
+                theme_border = participation.challenge.offline? ? "border-orange-400" : "border-indigo-400" 
+                theme_text = participation.challenge.offline? ? "text-orange-600" : "text-indigo-600"
+                theme_bg = participation.challenge.offline? ? "bg-orange-50" : "bg-indigo-50"
+              %>
+              <div class="relative">
+                <img src="<%= participation.challenge.thumbnail %>" class="w-16 h-16 rounded-2xl object-cover border-2 <%= theme_border %> shadow-sm" alt="">
+                <span class="absolute -top-2 -left-2 px-2 py-0.5 bg-white border border-slate-200 text-[8px] font-black rounded-md shadow-sm">Member</span>
+              </div>
               <div class="flex-1">
-                <p class="font-bold text-slate-900"><%= participation.challenge.title %></p>
+                <p class="font-black text-slate-900 group-hover:text-indigo-600 transition-colors"><%= participation.challenge.title %></p>
                 <div class="flex items-center gap-3 mt-1">
+                  <span class="text-[10px] <%= theme_text %> <%= theme_bg %> px-2 py-0.5 rounded font-black uppercase"><%= participation.challenge.offline? ? 'OFFLINE' : 'ONLINE' %></span>
                   <span class="text-[10px] text-slate-400 font-bold uppercase">달성률 <%= participation.completion_rate.to_i %>%</span>
                   <span class="text-[10px] text-orange-500 font-bold">🔥 <%= participation.current_streak %>일</span>
                 </div>
@@ -117,15 +126,24 @@
         <h3 class="text-xs font-black text-slate-400 uppercase ml-4 tracking-[0.3em] mt-8">Hosted Challenges</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <% @hosted_challenges.each do |challenge| %>
-            <%= link_to challenge_path(challenge), class: "bg-white rounded-[28px] border border-slate-200 shadow-sm p-5 hover:shadow-xl transition-all group" do %>
-              <div class="flex items-start gap-4">
-                <img src="<%= challenge.thumbnail %>" class="w-12 h-12 rounded-xl object-cover" alt="">
+            <% 
+              theme_border = challenge.offline? ? "border-orange-400" : "border-indigo-400" 
+              theme_text = challenge.offline? ? "text-orange-600" : "text-indigo-600"
+              theme_bg = challenge.offline? ? "bg-orange-50" : "bg-indigo-50"
+            %>
+            <%= link_to challenge_path(challenge), class: "bg-white rounded-[28px] border-2 #{theme_border} shadow-sm p-5 hover:shadow-xl transition-all group relative overflow-hidden" do %>
+              <div class="absolute top-0 right-0 px-3 py-1 bg-indigo-600 text-white text-[9px] font-black rounded-bl-xl shadow-lg">HOST</div>
+              <div class="flex items-start gap-4 relative z-10">
+                <img src="<%= challenge.thumbnail %>" class="w-14 h-14 rounded-xl object-cover border border-slate-100" alt="">
                 <div class="flex-1">
-                  <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase <%= challenge.offline? ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' %>">
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase <%= theme_bg %> <%= theme_text %> border <%= theme_border %>">
                     <%= challenge.offline? ? 'OFFLINE' : 'ONLINE' %>
                   </span>
-                  <h4 class="font-bold text-slate-900 mt-1 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
-                  <p class="text-xs text-slate-400 mt-1"><%= challenge.current_participants %>명 참여</p>
+                  <h4 class="font-black text-slate-900 mt-2 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
+                  <p class="text-[11px] font-bold text-slate-400 mt-1 flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <%= challenge.current_participants %>명 참여 중
+                  </p>
                 </div>
               </div>
             <% end %>

@@ -134,14 +134,22 @@
       <div class="flex overflow-x-auto gap-6 pb-8 -mx-4 px-4 snap-x hide-scrollbar" data-scroll-nav-target="container">
         <% @featured_challenges.each do |challenge| %>
            <% sl = challenge.status_label %>
-           <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-[32px] overflow-hidden border #{@joined_challenge_ids&.include?(challenge.id) ? 'border-4 border-emerald-500 shadow-2xl shadow-emerald-500/30' : 'border border-slate-200 shadow-lg shadow-indigo-100/50'} group hover:-translate-y-2 transition-all duration-300 relative flex flex-col" do %>
+           <% theme_border = challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
+           <% is_host = current_user && challenge.host_id == current_user.id %>
+           <% is_joined = @joined_challenge_ids&.include?(challenge.id) %>
+
+           <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-[32px] overflow-hidden border-2 #{theme_border} shadow-lg shadow-opacity-10 group hover:-translate-y-2 transition-all duration-300 relative flex flex-col" do %>
              <div class="relative aspect-[4/3] overflow-hidden">
                <img src="<%= challenge.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-               <div class="absolute top-4 left-4 flex gap-2">
-                 <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase <%= sl[:class] %>"><%= sl[:text] %></span>
-                 <span class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-black text-slate-900 border border-white/50"><%= challenge.category %></span>
-                  <%= render 'challenges/joined_badge', challenge: challenge %>
+                <div class="absolute top-4 left-4 flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase <%= sl[:class] %>"><%= sl[:text] %></span>
+                  <% if is_host %>
+                    <span class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">HOST</span>
+                  <% elsif is_joined %>
+                    <span class="bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">JOINED</span>
+                  <% end %>
+                  <span class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-black text-slate-900 border border-white/50"><%= challenge.category %></span>
                </div>
                <div class="absolute bottom-4 left-4 right-4 text-white">
                   <h3 class="font-black text-xl line-clamp-1 leading-tight"><%= challenge.title %></h3>
@@ -194,13 +202,21 @@
       <div class="flex overflow-x-auto gap-6 pb-8 -mx-4 px-4 scroll-smooth snap-x hide-scrollbar" data-scroll-nav-target="container">
          <% @hot_challenges.each_with_index do |challenge, i| %>
             <% sl = challenge.status_label %>
-            <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-[32px] overflow-hidden border #{@joined_challenge_ids&.include?(challenge.id) ? 'border-4 border-emerald-500 shadow-2xl shadow-emerald-500/30' : 'border border-slate-200 shadow-lg shadow-slate-200/40'} group hover:-translate-y-2 transition-all duration-300 flex flex-col" do %>
+            <% theme_border = challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
+            <% is_host = current_user && challenge.host_id == current_user.id %>
+            <% is_joined = @joined_challenge_ids&.include?(challenge.id) %>
+
+            <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-[32px] overflow-hidden border-2 #{theme_border} shadow-lg shadow-opacity-10 group hover:-translate-y-2 transition-all duration-300 flex flex-col" do %>
               <div class="relative aspect-[4/3] overflow-hidden">
                 <img src="<%= challenge.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
-                <div class="absolute top-4 left-4 flex gap-2">
+                <div class="absolute top-4 left-4 flex flex-wrap gap-2">
                   <span class="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white text-sm font-black shadow-lg border-2 border-white"><%= i + 1 %></span>
                   <span class="px-2.5 py-1.5 rounded-lg text-[10px] font-black uppercase <%= sl[:class] %>"><%= sl[:text] %></span>
-                   <%= render 'challenges/joined_badge', challenge: challenge %>
+                  <% if is_host %>
+                    <span class="bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">HOST</span>
+                  <% elsif is_joined %>
+                    <span class="bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">JOINED</span>
+                  <% end %>
                 </div>
                 <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-black text-slate-900 border border-white/50">
                    <%= challenge.category %>
@@ -290,13 +306,21 @@
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         <% @challenges.each do |challenge| %>
           <% sl = challenge.status_label %>
-          <%= link_to challenge_path(challenge), class: "bg-white rounded-[24px] overflow-hidden border #{@joined_challenge_ids&.include?(challenge.id) ? 'border-4 border-emerald-500 shadow-xl shadow-emerald-500/30' : 'border border-slate-200 shadow-sm'} hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full hover:-translate-y-1 duration-300" do %>
+          <% theme_border = challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
+          <% is_host = current_user && challenge.host_id == current_user.id %>
+          <% is_joined = @joined_challenge_ids&.include?(challenge.id) %>
+
+          <%= link_to challenge_path(challenge), class: "bg-white rounded-[24px] overflow-hidden border-2 #{theme_border} shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full hover:-translate-y-1 duration-300" do %>
             <div class="relative aspect-square overflow-hidden shrink-0">
               <img src="<%= challenge.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
               <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
                 <span class="px-2 py-1 rounded-lg text-[9px] font-black uppercase <%= sl[:class].gsub('shadow-lg', '').gsub(/shadow-\w+-\d+\/\d+/, '') %>"><%= sl[:text] %></span>
+                <% if is_host %>
+                  <span class="bg-indigo-600 text-white px-2 py-1 rounded-lg text-[9px] font-black border border-white/20 shadow-md">HOST</span>
+                <% elsif is_joined %>
+                  <span class="bg-emerald-500 text-white px-2 py-1 rounded-lg text-[9px] font-black border border-white/20 shadow-md">JOINED</span>
+                <% end %>
                 <span class="bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[9px] font-black uppercase text-slate-900 border border-white/50 shadow-sm"><%= challenge.category %></span>
-                 <%= render 'challenges/joined_badge', challenge: challenge %>
               </div>
             </div>
             <div class="p-4 space-y-2 flex flex-col flex-1">

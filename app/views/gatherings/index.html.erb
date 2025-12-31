@@ -104,21 +104,23 @@
         <% @gatherings.each do |gathering| %>
           <% sl = gathering.status_label %>
           <% is_joined = @joined_gathering_ids.include?(gathering.id) %>
-          <%= link_to challenge_path(gathering), class: "bg-white rounded-[24px] overflow-hidden border #{is_joined ? 'border-4 border-emerald-500 shadow-xl shadow-emerald-500/30' : 'border border-slate-200 shadow-sm'} hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full hover:-translate-y-1 duration-300" do %>
+          <% is_host = current_user && gathering.host_id == current_user.id %>
+          <% theme_border = "border-orange-400" %>
+
+          <%= link_to challenge_path(gathering), class: "bg-white rounded-[24px] overflow-hidden border-2 #{theme_border} shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full hover:-translate-y-1 duration-300" do %>
             <div class="relative aspect-square overflow-hidden shrink-0">
               <img src="<%= gathering.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
               <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
                 <span class="px-2 py-1 rounded-lg text-[9px] font-black uppercase <%= sl[:class].gsub('shadow-lg', '').gsub(/shadow-\w+-\d+\/\d+/, '') %>"><%= sl[:text] %></span>
+                <% if is_host %>
+                  <span class="bg-indigo-600 text-white px-2 py-1 rounded-lg text-[9px] font-black border border-white/20 shadow-md">HOST</span>
+                <% elsif is_joined %>
+                  <span class="bg-emerald-500 text-white px-2 py-1 rounded-lg text-[9px] font-black border border-white/20 shadow-md">JOINED</span>
+                <% end %>
                 <% if gathering.online_meeting_link.present? %>
                   <span class="bg-blue-600 text-white px-2 py-1 rounded-lg text-[9px] font-black uppercase shadow-sm">온라인</span>
                 <% elsif gathering.meeting_info.present? %>
                   <span class="bg-orange-600 text-white px-2 py-1 rounded-lg text-[9px] font-black uppercase shadow-sm">오프라인</span>
-                <% end %>
-                <% if is_joined %>
-                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase bg-emerald-600 text-white shadow-sm animate-pulse border border-emerald-400">
-                    <svg class="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                    참여중
-                  </span>
                 <% end %>
               </div>
             </div>

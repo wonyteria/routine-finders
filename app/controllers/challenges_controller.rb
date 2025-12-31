@@ -54,9 +54,16 @@ class ChallengesController < ApplicationController
       @rankings = @challenge.participants.includes(:user).order(completion_rate: :desc, current_streak: :desc).limit(5)
 
       # Pending Verifications for Host
-      @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user) if @is_host
+    @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user) if @is_host
 
-      # Refund Eligibility (3 days before end date)
+    # Management Data for Host (Gathering)
+    if @is_host
+      @applications = @challenge.challenge_applications.includes(:user).recent
+      @pending_applications = @applications.pending
+      @processed_applications = @applications.where.not(status: :pending)
+    end
+
+      # Refund Eligibility (3 3days before end date)
       @can_apply_refund = @challenge.cost_type_deposit? && @remaining_days <= 3 && @remaining_days >= 0
 
       # Common dashboard stats
