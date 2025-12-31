@@ -3,31 +3,65 @@ class ChallengesController < ApplicationController
   before_action :require_login, only: [ :new, :create, :join, :leave ]
 
   def index
-    @challenges = Challenge.online_challenges
+    # 검색 모드인지 확인 (키워드, 카테고리, 상태 필터가 하나라도 있으면 검색 모드)
+    @is_search_mode = params[:keyword].present? || params[:category].present? || params[:status].present?
 
-    # 검색 및 필터링
-    if params[:keyword].present?
-      @challenges = @challenges.where("title LIKE ?", "%#{params[:keyword]}%")
-    end
+    if @is_search_mode
+      # === 검색 모드 로직 ===
+      @challenges = Challenge.online_challenges.recruiting # 기본적으로 모집중인 것만 검색? 아니면 전체? -> 요구사항에 따라 전체에서 필터링
+      # 검색 시엔 상태 필터가 없으면 '모집중/진행중' 위주로 보여주는게 좋지만, 일단 전체 베이스에서 필터링
+      @challenges = Challenge.online_challenges 
 
-    if params[:category].present?
-      @challenges = @challenges.where(category: params[:category])
-    end
-
-    if params[:status].present?
-      case params[:status]
-      when 'recruiting'
-        @challenges = @challenges.where("recruitment_start_date <= ? AND recruitment_end_date >= ?", Date.current, Date.current)
-      when 'upcoming'
-        @challenges = @challenges.upcoming
-      when 'active'
-        @challenges = @challenges.active
-      when 'ended'
-        @challenges = @challenges.ended
+      # 키워드 검색
+      if params[:keyword].present?
+        @challenges = @challenges.where("title LIKE ?", "%#{params[:keyword]}%")
       end
+
+      # 카테고리 필터
+      if params[:category].present?
+        @challenges = @challenges.where(category: params[:category])
+      end
+
+      # 상태 필터
+      if params[:status].present?
+        case params[:status]
+        when 'recruiting'
+          # 모집중 (모집 기간 내)
+          @challenges = @challenges.where("recruitment_start_date <= ? AND recruitment_end_date >= ?", Date.current, Date.current)
+        when 'active'
+          # 진행중 (시작 ~ 종료)
+          @challenges = @challenges.active
+        when 'ended'
+          # 종료됨
+          @challenges = @challenges.ended
+        end
+      else
+        # 상태 필터가 없을 땐 기본적으로 모집중 + 진행중 + 예정 표시 (종료된 건 뒤로 밀거나 제외할 수도 있음)
+        # 여기서는 단순 최신순
+      end
+      
+      @challenges = @challenges.order(created_at: :desc)
+      
+    else
+      # === 랜딩 페이지(기본) 모드 로직 ===
+      # 1. 추천 챌린지 (Official or Random Pick)
+      @featured_challenges = Challenge.online_challenges.official.limit(4)
+      if @featured_challenges.empty?
+        # Official이 없으면 썸네일이 있는 것 중 랜덤 4개 혹은 최신 4개
+        @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail_image: nil).limit(4)
+        if @featured_challenges.empty?
+           @featured_challenges = Challenge.online_challenges.recruiting.limit(4)
+        end
+      end
+
+      # 2. 핫한 챌린지 (참여자 많은 순 + 모집중)
+      @hot_challenges = Challenge.online_challenges.recruiting.order(current_participants: :desc).limit(6)
+
+      # 3. 그 외 챌린지 (전체 모집중인 챌린지 최신순)
+      # 상단에 노출된 것과 중복될 수 있으나, 탐색 영역에는 전체가 나오는 게 자연스러움
+      @challenges = Challenge.online_challenges.recruiting.order(created_at: :desc).limit(12)
     end
 
-    @challenges = @challenges.order(created_at: :desc)
     @title = "챌린지 탐색"
     @description = "온라인으로 함께 습관을 만드는 챌린지"
   end

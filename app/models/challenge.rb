@@ -40,6 +40,7 @@ class Challenge < ApplicationRecord
   scope :online_challenges, -> { where(mode: :online) }
   scope :offline_gatherings, -> { where(mode: :offline) }
   scope :official, -> { where(is_official: true) }
+  scope :recruiting, -> { where("recruitment_start_date <= ? AND recruitment_end_date >= ?", Date.current, Date.current) }
   scope :active, -> { where("start_date <= ? AND end_date >= ?", Date.current, Date.current) }
   scope :public_challenges, -> { where(is_private: false) }
   scope :private_challenges, -> { where(is_private: true) }
