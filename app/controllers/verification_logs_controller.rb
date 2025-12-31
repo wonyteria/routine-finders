@@ -13,8 +13,8 @@ class VerificationLogsController < ApplicationController
       return redirect_to @challenge, alert: "죄송합니다. 최대 실패 횟수를 초과하여 더 이상 인증에 참여하실 수 없습니다."
     end
 
-    # 오늘 이미 인증했는지 확인
-    if @participant.verification_logs.today.exists?
+    # 오늘 이미 인증했는지 확인 (성공 또는 대기중인 인증이 있으면 차단)
+    if @participant.verification_logs.today.where.not(status: :rejected).exists?
       return redirect_to @challenge, alert: "오늘 이미 인증을 완료했습니다."
     end
 

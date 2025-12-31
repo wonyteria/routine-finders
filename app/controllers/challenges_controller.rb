@@ -197,8 +197,8 @@ class ChallengesController < ApplicationController
     @participant = current_user.participations.find_by(challenge: @challenge)
     return redirect_to @challenge, alert: "참여 정보가 없습니다." unless @participant
 
-    remaining_days = (@challenge.end_date - Date.current).to_i
-    unless @challenge.cost_type_deposit? && remaining_days <= 3
+    is_ended_or_near_end = @challenge.status_ended? || ((@challenge.end_date - Date.current).to_i <= 3)
+    unless @challenge.cost_type_deposit? && is_ended_or_near_end
       return redirect_to @challenge, alert: "환급 신청 기간이 아닙니다."
     end
 

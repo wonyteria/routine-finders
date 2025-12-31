@@ -18,7 +18,7 @@ class ReviewsController < ApplicationController
     @review.user = current_user
 
     if @review.save
-      redirect_to challenge_path(@challenge), notice: "리뷰가 등록되었습니다."
+      redirect_to challenge_path(@challenge, tab: "reviews"), notice: "리뷰가 등록되었습니다."
     else
       render :new, status: :unprocessable_entity
     end

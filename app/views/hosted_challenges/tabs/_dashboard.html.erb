@@ -72,13 +72,29 @@
                 <img src="<%= log.image_url %>" alt="" class="w-full h-48 rounded-2xl object-cover mb-4">
               <% end %>
 
-              <div class="flex items-center gap-2">
-                <%= button_to approve_challenge_verification_log_path(challenge, log), method: :post, class: "flex-1 py-2.5 bg-green-500 text-white rounded-xl font-black text-xs hover:bg-green-600 transition-all shadow-lg shadow-green-500/20" do %>
-                  승인
-                <% end %>
-                <%= button_to reject_challenge_verification_log_path(challenge, log), method: :post, class: "flex-1 py-2.5 bg-red-50 text-red-600 rounded-xl font-black text-xs hover:bg-red-100 transition-all", data: { turbo_confirm: "정말 거절하시겠습니까?" } do %>
-                  거절
-                <% end %>
+              <div class="space-y-2">
+                <!-- 기본 버튼 그룹 -->
+                <div id="action-buttons-<%= log.id %>" class="flex items-center gap-2">
+                  <%= button_to approve_challenge_verification_log_path(challenge, log), method: :post, class: "flex-1 py-2.5 bg-green-500 text-white rounded-xl font-black text-xs hover:bg-green-600 transition-all shadow-lg shadow-green-500/20" do %>
+                    승인
+                  <% end %>
+                  <button type="button" onclick="document.getElementById('reject-form-<%= log.id %>').classList.remove('hidden'); document.getElementById('action-buttons-<%= log.id %>').classList.add('hidden');" class="flex-1 py-2.5 bg-red-50 text-red-600 rounded-xl font-black text-xs hover:bg-red-100 transition-all">
+                    거절
+                  </button>
+                </div>
+
+                <!-- 거절 사유 입력 폼 (초기 숨김) -->
+                <div id="reject-form-<%= log.id %>" class="hidden bg-red-50 p-3 rounded-xl border border-red-100">
+                  <%= form_with url: reject_challenge_verification_log_path(challenge, log), method: :post, local: true do |f| %>
+                    <%= f.text_field :reject_reason, placeholder: "거절 사유를 입력하세요 (예: 사진 흐림)", class: "w-full text-xs p-2 mb-2 rounded-lg border border-red-200 focus:outline-none focus:border-red-400", required: true %>
+                    <div class="flex gap-2">
+                      <%= f.submit "거절 확정", class: "flex-1 py-1.5 bg-red-500 text-white text-[10px] font-bold rounded-lg hover:bg-red-600" %>
+                      <button type="button" onclick="document.getElementById('reject-form-<%= log.id %>').classList.add('hidden'); document.getElementById('action-buttons-<%= log.id %>').classList.remove('hidden');" class="px-3 py-1.5 bg-white text-slate-500 text-[10px] font-bold rounded-lg border border-slate-200 hover:bg-slate-50">
+                        취소
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
               </div>
             </div>
           <% end %>
