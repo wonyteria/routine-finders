@@ -142,8 +142,8 @@ class ChallengeApplicationsController < ApplicationController
     Notification.create!(
       user: @challenge.host,
       notification_type: :application,
-      title: "새로운 챌린지 신청",
-      message: "#{current_user.nickname}님이 '#{@challenge.title}' 챌린지에 신청했습니다.",
+      title: @challenge.offline? ? "새로운 모임 참가 신청" : "새로운 챌린지 신청",
+      message: "#{@challenge.offline? ? current_user.nickname + '님이 ' + @challenge.title + ' 모임에 참가 신청했습니다.' : current_user.nickname + '님이 ' + @challenge.title + ' 챌린지에 신청했습니다.'}",
       data: {
         challenge_id: @challenge.id,
         application_id: @application.id,

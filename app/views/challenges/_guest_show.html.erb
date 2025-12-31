@@ -47,18 +47,25 @@
     </div>
 
     <!-- Key Stats -->
-    <div class="grid grid-cols-3 border-b border-slate-200">
-      <div class="p-6 text-center border-r border-slate-200">
+    <div class="grid grid-cols-3 border-b border-slate-200 divide-x divide-slate-200">
+      <div class="p-6 text-center">
         <p class="text-3xl font-black text-indigo-600 mb-1"><%= @participants_count %></p>
         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">참여 인원</p>
       </div>
-      <div class="p-6 text-center border-r border-slate-200">
-        <p class="text-3xl font-black text-emerald-600 mb-1"><%= (@challenge.end_date - @challenge.start_date).to_i + 1 %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">진행 일수</p>
-      </div>
+      <% if @challenge.offline? && @challenge.meeting_info %>
+        <div class="p-6 text-center">
+          <p class="text-xl font-black text-emerald-600 mb-1 leading-tight"><%= @challenge.meeting_info.meeting_time.split(' ').last %></p>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">모임 시간</p>
+        </div>
+      <% else %>
+        <div class="p-6 text-center">
+          <p class="text-3xl font-black text-emerald-600 mb-1"><%= (@challenge.end_date - @challenge.start_date).to_i + 1 %></p>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">진행 일수</p>
+        </div>
+      <% end %>
       <div class="p-6 text-center">
-        <p class="text-3xl font-black text-amber-600 mb-1"><%= @challenge.cost_type_free? ? '무료' : number_with_delimiter(@challenge.total_payment_amount) %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">총 납부액</p>
+        <p class="text-3xl font-black text-amber-600 mb-1"><%= @challenge.cost_type_free? ? '무료' : (@challenge.participation_fee.to_i > 0 ? number_with_delimiter(@challenge.participation_fee) : number_with_delimiter(@challenge.total_payment_amount)) %></p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest"><%= @challenge.offline? ? '참가 비용' : '총 납부액' %></p>
       </div>
     </div>
 
@@ -110,11 +117,11 @@
     <div class="max-w-4xl mx-auto">
       <% if @is_host %>
         <div class="p-4 bg-indigo-600 rounded-2xl text-center">
-          <p class="text-white font-black text-sm">내가 호스트인 챌린지입니다</p>
+          <p class="text-white font-black text-sm">내가 호스트인 <%= @challenge.offline? ? "모임" : "챌린지" %>입니다</p>
         </div>
       <% elsif @is_joined %>
         <%= link_to challenge_path(@challenge, tab: 'records'), class: "block w-full py-5 bg-emerald-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-emerald-600/30 hover:bg-emerald-700 transition-all" do %>
-          참여중인 챌린지
+          참여중인 <%= @challenge.offline? ? "모임" : "챌린지" %>
         <% end %>
       <% else %>
         <% application = @challenge.challenge_applications.find_by(user: current_user) if current_user %>
@@ -139,7 +146,7 @@
         <% else %>
           <!-- 무료 챌린지: 모달 열기 -->
           <button data-action="click->modal#open" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all">
-            지금 참여하기
+            지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
           </button>
         <% end %>
       <% end %>
@@ -151,14 +158,14 @@
     <div class="bg-white rounded-[32px] border border-slate-200 shadow-2xl shadow-slate-200/40 p-8 space-y-6">
       <% if @is_host %>
         <div class="p-6 bg-indigo-600 rounded-2xl text-center">
-          <p class="text-white font-black">내가 호스트인 챌린지입니다</p>
+          <p class="text-white font-black">내가 호스트인 <%= @challenge.offline? ? "모임" : "챌린지" %>입니다</p>
         </div>
         <%= link_to clone_challenge_path(@challenge), class: "block w-full py-4 bg-emerald-500 text-white rounded-2xl text-center font-black text-sm shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all" do %>
-          똑같은 챌린지 다시 개설하기
+          똑같은 <%= @challenge.offline? ? "모임" : "챌린지" %> 다시 개설하기
         <% end %>
       <% elsif @is_joined %>
         <%= link_to challenge_path(@challenge, tab: 'records'), class: "block w-full py-5 bg-emerald-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-emerald-600/30 hover:bg-emerald-700 transition-all" do %>
-          참여중인 챌린지
+          참여중인 <%= @challenge.offline? ? "모임" : "챌린지" %>
         <% end %>
         <p class="text-center text-xs text-slate-400 mt-2">클릭하여 대시보드로 이동</p>
       <% else %>
@@ -186,7 +193,7 @@
         <% else %>
           <!-- 무료 챌린지: 모달 열기 -->
           <button data-action="click->modal#open" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all">
-            지금 참여하기
+            지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
           </button>
         <% end %>
       <% end %>
@@ -239,22 +246,37 @@
         </div>
         
         <div class="space-y-4">
-          <h2 class="text-3xl font-black text-slate-900 tracking-tight">챌린지에 참여하시겠어요?</h2>
+          <h2 class="text-3xl font-black text-slate-900 tracking-tight"><%= @challenge.offline? ? "이 모임에 함께하시겠어요?" : "챌린지에 참여하시겠어요?" %></h2>
           <div class="space-y-2">
-            <p class="text-slate-500 font-bold text-lg leading-relaxed">준비되셨나요? 성장의 기쁨을 느껴보세요!</p>
+            <p class="text-slate-500 font-bold text-lg leading-relaxed"><%= @challenge.offline? ? "오프라인에서 함께 소통하며 성장해요!" : "준비되셨나요? 성장의 기쁨을 느껴보세요!" %></p>
             <div class="bg-slate-50 rounded-2xl p-5 text-left space-y-2 border border-slate-100">
-              <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                매일 정해진 시간에 인증을 완료해야 식물이 자라요.
-              </p>
-              <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                성실히 참여하면 루파 배지와 환급금을 받을 수 있어요.
-              </p>
-              <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                실패 횟수가 많아지면 탈락할 수 있으니 주의하세요!
-              </p>
+              <% if @challenge.offline? %>
+                <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>
+                  정해진 모임 장소와 시간을 꼭 확인해주세요.
+                </p>
+                <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>
+                  함께하는 에티켓을 지켜 즐거운 모임을 만들어요.
+                </p>
+                <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>
+                  궁금한 점은 채팅방을 통해 호스트에게 문의하세요!
+                </p>
+              <% else %>
+                <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                  매일 정해진 시간에 인증을 완료해야 식물이 자라요.
+                </p>
+                <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                  성실히 참여하면 루파 배지와 환급금을 받을 수 있어요.
+                </p>
+                <p class="text-xs font-bold text-slate-600 flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+                  실패 횟수가 많아지면 탈락할 수 있으니 주의하세요!
+                </p>
+              <% end %>
             </div>
           </div>
         </div>

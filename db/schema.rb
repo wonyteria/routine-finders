@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_103638) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_155723) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -132,6 +132,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_103638) do
     t.date "recruitment_end_date"
     t.date "recruitment_start_date"
     t.date "refund_date"
+    t.text "refund_policy"
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
     t.json "reward_policy"

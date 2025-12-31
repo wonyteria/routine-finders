@@ -13,7 +13,7 @@
     <img src="<%= @challenge.thumbnail %>" class="w-20 h-20 rounded-2xl object-cover" alt="">
     <div>
       <h2 class="text-xl font-black text-slate-900"><%= @challenge.title %></h2>
-      <p class="text-slate-500 mt-1"><%= @challenge.current_participants %>명 참여 중</p>
+      <p class="text-slate-500 mt-1"><%= @challenge.current_participants %>명 <%= @challenge.offline? ? "참여 중" : "참여 중" %></p>
     </div>
   </div>
 
@@ -24,7 +24,7 @@
         <thead class="bg-slate-50">
           <tr>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">참가자</th>
-            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">달성률</th>
+            <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider"><%= @challenge.offline? ? "참여율" : "달성률" %></th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">연속 성공</th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">실패 횟수</th>
             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">상태</th>

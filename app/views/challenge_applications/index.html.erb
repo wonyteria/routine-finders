@@ -30,7 +30,7 @@
     <div class="mb-12">
       <h2 class="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
         <span class="w-3 h-3 bg-amber-500 rounded-full animate-pulse"></span>
-        대기 중인 신청
+        <%= @challenge.offline? ? "대기 중인 참가 신청" : "대기 중인 신청" %>
       </h2>
       
       <div class="space-y-4">

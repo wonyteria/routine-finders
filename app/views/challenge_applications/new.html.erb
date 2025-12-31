@@ -3,7 +3,7 @@
     <%= link_to challenge_path(@challenge), class: "p-2 rounded-xl hover:bg-slate-100 transition-colors" do %>
       <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
     <% end %>
-    <h1 class="text-3xl font-black text-slate-900">챌린지 신청</h1>
+    <h1 class="text-3xl font-black text-slate-900"><%= @challenge.offline? ? "모임 참가 신청" : "챌린지 신청" %></h1>
   </div>
 
   <!-- Rejection Alert -->
@@ -15,7 +15,7 @@
       <div>
         <h3 class="text-rose-900 font-black mb-1">이전 신청이 거절되었습니다</h3>
         <p class="text-rose-700 text-sm font-medium leading-relaxed">
-          거절 사유: <%= @rejected_application.reject_reason.present? ? @rejected_application.reject_reason : "사유가 입력되지 않았습니다." %>
+          거절 사유: <%= @rejected_application.reject_reason.presence || "사유가 입력되지 않았습니다." %>
         </p>
         <p class="text-rose-500 text-xs mt-2 font-bold">내용을 보완하여 다시 신청하실 수 있습니다.</p>
       </div>
@@ -175,8 +175,8 @@
                  required
                  class="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500 mt-0.5">
           <div class="flex-1">
-            <p class="font-bold text-slate-900 text-sm">챌린지 규칙에 동의합니다 <span class="text-red-500">*</span></p>
-            <p class="text-xs text-slate-500 mt-1">인증 규칙, 미인증 시 페널티, 환불 정책 등 챌린지 운영 규칙을 확인했습니다.</p>
+            <p class="font-bold text-slate-900 text-sm"><%= @challenge.offline? ? "모임 운영 규칙" : "챌린지 규칙" %>에 동의합니다 <span class="text-red-500">*</span></p>
+            <p class="text-xs text-slate-500 mt-1"><%= @challenge.offline? ? "참여 규칙, 입금 확인 및 환불 정책 등 모임 운영 규칙을 확인했습니다." : "인증 규칙, 미인증 시 페널티, 환불 정책 등 챌린지 운영 규칙을 확인했습니다." %></p>
           </div>
         </label>
 
@@ -189,7 +189,7 @@
                  class="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500 mt-0.5">
           <div class="flex-1">
             <p class="font-bold text-slate-900 text-sm">개인정보 제공에 동의합니다 <span class="text-red-500">*</span></p>
-            <p class="text-xs text-slate-500 mt-1">챌린지 운영을 위해 호스트에게 닉네임, 프로필 이미지가 공유됩니다.</p>
+            <p class="text-xs text-slate-500 mt-1"><%= @challenge.offline? ? "모임 운영을 위해 호스트에게 닉네임, 프로필 이미지가 공유됩니다." : "챌린지 운영을 위해 호스트에게 닉네임, 프로필 이미지가 공유됩니다." %></p>
           </div>
         </label>
 
@@ -205,9 +205,9 @@
               <p class="font-bold text-slate-900 text-sm">환불 정책에 동의합니다 <span class="text-red-500">*</span></p>
               <p class="text-xs text-slate-500 mt-1">
                 <% if @challenge.cost_type_deposit? %>
-                  보증금은 챌린지 종료 후 달성률에 따라 환급됩니다. 미인증 시 페널티가 차감될 수 있습니다.
+                  보증금은 <%= @challenge.offline? ? "모임" : "챌린지" %> 종료 후 달성률에 따라 환급됩니다. 미인증 시 페널티가 차감될 수 있습니다.
                 <% else %>
-                  참가비는 챌린지 시작 전까지만 환불 가능합니다.
+                  참가비는 <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 전까지만 환불 가능합니다.
                 <% end %>
               </p>
             </div>
@@ -229,7 +229,7 @@
           <% else %>
             <p class="mb-2">입금자명 입력 후 즉시 참여가 완료됩니다.</p>
             <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
-              <p>입금 확인은 호스트가 진행하며, 미입금 시 참여가 취소될 수 있습니다.</p>
+              <p>입금 확인은 호스트가 진행하며, 미입금 시 <%= @challenge.offline? ? "모임 참여" : "참여" %>가 취소될 수 있습니다.</p>
             <% end %>
           <% end %>
         </div>

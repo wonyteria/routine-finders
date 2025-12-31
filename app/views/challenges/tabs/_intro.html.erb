@@ -1,79 +1,5 @@
-<div class="space-y-10">
-  <!-- Main Description -->
-  <div class="space-y-6">
-    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
-      <div class="w-10 h-10 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      </div>
-      챌린지 상세 소개
-    </h2>
-    
-    <div class="text-slate-600 leading-relaxed space-y-4">
-      <% if challenge.description.present? %>
-        <div class="text-base font-medium whitespace-pre-wrap break-words"><%= challenge.description %></div>
-      <% else %>
-        <p class="text-slate-400 italic">호스트가 아직 상세 설명을 작성하지 않았습니다.</p>
-      <% end %>
-    </div>
-  </div>
-
-  <!-- Recommended For -->
-  <div class="p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[40px] border border-indigo-100 space-y-6">
-    <h3 class="font-black text-slate-900 text-xl flex items-center gap-3">
-      <span class="text-2xl">✨</span>
-      이런 분들께 추천해요!
-    </h3>
-    <ul class="space-y-3">
-      <li class="flex items-center gap-3">
-        <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center shrink-0">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <span class="text-sm font-medium text-slate-700">매일매일 조금씩이라도 성장하고 싶은 분</span>
-      </li>
-      <li class="flex items-center gap-3">
-        <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center shrink-0">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <span class="text-sm font-medium text-slate-700">혼자서는 의지가 약해져 중도 포기하기 쉬운 분</span>
-      </li>
-      <li class="flex items-center gap-3">
-        <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center shrink-0">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <span class="text-sm font-medium text-slate-700">같은 목표를 가진 사람들과 긍정적인 에너지를 나누고 싶은 분</span>
-      </li>
-      <li class="flex items-center gap-3">
-        <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center shrink-0">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <span class="text-sm font-medium text-slate-700">확실한 동기부여와 함께 습관을 만들고 싶은 분</span>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Expected Changes -->
-  <div class="space-y-4">
-    <h3 class="font-black text-slate-900 text-xl flex items-center gap-3">
-      <span class="text-2xl">🎯</span>
-      챌린지 참여 후 변화될 모습
-    </h3>
-    <div class="p-8 bg-white rounded-[32px] border border-slate-200 shadow-sm">
-      <p class="text-slate-600 font-medium leading-relaxed">
-        이 챌린지를 완주하고 나면, 당신은 단순한 습관 형성을 넘어 스스로를 통제하고 관리하는 <span class="text-indigo-600 font-black">'자기 주도적 삶'</span>에 한 걸음 더 다가가게 될 것입니다. 
-        <% unless challenge.cost_type_free? %>
-          보증금을 걸고 참여하는 만큼 서로에게 강력한 동기부여가 되며, 
-        <% end %>
-        끝까지 포기하지 않도록 호스트가 함께하겠습니다.
-      </p>
-    </div>
-
-    <div class="p-6 border-l-4 border-indigo-500 bg-indigo-50 rounded-r-2xl">
-      <p class="text-indigo-900 font-bold italic">"작은 습관이 모여 위대한 변화를 만듭니다. 지금 바로 루틴 파인더와 함께 시작해보세요!"</p>
-    </div>
-  </div>
-
   <% if challenge.offline? && challenge.meeting_info %>
-    <!-- Offline Meeting Info -->
+    <!-- Offline Meeting Info (Prominent) -->
     <div class="bg-orange-50 rounded-[40px] border border-orange-100 p-8 lg:p-10 space-y-8">
       <div class="flex items-center justify-between">
         <h2 class="text-2xl font-black text-orange-900 flex items-center gap-3">
@@ -93,7 +19,7 @@
         <div class="space-y-2 border-l border-orange-200/50 pl-8">
           <p class="text-[11px] font-black text-orange-600/60 uppercase tracking-widest">정기 모임 시간</p>
           <p class="text-xl font-black text-orange-900"><%= challenge.meeting_info.meeting_time %></p>
-          <p class="text-sm font-medium text-orange-800/70">최대 인원: <%= challenge.meeting_info.max_attendees %>명</p>
+          <p class="text-sm font-medium text-orange-800/70">최대 참여 인원: <%= challenge.max_participants || challenge.meeting_info.max_attendees %>명</p>
         </div>
       </div>
 
@@ -106,4 +32,75 @@
       <% end %>
     </div>
   <% end %>
+
+  <!-- Main Description -->
+  <div class="space-y-6">
+    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+      <div class="w-10 h-10 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <%= challenge.offline? ? "모임 상세 소개" : "챌린지 상세 소개" %>
+    </h2>
+    
+    <div class="text-slate-600 leading-relaxed space-y-4">
+      <% if challenge.description.present? %>
+        <div class="text-base font-medium whitespace-pre-wrap break-words"><%= challenge.description %></div>
+      <% else %>
+        <p class="text-slate-400 italic">호스트가 아직 상세 설명을 작성하지 않았습니다.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Recommended For -->
+  <div class="p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[40px] border border-indigo-100 space-y-6">
+    <h3 class="font-black text-slate-900 text-xl flex items-center gap-3">
+      <span class="text-2xl">✨</span>
+      이런 분들께 추천해요!
+    </h3>
+    <ul class="space-y-3">
+        <span class="text-sm font-medium text-slate-700"><%= challenge.offline? ? "새로운 인연을 만나고 인사이트를 나누고 싶은 분" : "매일매일 조금씩이라도 성장하고 싶은 분" %></span>
+      </li>
+      <li class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <span class="text-sm font-medium text-slate-700"><%= challenge.offline? ? "온라인을 넘어 오프라인의 생생한 에너지를 느끼고 싶은 분" : "혼자서는 의지가 약해져 중도 포기하기 쉬운 분" %></span>
+      </li>
+      <li class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <span class="text-sm font-medium text-slate-700">같은 목표를 가진 사람들과 긍정적인 에너지를 나누고 싶은 분</span>
+      </li>
+      <li class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <span class="text-sm font-medium text-slate-700"><%= challenge.offline? ? "함께 즐겁게 소통하며 취미나 루틴을 공유하고 싶은 분" : "확실한 동기부여와 함께 습관을 만들고 싶은 분" %></span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Expected Changes -->
+  <div class="space-y-4">
+    <h3 class="font-black text-slate-900 text-xl flex items-center gap-3">
+      <span class="text-2xl">🎯</span>
+      <%= challenge.offline? ? "모임 참여 후 기대되는 점" : "챌린지 참여 후 변화될 모습" %>
+    </h3>
+    <div class="p-8 bg-white rounded-[32px] border border-slate-200 shadow-sm">
+      <p class="text-slate-600 font-medium leading-relaxed">
+        <%= challenge.offline? ? "이 모임을 통해 단순한 참가를 넘어, 새로운 사람들과 소통하며 긍정적인 자극을 받는 '함께의 가치'를 경험하게 될 것입니다." : "이 챌린지를 완주하고 나면, 당신은 단순한 습관 형성을 넘어 스스로를 통제하고 관리하는 '자기 주도적 삶'에 한 걸음 더 다가가게 될 것입니다." %>
+        <% unless challenge.cost_type_free? %>
+          <%= challenge.offline? ? "참가비를 지불하고 모이는 만큼 더 책임감 있는 시간이 될 것이며, " : "보증금을 걸고 참여하는 만큼 서로에게 강력한 동기부여가 되며, " %>
+        <% end %>
+        끝까지 함께 즐길 수 있도록 호스트가 서포트하겠습니다.
+      </p>
+    </div>
+
+    <div class="p-6 border-l-4 border-indigo-500 bg-indigo-50 rounded-r-2xl">
+      <p class="text-indigo-900 font-bold italic">"작은 습관이 모여 위대한 변화를 만듭니다. 지금 바로 루틴 파인더와 함께 시작해보세요!"</p>
+    </div>
+  </div>
+
+<%# Bottom section removed as it's now at the top %>
 </div>

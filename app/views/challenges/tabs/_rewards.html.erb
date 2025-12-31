@@ -22,7 +22,7 @@
         </div>
         <div>
           <h2 class="text-2xl font-black text-slate-900">🏆 우승 혜택</h2>
-          <p class="text-sm font-medium text-slate-400">챌린지를 성공적으로 완료한 상위 참여자에게 주어지는 특별 보상</p>
+          <p class="text-sm font-medium text-slate-400"><%= challenge.offline? ? "모임" : "챌린지" %>를 성공적으로 완료한 상위 참여자에게 주어지는 특별 보상</p>
         </div>
       </div>
 
@@ -69,7 +69,7 @@
             <ul class="space-y-2 text-sm font-medium text-slate-600">
               <li class="flex items-start gap-2">
                 <span class="text-indigo-500 mt-0.5">•</span>
-                <span>우승 혜택은 챌린지 종료 후 호스트가 직접 지급합니다.</span>
+                <span>우승 혜택은 <%= challenge.offline? ? "모임" : "챌린지" %> 종료 후 호스트가 직접 지급합니다.</span>
               </li>
               <li class="flex items-start gap-2">
                 <span class="text-indigo-500 mt-0.5">•</span>
@@ -91,7 +91,7 @@
         <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
       </div>
       <h3 class="text-xl font-black text-slate-900 mb-2">설정된 우승 혜택이 없습니다</h3>
-      <p class="text-sm font-medium text-slate-400">이 챌린지는 별도의 우승 혜택이 제공되지 않습니다.</p>
+      <p class="text-sm font-medium text-slate-400">이 <%= challenge.offline? ? "모임" : "챌린지" %>은 별도의 우승 혜택이 제공되지 않습니다.</p>
     </div>
   <% end %>
 
@@ -144,7 +144,7 @@
 
           <div class="p-4 bg-white/60 rounded-2xl border border-emerald-100/50">
             <p class="text-[11px] font-bold text-slate-600 leading-relaxed">
-              💡 <span class="text-emerald-700">달성 기준:</span> 챌린지 기간 중 <span class="text-emerald-700 font-black"><%= (challenge.full_refund_threshold * 100).to_i %>%</span> 이상 달성한 참여자는 보증금을 전액 돌려받습니다.
+              💡 <span class="text-emerald-700">달성 기준:</span> <%= challenge.offline? ? "모임" : "챌린지" %> 기간 중 <span class="text-emerald-700 font-black"><%= (challenge.full_refund_threshold * 100).to_i %>%</span> 이상 달성한 참여자는 보증금을 전액 돌려받습니다.
             </p>
           </div>
         </div>
@@ -155,7 +155,7 @@
             <% if challenge.refund_date.present? %>
               📅 <span class="font-bold text-slate-700">환급 예정일:</span> <%= challenge.refund_date.strftime('%Y년 %m월 %d일') %>에 보증금 환급이 완료됩니다.
             <% else %>
-              📅 <span class="font-bold text-slate-700">환급 일정:</span> 챌린지 종료 후 영업일 기준 3~5일 이내에 환급이 처리됩니다.
+              📅 <span class="font-bold text-slate-700">환급 일정:</span> <%= challenge.offline? ? "모임" : "챌린지" %> 종료 후 영업일 기준 3~5일 이내에 환급이 처리됩니다.
             <% end %>
           </p>
         </div>
@@ -167,9 +167,9 @@
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2"/></svg>
             </div>
             <div>
-              <p class="text-3xl font-black text-indigo-600 mb-2">참가비형 챌린지</p>
+              <p class="text-3xl font-black text-indigo-600 mb-2"><%= challenge.offline? ? "참가비형 모임" : "참가비형 챌린지" %></p>
               <p class="text-sm font-medium text-slate-600">
-                이 챌린지는 참가비를 지불하고 참여하는 방식입니다.<br>
+                이 <%= challenge.offline? ? "모임" : "챌린지" %>은 참가비를 지불하고 참여하는 방식입니다.<br>
                 별도의 환급 정책은 없으며, 우승 혜택만 제공됩니다.
               </p>
             </div>

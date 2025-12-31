@@ -6,14 +6,30 @@ export default class extends Controller {
         "regularFrequency",
         "offlineLocation", "onlineLink",
         "feeSection",
-        "thumbnailPreview"
+        "thumbnailPreview",
+        "startDate", "endDate", "recStart", "recEnd"
     ]
 
     connect() {
         this.currentStep = 1
         this.totalSteps = 5
+        this.projectType = 'single' // Default
         this.showStep(1)
-        console.log("Gathering Form Controller Connected Successfully")
+    }
+
+    // 날짜 클릭 시 픽커 호출 (아이콘 없이 텍스트 클릭으로 열기)
+    openPicker(event) {
+        if (event.target.showPicker) {
+            event.target.showPicker()
+        }
+    }
+
+    // 단일 날짜 선택 시 종료일 자동 동기화
+    syncDates(event) {
+        const selectedDate = event.target.value
+        if (this.hasEndDateTarget) {
+            this.endDateTarget.value = selectedDate
+        }
     }
 
     // Navigation
@@ -33,7 +49,10 @@ export default class extends Controller {
 
     goToStep(event) {
         const targetStep = parseInt(event.currentTarget.dataset.step)
-        this.showStep(targetStep)
+        // 이전 단계 이동은 언제나 가능, 다음 단계는 검증 후 가능
+        if (targetStep < this.currentStep || this.validateCurrentStep()) {
+            this.showStep(targetStep)
+        }
     }
 
     showStep(stepNumber) {
@@ -73,9 +92,9 @@ export default class extends Controller {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
-    // Logic Handlers
     updateMeetingType(event) {
         const type = event.target.value
+        this.projectType = type
         if (this.hasRegularFrequencyTarget) {
             this.regularFrequencyTarget.classList.toggle('hidden', type !== 'regular')
         }
@@ -115,20 +134,15 @@ export default class extends Controller {
         let isValid = true
 
         requiredInputs.forEach(input => {
-            // Check if visible and empty
             const isVisible = input.offsetParent !== null
             if (isVisible && !input.value.trim()) {
                 isValid = false
-                input.classList.add('border-red-500', 'ring-2', 'ring-red-200')
-                console.log(`Validation failed for: ${input.name || input.id}`)
+                input.classList.add('border-red-500', 'ring-2', 'ring-red-100')
             } else {
-                input.classList.remove('border-red-500', 'ring-2', 'ring-red-200')
+                input.classList.remove('border-red-500', 'ring-2', 'ring-red-100')
             }
         })
 
-        if (!isValid) {
-            alert("필수 항목을 모두 입력해주세요.")
-        }
         return isValid
     }
 }

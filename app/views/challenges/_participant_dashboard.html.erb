@@ -43,7 +43,7 @@
             </div>
             
             <div>
-              <h2 class="text-3xl font-black mb-2">챌린지 완료!</h2>
+              <h2 class="text-3xl font-black mb-2"><%= @challenge.offline? ? "모임 완료!" : "챌린지 완료!" %></h2>
               <p class="text-indigo-100 text-sm font-medium">수고하셨습니다. 최종 결과를 확인하세요.</p>
             </div>
 
@@ -116,7 +116,7 @@
               <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
               </div>
-              <h2 class="text-lg font-black italic">오늘의 미션</h2>
+              <h2 class="text-lg font-black italic"><%= @challenge.offline? ? "참여 인증" : "오늘의 미션" %></h2>
             </div>
             <% unless @today_verified %>
               <% 
@@ -137,8 +137,8 @@
                 <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
               </div>
               <div>
-                <h3 class="text-xl font-black mb-1">오늘의 루틴 달성! 🎉</h3>
-                <p class="text-slate-400 text-xs font-medium">성공적으로 오늘의 성장을 기록했습니다.</p>
+                <h3 class="text-xl font-black mb-1"><%= @challenge.offline? ? "참여 완료! 🎉" : "오늘의 루틴 달성! 🎉" %></h3>
+                <p class="text-slate-400 text-xs font-medium"><%= @challenge.offline? ? "오늘 모임 참여를 성공적으로 기록했습니다." : "성공적으로 오늘의 성장을 기록했습니다." %></p>
               </div>
             </div>
           <% else %>
@@ -478,7 +478,7 @@
           <% when "info" %>
             <div class="space-y-8">
               <section class="prose prose-sm prose-slate max-w-none">
-                <h3 class="text-sm font-black text-slate-900 border-l-4 border-indigo-600 pl-3 mb-4 uppercase tracking-widest">챌린지 상세 소개</h3>
+                <h3 class="text-sm font-black text-slate-900 border-l-4 border-indigo-600 pl-3 mb-4 uppercase tracking-widest"><%= @challenge.offline? ? "모임 상세 소개" : "챌린지 상세 소개" %></h3>
                 <%= simple_format @challenge.description %>
                 
                 <div class="mt-8">
@@ -587,7 +587,7 @@
       <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-8 pb-4 text-center space-y-3">
           <div class="flex items-center justify-center gap-2">
-            <h3 class="text-sm font-black <%= garden_style[:title_color] %> uppercase tracking-widest">나의 루파 가든</h3>
+            <h3 class="text-sm font-black <%= garden_style[:title_color] %> uppercase tracking-widest"><%= @challenge.offline? ? "나의 참여 현황" : "나의 루파 가든" %></h3>
             <span class="px-2 py-0.5 <%= garden_style[:badge_bg] %> <%= garden_style[:badge_text] %> text-[9px] font-black rounded-full"><%= garden_style[:badge_label] %></span>
           </div>
           <p class="text-xl font-black text-slate-900 leading-snug"><%= @current_growth_stage[:name] %></p>
@@ -686,7 +686,7 @@
                 </button>
               <% else %>
                 <div class="px-4 py-3 bg-white/10 rounded-2xl border border-white/10 text-center">
-                  <p class="text-[10px] text-indigo-100/60 font-bold leading-tight">챌린지 종료 3일 전부터 환급 신청이 가능해집니다.</p>
+                  <p class="text-[10px] text-indigo-100/60 font-bold leading-tight"><%= @challenge.offline? ? "모임 종료 3일 전부터 환급 신청이 가능해집니다." : "챌린지 종료 3일 전부터 환급 신청이 가능해집니다." %></p>
                 </div>
               <% end %>
             <% elsif @participant.refund_applied? %>
@@ -731,7 +731,7 @@
     <div class="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl">
       <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
         <div>
-          <h2 class="text-xl font-black text-slate-900">환급 신청하기</h2>
+          <h2 class="text-xl font-black text-slate-900"><%= @challenge.offline? ? "참가비 환급 신청" : "보증금 환급 신청" %></h2>
           <p class="text-xs font-bold text-slate-400 mt-1">보증금을 돌려받을 계좌 정보를 입력해주세요.</p>
         </div>
         <button data-action="click->modal#close" class="p-2 hover:bg-slate-200 rounded-xl transition-all">
