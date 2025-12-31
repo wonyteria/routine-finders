@@ -167,9 +167,11 @@
           <% when "records" %>
             <div class="space-y-8">
               <!-- 루틴 잔디 위젯 (캘린더 스타일) -->
-              <div class="p-6 bg-white rounded-2xl border border-slate-100">
+              <div class="p-5 bg-white rounded-2xl border border-slate-100">
                 <div class="flex items-center justify-between mb-6">
-                  <h3 class="text-sm font-black text-slate-900 border-l-4 border-indigo-600 pl-3">나의 성취 지도</h3>
+                  <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                    <span>🗺️</span> 나의 성취 지도
+                  </h3>
                   <div class="flex items-center gap-3">
                     <div class="flex items-center gap-1.5">
                       <div class="w-2.5 h-2.5 bg-indigo-600 rounded-sm"></div>
@@ -190,11 +192,11 @@
                    all_weeks = (calendar_start..calendar_end).to_a.in_groups_of(7)
                 %>
 
-                <div class="w-full">
+                <div class="w-full max-w-[320px] mx-auto">
                   <!-- 요일 헤더 -->
                   <div class="grid grid-cols-7 mb-2">
                     <% %w[월 화 수 목 금 토 일].each do |day| %>
-                       <div class="text-center text-[10px] font-black text-slate-300"><%= day %></div>
+                       <div class="text-center text-[9px] font-black text-slate-300"><%= day %></div>
                     <% end %>
                   </div>
                   
@@ -223,8 +225,8 @@
                                end
                              end
                           %>
-                          <div class="aspect-square rounded-lg flex items-center justify-center relative group <%= bg_class %>">
-                            <span class="text-[10px] font-bold <%= text_class %>"><%= date.day %></span>
+                          <div class="aspect-square rounded-md flex items-center justify-center relative group <%= bg_class %>">
+                            <span class="text-[9px] font-bold <%= text_class %>"><%= date.day %></span>
                             <% if date >= start_date && date <= end_date %>
                                <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
                                  <%= date.strftime('%m/%d') %>: <%= is_success ? '달성 성공! 🎉' : (is_future ? '예정' : '달성 실패 😢') %>
