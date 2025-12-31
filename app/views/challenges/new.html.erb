@@ -75,6 +75,17 @@
 
                   <div class="space-y-8">
                     <div class="space-y-3">
+                      <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">카테고리 선택</label>
+                      <div class="relative group">
+                        <%= f.select :category, 
+                            options_for_select(['건강·운동', '학습·자기계발', 'SNS·브랜딩', '재테크·부업', '취미·라이프', '멘탈·성찰', '기타'], @challenge.category), 
+                            { include_blank: "카테고리를 선택해주세요" }, 
+                            class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-black text-lg text-slate-900 focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none appearance-none cursor-pointer" %>
+                        <svg class="w-5 h-5 absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none group-focus-within:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                      </div>
+                    </div>
+
+                    <div class="space-y-3">
                       <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">챌린지 제목</label>
                       <%= f.text_field :title, placeholder: "예: 매일 아침 수영 30분 하기", class: "w-full text-lg font-black p-6 bg-slate-50 border-2 border-transparent rounded-[28px] placeholder:text-slate-300 focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", id: "challenge_title" %>
                     </div>
