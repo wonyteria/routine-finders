@@ -166,76 +166,81 @@
 
           <% when "records" %>
             <div class="space-y-8">
-              <!-- 루틴 잔디 위젯 (캘린더 스타일) -->
+              <!-- 루틴 잔디 위젯 (GitHub 스타일) -->
               <div class="p-5 bg-white rounded-2xl border border-slate-100">
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center justify-between mb-4">
                   <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
                     <span>🗺️</span> 나의 성취 지도
                   </h3>
-                  <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-1.5">
-                      <div class="w-2.5 h-2.5 bg-indigo-600 rounded-sm"></div>
-                      <span class="text-[10px] font-bold text-slate-500">성공</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[9px] text-slate-400">Less</span>
+                    <div class="flex gap-0.5">
+                      <div class="w-2.5 h-2.5 bg-slate-100 rounded-[1px]"></div>
+                      <div class="w-2.5 h-2.5 bg-indigo-200 rounded-[1px]"></div>
+                      <div class="w-2.5 h-2.5 bg-indigo-400 rounded-[1px]"></div>
+                      <div class="w-2.5 h-2.5 bg-indigo-600 rounded-[1px]"></div>
                     </div>
-                    <div class="flex items-center gap-1.5">
-                      <div class="w-2.5 h-2.5 bg-slate-100 rounded-sm"></div>
-                      <span class="text-[10px] font-bold text-slate-400">빈칸</span>
-                    </div>
+                    <span class="text-[9px] text-slate-400">More</span>
                   </div>
                 </div>
 
                 <% 
                    start_date = @challenge.start_date
                    end_date = @challenge.end_date
-                   calendar_start = start_date.beginning_of_week
-                   calendar_end = end_date.end_of_week
-                   all_weeks = (calendar_start..calendar_end).to_a.in_groups_of(7)
+                   # 시작일의 요일에 맞춰 앞쪽 빈 날짜 채우기 위해 조정
+                   calendar_start = start_date - start_date.wday.days 
+                   # 끝나는 날짜도 주 단위로 맞춤
+                   calendar_end = end_date + (6 - end_date.wday).days
+                   
+                   all_dates = (calendar_start..calendar_end).to_a
+                   weeks = all_dates.in_groups_of(7)
                 %>
 
-                <div class="w-full max-w-[320px] mx-auto">
-                  <!-- 요일 헤더 -->
-                  <div class="grid grid-cols-7 mb-2">
-                    <% %w[월 화 수 목 금 토 일].each do |day| %>
-                       <div class="text-center text-[9px] font-black text-slate-300"><%= day %></div>
-                    <% end %>
+                <div class="flex gap-2">
+                  <!-- 요일 라벨 (월, 수, 금만 표시) -->
+                  <div class="flex flex-col gap-[3px] py-[1px] pr-1">
+                    <div class="h-2.5"></div> <!-- 일 -->
+                    <div class="h-2.5 text-[9px] text-slate-300 leading-3">월</div>
+                    <div class="h-2.5"></div> <!-- 화 -->
+                    <div class="h-2.5 text-[9px] text-slate-300 leading-3">수</div>
+                    <div class="h-2.5"></div> <!-- 목 -->
+                    <div class="h-2.5 text-[9px] text-slate-300 leading-3">금</div>
+                    <div class="h-2.5"></div> <!-- 토 -->
                   </div>
-                  
-                  <!-- 날짜 그리드 -->
-                  <div class="flex flex-col gap-1">
-                    <% all_weeks.each do |week| %>
-                      <div class="grid grid-cols-7 gap-1">
-                        <% week.each do |date| %>
-                          <% 
-                             if date < start_date || date > end_date
-                               bg_class = "bg-transparent" # 챌린지 기간 외
-                               text_class = "text-slate-200 opacity-0"
-                             else
-                               is_success = @daily_status_map[date]
-                               is_future = date > Date.current
-                               
-                               if is_success
-                                 bg_class = "bg-indigo-600 shadow-sm"
-                                 text_class = "text-white"
-                               elsif is_future
-                                 bg_class = "bg-slate-50 border border-slate-100"
-                                 text_class = "text-slate-300"
+
+                  <!-- 잔디밭 -->
+                  <div class="flex-1 overflow-x-auto no-scrollbar">
+                    <div class="flex gap-[3px]">
+                      <% weeks.each do |week| %>
+                        <div class="flex flex-col gap-[3px]">
+                          <% week.each do |date| %>
+                            <% 
+                               if date < start_date || date > end_date
+                                 bg_class = "bg-transparent" # 챌린지 기간 외
                                else
-                                 bg_class = "bg-slate-100"
-                                 text_class = "text-slate-400"
+                                 is_success = @daily_status_map[date]
+                                 is_future = date > Date.current
+                                 
+                                 if is_success
+                                   bg_class = "bg-indigo-600"
+                                 elsif is_future
+                                   bg_class = "bg-slate-50"
+                                 else
+                                   bg_class = "bg-slate-100"
+                                 end
                                end
-                             end
-                          %>
-                          <div class="aspect-square rounded-md flex items-center justify-center relative group <%= bg_class %>">
-                            <span class="text-[9px] font-bold <%= text_class %>"><%= date.day %></span>
-                            <% if date >= start_date && date <= end_date %>
-                               <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
-                                 <%= date.strftime('%m/%d') %>: <%= is_success ? '달성 성공! 🎉' : (is_future ? '예정' : '달성 실패 😢') %>
-                               </div>
-                            <% end %>
-                          </div>
-                        <% end %>
-                      </div>
-                    <% end %>
+                            %>
+                            <div class="w-2.5 h-2.5 rounded-[1px] <%= bg_class %> relative group" title="<%= date.strftime('%Y-%m-%d') %>">
+                              <% if date >= start_date && date <= end_date %>
+                                 <div class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg font-medium">
+                                   <%= date.strftime('%m/%d') %>: <%= is_success ? '성공' : (is_future ? '예정' : '실패') %>
+                                 </div>
+                              <% end %>
+                            </div>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
                   </div>
                 </div>
               </div>
