@@ -1,4 +1,4 @@
-<div class="max-w-6xl mx-auto space-y-6 pb-20 px-4">
+<div class="max-w-6xl mx-auto space-y-6 pb-20 px-4" data-controller="modal">
   <!-- 1. 상단 바 (대담한 스타일) -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
     <div class="flex items-center gap-4">
@@ -357,13 +357,28 @@
           <div class="flex items-end justify-between mb-6">
             <h4 class="text-3xl font-black"><%= number_with_delimiter(((@participant.completion_rate / 100.0) * @participant.paid_amount).to_i) %><span class="text-sm font-bold ml-1 opacity-50">원</span></h4>
           </div>
-          <% if @can_apply_refund %>
-            <%= button_to "환급 신청하기", "#", class: "w-full py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all shadow-md" %>
-          <% else %>
-             <div class="px-4 py-3 bg-white/10 rounded-2xl border border-white/10">
-               <p class="text-[10px] text-indigo-100/60 font-bold leading-tight">챌린지 종료 3일 전부터 환급 신청이 가능해집니다.</p>
-             </div>
-          <% end %>
+          
+          <div class="space-y-3">
+            <% if @participant.refund_none? %>
+              <% if @can_apply_refund %>
+                <button data-action="click->modal#open" class="w-full py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all shadow-md">
+                  환급 신청하기
+                </button>
+              <% else %>
+                <div class="px-4 py-3 bg-white/10 rounded-2xl border border-white/10 text-center">
+                  <p class="text-[10px] text-indigo-100/60 font-bold leading-tight">챌린지 종료 3일 전부터 환급 신청이 가능해집니다.</p>
+                </div>
+              <% end %>
+            <% elsif @participant.refund_applied? %>
+              <div class="px-4 py-3 bg-white/20 rounded-2xl border border-white/10 text-center">
+                <p class="text-xs font-black text-white">환급 신청 완료 (호스트 확인 중)</p>
+              </div>
+            <% elsif @participant.refund_completed? %>
+              <div class="px-4 py-3 bg-emerald-500 rounded-2xl border border-emerald-400 text-center">
+                <p class="text-xs font-black text-white">환급 입금 완료 ✨</p>
+              </div>
+            <% end %>
+          </div>
         </div>
       <% end %>
 
@@ -386,6 +401,53 @@
           <% end %>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Refund Modal -->
+  <div data-modal-target="container" 
+       data-action="click->modal#closeOnBackground" 
+       class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl">
+      <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div>
+          <h2 class="text-xl font-black text-slate-900">환급 신청하기</h2>
+          <p class="text-xs font-bold text-slate-400 mt-1">보증금을 돌려받을 계좌 정보를 입력해주세요.</p>
+        </div>
+        <button data-action="click->modal#close" class="p-2 hover:bg-slate-200 rounded-xl transition-all">
+          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <%= form_with url: apply_refund_challenge_path(@challenge), method: :post, class: "p-8 space-y-6" do |f| %>
+        <div class="space-y-4">
+          <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+            <p class="text-xs font-bold text-indigo-600 mb-1 tracking-tight">예상 환급 금액</p>
+            <p class="text-2xl font-black text-indigo-700">
+              <%= number_with_delimiter(((@participant.completion_rate / 100.0) * @participant.paid_amount).to_i) %>원
+            </p>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">은행명</label>
+            <%= f.text_field :refund_bank_name, required: true, placeholder: "예: 국민은행, 카카오뱅크", class: "w-full mt-1 p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">계좌번호</label>
+            <%= f.text_field :refund_account_number, required: true, placeholder: "'-'를 제외하고 입력", class: "w-full mt-1 p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">예금주 성함</label>
+            <%= f.text_field :refund_account_name, required: true, placeholder: "성함을 입력하세요", class: "w-full mt-1 p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <%= f.submit "환급 신청 전송", class: "w-full py-4 bg-indigo-600 text-white rounded-[24px] font-black hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20" %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

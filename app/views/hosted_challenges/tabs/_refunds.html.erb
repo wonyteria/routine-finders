@@ -1,0 +1,86 @@
+<div class="space-y-8">
+  <!-- Pending Refunds -->
+  <div class="bg-indigo-50 rounded-[40px] border border-indigo-200 p-8">
+    <h2 class="text-xl font-black text-indigo-900 mb-6 flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      환급 신청 현황 (<%= pending_refunds.count %>건 대기중)
+    </h2>
+
+    <% if pending_refunds.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% pending_refunds.each do |participant| %>
+          <div class="bg-white rounded-[28px] p-6 border border-indigo-100 shadow-sm">
+            <div class="flex items-center gap-4 mb-6">
+              <img src="<%= participant.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover" alt="">
+              <div>
+                <p class="font-black text-slate-900"><%= participant.user.nickname %></p>
+                <div class="flex items-center gap-2 mt-0.5">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">달성률 <%= participant.completion_rate.to_i %>%</span>
+                  <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                  <span class="text-[10px] font-black text-indigo-600">환급액 <%= number_with_delimiter(((participant.completion_rate / 100.0) * participant.paid_amount).to_i) %>원</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 rounded-2xl p-5 mb-6 space-y-3 border border-slate-100">
+              <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">입급 계좌 정보</p>
+                <p class="text-sm font-black text-slate-900 leading-relaxed">
+                  <%= participant.refund_bank_name %> <%= participant.refund_account_number %>
+                </p>
+                <p class="text-xs font-bold text-slate-600 mt-1">예금주: <%= participant.refund_account_name %></p>
+              </div>
+              <div class="pt-2 border-t border-slate-200/60">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">신청 일시</p>
+                <p class="text-xs font-bold text-slate-600"><%= participant.refund_applied_at.strftime('%Y.%m.%d %H:%M') %></p>
+              </div>
+            </div>
+
+            <%= button_to complete_refund_hosted_challenge_path(challenge, participant_id: participant.id), 
+                           method: :post, 
+                           class: "w-full py-3.5 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20",
+                           data: { turbo_confirm: "입금을 완료하셨습니까? 완료 처리 후에는 취소할 수 없습니다." } do %>
+              환급 완료 처리하기
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="py-12 text-center bg-white/50 rounded-[28px] border border-dashed border-indigo-200">
+        <p class="text-sm font-bold text-indigo-300">현재 대기 중인 환급 신청이 없습니다.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Completed Refunds -->
+  <div class="bg-white rounded-[40px] border border-slate-200 p-8 shadow-sm">
+    <h3 class="text-lg font-black text-slate-900 mb-6">처리 완료된 환급 (<%= completed_refunds.count %>건)</h3>
+    
+    <% if completed_refunds.any? %>
+      <div class="space-y-3">
+        <% completed_refunds.each do |participant| %>
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <div class="flex items-center gap-4">
+              <img src="<%= participant.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover grayscale opacity-50" alt="">
+              <div>
+                <p class="font-bold text-slate-500"><%= participant.user.nickname %></p>
+                <p class="text-[10px] font-bold text-slate-400">환급액 <%= number_with_delimiter(((participant.completion_rate / 100.0) * participant.paid_amount).to_i) %>원</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-right sr-only md:not-sr-only">
+                <p class="text-[10px] font-bold text-slate-400"><%= participant.refund_bank_name %></p>
+                <p class="text-[10px] font-medium text-slate-300"><%= participant.updated_at.strftime('%Y.%m.%d') %> 완료</p>
+              </div>
+              <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-black">송금 완료</span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-center py-12 text-sm font-bold text-slate-300">최근 처리된 환급 내역이 없습니다.</p>
+    <% end %>
+  </div>
+</div>

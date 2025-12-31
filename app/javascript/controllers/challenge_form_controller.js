@@ -10,7 +10,7 @@ export default class extends Controller {
         "invitationCodeSection", "summaryModal", "summaryContent",
         "hostBio", "missionGoalType", "fixedGoalSection", "dailyGoalSection",
         "disclaimerFields", "rewardHidden", "rewardsContainer", "achievementThresholds",
-        "refundDateField"
+        "refundDateField", "recruitmentStartDate", "recruitmentEndDate"
     ]
 
     connect() {
@@ -401,6 +401,8 @@ export default class extends Controller {
             const title = this.element.querySelector("#challenge_title").value
             const start = this.element.querySelector("#challenge_start_date").value
             const end = this.element.querySelector("#challenge_end_date").value
+            const recruitmentStart = this.element.querySelector('input[name="challenge[recruitment_start_date]"]').value
+            const recruitmentEnd = this.element.querySelector('input[name="challenge[recruitment_end_date]"]').value
             const costType = this.element.querySelector('input[name="challenge[cost_type]"]').value
             const amount = this.element.querySelector("#challenge_amount").value
             const maxParticipants = this.element.querySelector("#max-participants-display").textContent
@@ -453,10 +455,15 @@ export default class extends Controller {
                             <p class="text-sm font-bold text-slate-700">${start} ~ ${end}</p>
                         </div>
                         <div class="space-y-1">
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">모집 인원</p>
-                        <p class="text-sm font-bold text-slate-700">${maxParticipants}</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">모집 인원</p>
+                            <p class="text-sm font-bold text-slate-700">${maxParticipants}</p>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">참여 모집 기간</p>
+                        <p class="text-sm font-bold text-slate-700">${recruitmentStart} ~ ${recruitmentEnd}</p>
+                    </div>
 
                 <div class="space-y-2 pt-2 border-t border-slate-100">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">우승 혜택</p>

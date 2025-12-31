@@ -561,6 +561,23 @@
                     </div>
                   </div>
 
+                  <div class="space-y-6 pt-4">
+                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">참여 모집 기간</label>
+                    <div class="flex items-center gap-4 p-8 bg-slate-50 rounded-[32px] border border-slate-100 shadow-inner">
+                      <div class="flex-1 space-y-2">
+                        <p class="text-[10px] font-black text-slate-400 uppercase text-center tracking-tighter">모집 시작일</p>
+                        <%= f.date_field :recruitment_start_date, value: @challenge.recruitment_start_date || Date.current, onclick: "this.showPicker()", class: "w-full p-4 bg-white border-2 border-transparent rounded-2xl font-bold text-sm text-center focus:border-indigo-500/20 transition-all outline-none cursor-pointer" %>
+                      </div>
+                      <div class="pt-6">
+                        <div class="w-4 h-0.5 bg-slate-200 rounded-full"></div>
+                      </div>
+                      <div class="flex-1 space-y-2">
+                        <p class="text-[10px] font-black text-slate-400 uppercase text-center tracking-tighter">모집 마감일</p>
+                        <%= f.date_field :recruitment_end_date, value: @challenge.recruitment_end_date || (@challenge.start_date.present? ? @challenge.start_date - 1.day : Date.current + 6.days), onclick: "this.showPicker()", class: "w-full p-4 bg-white border-2 border-transparent rounded-2xl font-bold text-sm text-center focus:border-indigo-500/20 transition-all outline-none cursor-pointer" %>
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="space-y-6 pt-4 bg-slate-50/50 rounded-[32px] p-8 border border-slate-100/50">
                     <div class="flex items-center justify-between gap-4 pl-2">
                       <div class="space-y-1 flex-1">

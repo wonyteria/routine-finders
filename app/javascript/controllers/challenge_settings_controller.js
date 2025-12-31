@@ -13,6 +13,8 @@ export default class extends Controller {
             "challenge[custom_host_bio]": "호스트 소개",
             "challenge[start_date]": "시작일",
             "challenge[end_date]": "종료일",
+            "challenge[recruitment_start_date]": "모집 시작일",
+            "challenge[recruitment_end_date]": "모집 마감일",
             "challenge[days][]": "인증 요일",
             "challenge[verification_start_time]": "인증 시작 시간",
             "challenge[verification_end_time]": "인증 종료 시간",

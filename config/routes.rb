@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       post :join
       delete :leave
       get :clone
+      post :apply_refund
     end
     resources :verification_logs, only: [ :create ] do
       member do
@@ -62,7 +63,11 @@ Rails.application.routes.draw do
   end
 
   # 호스트 전용 챌린지 관리
-  resources :hosted_challenges, only: [ :index, :show, :update ]
+  resources :hosted_challenges, only: [ :index, :show, :update ] do
+    member do
+      post :complete_refund
+    end
+  end
 
   resources :gatherings, only: [ :index ]
 

@@ -108,6 +108,8 @@ class ChallengesController < ApplicationController
     @challenge.title = "[복사] #{original.title}"
     @challenge.start_date = Date.current + 1.day
     @challenge.end_date = Date.current + (original.end_date - original.start_date).to_i.days + 1.day
+    @challenge.recruitment_start_date = Date.current
+    @challenge.recruitment_end_date = @challenge.start_date - 1.day
     @challenge.current_participants = 0
     @challenge.host = current_user
     @challenge.original_challenge = original
@@ -162,6 +164,10 @@ class ChallengesController < ApplicationController
       return redirect_to @challenge, alert: "초대 코드가 올바르지 않습니다."
     end
 
+    if @challenge.recruitment_end_date.present? && Date.current > @challenge.recruitment_end_date
+      return redirect_to @challenge, alert: "모집 기간이 이미 종료된 챌린지입니다."
+    end
+
     participant = @challenge.participants.build(
       user: current_user,
       paid_amount: @challenge.amount,
@@ -187,6 +193,28 @@ class ChallengesController < ApplicationController
     end
   end
 
+  def apply_refund
+    @participant = current_user.participations.find_by(challenge: @challenge)
+    return redirect_to @challenge, alert: "참여 정보가 없습니다." unless @participant
+
+    remaining_days = (@challenge.end_date - Date.current).to_i
+    unless @challenge.cost_type_deposit? && remaining_days <= 3
+      return redirect_to @challenge, alert: "환급 신청 기간이 아닙니다."
+    end
+
+    if @participant.update(
+      refund_bank_name: params[:refund_bank_name],
+      refund_account_number: params[:refund_account_number],
+      refund_account_name: params[:refund_account_name],
+      refund_status: :refund_applied,
+      refund_applied_at: Time.current
+    )
+      redirect_to @challenge, notice: "환급 신청이 완료되었습니다. 호스트가 확인 후 환급해 드릴 예정입니다."
+    else
+      redirect_to @challenge, alert: "환급 신청에 실패했습니다."
+    end
+  end
+
   private
 
   def set_challenge
@@ -204,7 +232,7 @@ class ChallengesController < ApplicationController
       :is_private, :admission_type, :host_bank, :host_account, :host_account_holder,
       :v_photo, :v_simple, :v_metric, :v_url, :thumbnail_image, :save_account_to_profile,
       :certification_goal, :daily_goals, :reward_policy,
-      :full_refund_threshold, :refund_date,
+      :full_refund_threshold, :refund_date, :recruitment_start_date, :recruitment_end_date,
       days: [],
       meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
     )

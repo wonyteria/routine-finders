@@ -119,6 +119,10 @@
             <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
             <p class="text-amber-600/70 text-xs mt-1">호스트의 승인을 기다리고 있어요</p>
           </div>
+        <% elsif @challenge.recruitment_end_date.present? && Date.current > @challenge.recruitment_end_date %>
+          <div class="p-4 bg-slate-100 rounded-2xl text-center">
+            <p class="text-slate-500 font-black text-sm">모집 기간 종료</p>
+          </div>
         <% elsif @challenge.requires_approval? %>
           <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
             참여 신청하기
@@ -149,6 +153,11 @@
             <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
             <p class="text-amber-600/70 text-xs">호스트의 승인을 기다리고 있어요</p>
           </div>
+        <% elsif @challenge.recruitment_end_date.present? && Date.current > @challenge.recruitment_end_date %>
+          <div class="p-6 bg-slate-100 rounded-2xl text-center space-y-1">
+            <p class="text-slate-500 font-black text-sm">모집 기간 종료</p>
+            <p class="text-slate-400 text-xs text-nowrap tracking-tight">아쉽게도 참여 신청 기간이 지났습니다.</p>
+          </div>
         <% elsif @challenge.requires_approval? %>
           <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 bg-indigo-600 text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 transition-all" do %>
             참여 신청하기
@@ -162,6 +171,15 @@
 
       <!-- Quick Info -->
       <div class="pt-6 border-t border-slate-200 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-slate-400">모집 기간</p>
+            <p class="text-sm font-black text-slate-900"><%= (@challenge.recruitment_start_date || @challenge.created_at.to_date).strftime('%m.%d') %> - <%= (@challenge.recruitment_end_date || (@challenge.start_date - 1.day)).strftime('%m.%d') %></p>
+          </div>
+        </div>
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>

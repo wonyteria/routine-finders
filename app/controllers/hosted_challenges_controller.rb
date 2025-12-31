@@ -32,7 +32,8 @@ class HostedChallengesController < ApplicationController
       streak_keepers: @challenge.participants.where("current_streak > 0").count,
       dropped_out: @challenge.participants.failed.count,
       pending_verifications: @challenge.verification_logs.pending.count,
-      pending_applications: @challenge.challenge_applications.pending.count
+      pending_applications: @challenge.challenge_applications.pending.count,
+      pending_refunds: @challenge.participants.refund_applied.count
     }
 
     # 탭별 데이터 로드
@@ -47,27 +48,41 @@ class HostedChallengesController < ApplicationController
       load_reviews_data
     when "participants"
       load_participants_data
+    when "refunds"
+      load_refunds_data
+    end
+  end
+
+  def complete_refund
+    @challenge = current_user.hosted_challenges.find(params[:id])
+    participant = @challenge.participants.find(params[:participant_id])
+
+    if participant.refund_applied?
+      participant.update!(refund_status: :refund_completed)
+      redirect_to hosted_challenge_path(@challenge, tab: "refunds"), notice: "#{participant.user.nickname}님의 환급 처리가 완료되었습니다."
+    else
+      redirect_to hosted_challenge_path(@challenge, tab: "refunds"), alert: "환급 신청 상태가 아닙니다."
     end
   end
 
   def update
     @challenge = current_user.hosted_challenges.find(params[:id])
-    
+
     params_hash = challenge_params
-    
+
     # Convert percentage thresholds (0-100) to decimal (0-1)
     if params_hash[:full_refund_threshold].present?
       params_hash[:full_refund_threshold] = params_hash[:full_refund_threshold].to_f / 100.0
     end
-    
+
     if params_hash[:active_rate_threshold].present?
       params_hash[:active_rate_threshold] = params_hash[:active_rate_threshold].to_f / 100.0
     end
-    
+
     if params_hash[:sluggish_rate_threshold].present?
       params_hash[:sluggish_rate_threshold] = params_hash[:sluggish_rate_threshold].to_f / 100.0
     end
-    
+
     success = false
     error_message = nil
 
@@ -79,7 +94,7 @@ class HostedChallengesController < ApplicationController
               title: params[:announcement_title],
               content: params[:announcement_content]
             )
-            
+
             # Notify all participants
             @challenge.participants.each do |participant|
               Notification.create!(
@@ -93,13 +108,13 @@ class HostedChallengesController < ApplicationController
           end
           success = true
         else
-          error_message = @challenge.errors.full_messages.join(', ')
+          error_message = @challenge.errors.full_messages.join(", ")
           raise ActiveRecord::Rollback
         end
       end
     rescue ActiveRecord::RecordInvalid => e
       success = false
-      error_message = e.record.errors.full_messages.join(', ')
+      error_message = e.record.errors.full_messages.join(", ")
     rescue => e
       success = false
       error_message = e.message
@@ -169,5 +184,11 @@ class HostedChallengesController < ApplicationController
     else
       @participants = @participants.order(created_at: :desc)
     end
+  end
+
+  def load_refunds_data
+    @refund_applications = @challenge.participants.where.not(refund_status: :refund_none).order(refund_applied_at: :desc)
+    @pending_refunds = @refund_applications.refund_applied
+    @completed_refunds = @refund_applications.refund_completed
   end
 end

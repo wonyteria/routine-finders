@@ -33,6 +33,7 @@ class Challenge < ApplicationRecord
   validates :start_date, presence: true
   validates :end_date, presence: true
   validate :end_date_after_start_date
+  validate :recruitment_period_validity
 
   # Scopes
   scope :online_challenges, -> { where(mode: :online) }
@@ -100,6 +101,18 @@ class Challenge < ApplicationRecord
   def end_date_after_start_date
     return if end_date.blank? || start_date.blank?
     errors.add(:end_date, "must be after start date") if end_date < start_date
+  end
+
+  def recruitment_period_validity
+    return if recruitment_start_date.blank? || recruitment_end_date.blank?
+
+    if recruitment_end_date < recruitment_start_date
+      errors.add(:recruitment_end_date, "must be after recruitment start date")
+    end
+
+    if start_date.present? && recruitment_end_date > start_date
+      errors.add(:recruitment_end_date, "cannot be after challenge start date")
+    end
   end
 
   def set_host_name

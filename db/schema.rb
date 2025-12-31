@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_014142) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_021231) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -121,6 +121,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_014142) do
     t.integer "penalty_per_failure", default: 0
     t.string "purpose"
     t.boolean "re_verification_allowed", default: false, null: false
+    t.date "recruitment_end_date"
+    t.date "recruitment_start_date"
     t.date "refund_date"
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
@@ -183,6 +185,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_014142) do
     t.string "nickname"
     t.integer "paid_amount", default: 0, null: false
     t.string "profile_image"
+    t.string "refund_account_name"
+    t.string "refund_account_number"
+    t.datetime "refund_applied_at"
+    t.string "refund_bank_name"
+    t.integer "refund_status"
     t.integer "status", default: 0, null: false
     t.boolean "today_verified", default: false, null: false
     t.integer "total_failures", default: 0, null: false
