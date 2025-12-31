@@ -74,12 +74,12 @@
       <nav class="flex overflow-x-auto no-scrollbar gap-0 px-8">
         <% tabs = [
           { id: "intro", label: "소개" },
+          (@challenge.offline? ? nil : { id: "rules", label: "규칙" }),
           { id: "rewards", label: "혜택" },
-          { id: "rules", label: "규칙" },
           { id: "host", label: "호스트" },
           { id: "participants", label: "참여자" },
           { id: "reviews", label: "리뷰", count: @reviews.count }
-        ] %>
+        ].compact %>
 
         <% tabs.each do |tab_item| %>
           <%= link_to challenge_path(@challenge, tab: tab_item[:id]), 
@@ -214,14 +214,25 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </div>
           <div>
-            <p class="text-xs font-bold text-slate-400">진행 기간</p>
+            <p class="text-xs font-bold text-slate-400"><%= @challenge.offline? ? "모임 기간" : "진행 기간" %></p>
             <p class="text-sm font-black text-slate-900"><%= @challenge.start_date.strftime('%m.%d') %> - <%= @challenge.end_date.strftime('%m.%d') %></p>
           </div>
         </div>
+        <% if @challenge.offline? && @challenge.meeting_info %>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-slate-400">모임 장소</p>
+              <p class="text-sm font-black text-slate-900 truncate max-w-[180px]"><%= @challenge.meeting_info.place_name %></p>
+            </div>
+          </div>
+        <% end %>
         <% unless @challenge.cost_type_free? %>
           <div class="p-4 bg-slate-50 rounded-xl">
             <p class="text-xs font-bold text-slate-500 leading-relaxed">
-              참여 시 보증금이 예치되며, 챌린지 종료 후 <span class="text-indigo-600 font-black">달성률에 따라 환급</span>됩니다.
+              <%= @challenge.offline? ? "참가비를 지불하고 참여하는 모임입니다. 노쇼 방지를 위해 신중하게 신청해주세요." : "참여 시 보증금이 예치되며, 챌린지 종료 후 <span class='text-indigo-600 font-black'>달성률에 따라 환급</span>됩니다." %>
             </p>
           </div>
         <% end %>
