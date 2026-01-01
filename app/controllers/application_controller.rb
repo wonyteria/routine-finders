@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
+  before_action :auto_login_in_development, if: -> { Rails.env.development? }
   before_action :set_unviewed_badges
 
   helper_method :current_user, :logged_in?
@@ -40,5 +41,11 @@ class ApplicationController < ActionController::Base
   def redirect_back_or(default)
     redirect_to(session[:forwarding_url] || default)
     session.delete(:forwarding_url)
+  end
+
+  def auto_login_in_development
+    return if session[:user_id].present?
+    user = User.find_by(email: "routine@example.com")
+    session[:user_id] = user.id if user.present?
   end
 end
