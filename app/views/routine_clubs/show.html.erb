@@ -209,7 +209,24 @@
       <div class="lg:col-span-1 space-y-6">
         
         <!-- Join Card -->
-        <% if @is_member %>
+        <% if @is_host %>
+          <!-- Host Management -->
+          <div class="bg-purple-50 border-2 border-purple-200 rounded-[32px] p-8 text-center">
+            <div class="text-5xl mb-4">👑</div>
+            <h3 class="text-xl font-black text-purple-900 mb-2">호스트</h3>
+            <p class="text-purple-700 font-medium mb-6">
+              이 클럽을 운영하고 있습니다
+            </p>
+            <%= link_to "클럽 관리", manage_routine_club_path(@routine_club), class: "block w-full py-3 bg-purple-600 text-white rounded-2xl font-black hover:bg-purple-700 transition-colors mb-3" %>
+            <% if @pending_payments.any? %>
+              <div class="bg-amber-100 border border-amber-200 rounded-xl p-3 mt-3">
+                <p class="text-sm font-black text-amber-900">
+                  ⏳ 입금 대기 <%= @pending_payments.count %>건
+                </p>
+              </div>
+            <% end %>
+          </div>
+        <% elsif @is_member %>
           <!-- Already Member -->
           <div class="bg-emerald-50 border-2 border-emerald-200 rounded-[32px] p-8 text-center">
             <div class="text-5xl mb-4">✅</div>

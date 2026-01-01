@@ -1,6 +1,6 @@
 class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
-  before_action :set_routine_club, only: [ :show, :join, :confirm_payment, :reject_payment, :kick_member ]
+  before_action :set_routine_club, only: [ :show, :manage, :join, :confirm_payment, :reject_payment, :kick_member ]
 
   def index
     @routine_clubs = RoutineClub.recruiting_clubs
@@ -22,6 +22,13 @@ class RoutineClubsController < ApplicationController
     @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
     @pending_payments = @is_host ? @routine_club.members.where(payment_status: :pending) : []
     @rules = @routine_club.rules.order(:position)
+  end
+
+  def manage
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
+
+    @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
+    @pending_payments = @routine_club.members.where(payment_status: :pending)
   end
 
   def new

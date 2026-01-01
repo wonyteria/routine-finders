@@ -80,6 +80,7 @@ Rails.application.routes.draw do
   # Routine Clubs (유료 루틴 클럽)
   resources :routine_clubs do
     member do
+      get :manage
       post :join
       post :confirm_payment
       post :reject_payment
