@@ -99,32 +99,54 @@ end
 users = User.all.to_a
 
 # 2. Badges
+# 2. Badges
 puts "Creating Badges..."
 badges = [
-  # 1. 꾸준함의 미학 (연속 인증 - Max Streak)
-  { name: "작심삼일 탈출", badge_type: :max_streak, level: :bronze, requirement_value: 3.0, description: "3일 연속 인증에 성공했습니다.", icon_path: "🥉" },
-  { name: "습관의 시작", badge_type: :max_streak, level: :silver, requirement_value: 7.0, description: "7일 연속 인증에 성공했습니다.", icon_path: "🥈" },
-  { name: "끈기의 달인", badge_type: :max_streak, level: :gold, requirement_value: 21.0, description: "21일 연속 인증으로 습관을 만들었습니다.", icon_path: "🥇" },
-  { name: "불굴의 의지", badge_type: :max_streak, level: :platinum, requirement_value: 66.0, description: "66일 연속 인증으로 완벽한 습관이 되었습니다.", icon_path: "💎" },
-  { name: "전설의 기록", badge_type: :max_streak, level: :diamond, requirement_value: 100.0, description: "100일 연속 인증이라는 놀라운 기록!", icon_path: "👑" },
+  # [공통] 꾸준함의 미학 (연속 인증 - All / Max Streak)
+  { name: "작심삼일 탈출",    target_type: :all,       badge_type: :max_streak, level: :bronze, requirement_value: 3, desc: "3일 연속 인증에 성공했습니다.", icon: "🥉" },
+  { name: "일주일의 기적",    target_type: :all,       badge_type: :max_streak, level: :silver, requirement_value: 7, desc: "7일 연속 인증에 성공했습니다.", icon: "🥈" },
+  { name: "습관 형성 완료",   target_type: :all,       badge_type: :max_streak, level: :gold,   requirement_value: 21, desc: "21일 연속 인증으로 습관을 만들었습니다.", icon: "🥇" },
+  { name: "백일의 약속",      target_type: :all,       badge_type: :max_streak, level: :diamond, requirement_value: 100, desc: "100일 연속 스트릭을 달성했습니다.", icon: "👑" },
 
-  # 2. 도전의 발자국 (참여 횟수 - Participation Count)
-  { name: "첫 걸음", badge_type: :participation_count, level: :bronze, requirement_value: 1.0, description: "첫 번째 챌린지에 참여했습니다.", icon_path: "🐣" },
-  { name: "도전하는 삶", badge_type: :participation_count, level: :silver, requirement_value: 5.0, description: "5개의 챌린지에 도전했습니다.", icon_path: "🏃" },
-  { name: "열정 챌린저", badge_type: :participation_count, level: :gold, requirement_value: 10.0, description: "10개의 챌린지와 함께 성장하고 있습니다.", icon_path: "🔥" },
-  { name: "프로 루트너", badge_type: :participation_count, level: :platinum, requirement_value: 30.0, description: "30개의 챌린지를 경험한 진정한 프로!", icon_path: "🌟" },
-  { name: "명예의 전당", badge_type: :participation_count, level: :diamond, requirement_value: 50.0, description: "50개 이상의 챌린지에 참여한 레전드.", icon_path: "🏆" },
+  # [공통] 성실함의 증명 (총 인증 횟수 - All / Verification Count)
+  { name: "첫 인증",          target_type: :all,       badge_type: :verification_count, level: :bronze, requirement_value: 1, desc: "설레는 첫 인증을 남겼습니다.", icon: "📝" },
+  { name: "성실의 아이콘",    target_type: :all,       badge_type: :verification_count, level: :silver, requirement_value: 50, desc: "총 50번의 인증을 기록했습니다.", icon: "🛡️" },
+  { name: "인증 마스터",      target_type: :all,       badge_type: :verification_count, level: :gold,   requirement_value: 100, desc: "총 100번의 인증을 달성했습니다.", icon: "✨" },
 
-  # 3. 성실함의 증명 (총 인증 횟수 - Verification Count)
-  { name: "인증의 시작", badge_type: :verification_count, level: :bronze, requirement_value: 10.0, description: "총 10번의 인증을 남겼습니다.", icon_path: "📝" },
-  { name: "성실의 아이콘", badge_type: :verification_count, level: :silver, requirement_value: 50.0, description: "총 50번의 인증으로 성실함을 증명했습니다.", icon_path: "🛡️" },
-  { name: "신뢰의 상징", badge_type: :verification_count, level: :gold, requirement_value: 100.0, description: "총 100번의 인증을 달성했습니다.", icon_path: "✨" },
-  { name: "인증 마스터", badge_type: :verification_count, level: :platinum, requirement_value: 300.0, description: "총 300번의 인증을 기록했습니다.", icon_path: "🏅" },
-  { name: "인증의 신", badge_type: :verification_count, level: :diamond, requirement_value: 1000.0, description: "총 1000번의 인증! 존경합니다.", icon_path: "🏛️" }
+  # [챌린지] 도전의 발자국 (챌린지 참여 - Challenge / Participation Count)
+  { name: "챌린지 입문",      target_type: :challenge, badge_type: :participation_count, level: :bronze, requirement_value: 1, desc: "첫 챌린지에 도전했습니다.", icon: "🐣" },
+  { name: "도전 중독",        target_type: :challenge, badge_type: :participation_count, level: :silver, requirement_value: 5, desc: "5개의 챌린지에 참여했습니다.", icon: "🏃" },
+  { name: "프로 챌린저",      target_type: :challenge, badge_type: :participation_count, level: :gold,   requirement_value: 10, desc: "10개의 챌린지와 함께 성장 중입니다.", icon: "🔥" },
+
+  # [챌린지] 완벽주의자 (100% 달성 횟수 - Challenge / Achievement) - 로직상 achievement_rate 100인 건수
+  { name: "첫 완주",          target_type: :challenge, badge_type: :achievement_rate, level: :bronze, requirement_value: 1, desc: "하나의 챌린지를 완벽하게 끝냈습니다.", icon: "🏁" },
+  { name: "완벽의 경지",      target_type: :challenge, badge_type: :achievement_rate, level: :gold,   requirement_value: 5, desc: "5개의 챌린지를 100% 성공했습니다.", icon: "💯" },
+
+  # [모임] 만남의 기쁨 (모임 참여 - Gathering / Participation Count)
+  { name: "모임 새내기",      target_type: :gathering, badge_type: :participation_count, level: :bronze, requirement_value: 1, desc: "첫 모임에 참여했습니다.", icon: "👋" },
+  { name: "인싸의 길",        target_type: :gathering, badge_type: :participation_count, level: :silver, requirement_value: 5, desc: "5번의 모임에 참여했습니다.", icon: "🎉" },
+  { name: "프로 참석러",      target_type: :gathering, badge_type: :participation_count, level: :gold,   requirement_value: 10, desc: "10번의 모임에서 즐거운 시간을 보냈습니다.", icon: "🥂" },
+
+  # [호스트] 리더십 (개설 횟수 - Host / Host Count)
+  { name: "호스트 데뷔",      target_type: :host,      badge_type: :host_count, level: :bronze, requirement_value: 1, desc: "첫 챌린지/모임을 개설했습니다.", icon: "📢" },
+  { name: "커뮤니티 리더",    target_type: :host,      badge_type: :host_count, level: :gold,   requirement_value: 5, desc: "5개의 모임을 주최하며 이끌었습니다.", icon: "👑" },
+
+  # [소통] 응원단장 (응원 횟수 - All / Cheer Count)
+  { name: "따뜻한 한마디",    target_type: :all,       badge_type: :cheer_count, level: :bronze, requirement_value: 10, desc: "동료들에게 10번의 응원을 보냈습니다.", icon: "💌" },
+  { name: "에너지 충전소",    target_type: :all,       badge_type: :cheer_count, level: :silver, requirement_value: 50, desc: "50번의 응원으로 힘을 실어주었습니다.", icon: "🔋" },
+  { name: "공식 칭찬봇",      target_type: :all,       badge_type: :cheer_count, level: :gold,   requirement_value: 100, desc: "100번의 응원을 나눈 당신은 천사!", icon: "👼" }
 ]
 
-created_badges = badges.map do |badge_attrs|
-  Badge.create!(badge_attrs)
+created_badges = badges.map do |b|
+  Badge.create!(
+    name: b[:name],
+    target_type: b[:target_type],
+    badge_type: b[:badge_type],
+    level: b[:level],
+    requirement_value: b[:requirement_value],
+    description: b[:desc],
+    icon_path: b[:icon]
+  )
 end
 
 # 3. Assign Badges (Finders with most badges)
