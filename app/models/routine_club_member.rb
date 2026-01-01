@@ -26,6 +26,9 @@ class RoutineClubMember < ApplicationRecord
       payment_status: :confirmed,
       deposit_confirmed_at: Time.current
     )
+
+    # 알림 전송
+    RoutineClubNotificationService.notify_payment_confirmed(self)
   end
 
   def reject_payment!(reason = nil)
@@ -33,6 +36,9 @@ class RoutineClubMember < ApplicationRecord
       payment_status: :rejected,
       kick_reason: reason
     )
+
+    # 알림 전송
+    RoutineClubNotificationService.notify_payment_rejected(self, reason)
   end
 
   def kick!(reason)
@@ -40,6 +46,9 @@ class RoutineClubMember < ApplicationRecord
       status: :kicked,
       kick_reason: reason
     )
+
+    # 알림 전송
+    RoutineClubNotificationService.notify_kicked(self, reason)
   end
 
   def update_attendance_stats!

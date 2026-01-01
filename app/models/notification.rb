@@ -9,7 +9,12 @@ class Notification < ApplicationRecord
     settlement: 5,
     system: 6,
     application: 7,
-    badge_award: 8
+    badge_award: 8,
+    club_payment_confirmed: 9,
+    club_payment_rejected: 10,
+    club_kicked: 11,
+    club_attendance_reminder: 12,
+    club_warning: 13
   }
 
   # Associations
