@@ -6,6 +6,9 @@ free_challenge:
   mode: online
   cost_type: free
   admission_type: first_come
+  mission_frequency: daily
+  verification_type: simple
+  status: active
 
 paid_challenge:
   title: Paid Challenge
@@ -16,3 +19,6 @@ paid_challenge:
   cost_type: deposit
   admission_type: approval
   amount: 10000
+  mission_frequency: daily
+  verification_type: simple
+  status: active

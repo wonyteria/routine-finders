@@ -768,9 +768,8 @@
           <!-- 식물 영역 -->
           <div class="px-6 pb-8">
             <div class="aspect-square <%= garden_style[:bg_color] %> rounded-[32px] border <%= garden_style[:border_color] %> relative overflow-hidden group">
-              <!-- 식물 Sprite 이미지 (6단계) -->
-              <div class="absolute inset-6 bg-no-repeat bg-contain bg-center transition-all duration-700 group-hover:scale-105 <%= garden_style[:plant_filter] %>"
-                   style="background-image: url('/assets/images/roopa_plant_new.png'); background-size: 600% 100%; background-position: <%= @current_growth_stage[:stage] * 20 %>% 0%;">
+              <div class="absolute inset-0 bg-no-repeat transition-all duration-700 group-hover:scale-105 <%= garden_style[:plant_filter] %>"
+                   style="background-image: url('/assets/images/roopa_plant_new.png'); background-size: 600% 400%; background-position: <%= @current_growth_stage[:stage] * 20 %>% 50%;">
               </div>
               <!-- 단계 표시 -->
               <div class="absolute bottom-6 left-0 right-0 flex justify-center">
