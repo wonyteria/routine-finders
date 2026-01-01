@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_01_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_01_121000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -318,6 +318,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_120000) do
     t.index ["status"], name: "index_routine_club_penalties_on_status"
   end
 
+  create_table "routine_club_reports", force: :cascade do |t|
+    t.integer "absence_count", default: 0
+    t.integer "attendance_count", default: 0
+    t.float "attendance_rate", default: 0.0
+    t.text "cheering_message"
+    t.datetime "created_at", null: false
+    t.date "end_date", null: false
+    t.integer "received_cheers_count", default: 0
+    t.integer "report_type", default: 0, null: false
+    t.integer "routine_club_id", null: false
+    t.date "start_date", null: false
+    t.text "summary"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["routine_club_id"], name: "index_routine_club_reports_on_routine_club_id"
+    t.index ["user_id", "routine_club_id", "report_type", "start_date"], name: "index_reports_on_user_club_type_date", unique: true
+    t.index ["user_id"], name: "index_routine_club_reports_on_user_id"
+  end
+
   create_table "routine_club_rules", force: :cascade do |t|
     t.boolean "auto_kick_enabled", default: false
     t.integer "auto_kick_threshold"
@@ -455,6 +474,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_120000) do
   add_foreign_key "routine_club_penalties", "routine_club_rules"
   add_foreign_key "routine_club_penalties", "routine_clubs"
   add_foreign_key "routine_club_penalties", "users", column: "issued_by_id"
+  add_foreign_key "routine_club_reports", "routine_clubs"
+  add_foreign_key "routine_club_reports", "users"
   add_foreign_key "routine_club_rules", "routine_clubs"
   add_foreign_key "routine_clubs", "users", column: "host_id"
   add_foreign_key "staffs", "challenges"
