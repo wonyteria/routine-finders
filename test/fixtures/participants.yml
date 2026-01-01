@@ -2,8 +2,8 @@ participant_in_free:
   user: participant
   challenge: free_challenge
   joined_at: <%= Time.current %>
-  status: achieving
-  refund_status: refund_none
+  status: 0  # achieving
+  refund_status: 0  # refund_none
   completion_rate: 80.0
   current_streak: 5
   max_streak: 10

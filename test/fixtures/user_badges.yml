@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: participant
+  badge: one
+  granted_at: <%= Time.current %>
+  is_viewed: false
+
+two:
+  user: host
+  badge: two
+  granted_at: <%= Time.current - 1.day %>
+  is_viewed: true

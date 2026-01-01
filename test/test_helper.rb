@@ -8,7 +8,7 @@ module ActiveSupport
     # parallelize(workers: :number_of_processors) # Disabled for Windows compatibility
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-    # fixtures :all # Temporarily disabled due to fixture loading errors
+    fixtures :all
 
     # Add more helper methods to be used by all tests here...
   end

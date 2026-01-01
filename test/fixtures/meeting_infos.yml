@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  challenge: paid_challenge
+  place_name: "강남역 스터디카페"
+  address: "서울시 강남구 강남대로 123"
+  meeting_time: "매주 토요일 오후 2시"
+  description: "편안한 분위기의 스터디카페입니다"
+  max_attendees: 10

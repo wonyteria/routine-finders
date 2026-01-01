@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: host
+  challenge: free_challenge
+  staff_role: 0  # operator
+  nickname: "운영진1"
+
+two:
+  user: participant
+  challenge: paid_challenge
+  staff_role: 0  # operator
+  nickname: "운영진2"

@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: participant
+  title: "아침 운동"
+  category: "건강·운동"
+  icon: "💪"
+  color: "bg-indigo-500"
+  days: ["월", "수", "금"]
+  current_streak: 5
+  total_completions: 20
+
+two:
+  user: host
+  title: "독서 30분"
+  category: "학습·자기계발"
+  icon: "📚"
+  color: "bg-blue-500"
+  days: ["화", "목", "토"]
+  current_streak: 3
+  total_completions: 15

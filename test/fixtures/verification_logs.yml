@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  challenge: free_challenge
+  participant: participant_in_free
+  verification_type: 0  # simple
+  value: "완료"
+  status: 1  # approved
+  is_late: false
+
+two:
+  challenge: free_challenge
+  participant: participant_in_free
+  verification_type: 0  # simple
+  value: "완료"
+  status: 0  # pending
+  is_late: false

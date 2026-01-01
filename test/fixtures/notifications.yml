@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: participant
+  notification_type: 2  # announcement
+  title: "새로운 공지사항"
+  content: "챌린지 관련 공지사항입니다"
+  is_read: false
+
+two:
+  user: host
+  notification_type: 3  # approval
+  title: "인증이 승인되었습니다"
+  content: "인증이 승인되었습니다"
+  is_read: true
