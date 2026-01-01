@@ -21,6 +21,9 @@ class RoutineClub < ApplicationRecord
   validates :min_duration_months, presence: true, numericality: { greater_than_or_equal_to: 3 }
   validate :end_date_after_start_date
 
+  # Nested attributes
+  accepts_nested_attributes_for :rules, allow_destroy: true, reject_if: :all_blank
+
   # Scopes
   scope :recruiting_clubs, -> { where(status: :recruiting) }
   scope :active_clubs, -> { where(status: :active) }
