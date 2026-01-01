@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import confetti from "canvas-confetti"
 
 export default class extends Controller {
     static targets = ["container"]
@@ -97,14 +98,23 @@ export default class extends Controller {
             },
             body: JSON.stringify({ badge_ids: badgeIds })
         }).then(() => {
-            setTimeout(() => {
-                overlay.remove()
-                if (redirectToRoadmap) {
-                    window.location.href = "/badge_roadmap"
-                } else {
-                    window.location.reload()
-                }
-            }, 300)
+            // 성공 시 이동 (400, 500 에러여도 fetch는 여기로 옴, response.ok 체크 필요하지만 일단 넘어감)
+            this.redirect(overlay, redirectToRoadmap)
+        }).catch((error) => {
+            console.error("Badge update failed:", error)
+            // 실패 시에도 이동
+            this.redirect(overlay, redirectToRoadmap)
         })
+    }
+
+    redirect(overlay, redirectToRoadmap) {
+        setTimeout(() => {
+            overlay.remove()
+            if (redirectToRoadmap) {
+                window.location.href = "/badge_roadmap"
+            } else {
+                window.location.reload()
+            }
+        }, 300)
     }
 }
