@@ -1,0 +1,209 @@
+<div class="space-y-12">
+  
+  <!-- Hero Section: 환경의 힘 -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 rounded-[48px] p-12 text-white shadow-2xl">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
+    
+    <div class="relative z-10 max-w-4xl">
+      <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+        <span class="text-sm font-black">루틴 파인더스만의 프리미엄 기능</span>
+      </div>
+      
+      <h2 class="text-4xl md:text-5xl font-black mb-4 leading-tight">
+        혼자서는 어려웠던 습관,<br/>
+        <span class="text-yellow-300">환경의 힘</span>으로 만드세요
+      </h2>
+      
+      <p class="text-xl text-white/90 font-bold mb-8 leading-relaxed">
+        규칙 · 가시성 · 책임감이 만드는 강력한 루틴 환경.<br/>
+        최소 3개월, 함께하는 사람들과 진짜 변화를 경험하세요.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+          <div class="text-3xl mb-3">⚖️</div>
+          <h3 class="font-black text-lg mb-2">명확한 규칙</h3>
+          <p class="text-sm text-white/80 font-medium">출석, 인증, 패널티까지 투명한 시스템</p>
+        </div>
+        
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+          <div class="text-3xl mb-3">👥</div>
+          <h3 class="font-black text-lg mb-2">함께하는 동료</h3>
+          <p class="text-sm text-white/80 font-medium">서로 응원하고 자극받는 커뮤니티</p>
+        </div>
+        
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+          <div class="text-3xl mb-3">📊</div>
+          <h3 class="font-black text-lg mb-2">실시간 리포트</h3>
+          <p class="text-sm text-white/80 font-medium">내 성장이 한눈에 보이는 통계</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- My Clubs -->
+  <% if @my_club_memberships.any? %>
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-black text-slate-900">참여 중인 클럽</h2>
+        <span class="text-sm font-bold text-slate-400"><%= @my_club_memberships.count %>개 참여 중</span>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <% @my_club_memberships.each do |membership| %>
+          <% club = membership.routine_club %>
+          <%= link_to routine_club_path(club), class: "group" do %>
+            <div class="bg-white border-2 border-orange-200 rounded-3xl p-6 hover:shadow-2xl hover:border-orange-400 transition-all">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-xs font-black px-3 py-1 rounded-full bg-orange-100 text-orange-600"><%= club.category %></span>
+                    <% if membership.payment_status_pending? %>
+                      <span class="text-xs font-black px-3 py-1 rounded-full bg-amber-100 text-amber-600">입금 대기</span>
+                    <% elsif membership.status_warned? %>
+                      <span class="text-xs font-black px-3 py-1 rounded-full bg-red-100 text-red-600">경고</span>
+                    <% end %>
+                  </div>
+                  <h3 class="text-xl font-black text-slate-900 group-hover:text-orange-600 transition-colors"><%= club.title %></h3>
+                </div>
+                <div class="text-3xl group-hover:scale-110 transition-transform">🔥</div>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                <div>
+                  <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">출석률</p>
+                  <p class="text-2xl font-black text-emerald-500"><%= membership.attendance_rate.to_i %>%</p>
+                </div>
+                <div>
+                  <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">멤버</p>
+                  <p class="text-2xl font-black text-indigo-500"><%= club.current_members %>명</p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Pending Payments Alert -->
+  <% if @pending_payments.any? %>
+    <section class="bg-amber-50 border-2 border-amber-200 rounded-3xl p-8">
+      <div class="flex items-start gap-4">
+        <div class="text-4xl">⏳</div>
+        <div class="flex-1">
+          <h3 class="text-xl font-black text-amber-900 mb-2">입금 확인 대기 중</h3>
+          <p class="text-amber-700 font-bold mb-4">
+            <%= @pending_payments.count %>개 클럽의 입금 확인을 기다리고 있습니다. 
+            호스트가 확인하면 참여가 승인됩니다.
+          </p>
+          <div class="space-y-2">
+            <% @pending_payments.each do |membership| %>
+              <div class="bg-white rounded-2xl p-4 flex items-center justify-between">
+                <div>
+                  <p class="font-black text-slate-900"><%= membership.routine_club.title %></p>
+                  <p class="text-sm text-slate-500 font-medium">입금액: <%= number_to_currency(membership.paid_amount, unit: "₩", precision: 0) %></p>
+                </div>
+                <%= link_to "상세보기", routine_club_path(membership.routine_club), class: "px-4 py-2 bg-amber-500 text-white rounded-xl font-black text-sm hover:bg-amber-600 transition-colors" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- Available Clubs -->
+  <section class="space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900">모집 중인 루틴 클럽</h2>
+        <p class="text-slate-500 font-medium mt-1">지금 시작할 수 있는 클럽을 찾아보세요</p>
+      </div>
+      <%= link_to "전체보기", routine_clubs_path, class: "px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-700 transition-colors" %>
+    </div>
+
+    <% if @routine_clubs.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @routine_clubs.each do |club| %>
+          <%= link_to routine_club_path(club), class: "group" do %>
+            <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden hover:shadow-2xl hover:border-orange-300 transition-all">
+              <div class="aspect-video bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="text-6xl opacity-50">🎯</div>
+                </div>
+                <div class="absolute top-4 left-4">
+                  <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-orange-600">
+                    <%= club.category %>
+                  </span>
+                </div>
+                <div class="absolute bottom-4 right-4">
+                  <span class="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-white">
+                    <%= club.current_members %> / <%= club.max_members %>명
+                  </span>
+                </div>
+              </div>
+              
+              <div class="p-6 space-y-4">
+                <div>
+                  <h3 class="text-lg font-black text-slate-900 group-hover:text-orange-600 transition-colors mb-2">
+                    <%= club.title %>
+                  </h3>
+                  <p class="text-sm text-slate-600 font-medium line-clamp-2">
+                    <%= club.description %>
+                  </p>
+                </div>
+                
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">월 요금</p>
+                    <p class="text-xl font-black text-slate-900">
+                      <%= number_to_currency(club.monthly_fee, unit: "₩", precision: 0) %>
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">기간</p>
+                    <p class="text-sm font-black text-slate-900">
+                      <%= club.min_duration_months %>개월
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-20 text-center">
+        <div class="text-6xl mb-4 opacity-30">🎯</div>
+        <h3 class="text-xl font-black text-slate-400 mb-2">모집 중인 클럽이 없습니다</h3>
+        <p class="text-slate-400 font-medium">곧 새로운 클럽이 열릴 예정입니다</p>
+      </div>
+    <% end %>
+  </section>
+
+  <!-- CTA: Create Your Club -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[48px] p-12 text-white shadow-2xl">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+    
+    <div class="relative z-10 max-w-3xl mx-auto text-center">
+      <div class="text-6xl mb-6">🚀</div>
+      <h2 class="text-3xl md:text-4xl font-black mb-4">
+        나만의 루틴 클럽을 만들어보세요
+      </h2>
+      <p class="text-xl text-white/90 font-bold mb-8">
+        호스트가 되어 함께 성장할 멤버들을 모집하고,<br/>
+        체계적인 환경에서 루틴을 이끌어가세요.
+      </p>
+      <%= link_to new_routine_club_path, class: "inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all shadow-2xl" do %>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+        클럽 개설하기
+      <% end %>
+    </div>
+  </section>
+
+</div>

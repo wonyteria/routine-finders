@@ -1,0 +1,190 @@
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+  <!-- Left Column: My Routines -->
+  <div class="lg:col-span-8 space-y-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <h2 class="text-2xl font-black text-slate-900">나의 루틴</h2>
+      
+      <div class="flex bg-slate-100 p-1 rounded-2xl gap-1 overflow-x-auto">
+        <% [["전체", "all"], ["월", "1"], ["화", "2"], ["수", "3"], ["목", "4"], ["금", "5"], ["토", "6"], ["일", "0"]].each do |label, value| %>
+          <button type="button" 
+                  onclick="filterRoutines('<%= value %>')"
+                  id="btn-<%= value %>"
+                  class="routine-filter-btn px-6 py-2 rounded-xl text-xs font-black transition-all <%= value == Date.current.wday.to_s ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600' %>">
+            <%= label %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @personal_routines.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="routine-container">
+        <% @personal_routines.each do |routine| %>
+          <div class="routine-card group bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col gap-6" 
+               data-days="<%= (routine.days || []).join(',') %>">
+            <div class="flex justify-between items-start">
+              <div class="w-14 h-14 <%= routine.completed_today? ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-900 group-hover:bg-indigo-50 group-hover:text-indigo-600' %> rounded-2xl flex items-center justify-center text-2xl transition-all duration-300">
+                <%= routine.icon %>
+              </div>
+              <div class="flex gap-2">
+                <%= button_to toggle_personal_routine_path(routine), method: :post, class: "w-10 h-10 rounded-xl flex items-center justify-center transition-all #{routine.completed_today? ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' : 'bg-slate-50 text-slate-300 hover:bg-emerald-50 hover:text-emerald-500'}" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                <% end %>
+                <%= link_to edit_personal_routine_path(routine), class: "w-10 h-10 bg-slate-50 text-slate-300 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-all" do %>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div>
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest"><%= routine.category %></p>
+                <h4 class="text-xl font-black text-slate-900 <%= 'text-slate-300 line-through' if routine.completed_today? %> transition-all"><%= routine.title %></h4>
+              </div>
+              
+              <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+                <div class="flex gap-1">
+                  <% days_map = { "1" => "월", "2" => "화", "3" => "수", "4" => "목", "5" => "금", "6" => "토", "0" => "일" } %>
+                  <% ["1","2","3","4","5","6","0"].each do |d| %>
+                    <span class="text-[9px] font-black <%= (routine.days || []).include?(d) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-200 bg-transparent' %> px-1.5 py-0.5 rounded-md">
+                      <%= days_map[d] %>
+                    </span>
+                  <% end %>
+                </div>
+                <span class="text-[10px] font-black <%= routine.completed_today? ? 'text-emerald-500' : 'text-orange-500' %> flex items-center gap-1">
+                  🔥 <%= routine.current_streak %>일 연속
+                </span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-indigo-50/50 border-2 border-dashed border-indigo-100 rounded-3xl p-20 text-center space-y-4">
+        <div class="text-5xl opacity-30">✨</div>
+        <p class="text-slate-500 font-bold">나만의 루틴을 추가하고 새로운 습관을 시작해보세요.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Right Column: Sidebar -->
+  <div class="lg:col-span-4 space-y-8">
+    <!-- Activity Report -->
+    <section class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm space-y-6">
+      <h3 class="text-xl font-black text-slate-900">활동 리포트</h3>
+      <div class="grid grid-cols-7 gap-1">
+        <% 
+          start_date = 4.weeks.ago.beginning_of_week(:sunday).to_date
+          end_date = Date.current
+        %>
+        <% (start_date..end_date).each do |date| %>
+          <% 
+            count = @personal_routines.select { |r| r.completed_on?(date) }.count 
+            color_class = case
+            when count == 0 then "bg-slate-50"
+            when count <= 2 then "bg-emerald-100"
+            when count <= 4 then "bg-emerald-300"
+            else "bg-emerald-500"
+            end
+          %>
+          <div class="aspect-square rounded-md <%= color_class %> transition-all hover:ring-2 ring-indigo-300" 
+               title="<%= date %>: <%= count %> routines"></div>
+        <% end %>
+      </div>
+      <div class="flex justify-between items-center text-[9px] font-black text-slate-400 uppercase tracking-widest pt-2">
+        <span>Less</span>
+        <div class="flex gap-1">
+          <div class="w-2 h-2 rounded-sm bg-slate-50"></div>
+          <div class="w-2 h-2 rounded-sm bg-emerald-100"></div>
+          <div class="w-2 h-2 rounded-sm bg-emerald-300"></div>
+          <div class="w-2 h-2 rounded-sm bg-emerald-500"></div>
+        </div>
+        <span>More</span>
+      </div>
+    </section>
+
+    <!-- Custom Routine Form -->
+    <section class="bg-indigo-600 rounded-3xl p-8 text-white space-y-6 shadow-xl shadow-indigo-200">
+      <div class="space-y-1">
+        <h3 class="text-xl font-black">루틴 생성</h3>
+        <p class="text-indigo-100/70 text-sm font-bold">새로운 목표를 설정하세요.</p>
+      </div>
+      <%= form_with model: PersonalRoutine.new, class: "space-y-4" do |f| %>
+        <%= f.text_field :title, placeholder: "어떤 루틴인가요?", required: true, class: "w-full px-5 py-3 bg-white/10 border-white/20 rounded-2xl text-white placeholder-white/40 font-bold focus:ring-2 ring-white/50 border-none transition-all placeholder:text-white/40" %>
+        <div class="grid grid-cols-2 gap-3">
+           <div class="relative">
+             <%= f.select :icon, ["🔥", "⭐", "💪", "📖", "🥦", "🏃", "🎸", "🧘", "💊", "💧", "👀", "📝"], {}, class: "w-full px-5 py-3 bg-white/10 border-white/20 rounded-2xl text-white font-bold appearance-none cursor-pointer border-none" %>
+           </div>
+           <div class="relative">
+             <%= f.select :category, ["HEALTH", "LIFE", "MIND", "HOBBY", "STUDY"], {}, class: "w-full px-5 py-3 bg-white/10 border-white/20 rounded-2xl text-white font-bold appearance-none cursor-pointer border-none" %>
+           </div>
+        </div>
+        <div class="flex justify-between gap-1 overflow-x-auto pb-2">
+          <% [["월", 1], ["화", 2], ["수", 3], ["목", 4], ["금", 5], ["토", 6], ["일", 0]].each do |label, value| %>
+            <label class="flex-1 min-w-[32px]">
+              <%= check_box_tag "personal_routine[days][]", value, true, class: "peer hidden" %>
+              <div class="w-full py-2 text-center rounded-lg bg-white/5 text-white/40 font-black text-[10px] cursor-pointer peer-checked:bg-white peer-checked:text-indigo-600 transition-all">
+                <%= label %>
+              </div>
+            </label>
+          <% end %>
+        </div>
+        <%= f.submit "생성하기", class: "w-full py-3 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:bg-emerald-400 hover:text-white transition-all shadow-xl cursor-pointer" %>
+      <% end %>
+    </section>
+
+    <!-- Recommended Routines -->
+    <section class="space-y-6">
+      <h3 class="text-xl font-black text-slate-900 px-2">추천 루틴</h3>
+      <div class="space-y-3">
+        <% [
+          { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊" },
+          { title: "물 2L 마시기", category: "HEALTH", icon: "💧" },
+          { title: "스트레칭 5분", category: "HEALTH", icon: "🧘" },
+          { title: "책상 정리하기", category: "PRODUCTIVITY", icon: "🧹" },
+          { title: "감사 일기 쓰기", category: "MIND", icon: "✍️" }
+        ].each do |routine| %>
+          <div class="bg-white p-4 rounded-3xl border border-slate-50 flex items-center justify-between hover:border-indigo-100 transition-all group">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <%= routine[:icon] %>
+              </div>
+              <div>
+                <h4 class="text-sm font-black text-slate-900"><%= routine[:title] %></h4>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest"><%= routine[:category] %></p>
+              </div>
+            </div>
+            <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], color: "bg-indigo-500", days: [1,2,3,4,5,6,0] }), method: :post, class: "w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 6v12m6-6H6"/></svg>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  function filterRoutines(day) {
+    document.querySelectorAll('.routine-card').forEach(card => {
+      if (day === 'all' || (card.dataset.days && card.dataset.days.split(',').includes(day))) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    document.querySelectorAll('.routine-filter-btn').forEach(btn => {
+      btn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+      btn.classList.add('text-slate-400');
+    });
+    const activeBtn = document.getElementById('btn-' + day);
+    if (activeBtn) {
+      activeBtn.classList.remove('text-slate-400');
+      activeBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    filterRoutines('<%= Date.current.wday %>');
+  });
+</script>
