@@ -606,4 +606,118 @@ Notification.create!(
   content: "현재 활성화된 챌린지가 8개 있습니다."
 )
 
+# 9. Routine Clubs (유료 루틴 클럽)
+puts "Creating Routine Clubs..."
+
+routine_clubs_data = [
+  {
+    title: "새벽 5시 기상 클럽",
+    description: "새벽 5시에 일어나 하루를 시작하는 습관을 함께 만들어갑니다. 매일 아침 인증샷을 공유하고 서로 응원합니다.",
+    category: "건강·운동",
+    host: user1,
+    start_date: Date.current + 7.days,
+    end_date: Date.current + 97.days,
+    monthly_fee: 30000,
+    min_duration_months: 3,
+    max_members: 30,
+    current_members: 0,
+    status: :recruiting
+  },
+  {
+    title: "매일 독서 30분 클럽",
+    description: "매일 30분 이상 독서하고 인증합니다. 주말에는 읽은 책에 대한 간단한 리뷰를 공유합니다.",
+    category: "학습·자기계발",
+    host: user2,
+    start_date: Date.current + 10.days,
+    end_date: Date.current + 100.days,
+    monthly_fee: 25000,
+    min_duration_months: 3,
+    max_members: 25,
+    current_members: 0,
+    status: :recruiting
+  },
+  {
+    title: "1일 1커밋 개발자 클럽",
+    description: "매일 최소 1개의 커밋을 GitHub에 올립니다. 꾸준한 개발 습관으로 실력을 향상시킵니다.",
+    category: "학습·자기계발",
+    host: admin,
+    start_date: Date.current + 5.days,
+    end_date: Date.current + 95.days,
+    monthly_fee: 40000,
+    min_duration_months: 3,
+    max_members: 20,
+    current_members: 0,
+    status: :recruiting
+  }
+]
+
+created_clubs = routine_clubs_data.map do |club_data|
+  RoutineClub.create!(club_data)
+end
+
+# 10. Routine Club Rules
+puts "Creating Routine Club Rules..."
+
+created_clubs.each_with_index do |club, index|
+  # 기본 규칙들
+  RoutineClubRule.create!(
+    routine_club: club,
+    title: "매일 인증 필수",
+    description: "매일 정해진 시간 내에 루틴 수행 인증을 해야 합니다.",
+    rule_type: :attendance,
+    has_penalty: true,
+    penalty_description: "무단 결석 시 경고 1회",
+    penalty_points: 1,
+    auto_kick_enabled: true,
+    auto_kick_threshold: 3,
+    position: 1
+  )
+
+  RoutineClubRule.create!(
+    routine_club: club,
+    title: "상호 응원 및 격려",
+    description: "다른 멤버들의 인증에 응원과 격려를 남겨주세요.",
+    rule_type: :behavior,
+    has_penalty: false,
+    position: 2
+  )
+
+  RoutineClubRule.create!(
+    routine_club: club,
+    title: "존중과 배려",
+    description: "모든 멤버를 존중하고 배려하는 커뮤니케이션을 합니다.",
+    rule_type: :communication,
+    has_penalty: true,
+    penalty_description: "부적절한 언행 시 즉시 강퇴",
+    penalty_points: 0,
+    auto_kick_enabled: true,
+    auto_kick_threshold: 1,
+    position: 3
+  )
+end
+
+# 11. Sample Members (일부 클럽에 멤버 추가)
+puts "Creating Sample Club Members..."
+
+first_club = created_clubs.first
+if first_club
+  # User1은 자신의 클럽 호스트이므로 제외
+  [ user2, badge_master ].each do |member_user|
+    RoutineClubMember.create!(
+      routine_club: first_club,
+      user: member_user,
+      joined_at: Time.current,
+      membership_start_date: first_club.start_date,
+      membership_end_date: first_club.end_date,
+      paid_amount: first_club.monthly_fee * first_club.min_duration_months,
+      depositor_name: member_user.nickname,
+      payment_status: :confirmed,
+      deposit_confirmed_at: Time.current,
+      status: :active
+    )
+  end
+
+  first_club.update!(current_members: 2)
+end
+
 puts "Seeding completed successfully!"
