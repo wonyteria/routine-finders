@@ -18,6 +18,11 @@ class User < ApplicationRecord
   has_many :badges, through: :user_badges
   has_many :reviews, dependent: :destroy
 
+  # Routine Clubs
+  has_many :hosted_routine_clubs, class_name: "RoutineClub", foreign_key: :host_id, dependent: :destroy
+  has_many :routine_club_members, dependent: :destroy
+  has_many :routine_clubs, through: :routine_club_members
+
   # Validations
   validates :nickname, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

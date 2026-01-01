@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_155723) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_01_112400) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -253,6 +253,113 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_155723) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
+  create_table "routine_club_attendances", force: :cascade do |t|
+    t.date "attendance_date", null: false
+    t.integer "cheers_count", default: 0
+    t.json "cheers_from_users", default: []
+    t.datetime "created_at", null: false
+    t.string "proof_image"
+    t.text "proof_text"
+    t.integer "routine_club_id", null: false
+    t.integer "routine_club_member_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "submitted_at"
+    t.datetime "updated_at", null: false
+    t.index ["attendance_date"], name: "index_routine_club_attendances_on_attendance_date"
+    t.index ["routine_club_id"], name: "index_routine_club_attendances_on_routine_club_id"
+    t.index ["routine_club_member_id", "attendance_date"], name: "index_club_attendances_on_member_and_date", unique: true
+    t.index ["routine_club_member_id"], name: "index_routine_club_attendances_on_routine_club_member_id"
+  end
+
+  create_table "routine_club_members", force: :cascade do |t|
+    t.integer "absence_count", default: 0
+    t.integer "attendance_count", default: 0
+    t.decimal "attendance_rate", precision: 5, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "deposit_confirmed_at"
+    t.string "depositor_name"
+    t.boolean "is_moderator", default: false
+    t.datetime "joined_at", null: false
+    t.text "kick_reason"
+    t.date "membership_end_date", null: false
+    t.date "membership_start_date", null: false
+    t.integer "paid_amount", default: 0, null: false
+    t.integer "payment_status", default: 0, null: false
+    t.integer "penalty_count", default: 0
+    t.integer "routine_club_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["payment_status"], name: "index_routine_club_members_on_payment_status"
+    t.index ["routine_club_id", "user_id"], name: "index_routine_club_members_on_routine_club_id_and_user_id", unique: true
+    t.index ["routine_club_id"], name: "index_routine_club_members_on_routine_club_id"
+    t.index ["status"], name: "index_routine_club_members_on_status"
+    t.index ["user_id"], name: "index_routine_club_members_on_user_id"
+  end
+
+  create_table "routine_club_penalties", force: :cascade do |t|
+    t.text "appeal_message"
+    t.datetime "appealed_at"
+    t.datetime "created_at", null: false
+    t.integer "issued_by_id"
+    t.integer "penalty_points", default: 1
+    t.integer "penalty_type", default: 0, null: false
+    t.text "reason"
+    t.integer "routine_club_id", null: false
+    t.integer "routine_club_member_id", null: false
+    t.integer "routine_club_rule_id"
+    t.integer "status", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["issued_by_id"], name: "index_routine_club_penalties_on_issued_by_id"
+    t.index ["routine_club_id"], name: "index_routine_club_penalties_on_routine_club_id"
+    t.index ["routine_club_member_id"], name: "index_routine_club_penalties_on_routine_club_member_id"
+    t.index ["routine_club_rule_id"], name: "index_routine_club_penalties_on_routine_club_rule_id"
+    t.index ["status"], name: "index_routine_club_penalties_on_status"
+  end
+
+  create_table "routine_club_rules", force: :cascade do |t|
+    t.boolean "auto_kick_enabled", default: false
+    t.integer "auto_kick_threshold"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.boolean "has_penalty", default: false
+    t.text "penalty_description"
+    t.integer "penalty_points", default: 0
+    t.integer "position", default: 0
+    t.integer "routine_club_id", null: false
+    t.integer "rule_type", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["routine_club_id", "position"], name: "index_routine_club_rules_on_routine_club_id_and_position"
+    t.index ["routine_club_id"], name: "index_routine_club_rules_on_routine_club_id"
+  end
+
+  create_table "routine_clubs", force: :cascade do |t|
+    t.string "account_holder", default: "루틴파인더스"
+    t.string "account_number", default: "110-123-456789"
+    t.decimal "average_attendance_rate", precision: 5, scale: 2, default: "0.0"
+    t.string "bank_name", default: "신한은행"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.integer "current_members", default: 0
+    t.text "description"
+    t.date "end_date", null: false
+    t.integer "host_id", null: false
+    t.integer "max_members", default: 30
+    t.integer "min_duration_months", default: 3, null: false
+    t.integer "monthly_fee", default: 0, null: false
+    t.date "start_date", null: false
+    t.integer "status", default: 0, null: false
+    t.string "thumbnail_image"
+    t.string "title", null: false
+    t.integer "total_penalties", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_routine_clubs_on_category"
+    t.index ["host_id"], name: "index_routine_clubs_on_host_id"
+    t.index ["status"], name: "index_routine_clubs_on_status"
+  end
+
   create_table "staffs", force: :cascade do |t|
     t.integer "challenge_id", null: false
     t.datetime "created_at", null: false
@@ -340,6 +447,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_155723) do
   add_foreign_key "personal_routines", "users"
   add_foreign_key "reviews", "challenges"
   add_foreign_key "reviews", "users"
+  add_foreign_key "routine_club_attendances", "routine_club_members"
+  add_foreign_key "routine_club_attendances", "routine_clubs"
+  add_foreign_key "routine_club_members", "routine_clubs"
+  add_foreign_key "routine_club_members", "users"
+  add_foreign_key "routine_club_penalties", "routine_club_members"
+  add_foreign_key "routine_club_penalties", "routine_club_rules"
+  add_foreign_key "routine_club_penalties", "routine_clubs"
+  add_foreign_key "routine_club_penalties", "users", column: "issued_by_id"
+  add_foreign_key "routine_club_rules", "routine_clubs"
+  add_foreign_key "routine_clubs", "users", column: "host_id"
   add_foreign_key "staffs", "challenges"
   add_foreign_key "staffs", "users"
   add_foreign_key "user_badges", "badges"

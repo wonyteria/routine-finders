@@ -3,14 +3,16 @@ class PersonalRoutinesController < ApplicationController
   before_action :set_routine, only: [ :edit, :update, :toggle, :destroy ]
 
   def index
+    # 개인 루틴 (무료)
     @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
     @monthly_completions = current_user.personal_routines.joins(:completions)
                                        .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
                                        .select("personal_routines.id, personal_routine_completions.completed_on")
 
-    # 더 효율적인 방식: @personal_routines에서 이미 eager loading 했으므로 뷰에서 그대로 사용해도 되지만,
-    # 특정 범위만 가져오고 싶다면 별도 처리가 나을 수 있음.
-    # 여기서는 일단 includes(:completions)로 충분할 듯.
+    # 루틴 클럽 (유료)
+    @routine_clubs = RoutineClub.recruiting_clubs.includes(:host, :members).order(created_at: :desc).limit(6)
+    @my_club_memberships = current_user.routine_club_members.includes(:routine_club).where(status: [ :active, :warned ])
+    @pending_payments = current_user.routine_club_members.where(payment_status: :pending)
 
     @recommended_routines = [
       { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊", color: "text-rose-400" },

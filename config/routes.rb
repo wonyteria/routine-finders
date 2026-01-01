@@ -77,6 +77,16 @@ Rails.application.routes.draw do
     end
   end
 
+  # Routine Clubs (유료 루틴 클럽)
+  resources :routine_clubs do
+    member do
+      post :join
+      post :confirm_payment
+      post :reject_payment
+      post :kick_member
+    end
+  end
+
   resource :profile, only: [ :show, :edit, :update ] do
     collection do
       post :save_account
