@@ -15,6 +15,7 @@ class Badge < ApplicationRecord
     achievement_rate: "achievement_rate",
     verification_count: "verification_count",
     max_streak: "max_streak",
+    participation_count: "participation_count",
     host_participants: "host_participants",
     host_completion: "host_completion",
     host_count: "host_count"

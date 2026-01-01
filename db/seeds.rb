@@ -3,6 +3,12 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
 puts "Cleaning up existing data..."
+RoutineClubReport.destroy_all
+RoutineClubPenalty.destroy_all
+RoutineClubAttendance.destroy_all
+RoutineClubMember.destroy_all
+RoutineClubRule.destroy_all
+RoutineClub.destroy_all
 UserBadge.destroy_all
 Badge.destroy_all
 Notification.destroy_all
@@ -95,14 +101,26 @@ users = User.all.to_a
 # 2. Badges
 puts "Creating Badges..."
 badges = [
-  { name: "시작이 반", badge_type: :achievement_rate, level: :bronze, requirement_value: 10.0, description: "첫 챌린지를 성공적으로 시작했습니다.", icon_path: "🥉" },
-  { name: "꾸준함의 증명", badge_type: :achievement_rate, level: :silver, requirement_value: 50.0, description: "50% 이상의 달성률을 기록했습니다.", icon_path: "🥈" },
-  { name: "완벽주의자", badge_type: :achievement_rate, level: :gold, requirement_value: 100.0, description: "100% 달성률을 기록했습니다.", icon_path: "🥇" },
-  { name: "작심삼일 탈출", badge_type: :verification_count, level: :bronze, requirement_value: 3.0, description: "3일 연속 인증에 성공했습니다.", icon_path: "🐣" },
-  { name: "습관의 달인", badge_type: :verification_count, level: :platinum, requirement_value: 100.0, description: "총 100회 인증을 달성했습니다.", icon_path: "👑" },
-  { name: "스트릭 마스터", badge_type: :max_streak, level: :diamond, requirement_value: 365.0, description: "365일 연속 스트릭을 달성했습니다.", icon_path: "🔥" },
-  { name: "얼리버드", badge_type: :achievement_rate, level: :silver, requirement_value: 30.0, description: "아침 챌린지를 3회 이상 완주했습니다.", icon_path: "🌅" },
-  { name: "건강 지킴이", badge_type: :achievement_rate, level: :gold, requirement_value: 50.0, description: "건강 카테고리 챌린지를 5회 이상 완주했습니다.", icon_path: "💪" }
+  # 1. 꾸준함의 미학 (연속 인증 - Max Streak)
+  { name: "작심삼일 탈출", badge_type: :max_streak, level: :bronze, requirement_value: 3.0, description: "3일 연속 인증에 성공했습니다.", icon_path: "🥉" },
+  { name: "습관의 시작", badge_type: :max_streak, level: :silver, requirement_value: 7.0, description: "7일 연속 인증에 성공했습니다.", icon_path: "🥈" },
+  { name: "끈기의 달인", badge_type: :max_streak, level: :gold, requirement_value: 21.0, description: "21일 연속 인증으로 습관을 만들었습니다.", icon_path: "🥇" },
+  { name: "불굴의 의지", badge_type: :max_streak, level: :platinum, requirement_value: 66.0, description: "66일 연속 인증으로 완벽한 습관이 되었습니다.", icon_path: "💎" },
+  { name: "전설의 기록", badge_type: :max_streak, level: :diamond, requirement_value: 100.0, description: "100일 연속 인증이라는 놀라운 기록!", icon_path: "👑" },
+
+  # 2. 도전의 발자국 (참여 횟수 - Participation Count)
+  { name: "첫 걸음", badge_type: :participation_count, level: :bronze, requirement_value: 1.0, description: "첫 번째 챌린지에 참여했습니다.", icon_path: "🐣" },
+  { name: "도전하는 삶", badge_type: :participation_count, level: :silver, requirement_value: 5.0, description: "5개의 챌린지에 도전했습니다.", icon_path: "🏃" },
+  { name: "열정 챌린저", badge_type: :participation_count, level: :gold, requirement_value: 10.0, description: "10개의 챌린지와 함께 성장하고 있습니다.", icon_path: "🔥" },
+  { name: "프로 루트너", badge_type: :participation_count, level: :platinum, requirement_value: 30.0, description: "30개의 챌린지를 경험한 진정한 프로!", icon_path: "🌟" },
+  { name: "명예의 전당", badge_type: :participation_count, level: :diamond, requirement_value: 50.0, description: "50개 이상의 챌린지에 참여한 레전드.", icon_path: "🏆" },
+
+  # 3. 성실함의 증명 (총 인증 횟수 - Verification Count)
+  { name: "인증의 시작", badge_type: :verification_count, level: :bronze, requirement_value: 10.0, description: "총 10번의 인증을 남겼습니다.", icon_path: "📝" },
+  { name: "성실의 아이콘", badge_type: :verification_count, level: :silver, requirement_value: 50.0, description: "총 50번의 인증으로 성실함을 증명했습니다.", icon_path: "🛡️" },
+  { name: "신뢰의 상징", badge_type: :verification_count, level: :gold, requirement_value: 100.0, description: "총 100번의 인증을 달성했습니다.", icon_path: "✨" },
+  { name: "인증 마스터", badge_type: :verification_count, level: :platinum, requirement_value: 300.0, description: "총 300번의 인증을 기록했습니다.", icon_path: "🏅" },
+  { name: "인증의 신", badge_type: :verification_count, level: :diamond, requirement_value: 1000.0, description: "총 1000번의 인증! 존경합니다.", icon_path: "🏛️" }
 ]
 
 created_badges = badges.map do |badge_attrs|
