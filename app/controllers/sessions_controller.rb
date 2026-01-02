@@ -6,14 +6,21 @@ class SessionsController < ApplicationController
 
   def omniauth
     auth = request.env["omniauth.auth"]
+    Rails.logger.info "Starting OmniAuth for provider: #{auth.provider}, uid: #{auth.uid}"
+
     user = User.from_omniauth(auth)
 
     if user.persisted?
       session[:user_id] = user.id
-      redirect_to root_path, notice: "Threads 계정으로 로그인되었습니다!"
+      redirect_to root_path, notice: "#{auth.provider.titleize} 계정으로 로그인되었습니다!"
     else
-      redirect_to root_path, alert: "Threads 로그인에 실패했습니다: #{user.errors.full_messages.to_sentence}"
+      error_msg = user.errors.full_messages.to_sentence
+      Rails.logger.error "OmniAuth login failed for #{auth.provider}: #{error_msg}"
+      redirect_to root_path, alert: "로그인에 실패했습니다: #{error_msg}"
     end
+  rescue => e
+    Rails.logger.error "OmniAuth Critical Error: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+    redirect_to root_path, alert: "로그인 과정에서 시스템 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
   end
 
   def create

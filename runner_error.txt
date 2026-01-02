@@ -1,0 +1,486 @@
+﻿bundle : 
+위치 줄:1 문자:1
++ bundle exec rails runner "controller = Chall
+engesController.new; cont ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+(process:21456): VIPS-WARNING **: 04:21:21.553
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-heif.dll" -- 'C:\Ru
+by34-x64\msys64\ucrt64/lib/vips-modules-8.17\v
+ips-heif.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+
+(process:21456): VIPS-WARNING **: 04:21:21.554
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-jxl.dll" -- 'C:\Rub
+y34-x64\msys64\ucrt64/lib/vips-modules-8.17\vi
+ps-jxl.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+
+(process:21456): VIPS-WARNING **: 04:21:21.555
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-magick.dll" -- 'C:\
+Ruby34-x64\msys64\ucrt64/lib/vips-modules-8.17
+\vips-magick.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+
+(process:21456): VIPS-WARNING **: 04:21:21.555
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-openslide.dll" -- '
+C:\Ruby34-x64\msys64\ucrt64/lib/vips-modules-8
+.17\vips-openslide.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?
+덈떎.
+
+(process:21456): VIPS-WARNING **: 04:21:21.556
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-poppler.dll" -- 'C:
+\Ruby34-x64\msys64\ucrt64/lib/vips-modules-8.1
+7\vips-poppler.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+C:/Ruby34-x64/lib/ruby/3.4.0/win32/registry.rb
+:2: warning: C:/Ruby34-x64/lib/ruby/3.4.0/fidd
+le/import.rb is found in fiddle, which will no
+ longer be part of the default gems starting f
+rom Ruby 4.0.0.
+You can add fiddle to your Gemfile or gemspec 
+to silence this warning.
+C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/sqlite3
+-2.8.1-x64-mingw-ucrt/lib/sqlite3/statement.rb
+:36:in 'SQLite3::Statement#prepare': SQLite3::
+SQLException: no such column: challenges.thumb
+nail_image: (ActiveRecord::StatementInvalid)
+SELECT 1 AS one FROM "challenges" WHERE "chall
+enges"."mode" = ? AND (recruitment_start_date 
+<= ? AND recruitment_end_date >= ?) AND "chall
+enges"."thumbnail_image" IS NOT NULL LIMIT ?
+                                              
+                                              
+                                        ^
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/s
+qlite3-2.8.1-x64-mingw-ucrt/lib/sqlite3/statem
+ent.rb:36:in 'SQLite3::Statement#initialize'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/s
+qlite3-2.8.1-x64-mingw-ucrt/lib/sqlite3/databa
+se.rb:217:in 'Class#new'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/s
+qlite3-2.8.1-x64-mingw-ucrt/lib/sqlite3/databa
+se.rb:217:in 'SQLite3::Database#prepare'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/sqlite3/database_statements.rb:98:in
+ 'ActiveRecord::ConnectionAdapters::SQLite3::D
+atabaseStatements#perform_query'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:571:
+in 'block (2 levels) in ActiveRecord::Connecti
+onAdapters::DatabaseStatements#raw_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract_adapter.rb:1081:in 'block i
+n ActiveRecord::ConnectionAdapters::AbstractAd
+apter#with_raw_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/concurre
+ncy/null_lock.rb:9:in 'ActiveSupport::Concurre
+ncy::NullLock#synchronize'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract_adapter.rb:1050:in 'ActiveR
+ecord::ConnectionAdapters::AbstractAdapter#wit
+h_raw_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:570:
+in 'block in ActiveRecord::ConnectionAdapters:
+:DatabaseStatements#raw_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/notifica
+tions/instrumenter.rb:58:in 'ActiveSupport::No
+tifications::Instrumenter#instrument'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract_adapter.rb:1201:in 'ActiveR
+ecord::ConnectionAdapters::AbstractAdapter#log
+'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:569:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#raw_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:613:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#internal_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:555:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#internal_exec_query'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:708:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#select'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:76:i
+n 'ActiveRecord::ConnectionAdapters::DatabaseS
+tatements#select_all'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:275:in 'bloc
+k in ActiveRecord::ConnectionAdapters::QueryCa
+che#select_all'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:313:in 'bloc
+k (2 levels) in ActiveRecord::ConnectionAdapte
+rs::QueryCache#cache_sql'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:90:in 'Activ
+eRecord::ConnectionAdapters::QueryCache::Store
+#compute_if_absent'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:311:in 'bloc
+k in ActiveRecord::ConnectionAdapters::QueryCa
+che#cache_sql'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/concurre
+ncy/null_lock.rb:9:in 'ActiveSupport::Concurre
+ncy::NullLock#synchronize'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:310:in 'Acti
+veRecord::ConnectionAdapters::QueryCache#cache
+_sql'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:275:in 'Acti
+veRecord::ConnectionAdapters::QueryCache#selec
+t_all'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:105:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#select_rows'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/f
+inder_methods.rb:379:in 'block (2 levels) in A
+ctiveRecord::FinderMethods#exists?'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/connection_pool.rb:463:in '
+ActiveRecord::ConnectionAdapters::ConnectionPo
+ol#with_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_handling.rb:313:in 'ActiveRecord::ConnectionH
+andling#with_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/d
+elegation.rb:105:in 'ActiveRecord::Delegation#
+with_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/f
+inder_methods.rb:378:in 'block in ActiveRecord
+::FinderMethods#exists?'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation.r
+b:1494:in 'ActiveRecord::Relation#skip_query_c
+ache_if_necessary'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/f
+inder_methods.rb:377:in 'ActiveRecord::FinderM
+ethods#exists?'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation.r
+b:378:in 'ActiveRecord::Relation#empty?'
+	from D:/Antigravity/routine-finders/app/contr
+ollers/challenges_controller.rb:322:in 'Challe
+ngesController#load_landing_data'
+	from D:/Antigravity/routine-finders/app/contr
+ollers/challenges_controller.rb:12:in 'Challen
+gesController#index'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:49:in '<main>'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:49:in 'Kernel#eval'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:49:in 'block in Rails::Command::Ru
+nnerCommand#perform'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/executio
+n_wrapper.rb:91:in 'ActiveSupport::ExecutionWr
+apper.wrap'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:70:in 'Rails::Command::RunnerComma
+nd#conditional_executor'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:48:in 'Rails::Command::RunnerComma
+nd#perform'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/t
+hor-1.4.0/lib/thor/command.rb:28:in 'Thor::Com
+mand#run'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/t
+hor-1.4.0/lib/thor/invocation.rb:127:in 'Thor:
+:Invocation#invoke_command'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command/base.rb:176:in
+ 'Rails::Command::Base#invoke_command'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/t
+hor-1.4.0/lib/thor.rb:538:in 'Thor.dispatch'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command/base.rb:71:in 
+'Rails::Command::Base.perform'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command.rb:65:in 'bloc
+k in Rails::Command.invoke'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command.rb:143:in 'Rai
+ls::Command.with_argv'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command.rb:63:in 'Rail
+s::Command.invoke'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands.rb:18:in '<ma
+in>'
+	from C:/Ruby34-x64/lib/ruby/3.4.0/bundled_gem
+s.rb:82:in 'Kernel.require'
+	from C:/Ruby34-x64/lib/ruby/3.4.0/bundled_gem
+s.rb:82:in 'block (2 levels) in Kernel#replace
+_require'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/b
+ootsnap-1.20.0/lib/bootsnap/load_path_cache/co
+re_ext/kernel_require.rb:30:in 'Kernel#require
+'
+	from bin/rails:4:in '<main>'
+C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/sqlite3
+-2.8.1-x64-mingw-ucrt/lib/sqlite3/statement.rb
+:36:in 'SQLite3::Statement#prepare': no such c
+olumn: challenges.thumbnail_image: (SQLite3::S
+QLException)
+SELECT 1 AS one FROM "challenges" WHERE "chall
+enges"."mode" = ? AND (recruitment_start_date 
+<= ? AND recruitment_end_date >= ?) AND "chall
+enges"."thumbnail_image" IS NOT NULL LIMIT ?
+                                              
+                                              
+                                        ^
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/s
+qlite3-2.8.1-x64-mingw-ucrt/lib/sqlite3/statem
+ent.rb:36:in 'SQLite3::Statement#initialize'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/s
+qlite3-2.8.1-x64-mingw-ucrt/lib/sqlite3/databa
+se.rb:217:in 'Class#new'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/s
+qlite3-2.8.1-x64-mingw-ucrt/lib/sqlite3/databa
+se.rb:217:in 'SQLite3::Database#prepare'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/sqlite3/database_statements.rb:98:in
+ 'ActiveRecord::ConnectionAdapters::SQLite3::D
+atabaseStatements#perform_query'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:571:
+in 'block (2 levels) in ActiveRecord::Connecti
+onAdapters::DatabaseStatements#raw_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract_adapter.rb:1081:in 'block i
+n ActiveRecord::ConnectionAdapters::AbstractAd
+apter#with_raw_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/concurre
+ncy/null_lock.rb:9:in 'ActiveSupport::Concurre
+ncy::NullLock#synchronize'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract_adapter.rb:1050:in 'ActiveR
+ecord::ConnectionAdapters::AbstractAdapter#wit
+h_raw_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:570:
+in 'block in ActiveRecord::ConnectionAdapters:
+:DatabaseStatements#raw_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/notifica
+tions/instrumenter.rb:58:in 'ActiveSupport::No
+tifications::Instrumenter#instrument'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract_adapter.rb:1201:in 'ActiveR
+ecord::ConnectionAdapters::AbstractAdapter#log
+'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:569:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#raw_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:613:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#internal_execute'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:555:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#internal_exec_query'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:708:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#select'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:76:i
+n 'ActiveRecord::ConnectionAdapters::DatabaseS
+tatements#select_all'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:275:in 'bloc
+k in ActiveRecord::ConnectionAdapters::QueryCa
+che#select_all'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:313:in 'bloc
+k (2 levels) in ActiveRecord::ConnectionAdapte
+rs::QueryCache#cache_sql'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:90:in 'Activ
+eRecord::ConnectionAdapters::QueryCache::Store
+#compute_if_absent'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:311:in 'bloc
+k in ActiveRecord::ConnectionAdapters::QueryCa
+che#cache_sql'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/concurre
+ncy/null_lock.rb:9:in 'ActiveSupport::Concurre
+ncy::NullLock#synchronize'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:310:in 'Acti
+veRecord::ConnectionAdapters::QueryCache#cache
+_sql'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/query_cache.rb:275:in 'Acti
+veRecord::ConnectionAdapters::QueryCache#selec
+t_all'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/database_statements.rb:105:
+in 'ActiveRecord::ConnectionAdapters::Database
+Statements#select_rows'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/f
+inder_methods.rb:379:in 'block (2 levels) in A
+ctiveRecord::FinderMethods#exists?'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_adapters/abstract/connection_pool.rb:463:in '
+ActiveRecord::ConnectionAdapters::ConnectionPo
+ol#with_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/connection
+_handling.rb:313:in 'ActiveRecord::ConnectionH
+andling#with_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/d
+elegation.rb:105:in 'ActiveRecord::Delegation#
+with_connection'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/f
+inder_methods.rb:378:in 'block in ActiveRecord
+::FinderMethods#exists?'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation.r
+b:1494:in 'ActiveRecord::Relation#skip_query_c
+ache_if_necessary'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation/f
+inder_methods.rb:377:in 'ActiveRecord::FinderM
+ethods#exists?'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctiverecord-8.1.1/lib/active_record/relation.r
+b:378:in 'ActiveRecord::Relation#empty?'
+	from D:/Antigravity/routine-finders/app/contr
+ollers/challenges_controller.rb:322:in 'Challe
+ngesController#load_landing_data'
+	from D:/Antigravity/routine-finders/app/contr
+ollers/challenges_controller.rb:12:in 'Challen
+gesController#index'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:49:in '<main>'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:49:in 'Kernel#eval'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:49:in 'block in Rails::Command::Ru
+nnerCommand#perform'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/a
+ctivesupport-8.1.1/lib/active_support/executio
+n_wrapper.rb:91:in 'ActiveSupport::ExecutionWr
+apper.wrap'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:70:in 'Rails::Command::RunnerComma
+nd#conditional_executor'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands/runner/runner
+_command.rb:48:in 'Rails::Command::RunnerComma
+nd#perform'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/t
+hor-1.4.0/lib/thor/command.rb:28:in 'Thor::Com
+mand#run'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/t
+hor-1.4.0/lib/thor/invocation.rb:127:in 'Thor:
+:Invocation#invoke_command'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command/base.rb:176:in
+ 'Rails::Command::Base#invoke_command'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/t
+hor-1.4.0/lib/thor.rb:538:in 'Thor.dispatch'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command/base.rb:71:in 
+'Rails::Command::Base.perform'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command.rb:65:in 'bloc
+k in Rails::Command.invoke'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command.rb:143:in 'Rai
+ls::Command.with_argv'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/command.rb:63:in 'Rail
+s::Command.invoke'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/r
+ailties-8.1.1/lib/rails/commands.rb:18:in '<ma
+in>'
+	from C:/Ruby34-x64/lib/ruby/3.4.0/bundled_gem
+s.rb:82:in 'Kernel.require'
+	from C:/Ruby34-x64/lib/ruby/3.4.0/bundled_gem
+s.rb:82:in 'block (2 levels) in Kernel#replace
+_require'
+	from C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/b
+ootsnap-1.20.0/lib/bootsnap/load_path_cache/co
+re_ext/kernel_require.rb:30:in 'Kernel#require
+'
+	from bin/rails:4:in '<main>'

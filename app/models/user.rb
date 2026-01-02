@@ -34,15 +34,39 @@ class User < ApplicationRecord
   validates :password, presence: true, on: :create, if: -> { provider.blank? }
 
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
-      user.email = auth.info.email || "#{auth.info.nickname || auth.uid}@threads.temp"
-      user.nickname = auth.info.name || auth.info.nickname || "Threads User"
-      user.profile_image = auth.info.image
-      user.password = SecureRandom.hex(16) # Random password for OAuth users
+    # 1. First, try to find existing user by provider and uid
+    user = where(provider: auth.provider, uid: auth.uid).first
+
+    # 2. If not found, try to find by email to link accounts (if email is provided)
+    if user.nil? && auth.info.email.present?
+      user = find_by(email: auth.info.email)
+      if user
+        user.update(provider: auth.provider, uid: auth.uid)
+      end
+    end
+
+    # 3. If still nil, create new user
+    if user.nil?
+      user = new do |u|
+        u.provider = auth.provider
+        u.uid = auth.uid
+        u.email = auth.info.email.presence || "#{auth.provider}-#{auth.uid}@threads.temp"
+        u.nickname = auth.info.name.presence || auth.info.nickname.presence || "Threads User #{auth.uid.to_s.last(4)}"
+        u.profile_image = auth.info.image
+        u.password = SecureRandom.hex(16)
+        u.email_verified = true # OAuth users are pre-verified
+      end
+    end
+
+    # 4. Always update tokens
+    if user
       user.threads_token = auth.credentials.token
       user.threads_refresh_token = auth.credentials.refresh_token
-      user.threads_expires_at = Time.at(auth.credentials.expires_at) if auth.credentials.expires_at
+      user.threads_expires_at = Time.at(auth.credentials.expires_at) if auth.credentials&.expires_at
+      user.save
     end
+
+    user
   end
 
   # Email verification methods
