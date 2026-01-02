@@ -1,0 +1,23 @@
+﻿bundle : bin/rails: Could not load test file: 
+test/controllers/home_controller_test.rb. (Rai
+ls::TestUnit::InvalidTestError)
+위치 줄:1 문자:1
++ bundle exec rails test test/controllers/home
+_controller_test.rb 2>&1  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   bin/rails: Coul...validTestError):String)  
+   [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+
+Did you mean?  test/controllers/users_controll
+er_test.rb
+               test/controllers/reviews_contro
+ller_test.rb
+               test/controllers/profiles_contr
+oller_test.rb
+               test/controllers/rankings_contr
+oller_test.rb

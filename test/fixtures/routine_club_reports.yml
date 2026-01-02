@@ -1,0 +1,27 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  routine_club: one
+  user: host
+  report_type: 0
+  start_date: <%= Date.today - 7.days %>
+  end_date: <%= Date.today %>
+  attendance_count: 5
+  absence_count: 2
+  attendance_rate: 71.4
+  achievement_rate: 71.4
+  log_rate: 100.0
+  received_cheers_count: 3
+
+two:
+  routine_club: two
+  user: participant
+  report_type: 1
+  start_date: <%= Date.today - 30.days %>
+  end_date: <%= Date.today %>
+  attendance_count: 20
+  absence_count: 10
+  attendance_rate: 66.7
+  achievement_rate: 66.7
+  log_rate: 100.0
+  received_cheers_count: 15

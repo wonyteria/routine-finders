@@ -1,0 +1,236 @@
+﻿bundle : 
+위치 줄:1 문자:1
++ bundle exec rails test test/controllers/user
+s_controller_test.rb 2>&1 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandEr 
+   ror
+ 
+(process:10800): VIPS-WARNING **: 02:41:46.619
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-heif.dll" -- 'C:\Ru
+by34-x64\msys64\ucrt64/lib/vips-modules-8.17\v
+ips-heif.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+
+(process:10800): VIPS-WARNING **: 02:41:46.619
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-jxl.dll" -- 'C:\Rub
+y34-x64\msys64\ucrt64/lib/vips-modules-8.17\vi
+ps-jxl.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+
+(process:10800): VIPS-WARNING **: 02:41:46.621
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-magick.dll" -- 'C:\
+Ruby34-x64\msys64\ucrt64/lib/vips-modules-8.17
+\vips-magick.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+
+(process:10800): VIPS-WARNING **: 02:41:46.622
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-openslide.dll" -- '
+C:\Ruby34-x64\msys64\ucrt64/lib/vips-modules-8
+.17\vips-openslide.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?
+덈떎.
+
+(process:10800): VIPS-WARNING **: 02:41:46.623
+: unable to load "C:\Ruby34-x64\msys64\ucrt64/
+lib/vips-modules-8.17\vips-poppler.dll" -- 'C:
+\Ruby34-x64\msys64\ucrt64/lib/vips-modules-8.1
+7\vips-poppler.dll': 吏?뺣맂 紐⑤뱢??李얠쓣 ???놁뒿?덈떎.
+C:/Ruby34-x64/lib/ruby/3.4.0/win32/registry.rb
+:2: warning: C:/Ruby34-x64/lib/ruby/3.4.0/fidd
+le/import.rb is found in fiddle, which will no
+ longer be part of the default gems starting f
+rom Ruby 4.0.0.
+You can add fiddle to your Gemfile or gemspec 
+to silence this warning.
+Run options: --seed 37602
+
+# Running:
+
+E
+
+Error:
+UsersControllerTest#test_should_display_user_level:
+ActiveRecord::Fixture::FixtureError: table "routine_club_penalties" has no columns named "routine_club".
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:630:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'Array#map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:667:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Enumerable#filter_map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:509:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:684:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activesupport-8.1.1/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/actionpack-8.1.1/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activejob-8.1.1/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/railties-8.1.1/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/users_controller_test.rb:20
+
+E
+
+Error:
+UsersControllerTest#test_should_handle_user_with_sns_links:
+ActiveRecord::Fixture::FixtureError: table "routine_club_penalties" has no columns named "routine_club".
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:630:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'Array#map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:667:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Enumerable#filter_map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:509:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:684:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activesupport-8.1.1/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/actionpack-8.1.1/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activejob-8.1.1/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/railties-8.1.1/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/users_controller_test.rb:39
+
+E
+
+Error:
+UsersControllerTest#test_should_display_user_nickname:
+ActiveRecord::Fixture::FixtureError: table "routine_club_penalties" has no columns named "routine_club".
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:630:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'Array#map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:667:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Enumerable#filter_map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:509:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:684:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activesupport-8.1.1/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/actionpack-8.1.1/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activejob-8.1.1/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/railties-8.1.1/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/users_controller_test.rb:14
+
+E
+
+Error:
+UsersControllerTest#test_should_handle_user_with_bio:
+ActiveRecord::Fixture::FixtureError: table "routine_club_penalties" has no columns named "routine_club".
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:630:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'Array#map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:667:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Enumerable#filter_map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:509:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:684:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activesupport-8.1.1/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/actionpack-8.1.1/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activejob-8.1.1/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/railties-8.1.1/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/users_controller_test.rb:33
+
+E
+
+Error:
+UsersControllerTest#test_should_get_show_without_authentication:
+ActiveRecord::Fixture::FixtureError: table "routine_club_penalties" has no columns named "routine_club".
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:630:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'Array#map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:667:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Enumerable#filter_map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:509:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:684:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activesupport-8.1.1/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/actionpack-8.1.1/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activejob-8.1.1/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/railties-8.1.1/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/users_controller_test.rb:9
+
+E
+
+Error:
+UsersControllerTest#test_should_display_stats_section:
+ActiveRecord::Fixture::FixtureError: table "routine_club_penalties" has no columns named "routine_club".
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:630:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'Array#map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:625:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_sql'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:667:in 'block in ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'Enumerable#filter_map'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:665:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#build_fixture_statements'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/database_statements.rb:509:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#insert_fixtures_set'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:684:in 'block (2 levels) in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:683:in 'block in ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'Hash#each'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:674:in 'ActiveRecord::FixtureSet.insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:660:in 'ActiveRecord::FixtureSet.read_and_insert'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/fixtures.rb:605:in 'ActiveRecord::FixtureSet.create_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:282:in 'ActiveRecord::TestFixtures#load_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:146:in 'ActiveRecord::TestFixtures#setup_fixtures'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activerecord-8.1.1/lib/active_record/test_fixtures.rb:10:in 'ActiveRecord::TestFixtures#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activesupport-8.1.1/lib/active_support/testing/setup_and_teardown.rb:40:in 'ActiveSupport::Testing::SetupAndTeardown#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/actionpack-8.1.1/lib/action_dispatch/testing/integration.rb:349:in 'ActionDispatch::Integration::Runner#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/activejob-8.1.1/lib/active_job/test_helper.rb:53:in 'ActiveJob::TestHelper#before_setup'
+    C:/Ruby34-x64/lib/ruby/gems/3.4.0/gems/railties-8.1.1/lib/rails/test_help.rb:45:in 'ActionDispatch::IntegrationTest#before_setup'
+
+bin/rails test test/controllers/users_controller_test.rb:28
+
+
+
+Finished in 10.827960s, 0.5541 runs/s, 0.0000 assertions/s.
+6 runs, 0 assertions, 0 failures, 6 errors, 0 skips

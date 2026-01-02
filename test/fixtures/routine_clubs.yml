@@ -1,0 +1,35 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: 아침 운동 클럽
+  description: 매일 아침 운동하는 클럽
+  category: 운동
+  start_date: <%= Date.today %>
+  end_date: <%= Date.today + 90.days %>
+  monthly_fee: 30000
+  max_members: 30
+  min_duration_months: 3
+  current_members: 0
+  status: 0
+  is_official: false
+  host: host
+  bank_name: 신한은행
+  account_number: 110-123-456789
+  account_holder: 루틴파인더스
+
+two:
+  title: 독서 클럽
+  description: 매일 독서하는 클럽
+  category: 자기계발
+  start_date: <%= Date.today %>
+  end_date: <%= Date.today + 90.days %>
+  monthly_fee: 20000
+  max_members: 20
+  min_duration_months: 3
+  current_members: 0
+  status: 0
+  is_official: true
+  host: host
+  bank_name: 신한은행
+  account_number: 110-123-456789
+  account_holder: 루틴파인더스
