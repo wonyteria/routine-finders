@@ -150,4 +150,29 @@ class User < ApplicationRecord
     # 랭킹 산정용 점수 (기록률 + 달성률 가중치 등)
     (monthly_routine_log_rate + monthly_achievement_rate) / 2
   end
+
+  # 누적 통계 (All-time)
+  def total_routine_completions
+    # 루파 클럽 가입 이후 총 루틴 완료 횟수
+    membership = routine_club_members.active.first
+    return 0 unless membership
+
+    join_date = membership.joined_at.to_date
+    personal_routines.joins(:completions)
+                    .where("personal_routine_completions.completed_on >= ?", join_date)
+                    .count
+  end
+
+  def rufa_member_days
+    # 루파 클럽 멤버로 활동한 일수
+    membership = routine_club_members.active.first
+    return 0 unless membership
+
+    (Date.current - membership.joined_at.to_date).to_i + 1
+  end
+
+  def lifetime_rufa_score
+    # 누적 점수: 총 완료 횟수 기반
+    total_routine_completions
+  end
 end

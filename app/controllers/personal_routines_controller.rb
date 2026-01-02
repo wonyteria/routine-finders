@@ -63,9 +63,19 @@ class PersonalRoutinesController < ApplicationController
     @top_avg_score = @rufa_rankings.any? ? (@rufa_rankings.sum { |r| r[:score] } / @rufa_rankings.size).round(1) : 0
     @my_score = current_user.rufa_club_score
 
+    # 누적 랭킹 (All-time)
+    @lifetime_rankings = User.joins(:routine_club_members)
+                             .where(routine_club_members: { status: :active })
+                             .distinct
+                             .map { |u| { user: u, score: u.lifetime_rufa_score } }
+                             .sort_by { |r| -r[:score] }
+                             .take(10)
+
     # 루파 통계 (요약)
     @current_log_rate = current_user.monthly_routine_log_rate
     @current_achievement_rate = current_user.monthly_achievement_rate
+    @total_completions = current_user.total_routine_completions
+    @member_days = current_user.rufa_member_days
 
     # 전문가 템플릿 (Mock or Real)
     @routine_templates = RoutineTemplate.limit(4)
@@ -112,7 +122,7 @@ class PersonalRoutinesController < ApplicationController
                                   .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
                                   .group(:category).count
     # 기본 카테고리 보정 (데이터가 없을 경우 0)
-    @rufa_categories = [ "HEALTH", "LIFE", "MIND", "STUDY", "HOBBY" ]
+    @rufa_categories = [ "HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY" ]
     @rufa_categories.each { |cat| @category_stats[cat] ||= 0 }
 
     # 점수 트렌드 (최근 7일간의 달성률 변화)
