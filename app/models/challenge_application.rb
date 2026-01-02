@@ -9,6 +9,7 @@ class ChallengeApplication < ApplicationRecord
   # Validations
   validates :user_id, uniqueness: { scope: :challenge_id, message: "has already applied to this challenge" }
   validates :depositor_name, presence: true, if: -> { challenge&.cost_type_deposit? || challenge&.cost_type_fee? }
+  validates :contact_info, presence: true, if: -> { challenge&.cost_type_deposit? || challenge&.cost_type_fee? }
   validates :message, presence: true, if: -> { challenge&.requires_application_message? }
 
   # Callbacks

@@ -59,6 +59,7 @@ class RoutineClubsController < ApplicationController
       user: current_user,
       paid_amount: prorated_fee,
       depositor_name: params[:depositor_name],
+      contact_info: params[:contact_info],
       payment_status: :pending
     )
 

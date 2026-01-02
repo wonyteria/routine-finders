@@ -46,6 +46,14 @@ ko:
         recruitment_end_date: "모집 마감일"
         mission_frequency: "인증 빈도"
         failure_tolerance: "실패 허용 횟수"
+        contact_info: "연락처"
+      challenge_application:
+        message: "신청 메시지"
+        depositor_name: "입금자명"
+        contact_info: "연락처"
+      routine_club_member:
+        depositor_name: "입금자명"
+        contact_info: "연락처"
       meeting_info:
         place_name: "모임 장소명"
         address: "모임 주소"

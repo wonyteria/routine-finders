@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_02_034938) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_02_065641) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -65,6 +65,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_034938) do
   create_table "challenge_applications", force: :cascade do |t|
     t.datetime "applied_at"
     t.integer "challenge_id", null: false
+    t.string "contact_info"
     t.datetime "created_at", null: false
     t.string "depositor_name"
     t.text "message"
@@ -191,6 +192,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_034938) do
     t.integer "challenge_id", null: false
     t.decimal "completion_rate", precision: 5, scale: 2, default: "0.0"
     t.integer "consecutive_failures", default: 0, null: false
+    t.string "contact_info"
     t.datetime "created_at", null: false
     t.integer "current_streak", default: 0, null: false
     t.decimal "final_achievement_rate", precision: 5, scale: 2
@@ -277,6 +279,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_034938) do
     t.integer "absence_count", default: 0
     t.integer "attendance_count", default: 0
     t.decimal "attendance_rate", precision: 5, scale: 2, default: "0.0"
+    t.string "contact_info"
     t.datetime "created_at", null: false
     t.datetime "deposit_confirmed_at"
     t.string "depositor_name"

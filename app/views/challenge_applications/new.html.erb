@@ -156,6 +156,18 @@
               class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
           <p class="text-xs font-medium text-slate-400 ml-1">입금 확인을 위해 정확한 입금자명을 입력해주세요.</p>
         </div>
+
+        <!-- Contact Info -->
+        <div class="space-y-2 pt-4">
+          <%= f.label :contact_info, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
+            연락처 (전화번호 또는 오픈채팅 URL) <span class="text-red-500">*</span>
+          <% end %>
+          <%= f.text_field :contact_info, 
+              placeholder: "예: 010-1234-5678 또는 카카오톡 오픈채팅 링크", 
+              required: true,
+              class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
+          <p class="text-xs font-medium text-slate-400 ml-1">입금 확인 및 원활한 소통을 위해 연락 가능한 정보를 입력해주세요.</p>
+        </div>
       </div>
     <% end %>
 
