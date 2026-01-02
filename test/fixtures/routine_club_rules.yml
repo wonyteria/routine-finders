@@ -1,7 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  routine_club: one
+  routine_club_id: 1
   title: 출석 규칙
   description: 매일 출석해야 합니다
   rule_type: 0
@@ -12,7 +12,7 @@ one:
   position: 1
 
 two:
-  routine_club: two
+  routine_club_id: 2
   title: 지각 규칙
   description: 지각하면 안됩니다
   rule_type: 1

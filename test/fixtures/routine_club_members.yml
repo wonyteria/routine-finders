@@ -1,8 +1,8 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  routine_club: one
-  user: host
+  routine_club_id: 1
+  user_id: 1
   joined_at: 2026-01-01 00:00:00
   membership_start_date: 2026-01-01
   membership_end_date: 2026-04-01
@@ -16,8 +16,8 @@ one:
   is_moderator: false
 
 two:
-  routine_club: two
-  user: participant
+  routine_club_id: 2
+  user_id: 2
   joined_at: 2026-01-01 00:00:00
   membership_start_date: 2026-01-01
   membership_end_date: 2026-04-01

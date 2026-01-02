@@ -12,7 +12,7 @@ one:
   current_members: 0
   status: 0
   is_official: false
-  host: host
+  host_id: 1
   bank_name: 신한은행
   account_number: 110-123-456789
   account_holder: 루틴파인더스
@@ -29,7 +29,7 @@ two:
   current_members: 0
   status: 0
   is_official: true
-  host: host
+  host_id: 1
   bank_name: 신한은행
   account_number: 110-123-456789
   account_holder: 루틴파인더스
