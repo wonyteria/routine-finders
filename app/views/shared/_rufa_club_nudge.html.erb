@@ -1,0 +1,37 @@
+<% if current_user && (!current_user.is_rufa_club_member? || current_user.admin?) %>
+  <div class="relative overflow-hidden rounded-[40px] bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 p-8 md:p-12 text-white shadow-2xl shadow-orange-200 group">
+    <!-- Decorative Elements -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/20 transition-all duration-700"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+    
+    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div class="space-y-4 text-center md:text-left">
+        <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/30 text-[10px] font-black uppercase tracking-widest mb-2">
+          <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
+          Premium Lifestyle
+        </div>
+        <h3 class="text-3xl md:text-5xl font-black leading-tight">
+          아직 <span class="text-yellow-300">루파 클럽</span>이<br>아니신가요?
+        </h3>
+        <p class="text-white/80 font-bold text-sm md:text-base max-w-md">
+          규칙, 가시성, 책임감이 만드는 강력한 환경.<br/>
+          성장 리포트와 전용 커뮤니티로 진짜 변화를 시작하세요.
+        </p>
+      </div>
+      
+      <div class="shrink-0 flex flex-col items-center gap-4">
+        <div class="flex -space-x-4 mb-2">
+          <% ["A", "B", "C", "D"].each do |seed| %>
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=<%= seed %>" class="w-12 h-12 rounded-full border-4 border-white shadow-lg" alt="">
+          <% end %>
+          <div class="w-12 h-12 rounded-full bg-white text-orange-600 flex items-center justify-center font-black text-xs border-4 border-white shadow-lg">
+            +<%= RoutineClubMember.count %>
+          </div>
+        </div>
+        <%= link_to routine_clubs_path, class: "px-10 py-5 bg-white text-slate-900 rounded-3xl font-black text-lg hover:bg-yellow-300 hover:scale-105 transition-all shadow-xl shadow-orange-900/20 active:scale-95" do %>
+          지금 멤버십 확인하기
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

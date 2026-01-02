@@ -59,12 +59,51 @@ class RoutineClubMember < ApplicationRecord
   def update_attendance_stats!
     total_days = attendances.count
     present_days = attendances.where(status: :present).count
+    excused_days = attendances.where(status: :excused).count
 
     update!(
       attendance_count: present_days,
-      absence_count: total_days - present_days,
-      attendance_rate: total_days > 0 ? (present_days.to_f / total_days * 100).round(2) : 0.0
+      absence_count: total_days - (present_days + excused_days),
+      attendance_rate: total_days > 0 ? ((present_days + excused_days).to_f / total_days * 100).round(2) : 0.0
     )
+
+    recalculate_growth_points!
+  end
+
+  def use_relaxation_pass!(date = Date.current)
+    return false if used_passes_count >= 3
+
+    attendance = attendances.find_or_initialize_by(attendance_date: date, routine_club: routine_club)
+    return false unless attendance.status_absent? || attendance.new_record?
+
+    transaction do
+      attendance.update!(status: :excused)
+      increment!(:used_passes_count)
+      update_attendance_stats!
+    end
+    true
+  end
+
+  def recalculate_growth_points!
+    # Points logic:
+    # 1. 10 pts per present day
+    # 2. 5 pts per clap received
+    # 3. 50 pts Golden Fire bonus (per 7-day perfect streak)
+
+    points = 0
+    points += attendances.where(status: :present).count * 10
+    points += attendances.sum(:cheers_count) * 5
+
+    # Golden Fire (7-day streaks)
+    # Simple check: how many perfect weeks (7 attendances with status present/excused)
+    # For now, let's just count total present/7
+    points += (attendances.where(status: :present).count / 7) * 50
+
+    update!(growth_points: points)
+  end
+
+  def remaining_passes
+    3 - (used_passes_count || 0)
   end
 
   def can_participate?

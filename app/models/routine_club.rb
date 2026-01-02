@@ -36,6 +36,14 @@ class RoutineClub < ApplicationRecord
     ((end_date.year * 12 + end_date.month) - (start_date.year * 12 + start_date.month))
   end
 
+  def thumbnail_image
+    if thumbnail.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(thumbnail, only_path: true)
+    else
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=2000"
+    end
+  end
+
   def calculate_prorated_fee(join_date)
     return monthly_fee * min_duration_months if join_date <= start_date
 

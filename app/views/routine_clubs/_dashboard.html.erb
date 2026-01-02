@@ -2,26 +2,51 @@
   
   <!-- Stats Overview -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-lg">
+    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg">
+      <p class="text-sm font-bold text-indigo-100 mb-2">성장 에너지</p>
+      <p class="text-4xl font-black"><%= @my_membership.growth_points || 0 %>P</p>
+    </div>
+    
+    <div class="group relative bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden">
       <p class="text-sm font-bold text-emerald-100 mb-2">출석률</p>
       <p class="text-4xl font-black"><%= @my_membership.attendance_rate.to_i %>%</p>
+      <div class="absolute -right-2 -bottom-2 text-6xl opacity-10 group-hover:scale-110 transition-transform">📈</div>
     </div>
     
-    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 text-white shadow-lg">
-      <p class="text-sm font-bold text-indigo-100 mb-2">출석 일수</p>
-      <p class="text-4xl font-black"><%= @my_membership.attendance_count %>일</p>
+    <div class="group relative bg-gradient-to-br from-blue-500 to-sky-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden">
+      <div class="relative z-10">
+        <p class="text-sm font-bold text-blue-100 mb-2">남은 휴식권</p>
+        <div class="flex items-end justify-between">
+          <p class="text-4xl font-black"><%= @my_membership.remaining_passes %>개</p>
+          <% if @my_membership.remaining_passes > 0 %>
+            <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
+                          class: "text-[10px] font-black bg-white text-blue-600 px-3 py-1.5 rounded-xl hover:bg-blue-50 transition-colors shadow-sm", 
+                          data: { confirm: "오늘의 루틴 인증을 면제하시겠습니까? (휴식권 1매 소진)" } do %>
+               휴식권 사용
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      <div class="absolute -right-2 -bottom-2 text-6xl opacity-10 group-hover:scale-110 transition-transform">🎫</div>
     </div>
     
-    <div class="bg-gradient-to-br from-orange-500 to-pink-600 rounded-3xl p-6 text-white shadow-lg">
-      <p class="text-sm font-bold text-orange-100 mb-2">결석 일수</p>
-      <p class="text-4xl font-black"><%= @my_membership.absence_count %>일</p>
-    </div>
-    
-    <div class="bg-gradient-to-br from-amber-500 to-yellow-600 rounded-3xl p-6 text-white shadow-lg">
-      <p class="text-sm font-bold text-amber-100 mb-2">경고</p>
+    <div class="group relative bg-gradient-to-br from-amber-500 to-yellow-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden">
+      <p class="text-sm font-bold text-amber-100 mb-2">누적 경고</p>
       <p class="text-4xl font-black"><%= @my_membership.penalty_count %>회</p>
+      <div class="absolute -right-2 -bottom-2 text-6xl opacity-10 group-hover:scale-110 transition-transform">⚠️</div>
     </div>
   </div>
+
+  <% days_left = (@my_membership.membership_end_date - Date.current).to_i %>
+  <% if days_left.between?(1, 14) %>
+    <div class="bg-gradient-to-r from-orange-500 to-pink-500 rounded-[32px] p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-orange-200">
+       <div class="space-y-1">
+          <h3 class="text-2xl font-black">멤버십 만료 안내 ✨</h3>
+          <p class="font-bold opacity-90">루파 클럽 멤버십 종료가 <span class="bg-white/20 px-2 py-0.5 rounded text-yellow-300"><%= days_left %>일</span> 남았습니다. 끊김 없는 성장을 위해 연장해 보세요!</p>
+       </div>
+       <%= link_to "멤버십 기간 연장하기", routine_club_path(@routine_club), class: "px-8 py-4 bg-white text-orange-600 rounded-2xl font-black hover:bg-yellow-100 transition-all text-sm whitespace-nowrap" %>
+    </div>
+  <% end %>
 
   <!-- Today's Attendance -->
   <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">

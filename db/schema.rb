@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_02_065641) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_02_081522) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -283,6 +283,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_065641) do
     t.datetime "created_at", null: false
     t.datetime "deposit_confirmed_at"
     t.string "depositor_name"
+    t.integer "growth_points"
     t.string "identity_title"
     t.boolean "is_moderator", default: false
     t.datetime "joined_at", null: false
@@ -295,6 +296,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_065641) do
     t.integer "routine_club_id", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "used_passes_count"
     t.integer "user_id", null: false
     t.index ["payment_status"], name: "index_routine_club_members_on_payment_status"
     t.index ["routine_club_id", "user_id"], name: "index_routine_club_members_on_routine_club_id_and_user_id", unique: true
@@ -378,12 +380,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_065641) do
     t.integer "max_members", default: 30
     t.integer "min_duration_months", default: 3, null: false
     t.integer "monthly_fee", default: 0, null: false
+    t.string "monthly_reward_info"
+    t.string "season_reward_info"
     t.date "start_date", null: false
     t.integer "status", default: 0, null: false
     t.string "thumbnail_image"
     t.string "title", null: false
     t.integer "total_penalties", default: 0
     t.datetime "updated_at", null: false
+    t.string "weekly_reward_info"
     t.index ["category"], name: "index_routine_clubs_on_category"
     t.index ["host_id"], name: "index_routine_clubs_on_host_id"
     t.index ["status"], name: "index_routine_clubs_on_status"

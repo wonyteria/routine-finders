@@ -29,6 +29,23 @@
       </div>
     <% end %>
 
+    <!-- 기본 정보 섹션 -->
+    <section class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
+      <div class="p-8 border-b border-slate-100">
+        <h2 class="text-lg font-black text-slate-900">기본 정보</h2>
+        <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest">Base Information</p>
+      </div>
+      <div class="p-8 space-y-4">
+        <div>
+          <%= f.label :nickname, "닉네임", class: "block text-sm font-bold text-slate-700 mb-2" %>
+          <%= f.text_field :nickname,
+            placeholder: "변경할 닉네임을 입력하세요",
+            required: true,
+            class: "w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" %>
+        </div>
+      </div>
+    </section>
+
     <!-- 자기소개 섹션 -->
     <section class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
       <div class="p-8 border-b border-slate-100">

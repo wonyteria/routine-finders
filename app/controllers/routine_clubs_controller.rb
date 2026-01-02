@@ -1,7 +1,7 @@
 class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
   before_action :require_admin, only: [ :new, :create ]
-  before_action :set_routine_club, only: [ :show, :manage, :join, :confirm_payment, :reject_payment, :kick_member ]
+  before_action :set_routine_club, only: [ :show, :manage, :update, :join, :use_pass, :confirm_payment, :reject_payment, :kick_member ]
 
   def index
     @routine_clubs = RoutineClub.recruiting_clubs
@@ -20,7 +20,13 @@ class RoutineClubsController < ApplicationController
     @my_membership = current_user && @routine_club.members.find_by(user: current_user)
     @is_host = current_user && @routine_club.host_id == current_user.id
 
+    if @my_membership
+       @my_membership.recalculate_growth_points!
+    end
+
     @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
+    @rankings = @members.order(growth_points: :desc).limit(10)
+
     @pending_payments = @is_host ? @routine_club.members.where(payment_status: :pending) : []
     @rules = @routine_club.rules.order(:position)
   end
@@ -47,6 +53,16 @@ class RoutineClubsController < ApplicationController
     end
   end
 
+  def update
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
+
+    if @routine_club.update(routine_club_params)
+      redirect_to manage_routine_club_path(@routine_club), notice: "설정이 성공적으로 저장되었습니다."
+    else
+      redirect_to manage_routine_club_path(@routine_club), alert: "설정 저장에 실패했습니다."
+    end
+  end
+
   def join
     if @routine_club.is_full?
       return redirect_to @routine_club, alert: "정원이 마감되었습니다."
@@ -68,6 +84,16 @@ class RoutineClubsController < ApplicationController
       redirect_to @routine_club, notice: "참여 신청이 완료되었습니다. 입금 확인 후 참여가 승인됩니다."
     else
       redirect_to @routine_club, alert: "참여 신청에 실패했습니다."
+    end
+  end
+
+  def use_pass
+    return redirect_to @routine_club, alert: "멤버만 사용할 수 있습니다." unless @my_membership
+
+    if @my_membership.use_relaxation_pass!
+      redirect_to routine_club_path(@routine_club, tab: "dashboard"), notice: "휴식권이 성공적으로 사용되었습니다. 오늘 루틴은 면제 처리됩니다."
+    else
+      redirect_to routine_club_path(@routine_club, tab: "dashboard"), alert: "휴식권을 사용할 수 없는 상태이거나 횟수를 모두 소진했습니다."
     end
   end
 
@@ -108,6 +134,8 @@ class RoutineClubsController < ApplicationController
     params.require(:routine_club).permit(
       :title, :description, :category, :thumbnail,
       :start_date, :end_date, :monthly_fee, :min_duration_months, :max_members,
+      :bank_name, :account_number, :account_holder,
+      :weekly_reward_info, :monthly_reward_info, :season_reward_info,
       rules_attributes: [ :id, :title, :description, :rule_type, :has_penalty, :penalty_description, :penalty_points, :auto_kick_enabled, :auto_kick_threshold, :position, :_destroy ]
     )
   end

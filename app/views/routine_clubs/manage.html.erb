@@ -62,10 +62,24 @@
                 class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
           멤버 관리
         </button>
+        <button onclick="switchManageTab('expiring')" 
+                id="manage-tab-expiring"
+                class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600 relative">
+          마감 임박
+          <% expiring_count = @members.select { |m| (m.membership_end_date - Date.current).to_i.between?(0, 14) }.count %>
+          <% if expiring_count > 0 %>
+            <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center border-2 border-white"><%= expiring_count %></span>
+          <% end %>
+        </button>
         <button onclick="switchManageTab('penalties')" 
                 id="manage-tab-penalties"
                 class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
           패널티 관리
+        </button>
+        <button onclick="switchManageTab('settings')" 
+                id="manage-tab-settings"
+                class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
+          설정 관리
         </button>
       </div>
     </div>
@@ -217,7 +231,41 @@
       </div>
     </div>
 
-    <!-- Penalties Tab -->
+    <!-- Expiring Tab -->
+    <div id="manage-content-expiring" class="manage-tab-content hidden">
+      <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+        <h2 class="text-2xl font-black text-slate-900 mb-6">마감 임박 유저 (14일 이내)</h2>
+        
+        <% expiring_members = @members.select { |m| (m.membership_end_date - Date.current).to_i.between?(0, 14) }.sort_by(&:membership_end_date) %>
+        <% if expiring_members.any? %>
+          <div class="space-y-4">
+            <% expiring_members.each do |membership| %>
+              <div class="bg-orange-50 border border-orange-200 rounded-3xl p-6">
+                 <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                       <div class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center font-black text-slate-900 shadow-sm">
+                          <%= membership.user.nickname[0].upcase %>
+                       </div>
+                       <div>
+                          <p class="font-black text-slate-900"><%= membership.user.nickname %></p>
+                          <p class="text-xs font-bold text-orange-600">마감일까지 <%= (membership.membership_end_date - Date.current).to_i %>일 남음</p>
+                       </div>
+                    </div>
+                    <div class="text-right">
+                       <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">만료 예정일</p>
+                       <p class="text-sm font-black text-slate-700"><%= membership.membership_end_date.strftime("%Y년 %m월 %d일") %></p>
+                    </div>
+                 </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="bg-slate-50 rounded-3xl p-20 text-center">
+            <p class="text-slate-400 font-bold">마감이 임박한 유저가 없습니다.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
     <div id="manage-content-penalties" class="manage-tab-content hidden">
       <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
         <h2 class="text-2xl font-black text-slate-900 mb-6">패널티 관리</h2>
@@ -225,6 +273,75 @@
         <div class="bg-slate-50 rounded-3xl p-20 text-center">
           <div class="text-6xl mb-4 opacity-20">⚠️</div>
           <p class="text-slate-400 font-bold">패널티 기능은 곧 추가될 예정입니다</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="manage-content-settings" class="manage-tab-content hidden">
+      <div class="space-y-6">
+        <!-- General Settings -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 mb-6">클럽 프로필 설정</h2>
+          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-6" do |f| %>
+            <div class="flex items-center gap-8">
+              <div class="w-24 h-24 rounded-3xl bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-slate-200">
+                <% if @routine_club.thumbnail.attached? %>
+                  <%= image_tag @routine_club.thumbnail, class: "w-full h-full object-cover" %>
+                <% else %>
+                  <span class="text-4xl">💎</span>
+                <% end %>
+              </div>
+              <div class="flex-1">
+                <%= f.label :thumbnail, "클럽 섬네일 이미지", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.file_field :thumbnail, class: "block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 transition-all" %>
+                <p class="text-[10px] text-slate-400 mt-2">추천 사이즈: 21:9 비율의 고해상도 이미지</p>
+              </div>
+            </div>
+            <%= f.submit "프로필 저장", class: "px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100" %>
+          <% end %>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 mb-6">입금 계좌 설정</h2>
+          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-4" do |f| %>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <%= f.label :bank_name, "은행명", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.text_field :bank_name, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
+              </div>
+              <div>
+                <%= f.label :account_number, "계좌번호", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.text_field :account_number, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
+              </div>
+              <div>
+                <%= f.label :account_holder, "예금주", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.text_field :account_holder, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
+              </div>
+            </div>
+            <%= f.submit "계좌 정보 저장", class: "px-8 py-3 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-colors" %>
+          <% end %>
+        </div>
+
+        <!-- Reward Settings -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 mb-6">리워드 문구 설정</h2>
+          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-6" do |f| %>
+            <div>
+              <%= f.label :weekly_reward_info, "위클리 보상 (명예)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+              <%= f.text_field :weekly_reward_info, placeholder: "예: 프로필 골든 오라 부여", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
+            </div>
+            <div>
+              <%= f.label :monthly_reward_info, "먼슬리 보상 (쿠폰)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+              <%= f.text_field :monthly_reward_info, placeholder: "예: 스타벅스 아메리카노 기프티콘", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
+            </div>
+            <div>
+              <%= f.label :season_reward_info, "시즌 최종 보상 (무료권)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+              <%= f.text_field :season_reward_info, placeholder: "예: 차기 시즌 3/2/1개월 무료 이용권", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
+            </div>
+            <%= f.submit "리워드 설정 저장", class: "px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100" %>
+          <% end %>
         </div>
       </div>
     </div>
