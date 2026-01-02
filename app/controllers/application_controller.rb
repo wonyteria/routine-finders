@@ -34,6 +34,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_admin
+    unless current_user&.admin?
+      redirect_to root_path, alert: "해당 기능은 루틴 파인더스 관리자만 이용 가능합니다."
+    end
+  end
+
   def store_location
     session[:forwarding_url] = request.original_url if request.get?
   end

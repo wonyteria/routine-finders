@@ -10,7 +10,7 @@
             <span class="text-sm font-black text-orange-600">PREMIUM</span>
           </div>
           <h1 class="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-4">
-            루틴 클럽
+            루파 클럽
           </h1>
           <p class="text-xl text-slate-600 font-bold max-w-2xl">
             규칙 · 가시성 · 책임감이 만드는 강력한 환경.<br/>
@@ -18,11 +18,13 @@
           </p>
         </div>
         
-        <%= link_to new_routine_club_path, class: "inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-2xl font-black text-lg hover:shadow-2xl hover:shadow-orange-200 transition-all" do %>
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-          </svg>
-          클럽 개설하기
+        <% if current_user&.admin? %>
+          <%= link_to new_routine_club_path, class: "inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-2xl font-black text-lg hover:shadow-2xl hover:shadow-orange-200 transition-all" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            클럽 개설하기
+          <% end %>
         <% end %>
       </div>
     </header>
@@ -177,37 +179,14 @@
         <div class="text-8xl mb-6 opacity-20">🎯</div>
         <h3 class="text-2xl font-black text-slate-400 mb-3">
           <%= params[:category].present? ? "#{params[:category]} 카테고리에" : "" %>
-          모집 중인 클럽이 없습니다
+          모집 중인 루파 클럽이 없습니다
         </h3>
         <p class="text-slate-400 font-medium mb-8">
-          곧 새로운 클럽이 열릴 예정입니다
+          곧 새로운 루파 클럽이 열릴 예정입니다
         </p>
         <%= link_to "전체 클럽 보기", routine_clubs_path, class: "inline-block px-8 py-4 bg-slate-900 text-white rounded-2xl font-black hover:bg-slate-700 transition-colors" %>
       </div>
     <% end %>
-
-    <!-- Bottom CTA -->
-    <div class="mt-16 relative overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[48px] p-12 text-white shadow-2xl">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
-      
-      <div class="relative z-10 max-w-3xl mx-auto text-center">
-        <div class="text-6xl mb-6">🚀</div>
-        <h2 class="text-3xl md:text-4xl font-black mb-4">
-          나만의 루틴 클럽을 만들어보세요
-        </h2>
-        <p class="text-xl text-white/90 font-bold mb-8">
-          호스트가 되어 함께 성장할 멤버들을 모집하고,<br/>
-          체계적인 환경에서 루틴을 이끌어가세요.
-        </p>
-        <%= link_to new_routine_club_path, class: "inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all shadow-2xl" do %>
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-          </svg>
-          클럽 개설하기
-        <% end %>
-      </div>
-    </div>
 
   </div>
 </div>

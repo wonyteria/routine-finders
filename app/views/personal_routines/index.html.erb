@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
+<div class="min-h-screen bg-slate-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     
     <!-- Header -->
@@ -11,7 +11,6 @@
           <p class="text-slate-500 font-bold mt-2">매일의 기록이 모여 당신의 가능성을 증명합니다</p>
         </div>
         
-        <!-- Stats Cards -->
         <div class="flex gap-4">
           <div class="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm">
             <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Today</p>
@@ -34,64 +33,34 @@
       </div>
     </header>
 
-    <!-- Tabs Navigation -->
-    <div class="mb-8">
+    <!-- Simple Tabs (No Stimulus initially for stability) -->
+    <div class="mb-8" data-controller="tabs" data-tabs-active-class="bg-indigo-600 text-white shadow-lg" data-tabs-inactive-class="text-slate-400 hover:text-slate-600">
       <div class="bg-white border border-slate-200 rounded-3xl p-2 inline-flex gap-2 shadow-sm">
-        <button onclick="switchTab('free')" 
-                id="tab-free"
-                class="tab-button px-8 py-3 rounded-2xl font-black text-sm transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-200">
-          <span class="flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            무료 루틴
-          </span>
+        <button type="button"
+                data-action="tabs#change"
+                data-tabs-target="tab"
+                data-id="free"
+                class="px-8 py-3 rounded-2xl font-black text-sm transition-all bg-indigo-600 text-white shadow-lg">
+          무료 루틴
         </button>
-        <button onclick="switchTab('club')" 
-                id="tab-club"
-                class="tab-button px-8 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
-          <span class="flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-            루틴 클럽
-            <% if @pending_payments.any? %>
-              <span class="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full"><%= @pending_payments.count %></span>
-            <% end %>
-          </span>
+        <button type="button"
+                data-action="tabs#change"
+                data-tabs-target="tab"
+                data-id="club"
+                class="px-8 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
+          루파 클럽
         </button>
       </div>
-    </div>
 
-    <!-- Free Routines Tab Content -->
-    <div id="content-free" class="tab-content">
-      <%= render 'free_routines' %>
-    </div>
-
-    <!-- Club Routines Tab Content -->
-    <div id="content-club" class="tab-content hidden">
-      <%= render 'club_routines' %>
+      <div class="mt-8">
+        <div data-tabs-target="panel" data-id="free">
+          <%= render 'free_routines' %>
+        </div>
+        <div data-tabs-target="panel" data-id="club" class="hidden">
+          <%= render 'club_routines' %>
+        </div>
+      </div>
     </div>
 
   </div>
 </div>
-
-<script>
-  function switchTab(tab) {
-    // Update buttons
-    document.querySelectorAll('.tab-button').forEach(btn => {
-      btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-200');
-      btn.classList.add('text-slate-400', 'hover:text-slate-600');
-    });
-    
-    const activeBtn = document.getElementById('tab-' + tab);
-    activeBtn.classList.remove('text-slate-400', 'hover:text-slate-600');
-    activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-200');
-    
-    // Update content
-    document.querySelectorAll('.tab-content').forEach(content => {
-      content.classList.add('hidden');
-    });
-    document.getElementById('content-' + tab).classList.remove('hidden');
-  }
-</script>

@@ -1,5 +1,6 @@
 class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
+  before_action :require_admin, only: [ :new, :create ]
   before_action :set_routine_club, only: [ :show, :manage, :join, :confirm_payment, :reject_payment, :kick_member ]
 
   def index

@@ -4,6 +4,9 @@ class PersonalRoutinesController < ApplicationController
 
   def index
     # 개인 루틴 (무료)
+    # 배지 모달이 화면을 가리는 현상을 방지하기 위해 자동 조회 처리
+    current_user.user_badges.where(is_viewed: false).update_all(is_viewed: true) if logged_in?
+
     @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
     @monthly_completions = current_user.personal_routines.joins(:completions)
                                        .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
