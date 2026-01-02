@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_01_121000) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_02_032214) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -43,9 +43,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_121000) do
     t.integer "challenge_id", null: false
     t.text "content"
     t.datetime "created_at", null: false
+    t.integer "routine_club_id", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["challenge_id"], name: "index_announcements_on_challenge_id"
+    t.index ["routine_club_id"], name: "index_announcements_on_routine_club_id"
   end
 
   create_table "badges", force: :cascade do |t|
@@ -365,6 +367,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_121000) do
     t.text "description"
     t.date "end_date", null: false
     t.integer "host_id", null: false
+    t.boolean "is_official"
     t.integer "max_members", default: 30
     t.integer "min_duration_months", default: 3, null: false
     t.integer "monthly_fee", default: 0, null: false
@@ -399,6 +402,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_121000) do
     t.integer "user_id", null: false
     t.index ["badge_id"], name: "index_user_badges_on_badge_id"
     t.index ["user_id"], name: "index_user_badges_on_user_id"
+  end
+
+  create_table "user_goals", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.integer "goal_type"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_user_goals_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -454,6 +466,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_121000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "announcements", "challenges"
+  add_foreign_key "announcements", "routine_clubs"
   add_foreign_key "challenge_applications", "challenges"
   add_foreign_key "challenge_applications", "users"
   add_foreign_key "challenges", "challenges", column: "original_challenge_id"
@@ -482,6 +495,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_01_121000) do
   add_foreign_key "staffs", "users"
   add_foreign_key "user_badges", "badges"
   add_foreign_key "user_badges", "users"
+  add_foreign_key "user_goals", "users"
   add_foreign_key "verification_logs", "challenges"
   add_foreign_key "verification_logs", "participants"
 end

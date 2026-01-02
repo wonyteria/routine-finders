@@ -28,6 +28,7 @@ class RoutineClub < ApplicationRecord
   scope :recruiting_clubs, -> { where(status: :recruiting) }
   scope :active_clubs, -> { where(status: :active) }
   scope :by_category, ->(category) { where(category: category) if category.present? }
+  scope :official, -> { where(is_official: true) }
 
   # Methods
   def duration_in_months

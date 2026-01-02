@@ -11,13 +11,42 @@ class PersonalRoutinesController < ApplicationController
     @monthly_completions = current_user.personal_routines.joins(:completions)
                                        .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
 
+    # 루파 클럽 공식 생성 (없을 경우)
+    if RoutineClub.official.none?
+      admin = User.find_by(role: :admin) || User.first
+      RoutineClub.create!(
+        title: "루파 클럽 공식",
+        description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",
+        monthly_fee: 5000,
+        min_duration_months: 3,
+        start_date: Date.current,
+        end_date: Date.current + 1.year,
+        is_official: true,
+        host: admin,
+        category: "건강·운동"
+      )
+    end
+
     # 루파 클럽 (유료) 관련 통계 및 랭킹
+    @official_club = RoutineClub.official.first
     @routine_clubs = RoutineClub.recruiting_clubs.includes(:host, :members).order(created_at: :desc).limit(6)
     @my_club_memberships = current_user.routine_club_members.includes(:routine_club).where(status: [ :active, :warned ])
     @pending_payments = current_user.routine_club_members.where(payment_status: :pending)
 
+    # 루파 클럽 공식 공지사항
+    if Announcement.where(routine_club: @official_club).none?
+      @official_club.announcements.create!(title: "루파 클럽에 오신 것을 환영합니다! 목표 설정을 시작해보세요.", body: "내용")
+      @official_club.announcements.create!(title: "1월 오프라인 정기 모임 일정 안내", body: "내용")
+    end
+    @rufa_announcements = Announcement.where(routine_club: @official_club).recent.limit(5)
+
+    # 유저 목표 (단기/중기/장기)
+    @user_goals = current_user.user_goals.index_by(&:goal_type)
+    @short_term_goal = @user_goals["short_term"]&.body
+    @mid_term_goal = @user_goals["mid_term"]&.body
+    @long_term_goal = @user_goals["long_term"]&.body
+
     # 루파 클럽 멤버 랭킹 (상위 10명)
-    # 실제로는 캐싱이나 배치를 통해 미리 계산하는 것이 좋으나, 현재는 실시간 계산
     @rufa_rankings = User.joins(:routine_club_members)
                          .where(routine_club_members: { status: :active })
                          .distinct
@@ -77,6 +106,16 @@ class PersonalRoutinesController < ApplicationController
       format.html { redirect_to personal_routines_path }
       format.turbo_stream
     end
+  end
+
+  def update_goals
+    [ :short_term, :mid_term, :long_term ].each do |type|
+      if params[type].present?
+        goal = current_user.user_goals.find_or_initialize_by(goal_type: type)
+        goal.update(body: params[type])
+      end
+    end
+    redirect_to personal_routines_path(tab: "club"), notice: "목표가 저장되었습니다."
   end
 
   def destroy

@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :challenge_applications, dependent: :destroy
   has_many :user_badges, dependent: :destroy
   has_many :badges, through: :user_badges
+  has_many :user_goals, dependent: :destroy
   has_many :reviews, dependent: :destroy
 
   # Routine Clubs

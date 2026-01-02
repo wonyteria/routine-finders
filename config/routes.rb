@@ -131,6 +131,9 @@ Rails.application.routes.draw do
         member do
           post :toggle
         end
+        collection do
+          post :update_goals
+        end
       end
 
       # Notifications
