@@ -105,16 +105,21 @@ class PersonalRoutinesController < ApplicationController
     @current_achievement_rate = current_user.monthly_achievement_rate
 
     @recommended_routines = [
-      { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊", color: "text-rose-400" },
-      { title: "물 2L 마시기", category: "HEALTH", icon: "💧", color: "text-blue-400" },
-      { title: "스트레칭 5분", category: "HEALTH", icon: "🧘", color: "text-emerald-400" },
-      { title: "안약 넣기", category: "LIFE", icon: "👀", color: "text-sky-400" },
-      { title: "책상 정리하기", category: "PRODUCTIVITY", icon: "🧹", color: "text-orange-400" },
-      { title: "내일 할 일 계획", category: "PRODUCTIVITY", icon: "📝", color: "text-purple-400" },
-      { title: "스킨케어 루틴", category: "LIFE", icon: "✨", color: "text-pink-400" },
-      { title: "감사 일기 쓰기", category: "MIND", icon: "✍️", color: "text-yellow-400" },
-      { title: "자기 전 폰 안보기", category: "LIFE", icon: "📱", color: "text-indigo-400" },
-      { title: "스쿼트 20개", category: "HEALTH", icon: "🏋️", color: "text-orange-500" }
+      { title: "아침 물 한 잔 마시기", category: "HEALTH", icon: "💧", users_count: 1247 },
+      { title: "스트레칭 5분", category: "HEALTH", icon: "🧘", users_count: 982 },
+      { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊", users_count: 856 },
+      { title: "감사 일기 쓰기", category: "MIND", icon: "✍️", users_count: 734 },
+      { title: "책 10페이지 읽기", category: "STUDY", icon: "📚", users_count: 691 },
+      { title: "플랭크 1분", category: "HEALTH", icon: "💪", users_count: 623 },
+      { title: "명상 5분", category: "MIND", icon: "🧠", users_count: 589 },
+      { title: "아침 햇빛 쐬기", category: "HEALTH", icon: "☀️", users_count: 512 },
+      { title: "자기 전 폰 안보기", category: "LIFE", icon: "📱", users_count: 487 },
+      { title: "하루 목표 3가지 작성", category: "STUDY", icon: "🎯", users_count: 456 },
+      { title: "스쿼트 20개", category: "HEALTH", icon: "🏋️", users_count: 423 },
+      { title: "영어 단어 10개 외우기", category: "STUDY", icon: "📖", users_count: 398 },
+      { title: "사이드 프로젝트 30분", category: "MONEY", icon: "💻", users_count: 367 },
+      { title: "블로그 글쓰기", category: "MONEY", icon: "💰", users_count: 334 },
+      { title: "운동 30분", category: "HEALTH", icon: "🏃", users_count: 312 }
     ]
 
     # 루파 성장 레이더용 카테고리별 통계
