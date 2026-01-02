@@ -4,8 +4,8 @@ one:
   routine_club: one
   user: host
   report_type: 0
-  start_date: <%= Date.today - 7.days %>
-  end_date: <%= Date.today %>
+  start_date: 2025-12-26
+  end_date: 2026-01-02
   attendance_count: 5
   absence_count: 2
   attendance_rate: 71.4
@@ -17,8 +17,8 @@ two:
   routine_club: two
   user: participant
   report_type: 1
-  start_date: <%= Date.today - 30.days %>
-  end_date: <%= Date.today %>
+  start_date: 2025-12-03
+  end_date: 2026-01-02
   attendance_count: 20
   absence_count: 10
   attendance_rate: 66.7

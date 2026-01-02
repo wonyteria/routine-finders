@@ -3,9 +3,9 @@
 one:
   routine_club: one
   user: host
-  joined_at: <%= Time.current %>
-  membership_start_date: <%= Date.today %>
-  membership_end_date: <%= Date.today + 90.days %>
+  joined_at: 2026-01-01 00:00:00
+  membership_start_date: 2026-01-01
+  membership_end_date: 2026-04-01
   paid_amount: 30000
   payment_status: 1
   status: 0
@@ -18,9 +18,9 @@ one:
 two:
   routine_club: two
   user: participant
-  joined_at: <%= Time.current %>
-  membership_start_date: <%= Date.today %>
-  membership_end_date: <%= Date.today + 90.days %>
+  joined_at: 2026-01-01 00:00:00
+  membership_start_date: 2026-01-01
+  membership_end_date: 2026-04-01
   paid_amount: 20000
   payment_status: 1
   status: 0

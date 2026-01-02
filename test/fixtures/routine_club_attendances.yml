@@ -3,13 +3,13 @@
 one:
   routine_club: one
   routine_club_member: one
-  attendance_date: <%= Date.today %>
+  attendance_date: 2026-01-02
   status: 0
   cheers_count: 0
 
 two:
   routine_club: two
   routine_club_member: two
-  attendance_date: <%= Date.today %>
+  attendance_date: 2026-01-02
   status: 0
   cheers_count: 0
