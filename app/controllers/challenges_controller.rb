@@ -318,7 +318,7 @@ class ChallengesController < ApplicationController
   def load_landing_data
     @featured_challenges = Challenge.online_challenges.official.limit(4)
     if @featured_challenges.empty?
-      @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail_image: nil).limit(4)
+      @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail: nil).limit(4)
       @featured_challenges = Challenge.online_challenges.recruiting.limit(4) if @featured_challenges.empty?
       @featured_challenges = Challenge.generate_dummy_challenges.first(4) if @featured_challenges.empty? # Fallback to dummy
     end
