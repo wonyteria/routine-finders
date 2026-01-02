@@ -6,7 +6,7 @@ class Challenge < ApplicationRecord
   enum :entry_type, { season: 0, regular: 1 }, prefix: true
   enum :admission_type, { first_come: 0, approval: 1 }, prefix: true
   enum :verification_type, { simple: 0, metric: 1, photo: 2, url: 3, complex: 4 }, prefix: true
-  enum :mode, { online: 0, offline: 1 }
+  enum :mode, { online: 0, offline: 1 }, prefix: true
   enum :cost_type, { free: 0, fee: 1, deposit: 2 }, prefix: true
   enum :mission_frequency, { daily: 0, weekly_n: 1 }, prefix: true
   enum :status, { upcoming: 0, active: 1, ended: 2, archived: 3 }, prefix: true

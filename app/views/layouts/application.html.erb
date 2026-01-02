@@ -148,8 +148,13 @@
                   <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center ring-2 ring-white"><%= current_user.unread_notifications_count %></span>
                 <% end %>
               <% end %>
-              <%= link_to profile_path, class: "flex items-center gap-3 pl-2 cursor-pointer" do %>
-                <img src="<%= current_user.profile_image %>" alt="Profile" class="w-9 h-9 rounded-full ring-2 ring-indigo-50 object-cover">
+              <%= link_to profile_path, class: "flex items-center gap-3 pl-2 cursor-pointer group" do %>
+                <img src="<%= current_user.profile_image %>" alt="Profile" class="w-9 h-9 rounded-full ring-2 ring-indigo-50 object-cover group-hover:ring-indigo-200 transition-all">
+              <% end %>
+              <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all", title: "로그아웃" do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
               <% end %>
             <% else %>
               <button data-action="modal#open"

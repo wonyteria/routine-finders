@@ -3,9 +3,14 @@
   <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col lg:flex-row">
     <!-- Left: Profile Info -->
     <div class="lg:w-1/3 p-12 flex flex-col items-center justify-center text-center bg-gradient-to-br from-slate-50 to-white border-b lg:border-b-0 lg:border-r border-slate-100 relative">
-      <%= link_to edit_profile_path, class: "absolute top-6 right-6 w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm" do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-      <% end %>
+      <div class="absolute top-6 right-6 flex gap-2">
+        <%= link_to edit_profile_path, class: "w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm", title: "프로필 수정" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+        <% end %>
+        <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm", title: "로그아웃" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <% end %>
+      </div>
 
       <div class="relative mb-8 group">
         <img src="<%= @user.profile_image %>" class="w-40 h-40 rounded-[48px] border-8 border-white shadow-2xl object-cover transition-transform group-hover:scale-105" alt="">
@@ -132,6 +137,10 @@
               class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         챌린지
       </button>
+      <button data-tabs-target="tab" data-action="click->tabs#change" data-id="gatherings"
+              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+        모임
+      </button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="clubs"
               class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         루틴 클럽
@@ -161,13 +170,14 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left: Recent Activity Feed -->
       <div class="lg:col-span-2 space-y-8">
+        <!-- Participations (Challenges) -->
         <section>
           <div class="flex items-center justify-between mb-6 px-4">
             <h3 class="text-xl font-black text-slate-900">최근 참여 현황</h3>
             <%= link_to "전체보기", "#", class: "text-xs font-bold text-indigo-600", data: { action: "click->tabs#change", id: "challenges" } %>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <% @active_participations.first(4).each do |p| %>
+            <% @active_participations.first(2).each do |p| %>
               <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-all">
                 <div class="flex items-center gap-4 mb-4">
                   <img src="<%= p.challenge.thumbnail %>" class="w-12 h-12 rounded-2xl object-cover">
@@ -196,6 +206,57 @@
           </div>
         </section>
 
+        <!-- Gatherings Summary -->
+        <% if @gathering_participations.any? %>
+          <section>
+            <div class="flex items-center justify-between mb-6 px-4">
+              <h3 class="text-xl font-black text-slate-900">다가오는 모임</h3>
+              <%= link_to "전체보기", "#", class: "text-xs font-bold text-emerald-600", data: { action: "click->tabs#change", id: "gatherings" } %>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <% @gathering_participations.first(2).each do |p| %>
+                <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
+                  <div class="flex items-center gap-4">
+                    <img src="<%= p.challenge.thumbnail %>" class="w-12 h-12 rounded-2xl object-cover">
+                    <div class="flex-1 min-w-0">
+                      <h4 class="font-black text-slate-900 truncate text-sm"><%= p.challenge.title %></h4>
+                      <p class="text-[10px] text-emerald-600 font-black mt-1">📍 <%= p.challenge.meeting_info&.place_name %></p>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+
+        <!-- Routine Clubs Summary -->
+        <% if @club_memberships.any? %>
+          <section>
+            <div class="flex items-center justify-between mb-6 px-4">
+              <h3 class="text-xl font-black text-slate-900">참여 중인 루틴 클럽</h3>
+              <%= link_to "전체보기", "#", class: "text-xs font-bold text-indigo-600", data: { action: "click->tabs#change", id: "clubs" } %>
+            </div>
+            <div class="space-y-4">
+              <% @club_memberships.first(2).each do |membership| %>
+                <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl">
+                      🚀
+                    </div>
+                    <div>
+                      <h4 class="font-black text-slate-900 text-sm"><%= membership.routine_club.title %></h4>
+                      <p class="text-[10px] text-slate-400 font-bold uppercase"><%= membership.status %></p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-[10px] text-slate-400 font-black uppercase">참여도</p>
+                    <p class="text-sm font-black text-indigo-600"><%= membership.attendance_rate.to_i %>%</p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
         <section>
           <div class="flex items-center justify-between mb-6 px-4">
             <h3 class="text-xl font-black text-slate-900">내 개인 루틴 요약</h3>
@@ -219,6 +280,7 @@
           </div>
         </section>
 
+        <!-- Activity Feed -->
         <section>
           <div class="flex items-center justify-between mb-6 px-4">
             <h3 class="text-xl font-black text-slate-900">최근 활동 피드</h3>
@@ -270,30 +332,17 @@
           </div>
           <%= link_to "전체 뱃지 보기", "#", class: "block w-full text-center mt-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-sm", data: { action: "click->tabs#change", id: "achievements" } %>
         </section>
-
-        <section class="bg-indigo-600 p-8 rounded-[40px] text-white overflow-hidden relative">
-          <div class="relative z-10">
-            <h3 class="text-lg font-black mb-2">분석 리포트</h3>
-            <p class="text-sm text-indigo-100 mb-6 font-medium">나의 루틴과 챌린지 성과를 정밀 분석합니다.</p>
-            <%= link_to achievement_report_path, class: "inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:scale-105 transition-transform" do %>
-              리포트 확인하기
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            <% end %>
-          </div>
-          <div class="absolute -right-4 -bottom-4 opacity-10">
-            <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-          </div>
-        </section>
       </div>
     </div>
+  </div>
 
     <!-- Challenges Tab -->
     <div data-tabs-target="panel" data-id="challenges" class="hidden space-y-12">
       <!-- Participations -->
       <section class="space-y-6">
-        <h3 class="text-2xl font-black text-slate-900 ml-4">참여 중인 챌린지</h3>
+        <h3 class="text-2xl font-black text-slate-900 ml-4">참여 중인 챌린지 (온라인)</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <% @participations.each do |p| %>
+          <% @challenge_participations.each do |p| %>
             <%= link_to challenge_path(p.challenge), class: "group bg-white p-6 rounded-[40px] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all" do %>
               <div class="flex items-center gap-6">
                 <img src="<%= p.challenge.thumbnail %>" class="w-24 h-24 rounded-[32px] object-cover group-hover:scale-105 transition-transform">
@@ -319,23 +368,22 @@
               </div>
             <% end %>
           <% end %>
-          <% if @participations.empty? %>
-             <div class="col-span-2 p-20 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center">
-                <p class="text-slate-400 text-xl font-black">아직 참여 중인 챌린지가 없습니다.</p>
-                <%= link_to "챌린지 탐색하기", challenges_path, class: "inline-block mt-6 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg" %>
+          <% if @challenge_participations.empty? %>
+             <div class="col-span-2 p-12 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center">
+                <p class="text-slate-400 font-black">참여 중인 온라인 챌린지가 없습니다.</p>
              </div>
           <% end %>
         </div>
       </section>
 
-      <!-- Hosted -->
+      <!-- Hosted Online -->
       <section class="space-y-6">
         <div class="flex items-center justify-between px-4">
-          <h3 class="text-2xl font-black text-slate-900">내가 개최한 챌린지 / 모임</h3>
+          <h3 class="text-2xl font-black text-slate-900">내가 개최한 챌린지 (온라인)</h3>
           <%= link_to "관리 센터 가기", hosted_challenges_path, class: "text-sm font-bold text-indigo-600" %>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <% @hosted_challenges.each do |c| %>
+          <% @hosted_online_challenges.each do |c| %>
             <%= link_to hosted_challenge_path(c), class: "bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm hover:shadow-lg transition-all" do %>
               <div class="aspect-video bg-slate-100 rounded-2xl mb-4 overflow-hidden relative">
                 <img src="<%= c.thumbnail %>" class="w-full h-full object-cover">
@@ -348,18 +396,71 @@
               <h4 class="font-black text-slate-900 truncate"><%= c.title %></h4>
               <div class="mt-3 flex items-center justify-between">
                 <p class="text-xs text-slate-400 font-bold"><%= c.current_participants %>명 모집됨</p>
-                <% if @hosted_pending_counts[c.id].to_i > 0 %>
-                  <span class="px-2 py-1 bg-red-100 text-red-600 text-[10px] font-black border border-red-200 rounded-lg">
-                    미승인 인증 <%= @hosted_pending_counts[c.id] %>건
-                  </span>
-                <% end %>
               </div>
             <% end %>
           <% end %>
-          <% if @hosted_challenges.empty? %>
+          <% if @hosted_online_challenges.empty? %>
              <div class="col-span-3 p-12 bg-slate-50 rounded-[40px] text-center">
-                <p class="text-slate-400 font-bold">개최한 챌린지가 없습니다.</p>
-                <%= link_to "챌린지 개설하기", new_challenge_path, class: "inline-block mt-4 text-indigo-600 font-black text-sm" %>
+                <p class="text-slate-400 font-bold">개최한 온라인 챌린지가 없습니다.</p>
+             </div>
+          <% end %>
+        </div>
+      </section>
+    </div>
+
+    <!-- Meetings Tab -->
+    <div data-tabs-target="panel" data-id="gatherings" class="hidden space-y-12">
+      <section class="space-y-6">
+        <h3 class="text-2xl font-black text-slate-900 ml-4">참여 중인 모임 (오프라인)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <% @gathering_participations.each do |p| %>
+            <%= link_to challenge_path(p.challenge), class: "group bg-white p-6 rounded-[40px] border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all" do %>
+              <div class="flex items-center gap-6">
+                <img src="<%= p.challenge.thumbnail %>" class="w-24 h-24 rounded-[32px] object-cover group-hover:scale-105 transition-transform">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest"><%= p.challenge.category %></span>
+                    <span class="px-3 py-1 bg-emerald-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest">OFFLINE</span>
+                  </div>
+                  <h4 class="text-xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors truncate"><%= p.challenge.title %></h4>
+                  <div class="mt-2 flex items-center gap-2 text-xs text-slate-500 font-bold">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                    <%= p.challenge.meeting_info&.place_name || "장소 정보 없음" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+          <% if @gathering_participations.empty? %>
+             <div class="col-span-2 p-12 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center">
+                <p class="text-slate-400 font-black">참여 중인 오프라인 모임이 없습니다.</p>
+                <%= link_to "모임 탐색하기", gatherings_path, class: "inline-block mt-4 text-indigo-600 font-black" %>
+             </div>
+          <% end %>
+        </div>
+      </section>
+
+      <!-- Hosted Gatherings -->
+      <section class="space-y-6">
+        <h3 class="text-2xl font-black text-slate-900 ml-4">내가 개최한 모임 (오프라인)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <% @hosted_gatherings.each do |c| %>
+            <%= link_to hosted_challenge_path(c), class: "bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm hover:shadow-lg transition-all" do %>
+              <div class="aspect-video bg-slate-100 rounded-2xl mb-4 overflow-hidden relative">
+                <img src="<%= c.thumbnail %>" class="w-full h-full object-cover">
+                <div class="absolute top-3 left-3">
+                  <span class="px-3 py-1 bg-emerald-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+                    GATHERING
+                  </span>
+                </div>
+              </div>
+              <h4 class="font-black text-slate-900 truncate"><%= c.title %></h4>
+              <p class="text-xs text-slate-400 font-bold mt-2"><%= c.meeting_info&.place_name %></p>
+            <% end %>
+          <% end %>
+          <% if @hosted_gatherings.empty? %>
+             <div class="col-span-3 p-12 bg-slate-50 rounded-[40px] text-center">
+                <p class="text-slate-400 font-bold">개최한 오프라인 모임이 없습니다.</p>
              </div>
           <% end %>
         </div>

@@ -43,6 +43,14 @@ class ProfilesController < ApplicationController
     @active_participations = @participations.select { |p| p.challenge.status_active? }
     @active_clubs = @club_memberships.select { |m| m.routine_club.status_active? }
 
+    # 챌린지 vs 모임 (온/오프라인 모드 기준)
+    @challenge_participations = @participations.select { |p| p.challenge.mode_online? }
+    @gathering_participations = @participations.select { |p| p.challenge.mode_offline? }
+
+    # 내가 개최한 모임
+    @hosted_gatherings = @hosted_challenges.select { |c| c.mode_offline? }
+    @hosted_online_challenges = @hosted_challenges.select { |c| c.mode_online? }
+
     # 성장 투자 통계 (실제 기능 대신 기록용)
     @growth_stats = {
       total_invested: @participations.sum { |p| p.challenge.total_payment_amount },
