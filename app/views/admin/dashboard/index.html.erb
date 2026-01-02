@@ -76,6 +76,81 @@
     </div>
   </div>
 
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- User Registration Chart -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <h3 class="font-bold text-slate-900 mb-6">신규 가입자 현황 (최근 14일)</h3>
+      <div class="h-64">
+        <canvas id="userRegChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Activity Chart -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <h3 class="font-bold text-slate-900 mb-6">챌린지 활동 현황 (최근 14일)</h3>
+      <div class="h-64">
+        <canvas id="activityChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('turbo:load', () => {
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1 }
+          }
+        }
+      };
+
+      // User Registration Chart
+      const userCtx = document.getElementById('userRegChart');
+      if (userCtx) {
+        new Chart(userCtx, {
+          type: 'line',
+          data: {
+            labels: <%= raw @dates.to_json %>,
+            datasets: [{
+              label: '가입자 수',
+              data: <%= raw @user_reg_values.to_json %>,
+              borderColor: '#4F46E5',
+              backgroundColor: 'rgba(79, 70, 229, 0.1)',
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: chartOptions
+        });
+      }
+
+      // Activity Chart
+      const activityCtx = document.getElementById('activityChart');
+      if (activityCtx) {
+        new Chart(activityCtx, {
+          type: 'bar',
+          data: {
+            labels: <%= raw @dates.to_json %>,
+            datasets: [{
+              label: '인증 횟수',
+              data: <%= raw @activity_values.to_json %>,
+              backgroundColor: '#10B981',
+              borderRadius: 6
+            }]
+          },
+          options: chartOptions
+        });
+      }
+    });
+  </script>
+
   <!-- Recent Activity -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Recent Users -->

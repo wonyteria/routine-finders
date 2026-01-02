@@ -15,6 +15,23 @@ module Admin
 
       @recent_users = User.order(created_at: :desc).limit(5)
       @recent_challenges = Challenge.order(created_at: :desc).limit(5)
+
+      # Chart Data: User Registration Trend (Last 14 days)
+      @user_reg_data = User.where(created_at: 14.days.ago..Time.current)
+                           .group("DATE(created_at)")
+                           .count
+                           .sort.to_h
+
+      # Chart Data: Activity Trend (Verification Logs, Last 14 days)
+      @activity_data = VerificationLog.where(created_at: 14.days.ago..Time.current)
+                                      .group("DATE(created_at)")
+                                      .count
+                                      .sort.to_h
+
+      # Fill missing dates for smooth charts
+      @dates = (13.days.ago.to_date..Date.current).map { |d| d.to_s }
+      @user_reg_values = @dates.map { |d| @user_reg_data[d] || 0 }
+      @activity_values = @dates.map { |d| @activity_data[d] || 0 }
     end
   end
 end
