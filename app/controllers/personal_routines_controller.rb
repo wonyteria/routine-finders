@@ -7,7 +7,6 @@ class PersonalRoutinesController < ApplicationController
     @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
     @monthly_completions = current_user.personal_routines.joins(:completions)
                                        .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
-                                       .select("personal_routines.id, personal_routine_completions.completed_on")
 
     # 루틴 클럽 (유료)
     @routine_clubs = RoutineClub.recruiting_clubs.includes(:host, :members).order(created_at: :desc).limit(6)

@@ -1,83 +1,121 @@
 <div class="space-y-12">
   
-  <!-- Hero Section: 환경의 힘 -->
-  <section class="relative overflow-hidden bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 rounded-[48px] p-12 text-white shadow-2xl">
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
+  <!-- Hero Section: 환경의 힘 (Premium Design) -->
+  <section class="relative overflow-hidden bg-slate-900 rounded-[48px] p-12 text-white shadow-2xl group">
+    <!-- Dynamic Background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-purple-600/40 to-pink-600/40 opacity-50 z-0"></div>
+    <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+    <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-purple-500/20 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
     
     <div class="relative z-10 max-w-4xl">
-      <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
-        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-        <span class="text-sm font-black">루틴 파인더스만의 프리미엄 기능</span>
+      <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-8 border border-white/10">
+        <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(251,191,36,0.5)]"></span>
+        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-100">Premium Routine Club</span>
       </div>
       
-      <h2 class="text-4xl md:text-5xl font-black mb-4 leading-tight">
-        혼자서는 어려웠던 습관,<br/>
-        <span class="text-yellow-300">환경의 힘</span>으로 만드세요
+      <h2 class="text-4xl md:text-6xl font-black mb-6 leading-[1.1] tracking-tight">
+        압도적 성장을 만드는<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400">환경의 힘</span>
       </h2>
       
-      <p class="text-xl text-white/90 font-bold mb-8 leading-relaxed">
-        규칙 · 가시성 · 책임감이 만드는 강력한 루틴 환경.<br/>
-        최소 3개월, 함께하는 사람들과 진짜 변화를 경험하세요.
+      <p class="text-lg md:text-xl text-slate-300 font-medium mb-10 leading-relaxed max-w-2xl">
+        단순한 의지를 넘어 시스템으로 루틴을 정착시키세요.<br/>
+        검증된 규칙과 동료들이 당신의 한계를 넓혀줍니다.
       </p>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
-          <div class="text-3xl mb-3">⚖️</div>
-          <h3 class="font-black text-lg mb-2">명확한 규칙</h3>
-          <p class="text-sm text-white/80 font-medium">출석, 인증, 패널티까지 투명한 시스템</p>
-        </div>
-        
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
-          <div class="text-3xl mb-3">👥</div>
-          <h3 class="font-black text-lg mb-2">함께하는 동료</h3>
-          <p class="text-sm text-white/80 font-medium">서로 응원하고 자극받는 커뮤니티</p>
-        </div>
-        
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
-          <div class="text-3xl mb-3">📊</div>
-          <h3 class="font-black text-lg mb-2">실시간 리포트</h3>
-          <p class="text-sm text-white/80 font-medium">내 성장이 한눈에 보이는 통계</p>
+      <div class="flex flex-wrap gap-4">
+        <%= link_to "#available-clubs", class: "px-8 py-4 bg-white text-slate-900 rounded-2xl font-black text-sm hover:bg-amber-300 transition-all shadow-xl shadow-indigo-900/40" do %>
+          참여 가능한 클럽 보기
+        <% end %>
+        <div class="flex -space-x-3">
+          <% 5.times do |i| %>
+            <img class="w-12 h-12 rounded-2xl border-4 border-slate-900 bg-slate-800" src="https://api.dicebear.com/7.x/avataaars/svg?seed=<%= i %>" alt="">
+          <% end %>
+          <div class="w-12 h-12 rounded-2xl border-4 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">
+            +<%= RoutineClubMember.count %>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- My Clubs -->
+  <!-- Club Quick Stats -->
   <% if @my_club_memberships.any? %>
+    <section class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <% 
+        total_fees = @my_club_memberships.sum(&:paid_amount)
+        avg_attendance = @my_club_memberships.average(:attendance_rate) || 0
+      %>
+      <div class="bg-indigo-50/50 backdrop-blur-sm p-6 rounded-[32px] border border-indigo-100 flex items-center justify-between">
+        <div>
+          <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Participating</p>
+          <h4 class="text-2xl font-black text-indigo-600"><%= @my_club_memberships.count %><span class="text-xs ml-1 opacity-50">Clubs</span></h4>
+        </div>
+        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm">👑</div>
+      </div>
+      <div class="bg-emerald-50/50 backdrop-blur-sm p-6 rounded-[32px] border border-emerald-100 flex items-center justify-between">
+        <div>
+          <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Avg. Attendance</p>
+          <h4 class="text-2xl font-black text-emerald-600"><%= avg_attendance.to_i %><span class="text-xs ml-1 opacity-50">%</span></h4>
+        </div>
+        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm">📈</div>
+      </div>
+      <div class="bg-slate-50/50 backdrop-blur-sm p-6 rounded-[32px] border border-slate-100 flex items-center justify-between col-span-2 lg:col-span-1">
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Deposit</p>
+          <h4 class="text-2xl font-black text-slate-900"><%= number_to_currency(total_fees, unit: "₩", precision: 0) %></h4>
+        </div>
+        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-sm">💰</div>
+      </div>
+    </section>
+
+    <!-- Active Memberships -->
     <section class="space-y-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-black text-slate-900">참여 중인 클럽</h2>
-        <span class="text-sm font-bold text-slate-400"><%= @my_club_memberships.count %>개 참여 중</span>
+      <div class="flex items-center justify-between px-2">
+        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Active Memberships</h3>
+        <div class="h-px flex-1 bg-slate-100 ml-4"></div>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <% @my_club_memberships.each do |membership| %>
           <% club = membership.routine_club %>
-          <%= link_to routine_club_path(club), class: "group" do %>
-            <div class="bg-white border-2 border-orange-200 rounded-3xl p-6 hover:shadow-2xl hover:border-orange-400 transition-all">
-              <div class="flex items-start justify-between mb-4">
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="text-xs font-black px-3 py-1 rounded-full bg-orange-100 text-orange-600"><%= club.category %></span>
-                    <% if membership.payment_status_pending? %>
-                      <span class="text-xs font-black px-3 py-1 rounded-full bg-amber-100 text-amber-600">입금 대기</span>
-                    <% elsif membership.status_warned? %>
-                      <span class="text-xs font-black px-3 py-1 rounded-full bg-red-100 text-red-600">경고</span>
-                    <% end %>
-                  </div>
-                  <h3 class="text-xl font-black text-slate-900 group-hover:text-orange-600 transition-colors"><%= club.title %></h3>
-                </div>
-                <div class="text-3xl group-hover:scale-110 transition-transform">🔥</div>
-              </div>
+          <%= link_to routine_club_path(club), class: "group relative" do %>
+            <div class="bg-white rounded-[40px] p-8 border border-slate-100 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-1 transition-all relative overflow-hidden">
+              <!-- Background Decor -->
+              <div class="absolute -right-12 -top-12 w-40 h-40 group-hover:scale-110 transition-transform opacity-[0.03] text-[120px] pointer-events-none">🎯</div>
               
-              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-                <div>
-                  <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">출석률</p>
-                  <p class="text-2xl font-black text-emerald-500"><%= membership.attendance_rate.to_i %>%</p>
+              <div class="relative z-10 space-y-6">
+                <div class="flex justify-between items-start">
+                  <div class="space-y-1">
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[9px] font-black uppercase tracking-wider"><%= club.category %></span>
+                    <h4 class="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight"><%= club.title %></h4>
+                  </div>
+                  <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl transition-transform group-hover:scale-110">🔥</div>
                 </div>
-                <div>
-                  <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">멤버</p>
-                  <p class="text-2xl font-black text-indigo-500"><%= club.current_members %>명</p>
+
+                <div class="pt-6 border-t border-slate-50 grid grid-cols-2 gap-8">
+                  <div class="space-y-1">
+                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Attendance</p>
+                    <div class="flex items-baseline gap-1">
+                      <span class="text-3xl font-black text-emerald-500 tracking-tighter"><%= membership.attendance_rate.to_i %></span>
+                      <span class="text-xs font-bold text-slate-300">%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-50 rounded-full overflow-hidden mt-2">
+                       <div class="h-full bg-emerald-500 rounded-full" style="width: <%= membership.attendance_rate %>%"></div>
+                    </div>
+                  </div>
+                  <div class="space-y-1">
+                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Members</p>
+                    <div class="flex items-baseline gap-1">
+                      <span class="text-3xl font-black text-slate-900 tracking-tighter"><%= club.current_members %></span>
+                      <span class="text-xs font-bold text-slate-300">/ <%= club.max_members %></span>
+                    </div>
+                    <div class="flex -space-x-2 mt-2">
+                      <% [1,2,3].sample.times do |i| %>
+                         <div class="w-5 h-5 rounded-full border border-white bg-slate-100"></div>
+                      <% end %>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -87,86 +125,63 @@
     </section>
   <% end %>
 
-  <!-- Pending Payments Alert -->
-  <% if @pending_payments.any? %>
-    <section class="bg-amber-50 border-2 border-amber-200 rounded-3xl p-8">
-      <div class="flex items-start gap-4">
-        <div class="text-4xl">⏳</div>
-        <div class="flex-1">
-          <h3 class="text-xl font-black text-amber-900 mb-2">입금 확인 대기 중</h3>
-          <p class="text-amber-700 font-bold mb-4">
-            <%= @pending_payments.count %>개 클럽의 입금 확인을 기다리고 있습니다. 
-            호스트가 확인하면 참여가 승인됩니다.
-          </p>
-          <div class="space-y-2">
-            <% @pending_payments.each do |membership| %>
-              <div class="bg-white rounded-2xl p-4 flex items-center justify-between">
-                <div>
-                  <p class="font-black text-slate-900"><%= membership.routine_club.title %></p>
-                  <p class="text-sm text-slate-500 font-medium">입금액: <%= number_to_currency(membership.paid_amount, unit: "₩", precision: 0) %></p>
-                </div>
-                <%= link_to "상세보기", routine_club_path(membership.routine_club), class: "px-4 py-2 bg-amber-500 text-white rounded-xl font-black text-sm hover:bg-amber-600 transition-colors" %>
-              </div>
-            <% end %>
-          </div>
-        </div>
+  <!-- Available Clubs (Premium Grid) -->
+  <section id="available-clubs" class="space-y-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-2">
+      <div class="space-y-2">
+         <h4 class="text-sm font-black text-indigo-500 uppercase tracking-[0.2em]">Discovery</h4>
+         <h2 class="text-3xl font-black text-slate-900 tracking-tight">모집 중인 루틴 클럽</h2>
       </div>
-    </section>
-  <% end %>
-
-  <!-- Available Clubs -->
-  <section class="space-y-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-2xl font-black text-slate-900">모집 중인 루틴 클럽</h2>
-        <p class="text-slate-500 font-medium mt-1">지금 시작할 수 있는 클럽을 찾아보세요</p>
-      </div>
-      <%= link_to "전체보기", routine_clubs_path, class: "px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-700 transition-colors" %>
+      <%= link_to routine_clubs_path, class: "group flex items-center gap-3 px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-xs hover:bg-indigo-600 transition-all shadow-lg" do %>
+        전체 리스트
+        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      <% end %>
     </div>
 
     <% if @routine_clubs.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <% @routine_clubs.each do |club| %>
           <%= link_to routine_club_path(club), class: "group" do %>
-            <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden hover:shadow-2xl hover:border-orange-300 transition-all">
-              <div class="aspect-video bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
+            <div class="bg-white rounded-[40px] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:border-indigo-100 transition-all flex flex-col h-full ring-1 ring-slate-100/50">
+              <div class="aspect-[16/10] bg-slate-900 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-80"></div>
+                <!-- Abstract Pattern -->
+                <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_30%,#ffffff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+                
+                <div class="absolute top-5 left-5">
+                   <span class="px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/20">
+                     <%= club.category %>
+                   </span>
+                </div>
+                
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="text-6xl opacity-50">🎯</div>
+                   <span class="text-6xl transform group-hover:scale-125 transition-transform duration-700">🎯</span>
                 </div>
-                <div class="absolute top-4 left-4">
-                  <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-orange-600">
-                    <%= club.category %>
-                  </span>
-                </div>
-                <div class="absolute bottom-4 right-4">
-                  <span class="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-white">
-                    <%= club.current_members %> / <%= club.max_members %>명
-                  </span>
+
+                <div class="absolute bottom-5 right-5 px-3 py-1 bg-black/30 backdrop-blur-md rounded-lg border border-white/10">
+                   <p class="text-[10px] font-black text-white/80 tracking-tight"><%= club.current_members %> / <%= club.max_members %> 명</p>
                 </div>
               </div>
               
-              <div class="p-6 space-y-4">
-                <div>
-                  <h3 class="text-lg font-black text-slate-900 group-hover:text-orange-600 transition-colors mb-2">
+              <div class="p-8 space-y-6 flex-1 flex flex-col">
+                <div class="space-y-3 flex-1">
+                  <h3 class="text-xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug">
                     <%= club.title %>
                   </h3>
-                  <p class="text-sm text-slate-600 font-medium line-clamp-2">
+                  <p class="text-sm text-slate-500 font-medium line-clamp-2 leading-relaxed">
                     <%= club.description %>
                   </p>
                 </div>
                 
-                <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                  <div>
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">월 요금</p>
-                    <p class="text-xl font-black text-slate-900">
-                      <%= number_to_currency(club.monthly_fee, unit: "₩", precision: 0) %>
+                <div class="pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <div class="space-y-1">
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">Subscription</p>
+                    <p class="text-lg font-black text-slate-900">
+                      <%= number_to_currency(club.monthly_fee, unit: "₩", precision: 0) %><span class="text-xs font-bold text-slate-400 ml-1">/ mo</span>
                     </p>
                   </div>
-                  <div class="text-right">
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">기간</p>
-                    <p class="text-sm font-black text-slate-900">
-                      <%= club.min_duration_months %>개월
-                    </p>
+                  <div class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-black text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">
+                    Join Now
                   </div>
                 </div>
               </div>
@@ -175,35 +190,38 @@
         <% end %>
       </div>
     <% else %>
-      <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-20 text-center">
-        <div class="text-6xl mb-4 opacity-30">🎯</div>
-        <h3 class="text-xl font-black text-slate-400 mb-2">모집 중인 클럽이 없습니다</h3>
-        <p class="text-slate-400 font-medium">곧 새로운 클럽이 열릴 예정입니다</p>
+      <div class="bg-indigo-50/20 border-2 border-dashed border-indigo-100 rounded-[40px] p-24 text-center space-y-4">
+        <div class="text-6xl opacity-20">🧭</div>
+        <div class="space-y-1">
+          <p class="text-slate-900 font-black text-xl">새로운 클럽을 기다려주세요</p>
+          <p class="text-slate-400 font-medium">현재 모집 중인 새로운 프리미엄 클럽이 없습니다.</p>
+        </div>
       </div>
     <% end %>
   </section>
 
-  <!-- CTA: Create Your Club -->
-  <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[48px] p-12 text-white shadow-2xl">
-    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
+  <!-- CTA: Create Your Club (Ultra Premium) -->
+  <section class="relative overflow-hidden bg-indigo-600 rounded-[56px] p-16 text-white shadow-2xl shadow-indigo-200">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-0"></div>
+    <!-- Grain Overlay -->
+    <div class="absolute inset-0 opacity-[0.15] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+    <div class="absolute -right-20 -bottom-20 w-[400px] h-[400px] bg-white/10 rounded-full blur-[120px] pointer-events-none"></div>
     
-    <div class="relative z-10 max-w-3xl mx-auto text-center">
-      <div class="text-6xl mb-6">🚀</div>
-      <h2 class="text-3xl md:text-4xl font-black mb-4">
-        나만의 루틴 클럽을 만들어보세요
-      </h2>
-      <p class="text-xl text-white/90 font-bold mb-8">
-        호스트가 되어 함께 성장할 멤버들을 모집하고,<br/>
-        체계적인 환경에서 루틴을 이끌어가세요.
-      </p>
-      <%= link_to new_routine_club_path, class: "inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-lg hover:bg-yellow-300 hover:text-indigo-700 transition-all shadow-2xl" do %>
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-        </svg>
-        클럽 개설하기
+    <div class="relative z-10 max-w-4xl mx-auto text-center space-y-8">
+      <div class="w-20 h-20 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-2xl border border-white/20">🚀</div>
+      <div class="space-y-4 text-center">
+        <h2 class="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+          직접 호스트가 되어<br/><span class="text-amber-300">루틴을 주도해보세요</span>
+        </h2>
+        <p class="text-lg md:text-xl text-indigo-100 font-medium leading-relaxed max-w-2xl mx-auto">
+          나만의 노하우로 멤버들의 성장을 돕고 매달 고정된 수익과 강력한 영향력을 확보하세요.
+        </p>
+      </div>
+      <%= link_to new_routine_club_path, class: "inline-block px-12 py-5 bg-white text-indigo-600 rounded-[28px] font-black text-lg hover:bg-yellow-300 hover:text-indigo-900 transition-all shadow-2xl hover:scale-105 active:scale-95" do %>
+        클럽 시작하기
       <% end %>
     </div>
   </section>
 
 </div>
+
