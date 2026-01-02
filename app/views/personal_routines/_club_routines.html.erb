@@ -121,20 +121,20 @@
                <% todays_routines = @personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } %>
                <% if todays_routines.any? %>
                  <% todays_routines.each do |routine| %>
-                   <%= button_to toggle_personal_routine_path(routine), method: :post, class: "flex items-center justify-between p-6 rounded-3xl border-2 transition-all hover:scale-[1.02] #{routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}" do %>
-                      <div class="flex items-center gap-4">
-                        <span class="text-2xl transform group-hover:scale-125 transition-transform"><%= routine.icon %></span>
-                        <div class="text-left">
-                          <p class="text-[15px] font-black text-slate-900 <%= 'line-through text-slate-400' if routine.completed_today? %>"><%= routine.title %></p>
-                          <p class="text-[10px] font-bold text-slate-400"><%= routine.category %></p>
+                   <%= button_to toggle_personal_routine_path(routine), method: :post, class: "flex items-center justify-between p-6 rounded-3xl border-2 transition-all hover:scale-[1.02] w-full #{routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}" do %>
+                      <div class="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
+                        <span class="text-2xl transform group-hover:scale-125 transition-transform flex-shrink-0"><%= routine.icon %></span>
+                        <div class="text-left min-w-0 flex-1">
+                          <p class="text-[15px] font-black text-slate-900 truncate <%= 'line-through text-slate-400' if routine.completed_today? %>"><%= routine.title %></p>
+                          <p class="text-[10px] font-bold text-slate-400 truncate"><%= routine.category %></p>
                         </div>
                       </div>
                       <% if routine.completed_today? %>
-                        <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white">
+                        <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white flex-shrink-0 ml-4">
                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                         </div>
                       <% else %>
-                        <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all">
+                        <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all flex-shrink-0 ml-4">
                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                         </div>
                       <% end %>

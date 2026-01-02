@@ -34,33 +34,63 @@
     </header>
 
     <!-- Simple Tabs (No Stimulus initially for stability) -->
-    <div class="mb-8" data-controller="tabs" data-tabs-default-tab-value="<%= params[:tab] || 'free' %>" data-tabs-active-class="bg-indigo-600 text-white shadow-lg" data-tabs-inactive-class="text-slate-400 hover:text-slate-600">
+    <!-- Simple Tabs (Vanilla JS) -->
+    <div class="mb-8">
       <div class="bg-white border border-slate-200 rounded-3xl p-2 inline-flex gap-2 shadow-sm">
         <button type="button"
-                data-action="tabs#change"
-                data-tabs-target="tab"
-                data-id="free"
+                onclick="switchTab('free')"
+                id="tab-btn-free"
                 class="px-8 py-3 rounded-2xl font-black text-sm transition-all <%= (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600' %>">
           무료 루틴
         </button>
         <button type="button"
-                data-action="tabs#change"
-                data-tabs-target="tab"
-                data-id="club"
+                onclick="switchTab('club')"
+                id="tab-btn-club"
                 class="px-8 py-3 rounded-2xl font-black text-sm transition-all <%= params[:tab] == 'club' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600' %>">
           루파 클럽
         </button>
       </div>
 
       <div class="mt-8">
-        <div data-tabs-target="panel" data-id="free" class="<%= (params[:tab].blank? || params[:tab] == 'free') ? '' : 'hidden' %>">
+        <div id="panel-free" class="<%= (params[:tab].blank? || params[:tab] == 'free') ? '' : 'hidden' %>">
           <%= render 'free_routines' %>
         </div>
-        <div data-tabs-target="panel" data-id="club" class="<%= params[:tab] == 'club' ? '' : 'hidden' %>">
+        <div id="panel-club" class="<%= params[:tab] == 'club' ? '' : 'hidden' %>">
           <%= render 'club_routines' %>
         </div>
       </div>
     </div>
+
+    <script>
+      function switchTab(tabId) {
+        // Hide all panels
+        document.getElementById('panel-free').classList.add('hidden');
+        document.getElementById('panel-club').classList.add('hidden');
+
+        // Show selected panel
+        document.getElementById('panel-' + tabId).classList.remove('hidden');
+
+        // Reset all buttons
+        const btnClasses = ['bg-indigo-600', 'text-white', 'shadow-lg'];
+        const inactiveClasses = ['text-slate-400', 'hover:text-slate-600'];
+
+        ['free', 'club'].forEach(id => {
+          const btn = document.getElementById('tab-btn-' + id);
+          btn.classList.remove(...btnClasses);
+          btn.classList.add(...inactiveClasses);
+        });
+
+        // Activate selected button
+        const activeBtn = document.getElementById('tab-btn-' + tabId);
+        activeBtn.classList.remove(...inactiveClasses);
+        activeBtn.classList.add(...btnClasses);
+        
+        // Update URL without reloading (optional, helps with refreshing)
+        const url = new URL(window.location);
+        url.searchParams.set('tab', tabId);
+        window.history.pushState({}, '', url);
+      }
+    </script>
 
   </div>
 </div>
