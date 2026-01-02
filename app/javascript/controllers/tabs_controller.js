@@ -19,7 +19,11 @@ export default class extends Controller {
   showTab(tabName) {
     this.tabTargets.forEach(tab => {
       const isActive = tab.dataset.id === tabName
-      tab.dataset.active = isActive
+      if (isActive) {
+        tab.dataset.active = ""
+      } else {
+        delete tab.dataset.active
+      }
       if (isActive) {
         if (this.hasActiveClasses) tab.classList.add(...this.activeClasses)
         if (this.hasInactiveClasses) tab.classList.remove(...this.inactiveClasses)

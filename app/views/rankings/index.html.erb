@@ -11,38 +11,39 @@
   </div>
 
   <!-- Category Selection (Sub-Navigation) -->
-  <div data-controller="tabs" data-tabs-default-value="<%= logged_in? ? 'my' : 'weekly' %>">
+  <div data-controller="tabs" data-tabs-default-value="<%= params[:tab] || (logged_in? ? 'my' : 'weekly') %>">
     <div class="w-full space-y-12">
       <!-- Scrollable Tab Container -->
+      <% current_tab = params[:tab] || (logged_in? ? 'my' : 'weekly') %>
       <div class="flex justify-start md:justify-center overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
         <div class="bg-white p-1.5 rounded-[24px] inline-flex shadow-xl shadow-indigo-100 border border-slate-100 whitespace-nowrap">
           <% if logged_in? %>
-            <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="my"
+            <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="my" <%= 'data-active' if current_tab == 'my' %>
                     class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
               내 업적
             </button>
           <% end %>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="weekly"
+          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="weekly" <%= 'data-active' if current_tab == 'weekly' %>
                   class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
             종합 랭킹
           </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="challenge"
+          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="challenge" <%= 'data-active' if current_tab == 'challenge' %>
                   class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
             챌린지
           </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="routine"
+          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="routine" <%= 'data-active' if current_tab == 'routine' %>
                   class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
             루틴
           </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="gathering"
+          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="gathering" <%= 'data-active' if current_tab == 'gathering' %>
                   class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
             만남
           </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="host"
+          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="host" <%= 'data-active' if current_tab == 'host' %>
                   class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
             호스트
           </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="badges"
+          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="badges" <%= 'data-active' if current_tab == 'badges' %>
                   class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
             배지 마스터
           </button>
@@ -51,7 +52,7 @@
 
       <!-- Tab Content: My Achievements -->
       <% if logged_in? %>
-        <div data-tabs-target="panel" data-id="my" class="<%= 'hidden' unless logged_in? %> space-y-16">
+        <div data-tabs-target="panel" data-id="my" class="<%= 'hidden' unless (params[:tab].nil? || params[:tab] == 'my') %> space-y-16">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div class="bg-white rounded-[32px] p-6 border border-slate-100 shadow-xl shadow-indigo-50/50 flex flex-col items-center text-center">
               <span class="text-3xl mb-3">🏅</span>
@@ -131,39 +132,33 @@
       <% end %>
 
       <!-- Tab Content: 종합 랭킹 -->
-      <div data-tabs-target="panel" data-id="weekly" class="<%= 'hidden' if logged_in? %> space-y-8">
-        <%= render partial: 'ranking_podium', locals: { rankings: @weekly_rankings.to_a, title: "TOTAL MASTER", subtitle: "모든 활동을 아우르는 종합 랭킹" } %>
-        <%= render partial: 'ranking_list', locals: { rankings: @weekly_rankings.to_a[3..] || [], metric_label: "인증" } %>
+      <div data-tabs-target="panel" data-id="weekly" class="<%= params[:tab] == 'weekly' ? '' : 'hidden' %> space-y-8">
+        <%= render partial: 'ranking_table', locals: { rankings: @weekly_rankings.to_a, rank_type: 'weekly', metric_key: :weekly_count, metric_label: "Weekly Verified", metric_unit: "Count" } %>
       </div>
 
       <!-- Tab Content: 챌린지 랭킹 -->
       <div data-tabs-target="panel" data-id="challenge" class="hidden space-y-8">
-        <%= render partial: 'ranking_podium', locals: { rankings: @challenge_rankings.to_a, title: "CHALLENGE KING", subtitle: "공식 챌린지의 정점" } %>
-        <%= render partial: 'ranking_list', locals: { rankings: @challenge_rankings.to_a[3..] || [], metric_label: "인증", metric_key: :activity_count } %>
+        <%= render partial: 'ranking_table', locals: { rankings: @challenge_rankings.to_a, rank_type: 'challenge', metric_key: :challenge_score, metric_label: "Challenge Score", metric_unit: "Points" } %>
       </div>
 
       <!-- Tab Content: 루틴 랭킹 -->
       <div data-tabs-target="panel" data-id="routine" class="hidden space-y-8">
-        <%= render partial: 'ranking_podium', locals: { rankings: @routine_rankings.to_a, title: "ROUTINE GOD", subtitle: "꾸준함의 끝판왕" } %>
-        <%= render partial: 'ranking_list', locals: { rankings: @routine_rankings.to_a[3..] || [], metric_label: "누적 완료", metric_key: :total_completions } %>
+        <%= render partial: 'ranking_table', locals: { rankings: @routine_rankings.to_a, rank_type: 'routine', metric_key: :total_completions, metric_label: "Routine Completed", metric_unit: "Total" } %>
       </div>
 
       <!-- Tab Content: 만남 랭킹 -->
       <div data-tabs-target="panel" data-id="gathering" class="hidden space-y-8">
-        <%= render partial: 'ranking_podium', locals: { rankings: @gathering_rankings.to_a, title: "MEETING STAR", subtitle: "함께해서 더 즐거운 오프라인 만남" } %>
-        <%= render partial: 'ranking_list', locals: { rankings: @gathering_rankings.to_a[3..] || [], metric_label: "참여", metric_key: :activity_count } %>
+        <%= render partial: 'ranking_table', locals: { rankings: @gathering_rankings.to_a, rank_type: 'gathering', metric_key: :activity_count, metric_label: "Meeting Attended", metric_unit: "Visits" } %>
       </div>
 
       <!-- Tab Content: 호스트 랭킹 -->
       <div data-tabs-target="panel" data-id="host" class="hidden space-y-8">
-        <%= render partial: 'ranking_podium', locals: { rankings: @host_rankings.to_a, title: "TOP HOST", subtitle: "최고의 커뮤니티 리더" } %>
-        <%= render partial: 'ranking_list', locals: { rankings: @host_rankings.to_a[3..] || [], metric_label: "참여 유도", metric_key: :total_hosted_participants } %>
+        <%= render partial: 'ranking_table', locals: { rankings: @host_rankings.to_a, rank_type: 'host', metric_key: :host_score, metric_label: "Host Score", metric_unit: "Points" } %>
       </div>
 
       <!-- Tab Content: 배지 마스터 -->
-      <div data-tabs-target="panel" data-id="badges" class="hidden space-y-8">
-        <%= render partial: 'ranking_podium', locals: { rankings: @badge_rankings.to_a, title: "BADGE COLLECTOR", subtitle: "가장 많은 업적을 달성한 배지 컬렉터" } %>
-        <%= render partial: 'ranking_list', locals: { rankings: @badge_rankings.to_a[3..] || [], metric_label: "배지", metric_key: :badge_count } %>
+      <div data-tabs-target="panel" data-id="badges" class="<%= params[:tab] == 'badges' ? '' : 'hidden' %> space-y-8">
+        <%= render partial: 'ranking_table', locals: { rankings: @badge_rankings.to_a, rank_type: 'badges', metric_key: :badge_count, metric_label: "Badges Earned", metric_unit: "Earned" } %>
       </div>
     </div>
   </div>

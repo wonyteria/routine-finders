@@ -52,27 +52,39 @@ class RankingsController < ApplicationController
   end
 
   def category_ranking_data(filters)
-    User.joins(participations: :challenge)
-        .where(challenges: filters)
-        .group("users.id")
-        .select("users.*, COUNT(participants.id) as activity_count, AVG(participants.completion_rate) as avg_rate")
-        .order(Arel.sql("COUNT(participants.id) DESC"))
-        .limit(20)
+    if filters[:mode] == :online
+      User.joins(participations: :challenge)
+          .where(challenges: filters)
+          .group("users.id")
+          .select("users.*, (COUNT(participants.id) * 20 + COALESCE(AVG(participants.completion_rate), 0)) as challenge_score, COUNT(participants.id) as join_count, AVG(participants.completion_rate) as avg_rate")
+          .order(Arel.sql("challenge_score DESC"))
+          .limit(20)
+    else
+      User.joins(participations: :challenge)
+          .where(challenges: filters)
+          .group("users.id")
+          .select("users.*, COUNT(participants.id) as activity_count, MAX(participants.joined_at) as last_joined_at")
+          .order(Arel.sql("activity_count DESC"))
+          .limit(20)
+    end
   end
 
   def routine_ranking_data
     User.joins(:personal_routines)
         .group("users.id")
-        .select("users.*, SUM(personal_routines.total_completions) as total_completions")
-        .order(Arel.sql("SUM(personal_routines.total_completions) DESC"))
+        .select("users.*, SUM(personal_routines.total_completions) as total_completions, SUM(personal_routines.current_streak) as total_streak, COUNT(personal_routines.id) as routine_count")
+        .order(Arel.sql("total_completions DESC"))
         .limit(20)
   end
 
   def host_ranking_data
     User.joins(:hosted_challenges)
         .group("users.id")
-        .select("users.*, SUM(challenges.current_participants) as total_hosted_participants, COUNT(challenges.id) as hosted_count")
-        .order(Arel.sql("SUM(challenges.current_participants) DESC"))
+        .select("users.*,
+                 SUM(challenges.current_participants) as total_hosted_participants,
+                 COUNT(challenges.id) as hosted_count,
+                 (COALESCE(SUM(challenges.current_participants), 0) * 1.0 + COALESCE(AVG(challenges.completion_rate), 0) * 5.0 + COUNT(challenges.id) * 10) as host_score")
+        .order(Arel.sql("host_score DESC"))
         .limit(20)
   end
 

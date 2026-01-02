@@ -1,0 +1,150 @@
+<div class="bg-white rounded-[60px] border border-slate-100 shadow-2xl overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="border-b border-slate-50">
+          <th class="px-12 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest">Rank</th>
+          <th class="px-6 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest">Finder</th>
+          <th class="px-6 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center"><%= metric_label.presence || "Score" %></th>
+          <th class="px-6 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
+            <%= case rank_type
+                when 'badges' then "Collection"
+                when 'challenge' then "Performance"
+                when 'routine' then "Consistency"
+                when 'gathering' then "Last Active"
+                when 'host' then "Impact"
+                else "Info" end %>
+          </th>
+          <th class="px-12 py-10 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% max_val = rank_type == 'badges' ? Badge.count : (rankings.first&.public_send(metric_key) || 1).to_f %>
+        <% max_val = 1.0 if max_val.zero? %>
+        
+        <% rankings.each_with_index do |user, index| %>
+          <tr class="group hover:bg-slate-50/50 transition-all border-b border-slate-50/50 last:border-0">
+            <td class="px-12 py-8">
+              <div class="flex items-center gap-4">
+                <span class="text-2xl font-[900] <%= index < 3 ? 'text-indigo-600' : 'text-slate-300' %>">
+                  <%= (index + 1).to_s.rjust(2, '0') %>
+                </span>
+                <% if index < 3 %>
+                  <span class="text-xl shrink-0"><%= index == 0 ? "🥇" : (index == 1 ? "🥈" : "🥉") %></span>
+                <% end %>
+              </div>
+            </td>
+            <td class="px-6 py-8">
+              <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-[20px] bg-slate-100 p-0.5 shadow-sm border border-slate-200 shrink-0">
+                  <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-[18px]" alt="">
+                </div>
+                <div>
+                  <h4 class="text-lg font-black text-slate-900 leading-tight"><%= user.nickname %></h4>
+                  <p class="text-xs font-bold text-slate-400">Joined <%= user.created_at.strftime("%Y.%m") %></p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-8">
+              <div class="flex flex-col items-center">
+                <% val = user.public_send(metric_key) %>
+                <span class="text-xl font-black text-slate-900 group-hover:scale-110 transition-transform"><%= number_with_delimiter(val.is_a?(Float) ? val.round(0) : val) %></span>
+                <p class="text-[9px] font-black text-slate-400 uppercase mt-1 tracking-tighter text-center"><%= metric_unit.presence || "Points" %></p>
+              </div>
+            </td>
+            <td class="px-6 py-8">
+              <div class="flex justify-center items-center">
+                <% case rank_type %>
+                <% when 'badges' %>
+                  <div class="flex -space-x-2">
+                    <% user.badges.limit(5).each do |badge| %>
+                      <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center text-sm" title="<%= badge.name %>">
+                        <%= badge.icon_path %>
+                      </div>
+                    <% end %>
+                    <% badge_count = user.badges.count %>
+                    <% if badge_count > 5 %>
+                      <div class="w-8 h-8 rounded-lg bg-slate-900 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+                        +<%= badge_count - 5 %>
+                      </div>
+                    <% end %>
+                  </div>
+
+                <% when 'challenge' %>
+                  <div class="flex items-center gap-4">
+                    <div class="text-right">
+                      <p class="text-xs font-black text-slate-900"><%= number_to_percentage(user.avg_rate || 0, precision: 0) %></p>
+                      <p class="text-[9px] text-slate-400 font-bold uppercase">Avg Rate</p>
+                    </div>
+                    <div class="h-6 w-px bg-slate-200"></div>
+                    <div>
+                       <p class="text-xs font-black text-indigo-600"><%= user.join_count %> <span class="text-[9px] text-indigo-400">Ch</span></p>
+                       <p class="text-[9px] text-slate-400 font-bold uppercase">Joined</p>
+                    </div>
+                  </div>
+
+                <% when 'routine' %>
+                  <div class="flex items-center gap-2 text-orange-500 bg-orange-50 px-3 py-1.5 rounded-xl border border-orange-100">
+                    <span class="animate-pulse">🔥</span>
+                    <div>
+                      <span class="text-sm font-black"><%= number_with_delimiter(user.total_streak || 0) %></span>
+                      <span class="text-[9px] opacity-70 font-bold ml-0.5">streak</span>
+                    </div>
+                  </div>
+
+                <% when 'gathering' %>
+                   <div class="text-center">
+                     <p class="text-xs font-bold text-slate-500"><%= user.last_joined_at&.to_date&.strftime("%Y.%m.%d") || "-" %></p>
+                     <p class="text-[9px] text-slate-300 font-bold uppercase mt-0.5">Last Joined</p>
+                   </div>
+
+                <% when 'host' %>
+                   <div class="flex items-center gap-3">
+                      <div class="text-center">
+                        <p class="text-xs font-black text-slate-900"><%= number_with_delimiter(user.total_hosted_participants || 0) %></p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">Participants</p>
+                      </div>
+                      <div class="h-6 w-px bg-slate-200"></div>
+                      <div class="text-center">
+                        <p class="text-xs font-black text-indigo-600"><%= user.hosted_count %></p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">Hosted</p>
+                      </div>
+                   </div>
+                
+                <% else %>
+                   <!-- Weekly / Default -->
+                   <div class="flex items-center gap-2">
+                     <span class="text-xs font-bold text-slate-400">
+                        <%= user.created_at.strftime("%Y.%m.%d") %>
+                     </span>
+                   </div>
+                <% end %>
+              </div>
+            </td>
+            <td class="px-12 py-8 text-right">
+              <% percentage = (val.to_f / max_val * 100).round %>
+              <div class="inline-flex flex-col items-end gap-1.5">
+                <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">
+                  <%= percentage %>% <%= rank_type == 'badges' ? "Mastered" : "Relative" %>
+                </span>
+                <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-indigo-500 rounded-full" style="width: <%= percentage %>%; min-width: 5%;"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if rankings.empty? %>
+  <div class="py-32 text-center space-y-6 bg-slate-50 rounded-[60px] border-2 border-dashed border-slate-200">
+    <p class="text-6xl">🏜️</p>
+    <div class="space-y-2">
+      <h3 class="text-2xl font-black text-slate-900">아직 등록된 랭커가 없습니다</h3>
+      <p class="text-slate-400 font-bold text-lg">첫 번째 배지를 획득하고 주인공이 되어보세요!</p>
+    </div>
+  </div>
+<% end %>
