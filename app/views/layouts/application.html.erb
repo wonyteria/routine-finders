@@ -86,79 +86,51 @@
     <% end %>
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-threads-border">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center gap-8">
-            <%= link_to root_path, class: "flex items-center gap-2 cursor-pointer" do %>
-              <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg class="text-white w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" stroke-width="2"/>
-                  <path stroke-width="2" d="m9 12 2 2 4-4"/>
+        <div class="flex justify-between h-20">
+          <div class="flex items-center gap-10">
+            <%= link_to root_path, class: "flex items-center gap-3 group transition-all" do %>
+              <div class="w-12 h-12 bg-threads-black rounded-threads flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <svg class="text-white w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
                 </svg>
               </div>
-              <span class="font-black text-xl tracking-tight text-slate-900 hidden sm:block">Routine Finders</span>
+              <span class="font-black text-2xl tracking-tighter text-threads-black hidden sm:block">Routine Finders</span>
             <% end %>
             <div class="hidden lg:flex items-center gap-1">
-              <%= link_to root_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(root_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 12 2-2m0 0 7-7 7 7M5 10v10a1 1 0 0 0 1 1h3m10-11 2 2m-2-2v10a1 1 0 0 1-1 1h-3m-6 0a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1m-6 0h6"/></svg>
-                  홈
-                </div>
+              <%= link_to root_path, class: "px-5 py-2.5 rounded-threads text-sm font-bold transition-all #{current_page?(root_path) ? 'text-threads-black bg-slate-50' : 'text-slate-400 hover:text-threads-black hover:bg-slate-50'}" do %>
+                홈
               <% end %>
-              <%= link_to challenges_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(challenges_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-width="2" d="m9 12 2 2 4-4"/></svg>
-                  챌린지
-                </div>
+              <%= link_to personal_routines_path, class: "px-5 py-2.5 rounded-threads text-sm font-bold transition-all #{current_page?(personal_routines_path) ? 'text-threads-black bg-slate-50' : 'text-slate-400 hover:text-threads-black hover:bg-slate-50'}" do %>
+                루틴
               <% end %>
-              <%= link_to rankings_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(rankings_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                  명예의 전당
-                </div>
+              <%= link_to challenges_path, class: "px-5 py-2.5 rounded-threads text-sm font-bold transition-all #{current_page?(challenges_path) ? 'text-threads-black bg-slate-50' : 'text-slate-400 hover:text-threads-black hover:bg-slate-50'}" do %>
+                챌린지
               <% end %>
-              <%= link_to gatherings_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(gatherings_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
-                  모임
-                </div>
+              <%= link_to gatherings_path, class: "px-5 py-2.5 rounded-threads text-sm font-bold transition-all #{current_page?(gatherings_path) ? 'text-threads-black bg-slate-50' : 'text-slate-400 hover:text-threads-black hover:bg-slate-50'}" do %>
+                모임
               <% end %>
-              <%= link_to personal_routines_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(personal_routines_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
-                <div class="flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                  루틴
-                </div>
-              <% end %>
-              <% if current_user %>
-                <%= link_to profile_path, class: "px-4 py-2 rounded-lg text-sm font-semibold transition-all #{current_page?(profile_path) ? 'text-indigo-600 bg-indigo-50' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}" do %>
-                  <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z"/></svg>
-                    마이페이지
-                  </div>
-                <% end %>
+              <%= link_to rankings_path, class: "px-5 py-2.5 rounded-threads text-sm font-bold transition-all #{current_page?(rankings_path) ? 'text-threads-black bg-slate-50' : 'text-slate-400 hover:text-threads-black hover:bg-slate-50'}" do %>
+                명예의 전당
               <% end %>
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-3">
             <% if current_user %>
-              <%= link_to notifications_path, class: "p-3 text-slate-400 hover:bg-slate-50 rounded-2xl relative transition-all" do %>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg>
+              <%= link_to notifications_path, class: "p-3 text-slate-400 hover:bg-slate-50 rounded-threads relative transition-all" do %>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg>
                 <% if current_user.unread_notifications_count > 0 %>
-                  <span class="absolute top-2 right-2 w-4 h-4 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center ring-2 ring-white"><%= current_user.unread_notifications_count %></span>
+                  <span class="absolute top-2.5 right-2.5 w-4 h-4 bg-threads-black text-white text-[8px] font-black rounded-full flex items-center justify-center ring-2 ring-white"><%= current_user.unread_notifications_count %></span>
                 <% end %>
               <% end %>
               <%= link_to profile_path, class: "flex items-center gap-3 pl-2 cursor-pointer group" do %>
-                <img src="<%= current_user.profile_image %>" alt="Profile" class="w-9 h-9 rounded-full ring-2 ring-indigo-50 object-cover group-hover:ring-indigo-200 transition-all">
+                <img src="<%= current_user.profile_image %>" alt="Profile" class="w-12 h-12 rounded-threads border border-threads-border object-cover group-hover:scale-105 transition-all">
               <% end %>
-              <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all", title: "로그아웃" do %>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-              <% end %>
+<%# Logout link removed %>
             <% else %>
               <button data-action="modal#open"
-                      class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-lg text-sm hover:bg-indigo-700 transition-all">
+                      class="px-8 py-3 bg-threads-black text-white rounded-threads font-black shadow-lg text-sm hover:scale-[1.02] active:scale-95 transition-all">
                 로그인
               </button>
             <% end %>

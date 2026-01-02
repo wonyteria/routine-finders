@@ -45,7 +45,7 @@ export default class extends Controller {
     }
 
     handleBackdropClick(e) {
-        this.finishAll(true) // 배경 클릭 시 로드맵으로 이동
+        this.finishAll(false) // 배경 클릭 시에는 이동 없이 닫기만
     }
 
     // 다음 배지 보기 (모달 내 전환)
@@ -53,6 +53,8 @@ export default class extends Controller {
         if (e) e.stopPropagation()
 
         const currentCard = this.containerTargets[this.currentIndex]
+        // 기존 클래스 제거 후 새로운 상태 클래스 추가
+        currentCard.classList.remove("opacity-100", "scale-100")
         currentCard.classList.add("opacity-0", "scale-95", "pointer-events-none")
 
         this.currentIndex++
@@ -65,7 +67,7 @@ export default class extends Controller {
                 this.fireConfetti()
             }, 200)
         } else {
-            this.finishAll(true)
+            this.finishAll(false) // 마지막 배지에서 '다음' 누르면 그냥 닫기
         }
     }
 
@@ -77,7 +79,7 @@ export default class extends Controller {
 
     close(e) {
         if (e) e.stopPropagation()
-        this.next(e)
+        this.finishAll(false)
     }
 
     finishAll(redirectToRoadmap = true) {
@@ -98,11 +100,9 @@ export default class extends Controller {
             },
             body: JSON.stringify({ badge_ids: badgeIds })
         }).then(() => {
-            // 성공 시 이동 (400, 500 에러여도 fetch는 여기로 옴, response.ok 체크 필요하지만 일단 넘어감)
             this.redirect(overlay, redirectToRoadmap)
         }).catch((error) => {
             console.error("Badge update failed:", error)
-            // 실패 시에도 이동
             this.redirect(overlay, redirectToRoadmap)
         })
     }
@@ -112,8 +112,6 @@ export default class extends Controller {
             overlay.remove()
             if (redirectToRoadmap) {
                 window.location.href = "/badge_roadmap"
-            } else {
-                window.location.reload()
             }
         }, 300)
     }

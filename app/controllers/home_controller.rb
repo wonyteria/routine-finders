@@ -10,6 +10,8 @@ class HomeController < ApplicationController
     @personal_routines = @current_user&.personal_routines || []
     @participations = @current_user&.participations&.includes(:challenge) || []
     @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []
+    @personal_routine_completions = @current_user ? PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.year.ago..Date.current) : []
+    @club_attendances = @current_user ? RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.year.ago..Date.current) : []
 
     # Top Badge Achievers for Home
     @top_achievers = User.joins(:user_badges)
@@ -54,6 +56,16 @@ class HomeController < ApplicationController
     @current_user = current_user
     @participations = @current_user&.participations&.includes(:challenge) || []
     @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []
+    @personal_routine_completions = @current_user ? PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.year.ago..Date.current) : []
+    @club_attendances = @current_user ? RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.year.ago..Date.current) : []
+
+    # 성장 투자 통계 (My Page와 동일한 로직)
+    active_participations = @participations.select { |p| p.challenge.status_active? }
+    @growth_stats = {
+      total_invested: @participations.sum { |p| p.challenge.total_payment_amount || 0 },
+      total_refunded: @current_user&.total_refunded || 0,
+      expected_refund: active_participations.sum { |p| p.challenge.amount || 0 }
+    }
   end
 
   def badge_roadmap

@@ -1,5 +1,19 @@
 class SessionsController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: :omniauth
+
   def new
+  end
+
+  def omniauth
+    auth = request.env["omniauth.auth"]
+    user = User.from_omniauth(auth)
+
+    if user.persisted?
+      session[:user_id] = user.id
+      redirect_to root_path, notice: "Threads 계정으로 로그인되었습니다!"
+    else
+      redirect_to root_path, alert: "Threads 로그인에 실패했습니다: #{user.errors.full_messages.to_sentence}"
+    end
   end
 
   def create

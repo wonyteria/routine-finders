@@ -31,6 +31,19 @@ class User < ApplicationRecord
   validates :nickname, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, length: { minimum: 8 }, if: -> { password.present? }
+  validates :password, presence: true, on: :create, if: -> { provider.blank? }
+
+  def self.from_omniauth(auth)
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.email = auth.info.email || "#{auth.info.nickname || auth.uid}@threads.temp"
+      user.nickname = auth.info.name || auth.info.nickname || "Threads User"
+      user.profile_image = auth.info.image
+      user.password = SecureRandom.hex(16) # Random password for OAuth users
+      user.threads_token = auth.credentials.token
+      user.threads_refresh_token = auth.credentials.refresh_token
+      user.threads_expires_at = Time.at(auth.credentials.expires_at) if auth.credentials.expires_at
+    end
+  end
 
   # Email verification methods
   def generate_email_verification_token!

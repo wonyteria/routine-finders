@@ -22,6 +22,10 @@ Rails.application.routes.draw do
   resource :session, only: [ :create, :destroy ]
   resource :registration, only: [ :create ]
 
+  # OmniAuth Callbacks
+  match "/auth/:provider/callback", to: "sessions#omniauth", via: [ :get, :post ]
+  get "/auth/failure", to: redirect("/")
+
   # Email verification
   get "verify_email", to: "email_verifications#show"
   post "resend_email_verification", to: "email_verifications#resend"

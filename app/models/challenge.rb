@@ -80,6 +80,14 @@ class Challenge < ApplicationRecord
     offline?
   end
 
+  def online?
+    mode_online?
+  end
+
+  def offline?
+    mode_offline?
+  end
+
   def thumbnail
     if thumbnail_image.attached?
       Rails.application.routes.url_helpers.rails_blob_url(thumbnail_image, only_path: true)

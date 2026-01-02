@@ -1,46 +1,60 @@
 <div class="min-h-screen bg-slate-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     
-    <!-- Header -->
-    <header class="mb-12">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-            루틴 관리
-          </h1>
-          <p class="text-slate-500 font-bold mt-2">매일의 기록이 모여 당신의 가능성을 증명합니다</p>
+    <!-- Main Banner (Threads Aesthetic) -->
+    <section class="mb-12 relative overflow-hidden rounded-threads-lg bg-threads-black text-white shadow-2xl shadow-indigo-200/20">
+      <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+      
+      <!-- Abstract Gradients -->
+      <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+      <div class="absolute bottom-0 left-0 w-64 h-64 bg-slate-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+      <div class="relative z-10 p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
+        <div class="space-y-6 max-w-xl text-center md:text-left">
+          <div class="space-y-2">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-[10px] font-black uppercase tracking-[0.2em] border border-white/20">Daily Discipline</span>
+            <h1 class="text-4xl md:text-6xl font-black leading-tight tracking-tighter">
+              매일의 성취,<br/><span class="text-slate-400">당신의 루틴.</span>
+            </h1>
+            <p class="text-base md:text-lg font-bold text-slate-400 leading-relaxed">자신만의 속도로 차근차근 나아가세요.<br/>기록된 오늘이 내일의 당신을 만듭니다.</p>
+          </div>
         </div>
-        
-        <div class="flex gap-4">
-          <div class="bg-white border border-slate-100 p-6 rounded-3xl shadow-sm">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Today</p>
+
+        <div class="flex flex-col sm:flex-row gap-4 shrink-0">
+          <div class="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-threads-lg min-w-[160px] text-center shadow-inner">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Today Status</p>
             <% current_wday = Date.current.wday.to_s %>
             <% total_routines_today = @personal_routines.select { |r| (r.days || []).include?(current_wday) }.count %>
             <% completed_routines_today = @personal_routines.select { |r| r.completed_today? && (r.days || []).include?(current_wday) }.count %>
-            <div class="flex items-baseline gap-2">
-              <p class="text-3xl font-black text-emerald-500"><%= completed_routines_today %></p>
-              <p class="text-lg font-black text-slate-300">/ <%= total_routines_today %></p>
+            <div class="flex items-baseline justify-center gap-1">
+              <p class="text-4xl font-black text-white"><%= completed_routines_today %></p>
+              <p class="text-lg font-black text-slate-600">/ <%= total_routines_today %></p>
+            </div>
+            <div class="mt-4 w-full bg-white/10 h-1 rounded-full overflow-hidden">
+              <% percentage = total_routines_today > 0 ? (completed_routines_today.to_f / total_routines_today * 100) : 0 %>
+              <div class="bg-white h-full transition-all duration-1000" style="width: <%= percentage %>%"></div>
             </div>
           </div>
           
-          <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 rounded-3xl shadow-lg shadow-indigo-200">
-            <p class="text-xs font-black text-indigo-100 uppercase tracking-widest mb-1">Streak</p>
-            <p class="text-3xl font-black text-white">
-              <%= @personal_routines.map(&:current_streak).max || 0 %>🔥
+          <div class="bg-white p-8 rounded-threads-lg min-w-[160px] text-center shadow-2xl">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Best Streak</p>
+            <p class="text-4xl font-black text-threads-black">
+              <%= @personal_routines.map(&:current_streak).max || 0 %><span class="text-xl ml-1">🔥</span>
             </p>
+            <p class="text-[10px] font-bold text-slate-400 mt-2">Days in a row</p>
           </div>
         </div>
       </div>
-    </header>
+    </section>
 
     <!-- Simple Tabs (No Stimulus initially for stability) -->
     <!-- Simple Tabs (Vanilla JS) -->
     <div class="mb-8">
-      <div class="bg-white border border-slate-200 rounded-3xl p-2 inline-flex gap-2 shadow-sm">
+      <div class="bg-white border border-slate-200 rounded-threads-lg p-2 inline-flex gap-2 shadow-sm">
         <button type="button"
                 onclick="switchTab('free')"
                 id="tab-btn-free"
-                class="px-8 py-3 rounded-2xl font-black text-sm transition-all <%= (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600' %>">
+                class="px-8 py-3 rounded-threads font-black text-sm transition-all <%= (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600' %>">
           무료 루틴
         </button>
         <button type="button"

@@ -4,44 +4,53 @@
      data-action="click->modal#closeOnBackground"
      class="hidden fixed inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
   <!-- 모달 컨텐츠 -->
-  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+  <div class="bg-white rounded-threads-lg shadow-2xl w-full max-w-sm overflow-hidden border border-threads-border"
        data-controller="auth-tabs"
-       data-auth-tabs-active-class="border-indigo-500 text-indigo-600"
-       data-auth-tabs-inactive-class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+       data-auth-tabs-active-class="text-threads-black border-threads-black"
+       data-auth-tabs-inactive-class="text-slate-400 border-transparent">
     
     <!-- 헤더 -->
-    <div class="flex justify-between items-center px-6 pt-6">
-      <h2 class="text-xl font-bold text-gray-900">루틴파인더스</h2>
-      <button data-action="modal#close" 
-              class="text-gray-400 hover:text-gray-600 transition-colors">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+    <div class="flex flex-col items-center px-6 pt-10 pb-4">
+      <div class="w-16 h-16 bg-threads-black rounded-threads flex items-center justify-center mb-6 shadow-lg shadow-threads-black/10">
+        <svg class="text-white w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm4.5-9.5c.276 0 .5.224.5.5s-.224.5-.5.5h-1c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h1z"/>
         </svg>
-      </button>
+      </div>
+      <h2 class="text-2xl font-black text-threads-black tracking-tight">Routine Finders</h2>
+      <p class="text-slate-500 text-sm mt-1 font-medium">Threads로 시작하는 건강한 루틴</p>
     </div>
 
-    <!-- 탭 -->
-    <div class="flex border-b border-gray-200 px-6 mt-4">
-      <button data-auth-tabs-target="loginTab"
-              data-action="click->auth-tabs#showLogin"
-              class="flex-1 py-3 text-sm font-medium border-b-2 transition-colors">
-        로그인
-      </button>
-      <button data-auth-tabs-target="registerTab"
-              data-action="click->auth-tabs#showRegister"
-              class="flex-1 py-3 text-sm font-medium border-b-2 transition-colors">
-        회원가입
-      </button>
-    </div>
+    <div class="px-8 pb-10 space-y-6">
+      <!-- Threads Login Button (Primary) -->
+      <%= button_to auth_at_provider_path(provider: :threads), 
+                    data: { turbo: false },
+                    class: "w-full py-4 bg-threads-black hover:bg-threads-dark text-white rounded-threads font-bold text-lg flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-threads-black/10" do %>
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+        </svg>
+        Threads로 계속하기
+      <% end %>
 
-    <!-- 로그인 패널 -->
-    <div data-auth-tabs-target="loginPanel" class="p-6">
-      <%= render "shared/login_form" %>
-    </div>
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-threads-border"></div></div>
+        <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-3 text-slate-400 font-bold tracking-widest">OR</span></div>
+      </div>
 
-    <!-- 회원가입 패널 -->
-    <div data-auth-tabs-target="registerPanel" class="p-6 hidden">
-      <%= render "shared/register_form" %>
+      <!-- 이메일 로그인/가입 전환 -->
+      <div class="flex justify-center gap-6">
+        <button data-auth-tabs-target="loginTab" data-action="click->auth-tabs#showLogin" class="text-sm font-bold border-b-2 py-1 transition-all">이메일 로그인</button>
+        <button data-auth-tabs-target="registerTab" data-action="click->auth-tabs#showRegister" class="text-sm font-bold border-b-2 py-1 transition-all">회원가입</button>
+      </div>
+
+      <!-- 로그인 패널 -->
+      <div data-auth-tabs-target="loginPanel" class="animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <%= render "shared/login_form" %>
+      </div>
+
+      <!-- 회원가입 패널 -->
+      <div data-auth-tabs-target="registerPanel" class="hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <%= render "shared/register_form" %>
+      </div>
     </div>
   </div>
 </div>

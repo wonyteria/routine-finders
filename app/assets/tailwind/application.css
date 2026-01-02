@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+@theme {
+    --color-threads-black: #000000;
+    --color-threads-dark: #101010;
+    --color-threads-gray: #1e1e1e;
+    --color-threads-border: #dbdbdb;
+    --color-threads-light-bg: #fafafa;
+
+    --radius-threads: 28px;
+    --radius-threads-lg: 56px;
+    --radius-threads-xl: 88px;
+}
+
+@layer base {
+    body {
+        @apply bg-white text-threads-black;
+        font-feature-settings: 'ss01', 'cv01', 'cv11';
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+@layer components {
+    .btn-threads {
+        @apply px-6 py-3 bg-threads-black text-white rounded-threads font-bold transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2;
+    }
+
+    .card-threads {
+        @apply bg-white border border-threads-border rounded-threads-lg p-6 transition-all hover:shadow-sm;
+    }
+
+    .animate-infinite-scroll {
+        animation: infinite-scroll 40s linear infinite;
+    }
+}
+
+@keyframes infinite-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}

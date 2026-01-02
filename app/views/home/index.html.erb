@@ -1,27 +1,90 @@
 <% unless @current_user %>
-  <!-- Landing Page for non-logged-in users -->
-  <div class="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-8 p-6">
-    <div class="w-32 h-32 bg-indigo-600 rounded-[48px] flex items-center justify-center shadow-2xl animate-bounce">
-      <svg class="text-white w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" stroke-width="2"/>
-        <path stroke-width="2" d="m9 12 2 2 4-4"/>
-      </svg>
+  <!-- Landing Page for non-logged-in users (Threads Aesthetic) -->
+  <div class="flex flex-col items-center justify-center min-h-[85vh] text-center space-y-12 p-6 overflow-hidden relative">
+    <!-- Abstract Background Element -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-slate-100 to-transparent -z-10 opacity-50"></div>
+    
+    <div class="relative">
+      <div class="w-24 h-24 bg-threads-black rounded-threads-lg flex items-center justify-center shadow-2xl animate-in zoom-in duration-700">
+        <svg class="text-white w-12 h-12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+        </svg>
+      </div>
+      <div class="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full border-4 border-white animate-pulse"></div>
     </div>
-    <div class="space-y-4">
-      <h1 class="text-6xl lg:text-8xl font-black text-slate-900 leading-tight tracking-tighter">
-        루틴이 모여<br/><span class="text-indigo-600">당신이 됩니다.</span>
+
+    <div class="space-y-6 max-w-2xl px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <h1 class="text-5xl lg:text-7xl font-black text-threads-black leading-[1.1] tracking-tighter">
+        Threads에서 발견하는<br/><span class="text-slate-400">당신의 새로운 루틴.</span>
       </h1>
-      <p class="text-xl text-slate-500 font-bold">오프라인 모임부터 온라인 챌린지까지, 루틴 파인더스</p>
+      <p class="text-lg lg:text-xl text-slate-500 font-bold max-w-lg mx-auto leading-relaxed">
+        Threads 친구들과 함께 기록하고 성장하는<br/>가장 트렌디한 루틴 커뮤니티, 루틴 파인더스.
+      </p>
     </div>
-    <%= button_to login_path, method: :post, class: "px-16 py-7 bg-slate-900 text-white rounded-[32px] font-black text-2xl hover:scale-105 transition-all shadow-2xl flex items-center gap-4" do %>
-      갓생 시작하기
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-    <% end %>
+
+    <div class="flex flex-col gap-4 w-full max-w-sm animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+      <%= button_to auth_at_provider_path(provider: :threads), 
+                    data: { turbo: false },
+                    class: "w-full py-5 bg-threads-black text-white rounded-threads-lg font-black text-xl hover:scale-[1.03] transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95" do %>
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
+        </svg>
+        Threads로 1초 시작하기
+      <% end %>
+      
+      <p class="text-slate-400 text-xs font-bold uppercase tracking-widest pt-2">Powered by Threads API</p>
+    </div>
+
+    <!-- Floating badges demo -->
+    <div class="absolute bottom-10 left-0 right-0 overflow-hidden pointer-events-none opacity-20 hidden lg:block">
+      <div class="flex gap-10 animate-infinite-scroll">
+        <% 10.times do %>
+          <div class="flex items-center gap-3 bg-white border border-threads-border p-4 rounded-threads-lg min-w-max shadow-sm">
+            <div class="w-10 h-10 bg-slate-100 rounded-threads"></div>
+            <div class="w-24 h-3 bg-slate-100 rounded-full"></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
   </div>
 <% else %>
   <div class="space-y-16 pb-40">
+    <%
+      activity_data = Hash.new(0)
+      (@verification_logs || []).each { |log| activity_data[log.created_at.to_date] += 1 }
+      (@personal_routine_completions || []).each { |c| activity_data[c.completed_on] += 1 }
+      (@club_attendances || []).each { |a| activity_data[a.attendance_date] += 1 }
+
+      total_activities = activity_data.values.sum
+      max_streak = 0
+      current_streak = 0
+      sorted_dates = activity_data.keys.sort.reverse
+      if sorted_dates.any?
+        # Simple streak calculation based on activity dates
+        check_date = Date.current
+        if activity_data[check_date] > 0 || activity_data[check_date - 1.day] > 0
+          curr = activity_data[check_date] > 0 ? check_date : check_date - 1.day
+          while activity_data[curr] > 0
+            current_streak += 1
+            curr -= 1.day
+          end
+        end
+      end
+
+      end_date = Date.current
+      start_date = end_date - 1.year + 1.day
+      grid_start_date = start_date - start_date.wday
+      weeks = []
+      iter_date = grid_start_date
+      while iter_date <= end_date || weeks.size < 53
+        week = []
+        7.times { week << iter_date; iter_date += 1.day }
+        weeks << week
+        break if iter_date > end_date && weeks.size >= 53
+      end
+    %>
     <!-- Hero Banner -->
-    <section class="relative h-[420px] lg:h-[440px] rounded-[40px] overflow-hidden shadow-2xl shadow-indigo-100/50">
+    <section class="relative h-[420px] lg:h-[440px] rounded-threads-xl overflow-hidden shadow-2xl shadow-indigo-100/50">
       <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-10"></div>
       <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay" alt="">
       <div class="relative z-20 h-full flex flex-col justify-center px-12 lg:px-20 space-y-6 text-white">
@@ -37,7 +100,7 @@
     </section>
 
     <!-- My Achievements Section -->
-    <section class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-8 lg:p-12 space-y-10">
+    <section class="bg-white rounded-threads-xl border border-slate-200 shadow-sm p-8 lg:p-12 space-y-10">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
         <div class="space-y-1">
           <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
@@ -50,12 +113,12 @@
           <div class="flex items-center gap-6 px-8 py-4 bg-slate-50/80 rounded-2xl border border-slate-100">
             <div class="text-center">
               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total</p>
-              <p class="text-xl font-black text-slate-900"><%= @verification_logs.count %><span class="text-xs ml-0.5 text-slate-400">회</span></p>
+              <p class="text-xl font-black text-slate-900"><%= total_activities %><span class="text-xs ml-0.5 text-slate-400">회</span></p>
             </div>
             <div class="w-px h-6 bg-slate-200"></div>
             <div class="text-center">
               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Streak</p>
-              <p class="text-xl font-black text-orange-600"><%= @participations.map(&:current_streak).max || 0 %><span class="text-xs ml-0.5 text-slate-400">일</span></p>
+              <p class="text-xl font-black text-orange-600"><%= current_streak %><span class="text-xs ml-0.5 text-slate-400">일</span></p>
             </div>
           </div>
           <%= link_to achievement_report_path, class: "w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg hover:bg-indigo-600 transition-all group" do %>
@@ -66,21 +129,7 @@
         </div>
       </div>
 
-      <%
-        activity_data = (@verification_logs || []).group_by { |log| log.created_at.to_date }.transform_values(&:count)
-        end_date = Date.current
-        start_date = end_date - 1.year + 1.day
-        grid_start_date = start_date - start_date.wday
-        weeks = []
-        iter_date = grid_start_date
-        while iter_date <= end_date || weeks.size < 53
-          week = []
-          7.times { week << iter_date; iter_date += 1.day }
-          weeks << week
-          break if iter_date > end_date && weeks.size >= 53
-        end
-      %>
-
+<%# 통합 데이터 정합성 완료 %>
       <div class="bg-indigo-50/30 rounded-[32px] p-8 border border-indigo-100/50">
         <div class="flex items-center justify-between mb-6">
           <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Activity Dashboard</h3>
@@ -196,205 +245,111 @@
       </div>
     </section>
 
-    <!-- People to Watch (Top Hosts) Section -->
+    <!-- My Active Growth (Challenge Progress) -->
     <section class="space-y-8">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
+      <div class="flex items-end justify-between px-4">
         <div class="space-y-1">
           <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
-            주목해야 할 주최자
-            <span class="text-indigo-600 text-2xl">✨</span>
+            실행 중인 성장
+            <span class="text-indigo-600 text-2xl">⚡</span>
           </h2>
-          <p class="text-slate-400 font-bold text-base">당신의 성장을 돕는 검증된 가이드입니다.</p>
+          <p class="text-slate-400 font-bold text-base">진행 중인 챌린지의 달성 현황입니다.</p>
         </div>
-        <%= link_to host_ranking_path, class: "flex items-center gap-2 text-slate-400 font-black text-xs hover:text-indigo-600 transition-colors group" do %>
-          전체 랭킹 보기
-          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <%= link_to personal_routines_path, class: "text-slate-400 font-black text-xs hover:text-indigo-600 transition-colors" do %>
+          내 루틴 전체보기
         <% end %>
       </div>
 
-      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
-        <% @top_hosts.each do |host| %>
-          <div class="min-w-[260px] bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all p-6 flex flex-col items-center text-center relative group">
-            <% if host.is_featured_host? %>
-              <div class="absolute top-4 right-4 bg-indigo-600 text-white text-[8px] font-black px-2.5 py-1 rounded-full shadow-lg z-10">
-                PRO
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+        <% if @participations.any? %>
+          <% @participations.take(6).each do |participation| %>
+            <% challenge = participation.challenge %>
+            <div class="bg-white rounded-threads-lg border border-slate-100 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+              <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-4">
+                  <div class="w-14 h-14 rounded-threads bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100">
+                    <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover" alt="">
+                  </div>
+                  <div>
+                    <h4 class="font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
+                    <p class="text-xs font-bold text-slate-400"><%= challenge.category %></p>
+                  </div>
+                </div>
+                <span class="px-3 py-1.5 rounded-threads text-[10px] font-black <%= participation.status_badge_info[:class] %>">
+                  <%= participation.status_badge_info[:label] %>
+                </span>
+              </div>
+              
+              <div class="space-y-3">
+                <div class="flex justify-between items-end">
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Progress</p>
+                  <p class="text-lg font-black text-slate-900"><%= (participation.completion_rate * 100).to_i %>%</p>
+                </div>
+                <div class="w-full h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
+                  <div class="h-full bg-indigo-600 rounded-full transition-all duration-1000 shadow-sm" style="width: <%= participation.completion_rate * 100 %>%"></div>
+                </div>
+                <div class="flex justify-between pt-2">
+                  <p class="text-[10px] font-bold text-slate-400">Streak: <span class="text-indigo-600"><%= participation.current_streak %>일</span></p>
+                  <p class="text-[10px] font-bold text-rose-500">D-<%= (challenge.end_date - Date.current).to_i %></p>
+                </div>
+              </div>
+
+              <%= link_to challenge_path(challenge), class: "mt-6 block w-full py-3 bg-slate-50 text-slate-400 rounded-threads font-black text-xs text-center hover:bg-slate-900 hover:text-white transition-all shadow-sm group-hover:shadow-md" do %>
+                대시보드 관리
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="col-span-full py-20 text-center bg-slate-50 rounded-threads-xl border border-dashed border-slate-200">
+             <p class="text-slate-400 font-bold">진행 중인 챌린지가 없습니다.</p>
+             <%= link_to challenges_path, class: "mt-4 inline-block px-8 py-3 bg-indigo-600 text-white rounded-threads font-black text-sm shadow-lg hover:bg-slate-900 transition-all" do %>
+               새로운 습관 찾기
+             <% end %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- My collection (Badge Showcase) -->
+    <section class="space-y-8 px-4">
+      <div class="flex items-end justify-between">
+        <div class="space-y-1">
+          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+            획득한 메달
+            <span class="text-amber-500 text-2xl">🏅</span>
+          </h2>
+          <p class="text-slate-400 font-bold text-base">당신의 노력이 증명된 순간들입니다.</p>
+        </div>
+        <%= link_to badge_roadmap_path, class: "text-slate-400 font-black text-xs hover:text-indigo-600 transition-colors" do %>
+          배지 로드맵 보기
+        <% end %>
+      </div>
+
+      <div class="bg-threads-black rounded-threads-xl p-10 shadow-2xl relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-50"></div>
+        <div class="relative z-10 flex flex-wrap justify-center gap-10">
+          <% if @current_user.badges.any? %>
+            <% @current_user.badges.order(level: :desc).take(8).each do |badge| %>
+              <div class="flex flex-col items-center gap-4 transition-all hover:scale-110 group/badge">
+                <div class="w-20 h-20 rounded-threads bg-white/10 backdrop-blur-xl border border-white/20 p-4 shadow-2xl flex items-center justify-center transform group-hover/badge:rotate-12 transition-all cursor-help" title="<%= badge.description %>">
+                   <span class="text-4xl filter drop-shadow-lg"><%= badge.icon_path || "🏅" %></span>
+                </div>
+                <div class="text-center">
+                  <p class="text-[10px] font-black text-white/90 tracking-tight"><%= badge.name %></p>
+                  <div class="mt-1 flex gap-0.5 justify-center">
+                    <% (Badge.levels[badge.level] || 0).times do %>
+                      <div class="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></div>
+                    <% end %>
+                  </div>
+                </div>
               </div>
             <% end %>
-
-            <div class="relative w-20 h-20 mb-4 inline-block">
-              <div class="w-full h-full rounded-2xl bg-slate-50 p-0.5 border border-slate-100 overflow-hidden shadow-inner">
-                <img src="<%= host.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{host.nickname}" %>" class="w-full h-full object-cover rounded-[14px]" alt="">
-              </div>
-              <div class="absolute -bottom-1 -right-1 bg-white text-indigo-600 font-black text-[8px] px-1.5 py-0.5 rounded-md shadow-sm border border-indigo-50">
-                Lvl.<%= host.level || 1 %>
-              </div>
-            </div>
-
-            <div class="space-y-1 mb-4 flex-1">
-              <h4 class="text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors tracking-tight">
-                <%= host.nickname %>
-              </h4>
-              <p class="text-[11px] font-bold text-slate-400 line-clamp-2 leading-relaxed min-h-[2.5rem]">
-                <%= host.bio.present? ? host.bio : "당신의 성장을 응원하는 가이드입니다." %>
-              </p>
-            </div>
-
-            <div class="w-full space-y-4">
-              <div class="grid grid-cols-2 gap-2 pt-4 border-t border-slate-50">
-                <div class="text-left">
-                  <p class="text-xs font-black text-slate-900 leading-none"><%= number_with_delimiter(host.host_total_participants) %></p>
-                  <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Followers</p>
-                </div>
-                <div class="text-right">
-                  <p class="text-xs font-black text-indigo-600 leading-none truncate"><%= host.bio&.split&.find { |w| w.length > 2 }&.gsub(/[^\w\s]/, '') || "Growth" %></p>
-                  <p class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Topic</p>
-                </div>
-              </div>
-
-              <%= link_to user_profile_path(host), class: "w-full py-3 block bg-slate-50 text-slate-400 rounded-xl font-bold text-xs hover:bg-slate-900 hover:text-white transition-all shadow-sm group-hover:shadow-md" do %>
-                프로필 보기
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </section>
-
-    <!-- Routine Finders Pick Section -->
-    <section class="space-y-8 px-4">
-      <div class="flex items-end justify-between">
-        <div class="space-y-1">
-          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
-            루틴 파인더스 Pick
-            <span class="text-indigo-600 text-2xl">🏆</span>
-          </h2>
-          <p class="text-slate-400 font-bold text-base">운영진이 엄선한 가장 탄탄한 습관 형성 챌린지</p>
-        </div>
-        <%= link_to challenges_path, class: "flex items-center gap-2 text-indigo-600 font-black text-xs hover:underline group" do %>
-          전체보기
-          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <% end %>
-      </div>
-
-      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
-        <% @pick_challenges.each do |challenge| %>
-          <%= link_to challenge_path(challenge), class: "min-w-[280px] bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col" do %>
-            <div class="relative aspect-[1.6/1] overflow-hidden bg-slate-100 shrink-0">
-              <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="<%= challenge.title %>">
-              <div class="absolute top-3 left-3">
-                <span class="bg-indigo-600 text-white px-2.5 py-1 rounded-full text-[9px] font-black tracking-tight shadow-lg uppercase">RF PICK</span>
-              </div>
-            </div>
-            <div class="p-6 flex flex-col flex-1 justify-between gap-4">
-              <div class="space-y-2">
-                <h4 class="font-black text-slate-900 text-base leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2 min-h-[2.5rem]"><%= challenge.title %></h4>
-                <p class="text-[10px] font-bold text-slate-400">by <span class="text-slate-600"><%= challenge.host_name %></span></p>
-              </div>
-              <div class="flex items-center justify-between pt-3 border-t border-slate-50">
-                <span class="flex items-center gap-1.5 text-[10px] font-black text-slate-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                  <%= challenge.current_participants %>명
-                </span>
-                <span class="text-indigo-600 font-black text-xs tracking-tighter">
-                  <% if challenge.cost_type_free? %>무료<% else %><%= number_with_delimiter(challenge.total_payment_amount) %>원<% end %>
-                </span>
-              </div>
+          <% else %>
+            <div class="py-10 text-center">
+              <p class="text-white/40 font-bold">아직 획득한 메달이 없습니다.<br/>첫 번째 챌린지를 완수해보세요!</p>
             </div>
           <% end %>
-        <% end %>
-      </div>
-    </section>
-
-    <!-- Popular Online Challenges Section -->
-    <section class="space-y-8 px-4">
-      <div class="flex items-end justify-between">
-        <div class="space-y-1">
-          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
-            실시간 인기
-            <span class="text-emerald-500 text-2xl">📈</span>
-          </h2>
-          <p class="text-slate-400 font-bold text-base">지금 이 순간 많은 사람들이 도전하고 있어요</p>
         </div>
-        <%= link_to challenges_path, class: "flex items-center gap-2 text-indigo-600 font-black text-xs hover:underline group" do %>
-          전체보기
-          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <% end %>
-      </div>
-
-      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
-        <% @popular_challenges.each do |challenge| %>
-          <%= link_to challenge_path(challenge), class: "min-w-[280px] bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all group flex flex-col" do %>
-            <div class="relative aspect-[1.6/1] overflow-hidden bg-slate-100 shrink-0">
-              <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="<%= challenge.title %>">
-              <div class="absolute top-3 left-3">
-                <span class="bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[8px] font-black uppercase text-slate-900 tracking-tight"><%= challenge.category %></span>
-              </div>
-            </div>
-            <div class="p-6 flex flex-col flex-1 justify-between gap-4">
-              <div class="space-y-2">
-                <h4 class="font-black text-slate-900 text-base leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2 min-h-[2.5rem]"><%= challenge.title %></h4>
-                <p class="text-[10px] font-bold text-slate-400">by <span class="text-slate-600"><%= challenge.host_name %></span></p>
-              </div>
-              <div class="flex items-center justify-between pt-3 border-t border-slate-50">
-                <span class="flex items-center gap-1.5 text-[10px] font-black text-slate-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                  <%= challenge.current_participants %>명
-                </span>
-                <span class="text-indigo-600 font-black text-xs tracking-tighter">
-                  <% if challenge.cost_type_free? %>무료<% else %><%= number_with_delimiter(challenge.total_payment_amount) %>원<% end %>
-                </span>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </section>
-
-    <!-- Consolidated Offline Section -->
-    <section class="space-y-8 px-4">
-      <div class="flex items-end justify-between">
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <h2 class="text-3xl font-black text-slate-900">함께 성장하는 오프라인 모임</h2>
-            <span class="px-3 py-1 bg-amber-400 text-slate-900 text-[10px] font-black rounded-full shadow-sm">RUFA CLUB ONLY</span>
-          </div>
-          <p class="text-slate-400 font-bold text-base">루파 클럽 멤버만을 위한 프리미엄 오프라인 성장의 장</p>
-        </div>
-        <%= link_to challenges_path(mode: "offline"), class: "flex items-center gap-2 text-orange-600 font-black text-xs hover:underline group" do %>
-          전체보기
-          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        <% end %>
-      </div>
-
-      <div class="flex overflow-x-auto no-scrollbar gap-6 pb-6 px-4 -mx-4 items-stretch">
-        <% (@hot_gatherings + @recommended_gatherings).uniq.take(8).each do |gathering| %>
-          <%= link_to challenge_path(gathering), class: "min-w-[280px] bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col group border-b-4 border-b-orange-500" do %>
-            <div class="relative aspect-[1.6/1] overflow-hidden bg-slate-100 shrink-0">
-              <img src="<%= gathering.thumbnail %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="<%= gathering.title %>">
-              <% if @hot_gatherings.include?(gathering) %>
-                <div class="absolute top-3 left-3">
-                  <span class="bg-orange-600 text-white px-2.5 py-1 rounded-full text-[9px] font-black tracking-tight shadow-md uppercase">HOT</span>
-                </div>
-              <% end %>
-            </div>
-            <div class="p-6 flex flex-col flex-1 justify-between gap-4">
-              <div class="space-y-2">
-                <h4 class="text-lg font-black text-slate-900 line-clamp-2 group-hover:text-orange-600 transition-colors min-h-[3.5rem] leading-snug"><%= gathering.title %></h4>
-                <% if gathering.meeting_info %>
-                  <p class="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 line-clamp-1">
-                    <span class="text-orange-500 uppercase font-black">@</span> <%= gathering.meeting_info.place_name %>
-                  </p>
-                <% end %>
-              </div>
-              <div class="mt-auto pt-4 flex items-center justify-between border-t border-slate-50">
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter"><%= gathering.current_participants %>명 모집 중</span>
-                <span class="text-orange-600 font-black text-xs tracking-tighter">
-                  <% if gathering.cost_type_free? %>무료<% else %><%= number_with_delimiter(gathering.total_payment_amount) %>원<% end %>
-                </span>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
       </div>
     </section>
   </div>
