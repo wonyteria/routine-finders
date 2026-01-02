@@ -375,8 +375,8 @@
                             
                             <div class="mt-6 flex items-center justify-between">
                                <%= button_to rufa_activity_claps_path(activity), method: :post, class: "flex items-center gap-3 px-6 py-3 bg-white hover:bg-amber-100 rounded-full transition-all border border-slate-100 group/clap" do %>
-                                 <span class="text-2xl group-hover/clap:scale-150 transition-transform duration-500"><%= activity.claps_count > 0 ? "👏" : "🙌" %></span>
-                                 <span class="text-sm font-black <%= activity.claps_count > 0 ? 'text-amber-600' : 'text-slate-400' %>"><%= activity.claps_count %></span>
+                                 <span class="text-2xl group-hover/clap:scale-150 transition-transform duration-500"><%= activity.claps_count.to_i > 0 ? "👏" : "🙌" %></span>
+                                 <span class="text-sm font-black <%= activity.claps_count.to_i > 0 ? 'text-amber-600' : 'text-slate-400' %>"><%= activity.claps_count.to_i %></span>
                                <% end %>
                                <div class="flex gap-1">
                                  <% activity.claps.take(5).each do |clap| %>
