@@ -11,10 +11,23 @@ class PersonalRoutinesController < ApplicationController
     @monthly_completions = current_user.personal_routines.joins(:completions)
                                        .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
 
-    # 루틴 클럽 (유료)
+    # 루파 클럽 (유료) 관련 통계 및 랭킹
     @routine_clubs = RoutineClub.recruiting_clubs.includes(:host, :members).order(created_at: :desc).limit(6)
     @my_club_memberships = current_user.routine_club_members.includes(:routine_club).where(status: [ :active, :warned ])
     @pending_payments = current_user.routine_club_members.where(payment_status: :pending)
+
+    # 루파 클럽 멤버 랭킹 (상위 10명)
+    # 실제로는 캐싱이나 배치를 통해 미리 계산하는 것이 좋으나, 현재는 실시간 계산
+    @rufa_rankings = User.joins(:routine_club_members)
+                         .where(routine_club_members: { status: :active })
+                         .distinct
+                         .map { |u| { user: u, score: u.rufa_club_score } }
+                         .sort_by { |r| -r[:score] }
+                         .take(10)
+
+    # 현재 사용자의 루파 상태
+    @current_log_rate = current_user.monthly_routine_log_rate
+    @current_achievement_rate = current_user.monthly_achievement_rate
 
     @recommended_routines = [
       { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊", color: "text-rose-400" },

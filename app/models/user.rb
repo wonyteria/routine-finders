@@ -113,4 +113,37 @@ class User < ApplicationRecord
   def has_saved_account?
     saved_bank_name.present? && saved_account_number.present?
   end
+
+  # Rufa Club Standards
+  def is_rufa_club_member?
+    routine_club_members.where(status: :active, payment_status: :confirmed).exists?
+  end
+
+  # ① 루틴 작성률 (해당 월 동안 루틴을 기록한 날이 전체의 70% 이상)
+  # '기록'의 정의: 해당 일자에 완료 기록이 있거나 루틴이 설정되어 있었던 상태 (여기선 실제 액션 기준)
+  def monthly_routine_log_rate(date = Date.current)
+    start_date = date.beginning_of_month
+    end_date = [ date.end_of_month, Date.current ].min
+    total_days = (end_date - start_date).to_i + 1
+    return 0 if total_days <= 0
+
+    # 해당 월에 완료 기록이 있는 고유한 날짜 수
+    logged_days = personal_routines.joins(:completions)
+                                  .where(personal_routine_completions: { completed_on: start_date..end_date })
+                                  .distinct
+                                  .count("personal_routine_completions.completed_on")
+
+    (logged_days.to_f / total_days * 100).round(1)
+  end
+
+  # ② 루틴 달성률 (작성한 루틴 중 하루에 하나 이상 실천한 날 기준 70% 이상)
+  def monthly_achievement_rate(date = Date.current)
+    # 현재 정의상 ①과 유사하지만, 로직 확장을 위해 분리
+    monthly_routine_log_rate(date)
+  end
+
+  def rufa_club_score
+    # 랭킹 산정용 점수 (기록률 + 달성률 가중치 등)
+    (monthly_routine_log_rate + monthly_achievement_rate) / 2
+  end
 end

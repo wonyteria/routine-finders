@@ -53,7 +53,7 @@ class ChallengesController < ApplicationController
       # Rankings (top 5)
       @rankings = @challenge.participants.includes(:user).order(completion_rate: :desc, current_streak: :desc).limit(5)
 
-      # Pending Verifications for Host
+    # Pending Verifications for Host
     @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user) if @is_host
 
     # Management Data for Host (Gathering)
@@ -177,6 +177,11 @@ class ChallengesController < ApplicationController
 
   def join
     return redirect_to @challenge, alert: "이미 참여 중입니다." if current_user.participations.exists?(challenge: @challenge)
+
+    # 오프라인 모임(가더링) 참석 제한: 루파 클럽 멤버 전용
+    if @challenge.offline? && !current_user.is_rufa_club_member?
+      return redirect_to gatherings_path, alert: "오프라인 모임은 '루파 클럽' 멤버만 참여 가능합니다. 루파 클럽에 먼저 가입해주세요!"
+    end
 
     if @challenge.is_private? && params[:invitation_code] != @challenge.invitation_code
       return redirect_to @challenge, alert: "초대 코드가 올바르지 않습니다."
