@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  subtitle: MyString
+  badge_text: MyString
+  link_url: MyString
+  banner_type: 1
+  active: false
+  priority: 1
+
+two:
+  title: MyString
+  subtitle: MyString
+  badge_text: MyString
+  link_url: MyString
+  banner_type: 1
+  active: false
+  priority: 1

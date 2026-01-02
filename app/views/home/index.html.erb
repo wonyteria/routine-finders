@@ -1,54 +1,4 @@
-<% unless @current_user %>
-  <!-- Landing Page for non-logged-in users (Threads Aesthetic) -->
-  <div class="flex flex-col items-center justify-center min-h-[85vh] text-center space-y-12 p-6 overflow-hidden relative">
-    <!-- Abstract Background Element -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-slate-100 to-transparent -z-10 opacity-50"></div>
-    
-    <div class="relative">
-      <div class="w-24 h-24 bg-threads-black rounded-threads-lg flex items-center justify-center shadow-2xl animate-in zoom-in duration-700">
-        <svg class="text-white w-12 h-12" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
-        </svg>
-      </div>
-      <div class="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full border-4 border-white animate-pulse"></div>
-    </div>
-
-    <div class="space-y-6 max-w-2xl px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      <h1 class="text-5xl lg:text-7xl font-black text-threads-black leading-[1.1] tracking-tighter">
-        Threads에서 발견하는<br/><span class="text-slate-400">당신의 새로운 루틴.</span>
-      </h1>
-      <p class="text-lg lg:text-xl text-slate-500 font-bold max-w-lg mx-auto leading-relaxed">
-        Threads 친구들과 함께 기록하고 성장하는<br/>가장 트렌디한 루틴 커뮤니티, 루틴 파인더스.
-      </p>
-    </div>
-
-    <div class="flex flex-col gap-4 w-full max-w-sm animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-      <%= button_to auth_at_provider_path(provider: :threads), 
-                    data: { turbo: false },
-                    class: "w-full py-5 bg-threads-black text-white rounded-threads-lg font-black text-xl hover:scale-[1.03] transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95" do %>
-        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/>
-        </svg>
-        Threads로 1초 시작하기
-      <% end %>
-      
-      <p class="text-slate-400 text-xs font-bold uppercase tracking-widest pt-2">Powered by Threads API</p>
-    </div>
-
-    <!-- Floating badges demo -->
-    <div class="absolute bottom-10 left-0 right-0 overflow-hidden pointer-events-none opacity-20 hidden lg:block">
-      <div class="flex gap-10 animate-infinite-scroll">
-        <% 10.times do %>
-          <div class="flex items-center gap-3 bg-white border border-threads-border p-4 rounded-threads-lg min-w-max shadow-sm">
-            <div class="w-10 h-10 bg-slate-100 rounded-threads"></div>
-            <div class="w-24 h-3 bg-slate-100 rounded-full"></div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-<% else %>
-  <div class="space-y-16 pb-40">
+<div class="space-y-16 pb-40">
     <%
       activity_data = Hash.new(0)
       (@verification_logs || []).each { |log| activity_data[log.created_at.to_date] += 1 }
@@ -84,20 +34,46 @@
       end
     %>
     <!-- Hero Banner -->
-    <section class="relative h-[420px] lg:h-[440px] rounded-threads-xl overflow-hidden shadow-2xl shadow-indigo-100/50">
-      <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-10"></div>
-      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay" alt="">
-      <div class="relative z-20 h-full flex flex-col justify-center px-12 lg:px-20 space-y-6 text-white">
-        <div class="space-y-2">
-          <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase">Start your growth</span>
-          <h1 class="text-4xl lg:text-6xl font-black leading-tight tracking-tight">함께해서 더 강력한<br/>습관의 힘</h1>
-        </div>
-        <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed">평균 달성률 92%의 보증금 시스템으로<br/>진정한 변화를 경험하세요.</p>
-        <%= link_to challenges_path, class: "w-fit px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-base hover:shadow-2xl hover:-translate-y-1 transition-all" do %>
-          챌린지 둘러보기
+    <% if @main_banners.any? %>
+      <% banner = @main_banners.first %>
+      <section class="relative h-[420px] lg:h-[440px] rounded-threads-xl overflow-hidden shadow-2xl shadow-indigo-100/50 group">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-10"></div>
+        <% if banner.image.attached? %>
+          <%= image_tag banner.image, class: "absolute inset-0 w-full h-full object-cover mix-blend-overlay transition-transform duration-1000 group-hover:scale-105" %>
         <% end %>
-      </div>
-    </section>
+        <div class="relative z-20 h-full flex flex-col justify-center px-12 lg:px-20 space-y-6 text-white">
+          <div class="space-y-2">
+            <% if banner.badge_text.present? %>
+              <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase animate-in fade-in slide-in-from-left-4 duration-700"><%= banner.badge_text %></span>
+            <% end %>
+            <h1 class="text-4xl lg:text-6xl font-black leading-tight tracking-tight animate-in fade-in slide-in-from-left-6 duration-1000 delay-100"><%= raw banner.title.gsub("\n", "<br/>") %></h1>
+          </div>
+          <% if banner.subtitle.present? %>
+            <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000 delay-200"><%= raw banner.subtitle.gsub("\n", "<br/>") %></p>
+          <% end %>
+          <% if banner.link_url.present? %>
+            <%= link_to banner.link_url, class: "w-fit px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-base hover:shadow-2xl hover:-translate-y-1 transition-all animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500" do %>
+              챌린지 둘러보기
+            <% end %>
+          <% end %>
+        </div>
+      </section>
+    <% else %>
+      <section class="relative h-[420px] lg:h-[440px] rounded-threads-xl overflow-hidden shadow-2xl shadow-indigo-100/50">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-10"></div>
+        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay" alt="">
+        <div class="relative z-20 h-full flex flex-col justify-center px-12 lg:px-20 space-y-6 text-white">
+          <div class="space-y-2">
+            <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase">Start your growth</span>
+            <h1 class="text-4xl lg:text-6xl font-black leading-tight tracking-tight">함께해서 더 강력한<br/>습관의 힘</h1>
+          </div>
+          <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed">평균 달성률 92%의 보증금 시스템으로<br/>진정한 변화를 경험하세요.</p>
+          <%= link_to challenges_path, class: "w-fit px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-base hover:shadow-2xl hover:-translate-y-1 transition-all" do %>
+            챌린지 둘러보기
+          <% end %>
+        </div>
+      </section>
+    <% end %>
 
     <!-- My Achievements Section -->
     <section class="bg-white rounded-threads-xl border border-slate-200 shadow-sm p-8 lg:p-12 space-y-10">
@@ -352,5 +328,25 @@
         </div>
       </div>
     </section>
+
+    <!-- Ad Banners -->
+    <% if @ad_banners.any? %>
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+        <% @ad_banners.each do |banner| %>
+          <%= link_to banner.link_url || "#", class: "group relative h-48 rounded-[32px] overflow-hidden shadow-xl hover:shadow-2xl transition-all" do %>
+            <div class="absolute inset-0 bg-slate-900/40 z-10 group-hover:bg-slate-900/20 transition-colors"></div>
+            <% if banner.image.attached? %>
+              <%= image_tag banner.image, class: "absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" %>
+            <% end %>
+            <div class="relative z-20 h-full flex flex-col justify-center px-10 text-white">
+              <% if banner.badge_text.present? %>
+                <span class="w-fit px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase mb-2"><%= banner.badge_text %></span>
+              <% end %>
+              <h3 class="text-xl font-black mb-1"><%= banner.title %></h3>
+              <p class="text-xs text-white/70 font-medium"><%= banner.subtitle %></p>
+            </div>
+          <% end %>
+        <% end %>
+      </section>
+    <% end %>
   </div>
-<% end %>

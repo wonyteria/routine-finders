@@ -1,0 +1,75 @@
+<% content_for :page_title, "배너 관리" %>
+
+<div class="space-y-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-lg font-bold text-slate-900">배너 목록</h2>
+    <%= link_to "새 배너 추가", new_admin_banner_path, class: "px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold text-sm hover:bg-indigo-700 transition-all" %>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <table class="min-w-full divide-y divide-slate-200">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">배너</th>
+          <th class="px-6 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">타입</th>
+          <th class="px-6 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">우선순위</th>
+          <th class="px-6 py-3 text-left text-xs font-black text-slate-500 uppercase tracking-widest">상태</th>
+          <th class="px-6 py-3 text-right text-xs font-black text-slate-500 uppercase tracking-widest">관리</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @banners.each do |banner| %>
+          <tr>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-4">
+                <div class="w-20 h-12 bg-slate-100 rounded-lg overflow-hidden shrink-0">
+                  <% if banner.image.attached? %>
+                    <%= image_tag banner.image, class: "w-full h-full object-cover" %>
+                  <% end %>
+                </div>
+                <div>
+                  <p class="font-bold text-slate-900"><%= banner.title %></p>
+                  <p class="text-xs text-slate-500"><%= banner.subtitle %></p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 text-[10px] font-black uppercase rounded-full <%= banner.banner_type_main? ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700' %>">
+                <%= banner.banner_type.upcase %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-sm font-medium text-slate-700">
+              <%= banner.priority %>
+            </td>
+            <td class="px-6 py-4">
+              <% if banner.active %>
+                <span class="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> 활성
+                </span>
+              <% else %>
+                <span class="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> 비활성
+                </span>
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <%= link_to edit_admin_banner_path(banner), class: "p-2 text-slate-400 hover:text-indigo-600 transition-colors" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <% end %>
+                <%= button_to admin_banner_path(banner), method: :delete, data: { turbo_confirm: "정말 삭제하시겠습니까?" }, class: "p-2 text-slate-400 hover:text-red-600 transition-colors" do %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        <% if @banners.empty? %>
+          <tr>
+            <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">배너가 없습니다.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

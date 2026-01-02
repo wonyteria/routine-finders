@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   # Root path
   root "home#index"
+  get "landing", to: "home#landing"
   get "achievement_report", to: "home#achievement_report"
   get "badge_roadmap", to: "home#badge_roadmap"
   get "ranking", to: "home#ranking"
@@ -23,6 +24,7 @@ Rails.application.routes.draw do
   resource :registration, only: [ :create ]
 
   # OmniAuth Callbacks
+  match "/auth/:provider", to: lambda { |env| [ 200, { "Content-Type" => "text/plain" }, [ "Middleware did not catch the initiation request for #{env['router.params'][:provider]} (#{env['REQUEST_METHOD']})" ] ] }, via: [ :get, :post ]
   match "/auth/:provider/callback", to: "sessions#omniauth", via: [ :get, :post ]
   get "/auth/failure", to: redirect("/")
 
@@ -44,6 +46,8 @@ Rails.application.routes.draw do
     end
     resources :challenges, only: [ :index, :show, :edit, :update, :destroy ]
     resources :personal_routines, only: [ :index, :show, :destroy ]
+    resources :banners
+    resources :routine_clubs
   end
 
   # Web routes

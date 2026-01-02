@@ -1,0 +1,305 @@
+<!-- Ultra Premium Introduction Page -->
+<% content_for :head do %>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/feather-icons"></script>
+<% end %>
+
+<div class="bg-white text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden font-['Pretendard','Plus_Jakarta_Sans',-apple-system,BlinkMacSystemFont,system-ui,Roboto,'Helvetica_Neue','Segoe_UI','Apple_SD_Gothic_Neo','Noto_Sans_KR','Malgun_Gothic','Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol',sans-serif]">
+  
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
+    <!-- Subtle Gradient Background -->
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.05)_0%,rgba(255,255,255,0)_100%)]"></div>
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+
+    <div class="max-w-5xl mx-auto space-y-12 py-20">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-100 text-slate-500 rounded-full text-[10px] font-black tracking-[0.2em] uppercase">
+         Standard of Routine
+      </div>
+
+      <h1 class="text-6xl md:text-9xl font-black text-slate-900 leading-[0.9] tracking-[-0.05em]">
+        습관을 넘어<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-b from-indigo-600 to-indigo-900">성취의 궤적으로.</span>
+      </h1>
+
+      <p class="text-xl md:text-2xl text-slate-500 font-bold max-w-2xl mx-auto leading-relaxed">
+        개인 루틴부터 루파클럽 멤버십, 챌린지 운영까지.<br/>당신의 모든 성장을 기록하고 연결합니다.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        <% if current_user %>
+           <%= link_to root_path, class: "px-12 py-6 bg-slate-900 text-white rounded-[28px] font-black text-2xl hover:scale-105 transition-all shadow-2xl shadow-slate-200 flex items-center justify-center gap-4" do %>
+             <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+               <rect x="3" y="3" width="7" height="7"></rect>
+               <rect x="14" y="3" width="7" height="7"></rect>
+               <rect x="14" y="14" width="7" height="7"></rect>
+               <rect x="3" y="14" width="7" height="7"></rect>
+             </svg>
+             내 대시보드 열기
+           <% end %>
+        <% else %>
+           <%= button_to auth_at_provider_path(provider: :threads), 
+                         method: :post,
+                         data: { turbo: false },
+                         class: "px-12 py-6 bg-slate-900 text-white rounded-[28px] font-black text-2xl hover:scale-105 transition-all shadow-2xl shadow-indigo-100 flex items-center justify-center gap-4 group" do %>
+             <svg class="w-7 h-7 text-indigo-400 group-hover:animate-pulse" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+               <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+             </svg>
+             Threads로 계속하기
+           <% end %>
+           <% if Rails.env.development? %>
+             <%= button_to "/auth/developer", method: :post, data: { turbo: false }, class: "px-8 py-4 bg-slate-100 text-slate-600 rounded-full font-bold hover:bg-slate-200 transition-all text-sm" do %>
+               개발자 로그인 (테스트용)
+             <% end %>
+           <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Interface Showcase -->
+    <div class="w-full max-w-6xl px-4 mt-12 mb-20">
+       <div class="relative bg-white rounded-[56px] shadow-[0_60px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100 p-4">
+          <div class="aspect-[16/9] bg-slate-50 rounded-[44px] overflow-hidden border border-slate-100">
+             <img src="<%= image_path('landing_hero_mockup.png') %>" class="w-full h-full object-cover" alt="Routine Finders Interface">
+          </div>
+          <!-- Floating Overlay -->
+          <div class="absolute -bottom-10 right-10 p-8 bg-white rounded-[40px] shadow-2xl border border-slate-100 space-y-2 max-w-xs animate-bounce duration-[5000ms]">
+             <div class="flex items-center gap-2 mb-2">
+                <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Activity</p>
+             </div>
+             <p class="font-black text-slate-900 text-lg">오늘 1,204명이<br/>루틴을 완수했습니다.</p>
+          </div>
+       </div>
+    </div>
+  </section>
+
+  <!-- Section 1: Routine Management -->
+  <section class="py-40 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+    <div class="space-y-10">
+      <div class="inline-flex px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-black uppercase tracking-widest">01 / Routine</div>
+      <h2 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
+        가장 가볍고<br/>직관적인 루틴 기록.
+      </h2>
+      <p class="text-xl text-slate-400 font-bold leading-relaxed">
+        복잡한 설정 없이 원클릭으로 하루를 기록하세요. 아침 명상부터 독서까지, 당신의 모든 순간이 성취 지도가 되어 기록됩니다.
+      </p>
+      <div class="flex gap-6">
+         <div class="flex-1 p-8 bg-slate-50 rounded-[40px] space-y-4">
+            <div class="text-3xl">🏃‍♂️</div>
+            <p class="font-black text-slate-900">원클릭 기록</p>
+            <p class="text-xs font-bold text-slate-400">번거로운 과정 없이<br/>즉시 완료</p>
+         </div>
+         <div class="flex-1 p-8 bg-slate-50 rounded-[40px] space-y-4">
+            <div class="text-3xl">🌱</div>
+            <p class="font-black text-slate-900">성취 시각화</p>
+            <p class="text-xs font-bold text-slate-400">매일 쌓이는<br/>데이터 정원</p>
+         </div>
+      </div>
+    </div>
+    <div class="relative">
+       <div class="absolute -inset-10 bg-indigo-500/5 blur-[100px] rounded-full"></div>
+       <div class="relative bg-white border border-slate-100 shadow-2xl rounded-[56px] p-12 space-y-8">
+          <div class="flex items-center justify-between p-6 bg-indigo-50 rounded-3xl border border-indigo-100 group transition-all">
+             <div class="flex items-center gap-4">
+                <div class="text-4xl">☕️</div>
+                <div>
+                   <p class="font-black text-indigo-900 text-lg">따뜻한 차 마시기</p>
+                   <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Completed Just Now</p>
+                </div>
+             </div>
+             <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg">✓</div>
+          </div>
+          <div class="flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100">
+             <div class="flex items-center gap-4">
+                <div class="text-4xl">📚</div>
+                <p class="font-black text-slate-900 text-lg">책 10페이지 읽기</p>
+             </div>
+             <div class="w-10 h-10 rounded-full border-2 border-slate-200"></div>
+          </div>
+       </div>
+    </div>
+  </section>
+
+  <!-- Section 2: 루파클럽 (Membership) -->
+  <section class="py-40 bg-slate-900 overflow-hidden relative">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(99,102,241,0.15),transparent_50%)]"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+      <div class="relative order-2 lg:order-1">
+         <div class="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[56px] p-12 space-y-12">
+            <div class="flex justify-between items-center">
+               <h3 class="text-white font-black text-2xl tracking-tighter italic">WEEKLY INSIGHT</h3>
+               <span class="px-4 py-1 bg-indigo-500 text-white text-[10px] font-black rounded-lg uppercase tracking-widest shadow-lg shadow-indigo-500/20">Elite Only</span>
+            </div>
+            <div class="space-y-8">
+               <div class="flex items-end gap-2 h-40 px-4">
+                  <% [20, 45, 60, 100, 80, 95, 90].each do |h| %>
+                    <div class="flex-1 bg-indigo-500/40 rounded-t-xl hover:bg-indigo-400 transition-all cursor-crosshair" style="height: <%= h %>%"></div>
+                  <% end %>
+               </div>
+               <div class="p-6 bg-white/5 rounded-[32px] border border-white/10 space-y-4">
+                  <div class="flex items-center gap-3">
+                     <div class="w-8 h-8 rounded-full bg-slate-800 overflow-hidden">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jin" alt="">
+                     </div>
+                     <p class="text-xs font-black text-indigo-200 uppercase tracking-widest">Host Master Jin</p>
+                  </div>
+                  <p class="text-indigo-50 font-bold leading-relaxed">"이번 주 멤버들의 6시 기상률이 90%를 돌파했습니다. 주말 보팅(Voting) 세션에서 만나요! ✨"</p>
+               </div>
+            </div>
+         </div>
+         <!-- Floating Badge -->
+         <div class="absolute -bottom-6 -right-6 w-32 h-28 bg-white rounded-[32px] shadow-2xl border border-slate-100 flex flex-col items-center justify-center p-4">
+            <span class="text-4xl mb-1">💎</span>
+            <p class="text-[12px] font-black text-indigo-600 uppercase tracking-tighter leading-none text-center whitespace-nowrap">루파클럽 인증</p>
+         </div>
+      </div>
+
+      <div class="space-y-10 order-1 lg:order-2">
+        <div class="inline-flex px-4 py-1.5 bg-indigo-500 text-white rounded-full text-[11px] font-black uppercase tracking-widest">02 / Community</div>
+        <h2 class="text-5xl md:text-7xl font-black text-white tracking-tight leading-[1.05]">
+           압도적인 유대,<br/><span class="text-indigo-400">루파클럽</span>.
+        </h2>
+        <p class="text-xl text-slate-400 font-bold leading-relaxed">
+           루파클럽은 검증된 호스트가 이끄는 결속력 있는 커뮤니티입니다. 단순한 기록을 넘어 멤버들과의 소통과 매주 제공되는 유니크한 리포트로 압도적 성장을 경험하세요.
+        </p>
+        <div class="space-y-6 pt-4">
+           <div class="flex items-center gap-6">
+              <div class="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-2xl">📋</div>
+              <div>
+                 <p class="text-white font-black text-lg">전용 성취 리포트</p>
+                 <p class="text-sm font-bold text-slate-500">객관적인 수치로 확인하는 나의 변화</p>
+              </div>
+           </div>
+           <div class="flex items-center gap-6">
+              <div class="w-14 h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-2xl">🔒</div>
+              <div>
+                 <p class="text-white font-black text-lg">검증된 소수 정예</p>
+                 <p class="text-sm font-bold text-slate-500">열정적인 멤버들과의 건강한 네트워킹</p>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Host Dashboard -->
+  <section class="py-40 px-6 max-w-7xl mx-auto space-y-32">
+     <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+        <div class="space-y-10">
+           <div class="inline-flex px-4 py-1.5 bg-rose-50 text-rose-600 rounded-full text-[11px] font-black uppercase tracking-widest">03 / Leadership</div>
+           <h2 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
+              나만의 챌린지를<br/><span class="text-rose-500">직접 열어보세요</span>.
+           </h2>
+           <p class="text-xl text-slate-400 font-bold leading-relaxed">
+              누구나 호스트가 되어 성장의 선순환을 만들 수 있습니다. 참여자 인증 승인제부터 공지사항 발송까지, 루틴 파인더만의 전문적인 관리 도구를 제공합니다.
+           </p>
+           <ul class="space-y-6 pt-4">
+              <li class="flex items-center gap-5">
+                 <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-xl shadow-sm">🛠️</div>
+                 <div>
+                    <p class="font-black text-slate-900 text-lg">호스트 전담 대시보드</p>
+                    <p class="text-sm font-bold text-slate-400">인증 승인/반려 및 참여자 밀착 케어</p>
+                 </div>
+              </li>
+              <li class="flex items-center gap-5">
+                 <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-xl shadow-sm">📈</div>
+                 <div>
+                    <p class="font-black text-slate-900 text-lg">데이터 기반 관리</p>
+                    <p class="text-sm font-bold text-slate-400">참여자별 진척도 실시간 모니터링</p>
+                 </div>
+              </li>
+           </ul>
+        </div>
+        <div class="relative">
+           <div class="absolute -inset-10 bg-rose-500/5 blur-[100px] rounded-full"></div>
+           <div class="relative bg-slate-900 rounded-[56px] p-12 shadow-2xl space-y-10">
+              <div class="flex justify-between items-center border-b border-white/5 pb-8">
+                 <div class="flex gap-2">
+                    <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                 </div>
+                 <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Host Admin Mode</p>
+              </div>
+              <div class="space-y-6">
+                 <div class="p-6 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-between">
+                    <span class="text-white font-bold text-lg">신규 인증 승인 대기</span>
+                    <span class="px-5 py-1.5 bg-rose-600 text-white font-black text-sm rounded-full shadow-lg shadow-rose-900/50">14건</span>
+                 </div>
+                 <div class="p-6 bg-white/5 border border-white/10 rounded-3xl space-y-4">
+                    <div class="flex justify-between items-center text-white font-bold">
+                       <span>참여자 평균 완주율</span>
+                       <span class="text-emerald-400 font-black">94.8%</span>
+                    </div>
+                    <div class="h-3 bg-white/5 rounded-full overflow-hidden">
+                       <div class="h-full bg-emerald-500 w-[94.8%] rounded-full shadow-[0_0_20px_rgba(16,185,129,0.5)]"></div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+  </section>
+
+  <!-- Final Call to Action -->
+  <section class="max-w-6xl mx-auto px-6 py-40">
+    <div class="bg-indigo-600 rounded-[64px] p-24 text-center text-white space-y-12 relative overflow-hidden shadow-[0_60px_100px_-20px_rgba(79,70,229,0.4)]">
+       <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-indigo-900 opacity-50"></div>
+       <div class="relative z-10 space-y-6">
+          <h2 class="text-5xl md:text-8xl font-black tracking-tighter leading-tight">
+             가장 완벽한 루틴,<br/>지금 시작하세요.
+          </h2>
+          <p class="text-xl text-indigo-100 font-bold max-w-xl mx-auto opacity-80">이미 수천 명의 파인더스가 매일 매일 의미 있는 성장을 기록하고 있습니다.</p>
+       </div>
+       <div class="relative z-10">
+          <% if current_user %>
+            <%= link_to root_path, class: "mx-auto px-16 py-8 bg-white text-indigo-600 rounded-[32px] font-black text-3xl hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-6" do %>
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                내 대시보드로 이동
+            <% end %>
+          <% else %>
+            <%= button_to auth_at_provider_path(provider: :threads), 
+                          method: :post,
+                          data: { turbo: false },
+                          class: "mx-auto px-16 py-8 bg-white text-indigo-600 rounded-[32px] font-black text-3xl hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-6" do %>
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Threads로 시작하기
+            <% end %>
+          <% end %>
+       </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-40 flex flex-col md:flex-row justify-between items-center gap-10 border-t border-slate-100 pt-16 mb-20">
+       <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+             <svg class="text-white w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/></svg>
+          </div>
+          <span class="font-black text-2xl tracking-tight">Routine Finders.</span>
+       </div>
+       <div class="flex gap-10 text-slate-300 font-black text-xs uppercase tracking-widest">
+          <a href="#" class="hover:text-slate-900 transition-colors">Threads</a>
+       </div>
+       <p class="text-slate-400 font-bold text-sm">© 2026 Routine Finders Team. All rights reserved.</p>
+    </footer>
+  </section>
+
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.feather) feather.replace();
+  });
+</script>

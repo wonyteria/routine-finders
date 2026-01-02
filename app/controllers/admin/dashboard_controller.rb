@@ -6,8 +6,8 @@ module Admin
         admin_users: User.admin.count,
         verified_users: User.where(email_verified: true).count,
         total_challenges: Challenge.count,
-        online_challenges: Challenge.online.count,
-        offline_challenges: Challenge.offline.count,
+        online_challenges: Challenge.mode_online.count,
+        offline_challenges: Challenge.mode_offline.count,
         active_challenges: Challenge.active.count,
         total_personal_routines: PersonalRoutine.count,
         total_participants: Participant.count

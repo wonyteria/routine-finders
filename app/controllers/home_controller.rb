@@ -3,29 +3,39 @@
 class HomeController < ApplicationController
   def index
     @current_user = current_user
-    @pick_challenges = Challenge.online_challenges.where(is_featured: true).order(created_at: :desc).limit(6)
-    @popular_challenges = Challenge.online_challenges.where(is_featured: [ false, nil ]).order(current_participants: :desc, created_at: :desc).limit(6)
-    @recommended_gatherings = Challenge.offline_gatherings.order(created_at: :desc).limit(6)
-    @hot_gatherings = Challenge.offline_gatherings.order(current_participants: :desc).limit(6)
-    @personal_routines = @current_user&.personal_routines || []
-    @participations = @current_user&.participations&.includes(:challenge) || []
-    @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []
-    @personal_routine_completions = @current_user ? PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.year.ago..Date.current) : []
-    @club_attendances = @current_user ? RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.year.ago..Date.current) : []
+    if @current_user
+      @main_banners = Banner.banner_type_main.active.ordered
+      @ad_banners = Banner.banner_type_ad.active.ordered
+      @pick_challenges = Challenge.online_challenges.where(is_featured: true).order(created_at: :desc).limit(6)
+      @popular_challenges = Challenge.online_challenges.where(is_featured: [ false, nil ]).order(current_participants: :desc, created_at: :desc).limit(6)
+      @recommended_gatherings = Challenge.offline_gatherings.order(created_at: :desc).limit(6)
+      @hot_gatherings = Challenge.offline_gatherings.order(current_participants: :desc).limit(6)
+      @personal_routines = @current_user&.personal_routines || []
+      @participations = @current_user&.participations&.includes(:challenge) || []
+      @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []
+      @personal_routine_completions = @current_user ? PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.year.ago..Date.current) : []
+      @club_attendances = @current_user ? RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.year.ago..Date.current) : []
 
-    # Top Badge Achievers for Home
-    @top_achievers = User.joins(:user_badges)
-                         .select("users.*, COUNT(user_badges.id) as badge_count")
-                         .group("users.id")
-                         .order("badge_count DESC")
-                         .limit(3)
+      # Top Badge Achievers for Home
+      @top_achievers = User.joins(:user_badges)
+                           .select("users.*, COUNT(user_badges.id) as badge_count")
+                           .group("users.id")
+                           .order("badge_count DESC")
+                           .limit(3)
 
-    # Top Hosts for Home - Scoring logic
-    # Featured hosts FIRST, then Score = (participants * 0.5) + (avg_completion * 2.0) + (completed_challenges * 10)
-    @top_hosts = User.where("host_total_participants > 0 OR host_completed_challenges > 0 OR is_featured_host = ?", true)
-                     .select("users.*, (COALESCE(host_total_participants, 0) * 0.5 + COALESCE(host_avg_completion_rate, 0) * 2.0 + COALESCE(host_completed_challenges, 0) * 10) as host_score")
-                     .order("is_featured_host DESC, host_score DESC")
-                     .limit(4)
+      # Top Hosts for Home - Scoring logic
+      # Featured hosts FIRST, then Score = (participants * 0.5) + (avg_completion * 2.0) + (completed_challenges * 10)
+      @top_hosts = User.where("host_total_participants > 0 OR host_completed_challenges > 0 OR is_featured_host = ?", true)
+                       .select("users.*, (COALESCE(host_total_participants, 0) * 0.5 + COALESCE(host_avg_completion_rate, 0) * 2.0 + COALESCE(host_completed_challenges, 0) * 10) as host_score")
+                       .order("is_featured_host DESC, host_score DESC")
+                       .limit(4)
+    else
+      render :landing
+    end
+  end
+
+  def landing
+    # Landing page for both guest and logged-in users who want to see the platform intro
   end
 
   def ranking

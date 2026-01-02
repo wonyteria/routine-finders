@@ -1,0 +1,111 @@
+<% content_for :page_title, (@routine_club.new_record? ? "새 루틴 클럽 생성" : "루틴 클럽 수정") %>
+
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+    <%= form_with model: [:admin, @routine_club], local: true, class: "space-y-8" do |f| %>
+      <% if @routine_club.errors.any? %>
+        <div class="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 text-sm font-medium">
+          <ul>
+            <% @routine_club.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- 기본 정보 -->
+      <div class="space-y-6">
+        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">기본 정보</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2 col-span-full">
+            <%= f.label :title, "클럽 이름", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.text_field :title, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500", placeholder: "예: 미라클 모닝 루파 클럽" %>
+          </div>
+
+          <div class="space-y-2">
+            <%= f.label :category, "카테고리", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.text_field :category, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500", placeholder: "운동, 독서, 자기계발 등" %>
+          </div>
+
+          <div class="space-y-2">
+            <%= f.label :max_members, "최대 인원", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.number_field :max_members, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 운영 설정 -->
+      <div class="space-y-6">
+        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">운영 및 비용</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <%= f.label :monthly_fee, "월 참가비 (원)", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.number_field :monthly_fee, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+
+          <div class="space-y-2">
+            <%= f.label :min_duration_months, "최소 참여 기간 (개월)", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.number_field :min_duration_months, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+
+          <div class="flex items-center gap-3 pt-8">
+            <%= f.check_box :is_official, class: "w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
+            <%= f.label :is_official, "공식 인증 클럽", class: "text-sm font-black text-slate-700 uppercase tracking-widest" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 일정 -->
+      <div class="space-y-6">
+        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">운영 일정</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+             <%= f.label :start_date, "시작일", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+             <%= f.date_field :start_date, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+          <div class="space-y-2">
+             <%= f.label :end_date, "종료일", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+             <%= f.date_field :end_date, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+          <div class="space-y-2">
+            <%= f.label :status, "상태", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.select :status, RoutineClub.statuses.keys.map { |k| [k.upcase, k] }, {}, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상세 설명 및 이미지 -->
+      <div class="space-y-6">
+        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">풍부한 설명</h3>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <%= f.label :description, "상세 설명", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.text_area :description, rows: 6, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500", placeholder: "클럽의 목적, 운영 방식 등을 상세히 적어주세요." %>
+          </div>
+
+          <div class="space-y-2">
+            <%= f.label :thumbnail, "대표 이미지", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <div class="flex items-center gap-6">
+              <div class="w-32 h-32 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl overflow-hidden flex items-center justify-center shrink-0">
+                <% if @routine_club.thumbnail.attached? %>
+                  <%= image_tag @routine_club.thumbnail, class: "w-full h-full object-cover" %>
+                <% else %>
+                   <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 00-2 2z"/></svg>
+                <% end %>
+              </div>
+              <div class="flex-1">
+                <p class="text-[11px] text-slate-400 font-medium mb-3">권장 사이즈: 1200x800 (3:2 비율)<br>클럽의 개성을 잘 나타내는 이미지를 선택하세요.</p>
+                <%= f.file_field :thumbnail, class: "text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 cursor-pointer" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-8 flex items-center justify-end gap-3 border-t border-slate-100">
+        <%= link_to "취소", admin_routine_clubs_path, class: "px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all" %>
+        <%= f.submit (@routine_club.new_record? ? "클럽 생성" : "클럽 수정"), class: "px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all" %>
+      </div>
+    <% end %>
+  </div>
+</div>
