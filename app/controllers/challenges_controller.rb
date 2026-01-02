@@ -171,6 +171,7 @@ class ChallengesController < ApplicationController
     else
       @saved_account = current_user.saved_account
       @has_saved_account = current_user.has_saved_account?
+      flash.now[:alert] = "챌린지 생성 실패: #{@challenge.errors.full_messages.join(', ')}"
       render :new, status: :unprocessable_entity
     end
   end

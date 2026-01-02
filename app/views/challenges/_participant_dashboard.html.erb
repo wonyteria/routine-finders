@@ -395,6 +395,22 @@
 
           <% when "records" %>
             <div class="space-y-8">
+              <% if @challenge.chat_link.present? && !@challenge.offline? %>
+                <div class="p-4 bg-white border border-indigo-100 rounded-2xl flex items-center justify-between shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-black text-slate-900">참여자 커뮤니티 채팅방</p>
+                      <p class="text-xs text-slate-500 font-medium">함께 소통하며 동기부여를 받아보세요!</p>
+                    </div>
+                  </div>
+                  <%= link_to @challenge.chat_link, target: "_blank", class: "px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-colors" do %>
+                    입장하기
+                  <% end %>
+                </div>
+              <% end %>
               <!-- 루틴 잔디 위젯 (캘린더 스타일) -->
               <div class="p-5 bg-white rounded-2xl border border-slate-100">
                 <div class="flex items-center justify-between mb-6">

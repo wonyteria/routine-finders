@@ -14,3 +14,40 @@ ko:
       separator: "."
       delimiter: ","
       strip_insignificant_zeros: true
+
+  activerecord:
+    errors:
+      messages:
+        blank: "은(는) 필수 입력 항목입니다"
+        required: "은(는) 필수입니다"
+        taken: "은(는) 이미 사용 중입니다"
+        greater_than: "은(는) %{count}보다 커야 합니다"
+        greater_than_or_equal_to: "은(는) %{count}보다 크거나 같아야 합니다"
+        less_than: "은(는) %{count}보다 작아야 합니다"
+        less_than_or_equal_to: "은(는) %{count}보다 작거나 같아야 합니다"
+        not_a_number: "은(는) 숫자여야 합니다"
+        inclusion: "은(는) 목록에 포함되어 있지 않습니다"
+    attributes:
+      challenge:
+        title: "챌린지 제목"
+        category: "카테고리"
+        start_date: "시작일"
+        end_date: "종료일"
+        amount: "보증금"
+        participation_fee: "참가비"
+        max_participants: "최대 참여 인원"
+        penalty_per_failure: "실패 차감액"
+        description: "상세 소개"
+        summary: "한 줄 요약"
+        verification_start_time: "인증 시작 시간"
+        verification_end_time: "인증 종료 시간"
+        days: "인증 요일"
+        recruitment_start_date: "모집 시작일"
+        recruitment_end_date: "모집 마감일"
+        mission_frequency: "인증 빈도"
+        failure_tolerance: "실패 허용 횟수"
+      meeting_info:
+        place_name: "모임 장소명"
+        address: "모임 주소"
+        meeting_time: "모임 시간"
+        description: "모임 설명"
