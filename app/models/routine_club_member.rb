@@ -5,6 +5,10 @@ class RoutineClubMember < ApplicationRecord
   enum :payment_status, { pending: 0, confirmed: 1, rejected: 2 }, prefix: true
   enum :status, { active: 0, warned: 1, kicked: 2, left: 3 }, prefix: true
 
+  # Scopes
+  scope :confirmed, -> { where(payment_status: :confirmed) }
+  scope :active, -> { where(status: :active) }
+
   # Associations
   belongs_to :routine_club
   belongs_to :user

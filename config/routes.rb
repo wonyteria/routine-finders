@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Main Web Application Routes
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -12,6 +12,11 @@ Rails.application.routes.draw do
   get "host_ranking", to: "home#host_ranking"
   get "users/:id", to: "home#user_profile", as: :user_profile
   post "mark_badges_viewed", to: "home#mark_badges_viewed"
+  resources :routine_club_reports, only: [ :index, :show ] do
+    collection do
+      post :generate_current
+    end
+  end
 
   # Authentication routes
   resource :session, only: [ :create, :destroy ]
@@ -75,6 +80,9 @@ Rails.application.routes.draw do
     member do
       post :toggle
     end
+    collection do
+      post :update_goals
+    end
   end
 
   # Routine Clubs (유료 루틴 클럽)
@@ -96,6 +104,16 @@ Rails.application.routes.draw do
   end
 
   resources :rankings, only: [ :index ]
+
+  resources :rufa_activities, only: [ :index ] do
+    resources :claps, controller: "rufa_claps", only: [ :create ]
+  end
+
+  resources :routine_templates, only: [] do
+    member do
+      post :apply
+    end
+  end
 
   resources :users, only: [ :show ]
 
@@ -133,6 +151,22 @@ Rails.application.routes.draw do
         end
         collection do
           post :update_goals
+        end
+      end
+
+      resources :routine_templates, only: [] do
+        member do
+          post :apply
+        end
+      end
+
+      resources :rufa_activities do
+        resources :claps, controller: "rufa_claps", only: [ :create ]
+      end
+
+      resources :routine_club_reports, only: [ :index, :show ] do
+        collection do
+          post :generate_current
         end
       end
 

@@ -23,6 +23,9 @@ class User < ApplicationRecord
   has_many :hosted_routine_clubs, class_name: "RoutineClub", foreign_key: :host_id, dependent: :destroy
   has_many :routine_club_members, dependent: :destroy
   has_many :routine_clubs, through: :routine_club_members
+  has_many :routine_club_reports, dependent: :destroy
+  has_many :rufa_activities, dependent: :destroy
+  has_many :rufa_claps, dependent: :destroy
 
   # Validations
   validates :nickname, presence: true

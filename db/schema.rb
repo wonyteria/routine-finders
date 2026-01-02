@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_02_032214) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_02_034938) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -40,10 +40,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_032214) do
   end
 
   create_table "announcements", force: :cascade do |t|
-    t.integer "challenge_id", null: false
+    t.integer "challenge_id"
     t.text "content"
     t.datetime "created_at", null: false
-    t.integer "routine_club_id", null: false
+    t.integer "routine_club_id"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.index ["challenge_id"], name: "index_announcements_on_challenge_id"
@@ -280,6 +280,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_032214) do
     t.datetime "created_at", null: false
     t.datetime "deposit_confirmed_at"
     t.string "depositor_name"
+    t.string "identity_title"
     t.boolean "is_moderator", default: false
     t.datetime "joined_at", null: false
     t.text "kick_reason"
@@ -322,11 +323,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_032214) do
 
   create_table "routine_club_reports", force: :cascade do |t|
     t.integer "absence_count", default: 0
+    t.float "achievement_rate"
     t.integer "attendance_count", default: 0
     t.float "attendance_rate", default: 0.0
     t.text "cheering_message"
     t.datetime "created_at", null: false
     t.date "end_date", null: false
+    t.string "identity_title"
+    t.float "log_rate"
     t.integer "received_cheers_count", default: 0
     t.integer "report_type", default: 0, null: false
     t.integer "routine_club_id", null: false
@@ -380,6 +384,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_032214) do
     t.index ["category"], name: "index_routine_clubs_on_category"
     t.index ["host_id"], name: "index_routine_clubs_on_host_id"
     t.index ["status"], name: "index_routine_clubs_on_status"
+  end
+
+  create_table "routine_templates", force: :cascade do |t|
+    t.string "author_name"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.text "days"
+    t.text "description"
+    t.string "icon"
+    t.string "title"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "rufa_activities", force: :cascade do |t|
+    t.string "activity_type"
+    t.text "body"
+    t.integer "claps_count", default: 0
+    t.datetime "created_at", null: false
+    t.integer "target_id"
+    t.string "target_type"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_rufa_activities_on_user_id"
+  end
+
+  create_table "rufa_claps", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "rufa_activity_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["rufa_activity_id"], name: "index_rufa_claps_on_rufa_activity_id"
+    t.index ["user_id"], name: "index_rufa_claps_on_user_id"
   end
 
   create_table "staffs", force: :cascade do |t|
@@ -491,6 +527,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_032214) do
   add_foreign_key "routine_club_reports", "users"
   add_foreign_key "routine_club_rules", "routine_clubs"
   add_foreign_key "routine_clubs", "users", column: "host_id"
+  add_foreign_key "rufa_activities", "users"
+  add_foreign_key "rufa_claps", "rufa_activities"
+  add_foreign_key "rufa_claps", "users"
   add_foreign_key "staffs", "challenges"
   add_foreign_key "staffs", "users"
   add_foreign_key "user_badges", "badges"

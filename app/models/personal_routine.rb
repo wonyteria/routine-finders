@@ -27,6 +27,11 @@ class PersonalRoutine < ApplicationRecord
       # 완료 처리
       completions.create!(completed_on: today)
       update_stats!
+
+      # 루파 클럽 멤버일 경우 활동 피드 생성
+      if user.is_rufa_club_member?
+        RufaActivity.create_achievement_activity(user, title)
+      end
     end
   end
 

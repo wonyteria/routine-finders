@@ -1,0 +1,139 @@
+<div class="min-h-screen bg-slate-900 text-white pb-32">
+  <!-- Premium Header -->
+  <div class="relative overflow-hidden pt-20 pb-16 px-6">
+    <div class="absolute inset-0 bg-gradient-to-b from-indigo-600/20 to-transparent z-0"></div>
+    <div class="max-w-4xl mx-auto relative z-10 text-center space-y-4">
+      <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 mb-4">
+        <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(251,191,36,0.5)]"></span>
+        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-100">Monthly Growth Report</span>
+      </div>
+      <h1 class="text-5xl md:text-7xl font-black tracking-tighter">
+        <%= @report.start_date.strftime("%B") %> <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400">Rufa Report</span>
+      </h1>
+      <p class="text-xl text-slate-400 font-medium">당신의 한 달은 결코 헛되지 않았습니다.</p>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-6 space-y-12">
+    <!-- Identity Card -->
+    <section class="bg-white/5 backdrop-blur-xl rounded-[48px] p-12 border border-white/10 shadow-2xl relative overflow-hidden group">
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-[100px]"></div>
+      
+      <div class="relative z-10 flex flex-col md:flex-row items-center gap-10">
+        <div class="shrink-0">
+          <div class="w-32 h-32 rounded-[40px] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-5xl shadow-2xl ring-4 ring-white/10">
+            <%= case @report.identity_title
+                when /마스터/ then "👑"
+                when /가이드/ then "🧭"
+                when /개척자/ then "⚔️"
+                else "🌱"
+                end %>
+          </div>
+        </div>
+        <div class="text-center md:text-left space-y-4">
+          <p class="text-sm font-black text-indigo-400 uppercase tracking-widest leading-none">Your Current Identity</p>
+          <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight"><%= @report.identity_title %></h2>
+          <div class="h-1 w-20 bg-indigo-500 rounded-full mx-auto md:mx-0"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics Grid -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Log Rate Card -->
+      <div class="bg-white rounded-[40px] p-10 text-slate-900 shadow-2xl space-y-6">
+        <div class="flex justify-between items-center">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Monthly Log Rate</p>
+          <span class="text-xs font-bold text-indigo-600">성실함의 척도</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <h4 class="text-6xl font-black tracking-tighter"><%= @report.log_rate.to_i %></h4>
+          <span class="text-2xl font-black text-slate-300">%</span>
+        </div>
+        <div class="w-full h-4 bg-slate-50 rounded-full overflow-hidden border border-slate-100 p-1">
+          <div class="h-full bg-indigo-600 rounded-full transition-all duration-1000" style="width: <%= @report.log_rate %>%"></div>
+        </div>
+      </div>
+
+      <!-- Achievement Rate Card -->
+      <div class="bg-indigo-600 rounded-[40px] p-10 text-white shadow-2xl shadow-indigo-500/20 space-y-6">
+        <div class="flex justify-between items-center">
+          <p class="text-[10px] font-black text-indigo-200 uppercase tracking-widest">Achievement Rate</p>
+          <span class="text-xs font-bold text-indigo-300">실천의 결과</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <h4 class="text-6xl font-black tracking-tighter"><%= @report.achievement_rate.to_i %></h4>
+          <span class="text-2xl font-black text-indigo-400">%</span>
+        </div>
+        <div class="w-full h-4 bg-white/10 rounded-full overflow-hidden border border-white/5 p-1">
+          <div class="h-full bg-white rounded-full transition-all duration-1000" style="width: <%= @report.achievement_rate %>%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary Box -->
+    <section class="bg-slate-800/50 rounded-[48px] p-12 border border-white/5 space-y-8">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-xl">✍️</div>
+        <h3 class="text-2xl font-black tracking-tight">성장의 요약</h3>
+      </div>
+      <p class="text-xl md:text-2xl text-slate-300 font-bold leading-relaxed">
+        <%= @report.summary %>
+      </p>
+      <div class="p-8 bg-indigo-500/10 rounded-3xl border border-indigo-500/20">
+        <p class="text-lg text-indigo-200 font-bold italic">
+          "<%= @report.cheering_message %>"
+        </p>
+      </div>
+    </section>
+
+    <!-- Goal Architecture Review -->
+    <section class="bg-white rounded-[48px] p-12 text-slate-900 shadow-2xl space-y-10">
+      <div class="flex items-center justify-between">
+        <h3 class="text-2xl font-black tracking-tight">Goal Architecture Review</h3>
+        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Persistence Map</span>
+      </div>
+
+      <div class="space-y-8">
+        <% 
+          user_goals = @report.user.user_goals.index_by(&:goal_type)
+          [[:long_term, "Long Term", "bg-purple-500"], [:mid_term, "Mid Term", "bg-indigo-500"], [:short_term, "Short Term", "bg-emerald-500"]].each do |key, label, color|
+            goal_body = user_goals[key.to_s]&.body
+        %>
+          <div class="group">
+            <div class="flex items-center gap-4 mb-3">
+              <div class="w-3 h-3 rounded-full <%= color %>"></div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= label %></p>
+            </div>
+            <div class="pl-7">
+              <p class="text-xl font-black text-slate-700 <%= 'line-through opacity-30' if @report.achievement_rate >= 90 && key == :short_term %>">
+                <%= goal_body.present? ? goal_body : "설정된 목표가 없습니다." %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col md:flex-row gap-4 pt-10">
+      <%= link_to personal_routines_path(tab: "club"), class: "flex-1 py-6 bg-slate-800 text-white rounded-[24px] font-black text-center hover:bg-slate-700 transition-all" do %>
+        리포트 닫기
+      <% end %>
+      <button onclick="window.print()" class="flex-1 py-6 bg-indigo-600 text-white rounded-[24px] font-black hover:scale-[1.02] transition-all shadow-xl shadow-indigo-500/20">
+        나의 기록 보관하기 (PDF)
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  @media print {
+    .bg-slate-900 { background: white !important; color: black !important; }
+    .text-white { color: black !important; }
+    .bg-white\/5 { background: #f8fafc !important; }
+    .border-white\/10 { border-color: #e2e8f0 !important; }
+    .shadow-2xl { shadow: none !important; }
+    button, a { display: none !important; }
+  }
+</style>

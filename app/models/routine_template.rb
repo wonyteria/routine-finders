@@ -1,0 +1,2 @@
+class RoutineTemplate < ApplicationRecord
+end
