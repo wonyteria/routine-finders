@@ -244,10 +244,9 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
             <% if @personal_routines.any? %>
               <% @personal_routines.take(9).each do |routine| %>
-                <div class="group/routine">
+                <div id="routine_<%= routine.id %>_home" class="group/routine">
                   <%= button_to toggle_personal_routine_path(routine), 
                                 method: :post, 
-                                id: "routine_#{routine.id}_home",
                                 class: "w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all #{routine.completed_today? ? 'bg-white border-white shadow-xl translate-y-[-2px]' : 'bg-white/10 border-white/10 text-white hover:bg-white/20'}",
                                 data: { turbo_stream: true } do %>
                     <div class="flex items-center gap-4">
@@ -269,7 +268,7 @@
             <% else %>
                 <div class="col-span-full py-12 text-center">
                   <p class="text-white/60 font-black mb-6">첫 번째 루틴을 만들고 성장을 기록해보세요.</p>
-                  <%= link_to new_personal_routine_path, class: "px-10 py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm shadow-xl hover:scale-105 transition-all inline-block" do %>
+                  <%= link_to personal_routines_path, class: "px-10 py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm shadow-xl hover:scale-105 transition-all inline-block" do %>
                     루틴 만들기 +
                   <% end %>
                 </div>

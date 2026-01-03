@@ -1,8 +1,8 @@
 <div class="min-h-screen bg-slate-50/30 py-6 lg:py-12 px-4" data-controller="challenge-form">
   <div class="max-w-6xl mx-auto">
     <!-- Top Navigation Area -->
-    <div class="flex items-center justify-between mb-8 lg:mb-12">
-      <div class="flex items-center gap-4 lg:gap-6">
+    <div class="flex items-center justify-between mb-6 lg:mb-12">
+      <div class="flex items-center gap-3 lg:gap-6">
         <%= link_to challenges_path, class: "w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 shadow-sm transition-all group" do %>
           <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
         <% end %>
@@ -24,9 +24,27 @@
       </div>
     </div>
 
+    <!-- Current Step Indicator (Mobile-friendly) -->
+    <div class="mb-6 lg:mb-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-[28px] p-4 lg:p-6 shadow-xl shadow-indigo-200/50" data-challenge-form-target="stepIndicator">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3 lg:gap-4">
+          <div class="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            <span class="text-2xl lg:text-3xl font-black text-white" data-challenge-form-target="stepNumber">1</span>
+          </div>
+          <div>
+            <p class="text-[10px] lg:text-xs font-bold text-white/70 uppercase tracking-wider">Current Step</p>
+            <h2 class="text-lg lg:text-xl font-black text-white" data-challenge-form-target="stepTitle">기본 정보</h2>
+          </div>
+        </div>
+        <div class="hidden lg:flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl">
+          <span class="text-sm font-black text-white" data-challenge-form-target="stepProgress">1/7</span>
+        </div>
+      </div>
+    </div>
+
     <div class="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-      <!-- Side Step Navigation (Transformed to horizontal stepper on mobile) -->
-      <div class="flex overflow-x-auto lg:flex-col lg:w-64 shrink-0 gap-6 lg:gap-8 sticky top-20 lg:top-32 bg-slate-50/50 backdrop-blur-xl lg:bg-transparent z-40 -mx-4 px-6 py-4 lg:mx-0 lg:px-0 lg:py-0 no-scrollbar border-b border-slate-200 lg:border-none">
+      <!-- Side Step Navigation (Desktop only) -->
+      <div class="hidden lg:flex lg:flex-col lg:w-64 shrink-0 gap-8 lg:sticky lg:top-32">
         <% [
           { step: 1, label: "기본 정보", icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" },
           { step: 2, label: "인증 목표", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" },
@@ -37,16 +55,16 @@
           { step: 7, label: "혜택 설계", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2" }
         ].each_with_index do |nav, i| %>
           <button type="button" 
-                  class="flex items-center gap-3 lg:gap-5 shrink-0 lg:w-full text-left group" 
+                  class="flex items-center gap-5 w-full text-left group" 
                   data-action="click->challenge-form#goToStep" 
                   data-step="<%= nav[:step] %>"
                   data-challenge-form-target="nav">
-            <div class="nav-icon w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl flex items-center justify-center transition-all duration-500 <%= i == 0 ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200' : 'bg-white text-slate-300' %>">
+            <div class="nav-icon w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 <%= i == 0 ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200' : 'bg-white text-slate-300' %>">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= nav[:icon] %>"/></svg>
             </div>
             <div class="nav-text space-y-0.5 transition-all duration-500 <%= i == 0 ? 'opacity-100' : 'opacity-40 hover:opacity-100' %>">
-              <p class="text-[8px] lg:text-[10px] font-black uppercase tracking-widest text-slate-400">Step <%= nav[:step] %></p>
-              <p class="font-black text-sm lg:text-xl text-slate-900 whitespace-nowrap"><%= nav[:label] %></p>
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Step <%= nav[:step] %></p>
+              <p class="font-black text-xl text-slate-900 whitespace-nowrap"><%= nav[:label] %></p>
             </div>
           </button>
         <% end %>
@@ -55,9 +73,35 @@
       <!-- Main Content Card -->
       <div class="flex-1 max-w-4xl">
 
-
         <%= form_with model: @challenge, multipart: true, class: "space-y-10", id: "challenge-form-ui" do |f| %>
           <%= f.hidden_field :mode %>
+
+          <% if @challenge.errors.any? %>
+            <div class="bg-red-50 border-2 border-red-200 rounded-[32px] p-8 space-y-6 shadow-xl shadow-red-100/50 animate-shake">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-xl font-black text-red-900">챌린지 개설 실패</h3>
+                  <p class="text-sm font-bold text-red-600 mt-1">아래 항목들을 확인하고 수정해주세요.</p>
+                </div>
+              </div>
+              
+              <div class="space-y-3 pl-4 lg:pl-16">
+                <% @challenge.errors.full_messages.each do |message| %>
+                  <div class="flex items-start gap-3 p-4 bg-white rounded-2xl border border-red-100">
+                    <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+                    <p class="text-sm font-bold text-red-900 leading-relaxed"><%= message %></p>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="pl-4 lg:pl-16">
+                <p class="text-xs font-bold text-red-600/70 leading-relaxed">💡 각 단계를 확인하여 필수 항목을 모두 입력했는지 확인해주세요.</p>
+              </div>
+            </div>
+          <% end %>
           
           <!-- Step 1: Basic Information -->
           <div class="space-y-10" data-challenge-form-target="step">
@@ -312,10 +356,10 @@
                         <button type="button" 
                                 data-day="<%= day %>"
                                 data-action="click->challenge-form#toggleDay"
-                                class="w-16 h-16 rounded-[22px] bg-white text-slate-300 border-2 border-slate-100 font-black text-lg flex items-center justify-center transition-all duration-300 transform active:scale-90 hover:border-indigo-200">
+                                class="w-16 h-16 rounded-[22px] bg-indigo-600 text-white shadow-lg border-indigo-600 font-black text-lg flex items-center justify-center transition-all duration-300 transform active:scale-90 hover:border-indigo-200">
                           <%= day %>
                         </button>
-                        <%= checkbox_tag "challenge[days][]", day, true, id: "day_#{day}", class: "sr-only" %>
+                        <%= check_box_tag "challenge[days][]", day, true, id: "day_#{day}", class: "sr-only" %>
                       <% end %>
                     </div>
                   </div>
@@ -402,20 +446,74 @@
 
                   <div class="space-y-6 pt-4">
                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">인증 가능 시간대</label>
-                    <div class="flex items-center gap-6 p-10 bg-slate-50 rounded-[40px] border border-slate-100 shadow-inner">
-                      <div class="flex-1 space-y-3">
+                    <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-6 lg:p-10 bg-slate-50 rounded-[40px] border border-slate-100 shadow-inner">
+                      <div class="flex-1 w-full space-y-3">
                         <p class="text-[10px] font-black text-slate-400 uppercase text-center">시작 시간</p>
                         <div class="relative group">
-                          <%= f.time_field :verification_start_time, value: @challenge.verification_start_time&.strftime("%H:%M") || "00:00", onclick: "this.showPicker()", class: "w-full p-6 bg-white border-2 border-transparent rounded-[24px] font-black text-xl text-center focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none cursor-pointer" %>
+                          <%= f.time_field :verification_start_time, value: @challenge.verification_start_time&.strftime("%H:%M") || "00:00", onclick: "this.showPicker()", class: "w-full p-5 lg:p-6 bg-white border-2 border-transparent rounded-[24px] font-black text-lg lg:text-xl text-center focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none cursor-pointer" %>
                         </div>
                       </div>
-                      <div class="pt-6">
+                      <div class="hidden sm:block pt-6">
                         <div class="w-8 h-1 bg-slate-200 rounded-full"></div>
                       </div>
-                      <div class="flex-1 space-y-3">
+                      <div class="flex-1 w-full space-y-3">
                         <p class="text-[10px] font-black text-slate-400 uppercase text-center">종료 시간</p>
                         <div class="relative group">
-                          <%= f.time_field :verification_end_time, value: @challenge.verification_end_time&.strftime("%H:%M") || "23:59", onclick: "this.showPicker()", class: "w-full p-6 bg-white border-2 border-transparent rounded-[24px] font-black text-xl text-center focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none cursor-pointer" %>
+                          <%= f.time_field :verification_end_time, value: @challenge.verification_end_time&.strftime("%H:%M") || "23:59", onclick: "this.showPicker()", class: "w-full p-5 lg:p-6 bg-white border-2 border-transparent rounded-[24px] font-black text-lg lg:text-xl text-center focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none cursor-pointer" %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="space-y-6 pt-4">
+                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">인증 옵션 설정</label>
+                    <div class="space-y-4">
+                      <div class="p-5 bg-slate-50 rounded-[28px] flex items-center justify-between group transition-all hover:bg-white border border-slate-100">
+                        <div class="flex items-center gap-4">
+                          <div class="w-10 h-10 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                          </div>
+                          <div>
+                            <div class="flex items-center gap-1.5">
+                              <p class="font-black text-sm text-slate-900">재인증 허용</p>
+                              <div class="relative group/tooltip">
+                                <svg class="w-3.5 h-3.5 text-slate-300 hover:text-indigo-500 cursor-help transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:block w-48 p-3 bg-slate-900 text-white text-[10px] font-bold rounded-xl shadow-2xl z-50 pointer-events-none">
+                                  <p class="leading-relaxed">주최자가 인증을 거절했을 때, 당일 내에 다시 도전할 수 있는 기회를 주는 기능입니다.</p>
+                                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
+                                </div>
+                              </div>
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-400 mt-0.5">실패 시 재시도 기회 제공</p>
+                          </div>
+                        </div>
+                        <div class="relative inline-flex items-center">
+                          <%= f.check_box :re_verification_allowed, class: "sr-only peer", id: "re_verification_allowed_cb" %>
+                          <label for="re_verification_allowed_cb" class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5 cursor-pointer"></label>
+                        </div>
+                      </div>
+
+                      <div class="p-5 bg-slate-50 rounded-[28px] flex items-center justify-between group transition-all hover:bg-white border border-slate-100">
+                        <div class="flex items-center gap-4">
+                          <div class="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                          </div>
+                          <div>
+                            <div class="flex items-center gap-1.5">
+                              <p class="font-black text-sm text-slate-900">인증 승인제</p>
+                              <div class="relative group/tooltip">
+                                <svg class="w-3.5 h-3.5 text-slate-300 hover:text-amber-500 cursor-help transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:block w-48 p-3 bg-slate-900 text-white text-[10px] font-bold rounded-xl shadow-2xl z-50 pointer-events-none">
+                                  <p class="leading-relaxed">참여자의 인증물을 호스트가 직접 검토하고 승인해야 최종 성공으로 인정되는 방식입니다.</p>
+                                  <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
+                                </div>
+                              </div>
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-400 mt-0.5">호스트가 직접 승인</p>
+                          </div>
+                        </div>
+                        <div class="relative inline-flex items-center">
+                          <%= f.check_box :mission_requires_host_approval, class: "sr-only peer", id: "mission_requires_host_approval_cb" %>
+                          <label for="mission_requires_host_approval_cb" class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-amber-500 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5 cursor-pointer"></label>
                         </div>
                       </div>
                     </div>
@@ -423,75 +521,24 @@
                 </div>
               </div>
 
-              <!-- Right Column: Settings & Nav (Sticky) -->
-              <div class="w-full lg:w-80 shrink-0 space-y-8 lg:sticky lg:top-8">
-                <div class="bg-indigo-50/50 rounded-[40px] p-8 border border-indigo-100/30 space-y-6 shadow-xl shadow-indigo-100/10">
-                  <div class="flex items-center gap-3 text-indigo-900 border-b border-indigo-100 pb-4">
-                    <div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm">
-                      <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <!-- Right Column: Navigation & Guide (Sticky) -->
+              <div class="w-full lg:w-80 shrink-0 space-y-6 lg:space-y-8 lg:sticky lg:top-8">
+                <div class="bg-indigo-50/50 rounded-[28px] lg:rounded-[40px] p-6 lg:p-8 border border-indigo-100/30 space-y-4 lg:space-y-6">
+                  <div class="flex items-center gap-3 text-indigo-900 border-b border-indigo-100/50 pb-3 lg:pb-4">
+                    <div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center">
+                      <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <p class="font-black text-sm">인증 옵션 설정</p>
+                    <p class="font-black text-sm">인증 방식 안내</p>
                   </div>
-                  
-                  <div class="space-y-4">
-                    <div class="p-5 bg-white/60 rounded-[28px] flex items-center justify-between group transition-all hover:bg-white border border-indigo-100/50">
-                      <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                        </div>
-                        <div>
-                          <div class="flex items-center gap-1.5">
-                            <p class="font-black text-[11px] text-slate-900">재인증</p>
-                            <div class="relative group/tooltip">
-                              <svg class="w-3.5 h-3.5 text-slate-300 hover:text-indigo-500 cursor-help transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:block w-48 p-3 bg-slate-900 text-white text-[10px] font-bold rounded-xl shadow-2xl z-50 pointer-events-none">
-                                <p class="leading-relaxed">주최자가 인증을 거절했을 때, 당일 내에 다시 도전할 수 있는 기회를 주는 기능입니다.</p>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
-                              </div>
-                            </div>
-                          </div>
-                          <p class="text-[9px] font-bold text-slate-400">실패 시 재시도</p>
-                        </div>
-                      </div>
-                      <div class="relative inline-flex items-center">
-                        <%= f.check_box :re_verification_allowed, class: "sr-only peer", id: "re_verification_allowed_cb" %>
-                        <label for="re_verification_allowed_cb" class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5 cursor-pointer"></label>
-                      </div>
-                    </div>
-
-                    <div class="p-5 bg-white/60 rounded-[28px] flex items-center justify-between group transition-all hover:bg-white border border-indigo-100/50">
-                      <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 transition-colors group-hover:bg-amber-500 group-hover:text-white">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                        </div>
-                        <div>
-                          <div class="flex items-center gap-1.5">
-                            <p class="font-black text-[11px] text-slate-900">승인제</p>
-                            <div class="relative group/tooltip">
-                              <svg class="w-3.5 h-3.5 text-slate-300 hover:text-amber-500 cursor-help transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:block w-48 p-3 bg-slate-900 text-white text-[10px] font-bold rounded-xl shadow-2xl z-50 pointer-events-none">
-                                <p class="leading-relaxed">참여자의 인증물을 호스트가 직접 검토하고 승인해야 최종 성공으로 인정되는 방식입니다.</p>
-                                <div class="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900"></div>
-                              </div>
-                            </div>
-                          </div>
-                          <p class="text-[9px] font-bold text-slate-400">호스트 직접 승인</p>
-                        </div>
-                      </div>
-                      <div class="relative inline-flex items-center">
-                        <%= f.check_box :mission_requires_host_approval, class: "sr-only peer", id: "mission_requires_host_approval_cb" %>
-                        <label for="mission_requires_host_approval_cb" class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-amber-500 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5 cursor-pointer"></label>
-                      </div>
-                    </div>
-                  </div>
+                  <p class="text-[11px] font-bold text-indigo-900/40 leading-relaxed">사진 인증은 가장 확실한 방법이며, 간편 인증은 참여 장벽을 낮춥니다. 승인제를 활성화하면 품질 관리가 가능합니다.</p>
                 </div>
 
-                <div class="space-y-4">
-                  <button type="button" data-action="click->challenge-form#next" class="w-full py-6 bg-indigo-600 text-white rounded-[32px] font-black text-lg shadow-2xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-3 group">
+                <div class="space-y-3 lg:space-y-4">
+                  <button type="button" data-action="click->challenge-form#next" class="w-full py-5 lg:py-6 bg-indigo-600 text-white rounded-[28px] lg:rounded-[32px] font-black text-base lg:text-lg shadow-2xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-3 group">
                     다음 단계로
                     <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                   </button>
-                  <button type="button" data-action="click->challenge-form#prev" class="w-full py-5 bg-slate-100 text-slate-400 rounded-[32px] font-black text-sm hover:bg-slate-200 transition-all">
+                  <button type="button" data-action="click->challenge-form#prev" class="w-full py-4 lg:py-5 bg-slate-100 text-slate-400 rounded-[28px] lg:rounded-[32px] font-black text-sm hover:bg-slate-200 transition-all">
                     이전 단계로
                   </button>
                 </div>
@@ -584,20 +631,35 @@
                   </div>
 
                   <div class="space-y-6 pt-4">
-                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">참여 모집 기간</label>
-                    <div class="flex items-center gap-4 p-8 bg-slate-50 rounded-[32px] border border-slate-100 shadow-inner">
+                    <div class="flex items-center gap-3 pl-2">
+                      <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      </div>
+                      <label class="text-sm font-black text-slate-900">참여 모집 기간 설정</label>
+                      <span class="px-2 py-1 bg-red-500 text-white text-[9px] font-black rounded-md">필수</span>
+                    </div>
+                    <div class="flex items-center gap-4 p-8 bg-gradient-to-br from-emerald-50 to-indigo-50 rounded-[32px] border-2 border-emerald-200 shadow-lg shadow-emerald-100/50">
                       <div class="flex-1 space-y-2">
-                        <p class="text-[10px] font-black text-slate-400 uppercase text-center tracking-tighter">모집 시작일</p>
-                        <%= f.date_field :recruitment_start_date, value: @challenge.recruitment_start_date || Date.current, onclick: "this.showPicker()", class: "w-full p-4 bg-white border-2 border-transparent rounded-2xl font-bold text-sm text-center focus:border-indigo-500/20 transition-all outline-none cursor-pointer" %>
+                        <p class="text-[10px] font-black text-emerald-700 uppercase text-center tracking-tighter">모집 시작일</p>
+                        <%= f.date_field :recruitment_start_date, 
+                            value: @challenge.recruitment_start_date || Date.current, 
+                            onclick: "this.showPicker()", 
+                            required: true,
+                            class: "w-full p-4 bg-white border-2 border-emerald-200 rounded-2xl font-bold text-sm text-center focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-all outline-none cursor-pointer shadow-sm" %>
                       </div>
                       <div class="pt-6">
-                        <div class="w-4 h-0.5 bg-slate-200 rounded-full"></div>
+                        <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                       </div>
                       <div class="flex-1 space-y-2">
-                        <p class="text-[10px] font-black text-slate-400 uppercase text-center tracking-tighter">모집 마감일</p>
-                        <%= f.date_field :recruitment_end_date, value: @challenge.recruitment_end_date || (@challenge.start_date.present? ? @challenge.start_date - 1.day : Date.current + 6.days), onclick: "this.showPicker()", class: "w-full p-4 bg-white border-2 border-transparent rounded-2xl font-bold text-sm text-center focus:border-indigo-500/20 transition-all outline-none cursor-pointer" %>
+                        <p class="text-[10px] font-black text-indigo-700 uppercase text-center tracking-tighter">모집 마감일</p>
+                        <%= f.date_field :recruitment_end_date, 
+                            value: @challenge.recruitment_end_date || Date.current + 7.days, 
+                            onclick: "this.showPicker()", 
+                            required: true,
+                            class: "w-full p-4 bg-white border-2 border-indigo-200 rounded-2xl font-bold text-sm text-center focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all outline-none cursor-pointer shadow-sm" %>
                       </div>
                     </div>
+                    <p class="text-xs font-bold text-slate-500 pl-2">💡 모집 기간을 설정하면 해당 기간 동안만 참여 신청을 받을 수 있습니다.</p>
                   </div>
 
                   <div class="space-y-6 pt-4 bg-slate-50/50 rounded-[32px] p-8 border border-slate-100/50">
@@ -621,11 +683,11 @@
               </div>
 
               <!-- Right Column: Navigation & Extras (Sticky) -->
-              <div class="w-full lg:w-80 shrink-0 space-y-8 lg:sticky lg:top-8">
+              <div class="w-full lg:w-80 shrink-0 space-y-6 lg:space-y-8 lg:sticky lg:top-8">
 
 
-                <div class="bg-indigo-50/50 rounded-[40px] p-8 border border-indigo-100/30 space-y-6">
-                  <div class="flex items-center gap-3 text-indigo-900 border-b border-indigo-100/50 pb-4">
+                <div class="bg-indigo-50/50 rounded-[28px] lg:rounded-[40px] p-6 lg:p-8 border border-indigo-100/30 space-y-4 lg:space-y-6">
+                  <div class="flex items-center gap-3 text-indigo-900 border-b border-indigo-100/50 pb-3 lg:pb-4">
                     <div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center">
                       <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
@@ -634,12 +696,12 @@
                   <p class="text-[11px] font-bold text-indigo-900/40 leading-relaxed">호스트 승인을 선택할 경우, 호스트님이 신청자 목록에서 입금/참여를 확인한 후 직접 수락해야 합니다.</p>
                 </div>
 
-                <div class="space-y-4">
-                  <button type="button" data-action="click->challenge-form#next" class="w-full py-6 bg-indigo-600 text-white rounded-[32px] font-black text-lg shadow-2xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-3 group">
+                <div class="space-y-3 lg:space-y-4">
+                  <button type="button" data-action="click->challenge-form#next" class="w-full py-5 lg:py-6 bg-indigo-600 text-white rounded-[28px] lg:rounded-[32px] font-black text-base lg:text-lg shadow-2xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-3 group">
                     다음 단계로
                     <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                   </button>
-                  <button type="button" data-action="click->challenge-form#prev" class="w-full py-5 bg-slate-100 text-slate-400 rounded-[32px] font-black text-sm hover:bg-slate-200 transition-all">
+                  <button type="button" data-action="click->challenge-form#prev" class="w-full py-4 lg:py-5 bg-slate-100 text-slate-400 rounded-[28px] lg:rounded-[32px] font-black text-sm hover:bg-slate-200 transition-all">
                     이전 단계로
                   </button>
                 </div>
@@ -916,13 +978,26 @@
                     참가비 및 보증금은 모두가 신뢰할 수 있도록 주최자님의 <span class="text-indigo-600">세심한 관리와 투명한 운영</span>이 필요합니다. 정산 과정에서 발생하는 <span class="text-slate-900">모든 분쟁 및 금전적 이슈에 대한 책임은 전적으로 주최자에게 있으며</span>, 루틴 파인더스는 정산 문제에 대해 어떠한 책임도 지지 않으며 개입하지 않습니다.
                   </p>
                 </div>
+              </div>
 
-                <div class="space-y-4 pt-4">
-                  <button type="button" data-action="click->challenge-form#next" class="w-full py-6 bg-indigo-600 text-white rounded-[32px] font-black text-xl shadow-2xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-3 group">
-                    혜택 설계하기
+              <!-- Right Column: Navigation & Guide (Sticky) -->
+              <div class="w-full lg:w-80 shrink-0 space-y-6 lg:space-y-8 lg:sticky lg:top-8">
+                <div class="bg-amber-50/50 rounded-[28px] lg:rounded-[40px] p-6 lg:p-8 border border-amber-100/30 space-y-4 lg:space-y-6">
+                  <div class="flex items-center gap-3 text-amber-900 border-b border-amber-100/50 pb-3 lg:pb-4">
+                    <div class="w-8 h-8 rounded-xl bg-white flex items-center justify-center">
+                      <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <p class="font-black text-sm">비용 설정 안내</p>
+                  </div>
+                  <p class="text-[11px] font-bold text-amber-900/40 leading-relaxed">보증금 방식은 참여자의 동기부여를 높이고, 참가비는 수익 창출형 챌린지에 적합합니다. 무료 챌린지는 부담 없이 시작할 수 있습니다.</p>
+                </div>
+
+                <div class="space-y-3 lg:space-y-4">
+                  <button type="button" data-action="click->challenge-form#next" class="w-full py-5 lg:py-6 bg-indigo-600 text-white rounded-[28px] lg:rounded-[32px] font-black text-base lg:text-lg shadow-2xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all flex items-center justify-center gap-3 group">
+                    다음 단계로
                     <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                   </button>
-                  <button type="button" data-action="click->challenge-form#prev" class="w-full py-4 bg-slate-100 text-slate-400 rounded-[32px] font-black text-xs hover:bg-slate-200 transition-all">
+                  <button type="button" data-action="click->challenge-form#prev" class="w-full py-4 lg:py-5 bg-slate-100 text-slate-400 rounded-[28px] lg:rounded-[32px] font-black text-sm hover:bg-slate-200 transition-all">
                     이전 단계로
                   </button>
                 </div>
@@ -1135,6 +1210,16 @@
   }
   input[type="number"].no-spinner {
     -moz-appearance: textfield;
+  }
+
+  /* Shake Animation for Errors */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+    20%, 40%, 60%, 80% { transform: translateX(8px); }
+  }
+  .animate-shake {
+    animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
   }
 </style>
 

@@ -1,9 +1,8 @@
 <turbo-stream action="replace" target="routine_<%= @routine.id %>_home">
   <template>
-    <div class="group/routine">
+    <div id="routine_<%= @routine.id %>_home" class="group/routine">
       <%= button_to toggle_personal_routine_path(@routine), 
                     method: :post, 
-                    id: "routine_#{@routine.id}_home",
                     class: "w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all #{@routine.completed_today? ? 'bg-white border-white shadow-xl translate-y-[-2px]' : 'bg-white/10 border-white/10 text-white hover:bg-white/20'}",
                     data: { turbo_stream: true } do %>
         <div class="flex items-center gap-4">
@@ -32,37 +31,41 @@
 
 <turbo-stream action="replace" target="routine_<%= @routine.id %>_club">
   <template>
-    <%= button_to toggle_personal_routine_path(@routine), 
-                  method: :post, 
-                  class: "flex items-center justify-between p-6 rounded-3xl border-2 transition-all hover:scale-[1.02] w-full #{@routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}",
-                  data: { turbo_stream: true } do %>
-      <div class="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
-        <span class="text-2xl transform group-hover:scale-125 transition-transform flex-shrink-0"><%= @routine.icon %></span>
-        <div class="text-left min-w-0 flex-1">
-          <p class="text-[15px] font-black text-slate-900 truncate <%= 'line-through text-slate-400' if @routine.completed_today? %>"><%= @routine.title %></p>
-          <p class="text-[10px] font-bold text-slate-400 truncate"><%= @routine.category %></p>
+    <div id="routine_<%= @routine.id %>_club" class="w-full">
+      <%= button_to toggle_personal_routine_path(@routine), 
+                    method: :post, 
+                    class: "flex items-center justify-between p-6 rounded-3xl border-2 transition-all hover:scale-[1.02] w-full #{@routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}",
+                    data: { turbo_stream: true } do %>
+        <div class="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
+          <span class="text-2xl transform group-hover:scale-125 transition-transform flex-shrink-0"><%= @routine.icon %></span>
+          <div class="text-left min-w-0 flex-1">
+            <p class="text-[15px] font-black text-slate-900 truncate <%= 'line-through text-slate-400' if @routine.completed_today? %>"><%= @routine.title %></p>
+            <p class="text-[10px] font-bold text-slate-400 truncate"><%= @routine.category %></p>
+          </div>
         </div>
-      </div>
-      <% if @routine.completed_today? %>
-        <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white flex-shrink-0 ml-4 shadow-lg shadow-indigo-100">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-        </div>
-      <% else %>
-        <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all flex-shrink-0 ml-4 shadow-sm">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-        </div>
+        <% if @routine.completed_today? %>
+          <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white flex-shrink-0 ml-4 shadow-lg shadow-indigo-100">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+        <% else %>
+          <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all flex-shrink-0 ml-4 shadow-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </div>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </template>
 </turbo-stream>
 
 <turbo-stream action="replace" target="routine_<%= @routine.id %>_architecture">
   <template>
-    <%= button_to toggle_personal_routine_path(@routine), 
-                  method: :post, 
-                  class: "w-10 h-10 rounded-xl flex items-center justify-center transition-all #{@routine.completed_today? ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white text-slate-300 hover:bg-emerald-50 hover:text-emerald-500'}",
-                  data: { turbo_stream: true } do %>
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-    <% end %>
+    <div id="routine_<%= @routine.id %>_architecture">
+      <%= button_to toggle_personal_routine_path(@routine), 
+                    method: :post, 
+                    class: "w-10 h-10 rounded-xl flex items-center justify-center transition-all #{@routine.completed_today? ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white text-slate-300 hover:bg-emerald-50 hover:text-emerald-500'}",
+                    data: { turbo_stream: true } do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      <% end %>
+    </div>
   </template>
 </turbo-stream>

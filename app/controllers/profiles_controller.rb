@@ -106,6 +106,7 @@ class ProfilesController < ApplicationController
     params.require(:user).permit(
       :nickname,
       :bio,
+      :avatar,
       :saved_bank_name,
       :saved_account_number,
       :saved_account_holder,
