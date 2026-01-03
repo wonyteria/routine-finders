@@ -11,7 +11,8 @@ export default class extends Controller {
         "hostBio", "missionGoalType", "fixedGoalSection", "dailyGoalSection",
         "disclaimerFields", "rewardHidden", "rewardsContainer", "achievementThresholds",
         "refundDateField", "recruitmentStartDate", "recruitmentEndDate",
-        "feeSection", "depositSection", "addFeeCheckbox", "additionalFeeFields"
+        "feeSection", "depositSection", "addFeeCheckbox", "additionalFeeFields",
+        "stepNumber", "stepTitle", "stepProgress", "stepIndicator"
     ]
 
     connect() {
@@ -43,6 +44,17 @@ export default class extends Controller {
     }
 
     showStep() {
+        // Step titles mapping
+        const stepTitles = {
+            1: "기본 정보",
+            2: "인증 목표",
+            3: "일정 설정",
+            4: "인증 방식",
+            5: "참여 조건",
+            6: "비용 및 계좌",
+            7: "혜택 설계"
+        }
+
         // Show current step div, hide others
         this.stepTargets.forEach((el, i) => {
             el.classList.toggle("hidden", i + 1 !== this.currentStep)
@@ -63,6 +75,17 @@ export default class extends Controller {
             el.classList.toggle("w-2", !active)
         })
 
+        // Update step indicator
+        if (this.hasStepNumberTarget) {
+            this.stepNumberTarget.textContent = this.currentStep
+        }
+        if (this.hasStepTitleTarget) {
+            this.stepTitleTarget.textContent = stepTitles[this.currentStep] || "단계"
+        }
+        if (this.hasStepProgressTarget) {
+            this.stepProgressTarget.textContent = `${this.currentStep}/7`
+        }
+
         // Update side nav
         this.navTargets.forEach((el, i) => {
             const stepNum = i + 1
@@ -74,6 +97,22 @@ export default class extends Controller {
                 icon.classList.add("bg-indigo-600", "text-white", "shadow-xl", "shadow-indigo-200")
                 text.classList.remove("opacity-40")
                 text.classList.add("opacity-100")
+
+                // Scroll active nav item into view on mobile (horizontal scroll only)
+                const navContainer = el.closest('.overflow-x-auto')
+                if (navContainer && window.innerWidth < 1024) { // Only on mobile
+                    setTimeout(() => {
+                        const containerRect = navContainer.getBoundingClientRect()
+                        const elementRect = el.getBoundingClientRect()
+                        const scrollLeft = navContainer.scrollLeft
+                        const elementCenter = elementRect.left - containerRect.left + scrollLeft - (containerRect.width / 2) + (elementRect.width / 2)
+
+                        navContainer.scrollTo({
+                            left: elementCenter,
+                            behavior: 'smooth'
+                        })
+                    }, 100)
+                }
             } else {
                 icon.classList.remove("bg-indigo-600", "text-white", "shadow-xl", "shadow-indigo-200")
                 icon.classList.add("bg-white", "text-slate-300")
@@ -132,8 +171,10 @@ export default class extends Controller {
             event.currentTarget.classList.toggle("bg-indigo-600", checkbox.checked)
             event.currentTarget.classList.toggle("text-white", checkbox.checked)
             event.currentTarget.classList.toggle("shadow-lg", checkbox.checked)
+            event.currentTarget.classList.toggle("border-indigo-600", checkbox.checked)
             event.currentTarget.classList.toggle("bg-white", !checkbox.checked)
             event.currentTarget.classList.toggle("text-slate-300", !checkbox.checked)
+            event.currentTarget.classList.toggle("border-slate-100", !checkbox.checked)
         }
     }
 

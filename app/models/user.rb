@@ -2,6 +2,7 @@
 
 class User < ApplicationRecord
   has_secure_password
+  has_one_attached :avatar
 
   # Enums
   enum :role, { user: 0, admin: 1 }
@@ -117,7 +118,11 @@ class User < ApplicationRecord
   end
 
   def profile_image
-    self[:profile_image].presence || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{id}"
+    if avatar.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: true)
+    else
+      self[:profile_image].presence || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{id}"
+    end
   end
 
   # SNS Links accessors

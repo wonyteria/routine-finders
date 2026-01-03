@@ -186,18 +186,20 @@ class Challenge < ApplicationRecord
 
   def end_date_after_start_date
     return if end_date.blank? || start_date.blank?
-    errors.add(:end_date, "must be after start date") if end_date < start_date
+    errors.add(:end_date, "은(는) 시작일보다 이후여야 합니다") if end_date < start_date
   end
 
   def recruitment_period_validity
     return if recruitment_start_date.blank? || recruitment_end_date.blank?
 
+    # 모집 마감일은 모집 시작일보다 이후여야 함
     if recruitment_end_date < recruitment_start_date
-      errors.add(:recruitment_end_date, "must be after recruitment start date")
+      errors.add(:recruitment_end_date, "은(는) 모집 시작일보다 이후여야 합니다")
     end
 
-    if start_date.present? && recruitment_end_date > start_date
-      errors.add(:recruitment_end_date, "cannot be after challenge start date")
+    # 모집 마감일은 챌린지 종료일 이전이어야 함 (진행 중 모집 가능)
+    if end_date.present? && recruitment_end_date > end_date
+      errors.add(:recruitment_end_date, "은(는) 챌린지 종료일 이전이어야 합니다")
     end
   end
 

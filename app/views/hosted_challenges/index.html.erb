@@ -1,17 +1,17 @@
 <div class="space-y-10 pb-32">
   <!-- Header -->
-  <div class="flex items-end justify-between">
-    <div>
-      <h1 class="text-4xl font-black text-slate-900">내가 개최한 챌린지</h1>
-      <p class="text-slate-500 font-medium mt-2">총 <%= @hosted_challenges.count %>개의 챌린지를 운영 중입니다</p>
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-1">
+    <div class="space-y-1">
+      <h1 class="text-2xl lg:text-4xl font-black text-slate-900 tracking-tight">내가 개최한 챌린지</h1>
+      <p class="text-slate-500 font-bold text-xs lg:text-base">총 <%= @hosted_challenges.count %>개의 챌린지를 운영 중입니다</p>
     </div>
-    <div class="flex gap-3">
-      <%= link_to new_challenge_path, class: "px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg hover:bg-indigo-700 transition-all" do %>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    <div class="flex gap-2 sm:gap-3">
+      <%= link_to new_challenge_path, class: "flex-1 sm:flex-none px-5 lg:px-6 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs lg:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95" do %>
+        <svg class="w-4 h-4 lg:w-5 lg:h-5 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
         새 챌린지
       <% end %>
-      <%= link_to new_challenge_path(mode: "offline"), class: "px-6 py-3 bg-orange-600 text-white rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg hover:bg-orange-700 transition-all" do %>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+      <%= link_to new_challenge_path(mode: "offline"), class: "flex-1 sm:flex-none px-5 lg:px-6 py-3 bg-orange-600 text-white rounded-2xl font-black text-xs lg:text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all active:scale-95" do %>
+        <svg class="w-4 h-4 lg:w-5 lg:h-5 text-orange-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
         새 모임
       <% end %>
     </div>
