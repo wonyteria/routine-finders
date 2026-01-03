@@ -1,0 +1,68 @@
+<turbo-stream action="replace" target="routine_<%= @routine.id %>_home">
+  <template>
+    <div class="group/routine">
+      <%= button_to toggle_personal_routine_path(@routine), 
+                    method: :post, 
+                    id: "routine_#{@routine.id}_home",
+                    class: "w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all #{@routine.completed_today? ? 'bg-white border-white shadow-xl translate-y-[-2px]' : 'bg-white/10 border-white/10 text-white hover:bg-white/20'}",
+                    data: { turbo_stream: true } do %>
+        <div class="flex items-center gap-4">
+          <!-- Checkbox UI -->
+          <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all <%= @routine.completed_today? ? 'bg-indigo-600 border-indigo-600' : 'border-white/30 group-hover/routine:border-white' %>">
+            <% if @routine.completed_today? %>
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <% end %>
+          </div>
+          <div class="text-left">
+            <p class="text-sm font-black leading-tight <%= @routine.completed_today? ? 'text-slate-900' : 'text-white' %>"><%= @routine.title.truncate(12) %></p>
+            <p class="text-[9px] font-black uppercase tracking-widest <%= @routine.completed_today? ? 'text-indigo-600' : 'text-white/50' %>"><%= @routine.completed_today? ? 'Completed' : 'Pending' %></p>
+          </div>
+        </div>
+        <span class="text-2xl opacity-80 group-hover/routine:scale-110 transition-transform"><%= @routine.icon %></span>
+      <% end %>
+    </div>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="routine_<%= @routine.id %>_card">
+  <template>
+    <%= render partial: 'personal_routines/routine_card', locals: { routine: @routine }, formats: [:html] %>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="routine_<%= @routine.id %>_club">
+  <template>
+    <%= button_to toggle_personal_routine_path(@routine), 
+                  method: :post, 
+                  class: "flex items-center justify-between p-6 rounded-3xl border-2 transition-all hover:scale-[1.02] w-full #{@routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}",
+                  data: { turbo_stream: true } do %>
+      <div class="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
+        <span class="text-2xl transform group-hover:scale-125 transition-transform flex-shrink-0"><%= @routine.icon %></span>
+        <div class="text-left min-w-0 flex-1">
+          <p class="text-[15px] font-black text-slate-900 truncate <%= 'line-through text-slate-400' if @routine.completed_today? %>"><%= @routine.title %></p>
+          <p class="text-[10px] font-bold text-slate-400 truncate"><%= @routine.category %></p>
+        </div>
+      </div>
+      <% if @routine.completed_today? %>
+        <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white flex-shrink-0 ml-4 shadow-lg shadow-indigo-100">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+      <% else %>
+        <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all flex-shrink-0 ml-4 shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+      <% end %>
+    <% end %>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="routine_<%= @routine.id %>_architecture">
+  <template>
+    <%= button_to toggle_personal_routine_path(@routine), 
+                  method: :post, 
+                  class: "w-10 h-10 rounded-xl flex items-center justify-center transition-all #{@routine.completed_today? ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white text-slate-300 hover:bg-emerald-50 hover:text-emerald-500'}",
+                  data: { turbo_stream: true } do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+    <% end %>
+  </template>
+</turbo-stream>

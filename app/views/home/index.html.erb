@@ -186,104 +186,172 @@
             <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           <% end %>
         </div>
-
-        <!-- Integrated Routine Tracker -->
-        <div class="bg-indigo-600 rounded-[32px] p-5 sm:p-8 shadow-xl shadow-indigo-200/50 flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div class="flex items-center gap-5">
-            <div class="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl">
-              📅
-            </div>
-            <div class="text-white">
-              <h4 class="text-lg font-black">오늘의 루틴 체크인</h4>
-              <p class="text-xs text-white/70 font-medium">당신의 성취 지도를 명확하게 그려보세요.</p>
-            </div>
-          </div>
-          
-          <div class="flex flex-wrap justify-center gap-2">
-            <% if @personal_routines.any? %>
-              <% @personal_routines.take(6).each do |routine| %>
-                <%= button_to toggle_personal_routine_path(routine), method: :post, class: "flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 transition-all #{routine.completed_today? ? 'bg-white border-white text-indigo-600 shadow-lg' : 'bg-transparent border-white/20 text-white hover:bg-white/10'}" do %>
-                  <span class="text-lg"><%= routine.icon %></span>
-                  <span class="text-xs font-bold leading-none"><%= routine.title.truncate(10) %></span>
-                <% end %>
-              <% end %>
-            <% else %>
-              <%= link_to personal_routines_path, class: "text-white/80 font-black text-sm hover:text-white underline" do %>
-                첫 번째 루틴을 시작해보세요! →
-              <% end %>
-            <% end %>
-          </div>
-
-          <%= link_to personal_routines_path, class: "px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:scale-105 transition-all shadow-md shrink-0" do %>
-            전체 관리
-          <% end %>
-        </div>
       </div>
     </section>
 
-    <!-- My Active Growth (Challenge Progress) -->
-    <section class="space-y-8">
-      <div class="flex items-end justify-between px-4">
+    <!-- Dynamic Growth Dashboard (Tabs for Challenges & Routines) -->
+    <section class="space-y-8" data-controller="tabs" data-tabs-active-class="bg-indigo-600 text-white shadow-xl shadow-indigo-200 scale-105 z-10" data-tabs-inactive-class="text-slate-500 hover:text-indigo-600 hover:bg-white/50">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-4">
         <div class="space-y-1">
-          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-3">
             실행 중인 성장
             <span class="text-indigo-600 text-2xl">⚡</span>
           </h2>
-          <p class="text-slate-400 font-bold text-base">진행 중인 챌린지의 달성 현황입니다.</p>
+          <p class="text-slate-400 font-bold text-sm sm:text-base">오늘 당신이 몰두해야 할 것들입니다.</p>
         </div>
-        <%= link_to personal_routines_path, class: "text-slate-400 font-black text-xs hover:text-indigo-600 transition-colors" do %>
-          내 루틴 전체보기
-        <% end %>
+        
+        <!-- High-Contrast Tab Navigation -->
+        <div class="inline-flex p-1.5 bg-slate-200/60 backdrop-blur-md rounded-[24px] w-full lg:w-auto border border-slate-300/50 shadow-inner">
+          <button type="button" 
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-10 py-4 rounded-[20px] text-sm font-black transition-all duration-500 transform active:scale-95"
+                  data-tabs-target="tab"
+                  data-action="click->tabs#change"
+                  data-id="routines">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            데일리 루틴
+          </button>
+          <button type="button" 
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-10 py-4 rounded-[20px] text-sm font-black transition-all duration-500 transform active:scale-95"
+                  data-tabs-target="tab"
+                  data-action="click->tabs#change"
+                  data-id="challenges">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            참여 챌린지
+          </button>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+      <!-- Routines Panel (Now First) -->
+      <div class="px-4 animate-in fade-in slide-in-from-bottom-4 duration-500" data-tabs-target="panel" data-id="routines">
+        <div class="bg-indigo-600 rounded-[32px] p-6 sm:p-10 shadow-xl shadow-indigo-100 flex flex-col gap-8 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
+            <div class="flex items-center gap-6">
+              <div class="w-16 h-16 bg-white/15 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-white/10">
+                📅
+              </div>
+              <div class="text-white space-y-1">
+                <h4 class="text-xl font-black">오늘의 루틴 체크인</h4>
+                <p class="text-sm text-white/70 font-bold">작은 습관이 모여 위대한 변화를 만듭니다.</p>
+              </div>
+            </div>
+            <%= link_to personal_routines_path, class: "px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:scale-105 transition-all shadow-lg text-center" do %>
+               루틴 전체 관리
+            <% end %>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
+            <% if @personal_routines.any? %>
+              <% @personal_routines.take(9).each do |routine| %>
+                <div class="group/routine">
+                  <%= button_to toggle_personal_routine_path(routine), 
+                                method: :post, 
+                                id: "routine_#{routine.id}_home",
+                                class: "w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all #{routine.completed_today? ? 'bg-white border-white shadow-xl translate-y-[-2px]' : 'bg-white/10 border-white/10 text-white hover:bg-white/20'}",
+                                data: { turbo_stream: true } do %>
+                    <div class="flex items-center gap-4">
+                      <!-- Checkbox UI -->
+                      <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all <%= routine.completed_today? ? 'bg-indigo-600 border-indigo-600' : 'border-white/30 group-hover/routine:border-white' %>">
+                        <% if routine.completed_today? %>
+                          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <% end %>
+                      </div>
+                      <div class="text-left">
+                        <p class="text-sm font-black leading-tight <%= routine.completed_today? ? 'text-slate-900' : 'text-white' %>"><%= routine.title.truncate(12) %></p>
+                        <p class="text-[9px] font-black uppercase tracking-widest <%= routine.completed_today? ? 'text-indigo-600' : 'text-white/50' %>"><%= routine.completed_today? ? 'Completed' : 'Pending' %></p>
+                      </div>
+                    </div>
+                    <span class="text-2xl opacity-80 group-hover/routine:scale-110 transition-transform"><%= routine.icon %></span>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+                <div class="col-span-full py-12 text-center">
+                  <p class="text-white/60 font-black mb-6">첫 번째 루틴을 만들고 성장을 기록해보세요.</p>
+                  <%= link_to new_personal_routine_path, class: "px-10 py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm shadow-xl hover:scale-105 transition-all inline-block" do %>
+                    루틴 만들기 +
+                  <% end %>
+                </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenges Panel (Now Second) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 hidden animate-in fade-in slide-in-from-bottom-4 duration-500" data-tabs-target="panel" data-id="challenges">
         <% if @participations.any? %>
           <% @participations.take(6).each do |participation| %>
             <% challenge = participation.challenge %>
-            <div class="bg-white rounded-threads-lg border border-slate-100 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-              <div class="flex items-start justify-between mb-6">
+            <div class="bg-white rounded-threads-lg border border-slate-100 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50/50 rounded-bl-full -mr-12 -mt-12 transition-all group-hover:scale-110"></div>
+              
+              <div class="flex items-start justify-between mb-6 relative z-10">
                 <div class="flex items-center gap-4">
-                  <div class="w-14 h-14 rounded-threads bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100">
+                  <div class="w-14 h-14 rounded-threads bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100 shadow-sm">
                     <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover" alt="">
                   </div>
                   <div>
                     <h4 class="font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
-                    <p class="text-xs font-bold text-slate-400"><%= challenge.category %></p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= challenge.category %></p>
                   </div>
                 </div>
-                <span class="px-3 py-1.5 rounded-threads text-[10px] font-black <%= participation.status_badge_info[:class] %>">
-                  <%= participation.status_badge_info[:label] %>
-                </span>
+                
+                <!-- Challenge Checkbox/Status UI -->
+                <div class="flex flex-col items-end gap-1">
+                  <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all <%= participation.today_verified? ? 'bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-100' : 'bg-slate-50 border-slate-200' %>">
+                    <% if participation.today_verified? %>
+                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <% else %>
+                      <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
+                    <% end %>
+                  </div>
+                  <span class="text-[8px] font-black uppercase tracking-tighter <%= participation.today_verified? ? 'text-emerald-500' : 'text-slate-400' %>">
+                    <%= participation.today_verified? ? 'Verified' : 'To-do' %>
+                  </span>
+                </div>
               </div>
               
-              <div class="space-y-3">
+              <div class="space-y-4 relative z-10">
                 <div class="flex justify-between items-end">
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Progress</p>
-                  <p class="text-lg font-black text-slate-900"><%= (participation.completion_rate * 100).to_i %>%</p>
+                  <div class="space-y-0.5">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Growth Rate</p>
+                    <p class="text-xs font-bold text-indigo-600"><%= participation.current_streak %>일 연속 달성 중</p>
+                  </div>
+                  <p class="text-2xl font-black text-slate-900 tracking-tighter"><%= (participation.completion_rate * 100).to_i %><span class="text-xs ml-0.5 text-slate-400 font-bold">%</span></p>
                 </div>
-                <div class="w-full h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100">
-                  <div class="h-full bg-indigo-600 rounded-full transition-all duration-1000 shadow-sm" style="width: <%= participation.completion_rate * 100 %>%"></div>
+                <div class="w-full h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100 shadow-inner">
+                  <div class="h-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 rounded-full transition-all duration-1000 shadow-sm" style="width: <%= participation.completion_rate * 100 %>%"></div>
                 </div>
-                <div class="flex justify-between pt-2">
-                  <p class="text-[10px] font-bold text-slate-400">Streak: <span class="text-indigo-600"><%= participation.current_streak %>일</span></p>
-                  <p class="text-[10px] font-bold text-rose-500">D-<%= (challenge.end_date - Date.current).to_i %></p>
+                <div class="flex justify-between items-center pt-2">
+                  <div class="flex -space-x-2">
+                     <% challenge.participants.active.take(3).each do |p| %>
+                       <img src="<%= p.user.profile_image %>" class="w-6 h-6 rounded-full border-2 border-white shadow-sm" alt="">
+                     <% end %>
+                     <% if challenge.current_participants > 3 %>
+                       <div class="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] font-black text-slate-400">+<%= challenge.current_participants - 3 %></div>
+                     <% end %>
+                  </div>
+                  <p class="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-1 rounded-lg">D-<%= (challenge.end_date - Date.current).to_i %></p>
                 </div>
               </div>
 
-              <%= link_to challenge_path(challenge), class: "mt-6 block w-full py-3 bg-slate-50 text-slate-400 rounded-threads font-black text-xs text-center hover:bg-slate-900 hover:text-white transition-all shadow-sm group-hover:shadow-md" do %>
+              <%= link_to challenge_path(challenge), class: "mt-6 block w-full py-3.5 bg-slate-900 text-white rounded-threads font-black text-xs text-center hover:bg-indigo-600 transition-all shadow-xl shadow-slate-100 group-hover:shadow-indigo-100" do %>
                 대시보드 관리
               <% end %>
             </div>
           <% end %>
         <% else %>
-          <div class="col-span-full py-20 text-center bg-slate-50 rounded-threads-xl border border-dashed border-slate-200">
-             <p class="text-slate-400 font-bold">진행 중인 챌린지가 없습니다.</p>
-             <%= link_to challenges_path, class: "mt-4 inline-block px-8 py-3 bg-indigo-600 text-white rounded-threads font-black text-sm shadow-lg hover:bg-slate-900 transition-all" do %>
+          <div class="col-span-full py-20 text-center bg-slate-50 rounded-[32px] border border-dashed border-slate-200">
+             <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm text-2xl">🔍</div>
+             <p class="text-slate-400 font-bold mb-6">진행 중인 챌린지가 없습니다.</p>
+             <%= link_to challenges_path, class: "inline-block px-10 py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-100 hover:bg-slate-900 hover:shadow-slate-100 transition-all" do %>
                새로운 습관 찾기
              <% end %>
           </div>
         <% end %>
       </div>
+    </section>
     </section>
 
     <!-- My collection (Badge Showcase) -->

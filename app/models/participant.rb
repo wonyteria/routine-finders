@@ -3,6 +3,8 @@ class Participant < ApplicationRecord
   enum :status, { achieving: 0, lagging: 1, inactive: 2, failed: 3, abandoned: 4 }
   attribute :refund_status, :integer, default: 0
   enum :refund_status, { refund_none: 0, refund_applied: 1, refund_completed: 2 }
+  
+  scope :active, -> { where(status: [:achieving, :lagging, :inactive]) }
 
   # Associations
   belongs_to :user

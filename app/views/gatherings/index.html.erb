@@ -5,15 +5,21 @@
     <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
     <div class="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-    <div class="relative z-10 p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
-      <div class="space-y-6 max-w-2xl text-center md:text-left">
+    <div class="relative z-10 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
+      <div class="space-y-6 md:space-y-8 max-w-2xl text-center md:text-left">
         <div class="space-y-4">
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
-            <span class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-[11px] font-black uppercase tracking-widest border border-white/20">Gatherings</span>
-            <span class="inline-block px-4 py-1.5 rounded-full bg-amber-400 text-slate-900 text-[11px] font-black uppercase tracking-widest border border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.5)]">Rufa Club Exclusive</span>
+            <span class="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-white/20">Gatherings</span>
+            <span class="inline-block px-3 py-1 rounded-full bg-amber-400 text-slate-900 text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.5)]">Rufa Club Exclusive</span>
           </div>
-          <h1 class="text-4xl md:text-6xl font-black leading-tight tracking-tight">함께 모여<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-white">더 큰 시너지를</span></h1>
-          <p class="text-lg md:text-xl font-medium text-orange-100/80 leading-relaxed">온라인부터 루파 클럽 멤버 전용 오프라인 모임까지,<br>같은 관심사를 가진 사람들과 함께하세요.</p>
+          <h1 class="text-3xl md:text-6xl font-black leading-tight tracking-tight">
+            함께 모여<br class="md:hidden">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-white">더 큰 시너지를</span>
+          </h1>
+          <p class="text-sm md:text-xl font-medium text-orange-100/80 leading-relaxed break-keep">
+            온라인부터 루파 클럽 전용 오프라인 모임까지,<br>
+            관심사가 같은 사람들과 함께하세요.
+          </p>
         </div>
         <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
           <%= link_to new_gathering_path, class: "group inline-flex px-8 py-4 bg-white text-orange-700 rounded-[24px] font-black text-lg hover:bg-orange-50 transition-all shadow-xl active:scale-95 items-center justify-center gap-2" do %>
@@ -39,41 +45,59 @@
     </div>
   </section>
 
-  <!-- Filters -->
-  <div class="sticky top-4 z-40 bg-white/80 backdrop-blur-xl p-4 rounded-[32px] border border-white/50 shadow-lg shadow-slate-200/50 mb-12 transition-all flex flex-col md:flex-row items-center justify-between gap-4">
-    <div class="flex flex-wrap items-center justify-center gap-2">
-      <% 
-        current_location = params[:location_type].to_s
-        location_options = [['전체', ''], ['온라인', 'online'], ['오프라인', 'offline']]
-      %>
-      <% location_options.each do |label, value| %>
-        <%= link_to label, gatherings_path(request.query_parameters.merge(location_type: value)), class: "px-4 py-2.5 rounded-xl text-xs font-black transition-all border #{current_location == value ? 'bg-orange-600 text-white border-orange-600 shadow-md shadow-orange-600/20' : 'bg-white text-slate-500 border-slate-200 hover:border-orange-200 hover:text-orange-600'}" %>
-      <% end %>
-      
-      <div class="w-px h-4 bg-slate-300 mx-2"></div>
-      
-      <% 
-        current_status = params[:status].to_s
-        status_options = [['전체', ''], ['모집중', 'recruiting'], ['예정', 'upcoming'], ['종료', 'ended']]
-      %>
-      <% status_options.each do |label, value| %>
-        <%= link_to label, gatherings_path(request.query_parameters.merge(status: value)), class: "px-4 py-2.5 rounded-xl text-xs font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}" %>
-      <% end %>
-      
-      <div class="w-px h-4 bg-slate-300 mx-2"></div>
-      
-      <% current_category = params[:category] %>
-      <% %w[건강·운동 학습·자기계발 재테크·부업 취미·라이프 네트워킹].each do |cat| %>
-        <% target_cat = (current_category == cat ? nil : cat) %>
-        <%= link_to cat, gatherings_path(request.query_parameters.merge(category: target_cat)), class: "px-4 py-2.5 rounded-xl text-xs font-black transition-all border #{current_category == cat ? 'bg-orange-600 text-white border-orange-600 shadow-md shadow-orange-600/20' : 'bg-white text-slate-500 border-slate-200 hover:border-orange-200 hover:text-orange-600'}" %>
-      <% end %>
-    </div>
+  <!-- Redesigned Filters: Scrollable for Mobile -->
+  <div class="sticky top-20 z-40 mb-12 space-y-3">
+    <div class="bg-white/90 backdrop-blur-xl p-3 md:p-4 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="w-full flex flex-col gap-3 overflow-hidden">
+        <!-- Row 1: Types & Status -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <% 
+            current_location = params[:location_type].to_s
+            location_options = [['전체', ''], ['온라인', 'online'], ['오프라인', 'offline']]
+          %>
+          <div class="flex p-1 bg-slate-100 rounded-xl shrink-0">
+            <% location_options.each do |label, value| %>
+              <%= link_to label, gatherings_path(request.query_parameters.merge(location_type: value)), class: "px-3 py-1.5 rounded-lg text-[10px] font-black transition-all #{current_location == value ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}" %>
+            <% end %>
+          </div>
 
-    <div class="flex items-center gap-2 shrink-0">
-      <%= link_to new_gathering_path, class: "px-6 py-2.5 bg-orange-600 text-white rounded-xl font-black text-xs hover:bg-orange-700 transition-all shadow-md shadow-orange-200 flex items-center gap-2" do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-        모임 만들기
-      <% end %>
+          <div class="w-px h-4 bg-slate-200 shrink-0"></div>
+
+          <% 
+            current_status = params[:status].to_s
+            status_options = [['전체', ''], ['모집중', 'recruiting'], ['예정', 'upcoming'], ['종료', 'ended']]
+          %>
+          <div class="flex gap-1 shrink-0">
+            <% status_options.each do |label, value| %>
+              <%= link_to label, gatherings_path(request.query_parameters.merge(status: value)), class: "px-3 py-2 rounded-xl text-[10px] font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-sm' : 'bg-white text-slate-500 border-slate-200'}" %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Row 2: Categories -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+          <% current_category = params[:category] %>
+          <% %w[건강·운동 학습·자기계발 재테크·부업 취미·라이프 네트워킹].each do |cat| %>
+            <% target_cat = (current_category == cat ? nil : cat) %>
+            <%= link_to cat, gatherings_path(request.query_parameters.merge(category: target_cat)), class: "whitespace-nowrap px-4 py-2 rounded-xl text-[10px] font-black transition-all border shrink-0 #{current_category == cat ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'bg-white text-slate-500 border-slate-200'}" %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-2 shrink-0">
+        <%= link_to new_gathering_path, class: "px-6 py-2.5 bg-orange-600 text-white rounded-xl font-black text-xs hover:bg-orange-700 transition-all shadow-md shadow-orange-200 flex items-center gap-2" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          모임 만들기
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Mobile-only Floating Fab-style Create Button (Optional, but let's stick to the sticky bar content for now) -->
+    <div class="md:hidden flex justify-center">
+       <%= link_to new_gathering_path, class: "inline-flex px-6 py-3 bg-orange-600 text-white rounded-2xl font-black text-xs hover:bg-orange-700 transition-all shadow-lg shadow-orange-200 items-center gap-2" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+          새로운 모임 만들기
+        <% end %>
     </div>
   </div>
   

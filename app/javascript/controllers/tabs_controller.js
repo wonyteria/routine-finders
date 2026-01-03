@@ -40,5 +40,10 @@ export default class extends Controller {
         panel.classList.add("hidden")
       }
     })
+
+    // URL 업데이트 (새로고침 시 상태 유지용)
+    const url = new URL(window.location)
+    url.searchParams.set('tab', tabName)
+    window.history.replaceState({}, '', url)
   }
 }

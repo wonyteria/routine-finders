@@ -7,12 +7,18 @@
       <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
       <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-      <div class="relative z-10 p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div class="space-y-8 max-w-2xl text-center md:text-left">
+      <div class="relative z-10 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="space-y-6 md:space-y-8 max-w-2xl text-center md:text-left">
           <div class="space-y-4">
-            <span class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-[11px] font-black uppercase tracking-widest border border-white/20 shadow-inner">New Year 2024</span>
-            <h1 class="text-4xl md:text-6xl font-black leading-tight tracking-tight">작심삼일은 옛말,<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">함께라면 해낼 수 있어요.</span></h1>
-            <p class="text-lg md:text-xl font-medium text-indigo-100/80 leading-relaxed">혼자서는 힘들었던 목표, 루틴 파인더스에서 동료를 만나보세요.<br>서로 응원하고 인증하며 성장하는 즐거움을 경험하세요.</p>
+            <span class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-[10px] md:text-[11px] font-black uppercase tracking-widest border border-white/20 shadow-inner">New Year 2024</span>
+            <h1 class="text-3xl md:text-6xl font-black leading-tight tracking-tight">
+              작심삼일은 옛말,<br class="md:hidden">
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">함께라면 해낼 수 있어요.</span>
+            </h1>
+            <p class="text-sm md:text-xl font-medium text-indigo-100/80 leading-relaxed break-keep">
+              혼자서는 힘들었던 목표, 루틴 파인더스에서 동료를 만나보세요.<br>
+              서로 응원하고 인증하며 성장하는 즐거움을 경험하세요.
+            </p>
           </div>
           <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
              <%= link_to new_challenge_path, class: "group inline-flex px-8 py-4 bg-white text-indigo-700 rounded-[24px] font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95 items-center justify-center gap-2" do %>

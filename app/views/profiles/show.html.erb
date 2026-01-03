@@ -1,8 +1,8 @@
 <div class="space-y-12 pb-32" data-controller="tabs">
   <!-- Profile & Stats Hero -->
-  <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col lg:flex-row">
+  <div class="bg-white rounded-[32px] lg:rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col lg:flex-row">
     <!-- Left: Profile Info -->
-    <div class="lg:w-1/3 p-12 flex flex-col items-center justify-center text-center bg-gradient-to-br from-slate-50 to-white border-b lg:border-b-0 lg:border-r border-slate-100 relative">
+    <div class="lg:w-1/3 p-6 md:p-12 flex flex-col items-center justify-center text-center bg-gradient-to-br from-slate-50 to-white border-b lg:border-b-0 lg:border-r border-slate-100 relative">
       <div class="absolute top-6 right-6 flex gap-2">
         <%= link_to edit_profile_path, class: "w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm", title: "프로필 수정" do %>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
@@ -12,8 +12,8 @@
         <% end %>
       </div>
 
-      <div class="relative mb-8 group">
-        <img src="<%= @user.profile_image %>" class="w-40 h-40 rounded-[48px] border-8 border-white shadow-2xl object-cover transition-transform group-hover:scale-105" alt="">
+      <div class="relative mb-6 lg:mb-8 group">
+        <img src="<%= @user.profile_image %>" class="w-32 h-32 lg:w-40 lg:h-40 rounded-[32px] lg:rounded-[48px] border-8 border-white shadow-2xl object-cover transition-transform group-hover:scale-105" alt="">
         <% if @user.admin? %>
           <div class="absolute -top-4 -right-4 w-12 h-12 bg-indigo-600 rounded-3xl border-4 border-white flex items-center justify-center text-white shadow-xl">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Right: Quick Stats & Wallet -->
-    <div class="flex-1 p-12 lg:p-16 grid grid-cols-1 md:grid-cols-2 gap-8 content-center">
+    <div class="flex-1 p-6 lg:p-16 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 content-center">
       <!-- Participancy & Host Stats -->
       <div class="space-y-8">
         <div>
@@ -101,12 +101,12 @@
       <!-- Growth Investment Summary -->
       <div class="flex flex-col justify-center">
         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">성장 투자 요약</p>
-        <div class="bg-slate-900 rounded-[40px] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
+        <div class="bg-slate-900 rounded-[32px] lg:rounded-[40px] p-6 lg:p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
           <div class="absolute top-0 right-0 p-8 opacity-10">
             <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.89c1.53.28 2.39 1.15 2.62 2.3h-1.91c-.13-.67-.53-1.04-1.92-1.04-1.57 0-2.14.71-2.14 1.41 0 .91.82 1.39 2.82 1.9 2.59.61 4.04 1.76 4.04 3.55 0 1.94-1.43 3.51-3.52 4.08z"/></svg>
           </div>
           <p class="text-slate-400 font-black text-[11px] uppercase tracking-widest mb-2">Total Growth Investment</p>
-          <h3 class="text-4xl font-black mb-6"><%= number_to_currency(@growth_stats[:total_invested]) %></h3>
+          <h3 class="text-3xl lg:text-4xl font-black mb-6"><%= number_to_currency(@growth_stats[:total_invested]) %></h3>
           
           <div class="space-y-4 pt-6 border-t border-white/10">
             <div class="flex justify-between items-center text-sm">
@@ -126,35 +126,35 @@
     </div>
   </div>
 
-  <!-- Navigation Tabs -->
-  <div class="flex justify-center -mb-6 relative z-10">
-    <div class="bg-white p-2 rounded-[32px] shadow-xl border border-slate-100 inline-flex gap-2">
+  <!-- Navigation Tabs: Horizontally Scrollable on Mobile -->
+  <div class="flex justify-start lg:justify-center -mb-6 relative z-10 px-4 overflow-x-auto no-scrollbar">
+    <div class="bg-white p-1.5 lg:p-2 rounded-[24px] lg:rounded-[32px] shadow-xl border border-slate-100 flex lg:inline-flex gap-1 lg:gap-2 shrink-0">
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="dashboard" data-active="true"
-              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+              class="whitespace-nowrap px-6 lg:px-8 py-3 lg:py-4 rounded-[18px] lg:rounded-[24px] text-xs lg:text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         대시보드
       </button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="challenges"
-              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+              class="whitespace-nowrap px-6 lg:px-8 py-3 lg:py-4 rounded-[18px] lg:rounded-[24px] text-xs lg:text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         챌린지
       </button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="gatherings"
-              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+              class="whitespace-nowrap px-6 lg:px-8 py-3 lg:py-4 rounded-[18px] lg:rounded-[24px] text-xs lg:text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         모임
       </button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="clubs"
-              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+              class="whitespace-nowrap px-6 lg:px-8 py-3 lg:py-4 rounded-[18px] lg:rounded-[24px] text-xs lg:text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         루틴 클럽
       </button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="personal"
-              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+              class="whitespace-nowrap px-6 lg:px-8 py-3 lg:py-4 rounded-[18px] lg:rounded-[24px] text-xs lg:text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         개인 루틴
       </button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="achievements"
-              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
-        업적 & 뱃지
+              class="whitespace-nowrap px-6 lg:px-8 py-3 lg:py-4 rounded-[18px] lg:rounded-[24px] text-xs lg:text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+        업적 & 배지
       </button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="history"
-              class="px-8 py-4 rounded-[24px] text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
+              class="whitespace-nowrap px-6 lg:px-8 py-3 lg:py-4 rounded-[18px] lg:rounded-[24px] text-xs lg:text-sm font-black uppercase transition-all data-[active]:bg-indigo-600 data-[active]:text-white text-slate-400 hover:text-slate-600">
         활동 내역
       </button>
     </div>
@@ -262,32 +262,34 @@
             <h3 class="text-xl font-black text-slate-900">내 개인 루틴 요약</h3>
             <%= link_to "루틴 관리", personal_routines_path, class: "text-xs font-bold text-indigo-600" %>
           </div>
-          <div class="bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm">
-             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="bg-white p-6 lg:p-8 rounded-[32px] lg:rounded-[40px] border border-slate-100 shadow-sm">
+             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 <% @personal_routines.first(4).each do |routine| %>
-                  <div class="flex flex-col items-center gap-2">
-                    <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-xl">
+                  <div class="bg-slate-50 p-4 lg:p-6 rounded-[24px] lg:rounded-[32px] flex flex-col items-center gap-2 lg:gap-3 hover:bg-white hover:shadow-lg hover:shadow-indigo-100 transition-all border border-transparent hover:border-indigo-100 group">
+                    <div class="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl lg:rounded-3xl bg-white shadow-sm flex items-center justify-center text-2xl lg:text-3xl group-hover:scale-110 transition-transform">
                       <%= routine.icon %>
                     </div>
-                    <p class="text-sm font-bold text-slate-700 truncate w-full text-center px-2"><%= routine.title %></p>
-                    <p class="text-[10px] font-black text-indigo-500">🔥 <%= routine.current_streak %>일</p>
+                    <div class="text-center">
+                      <p class="text-[11px] lg:text-sm font-black text-slate-700 truncate w-full px-1"><%= routine.title %></p>
+                      <p class="text-[9px] lg:text-[10px] font-black text-indigo-500 mt-0.5">🔥 <%= routine.current_streak %>일</p>
+                    </div>
                   </div>
                 <% end %>
                 <% if @personal_routines.empty? %>
-                  <div class="col-span-4 py-8 text-center text-slate-400 font-bold">등록된 루틴이 없습니다.</div>
+                  <div class="col-span-2 lg:col-span-4 py-8 text-center text-slate-400 font-bold text-xs lg:text-sm">등록된 루틴이 없습니다.</div>
                 <% end %>
              </div>
           </div>
         </section>
 
         <!-- Activity Feed -->
-        <section>
+        <section data-controller="toggle-list" data-toggle-list-limit-value="3">
           <div class="flex items-center justify-between mb-6 px-4">
             <h3 class="text-xl font-black text-slate-900">최근 활동 피드</h3>
           </div>
           <div class="space-y-4">
             <% @rufa_activities.each do |activity| %>
-              <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-start gap-4">
+              <div data-toggle-list-target="item" class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-start gap-4">
                 <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 shrink-0">
                   <% if activity.activity_type == 'goal_update' %>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -311,26 +313,42 @@
               <div class="p-12 text-center text-slate-300 font-bold bg-white rounded-[40px] border border-slate-100">활동 기록이 아직 없습니다.</div>
             <% end %>
           </div>
+          
+          <% if @rufa_activities.size > 3 %>
+            <div class="mt-6 flex justify-center">
+              <button data-toggle-list-target="button" data-action="click->toggle-list#showMore" 
+                      class="px-8 py-3 bg-slate-100 text-slate-600 rounded-2xl font-black text-xs hover:bg-slate-200 transition-all flex items-center gap-2">
+                이어서 보기
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+            </div>
+          <% end %>
         </section>
       </div>
 
       <!-- Right: Badges & Quick Links -->
       <div class="space-y-8">
-        <section class="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm">
-          <h3 class="text-lg font-black text-slate-900 mb-6">최근 획득 뱃지</h3>
-          <div class="grid grid-cols-2 gap-4">
+        <section class="bg-white p-6 lg:p-8 rounded-[32px] lg:rounded-[40px] border border-slate-200 shadow-sm relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+          <h3 class="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
+            최근 획득 배지
+            <span class="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-lg"><%= @recent_badges.size %></span>
+          </h3>
+          <div class="grid grid-cols-2 gap-3 lg:gap-4 relative z-10">
             <% @recent_badges.each do |ub| %>
-              <div class="flex flex-col items-center gap-2 p-4 bg-slate-50 rounded-3xl group hover:bg-white hover:shadow-xl hover:shadow-indigo-100 transition-all cursor-pointer">
-                <span class="text-3xl"><%= ub.badge.icon_path %></span>
-                <p class="text-[10px] font-black text-slate-900 text-center"><%= ub.badge.name %></p>
-                <p class="text-[8px] text-slate-300 font-bold"><%= ub.granted_at&.strftime("%Y.%m.%d") %></p>
+              <div class="flex flex-col items-center gap-2 p-4 bg-slate-50/50 rounded-[24px] lg:rounded-3xl border border-slate-100 group hover:bg-white hover:shadow-xl hover:shadow-indigo-100 transition-all cursor-pointer">
+                <span class="text-3xl group-hover:scale-125 transition-transform duration-500"><%= ub.badge.icon_path %></span>
+                <div class="text-center">
+                  <p class="text-[10px] lg:text-[11px] font-black text-slate-900 text-center truncate w-full px-1"><%= ub.badge.name %></p>
+                  <p class="text-[8px] text-slate-400 font-bold mt-0.5"><%= ub.granted_at&.strftime("%y.%m.%d") %></p>
+                </div>
               </div>
             <% end %>
             <% if @recent_badges.empty? %>
-              <div class="col-span-2 py-8 text-center text-slate-300">획득한 뱃지가 없습니다.</div>
+              <div class="col-span-2 py-12 text-center text-slate-300 font-bold text-sm">획득한 배지가 없습니다.</div>
             <% end %>
           </div>
-          <%= link_to "전체 뱃지 보기", "#", class: "block w-full text-center mt-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-sm", data: { action: "click->tabs#change", id: "achievements" } %>
+          <%= link_to "전체 배지 보기", "#", class: "block w-full text-center mt-6 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-xs hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-100", data: { action: "click->tabs#change", id: "achievements" } %>
         </section>
       </div>
     </div>
@@ -606,7 +624,7 @@
     <div data-tabs-target="panel" data-id="achievements" class="hidden space-y-12">
       <section class="space-y-8">
         <div class="flex items-center justify-between px-4">
-          <h3 class="text-2xl font-black text-slate-900">획득한 뱃지 리스트</h3>
+          <h3 class="text-2xl font-black text-slate-900">획득한 배지 리스트</h3>
           <%= link_to "전체 로드맵 보기", badge_roadmap_path, class: "text-sm font-bold text-indigo-600" %>
         </div>
         
@@ -624,7 +642,7 @@
           <% end %>
           <% if @user_badges.empty? %>
              <div class="col-span-6 p-20 bg-slate-50 rounded-[48px] text-center">
-                <p class="text-slate-400 font-bold">아직 획득한 뱃지가 없습니다. 활동을 시작해보세요!</p>
+                <p class="text-slate-400 font-bold">아직 획득한 배지가 없습니다. 활동을 시작해보세요!</p>
              </div>
           <% end %>
         </div>

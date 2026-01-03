@@ -10,8 +10,8 @@ class HomeController < ApplicationController
       @popular_challenges = Challenge.online_challenges.where(is_featured: [ false, nil ]).order(current_participants: :desc, created_at: :desc).limit(6)
       @recommended_gatherings = Challenge.offline_gatherings.order(created_at: :desc).limit(6)
       @hot_gatherings = Challenge.offline_gatherings.order(current_participants: :desc).limit(6)
-      @personal_routines = @current_user&.personal_routines || []
-      @participations = @current_user&.participations&.includes(:challenge) || []
+      @personal_routines = @current_user&.personal_routines&.includes(:completions) || []
+      @participations = @current_user&.participations&.includes(challenge: { participants: :user }) || []
       @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []
       @personal_routine_completions = @current_user ? PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.year.ago..Date.current) : []
       @club_attendances = @current_user ? RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.year.ago..Date.current) : []

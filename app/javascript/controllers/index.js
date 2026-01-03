@@ -46,3 +46,6 @@ application.register("scroll-nav", ScrollNavController)
 import GatheringFormController from "controllers/gathering_form_controller"
 application.register("gathering-form", GatheringFormController)
 
+import ToggleListController from "controllers/toggle_list_controller"
+application.register("toggle-list", ToggleListController)
+

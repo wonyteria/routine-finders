@@ -170,7 +170,7 @@ class PersonalRoutinesController < ApplicationController
     @routine.toggle_completion!
 
     respond_to do |format|
-      format.html { redirect_to personal_routines_path }
+      format.html { redirect_back fallback_location: personal_routines_path }
       format.turbo_stream
     end
   end
