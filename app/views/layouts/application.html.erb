@@ -146,6 +146,10 @@
       </div>
     </nav>
 
+    <!-- Mobile Bottom Navigation -->
+    <%= render "shared/bottom_nav" %>
+
+
     <!-- Trendy Flash Notifications -->
     <div class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 w-full max-w-sm px-4">
       <% if notice %>
@@ -202,7 +206,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32 lg:pb-8">
       <%= yield %>
     </main>
 

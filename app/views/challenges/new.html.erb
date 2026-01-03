@@ -1,32 +1,32 @@
-<div class="min-h-screen bg-slate-50/30 py-12 px-4" data-controller="challenge-form">
+<div class="min-h-screen bg-slate-50/30 py-6 lg:py-12 px-4" data-controller="challenge-form">
   <div class="max-w-6xl mx-auto">
     <!-- Top Navigation Area -->
-    <div class="flex items-center justify-between mb-12">
-      <div class="flex items-center gap-6">
-        <%= link_to challenges_path, class: "w-14 h-14 rounded-[20px] bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 shadow-sm transition-all group" do %>
-          <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+    <div class="flex items-center justify-between mb-8 lg:mb-12">
+      <div class="flex items-center gap-4 lg:gap-6">
+        <%= link_to challenges_path, class: "w-10 h-10 lg:w-14 lg:h-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 shadow-sm transition-all group" do %>
+          <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
         <% end %>
-        <div class="space-y-1">
-          <h1 class="text-3xl font-black text-slate-900 tracking-tight">챌린지 설계하기</h1>
-          <p class="text-xs font-bold text-slate-400">나만의 특별한 루틴 커뮤니티를 만들어보세요.</p>
+        <div class="space-y-0.5">
+          <h1 class="text-xl lg:text-3xl font-black text-slate-900 tracking-tight">챌린지 설계하기</h1>
+          <p class="text-[10px] lg:text-xs font-bold text-slate-400 leading-none">나만의 특별한 루틴 커뮤니티</p>
         </div>
       </div>
       
       <!-- Progress Bar & Dots -->
-      <div class="hidden md:flex flex-col items-end gap-3">
-        <div class="flex gap-2">
+      <div class="flex flex-col items-end gap-2 lg:gap-3">
+        <div class="flex gap-1.5 lg:gap-2">
           <% (1..7).each do |i| %>
-            <div class="h-1.5 rounded-full transition-all duration-700 <%= i == 1 ? 'bg-indigo-600 w-8' : 'bg-slate-200 w-2' %>" 
+            <div class="h-1 lg:h-1.5 rounded-full transition-all duration-700 <%= i == 1 ? 'bg-indigo-600 w-6 lg:w-8' : 'bg-slate-200 w-1.5 lg:w-2' %>" 
                  data-challenge-form-target="dot"></div>
           <% end %>
         </div>
-        <p class="text-[10px] font-black text-indigo-600/50 uppercase tracking-widest">Design Progress</p>
+        <p class="text-[8px] lg:text-[10px] font-black text-indigo-600/50 uppercase tracking-widest">Design Progress</p>
       </div>
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-16 items-start">
-      <!-- Side Step Navigation -->
-      <div class="lg:w-64 shrink-0 space-y-8 sticky top-32">
+    <div class="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
+      <!-- Side Step Navigation (Transformed to horizontal stepper on mobile) -->
+      <div class="flex overflow-x-auto lg:flex-col lg:w-64 shrink-0 gap-6 lg:gap-8 sticky top-20 lg:top-32 bg-slate-50/50 backdrop-blur-xl lg:bg-transparent z-40 -mx-4 px-6 py-4 lg:mx-0 lg:px-0 lg:py-0 no-scrollbar border-b border-slate-200 lg:border-none">
         <% [
           { step: 1, label: "기본 정보", icon: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" },
           { step: 2, label: "인증 목표", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" },
@@ -37,16 +37,16 @@
           { step: 7, label: "혜택 설계", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2" }
         ].each_with_index do |nav, i| %>
           <button type="button" 
-                  class="flex items-center gap-5 w-full text-left group" 
+                  class="flex items-center gap-3 lg:gap-5 shrink-0 lg:w-full text-left group" 
                   data-action="click->challenge-form#goToStep" 
                   data-step="<%= nav[:step] %>"
                   data-challenge-form-target="nav">
-            <div class="nav-icon w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 <%= i == 0 ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200' : 'bg-white text-slate-300' %>">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= nav[:icon] %>"/></svg>
+            <div class="nav-icon w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl flex items-center justify-center transition-all duration-500 <%= i == 0 ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-200' : 'bg-white text-slate-300' %>">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= nav[:icon] %>"/></svg>
             </div>
             <div class="nav-text space-y-0.5 transition-all duration-500 <%= i == 0 ? 'opacity-100' : 'opacity-40 hover:opacity-100' %>">
-              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Step <%= nav[:step] %></p>
-              <p class="font-black text-xl text-slate-900"><%= nav[:label] %></p>
+              <p class="text-[8px] lg:text-[10px] font-black uppercase tracking-widest text-slate-400">Step <%= nav[:step] %></p>
+              <p class="font-black text-sm lg:text-xl text-slate-900 whitespace-nowrap"><%= nav[:label] %></p>
             </div>
           </button>
         <% end %>

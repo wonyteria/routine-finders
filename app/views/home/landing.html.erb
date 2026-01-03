@@ -20,19 +20,19 @@
          Standard of Routine
       </div>
 
-      <h1 class="text-6xl md:text-9xl font-black text-slate-900 leading-[0.9] tracking-[-0.05em]">
+      <h1 class="text-5xl sm:text-7xl md:text-9xl font-black text-slate-900 leading-[0.9] tracking-[-0.05em]">
         습관을 넘어<br/>
         <span class="text-transparent bg-clip-text bg-gradient-to-b from-indigo-600 to-indigo-900">성취의 궤적으로.</span>
       </h1>
 
-      <p class="text-xl md:text-2xl text-slate-500 font-bold max-w-2xl mx-auto leading-relaxed">
-        개인 루틴부터 루파클럽 멤버십, 챌린지 운영까지.<br/>당신의 모든 성장을 기록하고 연결합니다.
+      <p class="text-lg md:text-2xl text-slate-500 font-bold max-w-2xl mx-auto leading-relaxed px-4">
+        개인 루틴부터 루파클럽 멤버십, 챌린지 운영까지.<br class="hidden sm:block"/>당신의 모든 성장을 기록하고 연결합니다.
       </p>
 
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
         <% if current_user %>
-           <%= link_to root_path, class: "px-12 py-6 bg-slate-900 text-white rounded-[28px] font-black text-2xl hover:scale-105 transition-all shadow-2xl shadow-slate-200 flex items-center justify-center gap-4" do %>
-             <svg class="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+           <%= link_to root_path, class: "px-8 py-5 sm:px-12 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[28px] font-black text-lg sm:text-2xl hover:scale-105 transition-all shadow-2xl shadow-slate-200 flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-max" do %>
+             <svg class="w-6 h-6 sm:w-7 sm:h-7 text-indigo-400" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                <rect x="3" y="3" width="7" height="7"></rect>
                <rect x="14" y="3" width="7" height="7"></rect>
                <rect x="14" y="14" width="7" height="7"></rect>
@@ -44,8 +44,8 @@
            <%= button_to auth_at_provider_path(provider: :threads), 
                          method: :post,
                          data: { turbo: false },
-                         class: "px-12 py-6 bg-slate-900 text-white rounded-[28px] font-black text-2xl hover:scale-105 transition-all shadow-2xl shadow-indigo-100 flex items-center justify-center gap-4 group" do %>
-             <svg class="w-7 h-7 text-indigo-400 group-hover:animate-pulse" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                         class: "px-8 py-5 sm:px-12 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[28px] font-black text-lg sm:text-2xl hover:scale-105 transition-all shadow-2xl shadow-indigo-100 flex items-center justify-center gap-3 sm:gap-4 group w-full sm:w-max" do %>
+             <svg class="w-6 h-6 sm:w-7 sm:h-7 text-indigo-400 group-hover:animate-pulse" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
              </svg>
              Threads로 계속하기
@@ -78,10 +78,10 @@
   </section>
 
   <!-- Section 1: Routine Management -->
-  <section class="py-40 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+  <section class="py-20 lg:py-40 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
     <div class="space-y-10">
       <div class="inline-flex px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-black uppercase tracking-widest">01 / Routine</div>
-      <h2 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
+      <h2 class="text-4xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
         가장 가볍고<br/>직관적인 루틴 기록.
       </h2>
       <p class="text-xl text-slate-400 font-bold leading-relaxed">
@@ -125,7 +125,7 @@
   </section>
 
   <!-- Section 2: 루파클럽 (Membership) -->
-  <section class="py-40 bg-slate-900 overflow-hidden relative">
+  <section class="py-20 lg:py-40 bg-slate-900 overflow-hidden relative">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(99,102,241,0.15),transparent_50%)]"></div>
     
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
@@ -161,7 +161,7 @@
 
       <div class="space-y-10 order-1 lg:order-2">
         <div class="inline-flex px-4 py-1.5 bg-indigo-500 text-white rounded-full text-[11px] font-black uppercase tracking-widest">02 / Community</div>
-        <h2 class="text-5xl md:text-7xl font-black text-white tracking-tight leading-[1.05]">
+        <h2 class="text-4xl md:text-7xl font-black text-white tracking-tight leading-[1.05]">
            압도적인 유대,<br/><span class="text-indigo-400">루파클럽</span>.
         </h2>
         <p class="text-xl text-slate-400 font-bold leading-relaxed">
@@ -188,11 +188,11 @@
   </section>
 
   <!-- Section 3: Host Dashboard -->
-  <section class="py-40 px-6 max-w-7xl mx-auto space-y-32">
+  <section class="py-20 lg:py-40 px-6 max-w-7xl mx-auto space-y-16 lg:space-y-32">
      <div class="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
         <div class="space-y-10">
            <div class="inline-flex px-4 py-1.5 bg-rose-50 text-rose-600 rounded-full text-[11px] font-black uppercase tracking-widest">03 / Leadership</div>
-           <h2 class="text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
+           <h2 class="text-4xl md:text-7xl font-black text-slate-900 tracking-tight leading-[1.05]">
               나만의 챌린지를<br/><span class="text-rose-500">직접 열어보세요</span>.
            </h2>
            <p class="text-xl text-slate-400 font-bold leading-relaxed">
@@ -247,42 +247,48 @@
   </section>
 
   <!-- Final Call to Action -->
-  <section class="max-w-6xl mx-auto px-6 py-40">
-    <div class="bg-indigo-600 rounded-[64px] p-24 text-center text-white space-y-12 relative overflow-hidden shadow-[0_60px_100px_-20px_rgba(79,70,229,0.4)]">
+  <!-- 🔴 FILE UPDATED AT 15:01 - IF YOU SEE THIS IN SOURCE, THE FILE IS LOADING -->
+  <section class="max-w-6xl mx-auto px-6 py-20 lg:py-40">
+    <div class="bg-indigo-600 rounded-[32px] sm:rounded-[64px] text-center text-white relative overflow-hidden shadow-[0_60px_100px_-20px_rgba(79,70,229,0.4)]" style="padding: 3rem 1rem; display: flex; flex-direction: column; gap: 2.5rem; align-items: center;">
        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500 to-indigo-900 opacity-50"></div>
-       <div class="relative z-10 space-y-6">
-          <h2 class="text-5xl md:text-8xl font-black tracking-tighter leading-tight">
-             가장 완벽한 루틴,<br/>지금 시작하세요.
+       
+       <div class="relative z-10" style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center; width: 100%;">
+          <h2 style="font-size: 1.75rem; font-weight: 900; line-height: 1.3; letter-spacing: -0.02em; margin: 0; padding: 0; text-align: center;">
+             <span style="display: block; white-space: nowrap;">가장 완벽한 루틴,</span>
+             <span style="display: block; white-space: nowrap;">지금 시작하세요.</span>
           </h2>
-          <p class="text-xl text-indigo-100 font-bold max-w-xl mx-auto opacity-80">이미 수천 명의 파인더스가 매일 매일 의미 있는 성장을 기록하고 있습니다.</p>
+          <p style="font-size: 0.875rem; font-weight: 600; opacity: 0.9; line-height: 1.6; max-width: 28rem; margin: 0; padding: 0 1rem;">이미 수천 명의 파인더스가 매일 매일 의미 있는 성장을 기록하고 있습니다.</p>
        </div>
-       <div class="relative z-10">
+       
+       <div class="relative z-10" style="display: flex; justify-content: center; width: 100%;">
           <% if current_user %>
-            <%= link_to root_path, class: "mx-auto px-16 py-8 bg-white text-indigo-600 rounded-[32px] font-black text-3xl hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-6" do %>
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <%= link_to root_path, style: "display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: white; color: #4F46E5; border-radius: 1rem; font-weight: 900; font-size: 1.125rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); text-decoration: none; white-space: nowrap; transition: transform 0.2s;", onmouseover: "this.style.transform='scale(1.05)'", onmouseout: "this.style.transform='scale(1)'" do %>
+                <svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <rect x="3" y="3" width="7" height="7"></rect>
                   <rect x="14" y="3" width="7" height="7"></rect>
                   <rect x="14" y="14" width="7" height="7"></rect>
                   <rect x="3" y="14" width="7" height="7"></rect>
                 </svg>
-                내 대시보드로 이동
+                <span>내 대시보드로 이동</span>
             <% end %>
           <% else %>
             <%= button_to auth_at_provider_path(provider: :threads), 
                           method: :post,
                           data: { turbo: false },
-                          class: "mx-auto px-16 py-8 bg-white text-indigo-600 rounded-[32px] font-black text-3xl hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-6" do %>
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                          style: "display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem 2rem; background: white; color: #4F46E5; border-radius: 1rem; font-weight: 900; font-size: 1.125rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: none; cursor: pointer; white-space: nowrap; transition: transform 0.2s;",
+                          onmouseover: "this.style.transform='scale(1.05)'",
+                          onmouseout: "this.style.transform='scale(1)'" do %>
+                <svg style="width: 1.25rem; height: 1.25rem; flex-shrink: 0;" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
                 </svg>
-                Threads로 시작하기
+                <span>Threads로 시작하기</span>
             <% end %>
           <% end %>
        </div>
     </div>
 
     <!-- Footer -->
-    <footer class="mt-40 flex flex-col md:flex-row justify-between items-center gap-10 border-t border-slate-100 pt-16 mb-20">
+    <footer class="mt-20 lg:mt-40 flex flex-col md:flex-row justify-between items-center gap-10 border-t border-slate-100 pt-16 mb-20">
        <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
              <svg class="text-white w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/></svg>

@@ -7,9 +7,17 @@
     --color-threads-border: #dbdbdb;
     --color-threads-light-bg: #fafafa;
 
-    --radius-threads: 28px;
-    --radius-threads-lg: 56px;
-    --radius-threads-xl: 88px;
+    --radius-threads: 16px;
+    --radius-threads-lg: 24px;
+    --radius-threads-xl: 32px;
+}
+
+@media (min-width: 1024px) {
+    :root {
+        --radius-threads: 28px;
+        --radius-threads-lg: 56px;
+        --radius-threads-xl: 88px;
+    }
 }
 
 @layer base {
