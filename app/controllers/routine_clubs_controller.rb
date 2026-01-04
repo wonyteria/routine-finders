@@ -68,6 +68,10 @@ class RoutineClubsController < ApplicationController
       return redirect_to @routine_club, alert: "정원이 마감되었습니다."
     end
 
+    if @routine_club.members.exists?(user: current_user)
+      return redirect_to @routine_club, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
+    end
+
     join_date = Date.current
     prorated_fee = @routine_club.calculate_prorated_fee(join_date)
 
@@ -76,6 +80,7 @@ class RoutineClubsController < ApplicationController
       paid_amount: prorated_fee,
       depositor_name: params[:depositor_name],
       contact_info: params[:contact_info],
+      threads_nickname: params[:threads_nickname],
       payment_status: :pending
     )
 

@@ -58,7 +58,8 @@ class ChallengeApplicationsController < ApplicationController
               user: current_user,
               paid_amount: @challenge.total_payment_amount,
               joined_at: Time.current,
-              contact_info: @application.contact_info
+              contact_info: @application.contact_info,
+              threads_nickname: @application.threads_nickname
             )
 
             @challenge.increment!(:current_participants)
@@ -88,7 +89,8 @@ class ChallengeApplicationsController < ApplicationController
         user: @application.user,
         paid_amount: @challenge.total_payment_amount,
         joined_at: Time.current,
-        contact_info: @application.contact_info
+        contact_info: @application.contact_info,
+        threads_nickname: @application.threads_nickname
       )
 
       @challenge.increment!(:current_participants)
@@ -137,7 +139,7 @@ class ChallengeApplicationsController < ApplicationController
   end
 
   def application_params
-    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info)
+    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info, :threads_nickname)
   end
 
   def create_notification_for_host

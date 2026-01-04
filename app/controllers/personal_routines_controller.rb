@@ -19,7 +19,7 @@ class PersonalRoutinesController < ApplicationController
       @official_club = RoutineClub.create!(
         title: "루파 클럽 공식",
         description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",
-        monthly_fee: 5000,
+        monthly_fee: 3000,
         min_duration_months: 3,
         start_date: Date.current,
         end_date: Date.current + 1.year,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_02_152858) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_04_141814) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -83,6 +83,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_152858) do
     t.text "message"
     t.text "reject_reason"
     t.integer "status", default: 0, null: false
+    t.string "threads_nickname"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["challenge_id", "user_id"], name: "index_challenge_applications_on_challenge_id_and_user_id", unique: true
@@ -220,6 +221,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_152858) do
     t.string "refund_bank_name"
     t.integer "refund_status"
     t.integer "status", default: 0, null: false
+    t.string "threads_nickname"
     t.boolean "today_verified", default: false, null: false
     t.integer "total_failures", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -307,6 +309,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_02_152858) do
     t.integer "penalty_count", default: 0
     t.integer "routine_club_id", null: false
     t.integer "status", default: 0, null: false
+    t.string "threads_nickname"
     t.datetime "updated_at", null: false
     t.integer "used_passes_count"
     t.integer "user_id", null: false

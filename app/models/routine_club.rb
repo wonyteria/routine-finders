@@ -44,18 +44,27 @@ class RoutineClub < ApplicationRecord
     end
   end
 
+  # 분기별 요금 계산 (하루 100원)
+  # 1분기: 1월~3월, 2분기: 4월~6월, 3분기: 7월~9월, 4분기: 10월~12월
   def calculate_prorated_fee(join_date)
-    return monthly_fee * min_duration_months if join_date <= start_date
+    # 현재 분기의 마지막 날 계산
+    quarter_end_date = get_quarter_end_date(join_date)
 
-    # 참여하지 못한 일수 계산
-    days_missed = (join_date - start_date).to_i
-    total_days = (end_date - start_date).to_i
+    # 가입일부터 분기 마지막 날까지의 일수 계산
+    days_in_quarter = (quarter_end_date - join_date).to_i + 1
 
-    # 최소 3개월 요금에서 비례 계산
-    base_fee = monthly_fee * min_duration_months
-    missed_ratio = days_missed.to_f / total_days
+    # 하루 100원으로 계산
+    days_in_quarter * 100
+  end
 
-    (base_fee * (1 - missed_ratio)).to_i
+  # 주어진 날짜가 속한 분기의 마지막 날 반환
+  def get_quarter_end_date(date)
+    date.to_date.end_of_quarter
+  end
+
+  # 분기 시작일 반환
+  def get_quarter_start_date(date)
+    date.to_date.beginning_of_quarter
   end
 
   def is_full?
