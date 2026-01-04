@@ -66,6 +66,18 @@ class RoutineClub < ApplicationRecord
     members.where(payment_status: :pending).count
   end
 
+  def average_attendance_rate
+    confirmed_members = members.where(payment_status: :confirmed)
+    return 0.0 if confirmed_members.empty?
+
+    total_rate = confirmed_members.sum(:attendance_rate)
+    (total_rate / confirmed_members.count).round(2)
+  end
+
+  def total_penalties
+    penalties.count
+  end
+
   private
 
   def end_date_after_start_date
