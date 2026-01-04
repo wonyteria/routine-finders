@@ -46,7 +46,7 @@
             <% if banner.badge_text.present? %>
               <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase animate-in fade-in slide-in-from-left-4 duration-700"><%= banner.badge_text %></span>
             <% end %>
-            <h1 class="text-4xl lg:text-6xl font-black leading-tight tracking-tight animate-in fade-in slide-in-from-left-6 duration-1000 delay-100"><%= raw banner.title.gsub("\n", "<br/>") %></h1>
+            <h1 class="text-3xl lg:text-6xl font-black leading-tight tracking-tight animate-in fade-in slide-in-from-left-6 duration-1000 delay-100 break-keep"><%= raw banner.title.gsub("\n", "<br/>") %></h1>
           </div>
           <% if banner.subtitle.present? %>
             <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000 delay-200"><%= raw banner.subtitle.gsub("\n", "<br/>") %></p>
@@ -65,7 +65,7 @@
         <div class="relative z-20 h-full flex flex-col justify-center px-6 sm:px-12 lg:px-20 space-y-6 text-white">
           <div class="space-y-2">
             <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase">Start your growth</span>
-            <h1 class="text-4xl lg:text-6xl font-black leading-tight tracking-tight">함께해서 더 강력한<br/>습관의 힘</h1>
+            <h1 class="text-3xl lg:text-6xl font-black leading-tight tracking-tight break-keep">함께해서 더 강력한<br/>습관의 힘</h1>
           </div>
           <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed">평균 달성률 92%의 보증금 시스템으로<br/>진정한 변화를 경험하세요.</p>
           <%= link_to challenges_path, class: "w-fit px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-base hover:shadow-2xl hover:-translate-y-1 transition-all" do %>
@@ -77,28 +77,28 @@
 
     <!-- My Achievements Section -->
     <section class="bg-white rounded-threads-xl border border-slate-200 shadow-sm p-5 sm:p-8 lg:p-12 space-y-10">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
-        <div class="space-y-1">
-          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-2">
+        <div class="space-y-1 text-center lg:text-left">
+          <h2 class="text-2xl lg:text-3xl font-black text-slate-900 justify-center lg:justify-start flex items-center gap-3">
             나의 성취 지도
             <span class="text-orange-500">🔥</span>
           </h2>
-          <p class="text-slate-400 font-bold text-base">매일의 노력이 기록으로 남습니다.</p>
+          <p class="text-slate-400 font-bold text-sm lg:text-base">매일의 노력이 기록으로 남습니다.</p>
         </div>
-        <div class="flex items-center gap-4">
-          <div class="flex items-center gap-6 px-8 py-4 bg-slate-50/80 rounded-2xl border border-slate-100">
+        <div class="flex items-center justify-center gap-4">
+          <div class="flex items-center gap-6 px-6 lg:px-8 py-3 lg:py-4 bg-slate-50/80 rounded-2xl border border-slate-100">
             <div class="text-center">
               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total</p>
-              <p class="text-xl font-black text-slate-900"><%= total_activities %><span class="text-xs ml-0.5 text-slate-400">회</span></p>
+              <p class="text-lg lg:text-xl font-black text-slate-900"><%= total_activities %><span class="text-xs ml-0.5 text-slate-400">회</span></p>
             </div>
             <div class="w-px h-6 bg-slate-200"></div>
             <div class="text-center">
               <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Streak</p>
-              <p class="text-xl font-black text-orange-600"><%= current_streak %><span class="text-xs ml-0.5 text-slate-400">일</span></p>
+              <p class="text-lg lg:text-xl font-black text-orange-600"><%= current_streak %><span class="text-xs ml-0.5 text-slate-400">일</span></p>
             </div>
           </div>
-          <%= link_to achievement_report_path, class: "w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg hover:bg-indigo-600 transition-all group" do %>
-            <svg class="w-6 h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <%= link_to achievement_report_path, class: "w-12 h-12 lg:w-14 lg:h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg hover:bg-indigo-600 transition-all group shrink-0" do %>
+            <svg class="w-5 h-5 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
           <% end %>
@@ -203,20 +203,18 @@
         <!-- High-Contrast Tab Navigation -->
         <div class="inline-flex p-1.5 bg-slate-200/60 backdrop-blur-md rounded-[24px] w-full lg:w-auto border border-slate-300/50 shadow-inner">
           <button type="button" 
-                  class="flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-10 py-4 rounded-[20px] text-sm font-black transition-all duration-500 transform active:scale-95"
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep"
                   data-tabs-target="tab"
                   data-action="click->tabs#change"
                   data-id="routines">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-            데일리 루틴
+            루틴
           </button>
           <button type="button" 
-                  class="flex-1 lg:flex-none flex items-center justify-center gap-2.5 px-10 py-4 rounded-[20px] text-sm font-black transition-all duration-500 transform active:scale-95"
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep"
                   data-tabs-target="tab"
                   data-action="click->tabs#change"
                   data-id="challenges">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            참여 챌린지
+            챌린지
           </button>
         </div>
       </div>

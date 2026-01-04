@@ -2,7 +2,7 @@
   
   <% unless current_user.is_rufa_club_member? %>
     <!-- Premium Promotion View for Non-members -->
-    <section class="relative overflow-hidden bg-slate-900 rounded-[64px] p-12 lg:p-24 text-white shadow-2xl">
+    <section class="relative overflow-hidden bg-slate-900 rounded-[48px] lg:rounded-[64px] px-6 py-16 lg:p-24 text-white shadow-2xl">
       <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/30 via-slate-900 to-purple-900/30 z-0"></div>
       <div class="absolute -right-40 -top-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px]"></div>
       
@@ -12,18 +12,16 @@
           <span class="text-xs font-black uppercase tracking-[0.3em] text-indigo-100 italic">Routine Finders Premium</span>
         </div>
 
-        <div class="space-y-6">
-          <h2 class="text-5xl md:text-8xl font-black leading-[1.05] tracking-tighter">
-            단순한 기록을 넘어,<br/>
+          <h2 class="text-[32px] lg:text-7xl font-black leading-[1.15] lg:leading-[1.1] tracking-tighter break-keep">
+            단순한 기록을 넘어,<br class="hidden md:block"/>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400">당신의 정체성을 설계하다</span>
           </h2>
-          <p class="text-xl md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
-            루파 클럽은 성실함의 가치를 아는 상위 1%를 위한<br/>프리미엄 루틴 성장 시스템입니다.
+          <p class="text-lg lg:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed break-keep px-4 lg:px-0">
+            루파 클럽은 성실함의 가치를 아는 상위 1%를 위한 프리미엄 루틴 성장 시스템입니다.
           </p>
-        </div>
 
         <!-- Benefits Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left pt-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 text-center lg:text-left pt-8 lg:pt-12">
           <% [
             ["📊", "성장 리포트", "매월 객관적인 지표로 분석하는 루파 인텔리전스"],
             ["🤝", "오프라인 모임", "서울·경기 지역 정기 오프라인 성장 네트워킹"],
@@ -40,15 +38,15 @@
 
         <div class="pt-12 flex flex-col items-center gap-8">
           <% if @official_club %>
-            <%= link_to routine_club_path(@official_club), class: "group relative px-16 py-8 bg-white text-slate-900 rounded-[32px] font-black text-xl hover:bg-amber-400 transition-all shadow-[0_20px_60px_rgba(255,255,255,0.1)] overflow-hidden" do %>
+            <%= link_to routine_club_path(@official_club), class: "group relative w-full sm:w-auto px-8 lg:px-16 py-6 lg:py-8 bg-white text-slate-900 rounded-[28px] lg:rounded-[32px] font-black text-lg lg:text-xl hover:bg-amber-400 transition-all shadow-xl overflow-hidden" do %>
               <span class="relative z-10">지금 루파 클럽 참여하기</span>
               <div class="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <% end %>
           <% end %>
-          <div class="flex items-center gap-3 text-slate-500">
-            <span class="text-sm font-bold">월 5,000원으로 누리는 모든 권한</span>
-            <div class="w-1 h-1 bg-slate-700 rounded-full"></div>
-            <span class="text-sm font-bold">중도 해지 및 환불 불가</span>
+          <div class="flex flex-col sm:flex-row items-center gap-2 lg:gap-3 text-slate-500">
+            <span class="text-xs lg:text-sm font-bold">하루 100원, 월 3,000원으로 누리는 모든 권한</span>
+            <div class="hidden sm:block w-1 h-1 bg-slate-700 rounded-full"></div>
+            <span class="text-xs lg:text-sm font-bold">중도 해지 및 환불 불가</span>
           </div>
         </div>
       </div>
