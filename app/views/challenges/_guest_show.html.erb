@@ -136,30 +136,38 @@
           참여중인 <%= @challenge.offline? ? "모임" : "챌린지" %>
         <% end %>
       <% else %>
-        <% application = @challenge.challenge_applications.find_by(user: current_user) if current_user %>
-        <% if application&.pending? %>
-          <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-center">
-            <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
-            <p class="text-amber-600/70 text-xs mt-1">호스트의 승인을 기다리고 있어요</p>
-          </div>
-        <% elsif @challenge.recruitment_end_date.present? && Date.current > @challenge.recruitment_end_date %>
-          <div class="p-4 bg-slate-100 rounded-2xl text-center">
-            <p class="text-slate-500 font-black text-sm">모집 기간 종료</p>
-          </div>
-        <% elsif @challenge.requires_approval? %>
-          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
-            참여 신청하기
-          <% end %>
-        <% elsif !@challenge.cost_type_free? %>
-          <!-- 유료 챌린지: 신청 페이지로 이동 -->
-          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
-            입금 정보 입력하고 참여하기
+        <% if logged_in? %>
+          <% application = @challenge.challenge_applications.find_by(user: current_user) %>
+          <% if application&.pending? %>
+            <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-center">
+              <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
+              <p class="text-amber-600/70 text-xs mt-1">호스트의 승인을 기다리고 있어요</p>
+            </div>
+          <% elsif @challenge.recruitment_end_date.present? && Date.current > @challenge.recruitment_end_date %>
+            <div class="p-4 bg-slate-100 rounded-2xl text-center">
+              <p class="text-slate-500 font-black text-sm">모집 기간 종료</p>
+            </div>
+          <% elsif @challenge.requires_approval? %>
+            <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
+              참여 신청하기
+            <% end %>
+          <% elsif !@challenge.cost_type_free? %>
+            <!-- 유료 챌린지: 신청 페이지로 이동 -->
+            <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
+              입금 정보 입력하고 참여하기
+            <% end %>
+          <% else %>
+            <!-- 무료 챌린지: 모달 열기 -->
+            <button data-action="click->modal#open" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+              지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
+            </button>
           <% end %>
         <% else %>
-          <!-- 무료 챌린지: 모달 열기 -->
-          <button data-action="click->modal#open" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
-            지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
+          <!-- 비로그인 사용자: 로그인 유도 -->
+          <button onclick="document.getElementById('auth-modal').classList.remove('hidden'); document.getElementById('auth-modal').classList.add('flex');" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+            로그인하고 참여하기
           </button>
+          <p class="text-center text-xs text-slate-400 mt-2">로그인 후 <%= @challenge.offline? ? "모임" : "챌린지" %>에 참여할 수 있어요</p>
         <% end %>
       <% end %>
     </div>
@@ -181,32 +189,40 @@
         <% end %>
         <p class="text-center text-xs text-slate-400 mt-2">클릭하여 대시보드로 이동</p>
       <% else %>
-        <% application = @challenge.challenge_applications.find_by(user: current_user) if current_user %>
-        <% if application&.pending? %>
-          <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100 text-center space-y-1">
-            <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
-            <p class="text-amber-600/70 text-xs">호스트의 승인을 기다리고 있어요</p>
-          </div>
-        <% elsif @challenge.recruitment_end_date.present? && Date.current > @challenge.recruitment_end_date %>
-          <div class="p-6 bg-slate-100 rounded-2xl text-center space-y-1">
-            <p class="text-slate-500 font-black text-sm">모집 기간 종료</p>
-            <p class="text-slate-400 text-xs text-nowrap tracking-tight">아쉽게도 참여 신청 기간이 지났습니다.</p>
-          </div>
-        <% elsif @challenge.requires_approval? %>
-          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
-            참여 신청하기
+        <% if logged_in? %>
+          <% application = @challenge.challenge_applications.find_by(user: current_user) %>
+          <% if application&.pending? %>
+            <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100 text-center space-y-1">
+              <p class="text-amber-700 font-black text-sm">신청 승인 대기 중</p>
+              <p class="text-amber-600/70 text-xs">호스트의 승인을 기다리고 있어요</p>
+            </div>
+          <% elsif @challenge.recruitment_end_date.present? && Date.current > @challenge.recruitment_end_date %>
+            <div class="p-6 bg-slate-100 rounded-2xl text-center space-y-1">
+              <p class="text-slate-500 font-black text-sm">모집 기간 종료</p>
+              <p class="text-slate-400 text-xs text-nowrap tracking-tight">아쉽게도 참여 신청 기간이 지났습니다.</p>
+            </div>
+          <% elsif @challenge.requires_approval? %>
+            <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
+              참여 신청하기
+            <% end %>
+          <% elsif !@challenge.cost_type_free? %>
+            <!-- 유료 챌린지: 신청 페이지로 이동 -->
+            <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
+              입금 정보 입력하고 참여하기
+            <% end %>
+            <p class="text-center text-xs text-slate-400 mt-2">입금 확인 후 참여가 완료됩니다</p>
+          <% else %>
+            <!-- 무료 챌린지: 모달 열기 -->
+            <button data-action="click->modal#open" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+              지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
+            </button>
           <% end %>
-        <% elsif !@challenge.cost_type_free? %>
-          <!-- 유료 챌린지: 신청 페이지로 이동 -->
-          <%= link_to new_challenge_application_path(@challenge), class: "block w-full py-5 #{theme_bg_class} text-white rounded-2xl text-center font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all" do %>
-            입금 정보 입력하고 참여하기
-          <% end %>
-          <p class="text-center text-xs text-slate-400 mt-2">입금 확인 후 참여가 완료됩니다</p>
         <% else %>
-          <!-- 무료 챌린지: 모달 열기 -->
-          <button data-action="click->modal#open" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
-            지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
+          <!-- 비로그인 사용자: 로그인 유도 -->
+          <button onclick="document.getElementById('auth-modal').classList.remove('hidden'); document.getElementById('auth-modal').classList.add('flex');" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+            로그인하고 참여하기
           </button>
+          <p class="text-center text-xs text-slate-400 mt-2">로그인 후 <%= @challenge.offline? ? "모임" : "챌린지" %>에 참여할 수 있어요</p>
         <% end %>
       <% end %>
 

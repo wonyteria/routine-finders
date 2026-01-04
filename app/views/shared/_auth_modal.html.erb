@@ -2,12 +2,18 @@
 <div id="auth_modal" 
      data-modal-target="container"
      data-action="click->modal#closeOnBackground"
-     class="hidden fixed inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-  <!-- 모달 컨텐츠 -->
-  <div class="bg-white rounded-threads-lg shadow-2xl w-full max-w-sm overflow-hidden border border-threads-border"
+     class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all duration-300">
+  
+  <!-- 모달 컨텐츠 (Bottom Sheet on Mobile) -->
+  <div class="bg-white rounded-t-[32px] sm:rounded-threads-lg shadow-2xl w-full max-w-sm overflow-hidden border-t sm:border border-threads-border animate-slide-up sm:animate-in sm:zoom-in sm:fade-in duration-300"
        data-controller="auth-tabs"
        data-auth-tabs-active-class="text-threads-black border-threads-black"
        data-auth-tabs-inactive-class="text-slate-400 border-transparent">
+    
+    <!-- Grab Handle for Mobile -->
+    <div class="sm:hidden flex justify-center pt-4">
+      <div class="w-12 h-1.5 bg-slate-200 rounded-full"></div>
+    </div>
     
     <!-- 헤더 -->
     <div class="flex flex-col items-center px-6 pt-10 pb-4">

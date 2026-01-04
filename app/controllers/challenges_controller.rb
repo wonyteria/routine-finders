@@ -1,6 +1,7 @@
 class ChallengesController < ApplicationController
   before_action :set_challenge, only: [ :show, :join, :leave ]
   before_action :require_login, only: [ :new, :create, :join, :leave ]
+  skip_before_action :require_login, only: [ :index, :show ]
 
   def index
     # 검색어, 카테고리, 상태 필터가 있거나 '전체보기' 모드인 경우

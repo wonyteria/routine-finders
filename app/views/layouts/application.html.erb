@@ -42,6 +42,34 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <style>
+      /* Mobile App-like Experience Globals */
+      * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+      }
+      
+      body {
+        overscroll-behavior-y: none; /* Prevent rubber-band effect on body if needed, or keep for native feel */
+      }
+
+      .active-scale {
+        transition: transform 0.1s ease-out;
+      }
+      .active-scale:active {
+        transform: scale(0.95);
+      }
+
+      /* Bottom Sheet Animation */
+      @keyframes slide-up {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+      }
+      .animate-slide-up {
+        animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+    </style>
   </head>
 
   <body class="min-h-screen bg-[#F8FAFC]" 

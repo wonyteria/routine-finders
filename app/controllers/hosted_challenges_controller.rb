@@ -23,17 +23,18 @@ class HostedChallengesController < ApplicationController
     @challenge = current_user.hosted_challenges.find(params[:id])
     @tab = params[:tab] || "dashboard"
 
-    # 공통 데이터
+    # 공통 데이터 - 최적화된 쿼리
+    participants = @challenge.participants
     @stats = {
       total_participants: @challenge.current_participants,
-      active_today: @challenge.participants.where(today_verified: true).count,
-      unverified_today: @challenge.participants.where(today_verified: [ false, nil ]).count,
-      avg_completion_rate: @challenge.participants.average(:completion_rate)&.round(1) || 0,
-      streak_keepers: @challenge.participants.where("current_streak > 0").count,
-      dropped_out: @challenge.participants.failed.count,
+      active_today: participants.where(today_verified: true).count,
+      unverified_today: participants.where(today_verified: [ false, nil ]).count,
+      avg_completion_rate: participants.average(:completion_rate)&.round(1) || 0,
+      streak_keepers: participants.where("current_streak > 0").count,
+      dropped_out: participants.failed.count,
       pending_verifications: @challenge.verification_logs.pending.count,
       pending_applications: @challenge.challenge_applications.pending.count,
-      pending_refunds: @challenge.participants.refund_applied.count
+      pending_refunds: @challenge.cost_type_deposit? ? participants.refund_applied.count : 0
     }
 
     # 탭별 데이터 로드
@@ -49,7 +50,11 @@ class HostedChallengesController < ApplicationController
     when "participants"
       load_participants_data
     when "refunds"
-      load_refunds_data
+      if @challenge.cost_type_deposit?
+        load_refunds_data
+      else
+        redirect_to hosted_challenge_path(@challenge, tab: "dashboard"), alert: "환급 관리는 보증금 챌린지에서만 사용 가능합니다."
+      end
     end
   end
 

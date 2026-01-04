@@ -31,7 +31,7 @@
 
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
         <% if current_user %>
-           <%= link_to root_path, class: "px-8 py-5 sm:px-12 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[28px] font-black text-lg sm:text-2xl hover:scale-105 transition-all shadow-2xl shadow-slate-200 flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-max" do %>
+           <%= link_to root_path, class: "px-8 py-5 sm:px-12 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[28px] font-black text-lg sm:text-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-slate-200 flex items-center justify-center gap-3 sm:gap-4 w-full sm:w-max" do %>
              <svg class="w-6 h-6 sm:w-7 sm:h-7 text-indigo-400" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                <rect x="3" y="3" width="7" height="7"></rect>
                <rect x="14" y="3" width="7" height="7"></rect>
@@ -44,7 +44,7 @@
            <%= button_to auth_at_provider_path(provider: :threads), 
                          method: :post,
                          data: { turbo: false },
-                         class: "px-8 py-5 sm:px-12 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[28px] font-black text-lg sm:text-2xl hover:scale-105 transition-all shadow-2xl shadow-indigo-100 flex items-center justify-center gap-3 sm:gap-4 group w-full sm:w-max" do %>
+                         class: "px-8 py-5 sm:px-12 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[28px] font-black text-lg sm:text-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-indigo-100 flex items-center justify-center gap-3 sm:gap-4 group w-full sm:w-max border-none" do %>
              <svg class="w-6 h-6 sm:w-7 sm:h-7 text-indigo-400 group-hover:animate-pulse" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
              </svg>
@@ -261,7 +261,7 @@
        
        <div class="relative z-10 flex justify-center w-full">
           <% if current_user %>
-            <%= link_to root_path, class: "group inline-flex items-center justify-center gap-3 px-8 py-5 lg:px-12 lg:py-6 bg-white text-indigo-600 rounded-2xl lg:rounded-[28px] font-black text-lg lg:text-xl shadow-xl transition-all hover:scale-105" do %>
+            <%= link_to root_path, class: "group inline-flex items-center justify-center gap-3 px-8 py-5 lg:px-12 lg:py-6 bg-white text-indigo-600 rounded-2xl lg:rounded-[28px] font-black text-lg lg:text-xl shadow-xl transition-all hover:scale-105 active:scale-95" do %>
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <rect x="3" y="3" width="7" height="7"></rect>
                   <rect x="14" y="3" width="7" height="7"></rect>
@@ -274,7 +274,7 @@
             <%= button_to auth_at_provider_path(provider: :threads), 
                           method: :post,
                           data: { turbo: false },
-                          class: "group inline-flex items-center justify-center gap-3 px-8 py-5 lg:px-12 lg:py-6 bg-white text-indigo-600 rounded-2xl lg:rounded-[28px] font-black text-lg lg:text-xl shadow-xl transition-all hover:scale-105 border-none" do %>
+                          class: "group inline-flex items-center justify-center gap-3 px-8 py-5 lg:px-12 lg:py-6 bg-white text-indigo-600 rounded-2xl lg:rounded-[28px] font-black text-lg lg:text-xl shadow-xl transition-all hover:scale-105 active:scale-95 border-none" do %>
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
                 </svg>

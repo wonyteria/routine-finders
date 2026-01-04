@@ -168,14 +168,40 @@ export default class extends Controller {
         const checkbox = this.element.querySelector(`#day_${day}`)
         if (checkbox) {
             checkbox.checked = !checkbox.checked
-            event.currentTarget.classList.toggle("bg-indigo-600", checkbox.checked)
-            event.currentTarget.classList.toggle("text-white", checkbox.checked)
-            event.currentTarget.classList.toggle("shadow-lg", checkbox.checked)
-            event.currentTarget.classList.toggle("border-indigo-600", checkbox.checked)
-            event.currentTarget.classList.toggle("bg-white", !checkbox.checked)
-            event.currentTarget.classList.toggle("text-slate-300", !checkbox.checked)
-            event.currentTarget.classList.toggle("border-slate-100", !checkbox.checked)
+            this.updateDayUI(event.currentTarget, checkbox.checked)
         }
+    }
+
+    selectAllDays() {
+        ["월", "화", "수", "목", "금", "토", "일"].forEach(day => {
+            const checkbox = this.element.querySelector(`#day_${day}`)
+            const button = this.element.querySelector(`button[data-day="${day}"]`)
+            if (checkbox && button) {
+                checkbox.checked = true
+                this.updateDayUI(button, true)
+            }
+        })
+    }
+
+    deselectAllDays() {
+        ["월", "화", "수", "목", "금", "토", "일"].forEach(day => {
+            const checkbox = this.element.querySelector(`#day_${day}`)
+            const button = this.element.querySelector(`button[data-day="${day}"]`)
+            if (checkbox && button) {
+                checkbox.checked = false
+                this.updateDayUI(button, false)
+            }
+        })
+    }
+
+    updateDayUI(button, isChecked) {
+        button.classList.toggle("bg-indigo-600", isChecked)
+        button.classList.toggle("text-white", isChecked)
+        button.classList.toggle("shadow-lg", isChecked)
+        button.classList.toggle("border-indigo-600", isChecked)
+        button.classList.toggle("bg-white", !isChecked)
+        button.classList.toggle("text-slate-300", !isChecked)
+        button.classList.toggle("border-slate-100", !isChecked)
     }
 
     toggleVerificationType(event) {
@@ -462,7 +488,10 @@ export default class extends Controller {
             const recruitmentStart = this.element.querySelector('input[name="challenge[recruitment_start_date]"]').value
             const recruitmentEnd = this.element.querySelector('input[name="challenge[recruitment_end_date]"]').value
             const costType = this.element.querySelector('input[name="challenge[cost_type]"]').value
-            const amount = this.element.querySelector("#challenge_amount").value
+            const depositAmount = this.element.querySelector("#challenge_amount")?.value || "0"
+            const participationFee = this.element.querySelector('input[name="challenge[participation_fee]"]') ? this.element.querySelectorAll('input[name="challenge[participation_fee]"]')[0].value : "0"
+            const penaltyAmount = this.element.querySelector('input[name="challenge[penalty_per_failure]"]')?.value || "0"
+            const failureTolerance = this.element.querySelector('select[name="challenge[failure_tolerance]"]')?.value || "0"
             const maxParticipants = this.element.querySelector("#max-participants-display").textContent
 
             const missionGoal = this.element.querySelector("#challenge_certification_goal")?.value || ""
@@ -530,12 +559,23 @@ export default class extends Controller {
                     </div>
                 </div>
 
-                <div class="space-y-1 pt-2 border-t border-slate-100">
+                    <div class="space-y-1 pt-2 border-t border-slate-100">
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">참여 비용</p>
                         <p class="text-xl font-black text-indigo-600">
-                            ${costType === 'free' ? '무료' : Number(amount).toLocaleString('ko-KR') + '원'}
-                            <span class="text-xs text-slate-400 font-bold ml-1">(${costType === 'deposit' ? '보증금' : '참가비'})</span>
+                            ${costType === 'free' ? '무료' :
+                    (costType === 'deposit' ?
+                        Number(depositAmount).toLocaleString('ko-KR') + '원' :
+                        Number(participationFee).toLocaleString('ko-KR') + '원')}
+                            <span class="text-xs text-slate-400 font-bold ml-1">
+                                (${costType === 'deposit' ? '보증금' : (costType === 'fee' ? '참가비' : '')})
+                            </span>
                         </p>
+                        ${costType === 'deposit' ? `
+                            <p class="text-[10px] font-bold text-slate-400 mt-1">
+                                실패 시 <span class="text-rose-500">${Number(penaltyAmount).toLocaleString('ko-KR')}원</span> 차감 / 
+                                <span class="text-indigo-600">${failureTolerance}회</span> 실패 허용
+                            </p>
+                        ` : ''}
                     </div>
                 </div>
             `

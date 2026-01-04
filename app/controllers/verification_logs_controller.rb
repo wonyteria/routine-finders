@@ -22,6 +22,11 @@ class VerificationLogsController < ApplicationController
     @verification_log.challenge = @challenge
     @verification_log.verification_type = @challenge.verification_type
 
+    # 인증 데이터 검증
+    if !valid_verification_data?(@verification_log)
+      return redirect_to @challenge, alert: "인증 내용을 입력해주세요."
+    end
+
     if @verification_log.save
       # 호스트 승인이 필요없는 경우 자동 승인
       unless @challenge.mission_requires_host_approval
@@ -81,5 +86,24 @@ class VerificationLogsController < ApplicationController
 
   def verification_log_params
     params.require(:verification_log).permit(:value, :image_url)
+  end
+
+  def valid_verification_data?(log)
+    case log.verification_type.to_sym
+    when :photo
+      # 사진 인증: image_url 필수
+      log.image_url.present?
+    when :metric, :url
+      # 수치/URL 인증: value 필수
+      log.value.present?
+    when :simple
+      # 간단 인증: value가 있거나 "completed" 같은 기본값이 있어야 함
+      log.value.present?
+    when :complex
+      # 복합 인증: image_url 또는 value 중 하나는 있어야 함
+      log.image_url.present? || log.value.present?
+    else
+      false
+    end
   end
 end
