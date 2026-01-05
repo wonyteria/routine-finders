@@ -794,14 +794,17 @@
 
           <!-- 식물 영역 -->
           <div class="px-6 pb-8">
-            <div class="aspect-square <%= garden_style[:bg_color] %> rounded-[32px] border <%= garden_style[:border_color] %> relative overflow-hidden group">
-              <div class="absolute inset-0 bg-no-repeat transition-all duration-700 group-hover:scale-105 <%= garden_style[:plant_filter] %>"
-                   style="background-image: url('/assets/images/roopa_plant_new.png'); background-size: 600% 400%; background-position: <%= @current_growth_stage[:stage] * 20 %>% 50%;">
-              </div>
-              <!-- 단계 표시 -->
-              <div class="absolute bottom-6 left-0 right-0 flex justify-center">
-                <div class="px-4 py-1.5 bg-white/80 backdrop-blur-md rounded-full border border-white/50 shadow-sm">
-                  <p class="text-[10px] font-black text-slate-600 uppercase tracking-tighter">Growth Stage <%= @current_growth_stage[:stage] + 1 %></p>
+            <div class="aspect-square <%= garden_style[:bg_color] %> rounded-[32px] border <%= garden_style[:border_color] %> relative overflow-hidden flex items-center justify-center">
+              <!-- 준비중 표시 -->
+              <div class="text-center space-y-4 p-8">
+                <div class="text-6xl opacity-20">🌱</div>
+                <div>
+                  <p class="text-lg font-black text-slate-900 mb-2">식물 성장 시스템</p>
+                  <p class="text-sm font-bold text-slate-500">더 멋진 모습으로 준비 중입니다</p>
+                  <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-slate-200">
+                    <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-black text-slate-600 uppercase tracking-wider">Coming Soon</span>
+                  </div>
                 </div>
               </div>
             </div>

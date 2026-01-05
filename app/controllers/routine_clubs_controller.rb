@@ -50,12 +50,21 @@ class RoutineClubsController < ApplicationController
       monthly_total = monthly_atts.count
       monthly_rate = monthly_total > 0 ? (monthly_present.to_f / monthly_total * 100).round(2) : 0.0
 
+      # Get user's ongoing challenges
+      ongoing_challenges = m.user.participations
+                            .joins(:challenge)
+                            .where(status: :approved)
+                            .where("challenges.start_date <= ? AND challenges.end_date >= ?", Date.current, Date.current)
+                            .includes(:challenge)
+                            .limit(5) # Limit to 5 to avoid clutter
+
       {
         membership: m,
         monthly_rate: monthly_rate,
         monthly_absence: monthly_total - monthly_present,
         cumulative_rate: m.attendance_rate,
-        cumulative_points: m.growth_points || 0
+        cumulative_points: m.growth_points || 0,
+        ongoing_challenges: ongoing_challenges
       }
     end
 
