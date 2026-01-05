@@ -50,61 +50,27 @@
     <!-- Tabs Only (Sidebar is inside partials to avoid duplication) -->
     <div class="flex justify-center md:justify-start mb-8">
       <div class="bg-indigo-50/50 p-1.5 rounded-[24px] flex w-full md:w-auto md:inline-flex gap-1.5 border border-indigo-100/50">
-        <button type="button"
-                onclick="switchTab('free')"
-                id="tab-btn-free"
-                class="flex-1 md:flex-none px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 <%= (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' %>">
-          무료 루틴
-        </button>
-        <button type="button"
-                onclick="switchTab('club')"
-                id="tab-btn-club"
-                class="flex-1 md:flex-none px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 <%= params[:tab] == 'club' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' %>">
-          루파 클럽
-        </button>
+        <%= link_to "무료 루틴", personal_routines_path(tab: 'free'), 
+            class: "flex-1 md:flex-none px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 #{ (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' }" %>
+        
+        <%= link_to "루파 클럽", personal_routines_path(tab: 'club'), 
+            class: "flex-1 md:flex-none px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 #{ params[:tab] == 'club' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' }" %>
       </div>
     </div>
 
-    <div id="panel-free" class="<%= (params[:tab].blank? || params[:tab] == 'free') ? '' : 'hidden' %> animate-in fade-in slide-in-from-bottom-4">
-      <%= render 'free_routines' %>
-    </div>
-    <div id="panel-club" class="<%= params[:tab] == 'club' ? '' : 'hidden' %> animate-in fade-in slide-in-from-bottom-4">
-      <%= render 'club_routines' %>
-    </div>
+    <% if params[:tab].blank? || params[:tab] == 'free' %>
+      <div id="panel-free">
+        <%= render 'free_routines' %>
+      </div>
+    <% end %>
 
-    <script>
-      function switchTab(tabId) {
-        // Hide all panels
-        document.getElementById('panel-free').classList.add('hidden');
-        document.getElementById('panel-club').classList.add('hidden');
+    <% if params[:tab] == 'club' %>
+      <div id="panel-club" style="display: block !important; min-height: 500px; border: 5px solid red;">
+        <h1 class="text-center text-red-500 font-black text-xl py-4">[DEBUG: CLUB PANEL RENDERED]</h1>
+        <%= render 'club_routines' %>
+      </div>
+    <% end %>
 
-        // Show selected panel
-        document.getElementById('panel-' + tabId).classList.remove('hidden');
-
-        // Reset all buttons
-        const btnClasses = ['bg-indigo-600', 'text-white', 'shadow-xl', 'shadow-indigo-100', 'scale-105', 'z-10'];
-        const inactiveClasses = ['text-slate-400', 'hover:text-slate-600'];
-
-        ['free', 'club'].forEach(id => {
-          const btn = document.getElementById('tab-btn-' + id);
-          if (btn) {
-            btn.classList.remove(...btnClasses);
-            btn.classList.add(...inactiveClasses);
-          }
-        });
-
-        // Activate selected button
-        const activeBtn = document.getElementById('tab-btn-' + tabId);
-        if (activeBtn) {
-          activeBtn.classList.remove(...inactiveClasses);
-          activeBtn.classList.add(...btnClasses);
-        }
-        
-        // Update URL
-        const url = new URL(window.location);
-        url.searchParams.set('tab', tabId);
-        window.history.pushState({}, '', url);
-      }
-    </script>
+    <!-- Script removed as tabs are now handled by server-side navigation -->
   </div>
 </div>

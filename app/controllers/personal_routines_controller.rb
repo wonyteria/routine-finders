@@ -16,7 +16,7 @@ class PersonalRoutinesController < ApplicationController
     # 루파 클럽 공식 생성 (없을 경우)
     @official_club = RoutineClub.official.first
     unless @official_club
-      admin = User.find_by(role: :admin) || User.first
+      admin = User.where(role: [ :super_admin, :club_admin ]).order(role: :desc).first || User.first
       @official_club = RoutineClub.create!(
         title: "루파 클럽 공식",
         description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",

@@ -1,22 +1,24 @@
 <div class="space-y-12">
   
-  <% unless current_user.is_rufa_club_member? %>
+  <% unless current_user.is_rufa_club_member? || current_user.admin? %>
     <!-- Premium Promotion View for Non-members -->
-    <section class="relative overflow-hidden bg-slate-900 rounded-[48px] lg:rounded-[64px] px-6 py-16 lg:p-24 text-white shadow-2xl">
-      <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/30 via-slate-900 to-purple-900/30 z-0"></div>
-      <div class="absolute -right-40 -top-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px]"></div>
+    <section class="relative overflow-hidden bg-slate-900 rounded-[48px] lg:rounded-[64px] px-6 py-16 lg:p-24 text-white shadow-2xl" style="background-color: #0f172a !important; color: white !important;">
+
+      <!-- Decorative backgrounds commented out for safety -->
+      <!-- <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/30 via-slate-900 to-purple-900/30 z-0"></div> -->
+      <!-- <div class="absolute -right-40 -top-40 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px]"></div> -->
       
       <div class="relative z-10 max-w-4xl mx-auto text-center space-y-12">
         <div class="inline-flex items-center gap-3 bg-white/5 backdrop-blur-xl px-6 py-3 rounded-full border border-white/10">
           <span class="w-2.5 h-2.5 bg-amber-400 rounded-full animate-pulse shadow-[0_0_15px_rgba(251,191,36,0.8)]"></span>
-          <span class="text-xs font-black uppercase tracking-[0.3em] text-indigo-100 italic">Routine Finders Premium</span>
+          <span class="text-xs font-black uppercase tracking-[0.3em] text-indigo-100 italic" style="color: #e0e7ff;">Routine Finders Premium</span>
         </div>
 
-          <h2 class="text-[32px] lg:text-7xl font-black leading-[1.15] lg:leading-[1.1] tracking-tighter break-keep">
+          <h2 class="text-[32px] lg:text-7xl font-black leading-[1.15] lg:leading-[1.1] tracking-tighter break-keep" style="color: white;">
             단순한 기록을 넘어,<br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400">당신의 정체성을 설계하다</span>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400" style="color: #fbbf24;">당신의 정체성을 설계하다</span>
           </h2>
-          <p class="text-lg lg:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed break-keep px-4 lg:px-0">
+          <p class="text-lg lg:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed break-keep px-4 lg:px-0" style="color: #94a3b8;">
             루파 클럽은 성실함의 가치를 아는 상위 1%를 위한 프리미엄 루틴 성장 시스템입니다.
           </p>
 
@@ -37,7 +39,7 @@
         </div>
 
         <div class="pt-12 flex flex-col items-center gap-8">
-          <% if @official_club %>
+          <% if @official_club&.persisted? %>
             <%= link_to routine_club_path(@official_club), class: "group relative w-full sm:w-auto px-8 lg:px-16 py-6 lg:py-8 bg-white text-slate-900 rounded-[28px] lg:rounded-[32px] font-black text-lg lg:text-xl hover:bg-amber-400 transition-all shadow-xl overflow-hidden" do %>
               <span class="relative z-10">지금 루파 클럽 참여하기</span>
               <div class="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -61,9 +63,15 @@
       </div>
     </section>
 
+    </section>
   <% else %>
     <!-- Premium Member Dashboard with Sub-navigation -->
-    <div class="flex flex-col lg:flex-row gap-12" id="rufa-premium-board">
+    <div class="flex flex-col lg:flex-row gap-12" id="rufa-premium-board" style="background-color: #f8fafc; color: #1e293b; min-height: 500px;">
+      <% if current_user.admin? && !current_user.is_rufa_club_member? %>
+        <div class="fixed bottom-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full z-50 text-xs font-bold shadow-lg">
+          ADMIN MODE
+        </div>
+      <% end %>
       
       <!-- New Grid-based Mobile Navigation -->
       <aside class="w-full lg:w-72 shrink-0">
@@ -149,8 +157,9 @@
                    </div>
                  <% end %>
                <% else %>
-                 <div class="col-span-2 py-16 text-center bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
-                    <p class="text-sm font-bold text-slate-400 mb-4">오늘 설정된 전용 루틴이 없습니다.</p>
+                 <div class="col-span-2 py-16 text-center bg-slate-50 rounded-[40px] border border-dashed border-slate-200" style="border: 4px dashed #ef4444; background-color: #fee2e2;">
+                    <p class="text-2xl font-black text-red-600 mb-4">관리자님, 오늘 설정된 전용 루틴이 없습니다.</p>
+                    <p class="text-sm font-bold text-red-400 mb-4">(이 붉은 박스가 보이면 대시보드 화면 진입 성공입니다)</p>
                     <%= link_to "루틴 설정하러 가기", personal_routines_path(tab: "free"), class: "text-xs font-black text-indigo-600 hover:underline" %>
                  </div>
                <% end %>
