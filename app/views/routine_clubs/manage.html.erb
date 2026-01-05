@@ -86,6 +86,11 @@
                 class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
           설정 관리
         </button>
+        <button onclick="switchManageTab('community')" 
+                id="manage-tab-community"
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
+          커뮤니티 관리
+        </button>
       </div>
     </div>
 
@@ -428,6 +433,144 @@
 
   </div>
 </div>
+
+    <!-- Community Management Tab -->
+    <div id="manage-content-community" class="manage-tab-content hidden space-y-8">
+      
+      <!-- Announcements Section -->
+      <section class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl">📢</div>
+            <div>
+              <h2 class="text-2xl font-black text-slate-900">공지사항 관리</h2>
+              <p class="text-sm text-slate-500 font-medium">전체 멤버에게 중요 소식을 전달하세요</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Create Form -->
+          <div class="lg:col-span-1">
+            <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100">
+              <h3 class="text-lg font-black text-slate-900 mb-4">새 공지 등록</h3>
+              <%= form_with model: [@routine_club, RoutineClubAnnouncement.new], url: routine_club_announcements_path(@routine_club), local: true, class: "space-y-4" do |f| %>
+                <div>
+                  <%= f.label :title, "제목", class: "block text-xs font-black text-slate-500 mb-1" %>
+                  <%= f.text_field :title, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500", placeholder: "공지 제목을 입력하세요" %>
+                </div>
+                <div>
+                  <%= f.label :content, "내용", class: "block text-xs font-black text-slate-500 mb-1" %>
+                  <%= f.text_area :content, rows: 4, class: "w-full rounded-xl border-slate-200 text-sm font-medium focus:ring-indigo-500 focus:border-indigo-500", placeholder: "상세 내용을 입력하세요" %>
+                </div>
+                <%= f.submit "등록하기", class: "w-full py-3 bg-indigo-600 text-white rounded-xl font-black hover:bg-indigo-700 transition-colors cursor-pointer" %>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- List -->
+          <div class="lg:col-span-2 space-y-4">
+            <% if @announcements.any? %>
+              <% @announcements.each do |announcement| %>
+                <div class="bg-white border border-slate-100 rounded-2xl p-5 flex items-start justify-between group hover:border-slate-300 transition-colors">
+                  <div>
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg"><%= announcement.created_at.strftime("%y.%m.%d") %></span>
+                      <h4 class="font-black text-slate-900"><%= announcement.title %></h4>
+                    </div>
+                    <p class="text-sm text-slate-500 line-clamp-2"><%= announcement.content %></p>
+                  </div>
+                  <%= button_to routine_club_announcement_path(@routine_club, announcement), method: :delete, data: { confirm: "정말 삭제하시겠습니까?" }, class: "p-2 text-slate-300 hover:text-red-500 transition-colors" do %>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                <p class="text-slate-400 font-bold">등록된 공지사항이 없습니다.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gatherings Section -->
+      <section class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-2xl">🎉</div>
+            <div>
+              <h2 class="text-2xl font-black text-slate-900">온/오프라인 모임</h2>
+              <p class="text-sm text-slate-500 font-medium">멤버들과의 교류를 위한 모임을 만드세요</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Create Form -->
+          <div class="lg:col-span-1">
+            <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100">
+              <h3 class="text-lg font-black text-slate-900 mb-4">새 모임 개설</h3>
+              <%= form_with model: [@routine_club, RoutineClubGathering.new], url: routine_club_gatherings_path(@routine_club), local: true, class: "space-y-4" do |f| %>
+                <div>
+                  <%= f.label :title, "모임명", class: "block text-xs font-black text-slate-500 mb-1" %>
+                  <%= f.text_field :title, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500", placeholder: "모임 이름을 입력하세요" %>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <%= f.label :gathering_type, "유형", class: "block text-xs font-black text-slate-500 mb-1" %>
+                    <%= f.select :gathering_type, RoutineClubGathering.gathering_types.keys.map { |k| [k == 'online' ? '온라인' : '오프라인', k] }, {}, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500" %>
+                  </div>
+                  <div>
+                    <%= f.label :max_attendees, "정원", class: "block text-xs font-black text-slate-500 mb-1" %>
+                    <%= f.number_field :max_attendees, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500", placeholder: "무제한: 비워둠" %>
+                  </div>
+                </div>
+                <div>
+                  <%= f.label :gathering_at, "일시", class: "block text-xs font-black text-slate-500 mb-1" %>
+                  <%= f.datetime_field :gathering_at, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500" %>
+                </div>
+                <div>
+                  <%= f.label :location, "장소/링크", class: "block text-xs font-black text-slate-500 mb-1" %>
+                  <%= f.text_field :location, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-emerald-500 focus:border-emerald-500", placeholder: "주소 또는 줌 링크 등" %>
+                </div>
+                <div>
+                  <%= f.label :description, "상세 안내", class: "block text-xs font-black text-slate-500 mb-1" %>
+                  <%= f.text_area :description, rows: 3, class: "w-full rounded-xl border-slate-200 text-sm font-medium focus:ring-emerald-500 focus:border-emerald-500", placeholder: "모임에 대한 설명을 입력하세요" %>
+                </div>
+                <%= f.submit "개설하기", class: "w-full py-3 bg-emerald-600 text-white rounded-xl font-black hover:bg-emerald-700 transition-colors cursor-pointer" %>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- List -->
+          <div class="lg:col-span-2 space-y-4">
+            <% if @gatherings.any? %>
+              <% @gatherings.each do |gathering| %>
+                <div class="bg-white border border-slate-100 rounded-2xl p-5 flex items-start justify-between group hover:border-emerald-200 transition-colors">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="px-2 py-0.5 <%= gathering.online? ? 'bg-sky-100 text-sky-600' : 'bg-orange-100 text-orange-600' %> text-[10px] font-black rounded-lg uppercase"><%= gathering.gathering_type %></span>
+                      <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg"><%= gathering.gathering_at.strftime("%m/%d %H:%M") %></span>
+                    </div>
+                    <h4 class="font-black text-slate-900 text-lg mb-1"><%= gathering.title %></h4>
+                    <p class="text-sm text-slate-500 mb-2"><%= gathering.location %></p>
+                    <p class="text-xs text-slate-400 font-medium line-clamp-1"><%= gathering.description %></p>
+                  </div>
+                  <%= button_to routine_club_gathering_path(@routine_club, gathering), method: :delete, data: { confirm: "정말 삭제하시겠습니까?" }, class: "p-2 text-slate-300 hover:text-red-500 transition-colors" do %>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                <p class="text-slate-400 font-bold">예정된 모임이 없습니다.</p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </section>
+    </div>
 
 <script>
   function switchManageTab(tab) {

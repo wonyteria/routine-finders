@@ -29,6 +29,10 @@ class RoutineClubsController < ApplicationController
 
     @pending_payments = @is_host ? @routine_club.members.where(payment_status: :pending) : []
     @rules = @routine_club.rules.order(:position)
+
+    # Community Data
+    @announcements = @routine_club.announcements.order(created_at: :desc)
+    @gatherings = @routine_club.gatherings.order(gathering_at: :asc)
   end
 
   def manage
@@ -59,6 +63,10 @@ class RoutineClubsController < ApplicationController
     @monthly_sorted = @member_stats.sort_by { |s| -s[:monthly_rate] }
     # Default sort for Cumulative
     @cumulative_sorted = @member_stats.sort_by { |s| -s[:cumulative_points] }
+
+    # Community Data
+    @announcements = @routine_club.announcements.order(created_at: :desc)
+    @gatherings = @routine_club.gatherings.order(gathering_at: :asc)
   end
 
   def new

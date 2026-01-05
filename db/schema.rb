@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_05_050937) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_05_132708) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -289,6 +289,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_050937) do
     t.index ["routine_club_member_id"], name: "index_routine_club_attendances_on_routine_club_member_id"
   end
 
+  create_table "routine_club_gatherings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.datetime "gathering_at"
+    t.integer "gathering_type"
+    t.string "location"
+    t.integer "max_attendees"
+    t.integer "routine_club_id", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["routine_club_id"], name: "index_routine_club_gatherings_on_routine_club_id"
+  end
+
   create_table "routine_club_members", force: :cascade do |t|
     t.integer "absence_count", default: 0
     t.integer "attendance_count", default: 0
@@ -545,6 +558,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_050937) do
   add_foreign_key "reviews", "users"
   add_foreign_key "routine_club_attendances", "routine_club_members"
   add_foreign_key "routine_club_attendances", "routine_clubs"
+  add_foreign_key "routine_club_gatherings", "routine_clubs"
   add_foreign_key "routine_club_members", "routine_clubs"
   add_foreign_key "routine_club_members", "users"
   add_foreign_key "routine_club_penalties", "routine_club_members"

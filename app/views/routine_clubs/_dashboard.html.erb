@@ -48,7 +48,76 @@
     </div>
   <% end %>
 
-  <!-- Today's Attendance -->
+  <!-- Community Board -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Announcements -->
+    <div class="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+          <span class="text-2xl">📢</span> 공지사항
+        </h2>
+        <% if @announcements.count > 3 %>
+          <button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">더보기</button>
+        <% end %>
+      </div>
+      
+      <% if @announcements.any? %>
+        <div class="space-y-4">
+          <% @announcements.limit(3).each do |notice| %>
+            <div class="group cursor-pointer">
+              <div class="flex items-center justify-between mb-1">
+                <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-black rounded-lg"><%= notice.created_at.strftime("%m/%d") %></span>
+                <span class="text-[10px] font-bold text-slate-300 group-hover:text-amber-500 transition-colors">New</span>
+              </div>
+              <h3 class="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= notice.title %></h3>
+              <p class="text-xs text-slate-500 mt-1 line-clamp-2"><%= notice.content %></p>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+          <p class="text-slate-400 font-bold text-sm">등록된 공지사항이 없습니다</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Gatherings -->
+    <div class="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+          <span class="text-2xl">🎉</span> 다가오는 모임
+        </h2>
+        <% if @gatherings.count > 3 %>
+          <button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">더보기</button>
+        <% end %>
+      </div>
+      
+      <% if @gatherings.any? %>
+        <div class="space-y-3">
+          <% @gatherings.limit(3).each do |gathering| %>
+            <div class="bg-emerald-50/50 rounded-2xl p-4 border border-emerald-100/50 hover:bg-emerald-50 transition-colors cursor-pointer">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="px-2 py-0.5 <%= gathering.online? ? 'bg-sky-100 text-sky-600' : 'bg-orange-100 text-orange-600' %> text-[10px] font-black rounded-lg uppercase"><%= gathering.gathering_type == 'online' ? 'ON' : 'OFF' %></span>
+                <span class="text-[10px] font-bold text-emerald-600"><%= gathering.gathering_at.strftime("%m/%d %H:%M") %></span>
+              </div>
+              <h3 class="font-bold text-slate-900 line-clamp-1 mb-1"><%= gathering.title %></h3>
+              <div class="flex items-center gap-1 text-[10px] font-bold text-slate-400">
+                <span>📍 <%= gathering.location %></span>
+                <% if gathering.max_attendees %>
+                  <span>·</span>
+                  <span>선착순 <%= gathering.max_attendees %>명</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+          <p class="text-slate-400 font-bold text-sm">예정된 모임이 없습니다</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
   <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
     <div class="flex items-center justify-between mb-6">
       <div>
