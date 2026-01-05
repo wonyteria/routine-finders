@@ -14,15 +14,15 @@
     </div>
     
     <div class="flex bg-slate-100/50 p-1 rounded-xl self-start sm:self-auto min-w-[140px]">
-      <button data-tabs-target="tab" data-action="click->tabs#change" data-id="month"
-              class="flex-1 px-4 py-2 rounded-lg text-[10px] font-black transition-all bg-indigo-600 text-white shadow-lg z-10">1개월</button>
       <button data-tabs-target="tab" data-action="click->tabs#change" data-id="year"
-              class="flex-1 px-4 py-2 rounded-lg text-[10px] font-black transition-all text-slate-400 hover:text-slate-600">1년</button>
+              class="flex-1 px-4 py-2 rounded-lg text-[10px] font-black transition-all bg-indigo-600 text-white shadow-lg z-10">1년</button>
+      <button data-tabs-target="tab" data-action="click->tabs#change" data-id="month"
+              class="flex-1 px-4 py-2 rounded-lg text-[10px] font-black transition-all text-slate-400 hover:text-slate-600">1개월</button>
     </div>
   </div>
 
-  <%# Month View Panel %>
-  <div data-tabs-target="panel" data-id="month" class="relative z-10 space-y-4">
+  <%# Month View Panel (Initially Hidden) %>
+  <div data-tabs-target="panel" data-id="month" class="hidden relative z-10 space-y-4">
     <div class="grid grid-cols-7 gap-1 md:gap-1.5 max-w-[400px] w-full mx-auto">
       <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
         <div class="text-[9px] font-black text-slate-300 text-center py-1 md:py-2"><%= day %></div>
@@ -72,39 +72,37 @@
     </div>
   </div>
 
-  <%# Year View Panel %>
-  <div data-tabs-target="panel" data-id="year" class="hidden relative z-10 space-y-4">
-    <div class="grid grid-cols-7 gap-1 px-1">
-      <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
-        <div class="text-[8px] font-black text-slate-300 text-center uppercase py-1"><%= day %></div>
-      <% end %>
-    </div>
+  <%# Year View Panel (Active by Default) %>
+  <div data-tabs-target="panel" data-id="year" class="relative z-10 space-y-4">
+    <div class="flex">
+      <!-- Days Label (Left column) -->
+      <div class="flex flex-col justify-between py-[2px] pr-2 text-[8px] font-bold text-slate-300 h-[88px]">
+        <span>S</span>
+        <span>M</span>
+        <span>T</span>
+        <span>W</span>
+        <span>T</span>
+        <span>F</span>
+        <span>S</span>
+      </div>
 
-    <div class="relative group/matrix">
-      <div class="overflow-y-auto max-h-[350px] scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent pr-1 -mr-1">
-        <div class="grid grid-cols-7 gap-1 md:gap-1.5 max-w-[400px] w-full mx-auto">
-          <%
-            end_date = Date.current
-            start_of_range = end_date - 1.year + 1.day
-            
-            # Group by month to create a standard calendar flow for each month
-            months = (start_of_range..end_date).group_by { |d| d.beginning_of_month }
-          %>
+      <!-- Flexible 1-Year Contribution Graph (No Scroll, Full Width) -->
+      <div class="flex-1 h-full min-h-[100px] flex items-end gap-[1px] sm:gap-[2px]">
+        <%
+          end_date = Date.current
+          # Ensure we show exactly 52 weeks or fit to start of range approx 1 year ago
+          start_date = end_date - 52.weeks
+          
+          # Adjust start_date to the beginning of that week (Sunday) to align columns correctly
+          start_date = start_date.beginning_of_week(:sunday)
+          
+          all_dates = (start_date..end_date).to_a
+          weeks = all_dates.each_slice(7).to_a
+        %>
 
-          <% months.each do |month_start, dates| %>
-            <div class="col-span-7 flex items-center gap-3 mt-4 mb-2">
-              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
-                <%= month_start.strftime("%B %Y") %>
-              </span>
-              <div class="flex-1 h-px bg-slate-100"></div>
-            </div>
-
-            <%# Empty slots for start of month %>
-            <% month_start.wday.times do %>
-              <div class="aspect-square"></div>
-            <% end %>
-
-            <% dates.each do |date| %>
+        <% weeks.each do |week_dates| %>
+          <div class="flex-1 flex flex-col gap-[1px] sm:gap-[2px]">
+            <% week_dates.each do |date| %>
               <% 
                 count = @activity_data[date] || 0
                 color_class = case
@@ -115,21 +113,20 @@
                 end
                 is_today = date == Date.current
               %>
-              <div class="aspect-square rounded-[4px] md:rounded-lg <%= color_class %> transition-all <%= 'ring-2 ring-indigo-500 ring-offset-1 scale-90' if is_today %>"
-                   title="<%= date %>: <%= count %> actions">
+              <!-- Each cell fills the column width and keeps aspect ratio approximately square via height control in CSS/Flex logic or just flexible height -->
+              <div class="w-full aspect-square rounded-[1px] sm:rounded-[2px] <%= color_class %> transition-all <%= 'ring-1 ring-indigo-500 z-10' if is_today %>"
+                   title="<%= date.strftime('%Y-%m-%d') %>: <%= count %> actions">
               </div>
             <% end %>
-          <% end %>
-        </div>
-      </div>
-      
-      <%# Mobile Scroll Hint - Vertical %>
-      <div class="md:hidden absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 animate-pulse pointer-events-none pr-1">
-        <div class="w-1 h-8 bg-indigo-500/20 rounded-full"></div>
-        <span class="text-[8px] font-black text-indigo-400 rotate-90 origin-center whitespace-nowrap">SCROLL</span>
+            <%# Fill empty slots if last week is incomplete (though starting from Sunday aligned usually avoids this in the middle, but end might be partial) %>
+            <% (7 - week_dates.size).times do %>
+              <div class="w-full aspect-square"></div>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </div>
-
+    
     <div class="flex justify-between items-center pt-2">
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-1.5">
