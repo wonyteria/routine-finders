@@ -454,7 +454,7 @@
           <div class="lg:col-span-1">
             <div class="bg-slate-50 rounded-3xl p-6 border border-slate-100">
               <h3 class="text-lg font-black text-slate-900 mb-4">새 공지 등록</h3>
-              <%= form_with model: [@routine_club, RoutineClubAnnouncement.new], url: routine_club_announcements_path(@routine_club), local: true, class: "space-y-4" do |f| %>
+              <%= form_with model: [@routine_club, Announcement.new], url: routine_club_announcements_path(@routine_club), local: true, class: "space-y-4" do |f| %>
                 <div>
                   <%= f.label :title, "제목", class: "block text-xs font-black text-slate-500 mb-1" %>
                   <%= f.text_field :title, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500", placeholder: "공지 제목을 입력하세요" %>
