@@ -20,8 +20,18 @@
           <h2 class="text-2xl font-bold text-slate-900"><%= @user.nickname %></h2>
           <p class="text-slate-500 mt-1"><%= @user.email %></p>
           <div class="flex items-center gap-3 mt-3">
-            <span class="px-3 py-1 text-sm font-semibold rounded-full <%= @user.super_admin? ? 'bg-purple-100 text-purple-700' : (@user.club_admin? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700') %>">
-              <%= @user.role.titleize %>
+            <% role_style = case @user.role
+                 when 'super_admin' then 'bg-purple-100 text-purple-700'
+                 when 'club_admin' then 'bg-indigo-100 text-indigo-700'
+                 else 'bg-slate-100 text-slate-700'
+               end %>
+            <% role_label = case @user.role
+                 when 'super_admin' then '총괄 관리'
+                 when 'club_admin' then '클럽 관리'
+                 else '사용자'
+               end %>
+            <span class="px-3 py-1 text-sm font-semibold rounded-full <%= role_style %>">
+              <%= role_label %>
             </span>
             <% if @user.email_verified %>
               <span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-700">이메일 인증됨</span>

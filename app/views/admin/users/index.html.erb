@@ -46,8 +46,18 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full <%= user.admin? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700' %>">
-                <%= user.admin? ? '관리자' : '사용자' %>
+              <% role_style = case user.role
+                   when 'super_admin' then 'bg-purple-100 text-purple-700'
+                   when 'club_admin' then 'bg-indigo-100 text-indigo-700'
+                   else 'bg-slate-100 text-slate-700'
+                 end %>
+              <% role_label = case user.role
+                   when 'super_admin' then '총괄 관리'
+                   when 'club_admin' then '클럽 관리'
+                   else '사용자'
+                 end %>
+              <span class="px-2 py-1 text-xs font-semibold rounded-full <%= role_style %>">
+                <%= role_label %>
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-slate-600">
