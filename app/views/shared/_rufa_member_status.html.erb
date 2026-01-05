@@ -1,0 +1,91 @@
+<% if current_user&.is_rufa_club_member? %>
+  <% 
+    # Get user's routine club membership
+    membership = current_user.routine_club_members.where(payment_status: :confirmed).first
+    if membership
+      membership.recalculate_growth_points! rescue nil
+    end
+  %>
+  
+  <% if membership %>
+    <div class="relative overflow-hidden rounded-[40px] bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-8 md:p-12 text-white shadow-2xl shadow-indigo-200 group">
+      <!-- Decorative Elements -->
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/20 transition-all duration-700"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+      
+      <div class="relative z-10">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/30 text-[10px] font-black uppercase tracking-widest mb-3">
+              <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+              RUFA Premium Member
+            </div>
+            <h3 class="text-2xl md:text-4xl font-black leading-tight">
+              <%= current_user.nickname %>님의<br/>
+              <span class="text-yellow-300">성장 여정</span>
+            </h3>
+          </div>
+          
+          <%= link_to routine_club_path(membership.routine_club, tab: 'dashboard'), class: "px-6 py-3 bg-white/20 backdrop-blur-md text-white border border-white/30 rounded-2xl font-black text-sm hover:bg-white hover:text-indigo-600 transition-all shadow-lg" do %>
+            클럽 대시보드 →
+          <% end %>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <!-- Growth Points -->
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
+            <p class="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">성장 에너지</p>
+            <p class="text-3xl md:text-4xl font-black text-yellow-300"><%= membership.growth_points || 0 %></p>
+            <p class="text-[10px] text-white/40 font-medium mt-1">Points</p>
+          </div>
+          
+          <!-- Attendance Rate -->
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
+            <p class="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">출석률</p>
+            <p class="text-3xl md:text-4xl font-black text-emerald-300"><%= membership.attendance_rate.to_i %>%</p>
+            <p class="text-[10px] text-white/40 font-medium mt-1">Attendance</p>
+          </div>
+          
+          <!-- Remaining Passes -->
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
+            <p class="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">남은 휴식권</p>
+            <p class="text-3xl md:text-4xl font-black text-blue-300"><%= membership.remaining_passes %></p>
+            <p class="text-[10px] text-white/40 font-medium mt-1">Passes</p>
+          </div>
+          
+          <!-- Warnings -->
+          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
+            <p class="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">누적 경고</p>
+            <p class="text-3xl md:text-4xl font-black <%= membership.penalty_count > 5 ? 'text-red-300' : 'text-white' %>"><%= membership.penalty_count %></p>
+            <p class="text-[10px] text-white/40 font-medium mt-1">Warnings</p>
+          </div>
+        </div>
+        
+        <!-- Motivational Message -->
+        <div class="mt-8 p-6 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10">
+          <div class="flex items-start gap-4">
+            <div class="text-4xl">🔥</div>
+            <div class="flex-1">
+              <p class="font-black text-lg mb-2">
+                <% if membership.attendance_rate >= 90 %>
+                  완벽한 페이스입니다! 이대로만 유지하세요! 🎉
+                <% elsif membership.attendance_rate >= 70 %>
+                  훌륭해요! 조금만 더 힘내면 완벽합니다! 💪
+                <% elsif membership.attendance_rate >= 50 %>
+                  좋은 시작이에요. 꾸준함이 핵심입니다! 🌱
+                <% else %>
+                  다시 시작할 수 있습니다. 오늘부터 함께해요! 🚀
+                <% end %>
+              </p>
+              <p class="text-sm text-white/70 font-medium">
+                루파 클럽 멤버십 종료일: <span class="font-black text-yellow-300"><%= membership.membership_end_date.strftime("%Y년 %m월 %d일") %></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -513,15 +513,15 @@ export default class extends Controller {
 
             let missionSummary = ""
             if (hasDailyGoals) {
-                missionSummary = `<div class="mt-1 flex flex-wrap gap-1">`
+                missionSummary = `<div class="mt-1.5 flex flex-wrap gap-2">`
                 Object.entries(dailyGoals).forEach(([day, goal]) => {
                     if (goal && goal.trim()) {
-                        missionSummary += `<span class="px-2 py-1 bg-indigo-50 text-[10px] font-bold text-indigo-600 rounded-md">${day}: ${goal}</span>`
+                        missionSummary += `<span class="px-2.5 py-1.5 bg-indigo-50 text-xs font-bold text-indigo-600 rounded-xl border border-indigo-100/50">${day}: ${goal}</span>`
                     }
                 })
                 missionSummary += `</div>`
             } else {
-                missionSummary = `<p class="text-sm font-bold text-slate-700">${missionGoal || '공통 목표 없음'}</p>`
+                missionSummary = `<p class="text-sm font-bold text-slate-700 leading-relaxed">${missionGoal || '공통 목표가 설정되지 않았습니다.'}</p>`
             }
 
             let summaryHtml = `

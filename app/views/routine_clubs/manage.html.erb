@@ -50,21 +50,21 @@
     </div>
 
     <!-- Tabs -->
-    <div class="mb-8">
-      <div class="bg-white border border-slate-200 rounded-3xl p-2 inline-flex gap-2">
+    <div class="mb-8 overflow-x-auto pb-2">
+      <div class="bg-white border border-slate-200 rounded-3xl p-2 inline-flex gap-2 min-w-max">
         <button onclick="switchManageTab('pending')" 
                 id="manage-tab-pending"
-                class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all bg-indigo-600 text-white">
-          입금 대기 <% if @pending_payments.any? %><span class="ml-1 bg-white/20 px-2 py-0.5 rounded-full text-xs"><%= @pending_payments.count %></span><% end %>
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all bg-indigo-600 text-white whitespace-nowrap">
+          입금 대기 <% if @pending_payments.any? %><span class="ml-1 bg-white/20 px-1.5 md:px-2 py-0.5 rounded-full text-xs"><%= @pending_payments.count %></span><% end %>
         </button>
         <button onclick="switchManageTab('members')" 
                 id="manage-tab-members"
-                class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
           멤버 관리
         </button>
         <button onclick="switchManageTab('expiring')" 
                 id="manage-tab-expiring"
-                class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600 relative">
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 relative whitespace-nowrap">
           마감 임박
           <% expiring_count = @members.select { |m| (m.membership_end_date - Date.current).to_i.between?(0, 14) }.count %>
           <% if expiring_count > 0 %>
@@ -73,12 +73,12 @@
         </button>
         <button onclick="switchManageTab('penalties')" 
                 id="manage-tab-penalties"
-                class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
           패널티 관리
         </button>
         <button onclick="switchManageTab('settings')" 
                 id="manage-tab-settings"
-                class="manage-tab-btn px-6 py-3 rounded-2xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
           설정 관리
         </button>
       </div>
@@ -92,22 +92,22 @@
         <% if @pending_payments.any? %>
           <div class="space-y-4">
             <% @pending_payments.each do |membership| %>
-              <div class="bg-amber-50 border-2 border-amber-200 rounded-3xl p-6">
-                <div class="flex items-start justify-between gap-6">
-                  <div class="flex items-start gap-4 flex-1">
-                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-2xl font-black flex-shrink-0">
+              <div class="bg-amber-50 border-2 border-amber-200 rounded-3xl p-4 md:p-6">
+                <div class="flex flex-col lg:flex-row items-start gap-4 lg:gap-6">
+                  <div class="flex items-start gap-3 md:gap-4 flex-1 w-full">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xl md:text-2xl font-black flex-shrink-0">
                       <%= membership.user.nickname[0].upcase %>
                     </div>
                     
-                    <div class="flex-1">
-                      <h3 class="text-xl font-black text-slate-900 mb-2">
+                    <div class="flex-1 min-w-0">
+                      <h3 class="text-lg md:text-xl font-black text-slate-900 mb-3">
                         <%= membership.user.nickname %>
                       </h3>
                       
-                      <div class="grid grid-cols-2 gap-4 mb-4">
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-4">
                         <div>
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">입금자명</p>
-                          <p class="text-sm font-bold text-slate-700"><%= membership.depositor_name %></p>
+                          <p class="text-sm font-bold text-slate-700 truncate"><%= membership.depositor_name %></p>
                         </div>
                         <div>
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">입금액</p>
@@ -123,27 +123,27 @@
                         </div>
                         <div>
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">이메일</p>
-                          <p class="text-sm font-bold text-slate-700"><%= membership.user.email %></p>
+                          <p class="text-sm font-bold text-slate-700 truncate" title="<%= membership.user.email %>"><%= membership.user.email %></p>
                         </div>
-                        <div>
+                        <div class="sm:col-span-2">
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">연락처</p>
                           <p class="text-sm font-black text-emerald-600"><%= membership.contact_info.presence || "미입력" %></p>
                         </div>
                       </div>
                       
-                      <div class="bg-white border border-amber-200 rounded-2xl p-4">
+                      <div class="bg-white border border-amber-200 rounded-2xl p-3 md:p-4">
                         <p class="text-xs font-black text-amber-900 mb-2">입금 계좌 정보</p>
-                        <p class="text-sm text-amber-700 font-medium">
+                        <p class="text-xs md:text-sm text-amber-700 font-medium break-all">
                           <%= @routine_club.bank_name %> <%= @routine_club.account_number %> (예금주: <%= @routine_club.account_holder %>)
                         </p>
                       </div>
                     </div>
                   </div>
                   
-                  <div class="flex flex-col gap-2">
-                    <%= button_to "승인", confirm_payment_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-700 transition-colors whitespace-nowrap", data: { confirm: "#{membership.user.nickname}님의 입금을 승인하시겠습니까?" } %>
+                  <div class="flex flex-row lg:flex-col gap-2 w-full lg:w-auto">
+                    <%= button_to "승인", confirm_payment_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "flex-1 lg:flex-none px-4 md:px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-sm hover:bg-emerald-700 transition-colors whitespace-nowrap", data: { confirm: "#{membership.user.nickname}님의 입금을 승인하시겠습니까?" } %>
                     
-                    <%= button_to "거부", reject_payment_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "px-6 py-3 bg-red-100 text-red-600 rounded-2xl font-black hover:bg-red-200 transition-colors whitespace-nowrap", data: { confirm: "#{membership.user.nickname}님의 입금을 거부하시겠습니까?" } %>
+                    <%= button_to "거부", reject_payment_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "flex-1 lg:flex-none px-4 md:px-6 py-3 bg-red-100 text-red-600 rounded-2xl font-black text-sm hover:bg-red-200 transition-colors whitespace-nowrap", data: { confirm: "#{membership.user.nickname}님의 입금을 거부하시겠습니까?" } %>
                   </div>
                 </div>
               </div>
@@ -166,57 +166,57 @@
         <% if @members.any? %>
           <div class="space-y-4">
             <% @members.each do |membership| %>
-              <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
-                <div class="flex items-start justify-between gap-6">
-                  <div class="flex items-start gap-4 flex-1">
-                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-2xl font-black flex-shrink-0">
+              <div class="bg-slate-50 border border-slate-200 rounded-3xl p-4 md:p-6">
+                <div class="flex flex-col lg:flex-row items-start gap-4 lg:gap-6">
+                  <div class="flex items-start gap-3 md:gap-4 flex-1 w-full">
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xl md:text-2xl font-black flex-shrink-0">
                       <%= membership.user.nickname[0].upcase %>
                     </div>
                     
-                    <div class="flex-1">
-                      <div class="flex items-center gap-3 mb-3">
-                        <h3 class="text-xl font-black text-slate-900">
+                    <div class="flex-1 min-w-0">
+                      <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <h3 class="text-lg md:text-xl font-black text-slate-900">
                           <%= membership.user.nickname %>
                         </h3>
                         
                         <% if membership.status_warned? %>
-                          <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-black">경고</span>
+                          <span class="bg-red-100 text-red-600 px-2 md:px-3 py-1 rounded-full text-xs font-black">경고</span>
                         <% elsif membership.status_active? %>
-                          <span class="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-xs font-black">정상</span>
+                          <span class="bg-emerald-100 text-emerald-600 px-2 md:px-3 py-1 rounded-full text-xs font-black">정상</span>
                         <% end %>
                         
                         <% if membership.is_moderator %>
-                          <span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-black">운영진</span>
+                          <span class="bg-purple-100 text-purple-600 px-2 md:px-3 py-1 rounded-full text-xs font-black">운영진</span>
                         <% end %>
                       </div>
                       
-                      <div class="grid grid-cols-4 gap-4">
+                      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                         <div>
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">출석률</p>
-                          <p class="text-lg font-black text-emerald-600"><%= membership.attendance_rate.to_i %>%</p>
+                          <p class="text-base md:text-lg font-black text-emerald-600"><%= membership.attendance_rate.to_i %>%</p>
                         </div>
                         <div>
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">출석</p>
-                          <p class="text-lg font-black text-indigo-600"><%= membership.attendance_count %>일</p>
+                          <p class="text-base md:text-lg font-black text-indigo-600"><%= membership.attendance_count %>일</p>
                         </div>
                         <div>
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">결석</p>
-                          <p class="text-lg font-black text-orange-600"><%= membership.absence_count %>일</p>
+                          <p class="text-base md:text-lg font-black text-orange-600"><%= membership.absence_count %>일</p>
                         </div>
                         <div>
                           <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">경고</p>
-                          <p class="text-lg font-black text-red-600"><%= membership.penalty_count %>회</p>
+                          <p class="text-base md:text-lg font-black text-red-600"><%= membership.penalty_count %>회</p>
                         </div>
-                        <div class="col-span-4 mt-2 pt-2 border-t border-slate-100">
+                        <div class="col-span-2 md:col-span-4 mt-2 pt-2 border-t border-slate-100">
                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">연락처</p>
-                          <p class="text-sm font-bold text-indigo-600"><%= membership.contact_info.presence || "미입력" %></p>
+                          <p class="text-sm font-bold text-indigo-600 break-all"><%= membership.contact_info.presence || "미입력" %></p>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div class="flex flex-col gap-2">
-                    <%= button_to "강퇴", kick_member_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "px-6 py-3 bg-red-600 text-white rounded-2xl font-black hover:bg-red-700 transition-colors whitespace-nowrap", data: { confirm: "#{membership.user.nickname}님을 강퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다." } %>
+                  <div class="w-full lg:w-auto">
+                    <%= button_to "강퇴", kick_member_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "w-full lg:w-auto px-4 md:px-6 py-3 bg-red-600 text-white rounded-2xl font-black text-sm hover:bg-red-700 transition-colors whitespace-nowrap", data: { confirm: "#{membership.user.nickname}님을 강퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다." } %>
                   </div>
                 </div>
               </div>

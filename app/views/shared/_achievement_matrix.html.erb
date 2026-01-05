@@ -1,0 +1,150 @@
+<section id="achievement-matrix"
+         class="bg-white rounded-[32px] md:rounded-[40px] p-6 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8 relative overflow-hidden group"
+         data-controller="tabs"
+         data-tabs-query-param-value="matrix_tab"
+         data-tabs-active-class="bg-indigo-600 text-white shadow-lg z-10"
+         data-tabs-inactive-class="text-slate-400 hover:text-slate-600">
+  <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50/50 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
+  
+  <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h3 class="text-xl font-black text-slate-900 tracking-tight">성취 매트릭스</h3>
+      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5"><%= Date.current.year %> Achievement Matrix</p>
+    </div>
+    
+    <div class="flex bg-slate-100/50 p-1 rounded-xl self-start sm:self-auto min-w-[140px]">
+      <button data-tabs-target="tab" data-action="click->tabs#change" data-id="month"
+              class="flex-1 px-4 py-2 rounded-lg text-[10px] font-black transition-all bg-indigo-600 text-white shadow-lg z-10">1개월</button>
+      <button data-tabs-target="tab" data-action="click->tabs#change" data-id="year"
+              class="flex-1 px-4 py-2 rounded-lg text-[10px] font-black transition-all text-slate-400 hover:text-slate-600">1년</button>
+    </div>
+  </div>
+
+  <%# Month View Panel %>
+  <div data-tabs-target="panel" data-id="month" class="relative z-10 space-y-4">
+    <div class="grid grid-cols-7 gap-1 md:gap-1.5">
+      <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
+        <div class="text-[9px] font-black text-slate-300 text-center py-1 md:py-2"><%= day %></div>
+      <% end %>
+
+      <% 
+        start_of_month = Date.current.beginning_of_month
+        grid_start_month = start_of_month - start_of_month.wday
+        end_of_month = Date.current.end_of_month
+        grid_end_month = end_of_month + (6 - end_of_month.wday)
+      %>
+      
+      <% (grid_start_month..grid_end_month).each do |date| %>
+        <% 
+          is_current_month = date.month == Date.current.month
+          count = @activity_data[date] || 0
+          color_class = case
+          when !is_current_month then "bg-transparent opacity-0"
+          when count == 0 then "bg-slate-50"
+          when count <= 2 then "bg-indigo-100"
+          when count <= 4 then "bg-indigo-300"
+          else "bg-indigo-600"
+          end
+          
+          is_today = date == Date.current
+        %>
+        <div class="aspect-square rounded-lg md:rounded-xl <%= color_class %> transition-all relative group/day <%= 'ring-2 ring-indigo-500 ring-offset-2 scale-90' if is_today && is_current_month %>" 
+             title="<%= date %>: <%= count %> activities">
+          <% if is_today && is_current_month %>
+            <span class="absolute -top-1 -right-1 w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+          <% end %>
+          <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover/day:opacity-100 transition-opacity pointer-events-none">
+             <span class="text-[8px] font-black <%= count > 2 ? 'text-white' : 'text-indigo-600' %>"><%= date.day %></span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="flex justify-between items-center pt-4 border-t border-slate-50">
+      <div class="flex items-center gap-1.5">
+        <div class="w-2.5 h-2.5 rounded-full bg-indigo-600"></div>
+        <span class="text-[9px] font-bold text-slate-500">Target Reached</span>
+      </div>
+      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">
+        <%= @monthly_completions&.count || 0 %> DONE THIS MONTH
+      </p>
+    </div>
+  </div>
+
+  <%# Year View Panel %>
+  <div data-tabs-target="panel" data-id="year" class="hidden relative z-10 space-y-4">
+    <div class="grid grid-cols-7 gap-1 px-1">
+      <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
+        <div class="text-[8px] font-black text-slate-300 text-center uppercase py-1"><%= day %></div>
+      <% end %>
+    </div>
+
+    <div class="relative group/matrix">
+      <div class="overflow-y-auto max-h-[350px] scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent pr-1 -mr-1">
+        <div class="grid grid-cols-7 gap-1 md:gap-1.5">
+          <%
+            end_date = Date.current
+            start_of_range = end_date - 1.year + 1.day
+            
+            # Group by month to create a standard calendar flow for each month
+            months = (start_of_range..end_date).group_by { |d| d.beginning_of_month }
+          %>
+
+          <% months.each do |month_start, dates| %>
+            <div class="col-span-7 flex items-center gap-3 mt-4 mb-2">
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+                <%= month_start.strftime("%B %Y") %>
+              </span>
+              <div class="flex-1 h-px bg-slate-100"></div>
+            </div>
+
+            <%# Empty slots for start of month %>
+            <% month_start.wday.times do %>
+              <div class="aspect-square"></div>
+            <% end %>
+
+            <% dates.each do |date| %>
+              <% 
+                count = @activity_data[date] || 0
+                color_class = case
+                when count == 0 then "bg-slate-50"
+                when count <= 2 then "bg-indigo-100"
+                when count <= 4 then "bg-indigo-300"
+                else "bg-indigo-600"
+                end
+                is_today = date == Date.current
+              %>
+              <div class="aspect-square rounded-[4px] md:rounded-lg <%= color_class %> transition-all <%= 'ring-2 ring-indigo-500 ring-offset-1 scale-90' if is_today %>"
+                   title="<%= date %>: <%= count %> actions">
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      
+      <%# Mobile Scroll Hint - Vertical %>
+      <div class="md:hidden absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 animate-pulse pointer-events-none pr-1">
+        <div class="w-1 h-8 bg-indigo-500/20 rounded-full"></div>
+        <span class="text-[8px] font-black text-indigo-400 rotate-90 origin-center whitespace-nowrap">SCROLL</span>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center pt-2">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[8px] font-black text-slate-400">Less</span>
+          <div class="flex gap-0.5">
+            <div class="w-2.5 h-2.5 rounded-[2px] bg-slate-50"></div>
+            <div class="w-2.5 h-2.5 rounded-[2px] bg-indigo-100"></div>
+            <div class="w-2.5 h-2.5 rounded-[2px] bg-indigo-300"></div>
+            <div class="w-2.5 h-2.5 rounded-[2px] bg-indigo-600"></div>
+          </div>
+          <span class="text-[8px] font-black text-slate-400">More</span>
+        </div>
+      </div>
+      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">
+        <%= @activity_data.values.sum %> TOTAL DONE THIS YEAR
+      </p>
+    </div>
+  </div>
+</section>

@@ -119,9 +119,10 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def update_club_member_count
-    if payment_status_confirmed? && saved_change_to_payment_status?[1] == "confirmed"
+    # saved_change_to_payment_status returns [old_value, new_value]
+    if payment_status_confirmed? && saved_change_to_payment_status&.last == "confirmed"
       routine_club.increment!(:current_members)
-    elsif payment_status_rejected? && saved_change_to_payment_status?[0] == "confirmed"
+    elsif payment_status_rejected? && saved_change_to_payment_status&.first == "confirmed"
       routine_club.decrement!(:current_members)
     end
   end

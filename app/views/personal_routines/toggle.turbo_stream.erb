@@ -69,3 +69,10 @@
     </div>
   </template>
 </turbo-stream>
+<%= turbo_stream.update "monthly-done-count" do %>
+  <%= @monthly_completions&.count || 0 %>
+<% end %>
+
+<%= turbo_stream.update "achievement-matrix" do %>
+  <%= render "shared/achievement_matrix" %>
+<% end %>

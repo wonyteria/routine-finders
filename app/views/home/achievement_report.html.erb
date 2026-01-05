@@ -25,26 +25,20 @@
   </div>
 
   <%
-    # Aggregate data
-    activity_data = Hash.new(0)
-    (@verification_logs || []).each { |log| activity_data[log.created_at.to_date] += 1 }
-    (@personal_routine_completions || []).each { |c| activity_data[c.completed_on] += 1 }
-    (@club_attendances || []).each { |a| activity_data[a.attendance_date] += 1 }
-
-    total_activities = activity_data.values.sum
+    total_activities = @activity_data.values.sum
     
-    # Calculate Completion Rate (Simple average of active participations)
+    # Calculate Completion Rate
     avg_completion = @participations.any? ? (@participations.sum(&:completion_rate) / @participations.size * 100).to_i : 0
     
     # Calculate Unified Streak
-    all_activity_dates = activity_data.keys.sort.reverse
+    all_activity_dates = @activity_data.keys.sort.reverse
     
     current_streak = 0
     if all_activity_dates.any?
       check_date = Date.current
-      if all_activity_dates.include?(check_date) || all_activity_dates.include?(check_date - 1.day)
-        curr = all_activity_dates.include?(check_date) ? check_date : check_date - 1.day
-        while all_activity_dates.include?(curr)
+      if @activity_data[check_date] > 0 || @activity_data[check_date - 1.day] > 0
+        curr = @activity_data[check_date] > 0 ? check_date : check_date - 1.day
+        while @activity_data[curr] > 0
           current_streak += 1
           curr -= 1.day
         end
@@ -53,6 +47,14 @@
 
     max_streak = @participations.map(&:max_streak).max.to_i
     badge_count = @current_user.badges.count
+    
+    # Logs for mini-matrices - split by type
+    # For simplicity in the report, we can use the aggregated @activity_data for both or split them if needed.
+    # The existing code split them: c_logs, r_logs.
+    # Let's keep a split version for the mini-matrices if possible.
+    c_logs = VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).where(created_at: 1.month.ago..Time.current).map { |l| l.created_at.to_date }.uniq
+    r_logs = (PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.month.ago..Date.current).map(&:completed_on) + 
+             RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.month.ago..Date.current).map(&:attendance_date)).uniq
   %>
 
   <div class="relative min-h-[500px]">
@@ -141,10 +143,10 @@
             </div>
             <div class="flex gap-3">
               <div class="flex items-center gap-1 text-[9px] font-bold text-slate-400">
-                <span class="w-1.5 h-1.5 rounded-[1px] bg-slate-100"></span> 0%
+                <span class="w-1.5 h-1.5 rounded-[1px] bg-slate-100"></span> 0
               </div>
               <div class="flex items-center gap-1 text-[9px] font-bold text-slate-400">
-                <span class="w-1.5 h-1.5 rounded-[1px] bg-indigo-500"></span> 100%
+                <span class="w-1.5 h-1.5 rounded-[1px] bg-indigo-500"></span> High
               </div>
             </div>
           </div>
@@ -154,12 +156,6 @@
             matrix_end = Date.current
             matrix_start = matrix_end - 27.days
             matrix_dates = (matrix_start..matrix_end).to_a
-            
-            # Group by weeks (4 weeks)
-            matrix_weeks = matrix_dates.each_slice(7).to_a
-            
-            c_logs = @verification_logs.map { |l| l.created_at.to_date }
-            r_logs = @personal_routine_completions.map(&:completed_on) + @club_attendances.map(&:attendance_date)
             
             c_rate = matrix_dates.count { |d| c_logs.include?(d) } / 28.0 * 100
             r_rate = matrix_dates.count { |d| r_logs.include?(d) } / 28.0 * 100
@@ -172,19 +168,17 @@
                 <span class="text-[9px] font-bold text-indigo-500 uppercase tracking-wider">Challenges</span>
                 <span class="text-[10px] font-black text-slate-900"><%= c_rate.to_i %>%</span>
               </div>
-              <div class="flex gap-1 justify-between">
-                <% matrix_weeks.each do |week| %>
-                  <div class="grid grid-rows-7 gap-0.5 w-full">
-                    <% week.each do |date| %>
-                      <% active = c_logs.include?(date) %>
-                      <div class="aspect-square rounded-[1px] transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-indigo-500' : 'bg-slate-100' %>" 
-                           title="<%= date %>"></div>
-                    <% end %>
-                  </div>
+              <div class="grid grid-cols-7 gap-1">
+                <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
+                  <div class="text-[7px] font-black text-slate-300 text-center"><%= day %></div>
                 <% end %>
-                 <div class="grid grid-rows-7 gap-0.5 pl-0.5 text-[8px] font-bold text-slate-300 leading-none items-center w-3 text-center">
-                   <div>M</div><div class="invisible">T</div><div>W</div><div class="invisible">T</div><div>F</div><div class="invisible">S</div><div>S</div>
-                 </div>
+                <%# Padding for start of 28 day range %>
+                <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
+                <% matrix_dates.each do |date| %>
+                  <% active = c_logs.include?(date) %>
+                  <div class="aspect-square rounded-[2px] transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-indigo-500' : 'bg-slate-100' %>" 
+                       title="<%= date %>"></div>
+                <% end %>
               </div>
             </div>
 
@@ -194,19 +188,17 @@
                 <span class="text-[9px] font-bold text-purple-500 uppercase tracking-wider">Routines</span>
                 <span class="text-[10px] font-black text-slate-900"><%= r_rate.to_i %>%</span>
               </div>
-              <div class="flex gap-1 justify-between">
-                <% matrix_weeks.each do |week| %>
-                  <div class="grid grid-rows-7 gap-0.5 w-full">
-                    <% week.each do |date| %>
-                      <% active = r_logs.include?(date) %>
-                      <div class="aspect-square rounded-[1px] transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-purple-500' : 'bg-slate-100' %>"
-                           title="<%= date %>"></div>
-                    <% end %>
-                  </div>
+              <div class="grid grid-cols-7 gap-1">
+                <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
+                  <div class="text-[7px] font-black text-slate-300 text-center"><%= day %></div>
                 <% end %>
-                <div class="grid grid-rows-7 gap-0.5 pl-0.5 text-[8px] font-bold text-slate-300 leading-none items-center w-3 text-center">
-                   <div>M</div><div class="invisible">T</div><div>W</div><div class="invisible">T</div><div>F</div><div class="invisible">S</div><div>S</div>
-                 </div>
+                <%# Padding for start of 28 day range %>
+                <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
+                <% matrix_dates.each do |date| %>
+                  <% active = r_logs.include?(date) %>
+                  <div class="aspect-square rounded-[2px] transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-purple-500' : 'bg-slate-100' %>"
+                       title="<%= date %>"></div>
+                <% end %>
               </div>
             </div>
           </div>

@@ -1,0 +1,14 @@
+<%= turbo_stream.remove "routine_#{@routine.id}_card" %>
+
+<%# Update stats in sidebar if needed %>
+<%= turbo_stream.update "total-active-count" do %>
+  <%= current_user.personal_routines.count %> Active
+<% end %>
+
+<%= turbo_stream.update "monthly-done-count" do %>
+  <%= @monthly_completions&.count || 0 %>
+<% end %>
+
+<%= turbo_stream.update "achievement-matrix" do %>
+  <%= render "shared/achievement_matrix" %>
+<% end %>

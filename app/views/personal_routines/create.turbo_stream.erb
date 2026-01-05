@@ -1,0 +1,32 @@
+<%= turbo_stream.prepend "routine-container" do %>
+  <%= render "routine_card", routine: @routine %>
+<% end %>
+
+<%= turbo_stream.replace "new_personal_routine" do %>
+  <%= render partial: "personal_routines/form", locals: { routine: PersonalRoutine.new } %>
+<% end %>
+
+<%# Update stats in sidebar if needed %>
+<%= turbo_stream.update "monthly-done-count" do %>
+  <%= @monthly_completions&.count || 0 %>
+<% end %>
+
+<%= turbo_stream.update "total-active-count" do %>
+  <%= current_user.personal_routines.count %> Active
+<% end %>
+
+<%= turbo_stream.update "achievement-matrix" do %>
+  <%= render "shared/achievement_matrix" %>
+<% end %>
+
+<%= turbo_stream.append "body" do %>
+  <script>
+    if (typeof filterRoutines === 'function') {
+      const activeBtn = document.querySelector('.routine-filter-btn.bg-white');
+      if (activeBtn) {
+        const day = activeBtn.id.replace('btn-', '');
+        filterRoutines(day);
+      }
+    }
+  </script>
+<% end %>

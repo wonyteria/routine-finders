@@ -1,0 +1,32 @@
+<%= form_with model: routine, url: personal_routines_path, method: :post, id: "new_personal_routine", class: "relative z-10 space-y-5" do |f| %>
+  <div class="space-y-4">
+    <%= f.text_field :title, placeholder: "어떤 루틴인가요?", required: true, class: "w-full px-5 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-black text-sm focus:ring-4 ring-white/10 border-none transition-all" %>
+    
+    <div class="grid grid-cols-2 gap-3">
+       <div class="space-y-1.5">
+         <label class="text-[9px] font-black text-indigo-300 uppercase tracking-widest pl-1">Icon</label>
+          <%= f.select :icon, ["🔥", "⭐", "💪", "📖", "🥦", "🏃", "🎸", "🧘", "💊", "💧", "👀", "📝", "💰", "☀️", "🌙", "⏰", "🎯", "✨", "🌱", "🧠", "❤️", "🎨", "💻", "📱", "🎮", "🍎", "🥗", "🚴", "🏋️", "🧗", "🏊", "⚽", "🎵", "📚", "✍️", "💡"], {}, class: "w-full px-4 py-3 bg-white text-slate-900 border border-slate-200 rounded-2xl font-black text-sm cursor-pointer focus:ring-4 ring-indigo-100" %>
+       </div>
+       <div class="space-y-1.5">
+         <label class="text-[9px] font-black text-indigo-300 uppercase tracking-widest pl-1">Category</label>
+         <%= f.select :category, ["HEALTH", "LIFE", "MIND", "HOBBY", "STUDY", "MONEY"], {}, class: "w-full px-4 py-3 bg-white text-slate-900 border border-slate-200 rounded-2xl font-black text-sm cursor-pointer focus:ring-4 ring-indigo-100" %>
+       </div>
+    </div>
+
+    <div class="space-y-2">
+      <label class="text-[9px] font-black text-indigo-300 uppercase tracking-widest pl-1">Repeat Days</label>
+      <div class="flex justify-between gap-1">
+        <% [["월", 1], ["화", 2], ["수", 3], ["목", 4], ["금", 5], ["토", 6], ["일", 0]].each do |label, value| %>
+          <label class="flex-1">
+            <%= check_box_tag "personal_routine[days][]", value, false, class: "peer hidden" %>
+            <div class="w-full py-2.5 text-center rounded-xl bg-white/20 text-white/70 font-black text-[9px] cursor-pointer border-2 border-transparent peer-checked:bg-white peer-checked:text-indigo-600 peer-checked:border-white peer-checked:shadow-lg transition-all hover:bg-white/30 hover:text-white">
+              <%= label %>
+            </div>
+          </label>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%= f.submit "루틴 생성하기", class: "w-full py-4.5 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-indigo-900/20 cursor-pointer mt-2" %>
+<% end %>

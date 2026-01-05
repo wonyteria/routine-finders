@@ -12,9 +12,7 @@ class HomeController < ApplicationController
       @hot_gatherings = Challenge.offline_gatherings.order(current_participants: :desc).limit(6)
       @personal_routines = @current_user&.personal_routines&.includes(:completions) || []
       @participations = @current_user&.participations&.includes(challenge: { participants: :user }) || []
-      @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []
-      @personal_routine_completions = @current_user ? PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.year.ago..Date.current) : []
-      @club_attendances = @current_user ? RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.year.ago..Date.current) : []
+      set_activity_data
 
       # Top Badge Achievers for Home
       @top_achievers = User.joins(:user_badges)
@@ -65,9 +63,7 @@ class HomeController < ApplicationController
   def achievement_report
     @current_user = current_user
     @participations = @current_user&.participations&.includes(:challenge) || []
-    @verification_logs = @current_user ? VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).recent.limit(365) : []
-    @personal_routine_completions = @current_user ? PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.year.ago..Date.current) : []
-    @club_attendances = @current_user ? RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.year.ago..Date.current) : []
+    set_activity_data
 
     # 성장 투자 통계 (My Page와 동일한 로직)
     active_participations = @participations.select { |p| p.challenge.status_active? }
@@ -88,5 +84,36 @@ class HomeController < ApplicationController
     badge_ids = params[:badge_ids]
     current_user.user_badges.where(id: badge_ids).update_all(is_viewed: true)
     head :ok
+  end
+
+  private
+
+  def set_activity_data
+    return unless current_user
+
+    @activity_data = Hash.new(0)
+
+    # Challenge Verifications
+    VerificationLog.joins(participant: :user)
+                  .where(users: { id: current_user.id })
+                  .where(created_at: 1.year.ago..Time.current)
+                  .group("DATE(verification_logs.created_at)")
+                  .count.each { |date, count| @activity_data[date.to_date] += count }
+
+    # Personal Routine Completions
+    PersonalRoutineCompletion.joins(:personal_routine)
+                             .where(personal_routines: { user_id: current_user.id })
+                             .where(completed_on: 1.year.ago..Date.current)
+                             .group(:completed_on)
+                             .count.each { |date, count| @activity_data[date] += count }
+
+    # Club Attendances
+    RoutineClubAttendance.joins(:routine_club_member)
+                         .where(routine_club_members: { user_id: current_user.id })
+                         .where(attendance_date: 1.year.ago..Date.current)
+                         .group(:attendance_date)
+                         .count.each { |date, count| @activity_data[date] += count }
+
+    @monthly_completions = @activity_data.select { |date, _| date >= Date.current.beginning_of_month && date <= Date.current.end_of_month }
   end
 end

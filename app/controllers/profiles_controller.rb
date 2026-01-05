@@ -57,6 +57,35 @@ class ProfilesController < ApplicationController
       total_refunded: @user.total_refunded,
       expected_refund: @active_participations.sum { |p| p.challenge.amount || 0 }
     }
+
+    # 성취 매트릭스용 통합 데이터 (최근 1년)
+    @activity_data = Hash.new(0)
+
+    # 챌린지 인증
+    VerificationLog.joins(participant: :user)
+                  .where(users: { id: @user.id })
+                  .where(created_at: 1.year.ago..Time.current)
+                  .group("DATE(verification_logs.created_at)")
+                  .count
+                  .each { |date, count| @activity_data[date.to_date] += count }
+
+    # 개인 루틴 완료
+    PersonalRoutineCompletion.joins(:personal_routine)
+                             .where(personal_routines: { user_id: @user.id })
+                             .where(completed_on: 1.year.ago..Date.current)
+                             .group(:completed_on)
+                             .count
+                             .each { |date, count| @activity_data[date] += count }
+
+    # 클럽 출석
+    RoutineClubAttendance.joins(:routine_club_member)
+                         .where(routine_club_members: { user_id: @user.id })
+                         .where(attendance_date: 1.year.ago..Date.current)
+                         .group(:attendance_date)
+                         .count
+                         .each { |date, count| @activity_data[date] += count }
+
+    @monthly_completions = @activity_data.select { |date, _| date >= Date.current.beginning_of_month && date <= Date.current.end_of_month }
   end
 
   def edit

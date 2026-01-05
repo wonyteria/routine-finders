@@ -2,6 +2,7 @@ class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
   before_action :require_admin, only: [ :new, :create ]
   before_action :set_routine_club, only: [ :show, :manage, :update, :join, :use_pass, :confirm_payment, :reject_payment, :kick_member ]
+  before_action :set_my_membership, only: [ :show, :use_pass ]
 
   def index
     @routine_clubs = RoutineClub.recruiting_clubs
@@ -17,7 +18,6 @@ class RoutineClubsController < ApplicationController
 
   def show
     @is_member = current_user && @routine_club.members.exists?(user: current_user)
-    @my_membership = current_user && @routine_club.members.find_by(user: current_user)
     @is_host = current_user && @routine_club.host_id == current_user.id
 
     if @my_membership
@@ -133,6 +133,10 @@ class RoutineClubsController < ApplicationController
 
   def set_routine_club
     @routine_club = RoutineClub.find(params[:id])
+  end
+
+  def set_my_membership
+    @my_membership = current_user && @routine_club.members.find_by(user: current_user)
   end
 
   def routine_club_params

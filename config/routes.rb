@@ -98,6 +98,7 @@ Rails.application.routes.draw do
     member do
       get :manage
       post :join
+      post :use_pass
       post :confirm_payment
       post :reject_payment
       post :kick_member

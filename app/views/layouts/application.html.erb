@@ -144,7 +144,11 @@
                   명예의 전당
                 <% end %>
                 <% if current_user.admin? %>
-                  <%= link_to admin_root_path, class: "px-5 py-2.5 rounded-threads text-sm font-black transition-all text-indigo-600 hover:bg-indigo-50" do %>
+                  <% 
+                    hosted_club = RoutineClub.find_by(host_id: current_user.id)
+                    admin_nav_path = hosted_club ? manage_routine_club_path(hosted_club) : admin_root_path
+                  %>
+                  <%= link_to admin_nav_path, class: "px-5 py-2.5 rounded-threads text-sm font-black transition-all text-indigo-600 hover:bg-indigo-50" do %>
                     관리자
                   <% end %>
                 <% end %>

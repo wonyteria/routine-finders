@@ -9,8 +9,8 @@ class PersonalRoutinesController < ApplicationController
     current_user.user_badges.where(is_viewed: false).update_all(is_viewed: true)
 
     @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
-    @monthly_completions = current_user.personal_routines.joins(:completions)
-                                       .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
+
+    set_activity_data
 
     # 루파 클럽 공식 생성 (없을 경우)
     @official_club = RoutineClub.official.first
@@ -143,6 +143,7 @@ class PersonalRoutinesController < ApplicationController
     @routine = current_user.personal_routines.build(routine_params)
 
     if @routine.save
+      set_activity_data
       respond_to do |format|
         format.html { redirect_to personal_routines_path, notice: "루틴이 추가되었습니다!" }
         format.turbo_stream
@@ -168,6 +169,7 @@ class PersonalRoutinesController < ApplicationController
 
   def toggle
     @routine.toggle_completion!
+    set_activity_data
 
     respond_to do |format|
       format.html { redirect_back fallback_location: personal_routines_path }
@@ -190,6 +192,7 @@ class PersonalRoutinesController < ApplicationController
 
   def destroy
     @routine.destroy
+    set_activity_data
 
     respond_to do |format|
       format.html { redirect_to personal_routines_path, notice: "루틴이 삭제되었습니다." }
@@ -198,6 +201,14 @@ class PersonalRoutinesController < ApplicationController
   end
 
   private
+
+  def set_activity_data
+    @activity_data = current_user.personal_routines.joins(:completions)
+                                 .where(personal_routine_completions: { completed_on: 1.year.ago..Date.current })
+                                 .group("personal_routine_completions.completed_on")
+                                 .count
+    @monthly_completions = @activity_data.select { |date, _| date >= Date.current.beginning_of_month && date <= Date.current.end_of_month }
+  end
 
   def set_routine
     @routine = current_user.personal_routines.find(params[:id])

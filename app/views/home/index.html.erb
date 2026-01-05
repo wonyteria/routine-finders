@@ -1,36 +1,17 @@
 <div class="space-y-16 pb-40">
     <%
-      activity_data = Hash.new(0)
-      (@verification_logs || []).each { |log| activity_data[log.created_at.to_date] += 1 }
-      (@personal_routine_completions || []).each { |c| activity_data[c.completed_on] += 1 }
-      (@club_attendances || []).each { |a| activity_data[a.attendance_date] += 1 }
-
-      total_activities = activity_data.values.sum
-      max_streak = 0
+      total_activities = @activity_data.values.sum
       current_streak = 0
-      sorted_dates = activity_data.keys.sort.reverse
+      sorted_dates = @activity_data.keys.sort.reverse
       if sorted_dates.any?
-        # Simple streak calculation based on activity dates
         check_date = Date.current
-        if activity_data[check_date] > 0 || activity_data[check_date - 1.day] > 0
-          curr = activity_data[check_date] > 0 ? check_date : check_date - 1.day
-          while activity_data[curr] > 0
+        if @activity_data[check_date] > 0 || @activity_data[check_date - 1.day] > 0
+          curr = @activity_data[check_date] > 0 ? check_date : check_date - 1.day
+          while @activity_data[curr] > 0
             current_streak += 1
             curr -= 1.day
           end
         end
-      end
-
-      end_date = Date.current
-      start_date = end_date - 1.year + 1.day
-      grid_start_date = start_date - start_date.wday
-      weeks = []
-      iter_date = grid_start_date
-      while iter_date <= end_date || weeks.size < 53
-        week = []
-        7.times { week << iter_date; iter_date += 1.day }
-        weeks << week
-        break if iter_date > end_date && weeks.size >= 53
       end
     %>
     <!-- Hero Banner -->
@@ -106,82 +87,27 @@
       </div>
 
 <%# 통합 데이터 정합성 완료 %>
-      <div class="bg-indigo-50/30 rounded-[32px] p-5 sm:p-8 border border-indigo-100/50">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Activity Dashboard</h3>
-          <div class="flex items-center gap-4 text-[10px] font-black text-slate-400 uppercase">
-            <div class="flex items-center gap-2">
-              <div class="w-2.5 h-2.5 rounded-sm bg-slate-100"></div> No Activity
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="w-2.5 h-2.5 rounded-sm bg-indigo-600"></div> High Activity
-            </div>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto no-scrollbar">
-          <div class="min-w-max flex gap-1">
-            <div class="grid grid-rows-[20px_repeat(7,12px)] gap-1 text-[9px] font-black text-slate-300 pr-3 mt-[-1px]">
-              <div class="h-[20px]"></div>
-              <div class="h-[12px] flex items-center">SUN</div>
-              <div class="h-[12px] flex items-center"></div>
-              <div class="h-[12px] flex items-center">TUE</div>
-              <div class="h-[12px] flex items-center"></div>
-              <div class="h-[12px] flex items-center">THU</div>
-              <div class="h-[12px] flex items-center"></div>
-              <div class="h-[12px] flex items-center">SAT</div>
-            </div>
-
-            <div class="flex justify-between w-full gap-[3px]">
-              <% weeks.each do |week| %>
-                <div class="grid grid-rows-[20px_repeat(7,12px)] gap-1">
-                  <div class="h-[20px] text-[9px] font-black text-slate-300 truncate">
-                    <% if week.any? { |d| d.day == 1 } || week == weeks.first %>
-                      <%= week.find { |d| d.day == 1 }&.strftime("%^b") || (week == weeks.first ? week.first.strftime("%^b") : "") %>
-                    <% end %>
-                  </div>
-                  <% week.each do |date| %>
-                    <% if date <= end_date %>
-                      <% 
-                        count = activity_data[date] || 0
-                        color_class = case
-                        when count == 0 then "bg-slate-100"
-                        when count == 1 then "bg-indigo-200"
-                        when count == 2 then "bg-indigo-400"
-                        else "bg-indigo-600"
-                        end
-                      %>
-                      <div class="w-[12px] h-[12px] rounded-[2px] <%= color_class %> transition-all hover:scale-125 cursor-help" 
-                           title="<%= date.strftime("%Y-%m-%d") %>: <%= count %> verifications"></div>
-                    <% else %>
-                      <div class="w-[12px] h-[12px] rounded-[2px] bg-transparent"></div>
-                    <% end %>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
+      <%= render "shared/achievement_matrix" %>
+<%# 통합 데이터 정합성 완료 %>
 
       <div class="pt-8 border-t border-slate-100 space-y-10">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-8 px-2">
-          <div class="flex items-center gap-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 px-2">
+          <div class="flex items-center gap-6 sm:gap-8">
             <div class="space-y-1">
               <p class="text-[9px] font-black text-indigo-500 uppercase tracking-[0.2em]">Hall of Fame</p>
-              <h3 class="text-lg font-black text-slate-900 leading-tight">가장 많은 배지를<br>획득한 파인더스</h3>
+              <h3 class="text-base sm:text-lg font-black text-slate-900 leading-tight">가장 많은 배지를<br>획득한 파인더스</h3>
             </div>
             <div class="flex -space-x-3">
               <% @top_achievers.each_with_index do |user, index| %>
                 <div class="relative group">
-                  <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-md border-2 <%= index == 0 ? 'border-yellow-400' : (index == 1 ? 'border-slate-300' : 'border-amber-600') %> relative z-<%= 30 - index %> transition-all group-hover:-translate-y-1.5">
+                  <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white p-1 shadow-md border-2 <%= index == 0 ? 'border-yellow-400' : (index == 1 ? 'border-slate-300' : 'border-amber-600') %> relative z-<%= 30 - index %> transition-all group-hover:-translate-y-1.5 shrink-0">
                     <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-xl" alt="<%= user.nickname %>">
                   </div>
                 </div>
               <% end %>
             </div>
           </div>
-          <%= link_to rankings_path(tab: 'badges'), class: "group flex items-center gap-3 px-8 py-4 bg-indigo-50 text-indigo-600 rounded-2xl font-black text-sm hover:bg-indigo-600 hover:text-white active:scale-95 transition-all shadow-sm" do %>
+          <%= link_to rankings_path(tab: 'badges'), class: "group flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 bg-indigo-50 text-indigo-600 rounded-2xl font-black text-sm hover:bg-indigo-600 hover:text-white active:scale-95 transition-all shadow-sm w-full md:w-auto" do %>
             전체 랭킹 보기
             <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           <% end %>
@@ -190,7 +116,7 @@
     </section>
 
     <!-- Dynamic Growth Dashboard (Tabs for Challenges & Routines) -->
-    <section class="space-y-8" data-controller="tabs" data-tabs-active-class="bg-indigo-600 text-white shadow-xl shadow-indigo-200 scale-105 z-10" data-tabs-inactive-class="text-slate-500 hover:text-indigo-600 hover:bg-white/50">
+    <section class="space-y-8" data-controller="tabs" data-tabs-query-param-value="dashboard_tab" data-tabs-active-class="bg-indigo-600 text-white shadow-xl shadow-indigo-200 scale-105 z-10" data-tabs-inactive-class="text-slate-500 hover:text-indigo-600 hover:bg-white/50">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-4">
         <div class="space-y-1">
           <h2 class="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-3">
@@ -203,14 +129,14 @@
         <!-- High-Contrast Tab Navigation -->
         <div class="inline-flex p-1.5 bg-slate-200/60 backdrop-blur-md rounded-[24px] w-full lg:w-auto border border-slate-300/50 shadow-inner">
           <button type="button" 
-                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep"
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep bg-indigo-600 text-white shadow-xl shadow-indigo-200 scale-105 z-10"
                   data-tabs-target="tab"
                   data-action="click->tabs#change"
                   data-id="routines">
             루틴
           </button>
           <button type="button" 
-                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep"
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep text-slate-500 hover:text-indigo-600 hover:bg-white/50"
                   data-tabs-target="tab"
                   data-action="click->tabs#change"
                   data-id="challenges">

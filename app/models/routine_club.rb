@@ -12,6 +12,7 @@ class RoutineClub < ApplicationRecord
   has_many :attendances, class_name: "RoutineClubAttendance", dependent: :destroy
   has_many :penalties, class_name: "RoutineClubPenalty", dependent: :destroy
   has_many :announcements, dependent: :destroy
+  has_many :reports, class_name: "RoutineClubReport", dependent: :destroy
   has_one_attached :thumbnail
 
   # Validations
