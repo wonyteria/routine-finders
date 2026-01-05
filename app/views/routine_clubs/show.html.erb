@@ -41,7 +41,7 @@
             <!-- Status Badge -->
             <div class="absolute top-6 right-6">
               <% if @routine_club.is_full? %>
-                <span class="bg-red-500 px-4 py-2 rounded-full text-sm font-black text-white">
+                <span class="bg-slate-500 px-4 py-2 rounded-full text-sm font-black text-white">
                   마감
                 </span>
               <% elsif @routine_club.status_recruiting? %>
@@ -146,10 +146,10 @@
 
             <!-- System 3: Strict Penalty -->
             <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[32px] p-6 border border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all group">
-              <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm group-hover:scale-110 transition-transform text-red-400">🚫</div>
+              <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm group-hover:scale-110 transition-transform text-orange-400">🚫</div>
               <h3 class="font-black text-white mb-2">10-Penalty 킥</h3>
               <p class="text-[11px] text-slate-300 font-medium leading-relaxed">
-                수질 관리를 위한 최후의 잣대. <span class="text-red-400 font-black">누적 경고 10회 즉시 제명</span> 및 환불 불가 원칙이 적용됩니다.
+                수질 관리를 위한 최후의 잣대. <span class="text-orange-400 font-black">누적 경고 10회 즉시 제명</span> 및 환불 불가 원칙이 적용됩니다.
               </p>
             </div>
           </div>
@@ -360,7 +360,7 @@
             <%= link_to "관리 대시보드", manage_routine_club_path(@routine_club), class: "block w-full py-4 bg-white text-purple-600 rounded-2xl font-black hover:bg-purple-50 transition-colors mb-3 shadow-lg" %>
             <% if @pending_payments.any? %>
               <div class="bg-amber-400 text-amber-900 rounded-xl py-2 px-4 inline-flex items-center gap-2">
-                <span class="w-2 h-2 bg-red-600 rounded-full animate-ping"></span>
+                <span class="w-2 h-2 bg-orange-600 rounded-full animate-ping"></span>
                 <p class="text-xs font-black">확인 대기 <%= @pending_payments.count %>건</p>
               </div>
             <% end %>

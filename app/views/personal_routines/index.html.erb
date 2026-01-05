@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-slate-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 py-12">
     
     <!-- Main Banner (Threads Aesthetic) -->
     <section class="mb-12 relative overflow-hidden rounded-threads-lg bg-threads-black text-white shadow-2xl shadow-indigo-200/20">
@@ -65,8 +65,7 @@
     <% end %>
 
     <% if params[:tab] == 'club' %>
-      <div id="panel-club" style="display: block !important; min-height: 500px; border: 5px solid red;">
-        <h1 class="text-center text-red-500 font-black text-xl py-4">[DEBUG: CLUB PANEL RENDERED]</h1>
+      <div id="panel-club">
         <%= render 'club_routines' %>
       </div>
     <% end %>

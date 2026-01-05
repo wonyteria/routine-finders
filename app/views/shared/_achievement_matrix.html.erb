@@ -1,5 +1,6 @@
+<% compact ||= false %>
 <section id="achievement-matrix"
-         class="bg-white rounded-[32px] md:rounded-[40px] p-6 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8 relative overflow-hidden group"
+         class="bg-white rounded-[32px] md:rounded-[40px] <%= compact ? 'p-4 md:p-5' : 'p-6 md:p-8' %> border border-slate-100 shadow-sm space-y-4 md:space-y-6 relative overflow-hidden group"
          data-controller="tabs"
          data-tabs-query-param-value="matrix_tab"
          data-tabs-active-class="bg-indigo-600 text-white shadow-lg z-10"
@@ -8,8 +9,8 @@
   
   <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-      <h3 class="text-xl font-black text-slate-900 tracking-tight">성취 매트릭스</h3>
-      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5"><%= Date.current.year %> Achievement Matrix</p>
+      <h3 class="<%= compact ? 'text-base' : 'text-xl' %> font-black text-slate-900 tracking-tight">성취 매트릭스</h3>
+      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-0.5"><%= Date.current.year %> Matrix</p>
     </div>
     
     <div class="flex bg-slate-100/50 p-1 rounded-xl self-start sm:self-auto min-w-[140px]">

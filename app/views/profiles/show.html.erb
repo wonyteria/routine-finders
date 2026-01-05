@@ -85,30 +85,43 @@
     <!-- Right: Quick Stats & Wallet -->
     <div class="flex-1 p-6 lg:p-16 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 content-center">
       <!-- Participancy & Host Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-1 gap-4 lg:gap-8">
-        <div>
-          <p class="text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 lg:mb-4">참가 정보</p>
-          <div class="grid grid-cols-1 gap-3 lg:gap-4">
-            <div class="bg-indigo-50 p-4 lg:p-6 rounded-[24px] lg:rounded-[28px] border border-indigo-100 flex flex-col items-center text-center">
-              <p class="text-2xl lg:text-3xl font-black text-indigo-600"><%= @participations.count %></p>
-              <p class="text-[8px] lg:text-[10px] text-indigo-400 font-bold uppercase mt-1">참여 챌린지</p>
+      <div class="flex flex-col gap-6 lg:gap-8">
+        <div class="space-y-3 lg:space-y-4">
+          <p class="text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">참가 정보</p>
+          <div class="grid grid-cols-2 gap-3 lg:gap-4">
+            <div class="bg-indigo-50/50 p-4 lg:p-6 rounded-[24px] border border-indigo-100/50 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 group hover:bg-white hover:shadow-lg transition-all">
+              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-lg lg:text-xl shadow-sm">🎯</div>
+              <div class="text-center md:text-left">
+                <p class="text-xl lg:text-2xl font-black text-indigo-600 leading-none"><%= @participations.count %></p>
+                <p class="text-[8px] lg:text-[9px] text-indigo-400 font-black uppercase mt-1 tracking-tight">참여 챌린지</p>
+              </div>
             </div>
-            <div class="bg-indigo-50 p-4 lg:p-6 rounded-[24px] lg:rounded-[28px] border border-indigo-100 flex flex-col items-center text-center">
-              <p class="text-2xl lg:text-3xl font-black text-indigo-600">Lv.<%= @user.level %></p>
-              <p class="text-[8px] lg:text-[10px] text-indigo-400 font-bold uppercase mt-1">나의 레벨</p>
+            <div class="bg-indigo-50/50 p-4 lg:p-6 rounded-[24px] border border-indigo-100/50 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 group hover:bg-white hover:shadow-lg transition-all">
+              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-lg lg:text-xl shadow-sm">⚡</div>
+              <div class="text-center md:text-left">
+                <p class="text-xl lg:text-2xl font-black text-indigo-600 leading-none">Lv.<%= @user.level %></p>
+                <p class="text-[8px] lg:text-[9px] text-indigo-400 font-black uppercase mt-1 tracking-tight">나의 레벨</p>
+              </div>
             </div>
           </div>
         </div>
-        <div>
-          <p class="text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 lg:mb-4">호스트 정보</p>
-          <div class="grid grid-cols-1 gap-3 lg:gap-4">
-            <div class="bg-emerald-50 p-4 lg:p-6 rounded-[24px] lg:rounded-[28px] border border-emerald-100 flex flex-col items-center text-center">
-              <p class="text-2xl lg:text-3xl font-black text-emerald-600"><%= @host_stats[:total_challenges] %></p>
-              <p class="text-[8px] lg:text-[10px] text-emerald-400 font-bold uppercase mt-1">개최 챌린지</p>
+
+        <div class="space-y-3 lg:space-y-4">
+          <p class="text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">호스트 정보</p>
+          <div class="grid grid-cols-2 gap-3 lg:gap-4">
+            <div class="bg-emerald-50/50 p-4 lg:p-6 rounded-[24px] border border-emerald-100/50 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 group hover:bg-white hover:shadow-lg transition-all">
+              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-lg lg:text-xl shadow-sm">⚒️</div>
+              <div class="text-center md:text-left">
+                <p class="text-xl lg:text-2xl font-black text-emerald-600 leading-none"><%= @host_stats[:total_challenges] %></p>
+                <p class="text-[8px] lg:text-[9px] text-emerald-400 font-black uppercase mt-1 tracking-tight">개최 챌린지</p>
+              </div>
             </div>
-            <div class="bg-emerald-50 p-4 lg:p-6 rounded-[24px] lg:rounded-[28px] border border-emerald-100 flex flex-col items-center text-center">
-              <p class="text-2xl lg:text-3xl font-black text-emerald-600"><%= @host_stats[:total_participants] %></p>
-              <p class="text-[8px] lg:text-[10px] text-emerald-400 font-bold uppercase mt-1">누적 참가자</p>
+            <div class="bg-emerald-50/50 p-4 lg:p-6 rounded-[24px] border border-emerald-100/50 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 md:gap-4 group hover:bg-white hover:shadow-lg transition-all">
+              <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-lg lg:text-xl shadow-sm">👥</div>
+              <div class="text-center md:text-left">
+                <p class="text-xl lg:text-2xl font-black text-emerald-600 leading-none"><%= @host_stats[:total_participants] %></p>
+                <p class="text-[8px] lg:text-[9px] text-emerald-400 font-black uppercase mt-1 tracking-tight">누적 참가자</p>
+              </div>
             </div>
           </div>
         </div>
@@ -147,10 +160,9 @@
     <div class="bg-white p-1.5 lg:p-2 rounded-[24px] lg:rounded-[32px] shadow-xl border border-slate-100 flex lg:inline-flex gap-1 lg:gap-2 shrink-0">
       <% [
         { id: 'dashboard', label: '대시보드' },
+        { id: 'rupin', label: '루핀' },
         { id: 'challenges', label: '챌린지' },
         { id: 'gatherings', label: '모임' },
-        { id: 'clubs', label: '루틴 클럽' },
-        { id: 'personal', label: '개인 루틴' },
         { id: 'achievements', label: '업적 & 배지' },
         { id: 'history', label: '활동 내역' }
       ].each_with_index do |tab, index| %>
@@ -167,9 +179,6 @@
   <div class="mt-12">
     <!-- Dashboard Tab -->
     <div data-tabs-target="panel" data-id="dashboard" class="space-y-8">
-      <!-- Combined Achievement Matrix -->
-      <%= render "shared/achievement_matrix" %>
-
       <!-- Quick Summary Stats -->
       <!-- RUFA Club Member Status for members -->
       <%= render "shared/rufa_member_status" %>
@@ -180,32 +189,6 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left: Recent Activity Feed -->
       <div class="lg:col-span-2 space-y-8">
-        <!-- Personal Routines Summary (moved up) -->
-        <section>
-          <div class="flex items-center justify-between mb-6 px-4">
-            <h3 class="text-xl font-black text-slate-900">내 개인 루틴 요약</h3>
-            <%= link_to "루틴 관리", personal_routines_path, class: "text-xs font-bold text-indigo-600" %>
-          </div>
-          <div class="bg-white p-6 lg:p-8 rounded-[32px] lg:rounded-[40px] border border-slate-100 shadow-sm">
-             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-                <% @personal_routines.first(4).each do |routine| %>
-                  <div class="bg-slate-50 p-4 lg:p-6 rounded-[24px] lg:rounded-[32px] flex flex-col items-center gap-2 lg:gap-3 hover:bg-white hover:shadow-lg hover:shadow-indigo-100 transition-all border border-transparent hover:border-indigo-100 group">
-                    <div class="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl lg:rounded-3xl bg-white shadow-sm flex items-center justify-center text-2xl lg:text-3xl group-hover:scale-110 transition-transform">
-                      <%= routine.icon %>
-                    </div>
-                    <div class="text-center">
-                      <p class="text-[11px] lg:text-sm font-black text-slate-700 truncate w-full px-1"><%= routine.title %></p>
-                      <p class="text-[9px] lg:text-[10px] font-black text-indigo-500 mt-0.5">🔥 <%= routine.current_streak %>일</p>
-                    </div>
-                  </div>
-                <% end %>
-                <% if @personal_routines.empty? %>
-                  <div class="col-span-2 md:col-span-4 py-8 text-center text-slate-400 font-bold text-xs lg:text-sm">등록된 루틴이 없습니다.</div>
-                <% end %>
-             </div>
-          </div>
-        </section>
-
         <!-- Participations (Challenges) -->
         <section>
           <div class="flex items-center justify-between mb-6 px-4">
@@ -340,6 +323,30 @@
 
       <!-- Right: Badges & Quick Links -->
       <div class="space-y-8">
+        <!-- Personal Routines Summary relocated from left -->
+        <section class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-6 px-2">
+            <h3 class="text-sm font-black text-slate-900 text-slate-900 italic tracking-tight uppercase">Routines</h3>
+            <%= link_to "관리", personal_routines_path, class: "text-[10px] font-bold text-indigo-600" %>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <% @personal_routines.first(4).each do |routine| %>
+              <div class="bg-slate-50 p-4 rounded-2xl flex flex-col items-center gap-2 hover:bg-white hover:shadow-lg hover:border-indigo-100 transition-all border border-transparent group">
+                <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                  <%= routine.icon %>
+                </div>
+                <div class="text-center w-full">
+                  <p class="text-[10px] font-black text-slate-700 truncate"><%= routine.title %></p>
+                  <p class="text-[8px] font-black text-indigo-500 mt-0.5">🔥 <%= routine.current_streak %>일</p>
+                </div>
+              </div>
+            <% end %>
+            <% if @personal_routines.empty? %>
+              <div class="col-span-2 py-6 text-center text-slate-400 font-bold text-[10px]">등록된 루틴 없음</div>
+            <% end %>
+          </div>
+        </section>
+
         <section class="bg-white p-6 lg:p-8 rounded-[32px] lg:rounded-[40px] border border-slate-200 shadow-sm relative overflow-hidden">
           <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
           <h3 class="text-lg font-black text-slate-900 mb-6 flex items-center gap-2">
@@ -361,6 +368,14 @@
             <% end %>
           </div>
           <%= link_to "전체 배지 보기", "#", class: "block w-full text-center mt-6 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-xs hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-100", data: { action: "click->tabs#change", id: "achievements" } %>
+        </section>
+
+        <!-- Achievement Matrix relocated from top -->
+        <section class="bg-white p-4 rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-50 mb-4">
+            <h3 class="text-sm font-black text-slate-900">성취 매트릭스</h3>
+          </div>
+          <%= render "shared/achievement_matrix", compact: true %>
         </section>
       </div>
     </div>
@@ -497,10 +512,11 @@
       </section>
     </div>
 
-    <!-- Routine Clubs Tab -->
-    <div data-tabs-target="panel" data-id="clubs" class="hidden space-y-12">
+    <!-- Rupin Tab (RUFA Club + Routines) -->
+    <div data-tabs-target="panel" data-id="rupin" class="hidden space-y-16">
+      <!-- 1. RUFA Club Section -->
       <section class="space-y-6">
-        <h3 class="text-2xl font-black text-slate-900 ml-4">나의 루틴 클럽 (루파 클럽)</h3>
+        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">RUFA CLUB</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <% @club_memberships.each do |membership| %>
             <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
@@ -539,13 +555,6 @@
                       </p>
                     </div>
                   </div>
-                  
-                  <% if days_left.between?(1, 14) %>
-                    <div class="mt-4 bg-orange-50 border border-orange-200 rounded-2xl p-4 flex items-center justify-between">
-                      <p class="text-xs font-black text-orange-700">멤버십 마감이 얼마 남지 않았어요!</p>
-                      <%= link_to "연장하기", routine_club_path(membership.routine_club), class: "text-xs font-black px-3 py-1.5 bg-orange-500 text-white rounded-lg" %>
-                    </div>
-                  <% end %>
                 </div>
                 <div class="mt-8">
                    <%= link_to "클럽 대시보드", routine_club_path(membership.routine_club, tab: "dashboard"), class: "block w-full py-4 bg-indigo-600 text-white text-center rounded-2xl font-black text-sm shadow-xl shadow-indigo-100" %>
@@ -554,26 +563,55 @@
             </div>
           <% end %>
           <% if @club_memberships.empty? %>
-             <div class="col-span-1 sm:col-span-2 space-y-8">
-                <div class="p-12 md:p-20 bg-gradient-to-br from-slate-50 to-white rounded-[48px] border-2 border-dashed border-slate-200 text-center space-y-6">
-                  <div class="text-6xl">🏃‍♂️</div>
-                  <div>
-                    <p class="text-slate-900 text-2xl font-black mb-2">아직 참여 중인 루틴 클럽이 없습니다</p>
-                    <p class="text-slate-500 font-bold">루파 클럽에 가입하고 체계적인 루틴 관리를 시작하세요!</p>
-                  </div>
-                  <%= link_to routine_clubs_path, class: "inline-block px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100" do %>
-                    루파 클럽 둘러보기 →
-                  <% end %>
+             <div class="col-span-1 sm:col-span-2">
+                <div class="p-12 md:p-16 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center space-y-4">
+                  <p class="text-slate-400 font-black">참여 중인 루파 클럽이 없습니다.</p>
+                  <%= link_to "루파 클럽 둘러보기 →", routine_clubs_path, class: "text-indigo-600 font-black text-sm" %>
                 </div>
-                <%= render "shared/rufa_member_status" %>
-                <%= render "shared/rufa_club_nudge" %>
              </div>
           <% end %>
         </div>
       </section>
 
+      <!-- 2. Personal Routines Section -->
+      <section class="space-y-6 pt-12 border-t border-slate-100">
+        <div class="flex items-center justify-between px-4">
+           <h3 class="text-2xl font-black text-slate-900 italic font-italic tracking-tight">MY ROUTINES</h3>
+           <%= link_to "루틴 관리하기", personal_routines_path, class: "px-6 py-2.5 bg-slate-900 text-white rounded-2xl font-black text-xs shadow-xl" %>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+           <% @personal_routines.each do |routine| %>
+             <div class="bg-white p-6 rounded-[40px] border border-slate-200 shadow-sm flex flex-col items-center text-center group hover:border-indigo-200 transition-all">
+                <div class="w-16 h-16 rounded-[24px] bg-slate-50 flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">
+                  <%= routine.icon %>
+                </div>
+                <h4 class="text-base font-black text-slate-900 mb-1"><%= routine.title %></h4>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-4"><%= routine.category %></p>
+                
+                <div class="w-full grid grid-cols-2 gap-2 pt-4 border-t border-slate-50">
+                   <div>
+                     <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">누적</p>
+                     <p class="text-sm font-black text-slate-900"><%= routine.total_completions %>회</p>
+                   </div>
+                   <div>
+                     <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">연속</p>
+                     <p class="text-sm font-black text-indigo-600">🔥 <%= routine.current_streak %>일</p>
+                   </div>
+                </div>
+             </div>
+           <% end %>
+           <% if @personal_routines.empty? %>
+             <div class="col-span-full p-12 bg-slate-50 rounded-[40px] text-center border-2 border-dashed border-slate-200">
+                <p class="text-slate-400 font-bold">등록된 개인 루틴이 없습니다.</p>
+             </div>
+           <% end %>
+        </div>
+      </section>
+
+      <!-- 3. Recent Reports Section -->
       <section class="space-y-6">
-        <h3 class="text-2xl font-black text-slate-900 ml-4">최근 루파 리포트</h3>
+        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">REPORTS</h3>
         <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
           <% if @recent_reports.any? %>
             <% @recent_reports.each do |report| %>
@@ -601,43 +639,6 @@
           <% end %>
         </div>
       </section>
-    </div>
-
-    <!-- Personal Routines Tab -->
-    <div data-tabs-target="panel" data-id="personal" class="hidden space-y-8">
-       <div class="flex items-center justify-between px-4">
-          <h3 class="text-2xl font-black text-slate-900">나의 개인 루틴</h3>
-          <%= link_to "일간 루틴 관리 화면", personal_routines_path, class: "px-6 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm shadow-lg shadow-indigo-100" %>
-       </div>
-       
-       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <% @personal_routines.each do |routine| %>
-            <div class="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm flex flex-col items-center text-center">
-               <div class="w-20 h-20 rounded-[32px] bg-slate-50 flex items-center justify-center text-4xl mb-6">
-                 <%= routine.icon %>
-               </div>
-               <h4 class="text-lg font-black text-slate-900 mb-2"><%= routine.title %></h4>
-               <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-6"><%= routine.category %></p>
-               
-               <div class="w-full grid grid-cols-2 gap-4 pt-6 border-t border-slate-50">
-                  <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">누적 완료</p>
-                    <p class="text-lg font-black text-slate-900"><%= routine.total_completions %>회</p>
-                  </div>
-                  <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">장기 연속</p>
-                    <p class="text-lg font-black text-indigo-600">🔥 <%= routine.current_streak %>일</p>
-                  </div>
-               </div>
-            </div>
-          <% end %>
-          <% if @personal_routines.empty? %>
-            <div class="col-span-1 sm:col-span-2 lg:col-span-4 p-20 bg-slate-50 rounded-[48px] text-center border-2 border-dashed border-slate-200">
-               <p class="text-slate-400 font-bold">등록된 개인 루틴이 없습니다.</p>
-               <%= link_to "첫 루틴 등록하기", personal_routines_path, class: "mt-4 text-indigo-600 font-black block" %>
-            </div>
-          <% end %>
-       </div>
     </div>
 
     <!-- Achievements & Badges Tab -->

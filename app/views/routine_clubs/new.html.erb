@@ -133,11 +133,11 @@
                 </div>
                 
                 <div class="penalty-fields hidden">
-                  <div class="bg-red-50 border border-red-100 rounded-2xl p-4 space-y-3">
-                    <%= rule_form.text_field :penalty_description, placeholder: "패널티 내용", class: "w-full px-4 py-2 bg-white border border-red-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 ring-red-500 focus:border-red-500" %>
+                  <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                    <%= rule_form.text_field :penalty_description, placeholder: "패널티 내용", class: "w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 ring-indigo-500 focus:border-indigo-500" %>
                     <div class="grid grid-cols-2 gap-3">
-                      <%= rule_form.number_field :penalty_points, min: 0, placeholder: "경고 횟수", class: "px-4 py-2 bg-white border border-red-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 ring-red-500 focus:border-red-500" %>
-                      <%= rule_form.number_field :auto_kick_threshold, min: 0, placeholder: "자동 강퇴 기준", class: "px-4 py-2 bg-white border border-red-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 ring-red-500 focus:border-red-500" %>
+                      <%= rule_form.number_field :penalty_points, min: 0, placeholder: "경고 횟수", class: "px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 ring-indigo-500 focus:border-indigo-500" %>
+                      <%= rule_form.number_field :auto_kick_threshold, min: 0, placeholder: "자동 강퇴 기준", class: "px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium focus:ring-2 ring-indigo-500 focus:border-indigo-500" %>
                     </div>
                   </div>
                 </div>

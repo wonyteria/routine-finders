@@ -1,16 +1,16 @@
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
-  <!-- Left Column: My Routines -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+  <!-- LEFT COLUMN: Routine List & Add Form (Takes 8/12 on LG) -->
   <div class="lg:col-span-8 space-y-8">
     <% 
       current_date = @selected_date || Date.current
       start_of_week = current_date.beginning_of_week
       week_dates = (0..6).map { |i| start_of_week + i.days }
       
-      # For navigation (Previous/Next Week)
       prev_week = current_date - 1.week
       next_week = current_date + 1.week
     %>
 
+    <!-- 1. Header & Quick Switch -->
     <div class="flex flex-col gap-6">
       <div class="flex items-center justify-between px-1 border-b border-slate-100 pb-4">
         <div class="space-y-1">
@@ -41,13 +41,13 @@
         </div>
       </div>
       
+      <!-- Week View -->
       <div class="relative group/filter">
-        <div class="flex bg-white/80 backdrop-blur-md p-1.5 rounded-2xl gap-1.5 overflow-x-auto scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-transparent border border-slate-200/50 shadow-sm pb-2 md:pb-1.5">
+        <div class="flex bg-white/80 backdrop-blur-md p-1.5 rounded-2xl gap-1.5 overflow-x-auto border border-slate-200/50 shadow-sm pb-2 md:pb-1.5">
           <% week_dates.each do |date| %>
             <% 
                is_selected = date == current_date
                wday_str = ["일", "월", "화", "수", "목", "금", "토"][date.wday]
-               # Determine styling
                btn_class = is_selected ? "bg-indigo-600 text-white shadow-md scale-105" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
             %>
             <%= link_to personal_routines_path(date: date), 
@@ -58,45 +58,30 @@
             <% end %>
           <% end %>
         </div>
-        
-        <%# Mobile Scroll Hint %>
-        <div class="md:hidden absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1 animate-pulse pointer-events-none pr-2">
-          <div class="w-4 h-1 bg-indigo-500/20 rounded-full"></div>
-          <span class="text-[8px] font-black text-indigo-400 whitespace-nowrap">SWIPE</span>
-        </div>
       </div>
       
-      <!-- Expandable Monthly Calendar -->
+      <!-- Monthly Expandable -->
       <details class="group/calendar">
-        <summary class="list-none cursor-pointer flex justify-center py-2 -mt-2">
+        <summary class="list-none cursor-pointer flex justify-center py-2 -mt-2 focus:outline-none">
            <div class="px-4 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[10px] font-black text-slate-500 flex items-center gap-1 hover:text-indigo-600 hover:border-indigo-200 transition-all">
              <span class="group-open/calendar:hidden">🗓️ 월간 캘린더 펼치기</span>
              <span class="hidden group-open/calendar:inline">▲ 캘린더 접기</span>
            </div>
         </summary>
-        <div class="mt-4 bg-white p-6 rounded-[32px] border border-slate-200 shadow-xl animate-in slide-in-from-top-4 fade-in duration-300">
+        <div class="mt-4 bg-white p-6 rounded-[32px] border border-slate-200 shadow-xl animate-in slide-in-from-top-4 fade-in duration-300 overflow-hidden">
            <% 
              month_start = current_date.beginning_of_month
              month_end = current_date.end_of_month
              start_offset = month_start.wday
            %>
-           <div class="grid grid-cols-7 gap-y-4 gap-x-2 text-center">
+           <div class="grid grid-cols-7 gap-x-2 gap-y-4 text-center">
              <% ["일", "월", "화", "수", "목", "금", "토"].each do |day| %>
                <div class="text-[10px] font-black text-slate-300 uppercase"><%= day %></div>
              <% end %>
-             
-             <%# Empty slots %>
-             <% start_offset.times do %>
-               <div></div>
-             <% end %>
-             
+             <% start_offset.times do %> <div></div> <% end %>
              <% (month_start..month_end).each do |date| %>
                <% 
-                  # Completion Status Logic reused roughly
-                  # Activity data is loaded in controller: @activity_data[date]
                   count = @activity_data[date] || 0
-                  
-                  # Color Logic
                   bg_class = if date == current_date
                                 "bg-indigo-600 text-white ring-4 ring-indigo-100 scale-110 shadow-lg z-10"
                               elsif count > 0
@@ -106,7 +91,7 @@
                               end
                %>
                <%= link_to personal_routines_path(date: date), class: "aspect-square rounded-2xl flex flex-col items-center justify-center gap-0.5 transition-all #{bg_class}" do %>
-                 <span class="text-xs font-black"><%= date.day %></span>
+                 <span class="text-xs font-black text-[12px]"><%= date.day %></span>
                  <% if count > 0 %>
                    <div class="flex gap-0.5">
                      <% [count, 3].min.times do %>
@@ -117,19 +102,13 @@
                <% end %>
              <% end %>
            </div>
-           
-           <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-50">
-             <span class="text-[10px] font-bold text-slate-400">* 점은 완료된 루틴 개수를 의미합니다.</span>
-             <%= link_to "이번 달 전체 보기", "#", class: "text-[10px] font-black text-indigo-600 hover:underline" %>
-           </div>
         </div>
       </details>
+    </div>
 
-    <!-- Dashboard Container (Same as Home) -->
-    <div class="bg-indigo-600 rounded-[40px] p-6 md:p-10 shadow-xl shadow-indigo-100 flex flex-col gap-8 relative overflow-hidden">
-      <!-- Decor (Same as Home) -->
+    <!-- 2. Routine List Container -->
+    <div class="bg-indigo-600 rounded-[32px] md:rounded-[40px] p-5 md:p-8 shadow-xl shadow-indigo-100 flex flex-col gap-6 relative overflow-hidden">
       <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-      
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10" id="routine-container">
         <% if @personal_routines.any? %>
           <% @personal_routines.each do |routine| %>
@@ -143,32 +122,22 @@
         <% end %>
       </div>
     </div>
-  </div>
 
-  <!-- Right Column: Sidebar (Top priority form) -->
-  <aside class="lg:col-span-4 space-y-8">
-    <!-- Custom Routine Form -->
-    <section class="bg-indigo-600 rounded-[32px] md:rounded-[40px] p-6 md:p-8 text-white space-y-6 shadow-xl shadow-indigo-100 relative overflow-hidden group">
-      <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:scale-110 transition-transform"></div>
-      
+    <!-- 3. Add New Routine Form (LEFT SIDE) -->
+    <section class="bg-indigo-600 rounded-[40px] p-6 md:p-10 text-white space-y-6 shadow-xl shadow-indigo-100 relative overflow-hidden group">
+      <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:scale-110 transition-transform"></div>
       <div class="relative z-10 space-y-1">
-        <h3 class="text-xl font-black">새 루틴 추가</h3>
-        <p class="text-indigo-100/70 text-sm font-bold tracking-tight">오늘부터 시작할 작은 습관</p>
+        <h3 class="text-2xl font-black tracking-tight">새 루틴 추가</h3>
+        <p class="text-indigo-100/70 text-sm font-bold">오늘부터 시작할 작은 보물 같은 습관</p>
       </div>
-
       <%= render 'form', routine: PersonalRoutine.new %>
     </section>
+  </div> <!-- END LEFT COLUMN -->
 
-    <!-- Matrix in Sidebar for Desktop consistency -->
-    <div class="hidden lg:block">
-      <%= render "shared/achievement_matrix" %>
-    </div>
-  </aside>
-
-  <!-- Secondary Sections below main feed -->
-  <div class="lg:col-span-12 space-y-12 mt-4">
-    <!-- Stats Banner (Now as a performance summary below feed) -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- RIGHT COLUMN: Sidebar (Takes 4/12 on LG) -->
+  <aside class="lg:col-span-4 space-y-8 sticky top-12">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 gap-4">
       <% 
         total_completed = @monthly_completions&.count || 0
         avg_rate = @personal_routines.any? ? (total_completed.to_f / (@personal_routines.count * [Date.current.day, 1].max) * 100).clamp(0, 100).round : 0
@@ -176,73 +145,64 @@
         top_category = @personal_routines.group_by(&:category).max_by { |_, v| v.count }&.first || "None"
       %>
       
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-all">
+      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Monthly Done</p>
-        <div class="flex items-baseline gap-1">
-          <h4 class="text-3xl font-black text-slate-900"><%= total_completed %></h4>
-          <span class="text-xs font-bold text-slate-400">회</span>
-        </div>
+        <h4 class="text-3xl font-black text-slate-900 tabular-nums"><%= total_completed %><span class="text-sm ml-1 text-slate-400">회</span></h4>
       </div>
 
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-all">
+      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg. Success</p>
-        <div class="flex items-baseline gap-1">
-          <h4 class="text-3xl font-black text-emerald-600"><%= avg_rate %></h4>
-          <span class="text-xs font-bold text-emerald-400">%</span>
-        </div>
+        <h4 class="text-3xl font-black text-emerald-600 tabular-nums"><%= avg_rate %><span class="text-sm ml-1 text-emerald-300">%</span></h4>
       </div>
 
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-all">
+      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Max Streak</p>
-        <div class="flex items-baseline gap-1">
-          <h4 class="text-3xl font-black text-orange-500"><%= max_streak %></h4>
-          <span class="text-xs font-bold text-orange-400">일</span>
-        </div>
+        <h4 class="text-3xl font-black text-orange-500 tabular-nums"><%= max_streak %><span class="text-sm ml-1 text-orange-300">일</span></h4>
       </div>
 
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-all">
+      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Main Focus</p>
-        <div class="flex items-baseline gap-1">
-          <h4 class="text-xl font-black text-purple-600 truncate"><%= top_category %></h4>
-        </div>
+        <h4 class="text-sm font-black text-purple-600 truncate"><%= top_category %></h4>
       </div>
-    </section>
-
-    <!-- Matrix for Mobile (Full Width below stats) -->
-    <div class="lg:hidden">
-      <%= render "shared/achievement_matrix" %>
     </div>
 
-    <!-- Recommended Routines (Bottom) -->
-    <section class="space-y-6">
+    <!-- Achievement Matrix -->
+    <div class="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden p-1">
+      <div class="p-4 border-b border-slate-50">
+        <h3 class="text-sm font-black text-slate-900">성취 매트릭스</h3>
+      </div>
+      <%= render "shared/achievement_matrix", compact: true %>
+    </div>
+  </aside> <!-- END RIGHT COLUMN -->
+
+  <!-- BOTTOM: Recommended SECTION -->
+  <div class="lg:col-span-12 mt-12 pt-12 border-t border-slate-100">
+    <section class="space-y-8">
       <div class="flex items-center justify-between px-1">
         <div class="space-y-1">
-          <h3 class="text-xl font-black text-slate-900">인기 루틴 추천</h3>
-          <p class="text-sm font-bold text-slate-400">다른 사용자들이 많이 실천하는 루틴들을 둘러보세요</p>
-        </div>
-        <div class="flex items-center gap-2 text-xs font-bold text-indigo-500 bg-indigo-50 px-3 py-1.5 rounded-full">
-          Trending Now
+          <h3 class="text-2xl font-black text-slate-900 tracking-tight">인기 루틴 추천</h3>
+          <p class="text-base font-bold text-slate-400">다른 사용자들이 가장 많이 실천하는 습관들입니다.</p>
         </div>
       </div>
       
-      <div class="flex gap-4 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-indigo-100 -mx-1 px-1">
+      <div class="flex gap-6 overflow-x-auto pb-8 -mx-1 px-1">
         <% @recommended_routines.take(8).each do |routine| %>
-          <div class="min-w-[240px] bg-white p-6 rounded-[32px] border border-slate-100 hover:border-indigo-200 hover:shadow-xl transition-all group cursor-pointer">
-            <div class="flex items-start justify-between mb-6">
-              <div class="w-14 h-14 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform" loading="lazy">
+          <div class="min-w-[280px] bg-white p-8 rounded-[40px] border border-slate-100 hover:border-indigo-200 hover:shadow-2xl transition-all group cursor-pointer">
+            <div class="flex items-start justify-between mb-8">
+              <div class="w-16 h-16 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center text-3xl group-hover:rotate-6 transition-transform">
                 <%= routine[:icon] %>
               </div>
-              <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], days: [1,2,3,4,5,6,0] }), method: :post, class: "w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-threads-black hover:text-white transition-all shadow-sm hover:scale-110" do %>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v12m6-6H6"/></svg>
+              <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], days: [1,2,3,4,5,6,0] }), method: :post, class: "w-12 h-12 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-threads-black hover:text-white transition-all shadow-sm" do %>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
               <% end %>
             </div>
-            <div class="space-y-3">
-              <h4 class="text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= routine[:title] %></h4>
-              <div class="flex items-center justify-between pt-3 border-t border-slate-50">
-                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= routine[:category] %></span>
+            <div class="space-y-4">
+              <h4 class="text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= routine[:title] %></h4>
+              <div class="flex items-center justify-between pt-4 border-t border-slate-50">
+                <span class="text-[10px] font-black text-slate-400 tracking-widest uppercase"><%= routine[:category] %></span>
                 <div class="flex items-center gap-1.5 text-xs font-black text-emerald-600">
-                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                  <%= routine[:users_count] %>명 실천중
+                  <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <%= routine[:users_count] %>명
                 </div>
               </div>
             </div>
@@ -256,8 +216,6 @@
 <script>
   function filterRoutines(day) {
     document.querySelectorAll('.routine-card').forEach(card => {
-      // Logic: Show if 'all' or if the card's day list includes the selected day
-      // Note: day comes as string '0'..'6'
       if (day === 'all' || (card.dataset.days && card.dataset.days.split(',').includes(day))) {
         card.style.display = 'flex';
       } else {
@@ -281,7 +239,6 @@
   });
   
   document.addEventListener('turbo:load', () => {
-    // Determine the wday of the currently selected date
     <% current_date_wday = (@selected_date || Date.current).wday.to_s %>
     filterRoutines('<%= current_date_wday %>');
   });

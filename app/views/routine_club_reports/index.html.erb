@@ -1,4 +1,11 @@
 <div class="max-w-4xl mx-auto px-6 py-20 space-y-12">
+  <nav class="mb-8">
+    <%= link_to personal_routines_path(tab: "club"), class: "inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl font-black text-xs hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm group" do %>
+      <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+      루파 클럽으로 돌아가기
+    <% end %>
+  </nav>
+
   <header class="space-y-4">
     <div class="inline-flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100">
       <span class="text-[10px] font-black uppercase tracking-[.2em] text-indigo-600">Archive</span>
