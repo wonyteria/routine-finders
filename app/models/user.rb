@@ -217,4 +217,13 @@ class User < ApplicationRecord
     # 누적 점수: 총 완료 횟수 기반
     total_routine_completions
   end
+
+  # Admin & Role helpers
+  def super_admin?
+    admin?
+  end
+
+  def club_admin?
+    hosted_routine_clubs.exists?
+  end
 end

@@ -39,6 +39,15 @@
         <span class="text-[10px] font-bold <%= current_page?(gatherings_path) ? 'text-threads-black' : 'text-slate-400' %>">모임</span>
       <% end %>
 
+      <%= link_to rankings_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
+        <div class="p-2 rounded-2xl transition-all <%= current_page?(rankings_path) ? 'bg-threads-black text-white shadow-lg' : 'text-slate-400 group-hover:bg-slate-50' %>">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+        <span class="text-[10px] font-bold <%= current_page?(rankings_path) ? 'text-threads-black' : 'text-slate-400' %>">명예의전당</span>
+      <% end %>
+
       <%= link_to profile_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
         <div class="p-0.5 rounded-2xl transition-all <%= current_page?(profile_path) ? 'ring-2 ring-threads-black p-1' : 'text-slate-400 group-hover:bg-slate-50' %>">
           <img src="<%= current_user.profile_image %>" alt="Profile" class="w-7 h-7 rounded-xl object-cover">

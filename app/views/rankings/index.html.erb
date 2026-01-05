@@ -6,93 +6,85 @@
         🏆 명예의 전당
       </div>
       <h2 class="text-4xl md:text-6xl font-[900] text-slate-900 tracking-tight leading-none italic uppercase">Honor hall</h2>
-      <p class="text-slate-500 font-bold text-lg md:text-xl italic">당신의 꾸준함이 역사가 되는 곳, 파인더스 명예의 전당입니다.</p>
+      <p class="text-slate-500 font-bold text-lg md:text-xl italic">당신의 꾸준함이 역사가 되는 곳,<br class="md:hidden"> 파인더스 명예의 전당입니다.</p>
     </div>
   </div>
 
   <!-- Category Selection (Sub-Navigation) -->
-  <div data-controller="tabs" data-tabs-default-value="<%= params[:tab] || (logged_in? ? 'my' : 'weekly') %>">
+  <div data-controller="tabs" 
+       data-tabs-active-class="bg-indigo-600 text-white shadow-lg"
+       data-tabs-inactive-class="text-slate-400 hover:text-indigo-600"
+       data-tabs-default-value="<%= params[:tab] || (logged_in? ? 'my' : 'weekly') %>">
     <div class="w-full space-y-12">
       <!-- Scrollable Tab Container -->
       <% current_tab = params[:tab] || (logged_in? ? 'my' : 'weekly') %>
-      <div class="flex justify-start md:justify-center overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
-        <div class="bg-white p-1.5 rounded-[24px] inline-flex shadow-xl shadow-indigo-100 border border-slate-100 whitespace-nowrap">
-          <% if logged_in? %>
-            <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="my" <%= 'data-active' if current_tab == 'my' %>
-                    class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
-              내 업적
-            </button>
-          <% end %>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="weekly" <%= 'data-active' if current_tab == 'weekly' %>
-                  class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
-            종합 랭킹
-          </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="challenge" <%= 'data-active' if current_tab == 'challenge' %>
-                  class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
-            챌린지
-          </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="routine" <%= 'data-active' if current_tab == 'routine' %>
-                  class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
-            루틴
-          </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="gathering" <%= 'data-active' if current_tab == 'gathering' %>
-                  class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
-            만남
-          </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="host" <%= 'data-active' if current_tab == 'host' %>
-                  class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
-            호스트
-          </button>
-          <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="badges" <%= 'data-active' if current_tab == 'badges' %>
-                  class="px-8 py-3.5 rounded-[20px] text-sm font-black uppercase tracking-widest transition-all data-[active]:bg-indigo-600 data-[active]:text-white data-[active]:shadow-lg text-slate-400 hover:text-slate-600">
-            배지 마스터
-          </button>
+      <div class="sticky top-[80px] z-40 -mx-4 px-4 md:mx-0 md:px-0 py-4 bg-slate-50/80 backdrop-blur-md">
+        <div class="flex justify-start md:justify-center overflow-x-auto no-scrollbar">
+          <div class="bg-white p-1.5 rounded-[24px] inline-flex shadow-xl shadow-indigo-100/50 border border-slate-100 whitespace-nowrap">
+            <% if logged_in? %>
+              <% is_active = current_tab == 'my' %>
+              <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="my" 
+                      class="px-6 md:px-8 py-3 rounded-[18px] text-[11px] md:text-sm font-black uppercase tracking-widest transition-all <%= is_active ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-indigo-600' %>">
+                내 업적
+              </button>
+            <% end %>
+            <% [
+              { id: 'weekly', label: '종합 랭킹' },
+              { id: 'challenge', label: '챌린지' },
+              { id: 'routine', label: '루틴' },
+              { id: 'gathering', label: '만남' },
+              { id: 'host', label: '호스트' },
+              { id: 'badges', label: '배지 마스터' }
+            ].each do |t| %>
+              <% is_active = current_tab == t[:id] %>
+              <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="<%= t[:id] %>"
+                      class="px-6 md:px-8 py-3 rounded-[18px] text-[11px] md:text-sm font-black uppercase tracking-widest transition-all <%= is_active ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-indigo-600' %>">
+                <%= t[:label] %>
+              </button>
+            <% end %>
+          </div>
         </div>
       </div>
 
       <!-- Tab Content: My Achievements -->
       <% if logged_in? %>
         <div data-tabs-target="panel" data-id="my" class="<%= 'hidden' unless (params[:tab].nil? || params[:tab] == 'my') %> space-y-16">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="bg-white rounded-[32px] p-6 border border-slate-100 shadow-xl shadow-indigo-50/50 flex flex-col items-center text-center">
-              <span class="text-3xl mb-3">🏅</span>
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">전체 인증</p>
-              <p class="text-2xl font-[900] text-slate-900"><%= @user_metrics[:all][:verification_count] %>회</p>
-              <p class="text-[9px] text-slate-400 mt-1 font-bold">성공률 <%= number_to_percentage(@user_metrics[:all][:achievement_rate], precision: 1) %></p>
-            </div>
-            <div class="bg-white rounded-[32px] p-6 border border-slate-100 shadow-xl shadow-indigo-50/50 flex flex-col items-center text-center">
-              <span class="text-3xl mb-3">🔥</span>
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">챌린지</p>
-              <p class="text-2xl font-[900] text-slate-900"><%= @user_metrics[:challenge][:verification_count] %>회</p>
-            </div>
-            <div class="bg-white rounded-[32px] p-6 border border-slate-100 shadow-xl shadow-indigo-50/50 flex flex-col items-center text-center">
-              <span class="text-3xl mb-3">🔄</span>
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">루틴 실천</p>
-              <p class="text-2xl font-[900] text-slate-900"><%= @user_metrics[:routine][:verification_count] %>회</p>
-            </div>
-            <div class="bg-white rounded-[32px] p-6 border border-slate-100 shadow-xl shadow-indigo-50/50 flex flex-col items-center text-center">
-              <span class="text-3xl mb-3">👑</span>
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">호스트 영향력</p>
-              <p class="text-2xl font-[900] text-slate-900"><%= @user_metrics[:host][:host_participants] %>명</p>
-              <p class="text-[9px] text-slate-400 mt-1 font-bold">주최 <%= @user_metrics[:host][:host_count] %>회</p>
-            </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <% [
+              { icon: '🏅', title: '전체 인증', value: "#{@user_metrics[:all][:verification_count]}회", sub: "성공률 #{number_to_percentage(@user_metrics[:all][:achievement_rate], precision: 1)}" },
+              { icon: '🔥', title: '챌린지', value: "#{@user_metrics[:challenge][:verification_count]}회", sub: "Participating" },
+              { icon: '🔄', title: '루틴 실천', value: "#{@user_metrics[:routine][:verification_count]}회", sub: "Consistent" },
+              { icon: '👑', title: '호스트 영향력', value: "#{@user_metrics[:host][:host_participants]}명", sub: "주최 #{@user_metrics[:host][:host_count]}회" }
+            ].each do |stat| %>
+              <div class="bg-white rounded-[32px] p-6 border border-slate-100 shadow-xl shadow-indigo-50/50 flex flex-col items-center text-center group hover:-translate-y-1 transition-all">
+                <span class="text-3xl mb-3 group-hover:scale-110 transition-transform"><%= stat[:icon] %></span>
+                <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1"><%= stat[:title] %></p>
+                <p class="text-xl md:text-2xl font-black text-slate-900 tracking-tight"><%= stat[:value] %></p>
+                <p class="text-[9px] text-slate-400 mt-1 font-bold"><%= stat[:sub] %></p>
+              </div>
+            <% end %>
           </div>
 
-          <div class="space-y-12">
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl font-black text-slate-900">배지 획득 로드맵</h3>
-              <p class="text-indigo-600 font-bold px-4 py-1.5 bg-indigo-50 rounded-full text-xs">
-                <%= @user_badge_ids.count %> / <%= Badge.count %> 획득 완료
-              </p>
+          <div class="space-y-8 md:space-y-12">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
+              <h3 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">배지 획득 로드맵</h3>
+              <div class="flex items-center gap-2">
+                <span class="text-indigo-600 font-extrabold px-4 py-2 bg-indigo-50 rounded-full text-xs md:text-sm">
+                  <%= @user_badge_ids.count %> / <%= Badge.count %> Collected
+                </span>
+                <%= link_to badge_roadmap_path, class: "p-2 bg-slate-900 text-white rounded-full hover:bg-indigo-600 transition-colors" do %>
+                   <i data-feather="arrow-right" class="w-4 h-4"></i>
+                <% end %>
+              </div>
             </div>
 
-            <div class="bg-white rounded-[40px] border border-slate-100 shadow-2xl p-8 md:p-12 space-y-16">
+            <div class="bg-white rounded-[40px] border border-slate-100 shadow-2xl p-6 md:p-12 space-y-12 md:space-y-16">
               <% %w[all challenge routine gathering host].each do |target| %>
                 <% badges = @badges_by_type[target] %>
                 <% next if badges.blank? %>
-                <div class="space-y-8">
+                <div class="space-y-6 md:space-y-8">
                   <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-xl">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-50 border border-slate-100 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-xl">
                       <%= case target 
                           when 'challenge' then "🔥"
                           when 'routine' then "🔄"
@@ -100,26 +92,25 @@
                           when 'host' then "👑"
                           else "✨" end %>
                     </div>
-                    <h4 class="text-xl font-black text-slate-900 capitalize">
+                    <h4 class="text-lg md:text-xl font-black text-slate-900">
                       <%= case target 
                           when 'challenge' then "챌린지"
                           when 'routine' then "루틴"
                           when 'gathering' then "만남"
                           when 'host' then "호스트"
-                          else "전체" end %> 배지
+                          else "전체" end %> 시리즈
                     </h4>
                   </div>
 
-                  <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                  <div class="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
                     <% badges.each do |badge| %>
                       <% is_earned = @user_badge_ids.include?(badge.id) %>
-                      <div class="flex flex-col items-center gap-4 <%= is_earned ? "" : "opacity-40 grayscale" %>">
-                        <div class="w-20 h-20 rounded-[28px] bg-white border-2 <%= is_earned ? "border-indigo-500 shadow-lg" : "border-slate-100" %> flex items-center justify-center text-3xl" title="<%= badge.name %>: <%= badge.description %>">
+                      <div class="flex flex-col items-center gap-2 md:gap-4 <%= is_earned ? "" : "opacity-30 grayscale blur-[0.5px]" %>">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-[28px] bg-white border-2 <%= is_earned ? "border-indigo-500 shadow-lg" : "border-slate-100" %> flex items-center justify-center text-2xl md:text-3xl" title="<%= badge.name %>">
                           <%= is_earned ? badge.icon_path : "🔒" %>
                         </div>
                         <div class="text-center">
-                          <p class="text-xs font-black text-slate-900 line-clamp-1"><%= badge.name %></p>
-                          <p class="text-[10px] text-slate-400 font-bold"><%= badge.requirement_value %></p>
+                          <p class="text-[10px] md:text-xs font-black text-slate-900 line-clamp-1"><%= badge.name %></p>
                         </div>
                       </div>
                     <% end %>
@@ -131,35 +122,40 @@
         </div>
       <% end %>
 
-      <!-- Tab Content: 종합 랭킹 -->
-      <div data-tabs-target="panel" data-id="weekly" class="<%= params[:tab] == 'weekly' ? '' : 'hidden' %> space-y-8">
-        <%= render partial: 'ranking_table', locals: { rankings: @weekly_rankings.to_a, rank_type: 'weekly', metric_key: :weekly_count, metric_label: "Weekly Verified", metric_unit: "Count" } %>
-      </div>
-
-      <!-- Tab Content: 챌린지 랭킹 -->
-      <div data-tabs-target="panel" data-id="challenge" class="hidden space-y-8">
-        <%= render partial: 'ranking_table', locals: { rankings: @challenge_rankings.to_a, rank_type: 'challenge', metric_key: :challenge_score, metric_label: "Challenge Score", metric_unit: "Points" } %>
-      </div>
-
-      <!-- Tab Content: 루틴 랭킹 -->
-      <div data-tabs-target="panel" data-id="routine" class="hidden space-y-8">
-        <%= render partial: 'ranking_table', locals: { rankings: @routine_rankings.to_a, rank_type: 'routine', metric_key: :total_completions, metric_label: "Routine Completed", metric_unit: "Total" } %>
-      </div>
-
-      <!-- Tab Content: 만남 랭킹 -->
-      <div data-tabs-target="panel" data-id="gathering" class="hidden space-y-8">
-        <%= render partial: 'ranking_table', locals: { rankings: @gathering_rankings.to_a, rank_type: 'gathering', metric_key: :activity_count, metric_label: "Meeting Attended", metric_unit: "Visits" } %>
-      </div>
-
-      <!-- Tab Content: 호스트 랭킹 -->
-      <div data-tabs-target="panel" data-id="host" class="hidden space-y-8">
-        <%= render partial: 'ranking_table', locals: { rankings: @host_rankings.to_a, rank_type: 'host', metric_key: :host_score, metric_label: "Host Score", metric_unit: "Points" } %>
-      </div>
-
-      <!-- Tab Content: 배지 마스터 -->
-      <div data-tabs-target="panel" data-id="badges" class="<%= params[:tab] == 'badges' ? '' : 'hidden' %> space-y-8">
-        <%= render partial: 'ranking_table', locals: { rankings: @badge_rankings.to_a, rank_type: 'badges', metric_key: :badge_count, metric_label: "Badges Earned", metric_unit: "Earned" } %>
-      </div>
+      <!-- Ranking Panels -->
+      <% [
+        { id: 'weekly', rankings: @weekly_rankings.to_a, metric: :weekly_count, label: "Weekly Verified", unit: "Count", title: "TOP FINDERS", subtitle: "명예의 전당 종합 랭킹" },
+        { id: 'challenge', rankings: @challenge_rankings.to_a, metric: :challenge_score, label: "Challenge Score", unit: "Points", title: "CHALLENGE KINGS", subtitle: "챌린지 성취 부문" },
+        { id: 'routine', rankings: @routine_rankings.to_a, metric: :total_completions, label: "Routine Completed", unit: "Total", title: "ROUTINE MASTERS", subtitle: "꾸준한 루틴 실천 부문" },
+        { id: 'gathering', rankings: @gathering_rankings.to_a, metric: :activity_count, label: "Meeting Attended", unit: "Visits", title: "SOCIAL LEADERS", subtitle: "만남과 모임 부문" },
+        { id: 'host', rankings: @host_rankings.to_a, metric: :host_score, label: "Host Score", unit: "Points", title: "GREAT HOSTS", subtitle: "호스트 영향력 부문" },
+        { id: 'badges', rankings: @badge_rankings.to_a, metric: :badge_count, label: "Badges Earned", unit: "Earned", title: "BADGE COLLECTORS", subtitle: "배지 획득 부문" }
+      ].each do |panel| %>
+        <div data-tabs-target="panel" data-id="<%= panel[:id] %>" class="<%= current_tab == panel[:id] ? '' : 'hidden' %> space-y-12">
+          <% if panel[:rankings].any? %>
+            <!-- Podium for TOP 3 (Always Visible) -->
+            <%= render partial: 'ranking_podium', locals: { rankings: panel[:rankings].first(3), rank_type: panel[:id], metric_key: panel[:metric], metric_label: panel[:label], title: panel[:title], subtitle: panel[:subtitle] } %>
+            
+            <!-- List for the rest (Mobile) / Table (Desktop) -->
+            <div class="md:hidden">
+              <%= render partial: 'ranking_list', locals: { rankings: panel[:rankings].drop(3), rank_type: panel[:id], metric_key: panel[:metric], metric_label: panel[:label] } %>
+            </div>
+            <div class="hidden md:block">
+              <%= render partial: 'ranking_table', locals: { rankings: panel[:rankings].drop(3), rank_type: panel[:id], metric_key: panel[:metric], metric_label: panel[:label], metric_unit: panel[:unit] } %>
+            </div>
+          <% else %>
+            <div class="py-32 text-center space-y-6 bg-slate-50 rounded-[60px] border-2 border-dashed border-slate-200">
+              <p class="text-6xl">🏜️</p>
+              <div class="space-y-2">
+                <h3 class="text-2xl font-black text-slate-900">아직 등록된 랭커가 없습니다</h3>
+                <p class="text-slate-400 font-bold text-lg">첫 번째 배지를 획득하고 주인공이 되어보세요!</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
     </div>
   </div>
 </div>

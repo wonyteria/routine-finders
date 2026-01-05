@@ -4,99 +4,67 @@
     <h4 class="text-2xl font-[900] text-slate-900"><%= subtitle %></h4>
   </div>
 
-  <% if rankings.size >= 3 %>
-    <div class="grid grid-cols-3 gap-4 items-end max-w-3xl mx-auto pt-10">
+  <% if rankings.size >= 1 %>
+    <div class="grid grid-cols-3 gap-2 md:gap-4 items-end max-w-3xl mx-auto pt-16">
       <!-- 2nd Place -->
       <div class="text-center space-y-4">
-        <div class="relative inline-block group">
-          <div class="w-20 h-20 md:w-28 md:h-28 rounded-[32px] md:rounded-[40px] bg-slate-100 p-1 border-4 border-slate-200 shadow-xl overflow-hidden">
-            <img src="<%= rankings[1].profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{rankings[1].nickname}" %>" class="w-full h-full object-cover rounded-[28px] md:rounded-[36px]" alt="">
+        <% if rankings[1] %>
+          <div class="relative inline-block group mb-2">
+            <div class="w-16 h-16 md:w-28 md:h-28 rounded-[24px] md:rounded-[40px] bg-slate-100 p-0.5 md:p-1 border-2 md:border-4 border-slate-200 shadow-xl overflow-hidden relative z-10">
+              <img src="<%= rankings[1].profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{rankings[1].nickname}" %>" class="w-full h-full object-cover rounded-[20px] md:rounded-[36px]" alt="">
+            </div>
+            <div class="absolute -bottom-2 -right-2 w-7 h-7 md:w-10 md:h-10 bg-slate-400 rounded-xl md:rounded-2xl flex items-center justify-center text-white font-black text-sm md:text-lg shadow-lg ring-2 md:ring-4 ring-white z-20">2</div>
           </div>
-          <div class="absolute -bottom-3 -right-3 w-10 h-10 bg-slate-400 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg ring-4 ring-white">2</div>
-        </div>
-        <div class="space-y-1">
-          <p class="font-black text-slate-900 truncate max-w-[120px] mx-auto"><%= rankings[1].nickname %></p>
-          <div class="flex flex-col items-center">
-            <% if rankings[1].respond_to?(:badges) && rankings[1].badges.any? %>
-              <div class="flex -space-x-1 mb-1">
-                <% rankings[1].badges.limit(3).each do |badge| %>
-                  <span class="w-5 h-5 rounded-full bg-white border border-slate-100 flex items-center justify-center text-[8px] shadow-sm" title="<%= badge.name %>"><%= badge.icon_path %></span>
-                <% end %>
-              </div>
-            <% end %>
-            <p class="text-[10px] text-slate-400 font-bold uppercase">LV.<%= rankings[1].level %></p>
-            <% if rankings[1].respond_to?(:avg_rate) && rankings[1].avg_rate.present? %>
-              <p class="text-[10px] font-black text-indigo-500">성공률 <%= number_to_percentage(rankings[1].avg_rate, precision: 0) %></p>
-            <% end %>
-            <% if rankings[1].respond_to?(:hosted_count) && rankings[1].hosted_count.present? %>
-              <p class="text-[10px] font-black text-indigo-500">주최 <%= rankings[1].hosted_count %>회</p>
-            <% end %>
+          <div class="space-y-0.5 md:space-y-1 mb-2">
+            <p class="text-[10px] md:text-sm font-black text-slate-900 truncate max-w-[80px] md:max-w-[120px] mx-auto"><%= rankings[1].nickname %></p>
+            <p class="text-[8px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">LV.<%= rankings[1].level %></p>
+            <div class="flex flex-col items-center">
+              <p class="text-[10px] md:text-xs font-black text-indigo-600 tracking-tighter"><%= number_with_delimiter(rankings[1].send(metric_key)) %></p>
+            </div>
           </div>
-        </div>
-        <div class="h-24 bg-gradient-to-t from-slate-200/50 to-bg-[#F8FAFC] rounded-t-[32px] border-x border-t border-slate-200/50"></div>
+        <% end %>
+        <div class="h-16 md:h-24 bg-gradient-to-t from-slate-200/50 to-transparent rounded-t-[20px] md:rounded-t-[32px] border-x border-t border-slate-200/50"></div>
       </div>
 
       <!-- 1st Place -->
       <div class="text-center space-y-4">
-        <div class="relative inline-block group">
-          <div class="absolute -top-12 left-1/2 -translate-x-1/2 animate-bounce">
-            <svg class="w-12 h-12 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+        <div class="relative inline-block group mb-2">
+          <div class="absolute -top-10 md:-top-12 left-1/2 -translate-x-1/2 animate-bounce">
+            <svg class="w-8 h-8 md:w-12 md:h-12 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
           </div>
-          <div class="w-28 h-28 md:w-40 md:h-40 rounded-[40px] md:rounded-[60px] bg-amber-50 p-1.5 border-4 border-amber-400 shadow-2xl overflow-hidden relative z-10">
-            <img src="<%= rankings[0].profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{rankings[0].nickname}" %>" class="w-full h-full object-cover rounded-[36px] md:rounded-[56px]" alt="">
+          <div class="w-24 h-24 md:w-40 md:h-40 rounded-[32px] md:rounded-[60px] bg-amber-50 p-1 md:p-1.5 border-2 md:border-4 border-amber-400 shadow-2xl overflow-hidden relative z-10">
+            <img src="<%= rankings[0].profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{rankings[0].nickname}" %>" class="w-full h-full object-cover rounded-[28px] md:rounded-[56px]" alt="">
           </div>
-          <div class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl ring-4 ring-white z-20">1</div>
+          <div class="absolute -bottom-3 -right-3 w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl md:rounded-2xl flex items-center justify-center text-white font-black text-base md:text-xl shadow-xl ring-2 md:ring-4 ring-white z-20">1</div>
         </div>
-        <div class="pt-2 space-y-1">
-          <p class="text-xl font-black text-slate-900 truncate max-w-[150px] mx-auto"><%= rankings[0].nickname %></p>
+        <div class="pt-2 space-y-0.5 md:space-y-1 mb-2">
+          <p class="text-xs md:text-xl font-black text-slate-900 truncate max-w-[100px] md:max-w-[150px] mx-auto"><%= rankings[0].nickname %></p>
+          <p class="text-[8px] md:text-xs text-amber-600 font-extrabold uppercase tracking-widest">Legend</p>
           <div class="flex flex-col items-center">
-            <% if rankings[0].respond_to?(:badges) && rankings[0].badges.any? %>
-              <div class="flex -space-x-2 mb-1">
-                <% rankings[0].badges.limit(5).each do |badge| %>
-                  <span class="w-7 h-7 rounded-full bg-white border border-amber-200 flex items-center justify-center text-xs shadow-md" title="<%= badge.name %>"><%= badge.icon_path %></span>
-                <% end %>
-              </div>
-            <% end %>
-            <p class="text-xs text-amber-600 font-extrabold uppercase tracking-widest">전설</p>
-            <% if rankings[0].respond_to?(:avg_rate) && rankings[0].avg_rate.present? %>
-              <p class="text-xs font-black text-indigo-600">평균 달성률 <%= number_to_percentage(rankings[0].avg_rate, precision: 1) %></p>
-            <% end %>
-            <% if rankings[0].respond_to?(:hosted_count) && rankings[0].hosted_count.present? %>
-              <p class="text-xs font-black text-indigo-600">주최 <%= rankings[0].hosted_count %>회</p>
-            <% end %>
+            <p class="text-xs md:text-base font-black text-indigo-600 tracking-tighter"><%= number_with_delimiter(rankings[0].send(metric_key)) %></p>
           </div>
         </div>
-        <div class="h-40 bg-gradient-to-t from-amber-200/50 to-bg-[#F8FAFC] rounded-t-[40px] border-x border-t border-amber-200/50"></div>
+        <div class="h-28 md:h-40 bg-gradient-to-t from-amber-200/50 to-transparent rounded-t-[24px] md:rounded-t-[40px] border-x border-t border-amber-200/50"></div>
       </div>
 
       <!-- 3rd Place -->
       <div class="text-center space-y-4">
-        <div class="relative inline-block group">
-          <div class="w-20 h-20 md:w-28 md:h-28 rounded-[32px] md:rounded-[40px] bg-orange-50 p-1 border-4 border-orange-200 shadow-xl overflow-hidden">
-            <img src="<%= rankings[2].profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{rankings[2].nickname}" %>" class="w-full h-full object-cover rounded-[28px] md:rounded-[36px]" alt="">
+        <% if rankings[2] %>
+          <div class="relative inline-block group mb-2">
+            <div class="w-16 h-16 md:w-28 md:h-28 rounded-[24px] md:rounded-[40px] bg-orange-50 p-0.5 md:p-1 border-2 md:border-4 border-orange-200 shadow-xl overflow-hidden relative z-10">
+              <img src="<%= rankings[2].profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{rankings[2].nickname}" %>" class="w-full h-full object-cover rounded-[20px] md:rounded-[36px]" alt="">
+            </div>
+            <div class="absolute -bottom-2 -right-2 w-7 h-7 md:w-10 md:h-10 bg-orange-400 rounded-xl md:rounded-2xl flex items-center justify-center text-white font-black text-sm md:text-lg shadow-lg ring-2 md:ring-4 ring-white z-20">3</div>
           </div>
-          <div class="absolute -bottom-3 -right-3 w-10 h-10 bg-orange-400 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-lg ring-4 ring-white">3</div>
-        </div>
-        <div class="space-y-1">
-          <p class="font-black text-slate-900 truncate max-w-[120px] mx-auto"><%= rankings[2].nickname %></p>
-          <div class="flex flex-col items-center">
-            <% if rankings[2].respond_to?(:badges) && rankings[2].badges.any? %>
-              <div class="flex -space-x-1 mb-1">
-                <% rankings[2].badges.limit(3).each do |badge| %>
-                  <span class="w-5 h-5 rounded-full bg-white border border-slate-100 flex items-center justify-center text-[8px] shadow-sm" title="<%= badge.name %>"><%= badge.icon_path %></span>
-                <% end %>
-              </div>
-            <% end %>
-            <p class="text-[10px] text-slate-400 font-bold uppercase">LV.<%= rankings[2].level %></p>
-            <% if rankings[2].respond_to?(:avg_rate) && rankings[2].avg_rate.present? %>
-              <p class="text-[10px] font-black text-indigo-500">성공률 <%= number_to_percentage(rankings[2].avg_rate, precision: 0) %></p>
-            <% end %>
-            <% if rankings[2].respond_to?(:hosted_count) && rankings[2].hosted_count.present? %>
-              <p class="text-[10px] font-black text-indigo-500">주최 <%= rankings[2].hosted_count %>회</p>
-            <% end %>
+          <div class="space-y-0.5 md:space-y-1 mb-2">
+            <p class="text-[10px] md:text-sm font-black text-slate-900 truncate max-w-[80px] md:max-w-[120px] mx-auto"><%= rankings[2].nickname %></p>
+            <p class="text-[8px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest">LV.<%= rankings[2].level %></p>
+            <div class="flex flex-col items-center">
+              <p class="text-[10px] md:text-xs font-black text-indigo-600 tracking-tighter"><%= number_with_delimiter(rankings[2].send(metric_key)) %></p>
+            </div>
           </div>
-        </div>
-        <div class="h-16 bg-gradient-to-t from-orange-200/50 to-bg-[#F8FAFC] rounded-t-[32px] border-x border-t border-orange-200/50"></div>
+        <% end %>
+        <div class="h-12 md:h-16 bg-gradient-to-t from-orange-200/50 to-transparent rounded-t-[20px] md:rounded-t-[32px] border-x border-t border-orange-200/50"></div>
       </div>
     </div>
   <% else %>

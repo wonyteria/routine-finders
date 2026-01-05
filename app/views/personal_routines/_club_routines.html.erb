@@ -1,6 +1,6 @@
 <div class="space-y-12">
   
-  <% unless current_user.is_rufa_club_member? %>
+  <% unless current_user.is_rufa_club_member? || current_user.super_admin? || current_user.club_admin? %>
     <!-- Premium Promotion View for Non-members -->
     <section class="relative overflow-hidden bg-slate-900 rounded-[48px] lg:rounded-[64px] px-6 py-16 lg:p-24 text-white shadow-2xl">
       <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/30 via-slate-900 to-purple-900/30 z-0"></div>
@@ -13,7 +13,7 @@
         </div>
 
           <h2 class="text-[32px] lg:text-7xl font-black leading-[1.15] lg:leading-[1.1] tracking-tighter break-keep">
-            단순한 기록을 넘어,<br class="hidden md:block"/>
+            단순한 기록을 넘어,<br/>
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-400">당신의 정체성을 설계하다</span>
           </h2>
           <p class="text-lg lg:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed break-keep px-4 lg:px-0">

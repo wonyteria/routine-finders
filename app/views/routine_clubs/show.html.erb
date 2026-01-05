@@ -78,28 +78,28 @@
             </div>
             
             <!-- Stats Grid -->
-            <div class="grid grid-cols-4 gap-4 pt-6 border-t border-slate-100">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-4 pt-6 border-t border-slate-100">
               <div class="text-center md:text-left">
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 whitespace-nowrap">기간</p>
-                <p class="text-2xl font-black text-slate-900">
+                <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-2 whitespace-nowrap">기간</p>
+                <p class="text-xl md:text-2xl font-black text-slate-900 leading-tight">
                   <%= @routine_club.duration_in_months %>개월
                 </p>
               </div>
               <div class="text-center md:text-left">
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 whitespace-nowrap">분기 요금 (3개월)</p>
-                <p class="text-2xl font-black text-orange-500">
+                <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-2 whitespace-nowrap">분기 요금 <span class="hidden md:inline">(3개월)</span></p>
+                <p class="text-xl md:text-2xl font-black text-orange-500 leading-tight">
                   <%= number_to_currency(@routine_club.monthly_fee * @routine_club.min_duration_months, unit: "₩", precision: 0, format: "%n%u") %>
                 </p>
               </div>
               <div class="text-center md:text-left">
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 whitespace-nowrap">멤버</p>
-                <p class="text-2xl font-black text-indigo-500">
+                <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-2 whitespace-nowrap">멤버</p>
+                <p class="text-xl md:text-2xl font-black text-indigo-500 leading-tight">
                   <%= @routine_club.current_members %> / <%= @routine_club.max_members %>
                 </p>
               </div>
               <div class="text-center md:text-left">
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 whitespace-nowrap">시작일</p>
-                <p class="text-2xl font-black text-purple-500">
+                <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-2 whitespace-nowrap">시작일</p>
+                <p class="text-xl md:text-2xl font-black text-purple-500 leading-tight">
                   <%= @routine_club.start_date.strftime("%m/%d") %>
                 </p>
               </div>

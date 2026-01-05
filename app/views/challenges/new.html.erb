@@ -423,7 +423,7 @@
 
                   <div class="space-y-6">
                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">인증 유형 선택</label>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <% [
                         { id: "photo", label: "Photo", desc: "생동감 있는 사진 업로드", icon: "M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" },
                         { id: "simple", label: "Simple", desc: "간편한 버튼 터치", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
@@ -433,13 +433,13 @@
                         <button type="button" 
                                 data-action="click->challenge-form#toggleVerificationType" 
                                 data-type="<%= type[:id] %>"
-                                class="p-4 sm:p-6 border-2 <%= (@challenge.send("v_#{type[:id]}") || (type[:id] == 'photo')) ? 'border-indigo-600 bg-indigo-50 shadow-lg shadow-indigo-600/5' : 'border-slate-100 bg-white' %> rounded-[24px] lg:rounded-[28px] flex items-center gap-3 sm:gap-4 group hover:border-indigo-200 transition-all text-left">
-                          <div class="verif-icon-box w-10 h-10 rounded-xl <%= (@challenge.send("v_#{type[:id]}") || (type[:id] == 'photo')) ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-50 text-slate-300' %> flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= type[:icon] %>"/></svg>
+                                class="p-3 sm:p-6 border-2 <%= (@challenge.send("v_#{type[:id]}") || (type[:id] == 'photo')) ? 'border-indigo-600 bg-indigo-50 shadow-lg shadow-indigo-600/5' : 'border-slate-100 bg-white' %> rounded-[20px] sm:rounded-[24px] lg:rounded-[28px] flex items-center gap-3 sm:gap-4 group hover:border-indigo-200 transition-all text-left">
+                          <div class="verif-icon-box w-9 h-9 sm:w-10 sm:h-10 rounded-xl <%= (@challenge.send("v_#{type[:id]}") || (type[:id] == 'photo')) ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-50 text-slate-300' %> flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="<%= type[:icon] %>"/></svg>
                           </div>
-                          <div>
-                            <p class="font-black text-sm text-slate-900 group-hover:text-indigo-600 transition-colors"><%= type[:label] %></p>
-                            <p class="text-[9px] font-bold text-slate-400 mt-0.5"><%= type[:desc] %></p>
+                          <div class="min-w-0">
+                            <p class="font-black text-xs sm:text-sm text-slate-900 group-hover:text-indigo-600 transition-colors"><%= type[:label] %></p>
+                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-0.5 truncate"><%= type[:desc] %></p>
                           </div>
                         </button>
                         <%= f.hidden_field "v_#{type[:id]}", value: (@challenge.send("v_#{type[:id]}") ? "1" : (type[:id] == 'photo' ? "1" : "0")), id: "challenge_v_#{type[:id]}" %>
