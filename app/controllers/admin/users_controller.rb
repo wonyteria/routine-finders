@@ -1,6 +1,7 @@
 module Admin
   class UsersController < BaseController
-    before_action :set_user, only: [ :show, :edit, :update, :destroy, :toggle_role ]
+    before_action :require_super_admin
+    before_action :set_user, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @users = User.order(created_at: :desc)
@@ -21,6 +22,12 @@ module Admin
     end
 
     def update
+      # Prevent self-demotion from super_admin if attempting to change role
+      if user_params[:role].present? && @user == current_user
+        redirect_to admin_user_path(@user), alert: "자기 자신의 역할은 변경할 수 없습니다."
+        return
+      end
+
       if @user.update(user_params)
         redirect_to admin_user_path(@user), notice: "사용자 정보가 수정되었습니다."
       else
@@ -37,16 +44,6 @@ module Admin
       end
     end
 
-    def toggle_role
-      if @user == current_user
-        redirect_to admin_user_path(@user), alert: "자기 자신의 역할은 변경할 수 없습니다."
-      else
-        new_role = @user.admin? ? :user : :admin
-        @user.update(role: new_role)
-        redirect_to admin_user_path(@user), notice: "사용자 역할이 #{new_role == :admin ? '관리자' : '일반 사용자'}로 변경되었습니다."
-      end
-    end
-
     private
 
     def set_user
@@ -54,7 +51,7 @@ module Admin
     end
 
     def user_params
-      params.require(:user).permit(:nickname, :email, :level, :total_exp, :wallet_balance, :is_featured_host)
+      params.require(:user).permit(:nickname, :email, :level, :total_exp, :wallet_balance, :is_featured_host, :role)
     end
   end
 end

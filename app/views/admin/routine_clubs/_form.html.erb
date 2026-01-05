@@ -31,6 +31,12 @@
             <%= f.label :max_members, "최대 인원", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
             <%= f.number_field :max_members, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" %>
           </div>
+
+          <div class="space-y-2 col-span-full">
+            <%= f.label :host_id, "클럽 관리자 (Host)", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.collection_select :host_id, User.order(:nickname), :id, ->(u){ "#{u.nickname} (#{u.email})" }, { prompt: "관리자 선택" }, { class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500" } %>
+            <p class="text-xs text-slate-500 mt-1">지정된 사용자는 해당 클럽의 관리자 권한을 가집니다.</p>
+          </div>
         </div>
       </div>
 

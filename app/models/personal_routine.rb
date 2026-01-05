@@ -15,9 +15,8 @@ class PersonalRoutine < ApplicationRecord
     completions.any? { |c| c.completed_on == date }
   end
 
-  def toggle_completion!
-    today = Date.current
-    completion = completions.find_by(completed_on: today)
+  def toggle_completion!(date = Date.current)
+    completion = completions.find_by(completed_on: date)
 
     if completion
       # 완료 취소
@@ -25,10 +24,13 @@ class PersonalRoutine < ApplicationRecord
       update_stats!
     else
       # 완료 처리
-      completions.create!(completed_on: today)
+      completions.create!(completed_on: date)
       update_stats!
 
-      # 루파 클럽 멤버일 경우 활동 피드 생성
+      # 루파 클럽 멤버일 경우 활동 피드 생성 (오늘 날짜인 경우에만 생성 권장, 하지만 일단 유연하게 둠)
+      # 단, 과거 기록 수정 시 피드가 도배되는 것을 방지하기 위해 오늘인 경우에만 피드 생성 등의 로직 고려 가능.
+      # 현재 요구사항은 명확하지 않으므로, 활동 피드는 날짜와 무관하게 생성하되,
+      # "과거의 성취를 기록했습니다" 같은 문구 처리는 추후 고려. 일단 유지.
       if user.is_rufa_club_member?
         RufaActivity.create_achievement_activity(user, title)
       end

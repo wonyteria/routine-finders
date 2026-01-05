@@ -5,7 +5,17 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   # Enums
-  enum :role, { user: 0, admin: 1 }
+  # Role hierarchy: user (0) < club_admin (1) < super_admin (2)
+  # - user: Regular platform user
+  # - club_admin: Can manage assigned routine clubs
+  # - super_admin: Full platform access, can assign club admins
+  enum :role, { user: 0, club_admin: 1, super_admin: 2 }
+  scope :admin, -> { where(role: [ :club_admin, :super_admin ]) }
+
+  # Backward compatibility: admin? returns true for both club_admin and super_admin
+  def admin?
+    club_admin? || super_admin?
+  end
 
   # Associations
   has_many :hosted_challenges, class_name: "Challenge", foreign_key: :host_id, dependent: :destroy

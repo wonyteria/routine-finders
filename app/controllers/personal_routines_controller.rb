@@ -174,6 +174,9 @@ class PersonalRoutinesController < ApplicationController
     set_activity_data
     @selected_date = target_date
 
+    # 뷰 렌더링에 필요한 변수 설정 (현재 선택된 날짜 기준)
+    @selected_date = target_date
+
     respond_to do |format|
       format.html { redirect_back fallback_location: personal_routines_path(date: @selected_date) }
       format.turbo_stream

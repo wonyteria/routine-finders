@@ -40,6 +40,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_super_admin
+    unless current_user&.super_admin?
+      redirect_to root_path, alert: "해당 기능은 총괄 관리자만 이용 가능합니다."
+    end
+  end
+
   def store_location
     session[:forwarding_url] = request.original_url if request.get? || request.head?
   end
