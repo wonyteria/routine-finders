@@ -228,12 +228,5 @@ class User < ApplicationRecord
     total_routine_completions
   end
 
-  # Admin & Role helpers
-  def super_admin?
-    admin?
-  end
 
-  def club_admin?
-    hosted_routine_clubs.exists?
-  end
 end

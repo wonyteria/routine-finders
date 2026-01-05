@@ -1,6 +1,6 @@
 <div class="space-y-12">
   
-  <% unless current_user.is_rufa_club_member? || current_user.super_admin? || current_user.club_admin? %>
+  <% unless current_user.is_rufa_club_member? %>
     <!-- Premium Promotion View for Non-members -->
     <section class="relative overflow-hidden bg-slate-900 rounded-[48px] lg:rounded-[64px] px-6 py-16 lg:p-24 text-white shadow-2xl">
       <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/30 via-slate-900 to-purple-900/30 z-0"></div>

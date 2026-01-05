@@ -555,8 +555,15 @@
           <% end %>
           <% if @club_memberships.empty? %>
              <div class="col-span-1 sm:col-span-2 space-y-8">
-                <div class="p-20 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center">
-                  <p class="text-slate-400 text-xl font-black">아직 참여 중인 루틴 클럽이 없습니다.</p>
+                <div class="p-12 md:p-20 bg-gradient-to-br from-slate-50 to-white rounded-[48px] border-2 border-dashed border-slate-200 text-center space-y-6">
+                  <div class="text-6xl">🏃‍♂️</div>
+                  <div>
+                    <p class="text-slate-900 text-2xl font-black mb-2">아직 참여 중인 루틴 클럽이 없습니다</p>
+                    <p class="text-slate-500 font-bold">루파 클럽에 가입하고 체계적인 루틴 관리를 시작하세요!</p>
+                  </div>
+                  <%= link_to routine_clubs_path, class: "inline-block px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100" do %>
+                    루파 클럽 둘러보기 →
+                  <% end %>
                 </div>
                 <%= render "shared/rufa_member_status" %>
                 <%= render "shared/rufa_club_nudge" %>
