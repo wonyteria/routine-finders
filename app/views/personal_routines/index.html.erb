@@ -51,10 +51,10 @@
     <div class="flex justify-center md:justify-start mb-8">
       <div class="bg-indigo-50/50 p-1.5 rounded-[24px] flex w-full md:w-auto md:inline-flex gap-1.5 border border-indigo-100/50">
         <%= link_to "무료 루틴", personal_routines_path(tab: 'free'), 
-            class: "flex-1 md:flex-none px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 #{ (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' }" %>
+            class: "flex-1 md:flex-none flex items-center justify-center px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 #{ (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' }" %>
         
         <%= link_to "루파 클럽", personal_routines_path(tab: 'club'), 
-            class: "flex-1 md:flex-none px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 #{ params[:tab] == 'club' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' }" %>
+            class: "flex-1 md:flex-none flex items-center justify-center px-8 py-4 rounded-[20px] font-black text-sm transition-all duration-300 #{ params[:tab] == 'club' ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600' }" %>
       </div>
     </div>
 
