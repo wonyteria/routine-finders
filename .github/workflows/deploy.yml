@@ -52,5 +52,9 @@ jobs:
           echo "  StrictHostKeyChecking no" >> ~/.ssh/config
           echo "  UserKnownHostsFile=/dev/null" >> ~/.ssh/config
 
+      - name: Release deploy lock
+        run: bin/kamal lock release --force || true
+        continue-on-error: true
+
       - name: Deploy with Kamal
         run: bin/kamal deploy
