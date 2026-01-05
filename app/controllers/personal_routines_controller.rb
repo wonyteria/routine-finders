@@ -8,6 +8,7 @@ class PersonalRoutinesController < ApplicationController
     # 개인 루틴 (무료)
     current_user.user_badges.where(is_viewed: false).update_all(is_viewed: true)
 
+    @selected_date = params[:date] ? Date.parse(params[:date]) : Date.current
     @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
 
     set_activity_data
@@ -168,11 +169,15 @@ class PersonalRoutinesController < ApplicationController
   end
 
   def toggle
-    @routine.toggle_completion!
+    target_date = params[:date] ? Date.parse(params[:date]) : Date.current
+    @routine.toggle_completion!(target_date)
     set_activity_data
 
+    # 뷰 렌더링에 필요한 변수 설정 (현재 선택된 날짜 기준)
+    @selected_date = target_date
+
     respond_to do |format|
-      format.html { redirect_back fallback_location: personal_routines_path }
+      format.html { redirect_back fallback_location: personal_routines_path(date: @selected_date) }
       format.turbo_stream
     end
   end

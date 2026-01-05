@@ -1,5 +1,6 @@
 module Admin
   class RoutineClubsController < BaseController
+    before_action :require_super_admin
     before_action :set_routine_club, only: [ :show, :edit, :update, :destroy ]
 
     def index
@@ -23,7 +24,8 @@ module Admin
 
     def create
       @routine_club = RoutineClub.new(routine_club_params)
-      @routine_club.host = current_user if @routine_club.host.nil?
+      # If host_id is not provided, default to current_user
+      @routine_club.host ||= current_user
 
       if @routine_club.save
         redirect_to admin_routine_clubs_path, notice: "루틴 클럽이 생성되었습니다."
@@ -54,7 +56,8 @@ module Admin
     def routine_club_params
       params.require(:routine_club).permit(
         :title, :description, :category, :monthly_fee, :min_duration_months,
-        :start_date, :end_date, :status, :is_official, :max_members, :thumbnail
+        :start_date, :end_date, :status, :is_official, :max_members, :thumbnail,
+        :host_id
       )
     end
   end

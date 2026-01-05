@@ -143,13 +143,22 @@
                 <%= link_to rankings_path, class: "px-5 py-2.5 rounded-threads text-sm font-bold transition-all #{current_page?(rankings_path) ? 'text-threads-black bg-slate-50' : 'text-slate-400 hover:text-threads-black hover:bg-slate-50'}" do %>
                   명예의 전당
                 <% end %>
-                <% if current_user.admin? %>
+                <% if current_user.admin? || current_user.hosted_routine_clubs.any? %>
                   <% 
-                    hosted_club = RoutineClub.find_by(host_id: current_user.id)
-                    admin_nav_path = hosted_club ? manage_routine_club_path(hosted_club) : admin_root_path
+                    # 관리자 버튼 목적지 및 텍스트 결정
+                    if current_user.super_admin?
+                      admin_label = "총괄 관리"
+                      target_path = admin_root_path
+                    elsif (club = current_user.hosted_routine_clubs.first)
+                      admin_label = "클럽 관리"
+                      target_path = manage_routine_club_path(club)
+                    else
+                      admin_label = "관리자"
+                      target_path = admin_root_path
+                    end
                   %>
-                  <%= link_to admin_nav_path, class: "px-5 py-2.5 rounded-threads text-sm font-black transition-all text-indigo-600 hover:bg-indigo-50" do %>
-                    관리자
+                  <%= link_to target_path, class: "px-5 py-2.5 rounded-threads text-sm font-black transition-all text-indigo-600 hover:bg-indigo-50 border border-indigo-100/50 bg-indigo-50/30", title: admin_label do %>
+                    <%= admin_label %>
                   <% end %>
                 <% end %>
               </div>

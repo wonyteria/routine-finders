@@ -1,5 +1,7 @@
 module Admin
   class DashboardController < BaseController
+    before_action :require_super_admin
+
     def index
       @stats = {
         total_users: User.count,

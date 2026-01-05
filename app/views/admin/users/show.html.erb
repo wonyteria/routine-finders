@@ -20,8 +20,8 @@
           <h2 class="text-2xl font-bold text-slate-900"><%= @user.nickname %></h2>
           <p class="text-slate-500 mt-1"><%= @user.email %></p>
           <div class="flex items-center gap-3 mt-3">
-            <span class="px-3 py-1 text-sm font-semibold rounded-full <%= @user.admin? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700' %>">
-              <%= @user.admin? ? '관리자' : '사용자' %>
+            <span class="px-3 py-1 text-sm font-semibold rounded-full <%= @user.super_admin? ? 'bg-purple-100 text-purple-700' : (@user.club_admin? ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700') %>">
+              <%= @user.role.titleize %>
             </span>
             <% if @user.email_verified %>
               <span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-700">이메일 인증됨</span>
@@ -36,9 +36,6 @@
           수정
         <% end %>
         <% unless @user == current_user %>
-          <%= button_to toggle_role_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors" do %>
-            <%= @user.admin? ? '일반 사용자로 변경' : '관리자로 변경' %>
-          <% end %>
           <%= button_to admin_user_path(@user), method: :delete, data: { turbo_confirm: "정말 이 사용자를 삭제하시겠습니까?" }, class: "px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors" do %>
             삭제
           <% end %>
