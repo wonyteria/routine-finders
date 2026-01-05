@@ -1,6 +1,6 @@
 <% compact ||= false %>
 <section id="achievement-matrix"
-         class="bg-white rounded-[32px] md:rounded-[40px] <%= compact ? 'p-4 md:p-5' : 'p-6 md:p-8' %> border border-slate-100 shadow-sm space-y-4 md:space-y-6 relative overflow-hidden group"
+         class="bg-white rounded-[32px] md:rounded-[40px] <%= compact ? 'p-3 md:p-4' : 'p-4 md:p-6' %> border border-slate-100 shadow-sm space-y-4 md:space-y-6 relative overflow-hidden group"
          data-controller="tabs"
          data-tabs-query-param-value="matrix_tab"
          data-tabs-active-class="bg-indigo-600 text-white shadow-lg z-10"
@@ -23,7 +23,7 @@
 
   <%# Month View Panel %>
   <div data-tabs-target="panel" data-id="month" class="relative z-10 space-y-4">
-    <div class="grid grid-cols-7 gap-1 md:gap-1.5">
+    <div class="grid grid-cols-7 gap-1 md:gap-1.5 max-w-[400px] w-full mx-auto">
       <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
         <div class="text-[9px] font-black text-slate-300 text-center py-1 md:py-2"><%= day %></div>
       <% end %>
@@ -82,7 +82,7 @@
 
     <div class="relative group/matrix">
       <div class="overflow-y-auto max-h-[350px] scrollbar-thin scrollbar-thumb-indigo-100 scrollbar-track-transparent pr-1 -mr-1">
-        <div class="grid grid-cols-7 gap-1 md:gap-1.5">
+        <div class="grid grid-cols-7 gap-1 md:gap-1.5 max-w-[400px] w-full mx-auto">
           <%
             end_date = Date.current
             start_of_range = end_date - 1.year + 1.day
