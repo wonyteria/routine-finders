@@ -99,6 +99,8 @@ Rails.application.routes.draw do
       post :reject_payment
       post :kick_member
     end
+    resources :announcements, only: [ :create, :destroy ]
+    resources :gatherings, only: [ :create, :destroy ], controller: "routine_club_gatherings"
   end
 
   resource :profile, only: [ :show, :edit, :update ] do
