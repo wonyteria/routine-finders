@@ -362,78 +362,6 @@
       </div>
     </div>
 
-    <!-- Settings Tab -->
-    <div id="manage-content-settings" class="manage-tab-content hidden">
-      <div class="space-y-6">
-        <!-- General Settings -->
-        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
-          <h2 class="text-2xl font-black text-slate-900 mb-6">클럽 프로필 설정</h2>
-          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-6" do |f| %>
-            <div class="flex items-center gap-8">
-              <div class="w-24 h-24 rounded-3xl bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-slate-200">
-                <% if @routine_club.thumbnail.attached? %>
-                  <%= image_tag @routine_club.thumbnail, class: "w-full h-full object-cover" %>
-                <% else %>
-                  <span class="text-4xl">💎</span>
-                <% end %>
-              </div>
-              <div class="flex-1">
-                <%= f.label :thumbnail, "클럽 섬네일 이미지", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
-                <%= f.file_field :thumbnail, class: "block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 transition-all" %>
-                <p class="text-[10px] text-slate-400 mt-2">추천 사이즈: 21:9 비율의 고해상도 이미지</p>
-              </div>
-            </div>
-            <%= f.submit "프로필 저장", class: "px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100" %>
-          <% end %>
-        </div>
-
-        <!-- Account Settings -->
-        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
-          <h2 class="text-2xl font-black text-slate-900 mb-6">입금 계좌 설정</h2>
-          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-4" do |f| %>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <%= f.label :bank_name, "은행명", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
-                <%= f.text_field :bank_name, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
-              </div>
-              <div>
-                <%= f.label :account_number, "계좌번호", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
-                <%= f.text_field :account_number, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
-              </div>
-              <div>
-                <%= f.label :account_holder, "예금주", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
-                <%= f.text_field :account_holder, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
-              </div>
-            </div>
-            <%= f.submit "계좌 정보 저장", class: "px-8 py-3 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-colors" %>
-          <% end %>
-        </div>
-
-        <!-- Reward Settings -->
-        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
-          <h2 class="text-2xl font-black text-slate-900 mb-6">리워드 문구 설정</h2>
-          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-6" do |f| %>
-            <div>
-              <%= f.label :weekly_reward_info, "위클리 보상 (명예)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
-              <%= f.text_field :weekly_reward_info, placeholder: "예: 프로필 골든 오라 부여", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
-            </div>
-            <div>
-              <%= f.label :monthly_reward_info, "먼슬리 보상 (쿠폰)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
-              <%= f.text_field :monthly_reward_info, placeholder: "예: 스타벅스 아메리카노 기프티콘", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
-            </div>
-            <div>
-              <%= f.label :season_reward_info, "시즌 최종 보상 (무료권)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
-              <%= f.text_field :season_reward_info, placeholder: "예: 차기 시즌 3/2/1개월 무료 이용권", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
-            </div>
-            <%= f.submit "리워드 설정 저장", class: "px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100" %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
     <!-- Community Management Tab -->
     <div id="manage-content-community" class="manage-tab-content hidden space-y-8">
       
@@ -571,6 +499,79 @@
         </div>
       </section>
     </div>
+
+    <!-- Settings Tab -->
+    <div id="manage-content-settings" class="manage-tab-content hidden">
+      <div class="space-y-6">
+        <!-- General Settings -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 mb-6">클럽 프로필 설정</h2>
+          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-6" do |f| %>
+            <div class="flex items-center gap-8">
+              <div class="w-24 h-24 rounded-3xl bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-slate-200">
+                <% if @routine_club.thumbnail.attached? %>
+                  <%= image_tag @routine_club.thumbnail, class: "w-full h-full object-cover" %>
+                <% else %>
+                  <span class="text-4xl">💎</span>
+                <% end %>
+              </div>
+              <div class="flex-1">
+                <%= f.label :thumbnail, "클럽 섬네일 이미지", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.file_field :thumbnail, class: "block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 transition-all" %>
+                <p class="text-[10px] text-slate-400 mt-2">추천 사이즈: 21:9 비율의 고해상도 이미지</p>
+              </div>
+            </div>
+            <%= f.submit "프로필 저장", class: "px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100" %>
+          <% end %>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 mb-6">입금 계좌 설정</h2>
+          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-4" do |f| %>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <%= f.label :bank_name, "은행명", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.text_field :bank_name, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
+              </div>
+              <div>
+                <%= f.label :account_number, "계좌번호", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.text_field :account_number, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
+              </div>
+              <div>
+                <%= f.label :account_holder, "예금주", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+                <%= f.text_field :account_holder, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 ring-indigo-500" %>
+              </div>
+            </div>
+            <%= f.submit "계좌 정보 저장", class: "px-8 py-3 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-colors" %>
+          <% end %>
+        </div>
+
+        <!-- Reward Settings -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 mb-6">리워드 문구 설정</h2>
+          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-6" do |f| %>
+            <div>
+              <%= f.label :weekly_reward_info, "위클리 보상 (명예)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+              <%= f.text_field :weekly_reward_info, placeholder: "예: 프로필 골든 오라 부여", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
+            </div>
+            <div>
+              <%= f.label :monthly_reward_info, "먼슬리 보상 (쿠폰)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+              <%= f.text_field :monthly_reward_info, placeholder: "예: 스타벅스 아메리카노 기프티콘", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
+            </div>
+            <div>
+              <%= f.label :season_reward_info, "시즌 최종 보상 (무료권)", class: "block text-xs font-black text-slate-400 uppercase tracking-widest mb-2" %>
+              <%= f.text_field :season_reward_info, placeholder: "예: 차기 시즌 3/2/1개월 무료 이용권", class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold" %>
+            </div>
+            <%= f.submit "리워드 설정 저장", class: "px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 <script>
   function switchManageTab(tab) {
