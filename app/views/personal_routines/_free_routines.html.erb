@@ -17,10 +17,10 @@
           <div class="flex items-center gap-2">
             <h2 class="text-2xl font-black text-threads-black tracking-tight"><%= current_date.strftime("%Y.%m") %></h2>
             <div class="flex gap-1">
-              <%= link_to personal_routines_path(date: prev_week), class: "p-1 hover:bg-slate-100 rounded-lg transition-colors text-slate-400" do %>
+              <%= link_to personal_routines_path(date: prev_week), class: "p-1 hover:bg-slate-100 rounded-lg transition-colors text-slate-400", "aria-label": "지난 주 보기" do %>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
               <% end %>
-              <%= link_to personal_routines_path(date: next_week), class: "p-1 hover:bg-slate-100 rounded-lg transition-colors text-slate-400" do %>
+              <%= link_to personal_routines_path(date: next_week), class: "p-1 hover:bg-slate-100 rounded-lg transition-colors text-slate-400", "aria-label": "다음 주 보기" do %>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               <% end %>
             </div>
@@ -229,7 +229,7 @@
         <% @recommended_routines.take(8).each do |routine| %>
           <div class="min-w-[240px] bg-white p-6 rounded-[32px] border border-slate-100 hover:border-indigo-200 hover:shadow-xl transition-all group cursor-pointer">
             <div class="flex items-start justify-between mb-6">
-              <div class="w-14 h-14 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+              <div class="w-14 h-14 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform" loading="lazy">
                 <%= routine[:icon] %>
               </div>
               <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], days: [1,2,3,4,5,6,0] }), method: :post, class: "w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-threads-black hover:text-white transition-all shadow-sm hover:scale-110" do %>

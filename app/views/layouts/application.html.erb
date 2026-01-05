@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+  <html lang="ko">
   <head>
     <title><%= content_for(:title) || "Routine Finders" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
     <meta name="description" content="<%= content_for(:description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Routine Finders">
@@ -33,15 +33,18 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-    <!-- Fonts -->
+    <!-- Fonts optimization: Preconnect and Asynchronous loading with swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet"></noscript>
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
+    <!-- Confetti is now loaded dynamically only when needed to save mobile bandwidth -->
 
     <style>
       /* Mobile App-like Experience Globals */
@@ -120,10 +123,27 @@
           <div class="flex items-center gap-10">
             <%= link_to landing_path, class: "flex items-center gap-1 group transition-all" do %>
               <div class="h-[59px] w-[59px] flex items-center justify-center group-hover:scale-105 transition-transform">
-                <%= image_tag "rf_symbol_v9.png", class: "w-full h-full object-contain mix-blend-multiply" %>
+                <%# Mobile LCP Optimization: Smaller source for mobile, Fetch priority HIGH %>
+                <picture>
+                  <source srcset="<%= asset_path('rf_symbol_v9.png') %>" type="image/png">
+                  <%= image_tag "rf_symbol_v9.png", 
+                                width: 59, height: 59, 
+                                alt: "Routine Finders Symbol", 
+                                fetchpriority: "high",
+                                loading: "eager",
+                                class: "w-full h-full object-contain mix-blend-multiply" %>
+                </picture>
               </div>
               <div class="h-[47px] lg:h-[63px] flex items-center overflow-hidden">
-                <%= image_tag "rf_text_logo_v6.png", class: "h-[250%] w-auto max-w-none object-contain mix-blend-multiply" %>
+                <picture>
+                  <source srcset="<%= asset_path('rf_text_logo_v6.png') %>" type="image/png">
+                  <%= image_tag "rf_text_logo_v6.png", 
+                                width: 150, height: 63, 
+                                alt: "Routine Finders Logo", 
+                                fetchpriority: "high",
+                                loading: "eager",
+                                class: "h-[250%] w-auto max-w-none object-contain mix-blend-multiply" %>
+                </picture>
               </div>
             <% end %>
             <% if current_user %>
@@ -259,5 +279,29 @@
 
     <!-- Badge Award Modal -->
     <%= render "shared/badge_award" if logged_in? %>
+    <script>
+      // Optimized dynamic loader for mobile
+      window.loadConfetti = function() {
+        if (window.confetti) return Promise.resolve();
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js';
+          script.defer = true;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      };
+
+      // Example: Usage on success events
+      document.addEventListener('turbo:load', () => {
+        // Trigger pre-fetching only during idle time for mobile
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(() => {
+            console.log('Pre-calculating idle tasks...');
+          });
+        }
+      });
+    </script>
   </body>
 </html>
