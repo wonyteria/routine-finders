@@ -36,6 +36,29 @@ class RoutineClubsController < ApplicationController
 
     @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
     @pending_payments = @routine_club.members.where(payment_status: :pending)
+
+    # Calculate Monthly vs Cumulative
+    current_month_range = Time.current.all_month
+
+    @member_stats = @members.map do |m|
+      monthly_atts = m.attendances.where(attendance_date: current_month_range)
+      monthly_present = monthly_atts.where(status: [ :present, :excused ]).count
+      monthly_total = monthly_atts.count
+      monthly_rate = monthly_total > 0 ? (monthly_present.to_f / monthly_total * 100).round(2) : 0.0
+
+      {
+        membership: m,
+        monthly_rate: monthly_rate,
+        monthly_absence: monthly_total - monthly_present,
+        cumulative_rate: m.attendance_rate,
+        cumulative_points: m.growth_points || 0
+      }
+    end
+
+    # Default sort for Monthly
+    @monthly_sorted = @member_stats.sort_by { |s| -s[:monthly_rate] }
+    # Default sort for Cumulative
+    @cumulative_sorted = @member_stats.sort_by { |s| -s[:cumulative_points] }
   end
 
   def new

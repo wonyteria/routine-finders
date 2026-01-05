@@ -52,15 +52,25 @@
     <!-- Tabs -->
     <div class="mb-8 overflow-x-auto pb-2">
       <div class="bg-white border border-slate-200 rounded-3xl p-2 inline-flex gap-2 min-w-max">
-        <button onclick="switchManageTab('pending')" 
-                id="manage-tab-pending"
+        <button onclick="switchManageTab('monthly')" 
+                id="manage-tab-monthly"
                 class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all bg-indigo-600 text-white whitespace-nowrap">
-          입금 대기 <% if @pending_payments.any? %><span class="ml-1 bg-white/20 px-1.5 md:px-2 py-0.5 rounded-full text-xs"><%= @pending_payments.count %></span><% end %>
+          월간 관리
         </button>
         <button onclick="switchManageTab('members')" 
                 id="manage-tab-members"
                 class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
           멤버 관리
+        </button>
+        <button onclick="switchManageTab('penalties')" 
+                id="manage-tab-penalties"
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
+          패널티 관리
+        </button>
+        <button onclick="switchManageTab('pending')" 
+                id="manage-tab-pending"
+                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
+          입금 대기 <% if @pending_payments.any? %><span class="ml-1 bg-white/20 px-1.5 md:px-2 py-0.5 rounded-full text-xs"><%= @pending_payments.count %></span><% end %>
         </button>
         <button onclick="switchManageTab('expiring')" 
                 id="manage-tab-expiring"
@@ -71,11 +81,6 @@
             <span class="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white rounded-full text-[10px] flex items-center justify-center border-2 border-white"><%= expiring_count %></span>
           <% end %>
         </button>
-        <button onclick="switchManageTab('penalties')" 
-                id="manage-tab-penalties"
-                class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
-          패널티 관리
-        </button>
         <button onclick="switchManageTab('settings')" 
                 id="manage-tab-settings"
                 class="manage-tab-btn px-4 md:px-6 py-2 md:py-3 rounded-2xl font-black text-xs md:text-sm transition-all text-slate-400 hover:text-slate-600 whitespace-nowrap">
@@ -85,7 +90,7 @@
     </div>
 
     <!-- Pending Payments Tab -->
-    <div id="manage-content-pending" class="manage-tab-content">
+    <div id="manage-content-pending" class="manage-tab-content hidden">
       <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
         <h2 class="text-2xl font-black text-slate-900 mb-6">입금 확인 대기</h2>
         
@@ -158,76 +163,151 @@
       </div>
     </div>
 
-    <!-- Members Tab -->
-    <div id="manage-content-members" class="manage-tab-content hidden">
-      <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
-        <h2 class="text-2xl font-black text-slate-900 mb-6">멤버 관리</h2>
-        
-        <% if @members.any? %>
-          <div class="space-y-4">
-            <% @members.each do |membership| %>
-              <div class="bg-slate-50 border border-slate-200 rounded-3xl p-4 md:p-6">
-                <div class="flex flex-col lg:flex-row items-start gap-4 lg:gap-6">
-                  <div class="flex items-start gap-3 md:gap-4 flex-1 w-full">
-                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xl md:text-2xl font-black flex-shrink-0">
-                      <%= membership.user.nickname[0].upcase %>
-                    </div>
-                    
-                    <div class="flex-1 min-w-0">
-                      <div class="flex flex-wrap items-center gap-2 mb-3">
-                        <h3 class="text-lg md:text-xl font-black text-slate-900">
-                          <%= membership.user.nickname %>
-                        </h3>
-                        
-                        <% if membership.status_warned? %>
-                          <span class="bg-orange-100 text-orange-600 px-2 md:px-3 py-1 rounded-full text-xs font-black">경고</span>
-                        <% elsif membership.status_active? %>
-                          <span class="bg-emerald-100 text-emerald-600 px-2 md:px-3 py-1 rounded-full text-xs font-black">정상</span>
-                        <% end %>
-                        
-                        <% if membership.is_moderator %>
-                          <span class="bg-purple-100 text-purple-600 px-2 md:px-3 py-1 rounded-full text-xs font-black">운영진</span>
-                        <% end %>
-                      </div>
-                      
-                      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                        <div>
-                          <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">출석률</p>
-                          <p class="text-base md:text-lg font-black text-emerald-600"><%= membership.attendance_rate.to_i %>%</p>
-                        </div>
-                        <div>
-                          <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">출석</p>
-                          <p class="text-base md:text-lg font-black text-indigo-600"><%= membership.attendance_count %>일</p>
-                        </div>
-                        <div>
-                          <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">결석</p>
-                          <p class="text-base md:text-lg font-black text-orange-600"><%= membership.absence_count %>일</p>
-                        </div>
-                        <div>
-                          <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">경고</p>
-                          <p class="text-base md:text-lg font-black text-orange-600"><%= membership.penalty_count %>회</p>
-                        </div>
-                        <div class="col-span-2 md:col-span-4 mt-2 pt-2 border-t border-slate-100">
-                          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">연락처</p>
-                          <p class="text-sm font-bold text-indigo-600 break-all"><%= membership.contact_info.presence || "미입력" %></p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="w-full lg:w-auto">
-                    <%= button_to "강퇴", kick_member_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "w-full lg:w-auto px-4 md:px-6 py-3 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-colors whitespace-nowrap", data: { confirm: "#{membership.user.nickname}님을 강퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다." } %>
-                  </div>
-                </div>
-              </div>
-            <% end %>
+    <!-- Performance Management Tab -->
+    <div id="manage-content-monthly" class="manage-tab-content space-y-6">
+      <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm" data-controller="performance-toggle">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-3xl shadow-lg shadow-indigo-100">📊</div>
+            <div>
+              <h2 class="text-2xl font-black text-slate-900">퍼포먼스 리포트</h2>
+              <p class="text-sm text-slate-400 font-bold uppercase tracking-widest mt-1">멤버별 활동 및 성장 데이터</p>
+            </div>
           </div>
-        <% else %>
-          <div class="bg-slate-50 rounded-3xl p-20 text-center">
-            <div class="text-6xl mb-4 opacity-20">👥</div>
-            <p class="text-slate-400 font-bold">아직 참여한 멤버가 없습니다</p>
+          
+          <!-- Mode Toggle -->
+          <div class="inline-flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+            <button onclick="switchPerfMode('monthly')" id="perf-btn-monthly" class="perf-mode-btn px-6 py-2.5 rounded-xl font-black text-sm transition-all bg-white text-indigo-600 shadow-sm">
+              <%= Time.current.month %>월 현황
+            </button>
+            <button onclick="switchPerfMode('cumulative')" id="perf-btn-cumulative" class="perf-mode-btn px-6 py-2.5 rounded-xl font-black text-sm transition-all text-slate-400 hover:text-slate-600">
+              전체 누적
+            </button>
           </div>
-        <% end %>
+        </div>
+
+        <!-- Monthly List -->
+        <div id="perf-list-monthly" class="perf-list-container over overflow-x-auto">
+          <table class="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+              <tr class="bg-slate-50/50 border-b border-slate-100">
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">순위</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">멤버</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">월간 성공률</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">결석/경고</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">관리</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <% if @monthly_sorted.any? %>
+                <% @monthly_sorted.each_with_index do |stats, index| %>
+                  <% 
+                    is_top = stats[:monthly_rate] >= 90
+                    is_warning = stats[:monthly_rate] < 60 || stats[:membership].penalty_count > 0
+                    row_bg = is_top ? 'bg-emerald-50/20' : (is_warning ? 'bg-orange-50/20' : 'bg-white')
+                  %>
+                  <tr class="<%= row_bg %> hover:bg-slate-50/80 transition-colors">
+                    <td class="px-8 py-6">
+                      <span class="text-lg font-black <%= index < 3 ? 'text-indigo-600' : 'text-slate-400' %>">#<%= index + 1 %></span>
+                    </td>
+                    <td class="px-8 py-6">
+                      <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 text-xs border border-slate-200">
+                          <%= stats[:membership].user.nickname[0].upcase %>
+                        </div>
+                        <div>
+                          <p class="font-black text-slate-900"><%= stats[:membership].user.nickname %></p>
+                          <p class="text-[10px] font-bold text-slate-400"><%= stats[:membership].user.email %></p>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-8 py-6 text-center">
+                      <div class="inline-flex flex-col items-center">
+                        <span class="text-xl font-black <%= is_top ? 'text-emerald-600' : (is_warning ? 'text-orange-600' : 'text-slate-900') %>">
+                          <%= stats[:monthly_rate].to_i %>%
+                        </span>
+                        <div class="w-16 h-1 mt-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div class="h-full <%= is_top ? 'bg-emerald-500' : (is_warning ? 'bg-orange-500' : 'bg-slate-400') %>" style="width: <%= stats[:monthly_rate] %>%"></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-8 py-6 text-center">
+                      <div class="flex flex-col gap-1">
+                        <span class="text-xs font-bold text-slate-600">결석 <%= stats[:monthly_absence] %>일</span>
+                        <span class="text-[10px] font-black <%= stats[:membership].penalty_count > 0 ? 'text-orange-600' : 'text-slate-300' %>">경고 <%= stats[:membership].penalty_count %>회</span>
+                      </div>
+                    </td>
+                    <td class="px-8 py-6 text-right">
+                      <div class="flex items-center justify-end gap-2">
+                        <% if stats[:membership].contact_info.present? %>
+                          <%= link_to "https://wa.me/#{stats[:membership].contact_info.to_s.gsub(/[^0-9]/, '')}", class: "p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-all", target: "_blank", title: "개인 메시지" do %>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                          <% end %>
+                        <% end %>
+                        <button class="p-2 bg-slate-50 text-slate-400 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-all" title="경고 부여">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr><td colspan="5" class="px-8 py-20 text-center text-slate-400 font-bold">데이터가 없습니다.</td></tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Cumulative List -->
+        <div id="perf-list-cumulative" class="perf-list-container hidden overflow-x-auto">
+          <table class="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+              <tr class="bg-slate-50/50 border-b border-slate-100">
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">성장 순위</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">멤버</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">그로스 포인트</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">전체 성공률</th>
+                <th class="px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">관리</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <% if @cumulative_sorted.any? %>
+                <% @cumulative_sorted.each_with_index do |stats, index| %>
+                  <tr class="hover:bg-indigo-50/30 transition-colors">
+                    <td class="px-8 py-6">
+                      <div class="flex items-center gap-2">
+                        <% if index == 0 %><span class="text-xl">🏆</span><% end %>
+                        <span class="text-lg font-black <%= index < 3 ? 'text-indigo-600' : 'text-slate-400' %>">#<%= index + 1 %></span>
+                      </div>
+                    </td>
+                    <td class="px-8 py-6 text-indigo-600">
+                       <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center font-black text-indigo-500 text-xs border border-indigo-100">
+                          <%= stats[:membership].user.nickname[0].upcase %>
+                        </div>
+                        <p class="font-black text-slate-900"><%= stats[:membership].user.nickname %></p>
+                      </div>
+                    </td>
+                    <td class="px-8 py-6 text-center">
+                      <span class="px-4 py-1.5 bg-indigo-600 text-white rounded-full text-sm font-black shadow-lg shadow-indigo-100">
+                        <%= number_with_delimiter(stats[:cumulative_points]) %> P
+                      </span>
+                    </td>
+                    <td class="px-8 py-6 text-center">
+                      <span class="text-lg font-black text-slate-700"><%= stats[:cumulative_rate].to_i %>%</span>
+                      <p class="text-[10px] font-bold text-slate-400">전체 <%= stats[:membership].attendance_count %>일 성공</p>
+                    </td>
+                    <td class="px-8 py-6 text-right">
+                       <button class="px-4 py-2 bg-slate-900 text-white rounded-xl font-black text-xs hover:bg-slate-800 transition-all">상세보기</button>
+                    </td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr><td colspan="5" class="px-8 py-20 text-center text-slate-400 font-bold">데이터가 없습니다.</td></tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -366,5 +446,23 @@
       content.classList.add('hidden');
     });
     document.getElementById('manage-content-' + tab).classList.remove('hidden');
+  }
+
+  function switchPerfMode(mode) {
+    // Update buttons
+    document.querySelectorAll('.perf-mode-btn').forEach(btn => {
+      btn.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+      btn.classList.add('text-slate-400', 'hover:text-slate-600');
+    });
+    
+    const activeBtn = document.getElementById('perf-btn-' + mode);
+    activeBtn.classList.remove('text-slate-400', 'hover:text-slate-600');
+    activeBtn.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+    
+    // Update content
+    document.querySelectorAll('.perf-list-container').forEach(content => {
+      content.classList.add('hidden');
+    });
+    document.getElementById('perf-list-' + mode).classList.remove('hidden');
   }
 </script>
