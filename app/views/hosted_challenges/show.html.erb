@@ -109,7 +109,7 @@
           <%= link_to hosted_challenge_path(@challenge, tab: "refunds"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'refunds' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
             환급 관리
             <% if @stats[:pending_refunds] > 0 %>
-              <span class="ml-2 px-2 py-0.5 #{theme_bg_class} text-white text-[10px] rounded-full"><%= @stats[:pending_refunds] %></span>
+              <span class="ml-2 px-2 py-0.5 <%= theme_bg_class %> text-white text-[10px] rounded-full"><%= @stats[:pending_refunds] %></span>
             <% end %>
           <% end %>
         <% end %>

@@ -5,13 +5,13 @@ service: routine_finders
 image: cyberneum/routine-finders
 
 # How long to wait for a container to become ready (default 30)
-deploy_timeout: 120
+deploy_timeout: 300
 
 # Deploy to these servers.
 servers:
   web:
     hosts:
-      - 152.42.204.0
+      - <%= ENV["DEPLOY_HOST"] || "152.42.204.0" %>
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -29,15 +29,14 @@ proxy:
   host: www.routinefinders.life
   healthcheck:
     path: /up
-    interval: 5
-    timeout: 5
+    interval: 10s
+    timeout: 10s
 
 # Where you keep your container images.
 registry:
   server: ghcr.io
   username: cyberneum
-  password:
-    - KAMAL_REGISTRY_PASSWORD
+  password: KAMAL_REGISTRY_PASSWORD
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
@@ -50,7 +49,6 @@ env:
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
     KAKAO_CLIENT_ID: "f959f8ada6c21d791ef5be7f4257e19e"
-    KAKAO_CLIENT_SECRET: "xINFPROGnkZ9OoUX5UNUrkZcAFNzP7me"
 
     # Email URL host (www 필수 - SSL 인증서가 www 도메인에만 적용됨)
     APP_HOST: www.routinefinders.life
