@@ -198,7 +198,8 @@ GEM
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
-    minitest (5.27.0)
+    minitest (6.0.1)
+      prism (~> 1.5)
     msgpack (1.8.0)
     multi_xml (0.6.0)
     net-http (0.9.1)
@@ -480,7 +481,7 @@ DEPENDENCIES
   jbuilder
   kamal (~> 2.0)
   letter_opener (~> 1.10)
-  minitest (~> 5.25)
+  minitest (~> 6.0)
   omniauth
   omniauth-google-oauth2
   omniauth-kakao-oauth2
