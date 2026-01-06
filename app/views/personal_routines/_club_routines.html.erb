@@ -116,18 +116,36 @@
       <!-- New Grid-based Mobile Navigation -->
       <aside class="w-full lg:w-72 shrink-0">
         <div class="sticky top-[72px] lg:top-12 z-40 space-y-6 lg:space-y-8">
-          <!-- VIP & Stats (Hidden on Mobile) -->
-          <div class="hidden lg:flex px-6 py-4 bg-slate-900 rounded-[32px] text-white shadow-xl shadow-indigo-100 items-center gap-4 group cursor-pointer" onclick="toggleVipCard()">
-             <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl">🔱</div>
-             <div>
-               <p class="text-[9px] font-black text-indigo-200 uppercase tracking-widest">Rufa VIP</p>
-               <p class="text-sm font-black"><%= current_user.nickname %></p>
+          <!-- VIP & Identity Card (Visible on all devices, premium dark style) -->
+          <div class="flex px-5 py-4 lg:px-6 lg:py-4 bg-slate-900 rounded-3xl lg:rounded-[32px] text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
+             <div class="flex items-center gap-3 lg:gap-4 lg:min-w-0">
+               <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
+               <div class="min-w-0">
+                 <p class="text-[8px] lg:text-[9px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">Growth Identity</p>
+                 <p class="text-[13px] lg:text-sm font-black truncate"><%= current_user.routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+               </div>
              </div>
+             <svg class="w-4 h-4 text-indigo-300/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
           </div>
 
-          <!-- Tab Navigation: Grid on Mobile, Vertical on Desktop -->
+          <!-- Quick Links (Consolidated for all devices) -->
+          <div class="grid grid-cols-2 lg:grid-cols-1 gap-2">
+            <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-3 lg:p-4 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group shadow-sm" do %>
+                <span class="text-[10px] lg:text-xs font-black">성실함 리포트</span>
+                <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
+            <% end %>
+
+            <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-3 lg:p-4 bg-[#FEE500] text-[#3c1e1e] rounded-2xl hover:brightness-95 transition-all group shadow-sm" do %>
+                <div class="flex items-center gap-2">
+                  <svg class="w-3 h-3 lg:w-4 lg:h-4 text-[#3c1e1e]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
+                  <span class="text-[10px] lg:text-xs font-black">클럽 단톡방</span>
+                </div>
+                <svg class="w-3 h-3 lg:w-4 lg:h-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          </div>
+
           <!-- Tab Navigation: Horizontal Scroll on Mobile, Vertical on Desktop -->
-          <nav class="flex overflow-x-auto lg:flex-col gap-2 p-1 lg:p-0 no-scrollbar pb-2 lg:pb-0" style="-ms-overflow-style: none; scrollbar-width: none;">
+          <nav class="flex flex-nowrap overflow-x-auto lg:flex-col gap-2 p-1 lg:p-0 no-scrollbar pb-3 lg:pb-0 snap-x snap-mandatory" style="-ms-overflow-style: none; scrollbar-width: none;">
             <style>
               .no-scrollbar::-webkit-scrollbar {
                 display: none;
@@ -135,332 +153,190 @@
             </style>
             <% [
               ["dashboard", "🏠", "대시보드"],
-              ["architecture", "📐", "목표 설계"],
-              ["ranking", "🏆", "랭킹"],
               ["synergy", "✨", "시너지"],
-              ["insight", "💎", "인사이트"]
+              ["members", "👥", "멤버 루틴"],
+              ["ranking", "🏆", "랭킹"],
+              ["architecture", "📐", "목표 설계"]
             ].each do |id, icon, label| %>
               <button onclick="switchRufaTab('<%= id %>')" id="nav-<%= id %>" 
-                      class="rufa-nav-btn flex-shrink-0 flex flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 px-4 lg:px-8 py-2.5 lg:py-5 rounded-full lg:rounded-[28px] font-black transition-all border border-slate-100 lg:border-none shadow-sm lg:shadow-none hover:bg-indigo-50 hover:text-indigo-600 <%= id == 'dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white lg:bg-transparent text-slate-400' %>">
+                      class="rufa-nav-btn flex-shrink-0 flex flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 px-5 lg:px-8 py-2.5 lg:py-5 rounded-full lg:rounded-[28px] font-black transition-all border border-slate-100 lg:border-none shadow-sm lg:shadow-none hover:opacity-80 snap-start <%= id == 'dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white lg:bg-transparent text-slate-400' %>">
                 <span class="text-base lg:text-xl"><%= icon %></span>
                 <span class="text-xs lg:text-sm whitespace-nowrap"><%= label %></span>
               </button>
             <% end %>
           </nav>
-
-          <!-- Quick Stats Sidebar (Hidden on Mobile) -->
-          <div class="hidden lg:block bg-white rounded-[32px] p-8 border border-slate-100 space-y-6 shadow-sm">
-            <div class="space-y-1">
-              <p class="text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest">Growth Identity</p>
-              <h4 class="text-sm lg:text-base font-black text-slate-900"><%= current_user.routine_club_members.active.first&.identity_title %></h4>
-            </div>
-            
-            <div class="grid grid-cols-1 gap-3">
-              <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-4 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group" do %>
-                 <span class="text-xs font-black">월간 성실함 리포트</span>
-                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7m-7 7H3"/></svg>
-              <% end %>
-
-              <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-4 bg-[#FEE500] text-[#3c1e1e] rounded-2xl hover:brightness-95 transition-all group shadow-sm" do %>
-                 <div class="flex items-center gap-3">
-                   <div class="flex items-center justify-center p-1 bg-[#3c1e1e]/5 rounded-lg">
-                     <svg class="w-4 h-4 text-[#3c1e1e]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
-                   </div>
-                   <span class="text-xs font-black">루파 클럽 단톡방</span>
-                 </div>
-                 <svg class="w-4 h-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-              <% end %>
-            </div>
-          </div>
         </div>
       </aside>
 
       <!-- Sub-tab Content Area -->
       <main class="flex-1 space-y-12">
         
-        <!-- 1. Dashboard Tab -->
-        <div id="tab-dashboard" class="rufa-content-tab space-y-12">
+        <!-- 1. Dashboard Tab (Redesigned: Master Board Version) -->
+        <div id="tab-dashboard" class="rufa-content-tab space-y-4 lg:space-y-12">
           
-          <!-- Today's Check-in (Prominent on dashboard) -->
-          <div class="bg-white rounded-[32px] lg:rounded-[48px] p-6 lg:p-12 border border-slate-100 shadow-sm space-y-8 lg:space-y-10">
+          <!-- [NEW] Master Stats Header: All key metrics in one premium card -->
+          <div class="bg-slate-900 rounded-[32px] lg:rounded-[48px] p-6 lg:p-12 text-white border border-white/5 shadow-2xl relative overflow-hidden group">
+             <div class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-600/20 rounded-full blur-[80px]"></div>
+             
+             <div class="relative z-10 space-y-6 lg:space-y-10">
+                <!-- Top: Identity & Main Achievement -->
+                <div class="flex items-center justify-between gap-4">
+                   <div class="space-y-1.5 min-w-0">
+                      <p class="text-[8px] lg:text-[10px] font-black text-indigo-300 uppercase tracking-[0.3em]">Current Status</p>
+                      <h3 class="text-lg lg:text-3xl font-black truncate tracking-tight"><%= current_user.nickname %>님의 정진</h3>
+                      <p class="text-[10px] lg:text-base font-bold text-slate-400 truncate"><%= current_user.routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+                   </div>
+                   <div class="relative shrink-0">
+                      <svg class="w-16 h-16 lg:w-32 lg:h-32 transform -rotate-90">
+                        <circle cx="<%= 32 %>" cy="<%= 32 %>" r="<%= 28 %>" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6" class="lg:cx-64 lg:cy-64 lg:r-56 lg:stroke-12" />
+                        <circle cx="<%= 32 %>" cy="<%= 32 %>" r="<%= 28 %>" fill="none" stroke="#fbbf24" stroke-width="6" stroke-dasharray="<%= 2 * Math::PI * 28 %>" stroke-dashoffset="<%= (1 - @current_achievement_rate.to_f/100) * 2 * Math::PI * 28 %>" stroke-linecap="round" class="lg:cx-64 lg:cy-64 lg:r-56 lg:stroke-12 transition-all duration-1000" />
+                      </svg>
+                      <div class="absolute inset-0 flex flex-col items-center justify-center">
+                         <span class="text-xs lg:text-2xl font-black text-amber-400"><%= @current_achievement_rate.to_i %>%</span>
+                         <span class="text-[6px] lg:text-[10px] font-bold text-slate-400 uppercase">Success</span>
+                      </div>
+                   </div>
+                </div>
+
+                <!-- Bottom Stats Bar: 3-Column horizontal -->
+                <div class="grid grid-cols-3 gap-2 lg:gap-12 pt-6 border-t border-white/10">
+                   <div class="text-center space-y-1">
+                      <p class="text-[7px] lg:text-[10px] font-black text-slate-500 uppercase">Log Rate</p>
+                      <p class="text-sm lg:text-2xl font-black text-white"><%= @current_log_rate.to_i %>%</p>
+                   </div>
+                   <div class="text-center space-y-1 border-x border-white/5">
+                      <p class="text-[7px] lg:text-[10px] font-black text-slate-500 uppercase">Total</p>
+                      <p class="text-sm lg:text-2xl font-black text-emerald-400"><%= @total_completions %></p>
+                   </div>
+                   <div class="text-center space-y-1">
+                      <p class="text-[7px] lg:text-[10px] font-black text-slate-500 uppercase">Member Days</p>
+                      <p class="text-sm lg:text-2xl font-black text-purple-400"><%= @member_days %>d</p>
+                   </div>
+                </div>
+             </div>
+          </div>
+
+          <!-- [NEW] Slim Routine List: High density checklist -->
+          <div class="bg-white rounded-[32px] lg:rounded-[48px] p-5 lg:p-12 border border-slate-100 shadow-sm space-y-4 lg:space-y-10">
              <div class="flex items-center justify-between">
-               <h3 class="text-lg lg:text-2xl font-black text-slate-900 tracking-tight">오늘의 루틴 체크인</h3>
-               <span class="text-[9px] lg:text-[10px] font-black text-indigo-500 uppercase tracking-widest"><%= Date.current.strftime("%A, %B %d") %></span>
+               <h3 class="text-base lg:text-2xl font-black text-slate-900 tracking-tight">오늘의 체크인</h3>
+               <span class="px-2.5 py-1 bg-slate-50 rounded-lg text-[9px] lg:text-xs font-black text-slate-400 tracking-widest uppercase"><%= Date.current.strftime("%m.%d %a") %></span>
              </div>
              
-             <% todays_routines = @personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } %>
-             <div class="grid <%= todays_routines.size >= 2 ? 'grid-cols-2' : 'grid-cols-1' %> md:grid-cols-2 gap-3 lg:gap-4">
+             <div class="space-y-2 lg:space-y-4">
+               <% todays_routines = @personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } %>
                <% if todays_routines.any? %>
                  <% todays_routines.each do |routine| %>
-                   <div id="routine_<%= routine.id %>_club" class="w-full">
+                   <div id="routine_<%= routine.id %>_club">
                      <%= button_to toggle_personal_routine_path(routine), 
                                    method: :post, 
-                                   class: "flex flex-col items-center justify-center p-5 lg:p-8 rounded-[28px] lg:rounded-3xl border-2 transition-all hover:scale-[1.02] w-full #{routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}",
+                                   class: "flex items-center gap-3 lg:gap-6 p-3 lg:p-6 rounded-2xl lg:rounded-3xl border-2 transition-all w-full #{routine.completed_today? ? 'bg-indigo-50 border-indigo-100' : 'bg-white border-slate-50 hover:border-indigo-100 group'}",
                                    data: { turbo_stream: true } do %>
                         
-                        <div class="text-center space-y-2 lg:space-y-4 mb-4 min-w-0 w-full">
-                          <span class="text-2xl lg:text-4xl block transform group-hover:scale-125 transition-transform"><%= routine.icon %></span>
-                          <div class="min-w-0">
-                            <p class="text-[12px] lg:text-[15px] font-black text-slate-900 truncate <%= 'line-through text-slate-400' if routine.completed_today? %>"><%= routine.title %></p>
-                            <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 truncate uppercase tracking-widest mt-0.5"><%= routine.category %></p>
-                          </div>
+                        <span class="text-xl lg:text-4xl shrink-0"><%= routine.icon %></span>
+                        <div class="flex-1 min-w-0 text-left">
+                           <p class="text-[12px] lg:text-lg font-black text-slate-900 truncate <%= 'line-through text-slate-300' if routine.completed_today? %>"><%= routine.title %></p>
+                           <p class="text-[8px] lg:text-[11px] font-bold text-slate-400 truncate uppercase tracking-widest"><%= routine.category %></p>
                         </div>
 
                         <% if routine.completed_today? %>
-                          <div class="w-8 h-8 lg:w-12 lg:h-12 bg-indigo-600 rounded-xl lg:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100">
-                            <svg class="w-5 h-5 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                          <div class="w-6 h-6 lg:w-10 lg:h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white shrink-0">
+                            <svg class="w-4 h-4 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                           </div>
                         <% else %>
-                          <div class="w-8 h-8 lg:w-12 lg:h-12 bg-white rounded-xl lg:rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all shadow-sm">
-                            <svg class="w-5 h-5 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                          <div class="w-6 h-6 lg:w-10 lg:h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-200 border border-slate-100 shrink-0 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all">
+                            <svg class="w-4 h-4 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                           </div>
                         <% end %>
                      <% end %>
                    </div>
                  <% end %>
                <% else %>
-                 <div class="col-span-full py-16 text-center bg-slate-50 rounded-[40px] border border-slate-200">
-                    <p class="text-base lg:text-xl font-black text-slate-400 mb-2">오늘 설정된 전용 루틴이 없습니다.</p>
-                    <%= link_to "루틴 설정하러 가기", personal_routines_path(tab: "free", focus_new: true), class: "text-xs font-black text-indigo-600 hover:underline" %>
+                 <div class="py-10 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                    <p class="text-sm font-black text-slate-300">오늘 설정된 루틴이 없습니다.</p>
                  </div>
                <% end %>
              </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-             <!-- Status Card: Log Rate -->
-             <div class="bg-white rounded-[48px] p-10 border border-slate-100 shadow-sm space-y-8 relative overflow-hidden group">
-               <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
-               <div class="relative z-10 flex justify-between items-start">
-                 <div class="space-y-1">
-                   <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Log Rate</p>
-                   <h3 class="text-3xl font-black text-slate-900">당신의 성실함</h3>
-                 </div>
-                 <div class="text-right">
-                   <p class="text-4xl font-black text-indigo-600 tracking-tighter"><%= @current_log_rate.to_i %><span class="text-lg text-slate-300 ml-1">%</span></p>
-                 </div>
-               </div>
-               <div class="relative z-10 w-full h-8 bg-slate-50 rounded-2xl border border-slate-100 p-1.5 overflow-hidden">
-                 <div class="h-full bg-indigo-600 rounded-xl transition-all duration-1000 shadow-lg shadow-indigo-100" style="width: <%= @current_log_rate %>%"></div>
-               </div>
-               <p class="text-[11px] font-bold text-slate-400 px-1">최근 30일간의 루틴 기록률입니다. 70% 이상 유지를 권장합니다.</p>
-             </div>
-
-             <!-- Status Card: Achievement -->
-             <div class="bg-slate-900 rounded-[48px] p-10 shadow-2xl space-y-8 relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-600/20 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
-                <div class="relative z-10 flex justify-between items-start">
-                  <div class="space-y-1 text-white">
-                    <p class="text-[10px] font-black text-indigo-300 uppercase tracking-[0.2em]">Achievement</p>
-                    <h3 class="text-3xl font-black">실천의 결과</h3>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-4xl font-black text-amber-400 tracking-tighter"><%= @current_achievement_rate.to_i %><span class="text-lg text-indigo-300/50 ml-1">%</span></p>
-                  </div>
+          <!-- Bottom Bento Grid: Benchmark & Radar -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <!-- Compact Benchmark -->
+             <div class="bg-indigo-50/50 rounded-[32px] p-5 lg:p-10 border border-indigo-100 space-y-4">
+                <div class="flex justify-between items-center">
+                   <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Benchmark</p>
+                   <p class="text-[11px] font-bold text-slate-400 truncate">Top Avg vs Mine</p>
                 </div>
-                <div class="relative z-10 w-full h-8 bg-white/5 rounded-2xl border border-white/10 p-1.5 overflow-hidden">
-                  <div class="h-full bg-amber-400 rounded-xl transition-all duration-1000 shadow-lg shadow-amber-900/40" style="width: <%= @current_achievement_rate %>%"></div>
-                </div>
-                <!-- Sparkline Trend -->
-                <div class="pt-4 flex items-center justify-between border-t border-white/5">
-                   <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">7-Day Trend</p>
-                   <svg viewBox="0 0 140 30" class="w-24 h-6">
-                     <% 
-                       pts = @achievement_trend.each_with_index.map { |v, i| "#{i * 20 + 10},#{30 - (v * 0.25)}" }.join(" ")
-                     %>
-                     <polyline points="<%= pts %>" fill="none" stroke="#fbbf24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                   </svg>
+                <div class="flex items-center gap-4">
+                   <div class="flex-1 h-3 bg-white rounded-full p-0.5 border border-indigo-100 overflow-hidden relative">
+                      <div class="absolute top-0 bottom-0 w-1 bg-slate-300 z-10" style="left: <%= @top_avg_score %>%"></div>
+                      <div class="h-full bg-indigo-600 rounded-full" style="width: <%= @my_score %>%"></div>
+                   </div>
+                   <span class="text-sm font-black text-indigo-600"><%= @my_score %>p</span>
                 </div>
              </div>
 
-             <!-- Status Card: Total Completions (Cumulative) -->
-             <div class="bg-emerald-50 rounded-[48px] p-10 shadow-sm space-y-8 relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-100 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
-                <div class="relative z-10 flex justify-between items-start">
-                  <div class="space-y-1">
-                    <p class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Total Completions</p>
-                    <h3 class="text-3xl font-black text-slate-900">누적 달성</h3>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-4xl font-black text-emerald-600 tracking-tighter"><%= @total_completions %><span class="text-lg text-slate-300 ml-1">회</span></p>
-                  </div>
+             <!-- Mini Radar/Chart View -->
+             <div class="bg-white rounded-[32px] p-5 lg:p-10 border border-slate-100 space-y-4">
+                <div class="flex justify-between items-center">
+                   <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Growth Radar</p>
+                   <p class="text-[11px] font-bold text-indigo-500 uppercase"><%= @category_stats.max_by{|k,v| v}&.first %></p>
                 </div>
-                <p class="text-[11px] font-bold text-slate-400 px-1">루파 클럽 가입 이후 완료한 총 루틴 횟수입니다.</p>
-             </div>
-
-             <!-- Status Card: Member Duration (Cumulative) -->
-             <div class="bg-purple-50 rounded-[48px] p-10 shadow-sm space-y-8 relative overflow-hidden group">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-100 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
-                <div class="relative z-10 flex justify-between items-start">
-                  <div class="space-y-1">
-                    <p class="text-[10px] font-black text-purple-600 uppercase tracking-[0.2em]">Member Days</p>
-                    <h3 class="text-3xl font-black text-slate-900">함께한 시간</h3>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-4xl font-black text-purple-600 tracking-tighter"><%= @member_days %><span class="text-lg text-slate-300 ml-1">일</span></p>
-                  </div>
-                </div>
-                <p class="text-[11px] font-bold text-slate-400 px-1">루파 클럽 멤버로 활동한 총 일수입니다.</p>
-             </div>
-
-             <!-- Status Card: Ranking Benchmark (Compact One-liner for Mobile) -->
-             <div class="col-span-1 md:col-span-2 bg-indigo-50/50 rounded-[32px] lg:rounded-[48px] p-6 lg:p-10 border border-indigo-100 shadow-sm space-y-6 lg:space-y-8 relative overflow-hidden group">
-                <div class="flex flex-row items-center justify-between gap-4">
-                  <div class="space-y-0.5 min-w-0">
-                    <p class="text-[8px] lg:text-[10px] font-black text-indigo-400 uppercase tracking-widest truncate">Global Benchmark</p>
-                    <h3 class="text-xs lg:text-2xl font-black text-slate-900 truncate tracking-tight">당신은 상위권에 얼마나 가까운가요?</h3>
-                  </div>
-                  <div class="flex items-center gap-3 lg:gap-8 shrink-0">
-                    <div class="text-center">
-                      <p class="text-[8px] lg:text-[10px] font-bold text-slate-400 uppercase mb-0.5">Top 10</p>
-                      <p class="text-xs lg:text-2xl font-black text-slate-900"><%= @top_avg_score %></p>
-                    </div>
-                    <div class="w-px h-6 lg:h-8 bg-slate-200"></div>
-                    <div class="text-center">
-                      <p class="text-[8px] lg:text-[10px] font-bold text-indigo-400 uppercase mb-0.5">Mine</p>
-                      <p class="text-xs lg:text-2xl font-black text-indigo-600"><%= @my_score %></p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="space-y-4">
-                  <div class="relative w-full h-4 bg-white rounded-full overflow-hidden border border-indigo-100 p-0.5">
-                    <!-- Top Avg Indicator -->
-                    <div class="absolute top-0 bottom-0 w-1 bg-slate-300 z-10" style="left: <%= @top_avg_score %>%"></div>
-                    <!-- My Progress -->
-                    <div class="h-full bg-indigo-600 rounded-full transition-all duration-1000 shadow-lg" style="width: <%= @my_score %>%"></div>
-                  </div>
-                  <div class="flex justify-between px-1">
-                    <p class="text-[10px] font-bold text-slate-400">0 PTS</p>
-                    <p class="text-[10px] font-black text-indigo-600">성장 진행 중</p>
-                    <p class="text-[10px] font-bold text-slate-400">100 PTS</p>
-                  </div>
+                <div class="flex gap-4">
+                   <% ["HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY"].each do |cat| %>
+                     <div class="flex-1 h-12 bg-slate-50 rounded-lg relative overflow-hidden">
+                        <% max_val = @category_stats.values.max.to_f; max_val = 1.0 if max_val == 0 %>
+                        <div class="absolute bottom-0 left-0 right-0 <%= case cat when 'HEALTH' then 'bg-rose-400' when 'LIFE' then 'bg-emerald-400' when 'MIND' then 'bg-indigo-400' when 'STUDY' then 'bg-purple-400' when 'HOBBY' then 'bg-orange-400' else 'bg-amber-400' end %> opacity-60 transition-all duration-1000" style="height: <%= (@category_stats[cat].to_f / max_val * 100).to_i %>%"></div>
+                     </div>
+                   <% end %>
                 </div>
              </div>
-          </div>
-
-          <!-- Growth Radar: Visualizing Category Distribution (Improved Mobile) -->
-          <div class="bg-white rounded-[40px] lg:rounded-[48px] p-6 lg:p-12 border border-slate-100 shadow-sm space-y-8 lg:space-y-12">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div class="space-y-1">
-                <h3 class="text-xl lg:text-2xl font-black text-slate-900 tracking-tight">성장 레이더</h3>
-                <p class="text-[10px] lg:text-xs font-bold text-slate-400">실천 밸런스를 확인해보세요</p>
-              </div>
-              <div class="flex flex-wrap gap-3">
-                <% ["HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY"].take(3).each do |cat| %>
-                  <div class="flex items-center gap-1.5">
-                    <div class="w-1.5 h-1.5 rounded-full <%= case cat when 'HEALTH' then 'bg-rose-500' when 'LIFE' then 'bg-emerald-500' when 'MIND' then 'bg-indigo-500' when 'STUDY' then 'bg-purple-500' when 'HOBBY' then 'bg-orange-500' else 'bg-amber-500' end %>"></div>
-                    <span class="text-[8px] font-black text-slate-400 tracking-widest uppercase"><%= cat %></span>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-
-            <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-              <div class="w-full max-w-[260px] lg:max-w-none lg:w-80 aspect-square relative flex items-center justify-center mx-auto lg:mx-0">
-                <svg viewBox="0 0 200 200" class="w-full h-full transform -rotate-18">
-                  <!-- Radar background circles -->
-                  <% [40, 70, 100].each do |r| %>
-                    <circle cx="100" cy="100" r="<%= r %>" fill="none" stroke="#f1f5f9" stroke-width="1" />
-                  <% end %>
-                  <!-- Radar axes -->
-                  <% 5.times do |i| %>
-                    <% angle = (i * 72 * Math::PI / 180) %>
-                    <line x1="100" y1="100" x2="<%= 100 + 100 * Math.sin(angle) %>" y2="<%= 100 - 100 * Math.cos(angle) %>" stroke="#f1f5f9" stroke-width="1" />
-                  <% end %>
-                  
-                  <!-- Growth Shape -->
-                  <% 
-                    pts = []
-                    cats = ["HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY"]
-                    max_val = @category_stats.values.max.to_f
-                    max_val = 1.0 if max_val == 0
-                    cats.each_with_index do |cat, i|
-                      val = @category_stats[cat]
-                      scaled = (val.to_f / max_val) * 100
-                      angle = (i * 72 * Math::PI / 180)
-                      pts << "#{100 + scaled * Math.sin(angle)},#{100 - scaled * Math.cos(angle)}"
-                    end
-                  %>
-                  <polygon points="<%= pts.join(' ') %>" fill="rgba(79, 70, 229, 0.15)" stroke="#4f46e5" stroke-width="3" stroke-linejoin="round" />
-                  <% pts.each do |p| %>
-                    <circle cx="<%= p.split(',').first %>" cy="<%= p.split(',').last %>" r="4" fill="#4f46e5" />
-                  <% end %>
-                </svg>
-              </div>
-
-              <div class="w-full lg:flex-1 space-y-6 lg:space-y-8">
-                <h4 class="text-lg lg:text-xl font-black text-slate-900 leading-tight text-center lg:text-left">
-                  <%= case @category_stats.max_by{|k,v| v}&.first
-                      when "HEALTH" then "건강으로 탄탄해지고 있습니다."
-                      when "LIFE" then "생활 전반의 균형이 좋습니다."
-                      when "MIND" then "강력한 마인드 파인더입니다."
-                      when "STUDY" then "학구파적인 면모가 보입니다."
-                      when "MONEY" then "경제적 자유를 향해 전진합니다."
-                      else "꿈에 가깝게 전진하고 있습니다."
-                      end %>
-                </h4>
-                <div class="grid grid-cols-2 gap-4 lg:gap-6">
-                  <% ["HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY"].each do |cat| %>
-                    <div class="space-y-1.5 lg:space-y-2">
-                       <div class="flex justify-between items-baseline">
-                         <span class="text-[9px] font-black text-slate-400 tracking-widest uppercase"><%= cat %></span>
-                         <span class="text-xs font-black text-slate-900"><%= @category_stats[cat] %>회</span>
-                       </div>
-                       <div class="h-1.5 bg-slate-50 rounded-full overflow-hidden">
-                         <div class="h-full <%= case cat when 'HEALTH' then 'bg-rose-400' when 'LIFE' then 'bg-emerald-400' when 'MIND' then 'bg-indigo-400' when 'STUDY' then 'bg-purple-400' when 'HOBBY' then 'bg-orange-400' else 'bg-amber-400' end %>" style="width: <%= (@category_stats[cat].to_f / max_val * 100).to_i %>%"></div>
-                       </div>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         <!-- 2. Architecture Tab (Goals + Routines) -->
         <div id="tab-architecture" class="rufa-content-tab hidden space-y-12">
            <!-- Routine Management Section -->
-           <div class="bg-white rounded-[48px] p-12 border border-slate-100 shadow-sm space-y-10">
-             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-               <div class="space-y-1">
-                 <h3 class="text-2xl font-black text-slate-900 tracking-tight">나의 루틴 설계</h3>
-                 <p class="text-sm text-slate-500 font-medium">목표를 이루기 위한 구체적인 행동 계획</p>
+           <div class="bg-white rounded-[32px] lg:rounded-[48px] p-6 lg:p-12 border border-slate-100 shadow-sm space-y-6 lg:space-y-10">
+             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 lg:gap-6">
+               <div class="space-y-0.5 lg:space-y-1">
+                 <h3 class="text-lg lg:text-2xl font-black text-slate-900 tracking-tight">나의 루틴 설계</h3>
+                 <p class="text-xs lg:text-sm text-slate-500 font-medium">목표를 이루기 위한 구체적인 행동 계획</p>
                </div>
-               <div class="flex items-center gap-3">
-                 <span class="px-4 py-2 bg-slate-100 text-slate-600 rounded-full text-xs font-black"><%= @personal_routines.count %> 개 활성화</span>
-                 <%= link_to personal_routines_path(tab: "free", focus_new: true), class: "px-6 py-3 bg-indigo-50 text-indigo-600 rounded-2xl text-xs font-black hover:bg-indigo-600 hover:text-white transition-all" do %>
-                   무료 루틴 페이지에서 관리
+               <div class="flex items-center gap-2 lg:gap-3">
+                 <span class="px-3 py-1.5 lg:px-4 lg:py-2 bg-slate-100 text-slate-600 rounded-full text-[10px] lg:text-xs font-black"><%= @personal_routines.count %> 개 활성화</span>
+                 <%= link_to personal_routines_path(tab: "free", focus_new: true), class: "px-4 py-2 lg:px-6 lg:py-3 bg-indigo-50 text-indigo-600 rounded-xl lg:rounded-2xl text-[10px] lg:text-xs font-black hover:bg-indigo-600 hover:text-white transition-all shadow-sm" do %>
+                   루틴 페이지 관리
                  <% end %>
                </div>
              </div>
 
              <% if @personal_routines.any? %>
-               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-6">
                  <% @personal_routines.each do |routine| %>
-                   <div class="group bg-slate-50 p-6 rounded-[32px] border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all space-y-4">
+                   <div class="group bg-slate-50 p-4 lg:p-6 rounded-3xl lg:rounded-[32px] border border-slate-100 hover:border-indigo-200 transition-all space-y-3 lg:space-y-4">
                      <div class="flex items-center justify-between">
-                       <div class="flex items-center gap-4">
-                         <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform">
+                       <div class="flex items-center gap-3 lg:gap-4">
+                         <div class="w-10 h-10 lg:w-14 lg:h-14 bg-white rounded-xl lg:rounded-2xl flex items-center justify-center text-xl lg:text-3xl shadow-sm group-hover:scale-110 transition-transform">
                            <%= routine.icon %>
                          </div>
-                         <div>
-                           <h4 class="text-sm font-black text-slate-900"><%= routine.title %></h4>
-                           <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><%= routine.category %></p>
+                         <div class="min-w-0">
+                           <h4 class="text-[13px] lg:text-sm font-black text-slate-900 truncate"><%= routine.title %></h4>
+                           <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate"><%= routine.category %></p>
                          </div>
                        </div>
                         <div id="routine_<%= routine.id %>_architecture">
                           <%= button_to toggle_personal_routine_path(routine), 
                                         method: :post, 
-                                        class: "w-10 h-10 rounded-xl flex items-center justify-center transition-all #{routine.completed_today? ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white text-slate-300 hover:bg-emerald-50 hover:text-emerald-500'}",
+                                        class: "w-8 h-8 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl flex items-center justify-center transition-all #{routine.completed_today? ? 'bg-emerald-500 text-white shadow-lg' : 'bg-white text-slate-200 border border-slate-100 hover:text-emerald-500 hover:border-emerald-200'}",
                                         data: { turbo_stream: true } do %>
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                           <% end %>
                         </div>
                      </div>
-                     <div class="flex gap-1 pt-2 border-t border-slate-200">
+                     <div class="flex gap-1 pt-2 lg:pt-3 border-t border-slate-100">
                        <% [0,1,2,3,4,5,6].each do |day| %>
-                         <div class="flex-1 h-1.5 rounded-full <%= (routine.days || []).include?(day.to_s) ? 'bg-indigo-400' : 'bg-slate-200' %>"></div>
+                         <div class="flex-1 h-1 lg:h-1.5 rounded-full <%= (routine.days || []).include?(day.to_s) ? 'bg-indigo-400' : 'bg-slate-200' %>"></div>
                        <% end %>
                      </div>
                    </div>
@@ -484,37 +360,37 @@
            </div>
 
            <!-- Goal Architecture Section -->
-           <div class="bg-white rounded-[48px] p-12 lg:p-20 border border-slate-100 shadow-sm space-y-12">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+           <div class="bg-white rounded-[32px] lg:rounded-[48px] p-6 lg:p-20 border border-slate-100 shadow-sm space-y-8 lg:space-y-12">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 lg:gap-6">
               <div class="space-y-1">
-                <h3 class="text-3xl font-black text-slate-900 tracking-tight">Rufa Goal Architecture</h3>
-                <p class="text-base text-slate-500 font-medium italic">"원대한 꿈을 쪼개어 오늘의 루틴으로 만드세요."</p>
+                <h3 class="text-xl lg:text-3xl font-black text-slate-900 tracking-tight">루파 목표 입체 설계</h3>
+                <p class="text-xs lg:text-base text-slate-500 font-medium italic">"원대한 꿈을 쪼개어 오늘의 루틴으로 만드세요."</p>
               </div>
-              <div class="flex -space-x-3">
-                 <div class="w-12 h-12 bg-purple-500 rounded-2xl border-4 border-white shadow-sm flex items-center justify-center text-white font-black text-xs">L</div>
-                 <div class="w-12 h-12 bg-indigo-500 rounded-2xl border-4 border-white shadow-sm flex items-center justify-center text-white font-black text-xs">M</div>
-                 <div class="w-12 h-12 bg-emerald-500 rounded-2xl border-4 border-white shadow-sm flex items-center justify-center text-white font-black text-xs">S</div>
+              <div class="flex -space-x-2 lg:-space-x-3">
+                 <div class="w-8 h-8 lg:w-12 lg:h-12 bg-purple-500 rounded-xl lg:rounded-2xl border-2 lg:border-4 border-white shadow-sm flex items-center justify-center text-white font-black text-[10px] lg:text-xs">L</div>
+                 <div class="w-8 h-8 lg:w-12 lg:h-12 bg-indigo-500 rounded-xl lg:rounded-2xl border-2 lg:border-4 border-white shadow-sm flex items-center justify-center text-white font-black text-[10px] lg:text-xs">M</div>
+                 <div class="w-8 h-8 lg:w-12 lg:h-12 bg-emerald-500 rounded-xl lg:rounded-2xl border-2 lg:border-4 border-white shadow-sm flex items-center justify-center text-white font-black text-[10px] lg:text-xs">S</div>
               </div>
             </div>
 
-            <%= form_with url: update_goals_personal_routines_path, method: :post, class: "space-y-10" do %>
-              <div class="space-y-12">
-                <% [[:long_term, "Long Term (1년~)", "bg-purple-500", @long_term_goal, "내년에 나는 어떤 사람이 되어있을까요?"], 
-                    [:mid_term, "Mid Term (3~6개월)", "bg-indigo-500", @mid_term_goal, "어떤 중간 성취를 통해 증명하시겠습니까?"], 
-                    [:short_term, "Short Term (1개월)", "bg-emerald-500", @short_term_goal, "이번 달 가장 집중해야 할 한 가지는?"]].each do |name, label, color, val, ph| %>
-                  <div class="space-y-4">
-                    <div class="flex items-center gap-3">
-                      <div class="w-6 h-6 rounded-lg <%= color %> flex items-center justify-center text-[10px] text-white font-black"><%= label[0] %></div>
-                      <label class="text-xs font-black text-slate-900 uppercase tracking-widest"><%= label %></label>
+            <%= form_with url: update_goals_personal_routines_path, method: :post, class: "space-y-6 lg:space-y-10" do %>
+              <div class="space-y-6 lg:space-y-12">
+                <% [[:long_term, "장기 목표 (1년~)", "bg-purple-500", @long_term_goal, "내년에 나는 어떤 사람이 되어있을까요?"], 
+                    [:mid_term, "중간 목표 (3~6개월)", "bg-indigo-500", @mid_term_goal, "어떤 중간 성취를 통해 증명하시겠습니까?"], 
+                    [:short_term, "단기 목표 (1개월)", "bg-emerald-500", @short_term_goal, "이번 달 가장 집중해야 할 한 가지는?"]].each do |name, label, color, val, ph| %>
+                  <div class="space-y-2 lg:space-y-4">
+                    <div class="flex items-center gap-2 lg:gap-3">
+                      <div class="w-5 h-5 lg:w-6 lg:h-6 rounded lg:rounded-lg <%= color %> flex items-center justify-center text-[9px] lg:text-[10px] text-white font-black"><%= label[0] %></div>
+                      <label class="text-[10px] lg:text-xs font-black text-slate-900 uppercase tracking-widest"><%= label %></label>
                     </div>
-                    <input type="text" name="<%= name %>" value="<%= val %>" placeholder="<%= ph %>" class="w-full px-10 py-8 bg-slate-50 border-none rounded-[32px] font-black text-2xl text-slate-700 placeholder-slate-200 focus:ring-8 focus:bg-white ring-indigo-50 transition-all">
+                    <input type="text" name="<%= name %>" value="<%= val %>" placeholder="<%= ph %>" class="w-full px-5 py-4 lg:px-10 lg:py-8 bg-slate-50 border-none rounded-2xl lg:rounded-[32px] font-black text-base lg:text-2xl text-slate-700 placeholder-slate-300 focus:ring-4 lg:focus:ring-8 focus:bg-white ring-indigo-50 transition-all shadow-inner">
                   </div>
                 <% end %>
               </div>
-              <div class="pt-10">
-                <button type="submit" class="w-full py-8 bg-slate-900 text-white rounded-[32px] font-black text-xl hover:bg-indigo-600 transition-all shadow-2xl flex items-center justify-center gap-4 group">
+              <div class="pt-4 lg:pt-10">
+                <button type="submit" class="w-full py-5 lg:py-8 bg-slate-900 text-white rounded-2xl lg:rounded-[32px] font-black text-base lg:text-xl hover:bg-indigo-600 transition-all shadow-xl flex items-center justify-center gap-3 lg:gap-4 group">
                   정체성 업데이트하기
-                  <svg class="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                  <svg class="w-5 h-5 lg:w-6 lg:h-6 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                 </button>
               </div>
             <% end %>
@@ -523,240 +399,225 @@
 
         <!-- 3. Ranking Tab (Leaderboard) -->
         <div id="tab-ranking" class="rufa-content-tab hidden space-y-12">
-           <div class="bg-white rounded-[48px] p-12 border border-slate-100 shadow-sm space-y-12">
+            <div class="bg-white rounded-[32px] lg:rounded-[48px] p-6 lg:p-12 border border-slate-100 shadow-sm space-y-8 lg:space-y-12">
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div class="space-y-1">
-                  <div class="flex items-center gap-3">
-                    <h3 class="text-3xl font-black text-slate-900 tracking-tight">루파 클럽 멤버 랭킹</h3>
-                    <span id="ranking-period-badge" class="px-4 py-2 bg-indigo-100 text-indigo-600 rounded-full text-xs font-black uppercase tracking-wider"><%= Date.current.strftime("%B %Y") %> 기준</span>
+                  <div class="flex flex-wrap items-center gap-2 lg:gap-3">
+                    <h3 class="text-xl lg:text-3xl font-black text-slate-900 tracking-tight">루파 멤버 랭킹</h3>
+                    <span id="ranking-period-badge" class="px-3 py-1 lg:px-4 lg:py-2 bg-indigo-100 text-indigo-600 rounded-full text-[10px] lg:text-xs font-black uppercase tracking-wider"><%= Date.current.strftime("%B %Y") %> 기준</span>
                   </div>
-                  <p id="ranking-description" class="text-base text-slate-500 font-medium">성실함으로 증명하는 진짜 성장자들 · 매월 1일 초기화</p>
+                  <p id="ranking-description" class="text-xs lg:text-base text-slate-500 font-medium">성실함으로 증명하는 진짜 성장자들 · 매월 1일 초기화</p>
                 </div>
                 
                 <!-- Toggle: Monthly vs Lifetime -->
-                <div class="flex items-center gap-2 bg-slate-100 p-2 rounded-2xl">
-                  <button onclick="switchRankingMode('monthly')" id="btn-monthly-rank" class="ranking-mode-btn px-6 py-3 rounded-xl text-xs font-black transition-all bg-white text-indigo-600 shadow-sm">
+                <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl w-fit">
+                  <button onclick="switchRankingMode('monthly')" id="btn-monthly-rank" class="ranking-mode-btn px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl text-[11px] lg:text-xs font-black transition-all bg-white text-indigo-600 shadow-sm">
                     이번 달
                   </button>
-                  <button onclick="switchRankingMode('lifetime')" id="btn-lifetime-rank" class="ranking-mode-btn px-6 py-3 rounded-xl text-xs font-black transition-all text-slate-400 hover:text-slate-600">
-                    누적 전체
+                  <button onclick="switchRankingMode('lifetime')" id="btn-lifetime-rank" class="ranking-mode-btn px-4 lg:px-6 py-2.5 lg:py-3 rounded-xl text-[11px] lg:text-xs font-black transition-all text-slate-400">
+                    전체 누적
                   </button>
                 </div>
               </div>
 
-              <!-- Monthly Stats Summary -->
-              <div id="monthly-stats-summary" class="flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100">
-                   <div class="text-center">
-                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Members</p>
-                     <p class="text-2xl font-black text-slate-900"><%= @rufa_rankings.count %></p>
-                   </div>
-                   <div class="w-px h-8 bg-slate-200"></div>
-                   <div class="text-center">
-                     <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">My Rank</p>
-                     <p class="text-2xl font-black text-indigo-600">#<%= @rufa_rankings.index { |r| r[:user].id == current_user.id }.to_i + 1 %></p>
-                   </div>
-              </div>
-
-              <!-- Lifetime Stats Summary (Hidden by default) -->
-              <div id="lifetime-stats-summary" class="hidden flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100">
-                   <div class="text-center">
-                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Members</p>
-                     <p class="text-2xl font-black text-slate-900"><%= @lifetime_rankings.count %></p>
-                   </div>
-                   <div class="w-px h-8 bg-slate-200"></div>
-                   <div class="text-center">
-                     <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">My Total</p>
-                     <p class="text-2xl font-black text-emerald-600"><%= @total_completions %> 회</p>
-                   </div>
-              </div>
-            </div>
-
-              <!-- Monthly Ranking Container -->
-              <div id="monthly-ranking-container">
-                <!-- Top 3 Podium -->
-                <div class="grid grid-cols-3 gap-6 py-12">
-                  <% [1, 0, 2].each_with_index do |pos, idx| %>
-                    <% rank_data = @rufa_rankings[pos] %>
-                    <% if rank_data %>
-                      <div class="<%= idx == 1 ? 'order-1' : (idx == 0 ? 'order-2' : 'order-3') %> flex flex-col items-center gap-6 <%= idx == 1 ? 'transform -translate-y-6' : '' %>">
-                        <div class="relative">
-                          <div class="w-24 h-24 rounded-[32px] overflow-hidden border-4 <%= pos == 0 ? 'border-amber-400 shadow-2xl shadow-amber-200' : (pos == 1 ? 'border-slate-300 shadow-xl' : 'border-orange-600 shadow-lg') %>">
-                            <img src="<%= rank_data[:user].profile_image %>" class="w-full h-full object-cover" />
-                          </div>
-                          <div class="absolute -top-3 -right-3 w-12 h-12 <%= pos == 0 ? 'bg-amber-400' : (pos == 1 ? 'bg-slate-300' : 'bg-orange-600') %> rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg">
-                            <%= pos == 0 ? '🥇' : (pos == 1 ? '🥈' : '🥉') %>
-                          </div>
-                        </div>
-                        <div class="text-center space-y-2">
-                          <h4 class="text-lg font-black text-slate-900"><%= rank_data[:user].nickname %></h4>
-                          <p class="text-xs font-bold text-slate-400"><%= rank_data[:user].routine_club_members.active.first&.identity_title %></p>
-                          <div class="px-4 py-2 bg-indigo-50 rounded-full">
-                            <p class="text-sm font-black text-indigo-600"><%= rank_data[:score].to_i %> PTS</p>
-                          </div>
-                        </div>
-                      </div>
-                    <% end %>
-                  <% end %>
+              <!-- Stats Summary Cards -->
+              <div class="grid grid-cols-2 gap-3">
+                <div id="monthly-stats-summary" class="col-span-2 flex items-center justify-around bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100">
+                  <div class="text-center">
+                    <p class="text-[8px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Members</p>
+                    <p class="text-lg lg:text-2xl font-black text-slate-900"><%= @rufa_rankings.count %></p>
+                  </div>
+                  <div class="w-px h-8 bg-slate-200"></div>
+                  <div class="text-center">
+                    <p class="text-[8px] lg:text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">My Rank</p>
+                    <p class="text-lg lg:text-2xl font-black text-indigo-600">#<%= @rufa_rankings.index { |r| r[:user].id == current_user.id }.to_i + 1 %></p>
+                  </div>
                 </div>
 
-                <!-- Full Monthly Ranking List -->
-                <div class="space-y-4 pt-8 border-t border-slate-100">
-                  <% @rufa_rankings.each_with_index do |rank, index| %>
-                    <div class="group flex items-center justify-between p-6 rounded-[32px] border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all <%= rank[:user].id == current_user.id ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-white' %>">
-                       <div class="flex items-center gap-6">
-                         <div class="w-12 h-12 <%= index < 3 ? 'bg-gradient-to-br from-amber-400 to-orange-500' : 'bg-slate-100' %> rounded-2xl flex items-center justify-center">
-                           <span class="text-lg font-black <%= index < 3 ? 'text-white' : 'text-slate-400' %>">
-                             <%= index == 0 ? '🥇' : (index == 1 ? '🥈' : (index == 2 ? '🥉' : "##{index + 1}")) %>
-                           </span>
-                         </div>
-                         <div class="flex items-center gap-4">
-                           <img src="<%= rank[:user].profile_image %>" class="w-14 h-14 rounded-2xl shadow-sm border border-slate-100" />
-                           <div>
-                             <div class="flex items-center gap-2">
-                               <h4 class="text-base font-black text-slate-900"><%= rank[:user].nickname %></h4>
-                               <% if rank[:user].id == current_user.id %>
-                                 <span class="px-2 py-0.5 bg-indigo-600 text-white text-[9px] font-black rounded-full">YOU</span>
-                               <% end %>
+                <div id="lifetime-stats-summary" class="hidden col-span-2 flex items-center justify-around bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100">
+                  <div class="text-center">
+                    <p class="text-[8px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Members</p>
+                    <p class="text-lg lg:text-2xl font-black text-slate-900"><%= @lifetime_rankings.count %></p>
+                  </div>
+                  <div class="w-px h-8 bg-slate-200"></div>
+                  <div class="text-center">
+                    <p class="text-[8px] lg:text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">My Total</p>
+                    <p class="text-lg lg:text-2xl font-black text-emerald-600"><%= @total_completions %> 회</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ranking List Content -->
+              <div class="space-y-12">
+                <!-- Monthly Ranking Container -->
+                <div id="monthly-ranking-container" class="space-y-8 lg:space-y-12">
+                  <!-- Top 3 Podium (Mobile Optimized) -->
+                  <div class="grid grid-cols-3 gap-2 lg:gap-6 pt-4">
+                    <% [1, 0, 2].each_with_index do |pos, idx| %>
+                      <% rank_data = @rufa_rankings[pos] %>
+                      <% if rank_data %>
+                        <div class="<%= idx == 1 ? 'order-2 scale-110 z-10' : (idx == 0 ? 'order-1 mt-4' : 'order-3 mt-4') %> flex flex-col items-center gap-3 lg:gap-6">
+                          <div class="relative">
+                            <div class="w-16 h-16 lg:w-24 lg:h-24 rounded-2xl lg:rounded-[32px] overflow-hidden border-2 lg:border-4 <%= pos == 0 ? 'border-amber-400 shadow-xl shadow-amber-100' : (pos == 1 ? 'border-slate-300' : 'border-orange-600') %>">
+                              <img src="<%= rank_data[:user].profile_image %>" class="w-full h-full object-cover" />
+                            </div>
+                            <div class="absolute -top-2 -right-2 w-7 h-7 lg:w-12 lg:h-12 <%= pos == 0 ? 'bg-amber-400' : (pos == 1 ? 'bg-slate-300' : 'bg-orange-600') %> rounded-lg lg:rounded-2xl flex items-center justify-center text-white font-black text-xs lg:text-xl shadow-lg">
+                              <%= pos == 0 ? '🥇' : (pos == 1 ? '🥈' : '🥉') %>
+                            </div>
+                          </div>
+                          <div class="text-center min-w-0 w-full px-1">
+                            <h4 class="text-[11px] lg:text-lg font-black text-slate-900 truncate"><%= rank_data[:user].nickname %></h4>
+                            <div class="mt-1 px-2 py-0.5 lg:px-4 lg:py-2 bg-indigo-50 rounded-full inline-block">
+                              <p class="text-[9px] lg:text-sm font-black text-indigo-600"><%= rank_data[:score].to_i %>P</p>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                    <% end %>
+                  </div>
+
+                  <!-- Full Monthly List -->
+                  <div class="space-y-2 lg:space-y-4">
+                    <% @rufa_rankings.each_with_index do |rank, index| %>
+                      <div class="flex items-center justify-between p-3 lg:p-6 rounded-2xl lg:rounded-[32px] border border-slate-100 hover:border-indigo-100 transition-all <%= rank[:user].id == current_user.id ? 'bg-indigo-50 border-indigo-200' : 'bg-white' %>">
+                         <div class="flex items-center gap-3 lg:gap-6 min-w-0">
+                           <div class="w-8 h-8 lg:w-12 lg:h-12 shrink-0 <%= index < 3 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-400' %> rounded-xl flex items-center justify-center text-[10px] lg:text-lg font-black">
+                             <%= index < 3 ? ['🥇','🥈','🥉'][index] : index + 1 %>
+                           </div>
+                           <div class="flex items-center gap-3 min-w-0">
+                             <img src="<%= rank[:user].profile_image %>" class="w-10 h-10 lg:w-14 lg:h-14 rounded-xl lg:rounded-2xl shrink-0 object-cover" />
+                             <div class="min-w-0">
+                               <div class="flex items-center gap-1.5 lg:gap-2">
+                                 <h4 class="text-[13px] lg:text-base font-black text-slate-900 truncate"><%= rank[:user].nickname %></h4>
+                                 <% if rank[:user].id == current_user.id %>
+                                   <span class="px-1.5 py-0.5 bg-indigo-600 text-white text-[7px] lg:text-[9px] font-black rounded-full shrink-0">MY</span>
+                                 <% end %>
+                               </div>
+                               <p class="text-[9px] lg:text-xs font-bold text-slate-400 truncate"><%= rank[:user].routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
                              </div>
-                             <p class="text-xs font-bold text-slate-400"><%= rank[:user].routine_club_members.active.first&.identity_title || "시작하는 파인더" %></p>
                            </div>
                          </div>
-                       </div>
-                       <div class="flex items-center gap-8">
-                         <div class="text-right space-y-1">
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Score</p>
-                           <p class="text-2xl font-black text-slate-900"><%= rank[:score].to_i %></p>
-                         </div>
-                         <div class="text-right space-y-1">
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Log Rate</p>
-                           <p class="text-lg font-black <%= rank[:user].monthly_routine_log_rate >= 70 ? 'text-emerald-500' : 'text-slate-400' %>">
-                             <%= rank[:user].monthly_routine_log_rate.to_i %>%
-                           </p>
-                         </div>
-                         <div class="text-right space-y-1">
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Achievement</p>
-                           <p class="text-lg font-black <%= rank[:user].monthly_achievement_rate >= 70 ? 'text-indigo-500' : 'text-slate-400' %>">
-                             <%= rank[:user].monthly_achievement_rate.to_i %>%
-                           </p>
-                         </div>
-                       </div>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-
-              <!-- Lifetime Ranking Container (Hidden by default) -->
-              <div id="lifetime-ranking-container" class="hidden">
-                <!-- Top 3 Podium -->
-                <div class="grid grid-cols-3 gap-6 py-12">
-                  <% [1, 0, 2].each_with_index do |pos, idx| %>
-                    <% rank_data = @lifetime_rankings[pos] %>
-                    <% if rank_data %>
-                      <div class="<%= idx == 1 ? 'order-1' : (idx == 0 ? 'order-2' : 'order-3') %> flex flex-col items-center gap-6 <%= idx == 1 ? 'transform -translate-y-6' : '' %>">
-                        <div class="relative">
-                          <div class="w-24 h-24 rounded-[32px] overflow-hidden border-4 <%= pos == 0 ? 'border-emerald-400 shadow-2xl shadow-emerald-200' : (pos == 1 ? 'border-slate-300 shadow-xl' : 'border-purple-600 shadow-lg') %>">
-                            <img src="<%= rank_data[:user].profile_image %>" class="w-full h-full object-cover" />
-                          </div>
-                          <div class="absolute -top-3 -right-3 w-12 h-12 <%= pos == 0 ? 'bg-emerald-400' : (pos == 1 ? 'bg-slate-300' : 'bg-purple-600') %> rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg">
-                            <%= pos == 0 ? '👑' : (pos == 1 ? '⭐' : '💎') %>
-                          </div>
-                        </div>
-                        <div class="text-center space-y-2">
-                          <h4 class="text-lg font-black text-slate-900"><%= rank_data[:user].nickname %></h4>
-                          <p class="text-xs font-bold text-slate-400"><%= rank_data[:user].routine_club_members.active.first&.identity_title %></p>
-                          <div class="px-4 py-2 bg-emerald-50 rounded-full">
-                            <p class="text-sm font-black text-emerald-600"><%= rank_data[:score].to_i %> 회</p>
-                          </div>
-                        </div>
-                      </div>
-                    <% end %>
-                  <% end %>
-                </div>
-
-                <!-- Full Lifetime Ranking List -->
-                <div class="space-y-4 pt-8 border-t border-slate-100">
-                  <% @lifetime_rankings.each_with_index do |rank, index| %>
-                    <div class="group flex items-center justify-between p-6 rounded-[32px] border border-slate-100 hover:border-emerald-200 hover:shadow-lg transition-all <%= rank[:user].id == current_user.id ? 'bg-emerald-50 border-emerald-200 ring-4 ring-emerald-50' : 'bg-white' %>">
-                       <div class="flex items-center gap-6">
-                         <div class="w-12 h-12 <%= index < 3 ? 'bg-gradient-to-br from-emerald-400 to-teal-500' : 'bg-slate-100' %> rounded-2xl flex items-center justify-center">
-                           <span class="text-lg font-black <%= index < 3 ? 'text-white' : 'text-slate-400' %>">
-                             <%= index == 0 ? '👑' : (index == 1 ? '⭐' : (index == 2 ? '💎' : "##{index + 1}")) %>
-                           </span>
-                         </div>
-                         <div class="flex items-center gap-4">
-                           <img src="<%= rank[:user].profile_image %>" class="w-14 h-14 rounded-2xl shadow-sm border border-slate-100" />
-                           <div>
-                             <div class="flex items-center gap-2">
-                               <h4 class="text-base font-black text-slate-900"><%= rank[:user].nickname %></h4>
-                               <% if rank[:user].id == current_user.id %>
-                                 <span class="px-2 py-0.5 bg-emerald-600 text-white text-[9px] font-black rounded-full">YOU</span>
-                               <% end %>
-                             </div>
-                             <p class="text-xs font-bold text-slate-400"><%= rank[:user].routine_club_members.active.first&.identity_title || "시작하는 파인더" %></p>
+                         <div class="flex items-center gap-3 lg:gap-10 shrink-0">
+                           <div class="text-right">
+                             <p class="text-[8px] lg:text-[10px] font-black text-slate-300 uppercase tracking-widest hidden lg:block">Score</p>
+                             <p class="text-sm lg:text-2xl font-black text-slate-900 tracking-tight"><%= rank[:score].to_i %><span class="text-[10px] lg:text-sm font-bold ml-0.5">P</span></p>
+                           </div>
+                           <div class="hidden sm:block text-right">
+                             <p class="text-[8px] lg:text-[10px] font-black text-slate-300 uppercase tracking-widest">Success</p>
+                             <p class="text-sm lg:text-lg font-black text-emerald-500"><%= rank[:user].monthly_achievement_rate.to_i %>%</p>
                            </div>
                          </div>
-                       </div>
-                       <div class="flex items-center gap-8">
-                         <div class="text-right space-y-1">
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</p>
-                           <p class="text-2xl font-black text-emerald-600"><%= rank[:score].to_i %> 회</p>
-                         </div>
-                         <div class="text-right space-y-1">
-                           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Member Days</p>
-                           <p class="text-lg font-black text-purple-500">
-                             <%= rank[:user].rufa_member_days %> 일
-                           </p>
-                         </div>
-                       </div>
-                    </div>
-                  <% end %>
+                      </div>
+                    <% end %>
+                  </div>
                 </div>
-              </div>
-           </div>
-        </div>
+
+                <!-- Lifetime Ranking Container -->
+                <div id="lifetime-ranking-container" class="hidden space-y-8 lg:space-y-12">
+                  <!-- Top 3 Podium (Mobile Optimized) -->
+                  <div class="grid grid-cols-3 gap-2 lg:gap-6 pt-4">
+                    <% [1, 0, 2].each_with_index do |pos, idx| %>
+                      <% rank_data = @lifetime_rankings[pos] %>
+                      <% if rank_data %>
+                        <div class="<%= idx == 1 ? 'order-2 scale-110 z-10' : (idx == 0 ? 'order-1 mt-4' : 'order-3 mt-4') %> flex flex-col items-center gap-3 lg:gap-6">
+                          <div class="relative">
+                            <div class="w-16 h-16 lg:w-24 lg:h-24 rounded-2xl lg:rounded-[32px] overflow-hidden border-2 lg:border-4 <%= pos == 0 ? 'border-emerald-400 shadow-xl shadow-emerald-100' : (pos == 1 ? 'border-slate-300' : 'border-purple-600') %>">
+                              <img src="<%= rank_data[:user].profile_image %>" class="w-full h-full object-cover" />
+                            </div>
+                            <div class="absolute -top-2 -right-2 w-7 h-7 lg:w-12 lg:h-12 <%= pos == 0 ? 'bg-emerald-400' : (pos == 1 ? 'bg-slate-300' : 'bg-purple-600') %> rounded-lg lg:rounded-2xl flex items-center justify-center text-white font-black text-xs lg:text-xl shadow-lg">
+                              <%= pos == 0 ? '👑' : (pos == 1 ? '⭐' : '💎') %>
+                            </div>
+                          </div>
+                          <div class="text-center min-w-0 w-full px-1">
+                            <h4 class="text-[11px] lg:text-lg font-black text-slate-900 truncate"><%= rank_data[:user].nickname %></h4>
+                            <div class="mt-1 px-2 py-0.5 lg:px-4 lg:py-2 bg-emerald-50 rounded-full inline-block">
+                              <p class="text-[9px] lg:text-sm font-black text-emerald-600"><%= rank_data[:score].to_i %>회</p>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                    <% end %>
+                  </div>
+
+                  <!-- Full Lifetime List -->
+                  <div class="space-y-2 lg:space-y-4">
+                    <% @lifetime_rankings.each_with_index do |rank, index| %>
+                      <div class="flex items-center justify-between p-3 lg:p-6 rounded-2xl lg:rounded-[32px] border border-slate-100 hover:border-emerald-100 transition-all <%= rank[:user].id == current_user.id ? 'bg-emerald-50 border-emerald-200' : 'bg-white' %>">
+                         <div class="flex items-center gap-3 lg:gap-6 min-w-0">
+                           <div class="w-8 h-8 lg:w-12 lg:h-12 shrink-0 <%= index < 3 ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-400' %> rounded-xl flex items-center justify-center text-[10px] lg:text-lg font-black">
+                             <%= index < 3 ? ['👑','⭐','💎'][index] : index + 1 %>
+                           </div>
+                           <div class="flex items-center gap-3 min-w-0">
+                             <img src="<%= rank[:user].profile_image %>" class="w-10 h-10 lg:w-14 lg:h-14 rounded-xl lg:rounded-2xl shrink-0 object-cover" />
+                             <div class="min-w-0">
+                               <div class="flex items-center gap-1.5 lg:gap-2">
+                                 <h4 class="text-[13px] lg:text-base font-black text-slate-900 truncate"><%= rank[:user].nickname %></h4>
+                                 <% if rank[:user].id == current_user.id %>
+                                   <span class="px-1.5 py-0.5 bg-emerald-600 text-white text-[7px] lg:text-[9px] font-black rounded-full shrink-0">MY</span>
+                                 <% end %>
+                               </div>
+                               <p class="text-[9px] lg:text-xs font-bold text-slate-400 truncate"><%= rank[:user].routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+                             </div>
+                           </div>
+                         </div>
+                         <div class="flex items-center gap-3 lg:gap-10 shrink-0">
+                           <div class="text-right">
+                             <p class="text-[8px] lg:text-[10px] font-black text-slate-300 uppercase tracking-widest hidden lg:block">Total</p>
+                             <p class="text-sm lg:text-2xl font-black text-slate-900 tracking-tight"><%= rank[:score].to_i %><span class="text-[10px] lg:text-sm font-bold ml-0.5">회</span></p>
+                           </div>
+                           <div class="hidden sm:block text-right">
+                             <p class="text-[8px] lg:text-[10px] font-black text-slate-300 uppercase tracking-widest">Active Days</p>
+                             <p class="text-sm lg:text-lg font-black text-purple-500"><%= rank[:user].rufa_member_days %>일</p>
+                           </div>
+                         </div>
+                      </div>
+                    <% end %>
+                </div> <!-- closes full list -->
+              </div> <!-- closes container -->
+            </div> <!-- closes list content inner -->
+          </div> <!-- closes bg-white padding -->
+        </div> <!-- closes tab-ranking -->
 
         <!-- 4. Synergy Tab (Feed) -->
-        <div id="tab-synergy" class="rufa-content-tab hidden space-y-12">
-           <div class="bg-white rounded-[48px] p-12 border border-slate-100 shadow-sm space-y-12">
-              <div class="flex items-center justify-between">
-                <div class="space-y-1">
-                  <h3 class="text-2xl font-black text-slate-900 tracking-tight">루파 시너지 피드</h3>
-                  <p class="text-sm font-medium text-slate-400">성실함의 파동이 당신에게 닿길 바랍니다.</p>
+        <div id="tab-synergy" class="rufa-content-tab hidden space-y-4 lg:space-y-10">
+           <div class="bg-white rounded-[32px] lg:rounded-[48px] p-4 lg:p-10 border border-slate-100 shadow-sm space-y-6 lg:space-y-10">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div class="space-y-0.5 text-center md:text-left">
+                  <h3 class="text-lg lg:text-2xl font-black text-slate-900 tracking-tight">루파 시너지 피드</h3>
+                  <p class="text-[10px] lg:text-sm font-medium text-slate-400">성실함의 파동이 당신에게 닿길 바랍니다.</p>
                 </div>
-                <div class="flex items-center gap-4 bg-slate-50 px-6 py-3 rounded-2xl">
-                   <div class="flex -space-x-3">
+                <div class="flex items-center justify-center gap-2 bg-slate-50 px-3 py-2 lg:px-6 lg:py-3 rounded-xl lg:rounded-2xl shrink-0">
+                   <div class="flex -space-x-2">
                      <% @rufa_rankings.take(3).each do |rank| %>
-                       <img src="<%= rank[:user].profile_image %>" class="w-8 h-8 rounded-full border-2 border-white" />
+                       <img src="<%= rank[:user].profile_image %>" class="w-5 h-5 lg:w-8 lg:h-8 rounded-full border-2 border-white" />
                      <% end %>
                    </div>
-                   <span class="text-xs font-black text-slate-900"><%= @rufa_rankings.count %>명의 멤버 정진 중</span>
+                   <span class="text-[9px] lg:text-xs font-black text-slate-900"><%= @rufa_rankings.count %>명의 멤버 정진 중</span>
                 </div>
               </div>
 
-              <div class="space-y-8">
+              <div class="space-y-4 lg:space-y-8">
                 <% if @rufa_activities.any? %>
                   <% @rufa_activities.each do |activity| %>
-                    <div class="flex gap-8 group">
-                       <div class="shrink-0">
-                         <img src="<%= activity.user.profile_image %>" class="w-16 h-16 rounded-[24px] shadow-sm border border-slate-50" />
+                    <div class="flex gap-2.5 lg:gap-8 group">
+                       <div class="shrink-0 pt-1">
+                         <img src="<%= activity.user.profile_image %>" class="w-8 h-8 lg:w-16 lg:h-16 rounded-lg lg:rounded-[24px] shadow-sm border border-slate-50" />
                        </div>
-                       <div class="flex-1 space-y-4 pb-12 group-last:pb-0 border-l border-slate-100 pl-8 relative">
-                          <div class="absolute -left-[5px] top-6 w-2.5 h-2.5 bg-slate-200 rounded-full group-hover:bg-indigo-500 transition-colors"></div>
-                          <div class="bg-slate-50/50 p-8 rounded-[40px] border border-slate-100/50 group-hover:bg-white group-hover:shadow-xl transition-all">
-                            <div class="flex justify-between items-center mb-4">
-                              <span class="text-sm font-black text-slate-900"><%= activity.user.nickname %></span>
-                              <span class="text-[10px] font-black text-slate-300 uppercase"><%= time_ago_in_words(activity.created_at) %> ago</span>
+                       <div class="flex-1 space-y-2 lg:space-y-4 pb-6 lg:pb-12 group-last:pb-0 border-l border-slate-100 pl-3 lg:pl-8 relative text-left">
+                          <div class="absolute -left-[4px] top-4 lg:top-7 w-2 h-2 bg-slate-200 rounded-full group-hover:bg-indigo-500 transition-colors"></div>
+                          <div class="bg-slate-50/50 p-3.5 lg:p-8 rounded-[24px] lg:rounded-[40px] border border-slate-100/50 group-hover:bg-white group-hover:shadow-xl transition-all">
+                            <div class="flex justify-between items-center mb-1 lg:mb-4">
+                              <span class="text-[11px] lg:text-sm font-black text-slate-900"><%= activity.user.nickname %></span>
                             </div>
-                            <p class="text-lg font-bold text-slate-600 leading-relaxed"><%= activity.body %></p>
+                            <p class="text-[13px] lg:text-lg font-bold text-slate-600 leading-snug lg:leading-relaxed"><%= activity.body %></p>
                             
-                            <div class="mt-6 flex items-center justify-between">
-                               <%= button_to rufa_activity_claps_path(activity), method: :post, class: "flex items-center gap-3 px-6 py-3 bg-white hover:bg-amber-100 rounded-full transition-all border border-slate-100 group/clap" do %>
-                                 <span class="text-2xl group-hover/clap:scale-150 transition-transform duration-500"><%= activity.claps_count.to_i > 0 ? "👏" : "🙌" %></span>
-                                 <span class="text-sm font-black <%= activity.claps_count.to_i > 0 ? 'text-amber-600' : 'text-slate-400' %>"><%= activity.claps_count.to_i %></span>
-                               <% end %>
-                               <div class="flex gap-1">
-                                 <% activity.claps.take(5).each do |clap| %>
-                                   <div class="w-2 h-2 bg-amber-400 rounded-full"></div>
+                            <div class="mt-3 lg:mt-6 flex items-center justify-between">
+                               <div id="activity_claps_<%= activity.id %>">
+                                 <%= render 'personal_routines/activity_claps', activity: activity %>
+                               </div>
+                               <div class="flex gap-0.5 lg:gap-1">
+                                 <% activity.claps.take(3).each do |clap| %>
+                                   <div class="w-1 h-1 lg:w-2 lg:h-2 bg-amber-400 rounded-full"></div>
                                  <% end %>
                                </div>
                             </div>
@@ -765,80 +626,85 @@
                     </div>
                   <% end %>
                 <% else %>
-                  <div class="py-32 text-center text-slate-200 font-black text-3xl">첫 번째 파장을 기다리고 있습니다.</div>
+                  <div class="py-20 lg:py-32 text-center text-slate-200 font-black text-xl lg:text-3xl">첫 번째 파장을 기다리고 있습니다.</div>
                 <% end %>
               </div>
            </div>
         </div>
 
-        <!-- 5. Insight Tab (Templates) -->
-        <div id="tab-insight" class="rufa-content-tab hidden space-y-12">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 px-4">
-               <div class="space-y-1">
-                 <h3 class="text-3xl font-black text-slate-900 tracking-tight">루파 인사이트</h3>
-                 <p class="text-base text-slate-500 font-medium">검증된 최고 수준의 루틴 템플릿 라이브러리</p>
-               </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-               <% @routine_templates.each do |template| %>
-                 <div class="group bg-white rounded-[56px] p-12 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all relative overflow-hidden">
-                    <div class="absolute -right-10 -top-10 w-48 h-48 bg-indigo-50 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-                    
-                    <div class="relative z-10 space-y-10 text-center lg:text-left">
-                       <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
-                          <div class="w-20 h-20 bg-slate-50 rounded-[28px] flex items-center justify-center text-5xl transform group-hover:rotate-12 transition-transform duration-700">
-                            <%= template.icon %>
-                          </div>
-                          <div class="px-5 py-2 bg-indigo-600 text-white text-[10px] font-black rounded-full uppercase tracking-widest"><%= template.category %></div>
-                       </div>
-
-                       <div class="space-y-3">
-                         <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em]">Mastered by <%= template.author_name %></p>
-                         <h4 class="text-3xl font-black text-slate-900 leading-tight"><%= template.title %></h4>
-                         <p class="text-base font-medium text-slate-500 leading-relaxed max-w-sm"><%= template.description %></p>
-                       </div>
-
-                       <div class="pt-6">
-                         <%= button_to apply_routine_template_path(template), method: :post, class: "w-full py-6 bg-slate-900 text-white rounded-[24px] font-black text-sm hover:bg-indigo-600 transition-all flex items-center justify-center gap-4 shadow-xl" do %>
-                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 4v16m8-8H4"/></svg>
-                           내 루틴으로 복제하기
-                         <% end %>
-                       </div>
-                    </div>
+        <!-- 5. Member Routines Tab (Replacement for Insight) -->
+        <div id="tab-members" class="rufa-content-tab hidden space-y-8 lg:space-y-12">
+            <div class="bg-white rounded-[32px] lg:rounded-[48px] p-6 lg:p-12 border border-slate-100 shadow-sm space-y-8 lg:space-y-12">
+               <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                 <div class="space-y-1 text-center md:text-left">
+                   <h3 class="text-xl lg:text-3xl font-black text-slate-900 tracking-tight">멤버 성취 루틴</h3>
+                   <p class="text-xs lg:text-base text-slate-500 font-medium">루파 클럽 멤버들은 지금 어떤 루틴으로 성장하고 있을까요?</p>
                  </div>
-               <% end %>
-            </div>
+                 <div class="px-4 py-2 bg-slate-50 rounded-2xl flex items-center justify-center gap-2">
+                   <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+                   <span class="text-[10px] lg:text-xs font-black text-slate-600 uppercase tracking-widest"><%= @rufa_rankings.count %> Members Active</span>
+                 </div>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
+                 <% @rufa_rankings.each do |rank_data| %>
+                   <% member = rank_data[:user] %>
+                   <div class="bg-white rounded-[24px] lg:rounded-[32px] p-4 lg:p-6 border border-slate-100 hover:border-indigo-100 transition-all">
+                      <div class="flex items-center justify-between gap-3 lg:gap-4">
+                        <!-- Member Profile -->
+                        <div class="flex items-center gap-3 lg:gap-4 min-w-0 flex-1">
+                          <img src="<%= member.profile_image %>" class="w-10 h-10 lg:w-14 lg:h-14 rounded-xl lg:rounded-2xl object-cover shrink-0" />
+                          <div class="min-w-0">
+                            <h4 class="text-[13px] lg:text-base font-black text-slate-900 truncate"><%= member.nickname %></h4>
+                            <p class="text-[9px] lg:text-xs font-bold text-slate-400 truncate"><%= member.routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+                          </div>
+                        </div>
+
+                        <!-- Summary Stats -->
+                        <div class="flex items-center gap-4 lg:gap-8 shrink-0">
+                          <div class="text-right">
+                            <p class="text-[7px] lg:text-[9px] font-black text-slate-300 uppercase leading-none mb-1">Score</p>
+                            <p class="text-xs lg:text-lg font-black text-slate-900"><%= rank_data[:score].to_i %>P</p>
+                          </div>
+                          <div class="text-right">
+                            <p class="text-[7px] lg:text-[9px] font-black text-slate-300 uppercase leading-none mb-1">Success</p>
+                            <p class="text-xs lg:text-lg font-black text-emerald-500"><%= member.monthly_achievement_rate.to_i %>%</p>
+                          </div>
+                          <!-- Toggle Button -->
+                          <button onclick="toggleMemberRoutines(<%= member.id %>)" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
+                            <svg id="arrow-<%= member.id %>" class="w-4 h-4 lg:w-5 lg:h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Collapsible Routine List -->
+                      <div id="routines-<%= member.id %>" class="hidden mt-4 pt-4 border-t border-slate-100 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <p class="text-[9px] lg:text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em]">Active Routines</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <% member_routines = member.personal_routines %>
+                          <% if member_routines.any? %>
+                            <% member_routines.each do |routine| %>
+                              <div class="flex items-center gap-2.5 p-2 bg-slate-50 rounded-xl lg:rounded-2xl">
+                                <span class="text-base lg:text-lg shrink-0"><%= routine.icon %></span>
+                                <span class="text-[11px] lg:text-xs font-bold text-slate-700 truncate"><%= routine.title %></span>
+                              </div>
+                            <% end %>
+                          <% else %>
+                            <p class="text-xs font-medium text-slate-300 italic">아직 공개된 루틴이 없습니다.</p>
+                          <% end %>
+                        </div>
+                      </div>
+                   </div>
+                 <% end %>
+              </div>
+           </div>
         </div>
 
       </main>
       
-      <!-- Mobile Quick Stats (Visible only on mobile, at the bottom) -->
-      <div class="lg:hidden mt-8 space-y-6">
-        <div class="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm space-y-6 text-center">
-          <div class="space-y-1">
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Growth Identity</p>
-            <h4 class="text-lg font-black text-slate-900"><%= current_user.routine_club_members.active.first&.identity_title %></h4>
-          </div>
-          
-          <div class="grid grid-cols-1 gap-4">
-            <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-5 bg-indigo-50 text-indigo-600 rounded-[24px] font-black shadow-sm" do %>
-               <span class="text-sm">월간 성실함 리포트</span>
-               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-            <% end %>
-
-            <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-5 bg-[#FEE500] text-[#3c1e1e] rounded-[24px] font-black shadow-sm" do %>
-               <div class="flex items-center gap-3">
-                 <div class="flex items-center justify-center p-1.5 bg-[#3c1e1e]/5 rounded-lg">
-                   <svg class="w-5 h-5 text-[#3c1e1e]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
-                 </div>
-                 <span class="text-sm">루파 클럽 단톡방</span>
-               </div>
-               <svg class="w-5 h-5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-            <% end %>
-          </div>
-        </div>
-      </div>
+      <!-- Mobile Quick Stats Removed (Moved to top sidebar) -->
     </div>
   <% end %>
 </div>
@@ -850,9 +716,9 @@
      <div class="flex justify-between items-center">
         <div class="space-y-4">
           <div class="px-4 py-1.5 bg-amber-400 text-slate-900 rounded-full w-fit">
-            <p class="text-[10px] font-black tracking-[0.4em] uppercase">Rufa Official</p>
+            <p class="text-[10px] font-black tracking-[0.4em] uppercase">루파 오피셜</p>
           </div>
-          <h2 class="text-6xl font-black text-white italic tracking-tighter">RUFA VIP</h2>
+          <h2 class="text-6xl font-black text-white italic tracking-tighter">루파 VIP</h2>
         </div>
         <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-slate-900 text-4xl shadow-glow shadow-indigo-500/50">🔱</div>
      </div>
@@ -878,31 +744,44 @@
         </div>
      </div>
 
-     <div class="pt-12 flex justify-between items-end border-t border-white/5">
-        <div class="text-[11px] font-bold text-slate-500 uppercase leading-relaxed text-left max-w-[200px]">
-          Authenticated and issued by Routine Finders Headquarters. This pass grants exclusive offline benefits in 2026.
+      <div class="pt-12 border-t border-white/5">
+        <div class="text-[11px] font-bold text-slate-500 uppercase leading-relaxed text-left opacity-60">
+          본 패스는 루틴 파인더스(Routine Finders) 본부에서 인증 및 발행되었습니다. 2026년 루파 클럽 멤버 전용 혜택 증빙용으로 사용 가능합니다.
         </div>
-        <div class="w-28 h-28 bg-white p-4 rounded-[40px] select-none shadow-2xl">
-           <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=RUFA_VIP_<%= current_user.id %>" class="w-full h-full grayscale" />
-        </div>
-     </div>
+      </div>
   </div>
 </div>
 
 <script>
+  function toggleMemberRoutines(userId) {
+    const content = document.getElementById(`routines-${userId}`);
+    const arrow = document.getElementById(`arrow-${userId}`);
+    
+    if (content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      arrow.style.transform = 'rotate(180deg)';
+    } else {
+      content.classList.add('hidden');
+      arrow.style.transform = 'rotate(0deg)';
+    }
+  }
+
   function switchRufaTab(id) {
     // Hide all tabs
     document.querySelectorAll('.rufa-content-tab').forEach(tab => tab.classList.add('hidden'));
     // Show selected tab
     document.getElementById('tab-' + id).classList.remove('hidden');
     
-    // Update navigation styles
+    // Update navigation styles to match ternary logic in ERB
     document.querySelectorAll('.rufa-nav-btn').forEach(btn => {
+      // Reset to inactive state
       btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
-      btn.classList.add('text-slate-400', 'hover:bg-white', 'hover:text-slate-900');
+      btn.classList.add('bg-white', 'lg:bg-transparent', 'text-slate-400');
     });
+
     const activeBtn = document.getElementById('nav-' + id);
-    activeBtn.classList.remove('text-slate-400', 'hover:bg-white', 'hover:text-slate-900');
+    // Apply active state
+    activeBtn.classList.remove('bg-white', 'lg:bg-transparent', 'text-slate-400');
     activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
 
     // Scroll to top of content area on mobile
@@ -921,7 +800,7 @@
     
     // Update button states
     document.querySelectorAll('.ranking-mode-btn').forEach(btn => {
-      btn.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+      btn.classList.remove('bg-white', 'text-indigo-600', 'text-emerald-600', 'shadow-sm');
       btn.classList.add('text-slate-400');
     });
     

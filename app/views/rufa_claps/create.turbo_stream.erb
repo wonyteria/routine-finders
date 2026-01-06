@@ -1,0 +1,5 @@
+<%= turbo_stream.replace "activity_claps_#{@activity.id}" do %>
+  <div id="activity_claps_<%= @activity.id %>">
+    <%= render 'personal_routines/activity_claps', activity: @activity %>
+  </div>
+<% end %>

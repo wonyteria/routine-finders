@@ -3,14 +3,17 @@ class RufaClapsController < ApplicationController
 
   def create
     @activity = RufaActivity.find(params[:rufa_activity_id])
-    @clap = current_user.rufa_claps.find_or_initialize_by(rufa_activity: @activity)
+    @clap = current_user.rufa_claps.find_by(rufa_activity: @activity)
 
-    if @clap.save
-      respond_to do |format|
-        format.html { redirect_back fallback_location: personal_routines_path(tab: "club") }
-        # Turbo stream for instant update can be added here
-        format.turbo_stream
-      end
+    if @clap
+      @clap.destroy
+    else
+      current_user.rufa_claps.create(rufa_activity: @activity)
+    end
+
+    respond_to do |format|
+      format.html { redirect_back fallback_location: personal_routines_path(tab: "club") }
+      format.turbo_stream
     end
   end
 end
