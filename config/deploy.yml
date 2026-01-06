@@ -45,7 +45,8 @@ env:
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
     # When you start using multiple servers, you should split out job processing to a dedicated machine.
     SOLID_QUEUE_IN_PUMA: true
-    KAKAO_CLIENT_ID: "bf3b780447385208f02030613840733d"
+    KAKAO_CLIENT_ID: "f959f8ada6c21d791ef5be7f4257e19e"
+    KAKAO_CLIENT_SECRET: "xINFPROGnkZ9OoUX5UNUrkZcAFNzP7me"
 
     # Email URL host (www 필수 - SSL 인증서가 www 도메인에만 적용됨)
     APP_HOST: www.routinefinders.life
