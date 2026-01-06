@@ -13,7 +13,8 @@
       <div class="absolute -right-2 -bottom-2 text-6xl opacity-10 group-hover:scale-110 transition-transform">📈</div>
     </div>
     
-    <div class="group relative bg-gradient-to-br from-blue-500 to-sky-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden">
+    <div class="group relative bg-gradient-to-br from-blue-500 to-sky-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden cursor-help" 
+         title="시즌당 3회 사용 가능. 사용 시 오늘 분량의 루틴 인증을 면제하며, 완주를 위한 출석률(70%) 계산 시 '출석'으로 보호받습니다.">
       <div class="relative z-10">
         <p class="text-sm font-bold text-blue-100 mb-2">남은 휴식권</p>
         <div class="flex items-end justify-between">
@@ -21,7 +22,8 @@
           <% if @my_membership.remaining_passes > 0 %>
             <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
                           class: "text-[10px] font-black bg-white text-blue-600 px-3 py-1.5 rounded-xl hover:bg-blue-50 transition-colors shadow-sm", 
-                          data: { confirm: "오늘의 루틴 인증을 면제하시겠습니까? (휴식권 1매 소진)" } do %>
+                          data: { confirm: "오늘의 루틴 인증을 면제하시겠습니까? (휴식권 1매 소진)" },
+                          title: "클릭하여 즉시 사용 (오늘 하루 면제)" do %>
                휴식권 사용
             <% end %>
           <% end %>

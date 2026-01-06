@@ -57,9 +57,16 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def update_attendance_stats!
-    total_days = attendances.count
-    present_days = attendances.where(status: :present).count
-    excused_days = attendances.where(status: :excused).count
+    # "징검다리 로직": 루틴이 설정된 요일(약속한 날)들만 분모로 계산
+    # user의 personal_routines 중 루틴이 설정된 요일들을 가져옴
+    scheduled_wdays = user.personal_routines.pluck(:days).flatten.uniq.map(&:to_i)
+
+    # 해당 멤버의 전체 출석 기록 중, 루틴이 설정된 요일에 해당하는 기록만 필터링
+    relevant_attendances = attendances.select { |a| scheduled_wdays.include?(a.attendance_date.wday) }
+
+    total_days = relevant_attendances.size
+    present_days = relevant_attendances.select { |a| a.status == "present" }.size
+    excused_days = relevant_attendances.select { |a| a.status == "excused" }.size
 
     update!(
       attendance_count: present_days,
@@ -68,6 +75,11 @@ class RoutineClubMember < ApplicationRecord
     )
 
     recalculate_growth_points!
+  end
+
+  # 기수 완주 조건 확인 (출석률 70% 이상 + 제명되지 않음)
+  def met_completion_criteria?
+    status_active? && attendance_rate >= 70.0
   end
 
   def use_relaxation_pass!(date = Date.current)
@@ -107,7 +119,7 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def can_participate?
-    payment_status_confirmed? && status_active?
+    payment_status_confirmed? && status_active? && Date.current >= membership_start_date
   end
 
   private

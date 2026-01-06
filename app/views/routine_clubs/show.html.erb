@@ -44,9 +44,13 @@
                 <span class="bg-slate-500 px-4 py-2 rounded-full text-sm font-black text-white">
                   마감
                 </span>
-              <% elsif @routine_club.status_recruiting? %>
+              <% elsif @routine_club.recruitment_open? %>
                 <span class="bg-emerald-500 px-4 py-2 rounded-full text-sm font-black text-white animate-pulse">
                   모집 중
+                </span>
+              <% else %>
+                <span class="bg-slate-900/50 backdrop-blur-md px-4 py-2 rounded-full text-sm font-black text-white/50 border border-white/10">
+                  모집 종료
                 </span>
               <% end %>
             </div>
@@ -56,12 +60,12 @@
           <div class="p-8 space-y-6">
             <!-- Host Info -->
             <div class="flex items-center gap-4">
-              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white text-2xl font-black">
-                <%= @routine_club.host.nickname[0].upcase %>
+              <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-orange-200">
+                <%= image_tag "/quokka_host.jpg", class: "w-full h-full object-cover" %>
               </div>
               <div>
                 <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Host</p>
-                <p class="text-xl font-black text-slate-900"><%= @routine_club.host.nickname %></p>
+                <p class="text-xl font-black text-slate-900">쿼카워니</p>
               </div>
             </div>
             
@@ -71,10 +75,11 @@
                 <%= @routine_club.title %>
               </h1>
               <p class="text-lg text-slate-600 font-medium leading-relaxed">
-            무언가가 완전히 습관으로 자리잡기 위해서는 최소 66일, 그리고 이를 증명하기 위한 여유 기간이 필요합니다. <br/><br/>
-            루파 클럽은 <span class="text-orange-600 font-bold">하루 단 100원</span>으로 당신의 인생을 바꿀 90일을 설계합니다. 
-            <span class="bg-amber-100 text-amber-800 px-1 font-bold">망설이는 하루마다 당신의 일일 투자 비용은 비싸집니다.</span> 오늘 합류하는 것이 가장 큰 경제적 이득입니다.
-          </p>
+              <p class="text-lg text-slate-600 font-medium leading-relaxed">
+                무언가가 완전히 습관으로 자리잡기 위해서는 최소 66일, 그리고 이를 증명하기 위한 여유 기간이 필요합니다. <br/><br/>
+                루파 클럽은 <span class="text-orange-600 font-bold">하루 단 100원</span>으로 당신의 인생을 바꿀 90일을 설계합니다. 
+                <span class="bg-amber-100 text-amber-800 px-1 font-bold">기수별 정기 모집</span>을 통해 압도적인 소속감과 강력한 환경 통제 시스템을 경험하세요.
+              </p>
             </div>
             
             <!-- Stats Grid -->
@@ -86,10 +91,11 @@
                 </p>
               </div>
               <div class="text-center md:text-left">
-                <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-2 whitespace-nowrap">분기 요금 <span class="hidden md:inline">(3개월)</span></p>
-                <p class="text-xl md:text-2xl font-black text-orange-500 leading-tight">
-                  <%= number_to_currency(@routine_club.monthly_fee * @routine_club.min_duration_months, unit: "₩", precision: 0, format: "%n%u") %>
+                <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-2 whitespace-nowrap">분기 요금 (시작일 기준)</p>
+                <p class="text-xl md:text-2xl font-black text-orange-600 leading-tight">
+                  <%= number_to_currency(@routine_club.calculate_quarterly_fee, unit: "₩", precision: 0, format: "%n%u") %>
                 </p>
+                <p class="text-[9px] text-slate-400 font-bold mt-1">하루 단 100원</p>
               </div>
               <div class="text-center md:text-left">
                 <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-1 md:mb-2 whitespace-nowrap">멤버</p>
@@ -106,6 +112,71 @@
             </div>
           </div>
         </div>
+
+        <!-- Inline Recruitment Status (Top) - Duplicated from sidebar for better visibility -->
+        <% unless @is_member || @is_host || @routine_club.is_full? %>
+          <% if !@routine_club.recruitment_open? && current_user&.role != "admin" %>
+            <!-- Recruitment Closed Card -->
+            <div class="bg-slate-900 border-2 border-slate-800 rounded-[40px] p-10 md:p-16 text-center shadow-2xl relative overflow-hidden mb-8">
+              <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              <div class="relative z-10 space-y-8 max-w-2xl mx-auto">
+                <div class="w-24 h-24 bg-slate-800 rounded-[32px] flex items-center justify-center text-5xl mx-auto border border-white/5 shadow-2xl">🔒</div>
+                <div class="space-y-4">
+                  <h3 class="text-[20px] sm:text-3xl font-black text-white whitespace-nowrap">현재 정기 모집 기간이 아닙니다</h3>
+                  <p class="text-lg text-slate-500 font-bold leading-relaxed break-keep">
+                    루파 클럽은 최상의 몰입 환경을 유지하기 위해 <br class="hidden md:block"/>
+                    정해진 분기별 기수 모집 기간에만 신규 멤버를 선발하고 있습니다.
+                  </p>
+                </div>
+                <div class="pt-6 border-t border-white/5">
+                  <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-3">Next Recruitment Schedule</p>
+                  <div class="inline-flex px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-xl text-white font-black">
+                    <%= (@routine_club.get_quarter_start_date(Date.current + 3.months) - 14.days).strftime("%Y년 %m월 %d일") %> 오픈 예정
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <!-- Join Form Card (Visible when open) -->
+            <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-slate-900 rounded-[40px] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden group mb-8">
+              <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/20 transition-all"></div>
+              <div class="max-w-xl">
+                <% cur_gen = @routine_club.generation_number %>
+                <div class="inline-flex px-3 py-1 bg-white/20 backdrop-blur-md rounded-lg text-xs font-black uppercase tracking-widest mb-4">루파 클럽 <%= cur_gen %>기 신청</div>
+                <h3 class="text-3xl font-black mb-4">멤버십 정기 모집 활성화</h3>
+                <p class="text-lg font-medium text-white/80 mb-8 break-keep">
+                  하루 100원 수준의 투자로 성장을 강제하세요. <br/>
+                  가장 압도적인 한 단계 위로의 도약을 위해 지금 합류하세요.
+                </p>
+                <%= form_with url: join_routine_club_path(@routine_club), method: :post, class: "space-y-6" do |f| %>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-900">
+                    <div>
+                      <%= f.label :depositor_name, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
+                        입금자 실명 <span class="text-indigo-300">*</span>
+                      <% end %>
+                      <%= text_field_tag :depositor_name, nil, placeholder: "입금자명", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
+                    </div>
+                    <div>
+                      <%= f.label :contact_info, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
+                        연락처 <span class="text-indigo-300">*</span>
+                      <% end %>
+                      <%= text_field_tag :contact_info, nil, placeholder: "010-0000-0000", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
+                    </div>
+                  </div>
+                  <div class="flex flex-col md:flex-row items-center gap-6 pt-4">
+                    <div class="flex-1 bg-white/5 rounded-2xl p-5 text-sm border border-white/10 w-full">
+                      <p class="font-black text-white mb-2 text-xs">🏦 <%= @routine_club.bank_name %> <%= @routine_club.account_number %> (<%= @routine_club.account_holder %>)</p>
+                      <p class="text-[10px] text-white/40">입금 완료 후 신청하기 버튼을 눌러주세요.</p>
+                    </div>
+                    <button type="submit" class="w-full md:w-auto px-12 py-5 bg-white text-orange-600 rounded-3xl font-black text-xl hover:bg-yellow-300 hover:text-orange-700 transition-all shadow-xl active:scale-95 whitespace-nowrap">
+                      지금 바로 신청하기
+                    </button>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
 
         <!-- Rules Section -->
         <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm relative overflow-hidden">
@@ -165,8 +236,8 @@
             </h3>
             <p class="text-slate-600 font-medium leading-relaxed">
               인생을 바꾸는 것은 거창한 한 번의 결심이 아니라, 매일 반복되는 사소한 루틴의 합입니다. <br/>
-              루파 클럽은 <span class="bg-orange-100 text-orange-600 px-1 font-bold">분기당 9,000원(하루 단 100원 순수 참가비)</span>의 투자로 당신의 의지가 흔들릴 때, 강력한 시스템과 끈끈한 동료들이 당신을 다시 일으켜 세우는 '성장 가속기'입니다. <br/>
-              <span class="text-xs text-slate-400 mt-2 block">* 본 클럽은 분기 단위(3개월)로 운영되며, 결제는 분기별 남은 일수만큼 자동 계산됩니다.</span>
+              루파 클럽은 <span class="bg-orange-100 text-orange-600 px-1 font-bold">하루 단 100원</span>의 투자로 당신의 의지가 흔들릴 때, 강력한 시스템과 끈끈한 동료들이 당신을 다시 일으켜 세우는 '성장 가속기'입니다. <br/>
+              <span class="text-xs text-slate-400 mt-2 block">* 본 클럽은 분기별 기수 정기 모집(1월, 4월, 7월, 10월)으로만 운영되는 상호 책임 시스템입니다.</span>
             </p>
           </section>
 
@@ -231,20 +302,49 @@
           <section class="space-y-8">
             <h3 class="text-xl font-black text-slate-900 flex items-center gap-2">
               <span class="w-2 h-8 bg-amber-500 rounded-full"></span>
-              성장의 증명: 리워드 및 명예 시스템
+              성장의 증명: 기수 완주 및 배지 시스템
             </h3>
             
-            <div class="space-y-6">
-              <!-- Weekly: Honor -->
-              <div class="bg-slate-50 rounded-[32px] p-8 border border-slate-100 flex flex-col md:flex-row items-center gap-8 group">
-                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl shadow-sm group-hover:scale-110 transition-transform">🥇</div>
-                <div class="flex-1 text-center md:text-left">
-                  <div class="inline-block px-3 py-1 bg-slate-200 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">Weekly Honor</div>
-                  <h4 class="text-lg font-black text-slate-900 mb-1">위클리 에너지 킹</h4>
-                  <p class="text-sm text-slate-500 font-medium leading-relaxed">매주 가장 뜨거운 몰입을 보여준 멤버에게 선사하는 프리미엄 휘장입니다. 일주일간 커뮤니티 내 모든 영역에서 당신의 노력이 황금빛 아우라로 증명되며, 동료들의 선망을 받는 '에너지 킹'의 지위를 누립니다.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-slate-50 rounded-[32px] p-8 border border-slate-100">
+                <h4 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+                  <span class="text-2xl">🏅</span> 명예 완주 배지
+                </h4>
+                <div class="space-y-4">
+                  <div class="flex items-start gap-3">
+                    <div class="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-[10px] text-white shrink-0 mt-1">✓</div>
+                    <p class="text-sm text-slate-600 font-medium"><span class="font-black">출석률 70% 이상</span>: 루틴이 설정된 날짜 중 70% 이상 실천 시 수여</p>
+                  </div>
+                  <div class="flex items-start gap-3">
+                    <div class="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-[10px] text-white shrink-0 mt-1">✓</div>
+                    <p class="text-sm text-slate-600 font-medium"><span class="font-black">생존 필수</span>: 경고 누적으로 인한 제명(Kick) 없이 시즌을 마무리할 것</p>
+                  </div>
+                  <p class="text-xs text-slate-400 leading-relaxed pl-8">※ 완주 배지는 기수 종료일 익일 시스템에 의해 자동 수여되며 내 프로필의 '명예의 전당'에 영구 보존됩니다.</p>
                 </div>
               </div>
-
+              
+              <div class="bg-slate-900 rounded-[32px] p-8 text-white relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 text-8xl opacity-10 group-hover:scale-110 transition-transform">🚫</div>
+                <h4 class="text-lg font-black text-white mb-4 flex items-center gap-2">
+                  <span class="text-2xl text-red-500">⚡️</span> 강력한 제명 규정
+                </h4>
+                <ul class="space-y-3">
+                  <li class="text-sm text-slate-300 font-medium flex gap-2">
+                    <span class="text-red-500 font-black">•</span>
+                    <span>무단 결석 시 경고 1회 자동 부과</span>
+                  </li>
+                  <li class="text-sm text-slate-300 font-medium flex gap-2">
+                    <span class="text-red-500 font-black">•</span>
+                    <span><span class="text-white font-black">누적 경고 10회</span> 달성 시 즉시 시스템 제명</span>
+                  </li>
+                  <li class="text-sm text-slate-300 font-medium flex gap-2">
+                    <span class="text-red-500 font-black">•</span>
+                    <span>제명 시 서비스 이용 제한 및 환불 불가</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
               <!-- Monthly: Surprise -->
               <div class="bg-slate-50 rounded-[32px] p-8 border border-slate-100 flex flex-col md:flex-row items-center gap-8 group">
                 <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-4xl shadow-sm group-hover:scale-110 transition-transform">✨</div>
@@ -261,8 +361,12 @@
                 <div class="relative bg-white border-2 border-orange-100 rounded-[40px] p-8 md:p-12">
                   <div class="text-center space-y-4 mb-10">
                     <div class="inline-block px-4 py-1.5 bg-orange-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest">Season Final Selection</div>
-                    <h4 class="text-3xl font-black text-slate-900">시즌 루파 레전드 (MVP)</h4>
-                    <p class="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">3개월의 긴 여정을 거쳐 최고의 변화를 이끌어낸 '루파 레전드'에게는 압도적인 혜택이 주어집니다.</p>
+                    <h4 class="text-2xl sm:text-3xl font-black text-slate-900 whitespace-nowrap">시즌 루파 레전드 (MVP)</h4>
+                    <p class="text-slate-500 font-medium max-w-lg mx-auto leading-relaxed break-keep">
+                      3개월의 긴 여정을 거쳐<br/>
+                      최고의 변화를 이끌어낸 '루파 레전드'에게는<br/>
+                      압도적인 혜택이 주어집니다.
+                    </p>
                   </div>
                   
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -295,9 +399,10 @@
               🔍 운영 및 제명 규정
             </h3>
             <div class="space-y-4 text-sm text-slate-300 font-medium leading-relaxed">
-              <p>• <span class="text-white font-black">참여 기간</span>: 습관이 내면화되는 최소 시간인 3개월(90일) 약정제로 운영됩니다.</p>
-              <p>• <span class="text-white font-black">자동 제명 시스템</span>: 루파의 몰입도를 저해하는 무단 불참이 누적될 경우(경고 10회), 시스템에 의해 즉시 자동 제명 처리됩니다.</p>
-              <p>• <span class="text-white font-black">환불 규정</span>: 시스템 승인 및 시즌 시작 후에는 중도 퇴출이나 본인 변심에 의한 환불이 절대 불가합니다.</p>
+              <p>• <span class="text-white font-black">정기 모집 운영</span>: 루파 클럽은 매 분기(3개월/약 91일) 단위 기수제로 운영되며, 모집 기간 외 중도 가입은 불가능합니다.</p>
+              <p>• <span class="text-white font-black">완주 및 혜택</span>: 기수 기간 내 <span class="text-indigo-400 font-black">출석률 70% 이상 달성</span> 시 명예 완주 배지가 수여됩니다. (출석: 루틴이 설정된 요일에 1개 이상 실천 시)</p>
+              <p>• <span class="text-white font-black">자동 제명 시스템</span>: 몰입도를 저해하는 무단 불참 누적(경고 10회) 시, 시스템에 의해 자동 제명 처리됩니다.</p>
+              <p>• <span class="text-white font-black">환불 및 기간</span>: 정액제 참여 특성상 시스템 승인 후 중도 퇴출이나 본인 변심에 의한 환불이 절대 불가합니다.</p>
             </div>
           </section>
 
@@ -384,43 +489,61 @@
               인원이 가득 찼습니다<br/>다음 시즌을 기다려주세요
             </p>
           </div>
+        <% elsif !@routine_club.recruitment_open? && current_user&.role != "admin" %>
+          <!-- Recruitment Closed -->
+          <div class="bg-slate-900 border-2 border-slate-800 rounded-[32px] p-10 text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div class="relative z-10 space-y-6">
+              <div class="w-20 h-20 bg-slate-800 rounded-[28px] flex items-center justify-center text-4xl mx-auto border border-white/5">🔒</div>
+              <h3 class="text-xl font-black text-white">현재 정기 모집 기간이 아닙니다</h3>
+              <p class="text-slate-500 font-bold text-sm leading-relaxed">
+                루파 클럽은 분기별 기수제로 운영됩니다.<br/>
+                가장 완벽한 몰입을 위해 모집 기간에만<br/>
+                신규 멤버를 선발하고 있습니다.
+              </p>
+              <div class="pt-4">
+                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Next Recruitment</p>
+                <div class="inline-flex px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-black">
+                  <%= (@routine_club.get_quarter_start_date(Date.current + 3.months) - 14.days).strftime("%Y년 %m월 %d일") %> 예정
+                </div>
+              </div>
+            </div>
+          </div>
         <% else %>
           <!-- Join Form -->
-          <div class="bg-gradient-to-br from-orange-500 via-pink-500 to-purple-600 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden group">
+          <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-slate-900 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden group">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/20 transition-all"></div>
             
-            <h3 class="text-2xl font-black mb-2">멤버십 참여 신청</h3>
+            <% cur_gen = @routine_club.generation_number %>
+            <div class="inline-flex px-3 py-1 bg-white/20 backdrop-blur-md rounded-lg text-[10px] font-black uppercase tracking-widest mb-4">루파 클럽 <%= cur_gen %>기 신청</div>
+            
+            <h3 class="text-2xl font-black mb-2">멤버십 정기 모집</h3>
             <p class="text-xs font-bold text-white/70 mb-6 break-keep leading-relaxed">
-              하루 100원, 커피 한 잔도 안 되는 비용으로 당신의 목표를 현실로 만드세요.<br/>
-              <span class="text-yellow-300 font-black underline decoration-yellow-300/30 underline-offset-4">초기 합류 멤버는 시즌이 바뀌어도 지금 가격 그대로 평생 유지</span>됩니다.
+              하루 100원 수준의 투자로 가장 압도적인 성취를 경험하세요.<br/>
+              기수 완주 시 해당 기수 전용 <span class="text-indigo-300 font-black">명예 완주 배지</span>가 수여됩니다.
             </p>
             
             <!-- Price Calculation -->
-            <div class="bg-black/20 backdrop-blur-md rounded-3xl p-6 mb-6 border border-white/10">
+            <div class="bg-black/40 backdrop-blur-xl rounded-3xl p-6 mb-6 border border-white/10">
               <p class="text-xs font-black text-white/60 mb-3 uppercase tracking-widest leading-none">Investment Plan</p>
               <% 
-                join_date = Date.current
-                prorated_fee = @routine_club.calculate_prorated_fee(join_date)
-                total_fee = @routine_club.monthly_fee * @routine_club.min_duration_months
+                quarterly_fee = @routine_club.calculate_quarterly_fee
+                start_q = Date.current.beginning_of_quarter
+                end_q = Date.current.end_of_quarter
               %>
               
-              <div class="space-y-3">
+              <div class="space-y-4">
                 <div class="flex justify-between items-center">
-                  <span class="text-sm font-bold text-white/80">분기 기본 요금 (3개월)</span>
-                  <span class="font-black"><%= number_to_currency(total_fee, unit: "₩", precision: 0) %></span>
-                </div>
-                <% if join_date > @routine_club.get_quarter_start_date(join_date) %>
-                  <div class="flex justify-between items-center text-emerald-300">
-                    <span class="text-xs font-bold">분기 잔여 기간 할인</span>
-                    <span class="text-sm font-black">-<%= number_to_currency(total_fee - prorated_fee, unit: "₩", precision: 0) %></span>
-                  </div>
-                <% end %>
-                <div class="pt-4 border-t border-white/10 flex justify-between items-end">
                   <div class="text-left">
-                    <span class="text-sm font-bold text-white/80 block leading-none">총 참가비</span>
-                    <span class="text-[10px] text-white/50 font-medium whitespace-nowrap">이번 분기 종료일(<%= @routine_club.get_quarter_end_date(join_date).strftime("%m/%d") %>)까지</span>
+                    <span class="text-sm font-bold text-white/80 block"><%= cur_gen %>기 정액 참여비</span>
+                    <span class="text-[10px] text-white/40 font-medium">시즌 전체 일수 (<%= start_q.strftime("%m/%d") %> ~ <%= end_q.strftime("%m/%d") %>)</span>
                   </div>
-                  <span class="text-3xl font-black text-yellow-300"><%= number_to_currency(prorated_fee, unit: "₩", precision: 0) %></span>
+                  <span class="text-2xl font-black text-indigo-300"><%= number_to_currency(quarterly_fee, unit: "₩", precision: 0) %></span>
+                </div>
+                
+                <div class="pt-4 border-t border-white/10 text-xs font-bold text-white/60 leading-relaxed">
+                  * 루파클럽은 중도 가입 없이 기수 정액제로 운영됩니다.<br/>
+                  * 출석률 70% 이상 달성 시 완주 보상이 제공됩니다.
                 </div>
               </div>
             </div>
@@ -428,23 +551,23 @@
             <%= form_with url: join_routine_club_path(@routine_club), method: :post, class: "space-y-4" do |f| %>
               <div>
                 <%= f.label :depositor_name, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
-                  입금자 실명 <span class="text-yellow-300">*</span>
+                  입금자 실명 <span class="text-indigo-300">*</span>
                 <% end %>
-                <%= text_field_tag :depositor_name, nil, placeholder: "실제 성함을 입력해주세요", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/20 rounded-2xl text-white placeholder-white/40 font-bold focus:ring-2 ring-white/50 border-none transition-all" %>
+                <%= text_field_tag :depositor_name, nil, placeholder: "실제 성함을 입력해주세요", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
               </div>
 
               <div>
                 <%= f.label :contact_info, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
-                  연락처 <span class="text-yellow-300">*</span>
+                  연락처 <span class="text-indigo-300">*</span>
                 <% end %>
-                <%= text_field_tag :contact_info, nil, placeholder: "연락처 (번호/오픈채팅)", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/20 rounded-2xl text-white placeholder-white/40 font-bold focus:ring-2 ring-white/50 border-none transition-all" %>
+                <%= text_field_tag :contact_info, nil, placeholder: "연락처 (번호/오픈채팅)", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
               </div>
 
               <div>
                 <%= f.label :threads_nickname, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
                   스레드 계정 <span class="text-white/30">(선택)</span>
                 <% end %>
-                <%= text_field_tag :threads_nickname, nil, placeholder: "@threads_id 또는 닉네임", class: "w-full px-6 py-4 bg-white/10 border-white/20 rounded-2xl text-white placeholder-white/40 font-bold focus:ring-2 ring-white/50 border-none transition-all" %>
+                <%= text_field_tag :threads_nickname, nil, placeholder: "@threads_id 또는 닉네임", class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
               </div>
               
               <div class="bg-white/5 rounded-2xl p-5 text-xs space-y-2 border border-white/10">

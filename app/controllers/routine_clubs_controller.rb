@@ -16,6 +16,9 @@ class RoutineClubsController < ApplicationController
     @my_clubs = current_user&.routine_club_members&.includes(:routine_club) || []
   end
 
+  def guide
+  end
+
   def show
     @is_member = current_user && @routine_club.members.exists?(user: current_user)
     @is_host = current_user && @routine_club.host_id == current_user.id
@@ -108,16 +111,20 @@ class RoutineClubsController < ApplicationController
       return redirect_to @routine_club, alert: "정원이 마감되었습니다."
     end
 
+    if !@routine_club.recruitment_open? && current_user.role != "admin"
+      return redirect_to @routine_club, alert: "지금은 정기 모집 기간이 아닙니다. 다음 모집 기간에 신청해주세요."
+    end
+
     if @routine_club.members.exists?(user: current_user)
       return redirect_to @routine_club, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
     end
 
     join_date = Date.current
-    prorated_fee = @routine_club.calculate_prorated_fee(join_date)
+    quarterly_fee = @routine_club.calculate_quarterly_fee(join_date)
 
     @membership = @routine_club.members.build(
       user: current_user,
-      paid_amount: prorated_fee,
+      paid_amount: quarterly_fee,
       depositor_name: params[:depositor_name],
       contact_info: params[:contact_info],
       threads_nickname: params[:threads_nickname],

@@ -46,17 +46,46 @@ class RoutineClub < ApplicationRecord
     end
   end
 
-  # 분기별 요금 계산 (하루 100원)
-  # 1분기: 1월~3월, 2분기: 4월~6월, 3분기: 7월~9월, 4분기: 10월~12월
+  # 기수 계산 (2026년 1월 1일 시작 = 7기 기준)
+  def self.generation_number(date = Date.current)
+    base_date = Date.new(2026, 1, 1)
+    return 7 if date < base_date
+
+    quarters_passed = ((date.year - base_date.year) * 4) + ((date.month - 1) / 3) - ((base_date.month - 1) / 3)
+    7 + quarters_passed
+  end
+
+  def generation_number(date = Date.current)
+    self.class.generation_number(date)
+  end
+
+  # 모집 기간 여부 확인 (분기 시작 14일 전 ~ 시작일 당일)
+  def self.recruitment_open?(date = Date.current)
+    # 현재 분기 시작일 계산 (시작 14일 전 ~ 시작일 당일)
+    current_quarter_start = date.beginning_of_quarter
+    date >= (current_quarter_start - 14.days) && date <= current_quarter_start
+  end
+
+  def recruitment_open?(date = Date.current)
+    self.class.recruitment_open?(date)
+  end
+
+  # 고정 분기 요금 계산 (하루 100원 기준, 해당 분기 전체 일수 계산)
+  def self.calculate_quarterly_fee(date = Date.current)
+    start_of_q = date.beginning_of_quarter
+    end_of_q = date.end_of_quarter
+    days_in_q = (end_of_q - start_of_q).to_i + 1
+
+    days_in_q * 100
+  end
+
+  def calculate_quarterly_fee(date = Date.current)
+    self.class.calculate_quarterly_fee(date)
+  end
+
+  # 하위 호환성을 위해 유지하되 로직은 고정가로 변경
   def calculate_prorated_fee(join_date)
-    # 현재 분기의 마지막 날 계산
-    quarter_end_date = get_quarter_end_date(join_date)
-
-    # 가입일부터 분기 마지막 날까지의 일수 계산
-    days_in_quarter = (quarter_end_date - join_date).to_i + 1
-
-    # 하루 100원으로 계산
-    days_in_quarter * 100
+    calculate_quarterly_fee(join_date)
   end
 
   # 주어진 날짜가 속한 분기의 마지막 날 반환

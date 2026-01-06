@@ -22,7 +22,7 @@
         
         <p class="text-base sm:text-xl md:text-2xl text-slate-400 font-bold max-w-2xl mx-auto leading-relaxed break-keep px-4">
           하루 단 <span class="text-white border-b border-indigo-500/50 pb-0.5">100원</span>으로 시작하는 완벽한 루틴.<br/>
-          단순한 다짐을 넘어 시스템이 당신의 성장을 강제합니다.
+          단순한 다짐을 넘어 기수제 시스템이<br/>당신의 성장을 강제합니다.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center pt-6 px-4 sm:px-0">
@@ -32,9 +32,9 @@
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             <% end %>
           <% end %>
-          <a href="#features" class="px-10 py-5 bg-white/5 text-white border border-white/10 rounded-[24px] font-black text-lg hover:bg-white/10 transition-all backdrop-blur-md">
+          <%= link_to guide_routine_clubs_path, class: "px-10 py-5 bg-white/5 text-white border border-white/10 rounded-[24px] font-black text-lg hover:bg-white/10 transition-all backdrop-blur-md" do %>
             클럽 혜택보기
-          </a>
+          <% end %>
         </div>
       </div>
     </div>
@@ -50,9 +50,9 @@
       <!-- Feature 1 -->
       <div class="flex-shrink-0 w-[280px] sm:w-[300px] md:w-auto bg-white p-6 sm:p-10 rounded-[32px] sm:rounded-[48px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] border border-slate-100 snap-center group">
         <div class="w-12 h-12 sm:w-16 sm:h-16 bg-indigo-50 rounded-[20px] sm:rounded-[24px] flex items-center justify-center text-2xl sm:text-3xl mb-6 sm:mb-8 group-hover:scale-110 transition-transform duration-500">🎫</div>
-        <h3 class="text-xl sm:text-2xl font-black text-slate-900 mb-3 sm:mb-4 tracking-tight">시즌 휴식권</h3>
+        <h3 class="text-xl sm:text-2xl font-black text-slate-900 mb-3 sm:mb-4 tracking-tight">기수별 휴식권</h3>
         <p class="text-sm sm:text-base text-slate-500 font-medium leading-relaxed break-keep">
-          시즌당 3매의 휴식권으로 예상치 못한 상황에서도 당신의 스트릭을 보호하고 경고를 자동 방어합니다.
+          기수당 3매의 휴식권으로 예상치 못한 상황에서도 당신의 스트릭을 보호하고 출석률(70%)을 방어합니다.
         </p>
       </div>
 
@@ -79,18 +79,18 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div class="bg-indigo-600 p-10 rounded-[48px] flex flex-col sm:flex-row items-center gap-8 group overflow-hidden relative">
         <div class="absolute -right-8 -bottom-8 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-        <div class="w-24 h-24 bg-white/20 rounded-[32px] flex items-center justify-center text-4xl z-10">🚀</div>
+        <div class="w-24 h-24 bg-white/20 rounded-[32px] flex items-center justify-center text-4xl z-10">⚡️</div>
         <div class="z-10 text-center sm:text-left">
-           <h3 class="text-2xl font-black text-white mb-2">퍼스널 목표 선언</h3>
-           <p class="text-base text-indigo-100 font-medium leading-relaxed">루틴을 넘어선 나만의 큰 목표를 선언하고<br/>클럽원들과 함께 달성해 나갑니다.</p>
+           <h3 class="text-2xl font-black text-white mb-2">10-Penalty 킥</h3>
+           <p class="text-base text-indigo-100 font-medium leading-relaxed">경고 10회 누적 시 즉시 자동 제명.<br/>당신의 환경을 깨끗하게 유지합니다.</p>
         </div>
       </div>
       <div class="bg-slate-900 p-10 rounded-[48px] flex flex-col sm:flex-row items-center gap-8 group overflow-hidden relative">
         <div class="absolute -right-8 -bottom-8 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
         <div class="w-24 h-24 bg-white/10 rounded-[32px] flex items-center justify-center text-4xl z-10">🏅</div>
         <div class="z-10 text-center sm:text-left">
-           <h3 class="text-2xl font-black text-white mb-2">프리미엄 전용 뱃지</h3>
-           <p class="text-base text-slate-400 font-medium leading-relaxed">루파 클럽 멤버들에게만 허락된<br/>특별한 뱃지로 당신의 가치를 프로필에 담으세요.</p>
+           <h3 class="text-2xl font-black text-white mb-2">기수 완주 배지</h3>
+           <p class="text-base text-slate-400 font-medium leading-relaxed">출석률 70% 달성자에게 수여되는<br/>명예로운 기수 공식 인증 훈장</p>
         </div>
       </div>
     </div>
@@ -104,13 +104,13 @@
           <div class="space-y-6">
             <h2 class="text-4xl sm:text-6xl font-black text-slate-900 leading-[1.1] tracking-tighter break-keep">
               왜 루파 클럽은<br/>
-              <span class="text-indigo-600">최소 3개월</span> 인가요?
+              <span class="text-indigo-600">분기별 기수제</span> 인가요?
             </h2>
             <div class="w-20 h-1.5 bg-indigo-600 rounded-full"></div>
           </div>
           
           <p class="text-lg sm:text-xl text-slate-600 font-medium leading-[1.8] break-keep">
-            습관이 뇌에 각인되는 데 필요한 최소 시간은 66일입니다. 90일의 커리큘럼은 당신의 일상을 시스템으로 전환하여 작심삼일이 불가능한 구조를 만듭니다.
+            습관이 뇌에 각인되는 데 필요한 최소 시간은 66일입니다. 3개월(약 91일) 단위의 기수제 시스템은 당신의 일상을 루틴으로 전환하여 작심삼일이 불가능한 구조를 만듭니다.
           </p>
 
           <div class="space-y-4">
@@ -191,7 +191,7 @@
                <% end %>
                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
                <div class="absolute bottom-10 left-10">
-                 <span class="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full text-[10px] font-black uppercase tracking-widest">Official Season 25-1</span>
+                 <span class="px-4 py-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full text-[10px] font-black uppercase tracking-widest">Official <%= club.generation_number %>th Generation</span>
                </div>
              </div>
 
@@ -205,16 +205,15 @@
                  
                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10 pt-6 sm:pt-10 border-t border-slate-100">
                     <div>
-                       <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest mb-2 sm:mb-3">Monthly Fee</p>
+                       <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest mb-2 sm:mb-3">Quarterly Entrance Fee</p>
                        <div class="flex items-baseline gap-1">
-                         <p class="text-3xl sm:text-4xl font-black text-indigo-600">₩3,000</p>
-                         <p class="text-xs sm:text-sm font-bold text-slate-400">/ mo</p>
+                         <p class="text-3xl sm:text-4xl font-black text-indigo-600"><%= number_to_currency(club.calculate_quarterly_fee, unit: "₩", precision: 0, format: "%n%u") %></p>
                        </div>
-                       <p class="text-[10px] sm:text-[11px] font-black text-indigo-400/80 mt-1 sm:mt-2 uppercase tracking-tight">하루 단 100원</p>
+                       <p class="text-[10px] sm:text-[11px] font-black text-indigo-400/80 mt-1 sm:mt-2 uppercase tracking-tight">하루 단 100원 기준 정액제</p>
                     </div>
                     <div>
-                       <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest mb-2 sm:mb-3">Min. Commitment</p>
-                       <p class="text-3xl sm:text-4xl font-black text-slate-900 leading-tight"><%= club.min_duration_months %> <span class="text-2xl sm:text-3xl">Months</span></p>
+                       <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest mb-2 sm:mb-3">Standard Period</p>
+                       <p class="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">3 <span class="text-2xl sm:text-3xl">Months</span></p>
                     </div>
                  </div>
                </div>

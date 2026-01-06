@@ -175,6 +175,19 @@ class User < ApplicationRecord
     routine_club_members.where(status: :active, payment_status: :confirmed).exists?
   end
 
+  def has_active_rufa_membership?
+    routine_club_members.where(status: :active, payment_status: :confirmed)
+                       .where("membership_start_date <= ?", Date.current)
+                       .exists?
+  end
+
+  def pending_rufa_membership
+    routine_club_members.where(status: :active, payment_status: :confirmed)
+                       .where("membership_start_date > ?", Date.current)
+                       .order(membership_start_date: :asc)
+                       .first
+  end
+
   # ① 루틴 작성률 (해당 월 동안 루틴을 기록한 날이 전체의 70% 이상)
   # '기록'의 정의: 해당 일자에 완료 기록이 있거나 루틴이 설정되어 있었던 상태 (여기선 실제 액션 기준)
   def monthly_routine_log_rate(date = Date.current)
@@ -227,6 +240,4 @@ class User < ApplicationRecord
     # 누적 점수: 총 완료 횟수 기반
     total_routine_completions
   end
-
-
 end

@@ -92,6 +92,9 @@ Rails.application.routes.draw do
 
   # Routine Clubs (유료 루틴 클럽)
   resources :routine_clubs do
+    collection do
+      get :guide
+    end
     member do
       get :manage
       post :join

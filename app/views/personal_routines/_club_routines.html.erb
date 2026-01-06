@@ -1,6 +1,6 @@
 <div class="space-y-12">
   
-  <% unless current_user.is_rufa_club_member? || current_user.admin? %>
+  <% if !(current_user.is_rufa_club_member? || current_user.admin?) %>
     <!-- Premium Promotion View for Non-members -->
     <section class="relative overflow-hidden bg-slate-900 rounded-[48px] lg:rounded-[64px] px-6 py-16 lg:p-24 text-white shadow-2xl" style="background-color: #0f172a !important; color: white !important;">
 
@@ -40,31 +40,71 @@
 
         <div class="pt-12 flex flex-col items-center gap-8">
           <% if @official_club&.persisted? %>
-            <%= link_to routine_club_path(@official_club), class: "group relative w-full sm:w-auto px-8 lg:px-16 py-6 lg:py-8 bg-white text-slate-900 rounded-[28px] lg:rounded-[32px] font-black text-lg lg:text-xl hover:bg-amber-400 transition-all shadow-xl overflow-hidden" do %>
-              <span class="relative z-10">지금 루파 클럽 참여하기</span>
-              <div class="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <% if @official_club.recruitment_open? %>
+              <%= link_to routine_club_path(@official_club), class: "group relative w-full sm:w-auto px-8 lg:px-16 py-6 lg:py-8 bg-white text-slate-900 rounded-[28px] lg:rounded-[32px] font-black text-lg lg:text-xl hover:bg-amber-400 transition-all shadow-xl overflow-hidden" do %>
+                <span class="relative z-10">지금 루파 클럽 <%= @official_club.generation_number %>기 합류하기</span>
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <% end %>
+            <% else %>
+              <div class="group relative w-full sm:w-auto px-8 lg:px-16 py-6 lg:py-8 bg-slate-800 text-slate-400 rounded-[28px] lg:rounded-[32px] font-black text-lg lg:text-xl border border-white/10 opacity-70">
+                <span class="relative z-10">지금은 정기 모집 기간이 아닙니다</span>
+              </div>
             <% end %>
           <% end %>
           <div class="flex flex-col sm:flex-row items-center gap-2 lg:gap-3 text-slate-500">
             <% if @official_club %>
               <% 
-                today = Date.current
-                fee = @official_club.calculate_prorated_fee(today)
-                days_left = (@official_club.get_quarter_end_date(today) - today).to_i + 1
+                fee = @official_club.calculate_quarterly_fee
               %>
-              <span class="text-xs lg:text-sm font-bold">오늘 가입 시 이번 분기 종료까지 <span class="text-amber-400"><%= days_left %>일</span>간 <span class="text-amber-400"><%= number_to_currency(fee, unit: "₩", precision: 0) %></span> (하루 100원)</span>
+              <span class="text-xs lg:text-sm font-bold">분기 정액 멤버십 <span class="text-amber-400"><%= number_to_currency(fee, unit: "₩", precision: 0) %></span> (하루 100원 수준)</span>
             <% else %>
               <span class="text-xs lg:text-sm font-bold">하루 100원 수준의 투자로 누리는 모든 권한</span>
             <% end %>
             <div class="hidden sm:block w-1 h-1 bg-slate-700 rounded-full"></div>
-            <span class="text-xs lg:text-sm font-bold">중도 해지 및 환불 불가</span>
+            <span class="text-xs lg:text-sm font-bold">기수 완주(출석 70%) 시 명예 배지 부여</span>
           </div>
         </div>
       </div>
     </section>
+  <% elsif current_user.pending_rufa_membership %>
+    <!-- Approved but waiting for quarter start -->
+    <section class="relative overflow-hidden bg-slate-900 rounded-[48px] lg:rounded-[64px] px-6 py-20 lg:p-32 text-white shadow-2xl text-center">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.15),transparent_50%)]"></div>
+      
+      <div class="relative z-10 max-w-2xl mx-auto space-y-10">
+        <div class="inline-flex items-center gap-3 bg-indigo-500/20 backdrop-blur-xl px-6 py-3 rounded-full border border-indigo-500/30">
+          <span class="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-pulse"></span>
+          <% d_day = (current_user.pending_rufa_membership.membership_start_date - Date.current).to_i %>
+          <span class="text-sm font-black uppercase tracking-widest text-indigo-100 italic">D-<%= d_day %> Until Activation</span>
+        </div>
 
+        <h2 class="text-4xl lg:text-6xl font-black leading-tight break-keep">
+          승인이 완료되었습니다!<br/>
+          <span class="text-indigo-400">명예로운 <%= current_user.pending_rufa_membership.routine_club.generation_number(current_user.pending_rufa_membership.membership_start_date) %>기</span> 활동을 기다려주세요.
+        </h2>
+        
+        <p class="text-lg lg:text-xl text-slate-400 font-medium leading-relaxed break-keep">
+          루파 클럽의 모든 프리미엄 기능은 기수가 시작되는 <br class="hidden lg:block"/>
+          <span class="text-white font-bold"><%= current_user.pending_rufa_membership.membership_start_date.strftime("%Y년 %m월 %d일") %></span>부터 자동으로 활성화됩니다.
+        </p>
+
+        <div class="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-4">
+          <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">How to prepare</p>
+          <ul class="text-left space-y-3 max-w-md mx-auto">
+            <li class="flex items-center gap-3 text-slate-300 font-bold">
+              <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              <span>나만의 성취 루틴 미리 설계하기</span>
+            </li>
+            <li class="flex items-center gap-3 text-slate-300 font-bold">
+              <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              <span>루파 클럽 공지사항 및 가이드 숙지하기</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </section>
-  <% else %>
+
+  <% elsif current_user.has_active_rufa_membership? || current_user.admin? %>
     <!-- Premium Member Dashboard with Sub-navigation -->
     <div class="flex flex-col lg:flex-row gap-12" id="rufa-premium-board" style="background-color: #f8fafc; color: #1e293b; min-height: 500px;">
       <% if current_user.admin? && !current_user.is_rufa_club_member? %>

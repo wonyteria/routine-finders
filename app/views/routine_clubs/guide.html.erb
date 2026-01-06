@@ -1,0 +1,179 @@
+<div class="min-h-screen bg-slate-50">
+  <!-- Hero Section -->
+  <section class="relative bg-slate-900 pt-16 pb-48 overflow-hidden">
+    <!-- Back Button - Top Left -->
+    <div class="max-w-7xl mx-auto px-6 relative z-30">
+      <%= link_to routine_clubs_path, class: "inline-flex items-center gap-2 text-indigo-400 font-bold hover:text-indigo-300 transition-colors" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        돌아가기
+      <% end %>
+    </div>
+
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.2),transparent)]"></div>
+      <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent"></div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto px-6 relative z-10 text-center mt-12 space-y-8">
+      
+      <div class="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl px-5 py-2 rounded-full border border-white/10">
+        <span class="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse"></span>
+        <span class="text-[10px] sm:text-xs font-black text-indigo-200 tracking-[0.2em] uppercase">Rufa Club Official Guide</span>
+      </div>
+      
+      <h1 class="text-4xl sm:text-7xl font-black text-white leading-tight tracking-tighter break-keep">
+        루파 클럽<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+          운영 원칙과 시스템
+        </span>
+      </h1>
+      
+      <p class="text-lg sm:text-xl text-slate-400 font-medium max-w-3xl mx-auto leading-relaxed break-keep whitespace-nowrap hidden sm:block">
+        루파 클럽이 시스템으로 성장을 '강제'하는 방식에 대해 설명해 드립니다.
+      </p>
+      <p class="text-base text-slate-400 font-medium leading-relaxed break-keep sm:hidden">
+        성장을 '강제'하는 시스템을 설명해 드립니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <div class="max-w-4xl mx-auto px-6 -mt-24 pb-32 relative z-20 space-y-12">
+    
+    <!-- Core Engine 1: Generation System -->
+    <div class="bg-white rounded-[48px] p-8 md:p-16 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-10 group">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-500">📅</div>
+        <div>
+          <h2 class="text-2xl md:text-3xl font-black text-slate-900">분기별 기수제 운영</h2>
+          <p class="text-sm md:text-base text-slate-400 font-bold">Quarterly Generation System</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6 text-slate-600 font-medium leading-relaxed">
+        <p>루파 클럽은 아무 때나 가입하고 나가는 곳이 아닙니다. <span class="text-indigo-600 font-black">3개월마다 새로운 기수</span>가 시작되며, 모집 기간에 신청한 멤버들만이 90일간의 여정을 함께합니다.</p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+            <p class="font-black text-slate-900 mb-2">정기 모집 주기</p>
+            <p class="text-sm">매 분기 시작 2주 전(1·4·7·10월)부터 모집을 시작하며, 기수가 시작되면 중도 합류가 원칙적으로 불가능합니다.</p>
+          </div>
+          <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+            <p class="font-black text-slate-900 mb-2">멤버십 비용</p>
+            <p class="text-sm"><span class="font-black">하루 단 100원</span>을 기준으로 한 분기(약 91일) 전체 비용을 일괄 선결제하는 정액제로 운영됩니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Engine 2: Attendance Logic -->
+    <div class="bg-white rounded-[48px] p-8 md:p-16 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-10 group">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-amber-50 rounded-3xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-500">🎲</div>
+        <div>
+          <h2 class="text-2xl md:text-3xl font-black text-slate-900">징검다리 출석 로직</h2>
+          <p class="text-sm md:text-base text-slate-400 font-bold">Stepping Stone Logic</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6 text-slate-600 font-medium leading-relaxed">
+        <p>매일 루틴을 수행해야 한다는 압박감이 오히려 당신을 포기하게 만들지 않도록, 루파 클럽은 가장 공정한 <span class="text-amber-600 font-black">'징검다리 로직'</span>을 사용합니다.</p>
+        
+        <div class="p-8 bg-amber-50 rounded-[40px] border border-amber-100 relative overflow-hidden">
+          <div class="absolute -right-8 -bottom-8 text-6xl opacity-10">🤔</div>
+          <p class="text-amber-900 font-black mb-4">어떻게 계산되나요?</p>
+          <p class="text-sm text-amber-800 leading-relaxed">
+            단순히 달력 전체 일수로 나누지 않습니다. <span class="font-black">본인이 루틴을 설정한 구체적인 날짜들</span>만이 분모가 됩니다. 
+            주 3회 하시는 분도, 주 7회 하시는 분도 자신이 약속한 날에 얼마나 성실했는지를 기준으로 공평하게 경쟁합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Engine 3: Badge System -->
+    <div class="bg-white rounded-[48px] p-8 md:p-16 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-10 group">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-emerald-50 rounded-3xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-500">🏅</div>
+        <div>
+          <h2 class="text-2xl md:text-3xl font-black text-slate-900">기수 완주 시스템</h2>
+          <p class="text-sm md:text-base text-slate-400 font-bold">Honorary Completion Badge</p>
+        </div>
+      </div>
+      
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h4 class="font-black text-slate-900 flex items-center gap-2">
+            <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
+            명예 배지 수여 기준
+          </h4>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-4">
+              <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs">01</div>
+              <p class="font-medium text-slate-600">누적 출석률 <span class="text-emerald-600 font-black">70% 이상</span> 유지</p>
+            </li>
+            <li class="flex items-start gap-4">
+              <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs">02</div>
+              <p class="font-medium text-slate-600">누적 경고 10회 미만 (제명되지 않은 멤버)</p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-8 bg-slate-900 rounded-[40px] text-white relative overflow-hidden group">
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+          <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+            <div class="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center text-5xl shadow-2xl border border-white/20 animate-bounce">🎖️</div>
+            <div class="flex-1 text-center md:text-left">
+              <h5 class="text-xl font-black mb-2">기수별 명예 배지 발행</h5>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                각 기수가 종료되면 기준을 통과한 멤버에게만 <span class="text-white font-bold">'루파 클럽 n기 명예 완주'</span> 배지가 수여됩니다. 
+                이 배지는 당신의 프로필 영구적인 장식으로 남아 당신의 꾸준함을 증명하는 지표가 됩니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Engine 4: Penalty System -->
+    <div class="bg-white rounded-[48px] p-8 md:p-16 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-10 group">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 bg-red-50 rounded-3xl flex items-center justify-center text-3xl shadow-sm group-hover:scale-110 transition-transform duration-500">🚫</div>
+        <div>
+          <h2 class="text-2xl md:text-3xl font-black text-slate-900 leading-tight">제명 규정<br/>(10-Penalty Kick)</h2>
+          <p class="text-sm md:text-base text-slate-400 font-bold">Strict Environment Control</p>
+        </div>
+      </div>
+      
+      <div class="space-y-6 text-slate-600 font-medium leading-relaxed">
+        <p>상호 책임을 위해 루파 클럽은 엄격한 제명 제도를 운영합니다. 멤버들의 환경이 탁해지는 것을 방지하기 위한 최소한의 도구입니다.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-8 bg-slate-900 rounded-[40px] text-white">
+            <div class="text-red-500 text-2xl font-black mb-4">WARNING ⚡️</div>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              루틴을 입증하지 못하고 자정을 넘기면 <span class="text-white font-black">경고 1회</span>와 벌점이 자동 부과됩니다. 
+              <span class="text-red-400 font-black">누적 경고 10회</span> 달성 시 그 즉시 클럽에서 강제 퇴장(Kick) 처리됩니다.
+            </p>
+          </div>
+          <div class="p-8 bg-indigo-600 rounded-[40px] text-white">
+            <div class="text-indigo-200 text-2xl font-black mb-4">DEFENSE 🎫</div>
+            <p class="text-sm text-indigo-100 leading-relaxed">
+              갑작스러운 일정이 생겼을 때를 대비해 <span class="text-white font-black">기수당 3장의 휴식권</span>이 주어집니다. 
+              휴식권을 사용하면 경고를 방어하고 스트릭을 유지할 수 있으니 전략적으로 사용하세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="text-center space-y-8">
+      <h3 class="text-2xl font-black text-slate-900">변화를 시작할 준비가 되셨나요?</h3>
+      <% current_gen = RoutineClub.generation_number(Date.current) %>
+      <%= link_to routine_clubs_path, class: "inline-flex items-center gap-3 px-10 py-5 bg-indigo-600 text-white rounded-[32px] font-black text-xl hover:bg-indigo-500 transition-all shadow-2xl shadow-indigo-200 transform active:scale-95 group" do %>
+        루파 클럽 <%= current_gen %>기 확인하기
+        <svg class="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      <% end %>
+    </div>
+  </div>
+</div>

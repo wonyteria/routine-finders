@@ -19,6 +19,11 @@ class BadgeService
     new_badges
   end
 
+  def self.award_manually(user, badge)
+    return if user.badges.include?(badge)
+    user.user_badges.create!(badge: badge, granted_at: Time.current)
+  end
+
   private
 
   def calculate_metric(badge)
