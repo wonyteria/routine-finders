@@ -97,8 +97,8 @@ builder:
   #   - GITHUB_TOKEN
   #   - RAILS_MASTER_KEY
 
-# ssh:
-#   user: root
+ssh:
+  user: root
 #   keys:
 #     - "~/.ssh/routine-finders-droplet"
 
