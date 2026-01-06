@@ -111,21 +111,26 @@
           <!-- Quick Stats Sidebar (Hidden on Mobile) -->
           <div class="hidden lg:block bg-white rounded-[32px] p-8 border border-slate-100 space-y-6 shadow-sm">
             <div class="space-y-1">
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Growth Identity</p>
-              <h4 class="text-base font-black text-slate-900"><%= current_user.routine_club_members.active.first&.identity_title %></h4>
+              <p class="text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest">Growth Identity</p>
+              <h4 class="text-sm lg:text-base font-black text-slate-900"><%= current_user.routine_club_members.active.first&.identity_title %></h4>
             </div>
-            <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-4 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group" do %>
-               <span class="text-xs font-black">월간 성실함 리포트</span>
-               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7m-7 7H3"/></svg>
-            <% end %>
+            
+            <div class="grid grid-cols-1 gap-3">
+              <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-4 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group" do %>
+                 <span class="text-xs font-black">월간 성실함 리포트</span>
+                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7m-7 7H3"/></svg>
+              <% end %>
 
-            <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-4 bg-[#FEE500] text-[#3c1e1e] rounded-2xl hover:brightness-95 transition-all group shadow-sm" do %>
-               <div class="flex items-center gap-3">
-                 <span class="text-lg">💬</span>
-                 <span class="text-xs font-black">루파 클럽 단톡방</span>
-               </div>
-               <svg class="w-4 h-4 opacity-30" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
-            <% end %>
+              <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-4 bg-[#FEE500] text-[#3c1e1e] rounded-2xl hover:brightness-95 transition-all group shadow-sm" do %>
+                 <div class="flex items-center gap-3">
+                   <div class="flex items-center justify-center p-1 bg-[#3c1e1e]/5 rounded-lg">
+                     <svg class="w-4 h-4 text-[#3c1e1e]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
+                   </div>
+                   <span class="text-xs font-black">루파 클럽 단톡방</span>
+                 </div>
+                 <svg class="w-4 h-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+              <% end %>
+            </div>
           </div>
         </div>
       </aside>
@@ -137,42 +142,45 @@
         <div id="tab-dashboard" class="rufa-content-tab space-y-12">
           
           <!-- Today's Check-in (Prominent on dashboard) -->
-          <div class="bg-white rounded-[48px] p-12 border border-slate-100 shadow-sm space-y-10">
+          <div class="bg-white rounded-[32px] lg:rounded-[48px] p-6 lg:p-12 border border-slate-100 shadow-sm space-y-8 lg:space-y-10">
              <div class="flex items-center justify-between">
-               <h3 class="text-2xl font-black text-slate-900 tracking-tight">오늘의 루틴 체크인</h3>
-               <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest"><%= Date.current.strftime("%A, %B %d") %></span>
+               <h3 class="text-lg lg:text-2xl font-black text-slate-900 tracking-tight">오늘의 루틴 체크인</h3>
+               <span class="text-[9px] lg:text-[10px] font-black text-indigo-500 uppercase tracking-widest"><%= Date.current.strftime("%A, %B %d") %></span>
              </div>
-             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <% todays_routines = @personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } %>
+             
+             <% todays_routines = @personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } %>
+             <div class="grid <%= todays_routines.size >= 2 ? 'grid-cols-2' : 'grid-cols-1' %> md:grid-cols-2 gap-3 lg:gap-4">
                <% if todays_routines.any? %>
                  <% todays_routines.each do |routine| %>
                    <div id="routine_<%= routine.id %>_club" class="w-full">
                      <%= button_to toggle_personal_routine_path(routine), 
                                    method: :post, 
-                                   class: "flex items-center justify-between p-6 rounded-3xl border-2 transition-all hover:scale-[1.02] w-full #{routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}",
+                                   class: "flex flex-col items-center justify-center p-5 lg:p-8 rounded-[28px] lg:rounded-3xl border-2 transition-all hover:scale-[1.02] w-full #{routine.completed_today? ? 'bg-indigo-50 border-indigo-200 ring-4 ring-indigo-50' : 'bg-slate-50 border-transparent hover:border-indigo-100 group'}",
                                    data: { turbo_stream: true } do %>
-                        <div class="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
-                          <span class="text-2xl transform group-hover:scale-125 transition-transform flex-shrink-0"><%= routine.icon %></span>
-                          <div class="text-left min-w-0 flex-1">
-                            <p class="text-[15px] font-black text-slate-900 truncate <%= 'line-through text-slate-400' if routine.completed_today? %>"><%= routine.title %></p>
-                            <p class="text-[10px] font-bold text-slate-400 truncate"><%= routine.category %></p>
+                        
+                        <div class="text-center space-y-2 lg:space-y-4 mb-4 min-w-0 w-full">
+                          <span class="text-2xl lg:text-4xl block transform group-hover:scale-125 transition-transform"><%= routine.icon %></span>
+                          <div class="min-w-0">
+                            <p class="text-[12px] lg:text-[15px] font-black text-slate-900 truncate <%= 'line-through text-slate-400' if routine.completed_today? %>"><%= routine.title %></p>
+                            <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 truncate uppercase tracking-widest mt-0.5"><%= routine.category %></p>
                           </div>
                         </div>
+
                         <% if routine.completed_today? %>
-                          <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white flex-shrink-0 ml-4 shadow-lg shadow-indigo-100">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                          <div class="w-8 h-8 lg:w-12 lg:h-12 bg-indigo-600 rounded-xl lg:rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-100">
+                            <svg class="w-5 h-5 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                           </div>
                         <% else %>
-                          <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all flex-shrink-0 ml-4 shadow-sm">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                          <div class="w-8 h-8 lg:w-12 lg:h-12 bg-white rounded-xl lg:rounded-2xl flex items-center justify-center text-slate-200 border border-slate-100 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-all shadow-sm">
+                            <svg class="w-5 h-5 lg:w-7 lg:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                           </div>
                         <% end %>
                      <% end %>
                    </div>
                  <% end %>
                <% else %>
-                 <div class="col-span-2 py-16 text-center bg-slate-50 rounded-[40px] border border-slate-200">
-                    <p class="text-xl font-black text-slate-400 mb-2">오늘 설정된 전용 루틴이 없습니다.</p>
+                 <div class="col-span-full py-16 text-center bg-slate-50 rounded-[40px] border border-slate-200">
+                    <p class="text-base lg:text-xl font-black text-slate-400 mb-2">오늘 설정된 전용 루틴이 없습니다.</p>
                     <%= link_to "루틴 설정하러 가기", personal_routines_path(tab: "free", focus_new: true), class: "text-xs font-black text-indigo-600 hover:underline" %>
                  </div>
                <% end %>
@@ -764,6 +772,33 @@
         </div>
 
       </main>
+      
+      <!-- Mobile Quick Stats (Visible only on mobile, at the bottom) -->
+      <div class="lg:hidden mt-8 space-y-6">
+        <div class="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm space-y-6 text-center">
+          <div class="space-y-1">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Growth Identity</p>
+            <h4 class="text-lg font-black text-slate-900"><%= current_user.routine_club_members.active.first&.identity_title %></h4>
+          </div>
+          
+          <div class="grid grid-cols-1 gap-4">
+            <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-5 bg-indigo-50 text-indigo-600 rounded-[24px] font-black shadow-sm" do %>
+               <span class="text-sm">월간 성실함 리포트</span>
+               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+
+            <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-5 bg-[#FEE500] text-[#3c1e1e] rounded-[24px] font-black shadow-sm" do %>
+               <div class="flex items-center gap-3">
+                 <div class="flex items-center justify-center p-1.5 bg-[#3c1e1e]/5 rounded-lg">
+                   <svg class="w-5 h-5 text-[#3c1e1e]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
+                 </div>
+                 <span class="text-sm">루파 클럽 단톡방</span>
+               </div>
+               <svg class="w-5 h-5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
   <% end %>
 </div>
