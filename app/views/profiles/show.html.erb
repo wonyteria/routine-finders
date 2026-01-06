@@ -6,18 +6,6 @@
   <div class="bg-white rounded-[32px] lg:rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col lg:flex-row">
     <!-- Left: Profile Info -->
     <div class="lg:w-1/3 p-6 md:p-12 flex flex-col items-center justify-center text-center bg-gradient-to-br from-slate-50 to-white border-b lg:border-b-0 lg:border-r border-slate-100 relative">
-      <div class="absolute top-6 right-6 flex gap-2">
-        <%= link_to edit_profile_path, class: "w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm", title: "프로필 수정" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-        <% end %>
-        <%= link_to pwa_guide_path, class: "w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-300 transition-all shadow-sm", title: "앱 가이드" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-        <% end %>
-        <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm", title: "로그아웃" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-        <% end %>
-      </div>
-
       <div class="relative mb-6 lg:mb-8 group">
         <img src="<%= @user.profile_image %>" class="w-32 h-32 lg:w-40 lg:h-40 rounded-[32px] lg:rounded-[48px] border-8 border-white shadow-2xl object-cover transition-transform group-hover:scale-105" alt="">
         <% if @user.admin? %>
@@ -33,7 +21,23 @@
           <%= @user.role.upcase %>
         </span>
         <p class="text-xs font-bold text-slate-400"><%= @user.email %></p>
-        <% if @user.super_admin? || @user.club_admin? %>
+      </div>
+
+      <!-- [NEW] Profile Action Bar: Prominent and Labeled -->
+      <div class="mt-8 flex items-center gap-2">
+        <%= link_to edit_profile_path, class: "flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-[10px] font-black uppercase text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all shadow-sm" do %>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          프로필 수정
+        <% end %>
+        <%= link_to pwa_guide_path, class: "flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-[10px] font-black uppercase text-slate-600 hover:text-blue-600 hover:border-blue-300 transition-all shadow-sm" do %>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          앱 가이드
+        <% end %>
+        <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-[10px] font-black uppercase text-slate-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm" do %>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          로그아웃
+        <% end %>
+      </div>  <% if @user.super_admin? || @user.club_admin? %>
           <div class="mt-6 flex flex-wrap justify-center gap-3">
             <% hosted_club = RoutineClub.find_by(host_id: @user.id) %>
             
@@ -183,10 +187,10 @@
     <!-- Dashboard Tab -->
     <div data-tabs-target="panel" data-id="dashboard" class="space-y-8">
       <!-- Quick Summary Stats -->
-      <!-- RUFA Club Member Status for members -->
+      <!-- 루파 클럽 Member Status for members -->
       <%= render "shared/rufa_member_status" %>
       
-      <!-- RUFA Club Nudge for non-members -->
+      <!-- 루파 클럽 Nudge for non-members -->
       <%= render "shared/rufa_club_nudge" %>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -515,11 +519,11 @@
       </section>
     </div>
 
-    <!-- Rupin Tab (RUFA Club + Routines) -->
+    <!-- Rupin Tab (루파 클럽 + Routines) -->
     <div data-tabs-target="panel" data-id="rupin" class="hidden space-y-16">
-      <!-- 1. RUFA Club Section -->
+      <!-- 1. 루파 클럽 Section -->
       <section class="space-y-6">
-        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">RUFA CLUB</h3>
+        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">루파 클럽</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <% @club_memberships.each do |membership| %>
             <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">

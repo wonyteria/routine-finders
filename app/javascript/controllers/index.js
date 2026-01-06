@@ -52,4 +52,5 @@ application.register("toggle-list", ToggleListController)
 import PwaBannerController from "controllers/pwa_banner_controller"
 application.register("pwa-banner", PwaBannerController)
 
-
+import DropdownController from "controllers/dropdown_controller"
+application.register("dropdown", DropdownController)
