@@ -36,6 +36,10 @@ class HomeController < ApplicationController
     # Landing page for both guest and logged-in users who want to see the platform intro
   end
 
+  def pwa_guide
+    # PWA usage guide page
+  end
+
   def ranking
     @rankings = User.left_joins(:user_badges)
                     .select("users.*, COUNT(user_badges.id) as badge_count")

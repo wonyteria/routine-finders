@@ -49,3 +49,7 @@ application.register("gathering-form", GatheringFormController)
 import ToggleListController from "controllers/toggle_list_controller"
 application.register("toggle-list", ToggleListController)
 
+import PwaBannerController from "controllers/pwa_banner_controller"
+application.register("pwa-banner", PwaBannerController)
+
+

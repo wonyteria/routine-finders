@@ -1,0 +1,164 @@
+<div class="min-h-screen bg-slate-50 pb-20">
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden bg-white border-b border-slate-200">
+    <div class="max-w-4xl mx-auto px-6 pt-16 pb-24 text-center relative z-10">
+      <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-sm font-semibold mb-6 ring-1 ring-blue-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+        <span>스마트폰 앱으로 더 편리하게</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+        루틴 파인더스를<br/>
+        <span class="text-blue-600">앱(APP)</span>으로 만나보세요
+      </h1>
+      <p class="text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+        별도의 설치 없이, 홈 화면에 추가만 하세요.<br/>
+        언제든 아이콘 하나로 바로 접속하고, 더 쾌적하게 루틴을 관리할 수 있습니다.
+      </p>
+      
+      <div class="relative max-w-md mx-auto aspect-square rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-200">
+        <%= image_tag "pwa_guide_hero.png", class: "w-full h-full object-cover", alt: "PWA Guide Hero" %>
+      </div>
+    </div>
+    
+    <!-- Decorative elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+      <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+      <div class="absolute top-1/2 -right-24 w-64 h-64 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-6 -mt-12 relative z-20">
+    <!-- OS Selection Tabs -->
+    <div class="grid grid-cols-2 gap-4 mb-12" data-controller="tabs" data-tabs-active-class="bg-white shadow-lg text-blue-600 ring-1 ring-slate-200" data-tabs-inactive-class="bg-slate-100 text-slate-500">
+      <button data-tabs-target="tab" data-action="click->tabs#change" data-id="ios" class="flex flex-col items-center justify-center p-6 rounded-2xl transition-all duration-300 bg-white shadow-lg text-blue-600 ring-1 ring-slate-200">
+        <svg class="w-8 h-8 mb-2" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.89 1.22-2.11 1.09-3.33-1.04.04-2.3.7-3.04 1.57-.67.76-1.25 1.98-1.12 3.17 1.16.09 2.34-.52 3.07-1.41z"/></svg>
+        <span class="font-bold">iPhone / iOS</span>
+      </button>
+      <button data-tabs-target="tab" data-action="click->tabs#change" data-id="android" class="flex flex-col items-center justify-center p-6 rounded-2xl transition-all duration-300 bg-slate-100 text-slate-500">
+        <svg class="w-8 h-8 mb-2" fill="currentColor" viewBox="0 0 24 24"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9997.9993-.9997c.5511 0 .9993.4486.9993.9997s-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9997.9993-.9997c.5511 0 .9993.4486.9993.9997s-.4482.9997-.9993.9997m11.4045-6.0264l1.715-2.9725a.326.326 0 0 0-.119-.4446.327.327 0 0 0-.446.1188l-1.7481 3.0298C15.3418 8.4231 13.734 8.0467 12 8.0467s-3.3418.3764-4.8828 1.0061l-1.7481-3.0298a.3274.3274 0 0 0-.446-.1188.3262.3262 0 0 0-.119.4446l1.715 2.9725C3.3429 11.1396 1.1332 14.0722 1.0024 17.6534h21.9952c-.1308-3.5812-2.3405-6.5138-5.5131-8.3384"/></svg>
+        <span class="font-bold">Android</span>
+      </button>
+
+      <!-- iOS Guide -->
+      <div data-tabs-target="panel" data-id="ios" class="col-span-2 space-y-6 mt-4">
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+          <h3 class="text-xl font-bold text-slate-900 mb-8 flex items-center">
+            <span class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm mr-3 font-mono">i</span>
+            iPhone에서 설정하기
+          </h3>
+          <div class="space-y-10">
+            <div class="flex gap-6">
+              <div class="shrink-0 w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-400">1</div>
+              <div>
+                <h4 class="font-bold text-slate-800 mb-2 italic">Safari 브라우저 실행</h4>
+                <p class="text-slate-600 leading-relaxed">아이폰 기본 브라우저인 <span class="font-semibold text-blue-600">Safari</span>로 Routine Finders에 접속해 주세요.</p>
+              </div>
+            </div>
+            <div class="flex gap-6">
+              <div class="shrink-0 w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-400">2</div>
+              <div>
+                <h4 class="font-bold text-slate-800 mb-2 italic">'공유' 버튼 클릭</h4>
+                <p class="text-slate-600 leading-relaxed">하단 툴바 중앙에 있는 <span class="font-semibold text-blue-600">공유 버튼</span>(정사각형에 위로 화살표 모양)을 누릅니다.</p>
+              </div>
+            </div>
+            <div class="flex gap-6">
+              <div class="shrink-0 w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-400">3</div>
+              <div>
+                <h4 class="font-bold text-slate-800 mb-2 italic">'홈 화면에 추가' 선택</h4>
+                <p class="text-slate-600 leading-relaxed">공유 메뉴 리스트를 아래로 스크롤하여 <span class="font-semibold text-blue-600">'홈 화면에 추가'</span>를 클릭합니다.</p>
+              </div>
+            </div>
+            <div class="flex gap-6 border-l-4 border-blue-500 pl-6 py-2 bg-blue-50/50 rounded-r-2xl">
+              <div>
+                <h4 class="font-bold text-blue-900 mb-2">완료!</h4>
+                <p class="text-blue-800 leading-relaxed">바탕화면에 생성된 아이콘을 클릭하면 앱 부럽지 않은 전체 화면으로 루틴 파인더스를 이용할 수 있습니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Android Guide -->
+      <div data-tabs-target="panel" data-id="android" class="col-span-2 space-y-6 mt-4 hidden">
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+          <h3 class="text-xl font-bold text-slate-900 mb-8 flex items-center">
+            <span class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm mr-3 font-mono">a</span>
+            Android에서 설정하기
+          </h3>
+          <div class="space-y-10">
+            <div class="flex gap-6">
+              <div class="shrink-0 w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-400">1</div>
+              <div>
+                <h4 class="font-bold text-slate-800 mb-2 italic">Chrome 브라우저 실행</h4>
+                <p class="text-slate-600 leading-relaxed"><span class="font-semibold text-green-600">Chrome</span> 브라우저로 루틴 파인더스에 접속해 주세요.</p>
+              </div>
+            </div>
+            <div class="flex gap-6">
+              <div class="shrink-0 w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-400">2</div>
+              <div>
+                <h4 class="font-bold text-slate-800 mb-2 italic">'메뉴' 버튼 클릭</h4>
+                <p class="text-slate-600 leading-relaxed">우측 상단의 <span class="font-semibold text-green-600">점 3개 보개 버튼</span>을 누릅니다.</p>
+              </div>
+            </div>
+            <div class="flex gap-6">
+              <div class="shrink-0 w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center font-bold text-slate-400">3</div>
+              <div>
+                <h4 class="font-bold text-slate-800 mb-2 italic">'앱 설치' 또는 '홈 화면에 추가'</h4>
+                <p class="text-slate-600 leading-relaxed">메뉴 중 <span class="font-semibold text-green-600">'앱 설치'</span> 또는 <span class="font-semibold text-green-600">'홈 화면에 추가'</span>를 클릭합니다.</p>
+              </div>
+            </div>
+            <div class="flex gap-6 border-l-4 border-green-500 pl-6 py-2 bg-green-50/50 rounded-r-2xl">
+              <div>
+                <h4 class="font-bold text-green-900 mb-2">완료!</h4>
+                <p class="text-green-800 leading-relaxed">바탕화면에 설치된 앱을 실행하여 더욱 빠르고 간편하게 오늘 할 일을 체크해 보세요.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Benefits Section -->
+    <div class="mt-20">
+      <h3 class="text-2xl font-bold text-slate-900 mb-8 text-center">앱으로 사용하면 좋은 점</h3>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-transform hover:-translate-y-1">
+          <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h4 class="font-bold text-slate-800 mb-2">빠른 접속</h4>
+          <p class="text-slate-600 text-sm leading-relaxed">브라우저를 켜고 주소를 입력할 필요 없이 터치 한 번으로 바로 시작합니다.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-transform hover:-translate-y-1">
+          <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+          </div>
+          <h4 class="font-bold text-slate-800 mb-2">넓은 화면</h4>
+          <p class="text-slate-600 text-sm leading-relaxed">상단 주소창과 하단 툴바가 가려져서 더 몰입도 높은 전체 화면을 체함할 수 있습니다.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-transform hover:-translate-y-1">
+          <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600 mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          </div>
+          <h4 class="font-bold text-slate-800 mb-2">알림 (준비중)</h4>
+          <p class="text-slate-600 text-sm leading-relaxed">앞으로 루틴 시간 알림, 인증 독촉 알림 등 다양한 소식을 실시간으로 받아보실 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="mt-20 text-center">
+      <a href="/" class="inline-flex items-center justify-center px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl hover:bg-slate-800 transition-colors">
+        홈으로 돌아가 앱으로 추가하기
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple Stimulus-like logic if the project doesn't have it or for quick demo
+  // But I'll assume Stimulus is available given the data-controller attributes.
+  // If not, I can inject a small script here.
+</script>

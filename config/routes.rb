@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   # Root path
   root "home#index"
   get "landing", to: "home#landing"
+  get "pwa_guide", to: "home#pwa_guide"
   get "achievement_report", to: "home#achievement_report"
   get "badge_roadmap", to: "home#badge_roadmap"
   get "ranking", to: "home#ranking"

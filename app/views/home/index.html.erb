@@ -56,6 +56,42 @@
       </section>
     <% end %>
 
+    <% # end removal fix %>
+    
+    <!-- Floating PWA Guide Popup (Mobile & Web) -->
+    <div data-controller="pwa-banner" 
+         data-pwa-banner-target="banner" 
+         class="hidden fixed bottom-24 lg:bottom-10 right-4 lg:right-10 z-[60] w-[calc(100%-2rem)] max-w-sm">
+      <div class="bg-white rounded-[28px] shadow-[0_20px_50px_rgba(79,70,229,0.2)] border border-slate-100 overflow-hidden">
+        <div class="p-5 flex items-center gap-4">
+          <div class="shrink-0 w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-indigo-100">
+            📱
+          </div>
+          <div class="flex-1 min-w-0">
+            <%= link_to pwa_guide_path, class: "group" do %>
+              <h4 class="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors">앱처럼 사용하기</h4>
+              <p class="text-[11px] text-slate-500 font-bold mt-0.5 line-clamp-1">홈 화면에 추가하고 더 편하게 쓰세요!</p>
+            <% end %>
+          </div>
+          <button data-action="click->pwa-banner#dismiss" class="shrink-0 p-2 text-slate-300 hover:text-slate-500 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        
+        <div class="px-5 pb-4 flex items-center justify-between border-t border-slate-50 pt-3">
+          <button data-action="click->pwa-banner#dismissForever" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600 transition-colors flex items-center gap-1.5">
+            <div class="w-3.5 h-3.5 rounded border border-slate-300 flex items-center justify-center">
+              <div class="w-1.5 h-1.5 bg-slate-300 rounded-full"></div>
+            </div>
+            다시 보지 않기
+          </button>
+          <%= link_to pwa_guide_path, class: "text-[10px] font-black text-indigo-600 hover:underline" do %>
+            자세히 보기 →
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <!-- My Achievements Section -->
     <section class="bg-white rounded-threads-xl border border-slate-200 shadow-sm p-4 sm:p-6 lg:p-8 space-y-6">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-2">
