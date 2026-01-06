@@ -57,4 +57,4 @@ jobs:
           ssh -o StrictHostKeyChecking=no root@${{ secrets.DROPLET_IP }} "rm -rf .kamal/lock*" || true
 
       - name: Deploy with Kamal
-        run: bin/kamal deploy
+        run: bundle exec kamal deploy
