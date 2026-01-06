@@ -12,6 +12,10 @@ servers:
   web:
     hosts:
       - 152.42.204.0
+    healthcheck:
+      path: /up
+      interval: 5s
+      timeout: 5s
   # job:
   #   hosts:
   #     - 192.168.0.1
