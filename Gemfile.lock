@@ -111,6 +111,9 @@ GEM
       irb (~> 1.10)
       reline (>= 0.3.8)
     dotenv (3.2.0)
+    dotenv-rails (3.2.0)
+      dotenv (= 3.2.0)
+      railties (>= 6.1)
     drb (2.2.3)
     ed25519 (1.4.0)
     erb (6.0.1)
@@ -242,6 +245,14 @@ GEM
       logger
       rack (>= 2.2.3)
       rack-protection
+    omniauth-google-oauth2 (1.2.1)
+      jwt (>= 2.9.2)
+      oauth2 (~> 2.0)
+      omniauth (~> 2.0)
+      omniauth-oauth2 (~> 1.8)
+    omniauth-kakao-oauth2 (1.0.0)
+      omniauth (~> 2.1)
+      omniauth-oauth2 (~> 1.8)
     omniauth-oauth2 (1.9.0)
       oauth2 (>= 2.0.2, < 3)
       omniauth (~> 2.0)
@@ -463,6 +474,7 @@ DEPENDENCIES
   bundler-audit
   capybara
   debug
+  dotenv-rails
   image_processing (~> 1.2)
   importmap-rails
   jbuilder
@@ -470,6 +482,8 @@ DEPENDENCIES
   letter_opener (~> 1.10)
   minitest (~> 5.25)
   omniauth
+  omniauth-google-oauth2
+  omniauth-kakao-oauth2
   omniauth-rails_csrf_protection
   omniauth-threads-api
   propshaft

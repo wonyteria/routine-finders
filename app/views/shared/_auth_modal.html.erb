@@ -17,17 +17,40 @@
     
     <!-- 헤더 -->
     <div class="flex flex-col items-center px-6 pt-10 pb-4">
-      <div class="w-16 h-16 bg-threads-black rounded-threads flex items-center justify-center mb-6 shadow-lg shadow-threads-black/10">
-        <svg class="text-white w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zm4.5-9.5c.276 0 .5.224.5.5s-.224.5-.5.5h-1c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h1z"/>
-        </svg>
+      <div class="w-20 h-20 bg-white rounded-[24px] flex items-center justify-center mb-6 shadow-xl shadow-slate-200 border border-slate-100 overflow-hidden">
+        <%= image_tag "rf_symbol_v9.png", class: "w-full h-full object-contain p-2" %>
       </div>
       <h2 class="text-2xl font-black text-threads-black tracking-tight">Routine Finders</h2>
       <p class="text-slate-500 text-sm mt-1 font-medium">건강한 습관의 시작</p>
     </div>
 
     <div class="px-8 pb-10 space-y-6">
+      <!-- 소셜 로그인 섹션 -->
+      <div class="space-y-3">
+        <!-- 카카오 로그인 -->
+        <%= button_to "/auth/kakao", method: :post, data: { turbo: false }, class: "w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#191919] py-3.5 px-4 rounded-xl font-bold hover:opacity-90 transition-all shadow-sm" do %>
+          <svg class="w-5 h-5 text-current" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 3c-4.97 0-9 3.134-9 7s4.03 7 9 7c.606 0 1.18-.046 1.73-.131L18.5 21l-.924-3.59c2.81-1.353 4.424-3.714 4.424-6.41C22 7.134 17.97 3 12 3z"/>
+          </svg>
+          카카오로 시작하기
+        <% end %>
 
+        <!-- 구글 로그인 -->
+        <%= button_to "/auth/google_oauth2", method: :post, data: { turbo: false }, class: "w-full flex items-center justify-center gap-3 bg-white text-slate-700 py-3.5 px-4 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all shadow-sm" do %>
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0112 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
+            <path fill="#FBBC05" d="M16.04 18.013c-1.09.324-2.316.496-3.66.496-2.836 0-5.304-1.583-6.6-3.924L1.758 17.68C4.038 21.43 8.017 24 12.62 24c3.037 0 5.856-1.127 7.962-3.037l-4.542-2.95z"/>
+            <path fill="#4285F4" d="M19.98 11.393c.013.2.02.404.02.607 0 .613-.053 1.22-.158 1.821h-7.222v4.192h11.411c.14-.523.214-1.066.214-1.614V14.5c0-1.056-.16-2.072-.456-3.024l-3.809-1.083z"/>
+            <path fill="#34A853" d="M12 18.509c1.344 0 2.57-.172 3.66-.496l4.542 2.95c.241-.218.47-.447.688-.688l-4.223-2.736c.29-.952.45-1.968.45-3.039v-.607H12v4.616z"/>
+          </svg>
+          Google로 시작하기
+        <% end %>
+      </div>
+
+      <div class="relative py-2">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-100"></div></div>
+        <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-2 text-slate-400 font-bold tracking-widest">또는</span></div>
+      </div>
 
       <!-- 이메일 로그인/가입 전환 -->
       <div class="flex justify-center gap-6">

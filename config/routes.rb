@@ -25,7 +25,6 @@ Rails.application.routes.draw do
   resource :registration, only: [ :create ]
 
   # OmniAuth Callbacks
-  match "/auth/:provider", to: lambda { |env| [ 200, { "Content-Type" => "text/plain" }, [ "Middleware did not catch the initiation request for #{env['router.params'][:provider]} (#{env['REQUEST_METHOD']})" ] ] }, via: [ :get, :post ]
   match "/auth/:provider/callback", to: "sessions#omniauth", via: [ :get, :post ]
   get "/auth/failure", to: redirect("/")
 

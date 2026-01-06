@@ -24,6 +24,8 @@ gem "bcrypt", "~> 3.1.7"
 gem "omniauth"
 gem "omniauth-rails_csrf_protection"
 gem "omniauth-threads-api"
+gem "omniauth-google-oauth2"
+gem "omniauth-kakao-oauth2"
 
 # Email services
 gem "resend", "~> 0.17"
@@ -49,6 +51,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 group :development, :test do
+  gem "dotenv-rails"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 

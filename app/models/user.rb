@@ -61,22 +61,22 @@ class User < ApplicationRecord
       user = new do |u|
         u.provider = auth.provider
         u.uid = auth.uid
-        u.email = auth.info.email.presence || "#{auth.provider}-#{auth.uid}@threads.temp"
-        u.nickname = auth.info.name.presence || auth.info.nickname.presence || "Threads User #{auth.uid.to_s.last(4)}"
+        u.email = auth.info.email.presence || "#{auth.provider}-#{auth.uid}@routinefinders.temp"
+        u.nickname = auth.info.name.presence || auth.info.nickname.presence || "#{auth.provider.titleize} User #{auth.uid.to_s.last(4)}"
         u.profile_image = auth.info.image
         u.password = SecureRandom.hex(16)
         u.email_verified = true # OAuth users are pre-verified
       end
     end
 
-    # 4. Always update tokens
-    if user
+    # 4. Update tokens (threads specific for now as we have specific columns)
+    if user && auth.provider == "threads"
       user.threads_token = auth.credentials.token
       user.threads_refresh_token = auth.credentials.refresh_token
       user.threads_expires_at = Time.at(auth.credentials.expires_at) if auth.credentials&.expires_at
-      user.save
     end
 
+    user.save if user
     user
   end
 
