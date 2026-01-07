@@ -29,8 +29,8 @@ proxy:
   host: www.routinefinders.life
   healthcheck:
     path: /up
-    interval: 10s
-    timeout: 10s
+    interval: 10
+    timeout: 10
 
 # Where you keep your container images.
 registry:
