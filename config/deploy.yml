@@ -2,7 +2,7 @@
 service: routine_finders
 
 # Name of the container image (use your-user/app-name on external registries).
-image: cyberneum/routine-finders
+image: wonyteria/routine-finders
 
 # How long to wait for a container to become ready (default 30)
 deploy_timeout: 300
@@ -35,8 +35,9 @@ proxy:
 # Where you keep your container images.
 registry:
   server: ghcr.io
-  username: cyberneum
-  password: KAMAL_REGISTRY_PASSWORD
+  username: wonyteria
+  password:
+    - KAMAL_REGISTRY_PASSWORD
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
