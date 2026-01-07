@@ -62,7 +62,7 @@ class User < ApplicationRecord
         u.provider = auth.provider
         u.uid = auth.uid
         u.email = auth.info.email.presence || "#{auth.provider}-#{auth.uid}@routinefinders.temp"
-        u.nickname = auth.info.name.presence || auth.info.nickname.presence || "#{auth.provider.titleize} User #{auth.uid.to_s.last(4)}"
+        u.nickname = auth.info.name.presence || auth.info.nickname.presence || "#{auth.provider.to_s.titleize} User #{auth.uid.to_s.last(4)}"
         u.profile_image = auth.info.image
         u.password = SecureRandom.hex(16)
         u.email_verified = true # OAuth users are pre-verified

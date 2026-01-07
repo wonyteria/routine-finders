@@ -11,50 +11,50 @@
     %>
 
     <!-- 1. Header & Quick Switch -->
-    <div class="flex flex-col gap-6">
-      <div class="flex items-center justify-between px-1 border-b border-slate-100 pb-4">
-        <div class="space-y-1">
+    <div class="flex flex-col gap-4 lg:gap-6">
+      <div class="flex items-center justify-between px-1 border-b border-slate-100 pb-3 md:pb-4">
+        <div class="space-y-0.5">
           <div class="flex items-center gap-2">
-            <h2 class="text-2xl font-black text-threads-black tracking-tight"><%= current_date.strftime("%Y.%m") %></h2>
+            <h2 class="text-xl md:text-2xl font-black text-threads-black tracking-tight"><%= current_date.strftime("%Y.%m") %></h2>
             <div class="flex gap-1">
               <%= link_to personal_routines_path(date: prev_week), class: "p-1 hover:bg-slate-100 rounded-lg transition-colors text-slate-400", "aria-label": "지난 주 보기" do %>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
               <% end %>
               <%= link_to personal_routines_path(date: next_week), class: "p-1 hover:bg-slate-100 rounded-lg transition-colors text-slate-400", "aria-label": "다음 주 보기" do %>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               <% end %>
             </div>
           </div>
-          <p class="text-xs font-bold text-slate-400">
+          <p class="text-[10px] md:text-xs font-bold text-slate-400">
             <% if current_date == Date.current %>
-              오늘의 정상을 향한 기록
+              오늘의 정상 도전기
             <% else %>
-              <%= current_date.strftime("%Y년 %m월 %d일") %>의 기록
+              <%= current_date.strftime("%m월 %d일") %>의 기록
             <% end %>
           </p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
            <% if current_date != Date.current %>
-             <%= link_to "오늘로 이동", personal_routines_path(date: Date.current), class: "px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black hover:bg-indigo-100 transition-colors" %>
+             <%= link_to "오늘", personal_routines_path(date: Date.current), class: "px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[9px] font-black hover:bg-indigo-100 transition-colors" %>
            <% end %>
-           <span class="px-3 py-1 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-wider" id="total-active-count"><%= @personal_routines.count %> Active</span>
+           <span class="px-2.5 py-1 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-wider"><%= @personal_routines.count %> Active</span>
         </div>
       </div>
       
-      <!-- Week View -->
+        <!-- Week View -->
       <div class="relative group/filter">
-        <div class="flex bg-white/80 backdrop-blur-md p-1.5 rounded-2xl gap-1.5 overflow-x-auto border border-slate-200/50 shadow-sm pb-2 md:pb-1.5">
+        <div class="flex bg-white/80 backdrop-blur-md p-1 rounded-xl lg:rounded-2xl gap-1 overflow-x-auto border border-slate-200/50 shadow-sm pb-1.5 no-scrollbar">
           <% week_dates.each do |date| %>
             <% 
                is_selected = date == current_date
                wday_str = ["일", "월", "화", "수", "목", "금", "토"][date.wday]
-               btn_class = is_selected ? "bg-indigo-600 text-white shadow-md scale-105" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+               btn_class = is_selected ? "bg-indigo-600 text-white shadow-md scale-102" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
             %>
             <%= link_to personal_routines_path(date: date), 
-                        class: "routine-filter-btn flex-1 min-w-[60px] py-3 rounded-[14px] flex flex-col items-center justify-center gap-0.5 transition-all duration-300 #{btn_class}",
+                        class: "routine-filter-btn flex-1 min-w-[50px] py-2.5 rounded-lg lg:rounded-[14px] flex flex-col items-center justify-center gap-0.5 transition-all duration-300 #{btn_class}",
                         onclick: "filterRoutines('#{date.wday}')" do %>
-               <span class="text-[9px] font-black opacity-60"><%= wday_str %></span>
-               <span class="text-sm font-black"><%= date.day %></span>
+               <span class="text-[8px] font-black opacity-60"><%= wday_str %></span>
+               <span class="text-xs md:text-sm font-black"><%= date.day %></span>
             <% end %>
           <% end %>
         </div>
@@ -106,10 +106,10 @@
       </details>
     </div>
 
-    <!-- 2. Routine List Container -->
-    <div class="bg-indigo-600 rounded-[32px] md:rounded-[40px] p-5 md:p-8 shadow-xl shadow-indigo-100 flex flex-col gap-6 relative overflow-hidden">
+    <!-- 2. Routine List Container: Slim -->
+    <div class="bg-indigo-600 rounded-[28px] md:rounded-[40px] p-4 md:p-8 shadow-xl shadow-indigo-100 flex flex-col gap-5 relative overflow-hidden">
       <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10" id="routine-container">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-4 relative z-10" id="routine-container">
         <% if @personal_routines.any? %>
           <% @personal_routines.each do |routine| %>
             <%= render 'routine_card', routine: routine %>
@@ -136,8 +136,8 @@
 
   <!-- RIGHT COLUMN: Sidebar (Takes 4/12 on LG) -->
   <aside class="lg:col-span-4 space-y-8 sticky top-12">
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-2 gap-4">
+    <!-- Stats Cards: Slim -->
+    <div class="grid grid-cols-2 gap-3 md:gap-4">
       <% 
         total_completed = @monthly_completions&.count || 0
         avg_rate = @personal_routines.any? ? (total_completed.to_f / (@personal_routines.count * [Date.current.day, 1].max) * 100).clamp(0, 100).round : 0
@@ -145,24 +145,24 @@
         top_category = @personal_routines.group_by(&:category).max_by { |_, v| v.count }&.first || "None"
       %>
       
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Monthly Done</p>
-        <h4 class="text-3xl font-black text-slate-900 tabular-nums"><%= total_completed %><span class="text-sm ml-1 text-slate-400">회</span></h4>
+      <div class="bg-white p-4 md:p-6 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
+        <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Monthly Done</p>
+        <h4 class="text-xl md:text-3xl font-black text-slate-900 tabular-nums"><%= total_completed %><span class="text-[10px] md:text-sm ml-1 text-slate-400">회</span></h4>
       </div>
 
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg. Success</p>
-        <h4 class="text-3xl font-black text-emerald-600 tabular-nums"><%= avg_rate %><span class="text-sm ml-1 text-emerald-300">%</span></h4>
+      <div class="bg-white p-4 md:p-6 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
+        <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg. Success</p>
+        <h4 class="text-xl md:text-3xl font-black text-emerald-600 tabular-nums"><%= avg_rate %><span class="text-[10px] md:text-sm ml-1 text-emerald-300">%</span></h4>
       </div>
 
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Max Streak</p>
-        <h4 class="text-3xl font-black text-orange-500 tabular-nums"><%= max_streak %><span class="text-sm ml-1 text-orange-300">일</span></h4>
+      <div class="bg-white p-4 md:p-6 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
+        <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Max Streak</p>
+        <h4 class="text-xl md:text-3xl font-black text-orange-500 tabular-nums"><%= max_streak %><span class="text-[10px] md:text-sm ml-1 text-orange-300">일</span></h4>
       </div>
 
-      <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Main Focus</p>
-        <h4 class="text-sm font-black text-purple-600 truncate"><%= top_category %></h4>
+      <div class="bg-white p-4 md:p-6 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-sm flex flex-col justify-center">
+        <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Main Focus</p>
+        <h4 class="text-xs md:text-sm font-black text-purple-600 truncate"><%= top_category %></h4>
       </div>
     </div>
 
@@ -185,23 +185,23 @@
         </div>
       </div>
       
-      <div class="flex gap-6 overflow-x-auto pb-8 -mx-1 px-1">
+      <div class="flex gap-4 lg:gap-6 overflow-x-auto pb-6 -mx-1 px-1 no-scrollbar text-left">
         <% @recommended_routines.take(8).each do |routine| %>
-          <div class="min-w-[280px] bg-white p-8 rounded-[40px] border border-slate-100 hover:border-indigo-200 hover:shadow-2xl transition-all group cursor-pointer">
-            <div class="flex items-start justify-between mb-8">
-              <div class="w-16 h-16 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center text-3xl group-hover:rotate-6 transition-transform">
+          <div class="min-w-[240px] md:min-w-[280px] bg-white p-6 md:p-8 rounded-[32px] md:rounded-[40px] border border-slate-100 hover:border-indigo-200 hover:shadow-2xl transition-all group cursor-pointer shrink-0">
+            <div class="flex items-start justify-between mb-6 md:mb-8">
+              <div class="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl group-hover:rotate-6 transition-transform">
                 <%= routine[:icon] %>
               </div>
-              <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], days: [1,2,3,4,5,6,0] }), method: :post, class: "w-12 h-12 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-threads-black hover:text-white transition-all shadow-sm" do %>
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
+              <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], days: [1,2,3,4,5,6,0] }), method: :post, class: "w-10 h-10 md:w-12 md:h-12 bg-slate-50 text-slate-400 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-threads-black hover:text-white transition-all shadow-sm" do %>
+                <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
               <% end %>
             </div>
-            <div class="space-y-4">
-              <h4 class="text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= routine[:title] %></h4>
-              <div class="flex items-center justify-between pt-4 border-t border-slate-50">
-                <span class="text-[10px] font-black text-slate-400 tracking-widest uppercase"><%= routine[:category] %></span>
-                <div class="flex items-center gap-1.5 text-xs font-black text-emerald-600">
-                  <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            <div class="space-y-3 md:space-y-4">
+              <h4 class="text-base md:text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= routine[:title] %></h4>
+              <div class="flex items-center justify-between pt-3 md:pt-4 border-t border-slate-50">
+                <span class="text-[8px] md:text-[10px] font-black text-slate-400 tracking-widest uppercase"><%= routine[:category] %></span>
+                <div class="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-emerald-600">
+                  <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
                   <%= routine[:users_count] %>명
                 </div>
               </div>

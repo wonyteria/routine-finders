@@ -7,28 +7,27 @@
       <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
       <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-      <div class="relative z-10 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div class="space-y-6 md:space-y-8 max-w-2xl text-center md:text-left">
-          <div class="space-y-4">
-            <span class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-[10px] md:text-[11px] font-black uppercase tracking-widest border border-white/20 shadow-inner">New Year 2024</span>
-            <h1 class="text-3xl md:text-6xl font-black leading-tight tracking-tight">
+      <div class="relative z-10 p-6 md:p-16 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
+        <div class="space-y-5 md:space-y-8 max-w-2xl text-center md:text-left">
+          <div class="space-y-3 md:space-y-4">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-white/20 shadow-inner">New Year 2024</span>
+            <h1 class="text-2xl md:text-6xl font-black leading-tight tracking-tight">
               작심삼일은 옛말,<br class="md:hidden">
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">함께라면 해낼 수 있어요.</span>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">함께하면 해낼 수 있어요.</span>
             </h1>
-            <p class="text-sm md:text-xl font-medium text-indigo-100/80 leading-relaxed break-keep">
-              혼자서는 힘들었던 목표, 루틴 파인더스에서 동료를 만나보세요.<br>
-              서로 응원하고 인증하며 성장하는 즐거움을 경험하세요.
+            <p class="text-xs md:text-xl font-medium text-indigo-100/80 leading-relaxed break-keep">
+              기록된 오늘이 내일의 당신을 만듭니다.
             </p>
           </div>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-             <%= link_to new_challenge_path, class: "group inline-flex px-8 py-4 bg-white text-indigo-700 rounded-[24px] font-black text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95 items-center justify-center gap-2" do %>
-               <span>챌린지 개설하기</span>
-               <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+             <%= link_to new_challenge_path, class: "group inline-flex px-6 py-3.5 md:px-8 md:py-4 bg-white text-indigo-700 rounded-xl md:rounded-[24px] font-black text-sm md:text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95 items-center justify-center gap-2" do %>
+               <span>챌린지 개설</span>
+               <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
              <% end %>
              <button type="button" 
                      data-action="click->modal#open"
-                     class="inline-flex px-8 py-4 bg-indigo-800/50 text-white rounded-[24px] font-black text-lg hover:bg-indigo-800/70 transition-all border border-indigo-500/30 backdrop-blur-sm items-center justify-center">
-               가이드 보기
+                     class="inline-flex px-6 py-3.5 md:px-8 md:py-4 bg-indigo-800/40 text-white rounded-xl md:rounded-[24px] font-black text-sm md:text-lg hover:bg-indigo-800/60 transition-all border border-indigo-500/30 backdrop-blur-sm items-center justify-center">
+               가이드
              </button>
           </div>
         </div>
@@ -145,11 +144,11 @@
   <% end %>
 
   <% if @is_search_mode %>
-    <div class="mb-10 px-4 space-y-3 pt-4">
-       <div class="flex items-center gap-4">
-         <div class="w-14 h-14 rounded-3xl bg-indigo-50 flex items-center justify-center text-3xl shadow-sm shadow-indigo-100/50">🔍</div>
-         <div class="space-y-1">
-           <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+    <div class="mb-8 px-4 space-y-2 pt-4">
+       <div class="flex items-center gap-3">
+         <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl shadow-sm shadow-indigo-100/50">🔍</div>
+         <div class="space-y-0.5">
+           <h1 class="text-xl md:text-4xl font-black text-slate-900 tracking-tight">
              <% if @title.present? %>
                <%= @title %>
              <% elsif params[:mode] == 'all' %>
@@ -158,25 +157,9 @@
                Search Results
              <% end %>
            </h1>
-           <p class="text-sm md:text-base font-bold text-slate-400">
-        <% if @description.present? %>
-          <%= @description %>
-        <% elsif params[:mode] == 'all' && params[:keyword].blank? && params[:category].blank? && params[:status].blank? %>
-          탐색 모드입니다. 다양한 습관을 찾아보세요!
-        <% else %>
-          <% 
-            filters = []
-            filters << "\"#{params[:keyword]}\"" if params[:keyword].present?
-            filters << params[:category] if params[:category].present?
-            if params[:status].present?
-              status_map = { "recruiting" => "모집중", "active" => "진행중", "status_ended" => "종료" }
-              filters << (status_map[params[:status]] || params[:status])
-            end
-            filter_text = filters.join(", ")
-          %>
-          <%= filter_text.present? ? "'#{filter_text}' 검색 결과입니다." : "모든 챌린지를 살펴보고 있습니다." %>
-        <% end %>
-      </p>
+           <p class="text-[10px] md:text-base font-bold text-slate-400">
+             <%= @description.present? ? @description : "나에게 딱 맞는 습관을 찾아보세요." %>
+           </p>
          </div>
        </div>
     </div>
@@ -184,25 +167,28 @@
 
   <% if @is_search_mode %>
     <!-- Filters (Sticky) -->
-    <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-xl p-3 md:p-4 rounded-threads-lg border border-white/50 shadow-lg shadow-slate-200/50 mb-8 md:mb-12 transition-all flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-indigo-200 scrollbar-track-transparent pb-2 md:pb-0 w-full md:w-auto px-1">
+    <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-xl p-2 md:p-4 rounded-2xl md:rounded-threads-lg border border-white/50 shadow-lg shadow-slate-200/50 mb-8 md:mb-12 transition-all flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0 w-full md:w-auto px-1">
          <% 
             current_status = params[:status].to_s 
-            status_options = [['전체', ''], ['모집중', 'recruiting'], ['진행중', 'active'], ['종료됨', 'ended']]
+            status_options = [['전체', ''], ['모집중', 'recruiting'], ['진행중', 'active']]
          %>
          <% status_options.each do |label, value| %>
-           <%= link_to label, challenges_path(request.query_parameters.merge(status: value)), class: "whitespace-nowrap px-4 py-2.5 rounded-xl text-xs font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}" %>
+           <%= link_to label, challenges_path(request.query_parameters.merge(status: value)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}" %>
          <% end %>
-         <div class="shrink-0 w-px h-4 bg-slate-300 mx-2"></div>
+         <div class="shrink-0 w-px h-3 bg-slate-300 mx-1"></div>
          <% current_category = params[:category] %>
-         <% %w[건강·운동 학습·자기계발 SNS·브랜딩 재테크·부업 취미·라이프 멘탈·성찰].each do |cat| %>
-           <% target_cat = (current_category == cat ? nil : cat) %>
-           <%= link_to cat, challenges_path(request.query_parameters.merge(category: target_cat)), class: "whitespace-nowrap px-4 py-2.5 rounded-xl text-xs font-black transition-all border #{current_category == cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-200 hover:text-indigo-600'}" %>
+         <% %w[건강 학습 브랜딩 재테크 라이프 성찰].each do |cat_label| %>
+           <% 
+              full_cat = %w[건강·운동 학습·자기계발 SNS·브랜딩 재테크·부업 취미·라이프 멘탈·성찰].find { |c| c.include?(cat_label) }
+              target_cat = (current_category == full_cat ? nil : full_cat) 
+           %>
+           <%= link_to cat_label, challenges_path(request.query_parameters.merge(category: target_cat)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border #{current_category == full_cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-200 hover:text-indigo-600'}" %>
          <% end %>
       </div>
 
-      <div class="flex items-center gap-2 shrink-0">
-        <%= link_to new_challenge_path, class: "px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-xs hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 flex items-center gap-2" do %>
+      <div class="flex items-center gap-2 shrink-0 md:block hidden">
+        <%= link_to new_challenge_path, class: "px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-xs hover:bg-indigo-700 transition-all shadow-md flex items-center gap-2" do %>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
           챌린지 만들기
         <% end %>
@@ -219,7 +205,7 @@
              <span class="text-indigo-600 text-xl">👑</span>
              루파 Pick
            </h2>
-           <p class="text-xs font-bold text-slate-400 ml-8">운영진이 강력 추천하는 알짜배기 챌린지</p>
+           <p class="text-xs font-bold text-slate-400 ml-8">운영진이 강력 추천하는 챌린지</p>
          </div>
          <div class="hidden md:flex gap-2">
            <button data-action="click->scroll-nav#scrollLeft" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors">
@@ -232,8 +218,8 @@
       </div>
       
       <!-- Scroll Container (Large) -->
-      <div class="flex overflow-x-auto pb-8 -mx-4 hide-scrollbar snap-x" data-scroll-nav-target="container">
-        <div class="shrink-0 w-8"></div> <!-- Spacer for 32px alignment -->
+      <div class="flex overflow-x-auto pb-8 -mx-4 hide-scrollbar snap-x scroll-smooth" data-scroll-nav-target="container">
+        <div class="shrink-0 w-8"></div> 
         <div class="flex gap-6">
         <% @featured_challenges.each do |challenge| %>
            <% sl = challenge.status_label %>
@@ -241,37 +227,36 @@
            <% is_host = current_user && challenge.host_id == current_user.id %>
            <% is_joined = @joined_challenge_ids&.include?(challenge.id) %>
 
-           <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-threads-lg overflow-hidden border-2 #{theme_border} shadow-lg shadow-opacity-10 group hover:-translate-y-2 transition-all duration-300 relative flex flex-col" do %>
+           <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-[32px] overflow-hidden border-2 #{theme_border} shadow-lg shadow-opacity-10 group transition-all duration-300 relative flex flex-col" do %>
              <div class="relative aspect-[4/3] overflow-hidden">
                <img src="<%= challenge.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                  <span class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase <%= sl[:class] %>"><%= sl[:text] %></span>
+                  <span class="px-2.5 py-1.5 rounded-lg text-[10px] font-black uppercase <%= sl[:class].gsub('shadow-lg', '').gsub(/shadow-\w+-\d+\/\d+/, '') %>"><%= sl[:text] %></span>
                   <% if is_host %>
-                    <span class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">HOST</span>
+                    <span class="bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">HOST</span>
                   <% elsif is_joined %>
-                    <span class="bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">JOINED</span>
+                    <span class="bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">JOINED</span>
                   <% end %>
-                  <span class="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-black text-slate-900 border border-white/50"><%= challenge.category %></span>
                </div>
-               <div class="absolute bottom-4 left-4 right-4 text-white">
-                  <h3 class="font-black text-xl line-clamp-1 leading-tight"><%= challenge.title %></h3>
+               <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-black text-slate-900 border border-white/50">
+                  <%= challenge.category %>
                </div>
              </div>
-             <div class="p-6 space-y-4 flex flex-col flex-1">
-               <p class="text-sm text-slate-500 line-clamp-1 leading-relaxed" title="<%= challenge.summary %>"><%= challenge.summary %></p>
+             <div class="p-6 space-y-4 flex flex-col flex-1 text-left">
+               <div class="space-y-1">
+                 <h4 class="font-black text-slate-900 text-lg leading-tight line-clamp-2 group-hover:text-indigo-600 transition-colors"><%= challenge.title %></h4>
+                 <p class="text-xs text-slate-500 line-clamp-1" title="<%= challenge.summary %>"><%= challenge.summary %></p>
+               </div>
                <div class="space-y-3 mt-auto">
                  <div class="flex items-center justify-between">
                     <span class="text-xs font-black text-indigo-600"><%= challenge.cost_display_text %></span>
                     <% if challenge.recruitment_d_day.present? %>
-                      <span class="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-1 rounded-md">D-<%= challenge.recruitment_d_day %> 모집마감</span>
+                      <span class="text-[10px] font-black text-rose-500">D-<%= challenge.recruitment_d_day %> 마감</span>
                     <% end %>
                  </div>
-                 <div class="flex items-center gap-4 pt-3 border-t border-slate-50">
-                   <div class="flex items-center gap-1.5 text-slate-400 text-xs font-bold">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                      <%= challenge.current_participants %>명 도전 중
-                   </div>
+                 <div class="pt-3 border-t border-slate-100">
+                    <span class="text-xs font-bold text-slate-400"><%= challenge.current_participants %>명 도전 중</span>
                  </div>
                </div>
              </div>
@@ -282,15 +267,15 @@
       </div>
     </div>
 
-    <!-- Section: Hot Trending (Horizontal Scroll) -->
-    <div class="mb-16 space-y-6" data-controller="scroll-nav">
+    <!-- Section: Hot Trending -->
+    <div class="mb-12 space-y-5" data-controller="scroll-nav">
       <div class="flex items-end justify-between px-2">
-         <div class="space-y-1">
-           <h2 class="text-2xl font-black text-slate-900 flex items-center gap-2">
-             <span class="text-orange-500 text-xl">🔥</span>
+         <div class="space-y-0.5">
+           <h2 class="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
+             <span class="text-orange-500 text-lg md:text-xl">🔥</span>
              Hot Trending
            </h2>
-           <p class="text-xs font-bold text-slate-400 ml-8">참여자가 급증하고 있는 핫한 챌린지</p>
+           <p class="text-[10px] md:text-xs font-bold text-slate-400 ml-7 md:ml-8 leading-tight">참여자가 급증하고 있는 인기 챌린지</p>
          </div>
          <div class="hidden md:flex gap-2">
            <button data-action="click->scroll-nav#scrollLeft" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors">
@@ -412,42 +397,40 @@
         <% end %>
       </div>
     <% else %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-2">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-2 text-left">
         <% @challenges.each do |challenge| %>
           <% sl = challenge.status_label %>
           <% theme_border = challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
           <% is_host = current_user && challenge.host_id == current_user.id %>
           <% is_joined = @joined_challenge_ids&.include?(challenge.id) %>
 
-          <%= link_to challenge_path(challenge), class: "bg-white rounded-threads overflow-hidden border-2 #{theme_border} shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full hover:-translate-y-1 duration-300" do %>
+          <%= link_to challenge_path(challenge), class: "bg-white rounded-2xl overflow-hidden border-2 #{theme_border} shadow-sm group flex flex-col h-full transition-all duration-300" do %>
             <div class="relative aspect-square overflow-hidden shrink-0">
               <img src="<%= challenge.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                <span class="px-2 py-1 rounded-lg text-[9px] font-black uppercase <%= sl[:class].gsub('shadow-lg', '').gsub(/shadow-\w+-\d+\/\d+/, '') %>"><%= sl[:text] %></span>
+              <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1">
+                <span class="px-2 py-1 rounded-lg text-[8px] font-black uppercase <%= sl[:class].gsub('shadow-lg', '').gsub(/shadow-\w+-\d+\/\d+/, '') %>"><%= sl[:text] %></span>
                 <% if is_host %>
-                  <span class="bg-indigo-600 text-white px-2 py-1 rounded-lg text-[9px] font-black border border-white/20 shadow-md">HOST</span>
+                  <span class="bg-indigo-600 text-white px-2 py-1 rounded-lg text-[8px] font-black border border-white/20 shadow-md">HOST</span>
                 <% elsif is_joined %>
-                  <span class="bg-emerald-500 text-white px-2 py-1 rounded-lg text-[9px] font-black border border-white/20 shadow-md">JOINED</span>
+                  <span class="bg-emerald-500 text-white px-2 py-1 rounded-lg text-[8px] font-black border border-white/20 shadow-md">JOINED</span>
                 <% end %>
-                <span class="bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[9px] font-black uppercase text-slate-900 border border-white/50 shadow-sm"><%= challenge.category %></span>
+                <span class="bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[8px] font-black uppercase text-slate-900 border border-white/50 shadow-sm"><%= challenge.category.split('·').first %></span>
               </div>
             </div>
-            <div class="p-4 space-y-2 flex flex-col flex-1">
+            <div class="p-3.5 md:p-4 space-y-1.5 flex flex-col flex-1">
               <div class="space-y-1 flex-1">
-                <h4 class="font-black text-slate-900 text-sm md:text-base leading-tight line-clamp-2 group-hover:text-indigo-600 transition-colors"><%= challenge.title %></h4>
-                <p class="text-[10px] text-slate-500 line-clamp-1" title="<%= challenge.summary %>"><%= challenge.summary %></p>
+                <h4 class="font-black text-slate-900 text-xs md:text-base leading-tight line-clamp-2 transition-colors"><%= challenge.title %></h4>
+                <p class="text-[9px] text-slate-500 line-clamp-1"><%= challenge.summary %></p>
               </div>
               <div class="space-y-2 mt-auto">
                 <div class="flex items-center justify-between">
-                   <span class="text-[10px] font-black text-indigo-600"><%= challenge.cost_display_text %></span>
+                   <span class="text-[9px] md:text-[10px] font-black text-indigo-600"><%= challenge.cost_display_text %></span>
                    <% if challenge.recruitment_d_day.present? %>
-                     <span class="text-[9px] font-black text-rose-500">D-<%= challenge.recruitment_d_day %></span>
+                     <span class="text-[8px] font-black text-rose-500">D-<%= challenge.recruitment_d_day %></span>
                    <% end %>
                 </div>
-                <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 border-t border-slate-50 pt-2">
-                  <span class="flex items-center gap-1">
-                    <%= challenge.current_participants %>명 참여
-                  </span>
+                <div class="flex items-center justify-between text-[8px] font-bold text-slate-400 border-t border-slate-50 pt-2">
+                  <span><%= challenge.current_participants %>명 도전 중</span>
                 </div>
               </div>
             </div>

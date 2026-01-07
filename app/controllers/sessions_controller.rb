@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
 
     if user.persisted?
       session[:user_id] = user.id
-      redirect_to root_path, notice: "#{auth.provider.titleize} 계정으로 로그인되었습니다!"
+      redirect_to root_path, notice: "#{auth.provider.to_s.titleize} 계정으로 로그인되었습니다!"
     else
       error_msg = user.errors.full_messages.to_sentence
       Rails.logger.error "OmniAuth login failed for #{auth.provider}: #{error_msg}"

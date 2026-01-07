@@ -1,4 +1,4 @@
-<div class="space-y-16 pb-40">
+<div class="space-y-10 pb-40">
     <%
       total_activities = @activity_data.values.sum
       current_streak = 0
@@ -14,55 +14,44 @@
         end
       end
     %>
-    <!-- Hero Banner -->
-    <% if @main_banners.any? %>
-      <% banner = @main_banners.first %>
-      <section class="relative h-[420px] lg:h-[440px] rounded-threads-xl overflow-hidden shadow-2xl shadow-indigo-100/50 group">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-10"></div>
-        <% if banner.image.attached? %>
-          <%= image_tag banner.image, class: "absolute inset-0 w-full h-full object-cover mix-blend-overlay transition-transform duration-1000 group-hover:scale-105" %>
-        <% end %>
-        <div class="relative z-20 h-full flex flex-col justify-center px-6 sm:px-12 lg:px-20 space-y-6 text-white">
-          <div class="space-y-2">
+    <!-- Hero Banner: Balanced Compact Redesign -->
+    <section class="relative h-[280px] lg:h-[340px] mt-6 lg:mt-0 rounded-[32px] lg:rounded-[48px] overflow-hidden shadow-lg shadow-indigo-100/20 bg-gradient-to-br from-indigo-700 via-indigo-600 to-slate-900 group">
+      <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl"></div>
+      
+      <div class="relative z-20 h-full flex flex-col justify-center px-8 lg:px-16 text-white">
+        <% if @main_banners.any? %>
+          <% banner = @main_banners.first %>
+          <div class="space-y-5 pt-6 pb-4">
             <% if banner.badge_text.present? %>
-              <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase animate-in fade-in slide-in-from-left-4 duration-700"><%= banner.badge_text %></span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-[9px] lg:text-[10px] font-black tracking-[0.1em] uppercase border border-white/5 w-fit mt-2">
+                <%= banner.badge_text %>
+              </span>
             <% end %>
-            <h1 class="text-3xl lg:text-6xl font-black leading-tight tracking-tight animate-in fade-in slide-in-from-left-6 duration-1000 delay-100 break-keep"><%= raw banner.title.gsub("\n", "<br/>") %></h1>
+            <h1 class="text-2xl lg:text-3xl font-black leading-tight tracking-tight break-keep pb-2">
+              <%= raw banner.title.gsub("\n", "<br/>") %>
+            </h1>
           </div>
-          <% if banner.subtitle.present? %>
-            <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed animate-in fade-in slide-in-from-left-8 duration-1000 delay-200"><%= raw banner.subtitle.gsub("\n", "<br/>") %></p>
-          <% end %>
-          <% if banner.link_url.present? %>
-            <%= link_to banner.link_url, class: "w-fit px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-base hover:shadow-2xl hover:-translate-y-1 transition-all animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500" do %>
-              챌린지 둘러보기
-            <% end %>
-          <% end %>
-        </div>
-      </section>
-    <% else %>
-      <section class="relative h-[420px] lg:h-[440px] rounded-threads-xl overflow-hidden shadow-2xl shadow-indigo-100/50">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 opacity-90 z-10"></div>
-        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay" alt="">
-        <div class="relative z-20 h-full flex flex-col justify-center px-6 sm:px-12 lg:px-20 space-y-6 text-white">
-          <div class="space-y-2">
-            <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-full text-xs font-black tracking-widest uppercase">Start your growth</span>
-            <h1 class="text-3xl lg:text-6xl font-black leading-tight tracking-tight break-keep">함께해서 더 강력한<br/>습관의 힘</h1>
+        <% else %>
+          <div class="space-y-5 pt-6 pb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-[9px] font-black tracking-[0.1em] uppercase border border-white/5 w-fit mt-2">
+              Start your growth
+            </span>
+            <h1 class="text-2xl lg:text-3xl font-black leading-tight tracking-tight break-keep pb-2">
+              함께해서 더 강력한<br/>습관의 힘
+            </h1>
           </div>
-          <p class="text-base lg:text-lg text-white/80 font-medium max-w-lg leading-relaxed">동료의 응원과 보상 시스템으로<br/>작심삼일을 평생 습관으로 만드세요.</p>
-          <%= link_to challenges_path, class: "w-fit px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-base hover:shadow-2xl hover:-translate-y-1 transition-all" do %>
-            챌린지 둘러보기
-          <% end %>
-        </div>
-      </section>
-    <% end %>
+        <% end %>
+      </div>
+    </section>
 
     <% # end removal fix %>
     
     <!-- Floating PWA Guide Popup (Mobile & Web) -->
     <div data-controller="pwa-banner" 
          data-pwa-banner-target="banner" 
-         class="hidden fixed bottom-24 lg:bottom-10 right-4 lg:right-10 z-[60] w-[calc(100%-2rem)] max-w-sm">
-      <div class="bg-white rounded-[28px] shadow-[0_20px_50px_rgba(79,70,229,0.2)] border border-slate-100 overflow-hidden">
+         style="z-index: 99999 !important; isolation: isolate;"
+         class="hidden fixed bottom-28 lg:bottom-10 right-4 lg:right-10 w-[calc(100%-2rem)] max-w-sm">
+      <div class="relative z-10 bg-white rounded-[28px] shadow-[0_20px_50px_rgba(79,70,229,0.2)] border border-slate-100 overflow-hidden">
         <div class="p-5 flex items-center gap-4">
           <div class="shrink-0 w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-indigo-100">
             📱
@@ -92,31 +81,34 @@
       </div>
     </div>
 
-    <!-- My Achievements Section -->
-    <section class="bg-white rounded-threads-xl border border-slate-200 shadow-sm p-4 sm:p-6 lg:p-8 space-y-6">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-2">
-        <div class="space-y-1 text-center lg:text-left">
-          <h2 class="text-2xl lg:text-3xl font-black text-slate-900 justify-center lg:justify-start flex items-center gap-3">
+    <!-- My Achievements Section: Ultra Compact Row Layout -->
+    <section class="bg-white rounded-threads-xl border border-slate-200 shadow-sm p-4 lg:p-8 space-y-4 lg:space-y-6">
+      <div class="flex items-center justify-between gap-2 lg:gap-6 px-1 lg:px-2">
+        <!-- Left: Title & Subtitle -->
+        <div class="space-y-0.5 flex-1 min-w-0">
+          <h2 class="text-base lg:text-3xl font-black text-slate-900 flex items-center gap-1.5 lg:gap-3">
             나의 성취 지도
-            <span class="text-orange-500">🔥</span>
+            <span class="text-orange-500 text-sm lg:text-2xl">🔥</span>
           </h2>
-          <p class="text-slate-400 font-bold text-sm lg:text-base">매일의 노력이 기록으로 남습니다.</p>
+          <p class="text-slate-400 font-bold text-[9px] lg:text-base leading-tight break-keep">매일의 노력이 기록으로 남습니다.</p>
         </div>
-        <div class="flex items-center justify-center gap-4">
-          <div class="flex items-center gap-6 px-6 lg:px-8 py-3 lg:py-4 bg-slate-50/80 rounded-2xl border border-slate-100">
+
+        <!-- Right: Stats & Icon -->
+        <div class="flex items-center gap-2 lg:gap-4 shrink-0">
+          <div class="flex items-center gap-3 lg:gap-6 px-3 lg:px-8 py-2 lg:py-4 bg-slate-50/80 rounded-xl lg:rounded-2xl border border-slate-100">
             <div class="text-center">
-              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total</p>
-              <p class="text-lg lg:text-xl font-black text-slate-900"><%= total_activities %><span class="text-xs ml-0.5 text-slate-400">회</span></p>
+              <p class="text-[7px] lg:text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total</p>
+              <p class="text-sm lg:text-xl font-black text-slate-900"><%= total_activities %><span class="text-[9px] ml-0.5 text-slate-400">회</span></p>
             </div>
-            <div class="w-px h-6 bg-slate-200"></div>
+            <div class="w-px h-4 lg:h-6 bg-slate-200"></div>
             <div class="text-center">
-              <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Streak</p>
-              <p class="text-lg lg:text-xl font-black text-orange-600"><%= current_streak %><span class="text-xs ml-0.5 text-slate-400">일</span></p>
+              <p class="text-[7px] lg:text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Streak</p>
+              <p class="text-sm lg:text-xl font-black text-orange-600"><%= current_streak %><span class="text-[9px] ml-0.5 text-slate-400">일</span></p>
             </div>
           </div>
-          <%= link_to achievement_report_path, class: "w-12 h-12 lg:w-14 lg:h-14 bg-slate-900 rounded-2xl flex items-center justify-center shadow-lg hover:bg-indigo-600 active:scale-90 transition-all group shrink-0" do %>
-            <svg class="w-5 h-5 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          <%= link_to achievement_report_path, class: "w-9 h-9 lg:w-14 lg:h-14 bg-slate-900 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg hover:bg-indigo-600 active:scale-90 transition-all group shrink-0" do %>
+            <svg class="w-4 h-4 lg:w-6 lg:h-6 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
           <% end %>
         </div>
@@ -126,61 +118,30 @@
       <%= render "shared/achievement_matrix" %>
 <%# 통합 데이터 정합성 완료 %>
 
-      <div class="pt-10 border-t border-slate-100 space-y-8">
-        <div class="bg-slate-50/50 rounded-[32px] p-6 sm:p-8 border border-slate-100 shadow-inner">
-          <div class="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div class="flex flex-col md:flex-row items-center gap-6 sm:gap-8 text-center md:text-left">
-              <div class="space-y-1">
-                <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em]">Hall of Fame</p>
-                <h3 class="text-xl sm:text-2xl font-black text-slate-900 leading-tight">가장 많은 배지를<br class="hidden md:block">획득한 파인더스</h3>
-                <p class="text-xs font-bold text-slate-400">이번 달 성취를 이끄는 주인공들</p>
-              </div>
-              
-              <div class="flex -space-x-4 md:-space-x-3 py-2">
-                <% @top_achievers.each_with_index do |user, index| %>
-                  <div class="relative group">
-                    <div class="w-16 h-16 sm:w-14 sm:h-14 rounded-2xl bg-white p-1 shadow-xl border-2 <%= index == 0 ? 'border-yellow-400 ring-4 ring-yellow-400/20' : (index == 1 ? 'border-slate-300' : 'border-amber-600') %> relative z-<%= 30 - index %> transition-all group-hover:-translate-y-2 group-hover:rotate-6 shrink-0">
-                      <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-xl" alt="<%= user.nickname %>">
-                      <% if index == 0 %>
-                        <div class="absolute -top-3 -right-3 text-2xl animate-bounce">👑</div>
-                      <% end %>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-            
-            <%= link_to rankings_path(tab: 'badges'), class: "group flex items-center justify-center gap-3 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-slate-900 active:scale-95 transition-all shadow-xl shadow-indigo-100 w-full md:w-auto" do %>
-              전체 랭킹 보기
-              <i data-feather="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
-            <% end %>
-          </div>
-        </div>
-      </div>
     </section>
 
-    <!-- Dynamic Growth Dashboard (Tabs for Challenges & Routines) -->
-    <section class="space-y-8" data-controller="tabs" data-tabs-query-param-value="dashboard_tab" data-tabs-active-class="bg-indigo-600 text-white shadow-xl shadow-indigo-200 scale-105 z-10" data-tabs-inactive-class="text-slate-500 hover:text-indigo-600 hover:bg-white/50">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 px-4">
-        <div class="space-y-1">
-          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 flex items-center gap-3">
+    <!-- Dynamic Growth Dashboard: Compact for mobile -->
+    <section class="space-y-6 lg:space-y-8" data-controller="tabs" data-tabs-query-param-value="dashboard_tab" data-tabs-active-class="bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105 z-10" data-tabs-inactive-class="text-slate-500 hover:text-indigo-600 hover:bg-white/50">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 px-4">
+        <div class="space-y-0.5">
+          <h2 class="text-xl lg:text-3xl font-black text-slate-900 flex items-center gap-2">
             실행 중인 성장
-            <span class="text-indigo-600 text-2xl">⚡</span>
+            <span class="text-indigo-600 text-xl lg:text-2xl">⚡</span>
           </h2>
-          <p class="text-slate-400 font-bold text-sm sm:text-base">오늘 당신이 몰두해야 할 것들입니다.</p>
+          <p class="text-slate-400 font-bold text-xs lg:text-base">오늘 당신이 몰두해야 할 것들입니다.</p>
         </div>
         
         <!-- High-Contrast Tab Navigation -->
-        <div class="inline-flex p-1.5 bg-slate-200/60 backdrop-blur-md rounded-[24px] w-full lg:w-auto border border-slate-300/50 shadow-inner">
+        <div class="inline-flex p-1.5 bg-slate-200/60 backdrop-blur-md rounded-2xl lg:rounded-[24px] w-full lg:w-auto border border-slate-300/50 shadow-inner">
           <button type="button" 
-                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep bg-indigo-600 text-white shadow-xl shadow-indigo-200 scale-105 z-10"
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3 lg:py-4 rounded-xl lg:rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105 z-10"
                   data-tabs-target="tab"
                   data-action="click->tabs#change"
                   data-id="routines">
             루틴
           </button>
           <button type="button" 
-                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3.5 lg:py-4 rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep text-slate-500 hover:text-indigo-600 hover:bg-white/50"
+                  class="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 lg:px-10 py-3 lg:py-4 rounded-xl lg:rounded-[20px] text-xs lg:text-sm font-black transition-all duration-500 transform active:scale-95 break-keep text-slate-500 hover:text-indigo-600 hover:bg-white/50"
                   data-tabs-target="tab"
                   data-action="click->tabs#change"
                   data-id="challenges">
@@ -189,23 +150,23 @@
         </div>
       </div>
 
-      <!-- Routines Panel (Now First) -->
+      <!-- Routines Panel: 슬림화 -->
       <div class="px-4 animate-in fade-in slide-in-from-bottom-4 duration-500" data-tabs-target="panel" data-id="routines">
-        <div class="bg-indigo-600 rounded-[32px] p-6 sm:p-10 shadow-xl shadow-indigo-100 flex flex-col gap-8 relative overflow-hidden">
+        <div class="bg-indigo-600 rounded-[28px] lg:rounded-[32px] p-4 lg:p-8 shadow-xl shadow-indigo-100 flex flex-col gap-5 lg:gap-8 relative overflow-hidden">
           <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
           
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-            <div class="flex items-center gap-6">
-              <div class="w-16 h-16 bg-white/15 backdrop-blur-xl rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-white/10">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 lg:gap-6 relative z-10">
+            <div class="flex items-center gap-3 lg:gap-6">
+              <div class="w-10 h-10 lg:w-16 lg:h-16 bg-white/15 backdrop-blur-xl rounded-xl lg:rounded-2xl flex items-center justify-center text-xl lg:text-3xl shadow-inner border border-white/10">
                 📅
               </div>
-              <div class="text-white space-y-1">
-                <h4 class="text-xl font-black">오늘의 루틴 체크인</h4>
-                <p class="text-sm text-white/70 font-bold">작은 습관이 모여 위대한 변화를 만듭니다.</p>
+              <div class="text-white space-y-0.5">
+                <h4 class="text-base lg:text-xl font-black">오늘의 루틴 체크인</h4>
+                <p class="text-[9px] lg:text-sm text-white/70 font-bold">작은 습관이 위대한 변화를 만듭니다.</p>
               </div>
             </div>
-            <%= link_to personal_routines_path, class: "px-8 py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-lg text-center" do %>
-               루틴 전체 관리
+            <%= link_to personal_routines_path, class: "px-5 py-2.5 lg:px-8 lg:py-4 bg-white text-indigo-600 rounded-lg lg:rounded-2xl font-black text-[10px] lg:text-sm hover:scale-105 transition-all shadow-lg text-center" do %>
+               루틴 관리
             <% end %>
           </div>
 
@@ -215,21 +176,21 @@
                 <div id="routine_<%= routine.id %>_home" class="group/routine">
                   <%= button_to toggle_personal_routine_path(routine), 
                                 method: :post, 
-                                class: "w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all #{routine.completed_today? ? 'bg-white border-white shadow-xl translate-y-[-2px]' : 'bg-white/10 border-white/10 text-white hover:bg-white/20'}",
+                                class: "w-full flex items-center justify-between p-3 lg:p-4 rounded-xl border-2 transition-all #{routine.completed_today? ? 'bg-white border-white shadow-xl translate-y-[-2px]' : 'bg-white/10 border-white/10 text-white hover:bg-white/20'}",
                                 data: { turbo_stream: true } do %>
-                    <div class="flex items-center gap-4 active:scale-95 transition-transform origin-left">
+                    <div class="flex items-center gap-3 lg:gap-4 active:scale-95 transition-transform origin-left">
                       <!-- Checkbox UI -->
-                      <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all <%= routine.completed_today? ? 'bg-indigo-600 border-indigo-600' : 'border-white/30 group-hover/routine:border-white' %>">
+                      <div class="w-6 h-6 lg:w-7 lg:h-7 rounded-lg border-2 flex items-center justify-center transition-all <%= routine.completed_today? ? 'bg-indigo-600 border-indigo-600' : 'border-white/30 group-hover/routine:border-white' %>">
                         <% if routine.completed_today? %>
-                          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                         <% end %>
                       </div>
                       <div class="text-left">
-                        <p class="text-sm font-black leading-tight <%= routine.completed_today? ? 'text-slate-900' : 'text-white' %>"><%= routine.title.truncate(12) %></p>
-                        <p class="text-[9px] font-black uppercase tracking-widest <%= routine.completed_today? ? 'text-indigo-600' : 'text-white/50' %>"><%= routine.completed_today? ? 'Completed' : 'Pending' %></p>
+                        <p class="text-xs lg:text-sm font-black leading-tight <%= routine.completed_today? ? 'text-slate-900' : 'text-white' %>"><%= routine.title.truncate(10) %></p>
+                        <p class="text-[8px] font-black uppercase tracking-widest <%= routine.completed_today? ? 'text-indigo-600' : 'text-white/50' %>"><%= routine.completed_today? ? 'Done' : 'Pending' %></p>
                       </div>
                     </div>
-                    <span class="text-2xl opacity-80 group-hover/routine:scale-110 active:scale-125 transition-transform"><%= routine.icon %></span>
+                    <span class="text-xl lg:text-2xl opacity-80 group-hover/routine:scale-110 active:scale-125 transition-transform"><%= routine.icon %></span>
                   <% end %>
                 </div>
               <% end %>
@@ -245,65 +206,64 @@
         </div>
       </div>
 
-      <!-- Challenges Panel (Now Second) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 hidden animate-in fade-in slide-in-from-bottom-4 duration-500" data-tabs-target="panel" data-id="challenges">
+      <!-- Challenges Panel: 콤팩트화 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 px-4 hidden animate-in fade-in slide-in-from-bottom-4 duration-500" data-tabs-target="panel" data-id="challenges">
         <% if @participations.any? %>
           <% @participations.take(6).each do |participation| %>
             <% challenge = participation.challenge %>
-            <div class="bg-white rounded-threads-lg border border-slate-100 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden">
-              <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50/50 rounded-bl-full -mr-12 -mt-12 transition-all group-hover:scale-110"></div>
+            <div class="bg-white rounded-threads-lg border border-slate-100 p-4 lg:p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-20 h-20 bg-indigo-50/50 rounded-bl-full -mr-10 -mt-10 transition-all group-hover:scale-110"></div>
               
-              <div class="flex items-start justify-between mb-6 relative z-10">
-                <div class="flex items-center gap-4">
-                  <div class="w-14 h-14 rounded-threads bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100 shadow-sm">
+              <div class="flex items-start justify-between mb-4 lg:mb-6 relative z-10">
+                <div class="flex items-center gap-3 lg:gap-4">
+                  <div class="w-10 h-10 lg:w-14 lg:h-14 rounded-xl lg:rounded-threads bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100 shadow-sm">
                     <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover" alt="">
                   </div>
                   <div>
-                    <h4 class="font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= challenge.category %></p>
+                    <h4 class="text-sm lg:text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= challenge.title %></h4>
+                    <p class="text-[8px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= challenge.category %></p>
                   </div>
                 </div>
                 
-                <!-- Challenge Checkbox/Status UI -->
                 <div class="flex flex-col items-end gap-1">
-                  <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all <%= participation.today_verified? ? 'bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-100' : 'bg-slate-50 border-slate-200' %>">
+                  <div class="w-6 h-6 lg:w-7 lg:h-7 rounded-lg border-2 flex items-center justify-center transition-all <%= participation.today_verified? ? 'bg-emerald-500 border-emerald-500 shadow-lg shadow-emerald-100' : 'bg-slate-50 border-slate-200' %>">
                     <% if participation.today_verified? %>
-                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                      <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                     <% else %>
                       <div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div>
                     <% end %>
                   </div>
-                  <span class="text-[8px] font-black uppercase tracking-tighter <%= participation.today_verified? ? 'text-emerald-500' : 'text-slate-400' %>">
-                    <%= participation.today_verified? ? 'Verified' : 'To-do' %>
+                  <span class="text-[7px] lg:text-[8px] font-black uppercase tracking-tighter <%= participation.today_verified? ? 'text-emerald-500' : 'text-slate-400' %>">
+                    <%= participation.today_verified? ? 'Done' : 'Wait' %>
                   </span>
                 </div>
               </div>
               
-              <div class="space-y-4 relative z-10">
+              <div class="space-y-3 relative z-10">
                 <div class="flex justify-between items-end">
                   <div class="space-y-0.5">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Growth Rate</p>
-                    <p class="text-xs font-bold text-indigo-600"><%= participation.current_streak %>일 연속 달성 중</p>
+                    <p class="text-[8px] lg:text-[9px] font-black text-slate-400 uppercase tracking-widest">Progress</p>
+                    <p class="text-[10px] lg:text-xs font-bold text-indigo-600"><%= participation.current_streak %>일 연속</p>
                   </div>
-                  <p class="text-2xl font-black text-slate-900 tracking-tighter"><%= (participation.completion_rate * 100).to_i %><span class="text-xs ml-0.5 text-slate-400 font-bold">%</span></p>
+                  <p class="text-xl lg:text-2xl font-black text-slate-900 tracking-tighter"><%= (participation.completion_rate * 100).to_i %><span class="text-[10px] ml-0.5 text-slate-400 font-bold">%</span></p>
                 </div>
-                <div class="w-full h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100 shadow-inner">
+                <div class="w-full h-2 lg:h-3 bg-slate-50 rounded-full overflow-hidden border border-slate-100 shadow-inner">
                   <div class="h-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 rounded-full transition-all duration-1000 shadow-sm" style="width: <%= participation.completion_rate * 100 %>%"></div>
                 </div>
                 <div class="flex justify-between items-center pt-2">
-                  <div class="flex -space-x-2">
+                  <div class="flex -space-x-1.5">
                      <% challenge.participants.active.take(3).each do |p| %>
-                       <img src="<%= p.user.profile_image %>" class="w-6 h-6 rounded-full border-2 border-white shadow-sm" alt="">
+                       <img src="<%= p.user.profile_image %>" class="w-5 h-5 lg:w-6 lg:h-6 rounded-full border-2 border-white shadow-sm" alt="">
                      <% end %>
                      <% if challenge.current_participants > 3 %>
-                       <div class="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[8px] font-black text-slate-400">+<%= challenge.current_participants - 3 %></div>
+                       <div class="w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[7px] lg:text-[8px] font-black text-slate-400">+<%= challenge.current_participants - 3 %></div>
                      <% end %>
                   </div>
-                  <p class="text-[10px] font-black text-rose-500 bg-rose-50 px-2 py-1 rounded-lg">D-<%= (challenge.end_date - Date.current).to_i %></p>
+                  <p class="text-[9px] lg:text-[10px] font-black text-rose-500 bg-rose-50 px-1.5 py-0.5 lg:px-2 lg:py-1 rounded-lg">D-<%= (challenge.end_date - Date.current).to_i %></p>
                 </div>
               </div>
 
-              <%= link_to challenge_path(challenge), class: "mt-6 block w-full py-3.5 bg-slate-900 text-white rounded-threads font-black text-xs text-center hover:bg-indigo-600 active:bg-indigo-700 active:scale-[0.98] transition-all shadow-xl shadow-slate-100 group-hover:shadow-indigo-100" do %>
+              <%= link_to challenge_path(challenge), class: "mt-4 lg:mt-6 block w-full py-2.5 lg:py-3.5 bg-slate-900 text-white rounded-lg lg:rounded-threads font-black text-[10px] lg:text-xs text-center hover:bg-indigo-600 transition-all shadow-xl" do %>
                 대시보드 관리
               <% end %>
             </div>
@@ -321,35 +281,35 @@
     </section>
     </section>
 
-    <!-- My collection (Badge Showcase) -->
-    <section class="space-y-8 px-4">
+    <!-- My collection: 배지 쇼케이스 최적화 -->
+    <section class="space-y-6 lg:space-y-8 px-4 mt-8">
       <div class="flex items-end justify-between">
-        <div class="space-y-1">
-          <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
+        <div class="space-y-0.5">
+          <h2 class="text-2xl lg:text-3xl font-black text-slate-900 flex items-center gap-2">
             획득한 메달
-            <span class="text-amber-500 text-2xl">🏅</span>
+            <span class="text-amber-500 text-xl lg:text-2xl">🏅</span>
           </h2>
-          <p class="text-slate-400 font-bold text-base">당신의 노력이 증명된 순간들입니다.</p>
+          <p class="text-slate-400 font-bold text-xs lg:text-base">기록으로 증명된 순간들입니다.</p>
         </div>
-        <%= link_to badge_roadmap_path, class: "text-slate-400 font-black text-xs hover:text-indigo-600 transition-colors" do %>
-          배지 로드맵 보기
+        <%= link_to badge_roadmap_path, class: "text-slate-400 font-black text-[10px] lg:text-xs hover:text-indigo-600 transition-colors" do %>
+          배지 로드맵 →
         <% end %>
       </div>
 
-      <div class="bg-threads-black rounded-threads-xl p-6 sm:p-10 shadow-2xl relative overflow-hidden group">
+      <div class="bg-threads-black rounded-[28px] lg:rounded-threads-xl p-6 lg:p-10 shadow-2xl relative overflow-hidden group">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-50"></div>
-        <div class="relative z-10 flex flex-wrap justify-center gap-10">
+        <div class="relative z-10 flex flex-wrap justify-center gap-6 lg:gap-10">
           <% if @current_user.badges.any? %>
             <% @current_user.badges.order(level: :desc).take(8).each do |badge| %>
-              <div class="flex flex-col items-center gap-4 transition-all hover:scale-110 group/badge">
-                <div class="w-20 h-20 rounded-threads bg-white/10 backdrop-blur-xl border border-white/20 p-4 shadow-2xl flex items-center justify-center transform group-hover/badge:rotate-12 transition-all cursor-help" title="<%= badge.description %>">
-                   <span class="text-4xl filter drop-shadow-lg"><%= badge.icon_path || "🏅" %></span>
+              <div class="flex flex-col items-center gap-3 lg:gap-4 transition-all hover:scale-110 group/badge">
+                <div class="w-14 h-14 lg:w-20 lg:h-20 rounded-xl lg:rounded-threads bg-white/10 backdrop-blur-xl border border-white/20 p-3 lg:p-4 shadow-2xl flex items-center justify-center transform group-hover/badge:rotate-12 transition-all cursor-help" title="<%= badge.description %>">
+                   <span class="text-2xl lg:text-4xl filter drop-shadow-lg"><%= badge.icon_path || "🏅" %></span>
                 </div>
                 <div class="text-center">
-                  <p class="text-[10px] font-black text-white/90 tracking-tight"><%= badge.name %></p>
+                  <p class="text-[9px] lg:text-[10px] font-black text-white/90 tracking-tight"><%= badge.name %></p>
                   <div class="mt-1 flex gap-0.5 justify-center">
                     <% (Badge.levels[badge.level] || 0).times do %>
-                      <div class="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></div>
+                      <div class="w-1 h-1 lg:w-1.5 lg:h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></div>
                     <% end %>
                   </div>
                 </div>
@@ -357,28 +317,28 @@
             <% end %>
           <% else %>
             <div class="py-10 text-center">
-              <p class="text-white/40 font-bold">아직 획득한 메달이 없습니다.<br/>첫 번째 챌린지를 완수해보세요!</p>
+              <p class="text-white/40 font-bold text-sm">아직 획득한 메달이 없습니다.</p>
             </div>
           <% end %>
         </div>
       </div>
     </section>
 
-    <!-- Ad Banners -->
+    <!-- Ad Banners: 콤팩트화 -->
     <% if @ad_banners.any? %>
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 px-4">
         <% @ad_banners.each do |banner| %>
-          <%= link_to banner.link_url || "#", class: "group relative h-48 rounded-[32px] overflow-hidden shadow-xl hover:shadow-2xl transition-all" do %>
+          <%= link_to banner.link_url || "#", class: "group relative h-36 lg:h-48 rounded-2xl lg:rounded-[32px] overflow-hidden shadow-xl hover:shadow-2xl transition-all" do %>
             <div class="absolute inset-0 bg-slate-900/40 z-10 group-hover:bg-slate-900/20 transition-colors"></div>
             <% if banner.image.attached? %>
               <%= image_tag banner.image, class: "absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" %>
             <% end %>
-            <div class="relative z-20 h-full flex flex-col justify-center px-10 text-white">
+            <div class="relative z-20 h-full flex flex-col justify-center px-8 lg:px-10 text-white">
               <% if banner.badge_text.present? %>
-                <span class="w-fit px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-black tracking-widest uppercase mb-2"><%= banner.badge_text %></span>
+                <span class="w-fit px-2.5 py-0.5 bg-white/20 backdrop-blur-md rounded-full text-[9px] lg:text-[10px] font-black tracking-widest uppercase mb-1.5"><%= banner.badge_text %></span>
               <% end %>
-              <h3 class="text-xl font-black mb-1"><%= banner.title %></h3>
-              <p class="text-xs text-white/70 font-medium"><%= banner.subtitle %></p>
+              <h3 class="text-lg lg:text-xl font-black mb-0.5"><%= banner.title %></h3>
+              <p class="text-[10px] lg:text-xs text-white/70 font-medium"><%= banner.subtitle %></p>
             </div>
           <% end %>
         <% end %>

@@ -7,13 +7,20 @@ export default class extends Controller {
     }
 
     connect() {
+        console.log('PWA Banner Controller connected');
+        console.log('Storage key:', this.storageKeyValue);
+        console.log('Dismissed?', localStorage.getItem(this.storageKeyValue));
+
         if (localStorage.getItem(this.storageKeyValue)) {
+            console.log('Banner was dismissed, keeping hidden');
             this.bannerTarget.classList.add("hidden")
         } else {
+            console.log('Showing banner after 1 second delay');
             // Subtle delay before showing to feel less intrusive
             setTimeout(() => {
+                console.log('Removing hidden class and showing banner');
                 this.bannerTarget.classList.remove("hidden")
-                this.bannerTarget.classList.add("animate-slide-up")
+                this.bannerTarget.classList.add("block", "animate-slide-up")
             }, 1000)
         }
     }
