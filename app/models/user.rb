@@ -45,6 +45,9 @@ class User < ApplicationRecord
   validates :password, presence: true, on: :create, if: -> { provider.blank? }
 
   def self.from_omniauth(auth)
+    Rails.logger.info "OmniAuth: Processing #{auth.provider} login for uid: #{auth.uid}"
+    Rails.logger.info "OmniAuth: Received data - email: #{auth.info.email}, name: #{auth.info.name}, nickname: #{auth.info.nickname}"
+
     # 1. First, try to find existing user by provider and uid
     user = where(provider: auth.provider, uid: auth.uid).first
 
@@ -52,12 +55,14 @@ class User < ApplicationRecord
     if user.nil? && auth.info.email.present?
       user = find_by(email: auth.info.email)
       if user
+        Rails.logger.info "OmniAuth: Linking existing user (#{user.id}) with #{auth.provider}"
         user.update(provider: auth.provider, uid: auth.uid)
       end
     end
 
     # 3. If still nil, create new user
     if user.nil?
+      Rails.logger.info "OmniAuth: Creating new user for #{auth.provider}"
       user = new do |u|
         u.provider = auth.provider
         u.uid = auth.uid
@@ -76,7 +81,15 @@ class User < ApplicationRecord
       user.threads_expires_at = Time.at(auth.credentials.expires_at) if auth.credentials&.expires_at
     end
 
-    user.save if user
+    if user
+      unless user.save
+        Rails.logger.error "OmniAuth: Failed to save user for #{auth.provider}"
+        Rails.logger.error "OmniAuth: Validation errors: #{user.errors.full_messages.join(', ')}"
+      else
+        Rails.logger.info "OmniAuth: Successfully saved user #{user.id} for #{auth.provider}"
+      end
+    end
+
     user
   end
 
