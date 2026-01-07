@@ -141,11 +141,11 @@ class ProfilesController < ApplicationController
       return
     end
 
+    # 세션을 먼저 완전히 초기화 (사용자 삭제 전에 수행)
+    reset_session
+
     # 사용자 삭제 (dependent: :destroy로 연관 데이터도 함께 삭제됨)
     @user.destroy
-
-    # 세션 종료
-    session.delete(:user_id)
 
     redirect_to root_path, notice: "회원 탈퇴가 완료되었습니다. 그동안 이용해주셔서 감사합니다."
   end
