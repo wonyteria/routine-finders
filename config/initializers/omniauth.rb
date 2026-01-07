@@ -1,9 +1,10 @@
 OmniAuth.config.allowed_request_methods = [ :post ]
 OmniAuth.config.silence_get_warning = true
 
-# Handle OmniAuth failure by redirecting to root with an alert
+# Handle OmniAuth failure by redirecting to root with an alert and message for debugging
 OmniAuth.config.on_failure = Proc.new do |env|
-  [ 302, { "Location" => "/", "Content-Type" => "text/html" }, [] ]
+  message_key = env["omniauth.error.type"]
+  [ 302, { "Location" => "/?auth_error=#{message_key}", "Content-Type" => "text/html" }, [] ]
 end
 
 # Ensure full_host is set to HTTPS in production
