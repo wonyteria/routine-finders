@@ -10,6 +10,15 @@ class SessionsController < ApplicationController
 
     user = User.from_omniauth(auth)
 
+    # Check if the user account was deleted
+    if user&.deleted?
+      # Store user info in session for restoration flow
+      session[:deleted_user_id] = user.id
+      session[:auth_provider] = auth.provider
+      redirect_to restore_account_path, notice: "이전에 탈퇴한 계정이 있습니다."
+      return
+    end
+
     if user.persisted?
       session[:user_id] = user.id
       redirect_to root_path, notice: "#{auth.provider.to_s.titleize} 계정으로 로그인되었습니다!"
@@ -53,6 +62,27 @@ class SessionsController < ApplicationController
           )
         end
       end
+    end
+  end
+
+  def restore_account
+    @user = User.find_by(id: session[:deleted_user_id])
+    unless @user&.deleted?
+      redirect_to root_path, alert: "복구할 계정을 찾을 수 없습니다."
+    end
+  end
+
+  def confirm_restore
+    user = User.find_by(id: session[:deleted_user_id])
+
+    if user&.deleted?
+      user.restore
+      session[:user_id] = user.id
+      session.delete(:deleted_user_id)
+      session.delete(:auth_provider)
+      redirect_to root_path, notice: "계정이 복구되었습니다. 다시 오신 것을 환영합니다!"
+    else
+      redirect_to root_path, alert: "계정 복구에 실패했습니다."
     end
   end
 

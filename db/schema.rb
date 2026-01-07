@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_05_152749) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_07_154213) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -92,7 +92,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_152749) do
   end
 
   create_table "challenges", force: :cascade do |t|
-    t.integer "active_rate_threshold", default: 80
+    t.decimal "active_rate_threshold", precision: 5, scale: 2, default: "0.8"
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
     t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
@@ -152,7 +152,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_152749) do
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
     t.json "reward_policy"
-    t.integer "sluggish_rate_threshold", default: 50
+    t.decimal "sluggish_rate_threshold", precision: 5, scale: 2, default: "0.5"
     t.date "start_date", null: false
     t.integer "status", default: 0, null: false
     t.text "summary"
@@ -490,6 +490,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_05_152749) do
     t.text "bio"
     t.integer "completed_count", default: 0, null: false
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.string "email", null: false
     t.datetime "email_verification_sent_at"
     t.string "email_verification_token"

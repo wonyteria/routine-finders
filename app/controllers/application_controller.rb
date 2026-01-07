@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @_current_user ||= session[:user_id] ? User.find_by(id: session[:user_id]) : nil
+    @_current_user ||= session[:user_id] ? User.active.find_by(id: session[:user_id]) : nil
   end
 
   def logged_in?

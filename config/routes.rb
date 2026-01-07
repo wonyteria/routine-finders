@@ -28,6 +28,10 @@ Rails.application.routes.draw do
   match "/auth/:provider/callback", to: "sessions#omniauth", via: [ :get, :post ]
   get "/auth/failure", to: redirect("/")
 
+  # Account restoration
+  get "/restore_account", to: "sessions#restore_account"
+  post "/restore_account/confirm", to: "sessions#confirm_restore", as: :confirm_restore_account
+
   # Email verification
   get "verify_email", to: "email_verifications#show"
   post "resend_email_verification", to: "email_verifications#resend"

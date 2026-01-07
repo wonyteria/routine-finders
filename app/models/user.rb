@@ -44,23 +44,46 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 8 }, if: -> { password.present? }
   validates :password, presence: true, on: :create, if: -> { provider.blank? }
 
+  # Soft delete scopes
+  scope :active, -> { where(deleted_at: nil) }
+  scope :deleted, -> { where.not(deleted_at: nil) }
+
+  def deleted?
+    deleted_at.present?
+  end
+
+  def soft_delete
+    update(deleted_at: Time.current)
+  end
+
+  def restore
+    update(deleted_at: nil)
+  end
+
   def self.from_omniauth(auth)
     Rails.logger.info "OmniAuth: Processing #{auth.provider} login for uid: #{auth.uid}"
     Rails.logger.info "OmniAuth: Received data - email: #{auth.info.email}, name: #{auth.info.name}, nickname: #{auth.info.nickname}"
 
-    # 1. First, try to find existing user by provider and uid
-    user = where(provider: auth.provider, uid: auth.uid).first
+    # 1. First, try to find existing user by provider and uid (including deleted accounts)
+    user = unscoped.where(provider: auth.provider, uid: auth.uid).first
 
-    # 2. If not found, try to find by email to link accounts (if email is provided)
+    # 2. Check if user was deleted
+    if user&.deleted?
+      Rails.logger.info "OmniAuth: Found deleted account for #{auth.provider}"
+      # Return the deleted user - SessionsController will handle the restoration flow
+      return user
+    end
+
+    # 3. If not found, try to find by email to link accounts (if email is provided)
     if user.nil? && auth.info.email.present?
-      user = find_by(email: auth.info.email)
+      user = active.find_by(email: auth.info.email)
       if user
         Rails.logger.info "OmniAuth: Linking existing user (#{user.id}) with #{auth.provider}"
         user.update(provider: auth.provider, uid: auth.uid)
       end
     end
 
-    # 3. If still nil, create new user
+    # 4. If still nil, create new user
     if user.nil?
       Rails.logger.info "OmniAuth: Creating new user for #{auth.provider}"
       user = new do |u|
