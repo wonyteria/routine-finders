@@ -1,5 +1,15 @@
-OmniAuth.config.allowed_request_methods = [ :post, :get ]
+OmniAuth.config.allowed_request_methods = [ :post ]
 OmniAuth.config.silence_get_warning = true
+
+# Handle OmniAuth failure by redirecting to root with an alert
+OmniAuth.config.on_failure = Proc.new do |env|
+  [ 302, { "Location" => "/", "Content-Type" => "text/html" }, [] ]
+end
+
+# Ensure full_host is set to HTTPS in production
+if Rails.env.production?
+  OmniAuth.config.full_host = "https://www.routinefinders.life"
+end
 
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :developer if Rails.env.development?
