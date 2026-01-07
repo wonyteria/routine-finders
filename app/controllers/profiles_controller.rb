@@ -129,6 +129,27 @@ class ProfilesController < ApplicationController
     end
   end
 
+  def destroy
+    @user = current_user
+
+    # 진행 중인 챌린지가 있는지 확인
+    active_participations = @user.participations.joins(:challenge).where(challenges: { status: :active })
+    active_hosted_challenges = @user.hosted_challenges.where(status: :active)
+
+    if active_participations.any? || active_hosted_challenges.any?
+      redirect_to profile_path, alert: "진행 중인 챌린지가 있어 탈퇴할 수 없습니다. 모든 챌린지를 종료한 후 다시 시도해주세요."
+      return
+    end
+
+    # 사용자 삭제 (dependent: :destroy로 연관 데이터도 함께 삭제됨)
+    @user.destroy
+
+    # 세션 종료
+    session.delete(:user_id)
+
+    redirect_to root_path, notice: "회원 탈퇴가 완료되었습니다. 그동안 이용해주셔서 감사합니다."
+  end
+
   private
 
   def profile_params

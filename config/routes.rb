@@ -106,7 +106,7 @@ Rails.application.routes.draw do
     resources :gatherings, only: [ :create, :destroy ], controller: "routine_club_gatherings"
   end
 
-  resource :profile, only: [ :show, :edit, :update ] do
+  resource :profile, only: [ :show, :edit, :update, :destroy ] do
     collection do
       post :save_account
       get :get_account
