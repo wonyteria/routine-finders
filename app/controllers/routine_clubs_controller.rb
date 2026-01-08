@@ -165,12 +165,14 @@ class RoutineClubsController < ApplicationController
       @my_membership.update_attendance_stats!
       @my_membership.update_achievement_stats!
 
-      # Create synergy activity
-      RufaActivity.create!(
-        user: current_user,
-        activity_type: :attendance,
-        body: "#{current_user.nickname}님이 오늘 루틴 #{achievement_rate}% 달성을 기록했습니다: \"#{params[:proof_text]}\""
-      )
+    # Create synergy activity
+    RufaActivity.create!(
+      user: current_user,
+      activity_type: :attendance,
+      target_id: attendance.id,
+      target_type: "RoutineClubAttendance",
+      body: "#{current_user.nickname}님이 오늘 루틴 #{achievement_rate}% 달성을 기록했습니다: \"#{params[:proof_text]}\""
+    )
 
       redirect_back fallback_location: routine_club_path(@routine_club), notice: "오늘의 기록이 저장되었습니다!"
     else
@@ -238,11 +240,30 @@ class RoutineClubsController < ApplicationController
       end
     end
 
-    attendance.add_cheer(current_user.id)
+    # Toggle cheer
+    if attendance.cheered_by?(current_user.id)
+      attendance.remove_cheer(current_user.id)
+      action_notice = "응원을 취소했습니다."
+    else
+      attendance.add_cheer(current_user.id)
+      action_notice = "응원을 보냈습니다!"
+    end
+
+    # Synchronize with RufaClap if a related synergy activity exists
+    activity = RufaActivity.find_by(target_id: attendance.id, target_type: "RoutineClubAttendance")
+    if activity
+      clap = current_user.rufa_claps.find_by(rufa_activity: activity)
+      if clap && action_notice.include?("취소")
+        clap.destroy
+      elsif !clap && action_notice.include?("보냈습니다")
+        current_user.rufa_claps.create(rufa_activity: activity)
+      end
+    end
+
     attendance.routine_club_member.recalculate_growth_points!
 
     respond_to do |format|
-      format.html { redirect_back fallback_location: personal_routines_path(tab: "club"), notice: "응원을 보냈습니다!" }
+      format.html { redirect_back fallback_location: personal_routines_path(tab: "club"), notice: action_notice }
       format.turbo_stream
     end
   end
