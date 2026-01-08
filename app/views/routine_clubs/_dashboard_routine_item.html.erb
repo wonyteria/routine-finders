@@ -1,0 +1,20 @@
+<%# locals: (routine:, is_done:, selected_date:) %>
+<div id="routine_<%= routine.id %>_dashboard" class="flex items-center justify-between p-4 rounded-[20px] transition-all <%= is_done ? 'bg-indigo-600/40 border border-indigo-400/30 shadow-lg shadow-indigo-100/10' : 'bg-white/5 border border-white/10 hover:bg-white/10' %>">
+  <div class="flex items-center gap-4 min-w-0 flex-1">
+    <%= button_to toggle_personal_routine_path(routine, date: selected_date), 
+                  method: :post, 
+                  data: { turbo_stream: true }, 
+                  class: "shrink-0 w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all #{is_done ? 'bg-indigo-600 border-indigo-400 text-white' : 'border-white/30 text-transparent hover:border-white/60 hover:bg-white/5'}" do %>
+      <svg class="w-5 h-5 <%= is_done ? 'opacity-100' : 'opacity-0' %>" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+    <% end %>
+    <div class="min-w-0 flex-1">
+      <p class="text-[9px] font-black <%= is_done ? 'text-indigo-200' : 'text-slate-500' %> uppercase tracking-widest leading-none mb-1.5"><%= routine.category %></p>
+      <h4 class="text-[15px] font-black truncate <%= is_done ? 'text-white line-through decoration-white/30' : 'text-slate-200' %>">
+        <%= routine.title %>
+      </h4>
+    </div>
+  </div>
+  <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
+    <%= routine.icon %>
+  </div>
+</div>

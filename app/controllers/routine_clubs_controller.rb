@@ -1,7 +1,7 @@
 class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
   before_action :require_admin, only: [ :new, :create ]
-  before_action :set_routine_club, only: [ :show, :manage, :update, :join, :use_pass, :confirm_payment, :reject_payment, :kick_member ]
+  before_action :set_routine_club, only: [ :show, :join, :manage, :update_settings, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member ]
   before_action :set_my_membership, only: [ :show, :use_pass ]
 
   def index
@@ -20,8 +20,13 @@ class RoutineClubsController < ApplicationController
   end
 
   def show
-    @is_member = current_user && @routine_club.members.exists?(user: current_user)
-    @is_host = current_user && @routine_club.host_id == current_user.id
+    @is_member = current_user && (@routine_club.members.exists?(user: current_user) || current_user.admin?)
+    @is_host = current_user && (@routine_club.host_id == current_user.id || current_user.super_admin?)
+
+    # Default to dashboard if member/admin and no tab specified
+    if params[:tab].blank? && @is_member
+      params[:tab] = "dashboard"
+    end
 
     if @my_membership
        @my_membership.recalculate_growth_points!
@@ -36,6 +41,9 @@ class RoutineClubsController < ApplicationController
     # Community Data
     @announcements = @routine_club.announcements.order(created_at: :desc)
     @gatherings = @routine_club.gatherings.order(gathering_at: :asc)
+
+    # User Routines for Dashboard Checklist
+    @personal_routines = current_user&.personal_routines&.includes(:completions)&.order(created_at: :desc) || []
   end
 
   def manage
@@ -139,6 +147,33 @@ class RoutineClubsController < ApplicationController
     end
   end
 
+  def record
+    return redirect_to @routine_club, alert: "멤버만 기록할 수 있습니다." unless @my_membership
+
+    attendance = @my_membership.attendances.find_or_initialize_by(
+      attendance_date: Date.current,
+      routine_club: @routine_club
+    )
+
+    # Calculate achievement rate at the moment of recording
+    achievement_rate = current_user.daily_achievement_rate(Date.current)
+
+    if attendance.update(status: :present, proof_text: params[:proof_text], achievement_rate: achievement_rate)
+      @my_membership.update_attendance_stats!
+      @my_membership.update_achievement_stats!
+
+      # Create synergy activity
+      RufaActivity.create!(
+        user: current_user,
+        activity_type: :attendance,
+        body: "#{current_user.nickname}님이 오늘 루틴 #{achievement_rate}% 달성을 기록했습니다: \"#{params[:proof_text]}\""
+      )
+
+      redirect_back fallback_location: routine_club_path(@routine_club), notice: "오늘의 기록이 저장되었습니다!"
+    else
+      redirect_back fallback_location: routine_club_path(@routine_club), alert: "기록 저장에 실패했습니다."
+    end
+  end
   def use_pass
     return redirect_to @routine_club, alert: "멤버만 사용할 수 있습니다." unless @my_membership
 
@@ -183,7 +218,22 @@ class RoutineClubsController < ApplicationController
   end
 
   def set_my_membership
-    @my_membership = current_user && @routine_club.members.find_by(user: current_user)
+    return unless current_user
+    @my_membership = @routine_club.members.find_by(user: current_user)
+
+    # If admin/host doesn't have a membership record, create a virtual one or actual one
+    # For now, let's ensure they have a record if they are admins to avoid nil errors in dashboard
+    if !@my_membership && current_user.admin?
+      @my_membership = @routine_club.members.create!(
+        user: current_user,
+        payment_status: :confirmed,
+        status: :active,
+        paid_amount: 1, # Dummy
+        joined_at: Time.current,
+        membership_start_date: @routine_club.start_date,
+        membership_end_date: @routine_club.end_date
+      )
+    end
   end
 
   def routine_club_params

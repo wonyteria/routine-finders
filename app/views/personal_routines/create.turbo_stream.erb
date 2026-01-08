@@ -15,8 +15,14 @@
   <%= current_user.personal_routines.count %> Active
 <% end %>
 
-<%= turbo_stream.update "achievement-matrix" do %>
+<%= turbo_stream.replace "achievement-matrix" do %>
   <%= render "shared/achievement_matrix" %>
+<% end %>
+
+<%= turbo_stream.replace "recommended-routines-section" do %>
+  <div id="recommended-routines-section" class="flex gap-4 lg:gap-6 overflow-x-auto pb-6 -mx-1 px-1 no-scrollbar text-left">
+    <%= render "recommended_routines" %>
+  </div>
 <% end %>
 
 <%= turbo_stream.append "body" do %>

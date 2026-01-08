@@ -9,7 +9,19 @@ class PersonalRoutinesController < ApplicationController
     current_user.user_badges.where(is_viewed: false).update_all(is_viewed: true)
 
     @selected_date = params[:date] ? Date.parse(params[:date]) : Date.current
-    @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
+
+    # Filter routines that were active on the selected date
+    if @selected_date == Date.current
+      @personal_routines = current_user.personal_routines.includes(:completions)
+                                       .where("created_at <= ?", @selected_date.end_of_day)
+                                       .where(deleted_at: nil)
+                                       .order(created_at: :desc)
+    else
+      @personal_routines = current_user.personal_routines.includes(:completions)
+                                       .where("created_at <= ?", @selected_date.end_of_day)
+                                       .where("deleted_at IS NULL OR deleted_at > ?", @selected_date.end_of_day)
+                                       .order(created_at: :desc)
+    end
 
     set_activity_data
 
@@ -30,6 +42,19 @@ class PersonalRoutinesController < ApplicationController
       )
     end
 
+    # 관리자는 자동으로 공식 클럽 멤버로 등록 (레코드가 없을 경우)
+    if current_user.admin? && !current_user.routine_club_members.exists?(routine_club: @official_club)
+      current_user.routine_club_members.create!(
+        routine_club: @official_club,
+        payment_status: :confirmed,
+        status: :active,
+        paid_amount: 1, # Dummy amount for admins
+        joined_at: Time.current,
+        membership_start_date: @official_club.start_date,
+        membership_end_date: @official_club.end_date
+      )
+    end
+
     # 루파 클럽 (유료) 관련 통계 및 랭킹
     @routine_clubs = RoutineClub.recruiting_clubs.includes(:host, :members).order(created_at: :desc).limit(6)
     @my_club_memberships = current_user.routine_club_members.includes(:routine_club).where(status: [ :active, :warned ])
@@ -40,12 +65,22 @@ class PersonalRoutinesController < ApplicationController
     end
     @pending_payments = current_user.routine_club_members.where(payment_status: :pending)
 
+    @my_official_membership = current_user.routine_club_members.find_by(routine_club: @official_club)
+    @is_official_host = current_user.admin? || (@official_club && @official_club.host_id == current_user.id)
+
     # 루파 클럽 공식 공지사항
     if @official_club && Announcement.where(routine_club: @official_club).none?
       @official_club.announcements.create!(title: "루파 클럽에 오신 것을 환영합니다! 목표 설정을 시작해보세요.", content: "내용")
       @official_club.announcements.create!(title: "1월 오프라인 정기 모임 일정 안내", content: "내용")
     end
     @rufa_announcements = @official_club ? Announcement.where(routine_club: @official_club).recent.limit(5) : []
+
+    # Standard variables for club dashboard partial
+    @routine_club = @official_club
+    @my_membership = @my_official_membership
+    @is_host = @is_official_host
+    @announcements = @official_club ? @official_club.announcements.order(created_at: :desc) : []
+    @gatherings = @official_club ? @official_club.gatherings.order(gathering_at: :asc) : []
 
     # 유저 목표 (단기/중기/장기)
     @user_goals = current_user.user_goals.index_by(&:goal_type)
@@ -144,6 +179,8 @@ class PersonalRoutinesController < ApplicationController
     @routine = current_user.personal_routines.build(routine_params)
 
     if @routine.save
+      @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
+      @selected_date = Date.current
       set_activity_data
       respond_to do |format|
         format.html { redirect_to personal_routines_path, notice: "루틴이 추가되었습니다!" }
@@ -155,9 +192,17 @@ class PersonalRoutinesController < ApplicationController
   end
 
   def edit
+    if params[:date] && Date.parse(params[:date]) != Date.current
+      redirect_to personal_routines_path, alert: "루틴 수정은 오늘 날짜에서만 가능합니다."
+    end
   end
 
   def update
+    target_date = params[:date] ? Date.parse(params[:date]) : Date.current
+    if target_date != Date.current
+      return redirect_to personal_routines_path, alert: "루틴 수정은 오늘 날짜에서만 가능합니다."
+    end
+
     if @routine.update(routine_params)
       respond_to do |format|
         format.html { redirect_to personal_routines_path, notice: "루틴이 수정되었습니다!" }
@@ -170,12 +215,50 @@ class PersonalRoutinesController < ApplicationController
 
   def toggle
     target_date = params[:date] ? Date.parse(params[:date]) : Date.current
+
+    if target_date != Date.current
+      return respond_to do |format|
+        format.html { redirect_back fallback_location: personal_routines_path, alert: "루틴 체크는 당일에만 가능합니다." }
+        format.turbo_stream {
+          render turbo_stream: [
+            turbo_stream.append("body", html: "<script>alert('루틴 체크는 당일에만 가능합니다.');</script>"),
+            turbo_stream.prepend("body", html: "<div class='fixed top-20 left-1/2 -translate-x-1/2 z-[100] bg-rose-600 text-white px-6 py-3 rounded-2xl shadow-2xl font-black animate-bounce' onclick='this.remove()'>⚠️ 루틴 체크는 당일에만 가능합니다!</div>")
+          ]
+        }
+      end
+    end
+
     @routine.toggle_completion!(target_date)
     set_activity_data
     @selected_date = target_date
 
     # 뷰 렌더링에 필요한 변수 설정 (현재 선택된 날짜 기준)
     @selected_date = target_date
+
+    # 루파 클럽 멤버라면 달성률 통계 업데이트 및 자동 기록 체크
+    @official_club = RoutineClub.official.first
+    @my_membership = current_user.routine_club_members.find_by(routine_club: @official_club)
+    @routine_club = @official_club
+
+    if current_user.is_rufa_club_member?
+      current_user.routine_club_members.active.each do |m|
+        attendance = m.attendances.find_or_initialize_by(attendance_date: target_date, routine_club: m.routine_club)
+
+        # 1. 자동 기록: 오늘 날짜이고 모든 루틴을 완료했을 경우
+        if target_date == Date.current && current_user.all_routines_completed?(target_date) && !attendance.status_present?
+          attendance.update(status: :present, achievement_rate: 100.0, proof_text: "오늘의 루틴을 모두 완료했습니다! (자동 기록)")
+        else
+          # 2. 통계 업데이트: 이미 기록이 있는 경우 달성률 최신화
+          if attendance.persisted?
+            attendance.update(achievement_rate: current_user.daily_achievement_rate(target_date))
+          end
+        end
+
+        m.update_attendance_stats!
+        m.update_achievement_stats!
+        m.recalculate_growth_points!
+      end
+    end
 
     respond_to do |format|
       format.html { redirect_back fallback_location: personal_routines_path(date: @selected_date) }
@@ -197,8 +280,21 @@ class PersonalRoutinesController < ApplicationController
   end
 
   def destroy
-    @routine.destroy
+    target_date = params[:date] ? Date.parse(params[:date]) : Date.current
+    if target_date != Date.current
+      return respond_to do |format|
+        format.html { redirect_back fallback_location: personal_routines_path, alert: "루틴 삭제는 오늘 날짜에서만 가능합니다." }
+        format.turbo_stream { render turbo_stream: turbo_stream.append("body", html: "<script>alert('루틴 삭제는 오늘 날짜에서만 가능합니다.');</script>") }
+      end
+    end
+
+    @routine.update(deleted_at: Time.current)
     set_activity_data
+    @selected_date = Date.current
+    @personal_routines = current_user.personal_routines.includes(:completions)
+                                     .where("created_at <= ?", @selected_date.end_of_day)
+                                     .where(deleted_at: nil)
+                                     .order(created_at: :desc)
 
     respond_to do |format|
       format.html { redirect_to personal_routines_path, notice: "루틴이 삭제되었습니다." }

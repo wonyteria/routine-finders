@@ -208,10 +208,12 @@ class User < ApplicationRecord
 
   # Rufa Club Standards
   def is_rufa_club_member?
+    return true if admin?
     routine_club_members.where(status: :active, payment_status: :confirmed).exists?
   end
 
   def has_active_rufa_membership?
+    return true if admin?
     routine_club_members.where(status: :active, payment_status: :confirmed)
                        .where("membership_start_date <= ?", Date.current)
                        .exists?
@@ -243,13 +245,34 @@ class User < ApplicationRecord
 
   # ② 루틴 달성률 (작성한 루틴 중 하루에 하나 이상 실천한 날 기준 70% 이상)
   def monthly_achievement_rate(date = Date.current)
-    # 현재 정의상 ①과 유사하지만, 로직 확장을 위해 분리
+    # 실제로는 개별 루틴의 '달성 비중'을 평균내는 것이 더 정확할 수 있으나,
+    # 현재는 전체 로그일 수를 기준으로 계산 (추후 고도화 가능)
     monthly_routine_log_rate(date)
   end
 
+  def daily_achievement_rate(date = Date.current)
+    todays_routines = personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+    return 0 if todays_routines.empty?
+
+    completed_count = personal_routines.joins(:completions)
+                                      .where(personal_routine_completions: { completed_on: date })
+                                      .count
+    (completed_count.to_f / todays_routines.size * 100).round(1)
+  end
+
+  def all_routines_completed?(date = Date.current)
+    todays_routines = personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+    return false if todays_routines.empty?
+
+    completed_count = personal_routines.joins(:completions)
+                                      .where(personal_routine_completions: { completed_on: date })
+                                      .count
+    completed_count >= todays_routines.size
+  end
+
   def rufa_club_score
-    # 랭킹 산정용 점수 (기록률 + 달성률 가중치 등)
-    (monthly_routine_log_rate + monthly_achievement_rate) / 2
+    # 랭킹 산정용 점수 (기록률 30% + 달성률 70% 가중치)
+    (monthly_routine_log_rate * 0.3 + monthly_achievement_rate * 0.7).round(1)
   end
 
   # 누적 통계 (All-time)

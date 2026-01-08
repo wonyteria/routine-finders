@@ -38,17 +38,13 @@ class PersonalRoutine < ApplicationRecord
   end
 
   def update_stats!
-    # 스트레이크 및 총 완료 횟수 업데이트
+    # Update stats based on completions
     latest_completions = completions.order(completed_on: :desc)
-
     totalCount = latest_completions.count
 
-    # Calculate streak
     streak = 0
     if latest_completions.any?
       current_date = latest_completions.first.completed_on
-
-      # 만약 마지막 완료일이 오늘이나 어제가 아니면 스트레이크는 0 (또는 오늘 완료했다면 1부터 시작)
       if current_date == Date.current || current_date == Date.yesterday
         streak = 1
         latest_completions.each_cons(2) do |newer, older|
@@ -66,5 +62,9 @@ class PersonalRoutine < ApplicationRecord
       current_streak: streak,
       total_completions: totalCount
     )
+  end
+
+  def active_on?(date)
+    created_at.to_date <= date && (deleted_at.nil? || deleted_at.to_date > date)
   end
 end

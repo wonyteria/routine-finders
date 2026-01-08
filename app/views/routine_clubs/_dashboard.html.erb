@@ -1,41 +1,60 @@
 <div class="space-y-8">
   
-  <!-- Stats Overview -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-3xl p-6 text-white shadow-lg">
-      <p class="text-sm font-bold text-indigo-100 mb-2">성장 에너지</p>
-      <p class="text-4xl font-black"><%= @my_membership.growth_points || 0 %>P</p>
-    </div>
-    
-    <div class="group relative bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden">
-      <p class="text-sm font-bold text-emerald-100 mb-2">출석률</p>
-      <p class="text-4xl font-black"><%= @my_membership.attendance_rate.to_i %>%</p>
-      <div class="absolute -right-2 -bottom-2 text-6xl opacity-10 group-hover:scale-110 transition-transform">📈</div>
-    </div>
-    
-    <div class="group relative bg-gradient-to-br from-blue-500 to-sky-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden cursor-help" 
-         title="시즌당 3회 사용 가능. 사용 시 오늘 분량의 루틴 인증을 면제하며, 완주를 위한 출석률(70%) 계산 시 '출석'으로 보호받습니다.">
-      <div class="relative z-10">
-        <p class="text-sm font-bold text-blue-100 mb-2">남은 휴식권</p>
-        <div class="flex items-end justify-between">
-          <p class="text-4xl font-black"><%= @my_membership.remaining_passes %>개</p>
-          <% if @my_membership.remaining_passes > 0 %>
-            <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
-                          class: "text-[10px] font-black bg-white text-blue-600 px-3 py-1.5 rounded-xl hover:bg-blue-50 transition-colors shadow-sm", 
-                          data: { confirm: "오늘의 루틴 인증을 면제하시겠습니까? (휴식권 1매 소진)" },
-                          title: "클릭하여 즉시 사용 (오늘 하루 면제)" do %>
-               휴식권 사용
-            <% end %>
-          <% end %>
-        </div>
+  <!-- Stats Overview: Premium Bauhaus Style -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+    <div class="bg-slate-900 rounded-[32px] p-6 lg:p-8 text-white shadow-xl relative overflow-hidden group hover:scale-[1.02] transition-transform">
+      <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-600/20 rounded-full blur-2xl"></div>
+      <p class="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-3 leading-none">성장 에너지</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-3xl lg:text-4xl font-black tracking-tight tabular-nums"><%= @my_membership.growth_points || 0 %></p>
+        <p class="text-xs font-bold text-indigo-400">P</p>
       </div>
-      <div class="absolute -right-2 -bottom-2 text-6xl opacity-10 group-hover:scale-110 transition-transform">🎫</div>
+    </div>
+
+    <div class="bg-white rounded-[32px] p-6 lg:p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-transform">
+      <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-3 leading-none">달성률</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.achievement_rate.to_i %></p>
+        <p class="text-xs font-bold text-slate-400">%</p>
+      </div>
+      <div class="mt-4 w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+        <div class="bg-gradient-to-r from-purple-500 to-indigo-600 h-full transition-all duration-1000" style="width: <%= @my_membership.achievement_rate.to_i %>%"></div>
+      </div>
     </div>
     
-    <div class="group relative bg-gradient-to-br from-amber-500 to-yellow-600 rounded-3xl p-6 text-white shadow-lg overflow-hidden">
-      <p class="text-sm font-bold text-amber-100 mb-2">누적 경고</p>
-      <p class="text-4xl font-black"><%= @my_membership.penalty_count %>회</p>
-      <div class="absolute -right-2 -bottom-2 text-6xl opacity-10 group-hover:scale-110 transition-transform">⚠️</div>
+    <a href="#attendance-calendar" class="bg-white rounded-[32px] p-6 lg:p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-transform">
+      <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-3 leading-none">출석률</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.attendance_rate.to_i %></p>
+        <p class="text-xs font-bold text-slate-400">%</p>
+      </div>
+      <div class="mt-4 w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+        <div class="bg-emerald-500 h-full transition-all duration-1000" style="width: <%= @my_membership.attendance_rate.to_i %>%"></div>
+      </div>
+    </a>
+    
+    <div class="bg-white rounded-[32px] p-6 lg:p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-transform cursor-help" 
+         title="오늘 분량 면제 & 출석률 70% 보호">
+      <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-3 leading-none">휴식권</p>
+      <div class="flex items-center justify-between">
+        <p class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %><span class="text-xs font-bold text-slate-400 ml-1">개</span></p>
+        <% if @my_membership.remaining_passes > 0 %>
+          <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
+                        class: "px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black border border-blue-100 hover:bg-blue-600 hover:text-white transition-all", 
+                        data: { turbo_confirm: "휴식권을 사용하시겠습니까?" } do %>
+             사용
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-[32px] p-6 lg:p-8 border border-slate-100 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-transform">
+      <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-3 leading-none">누적 경고</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-3xl lg:text-4xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.penalty_count %></p>
+        <p class="text-xs font-bold text-slate-400">회</p>
+      </div>
+      <div class="absolute -right-2 -bottom-2 text-4xl opacity-5 group-hover:scale-110 transition-transform">⚠️</div>
     </div>
   </div>
 
@@ -58,9 +77,16 @@
         <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
           <span class="text-2xl">📢</span> 공지사항
         </h2>
-        <% if @announcements.count > 3 %>
-          <button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">더보기</button>
-        <% end %>
+        <div class="flex gap-2">
+          <% if @is_host || current_user&.admin? %>
+            <%= link_to manage_routine_club_path(@routine_club, anchor: "manage-content-community"), class: "text-[10px] font-black bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg hover:bg-indigo-100 transition-colors" do %>
+              공지 등록
+            <% end %>
+          <% end %>
+          <% if @announcements.count > 3 %>
+            <button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">더보기</button>
+          <% end %>
+        </div>
       </div>
       
       <% if @announcements.any? %>
@@ -89,9 +115,16 @@
         <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
           <span class="text-2xl">🎉</span> 다가오는 모임
         </h2>
-        <% if @gatherings.count > 3 %>
-          <button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">더보기</button>
-        <% end %>
+        <div class="flex gap-2">
+          <% if @is_host || current_user&.admin? %>
+            <%= link_to manage_routine_club_path(@routine_club, anchor: "manage-content-community"), class: "text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg hover:bg-emerald-100 transition-colors" do %>
+              모임 등록
+            <% end %>
+          <% end %>
+          <% if @gatherings.count > 3 %>
+            <button class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">더보기</button>
+          <% end %>
+        </div>
       </div>
       
       <% if @gatherings.any? %>
@@ -120,49 +153,58 @@
       <% end %>
     </div>
   </div>
-  <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h2 class="text-2xl font-black text-slate-900">오늘의 출석</h2>
-        <p class="text-sm text-slate-500 font-medium mt-1"><%= Date.current.strftime("%Y년 %m월 %d일") %></p>
-      </div>
-      
-      <% today_attendance = @my_membership.attendances.find_by(attendance_date: Date.current) %>
-      <% if today_attendance&.status_present? %>
-        <div class="flex items-center gap-2 bg-emerald-100 px-4 py-2 rounded-full">
-          <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-          </svg>
-          <span class="text-sm font-black text-emerald-600">출석 완료</span>
-        </div>
-      <% else %>
-        <button class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl font-black hover:shadow-lg transition-all">
-          출석 체크
-        </button>
-      <% end %>
-    </div>
-    
-    <% if today_attendance %>
-      <div class="bg-slate-50 rounded-3xl p-6">
-        <% if today_attendance.proof_text.present? %>
-          <p class="text-slate-700 font-medium mb-4"><%= today_attendance.proof_text %></p>
-        <% end %>
+  <div class="flex flex-col lg:flex-row gap-6 lg:gap-10 items-stretch">
+    <!-- Combined Mission Control Panel -->
+    <div class="w-full lg:w-[45%] flex flex-col gap-6">
+      <div class="bg-slate-900 rounded-[40px] p-8 lg:p-10 shadow-2xl relative overflow-hidden group flex-1 flex flex-col">
+        <div class="absolute -right-16 -top-16 w-48 h-48 bg-indigo-600/30 rounded-full blur-[80px]"></div>
         
-        <div class="flex items-center gap-4">
-          <button class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-orange-200 rounded-xl hover:border-orange-400 transition-colors">
-            <svg class="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
-            </svg>
-            <span class="text-sm font-black text-slate-700">응원 <%= today_attendance.cheers_count %></span>
-          </button>
+        <div class="relative z-10 mb-10 flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl lg:text-3xl font-black text-white tracking-tight italic">오늘의 루틴</h2>
+            <p class="text-indigo-300 font-bold text-xs uppercase tracking-widest mt-1">오늘의 정진을 체크하세요</p>
+          </div>
+          <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
         </div>
+
+        <div class="relative z-10 flex-1 flex flex-col gap-3">
+          <% 
+            current_wday = Date.current.wday.to_s
+            todays_routines = @personal_routines.select { |r| (r.days || []).map(&:to_s).include?(current_wday) }
+          %>
+          
+          <% if todays_routines.any? %>
+            <div class="grid grid-cols-1 gap-2.5">
+              <% todays_routines.each do |routine| %>
+                <% is_done = routine.completed_on?(Date.current) %>
+                <%= render 'routine_clubs/dashboard_routine_item', routine: routine, is_done: is_done, selected_date: Date.current %>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="flex-1 flex flex-col items-center justify-center py-10 opacity-30">
+              <span class="text-5xl mb-4">🏖️</span>
+              <p class="text-white font-bold">오늘은 휴식일입니다</p>
+            </div>
+          <% end %>
+        </div>
+
+        <% if todays_routines.any? %>
+          <div class="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
+            <div class="flex -space-x-2">
+               <% [1,2,3].each do |i| %>
+                 <div class="w-6 h-6 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-[10px]">✨</div>
+               <% end %>
+            </div>
+            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">모두 완료하면 기록이 활성화됩니다</p>
+          </div>
+        <% end %>
       </div>
-    <% else %>
-      <div class="bg-amber-50 border-2 border-dashed border-amber-200 rounded-3xl p-12 text-center">
-        <div class="text-5xl mb-4 opacity-30">📝</div>
-        <p class="text-amber-700 font-bold">오늘의 출석을 체크해주세요</p>
-      </div>
-    <% end %>
+    </div>
+
+    <!-- Right Component: The Daily Record -->
+    <div id="rufa-daily-record" class="w-full lg:w-[55%] flex flex-col">
+      <%= render 'routine_clubs/daily_record_area' %>
+    </div>
   </div>
 
   <!-- Recent Activity Feed -->
@@ -217,7 +259,7 @@
   </div>
 
   <!-- Attendance Calendar -->
-  <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+  <div id="attendance-calendar" class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm scroll-mt-24">
     <h2 class="text-2xl font-black text-slate-900 mb-6">출석 캘린더</h2>
     
     <div class="grid grid-cols-7 gap-2">

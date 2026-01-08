@@ -1,5 +1,4 @@
-<div class="min-h-screen bg-slate-50">
-  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 py-12">
+<div class="space-y-10 pb-12">
     
     <!-- Main Banner (Standardized) -->
     <section class="mb-8 lg:mb-12 relative overflow-hidden rounded-[32px] lg:rounded-[40px] bg-gradient-to-br from-indigo-700 via-indigo-600 to-slate-900 text-white shadow-2xl shadow-indigo-200">
@@ -57,15 +56,13 @@
     <!-- Tabs Only: Compact for mobile -->
     <div class="flex justify-center md:justify-start mb-6 md:mb-8">
       <div class="bg-indigo-50/50 p-1 rounded-2xl md:rounded-[24px] flex w-full md:w-auto md:inline-flex gap-1 border border-indigo-100/50">
-        <%= link_to "무료 루틴", personal_routines_path(tab: 'free'), 
+        <%= link_to "나의 루틴", personal_routines_path(tab: 'free'), 
             class: "flex-1 md:flex-none flex items-center justify-center px-6 py-3 md:px-8 md:py-4 rounded-[14px] md:rounded-[20px] font-black text-xs md:text-sm transition-all duration-300 #{ (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600 font-bold' }" %>
         
         <%= link_to "루파 클럽", personal_routines_path(tab: 'club'), 
             class: "flex-1 md:flex-none flex items-center justify-center px-6 py-3 md:px-8 md:py-4 rounded-[14px] md:rounded-[20px] font-black text-xs md:text-sm transition-all duration-300 #{ params[:tab] == 'club' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600 font-bold' }" %>
       </div>
     </div>
-
-
 
     <% if params[:tab].blank? || params[:tab] == 'free' %>
       <div id="panel-free">
@@ -78,7 +75,4 @@
         <%= render 'club_routines' %>
       </div>
     <% end %>
-
-    <!-- Script removed as tabs are now handled by server-side navigation -->
-  </div>
 </div>

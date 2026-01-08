@@ -10,7 +10,7 @@
 
     <% unless is_recruiting %>
       <!-- Recruitment Notice Banner -->
-      <div class="mb-12 bg-white rounded-[40px] p-8 lg:p-12 border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden group">
+      <div class="mb-12 bg-white rounded-[40px] p-8 lg:p-12 border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col lg:flex-row items-center justify-center gap-8 relative overflow-hidden group">
         <div class="absolute right-0 top-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-indigo-100 transition-colors"></div>
         
         <div class="relative z-10 flex flex-col lg:flex-row items-center gap-8 text-center lg:text-left">
@@ -25,10 +25,6 @@
           </div>
         </div>
 
-        <%= link_to pwa_guide_path, class: "relative z-10 px-10 py-5 bg-slate-900 text-white rounded-[24px] font-black text-sm lg:text-base hover:bg-indigo-600 active:scale-95 transition-all shadow-xl shadow-slate-200 flex items-center gap-3 whitespace-nowrap" do %>
-          <span>루파 클럽 둘러보기</span>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-        <% end %>
       </div>
     <% end %>
 
@@ -152,10 +148,22 @@
                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
                <div class="min-w-0">
                  <p class="text-[8px] lg:text-[9px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">Growth Identity</p>
-                 <p class="text-[13px] lg:text-sm font-black truncate"><%= current_user.routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+                 <p class="text-[13px] lg:text-sm font-black truncate"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
                </div>
              </div>
              <svg class="w-4 h-4 text-indigo-300/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          </div>
+
+          <!-- Top Stats Summary: Achievement & Attendance -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="bg-white p-4 rounded-[24px] border border-slate-100 text-center shadow-sm">
+              <p class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em] mb-1">달성률</p>
+              <p class="text-xl font-black text-indigo-600"><%= @my_official_membership&.achievement_rate.to_i %>%</p>
+            </div>
+            <div class="bg-white p-4 rounded-[24px] border border-slate-100 text-center shadow-sm">
+              <p class="text-[8px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-1">출석률</p>
+              <p class="text-xl font-black text-emerald-600"><%= @my_official_membership&.attendance_rate.to_i %>%</p>
+            </div>
           </div>
 
           <!-- Quick Links (Consolidated for all devices) -->
@@ -182,17 +190,25 @@
               }
             </style>
             <% [
-              ["dashboard", "🏠", "대시보드"],
+              ["club_dashboard", "🏠", "클럽 대시보드"],
+              ["dashboard", "⚡", "나의 정진"],
               ["synergy", "✨", "시너지"],
               ["members", "👥", "멤버 루틴"],
               ["ranking", "🏆", "랭킹"],
               ["architecture", "📐", "목표 설계"]
             ].each do |id, icon, label| %>
               <button onclick="switchRufaTab('<%= id %>')" id="nav-<%= id %>" 
-                      class="rufa-nav-btn flex-shrink-0 flex flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 px-5 lg:px-8 py-2.5 lg:py-5 rounded-full lg:rounded-[28px] font-black transition-all border border-slate-100 lg:border-none shadow-sm lg:shadow-none hover:opacity-80 snap-start <%= id == 'dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white lg:bg-transparent text-slate-400' %>">
+                      class="rufa-nav-btn flex-shrink-0 flex flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 px-5 lg:px-8 py-2.5 lg:py-5 rounded-full lg:rounded-[28px] font-black transition-all border border-slate-100 lg:border-none shadow-sm lg:shadow-none hover:opacity-80 snap-start <%= id == 'club_dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white lg:bg-transparent text-slate-400' %>">
                 <span class="text-base lg:text-xl"><%= icon %></span>
                 <span class="text-xs lg:text-sm whitespace-nowrap"><%= label %></span>
               </button>
+            <% end %>
+
+            <% if @is_official_host %>
+               <%= link_to manage_routine_club_path(@official_club), class: "flex-shrink-0 flex flex-row items-center justify-center lg:justify-start gap-2 lg:gap-4 px-5 lg:px-8 py-2.5 lg:py-5 rounded-full lg:rounded-[28px] font-black transition-all border border-indigo-100 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white group snap-start" do %>
+                 <span class="text-base lg:text-xl">⚙️</span>
+                 <span class="text-xs lg:text-sm whitespace-nowrap">클럽 관리</span>
+               <% end %>
             <% end %>
           </nav>
         </div>
@@ -201,8 +217,13 @@
       <!-- Sub-tab Content Area -->
       <main class="flex-1 space-y-12">
         
+        <!-- 0. Club Dashboard Tab (NEW) -->
+        <div id="tab-club_dashboard" class="rufa-content-tab space-y-4 lg:space-y-12">
+           <%= render 'routine_clubs/dashboard' %>
+        </div>
+
         <!-- 1. Dashboard Tab (Redesigned: Master Board Version) -->
-        <div id="tab-dashboard" class="rufa-content-tab space-y-4 lg:space-y-12">
+        <div id="tab-dashboard" class="rufa-content-tab hidden space-y-4 lg:space-y-12">
           
           <!-- [NEW] Master Stats Header: All key metrics in one premium card -->
           <div class="bg-slate-900 rounded-[32px] lg:rounded-[48px] p-6 lg:p-12 text-white border border-white/5 shadow-2xl relative overflow-hidden group">
@@ -214,7 +235,7 @@
                    <div class="space-y-1.5 min-w-0">
                       <p class="text-[8px] lg:text-[10px] font-black text-indigo-300 uppercase tracking-[0.3em]">Current Status</p>
                       <h3 class="text-lg lg:text-3xl font-black truncate tracking-tight"><%= current_user.nickname %>님의 정진</h3>
-                      <p class="text-[10px] lg:text-base font-bold text-slate-400 truncate"><%= current_user.routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+                      <p class="text-[10px] lg:text-base font-bold text-slate-400 truncate"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
                    </div>
                    <div class="relative shrink-0">
                       <svg class="w-16 h-16 lg:w-32 lg:h-32 transform -rotate-90">
@@ -523,7 +544,7 @@
                                    <span class="px-1.5 py-0.5 bg-indigo-600 text-white text-[7px] lg:text-[9px] font-black rounded-full shrink-0">MY</span>
                                  <% end %>
                                </div>
-                               <p class="text-[9px] lg:text-xs font-bold text-slate-400 truncate"><%= rank[:user].routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+                               <p class="text-[9px] lg:text-xs font-bold text-slate-400 truncate"><%= rank[:user].routine_club_members.find_by(routine_club: @official_club)&.identity_title || "루파 파인더" %></p>
                              </div>
                            </div>
                          </div>
@@ -764,12 +785,20 @@
 
         <div class="grid grid-cols-2 gap-12 border-t border-white/5 pt-12">
            <div class="space-y-2">
-             <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Current Identity</p>
-             <p class="text-lg font-black text-white"><%= current_user.routine_club_members.active.first&.identity_title %></p>
+             <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Achievement Rate</p>
+             <p class="text-xl font-black text-indigo-400"><%= @my_official_membership&.achievement_rate.to_i %>%</p>
+           </div>
+           <div class="space-y-2">
+             <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Attendance Rate</p>
+             <p class="text-xl font-black text-emerald-400"><%= @my_official_membership&.attendance_rate.to_i %>%</p>
+           </div>
+           <div class="space-y-2">
+             <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Identity</p>
+             <p class="text-lg font-black text-white"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
            </div>
            <div class="space-y-2">
              <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Authenticated</p>
-             <p class="text-lg font-black text-amber-400"><%= current_user.routine_club_members.active.first&.joined_at&.strftime("%Y.%m.%d") %></p>
+             <p class="text-lg font-black text-amber-400"><%= @my_official_membership&.joined_at&.strftime("%Y.%m.%d") || Date.current.strftime("%Y.%m.%d") %></p>
            </div>
         </div>
      </div>

@@ -29,6 +29,13 @@
   </template>
 </turbo-stream>
 
+<turbo-stream action="replace" target="routine_<%= @routine.id %>_dashboard">
+  <template>
+    <% is_done = @routine.completed_on?(@selected_date) %>
+    <%= render partial: 'routine_clubs/dashboard_routine_item', locals: { routine: @routine, is_done: is_done, selected_date: @selected_date }, formats: [:html] %>
+  </template>
+</turbo-stream>
+
 <turbo-stream action="replace" target="routine_<%= @routine.id %>_club">
   <template>
     <div id="routine_<%= @routine.id %>_club" class="w-full">
@@ -69,10 +76,19 @@
     </div>
   </template>
 </turbo-stream>
+
 <%= turbo_stream.update "monthly-done-count" do %>
   <%= @monthly_completions&.count || 0 %>
 <% end %>
 
 <%= turbo_stream.update "achievement-matrix" do %>
-  <%= render "shared/achievement_matrix" %>
+  <%= render partial: "shared/achievement_matrix", formats: [:html] %>
+<% end %>
+
+<% if current_user.is_rufa_club_member? && @routine_club && @my_membership %>
+  <%= turbo_stream.replace "rufa-daily-record" do %>
+    <div id="rufa-daily-record" class="w-full lg:w-[55%] flex flex-col">
+       <%= render partial: 'routine_clubs/daily_record_area', formats: [:html] %>
+    </div>
+  <% end %>
 <% end %>

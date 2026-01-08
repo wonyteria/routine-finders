@@ -1,0 +1,29 @@
+<% @recommended_routines.take(8).each_with_index do |routine, index| %>
+  <% already_added = @personal_routines.any? { |r| r.title == routine[:title] } %>
+  <div id="recommended_routine_<%= index %>" class="min-w-[240px] md:min-w-[280px] bg-white p-6 md:p-8 rounded-[32px] md:rounded-[40px] border border-slate-100 hover:border-indigo-200 hover:shadow-2xl transition-all group cursor-pointer shrink-0 <%= 'opacity-60 grayscale-[0.5]' if already_added %>">
+    <div class="flex items-start justify-between mb-6 md:mb-8">
+      <div class="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl group-hover:rotate-6 transition-transform">
+        <%= routine[:icon] %>
+      </div>
+      <% if already_added %>
+        <div class="w-10 h-10 md:w-12 md:h-12 bg-emerald-50 text-emerald-500 rounded-xl md:rounded-2xl flex items-center justify-center shadow-sm">
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+      <% else %>
+        <%= button_to personal_routines_path(personal_routine: { title: routine[:title], category: routine[:category], icon: routine[:icon], days: [1,2,3,4,5,6,0] }), method: :post, data: { turbo_stream: true }, class: "w-10 h-10 md:w-12 md:h-12 bg-slate-50 text-slate-400 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-threads-black hover:text-white transition-all shadow-sm" do %>
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="space-y-3 md:space-y-4">
+      <h4 class="text-base md:text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1"><%= routine[:title] %></h4>
+      <div class="flex items-center justify-between pt-3 md:pt-4 border-t border-slate-50">
+        <span class="text-[8px] md:text-[10px] font-black text-slate-400 tracking-widest uppercase"><%= routine[:category] %></span>
+        <div class="flex items-center gap-1.5 text-[10px] md:text-xs font-black text-emerald-600">
+          <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+          <%= routine[:users_count] %>명
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

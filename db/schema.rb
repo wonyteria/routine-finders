@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_07_154213) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_08_041726) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -92,7 +92,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_154213) do
   end
 
   create_table "challenges", force: :cascade do |t|
-    t.decimal "active_rate_threshold", precision: 5, scale: 2, default: "0.8"
+    t.integer "active_rate_threshold", default: 80
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
     t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
@@ -152,7 +152,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_154213) do
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
     t.json "reward_policy"
-    t.decimal "sluggish_rate_threshold", precision: 5, scale: 2, default: "0.5"
+    t.integer "sluggish_rate_threshold", default: 50
     t.date "start_date", null: false
     t.integer "status", default: 0, null: false
     t.text "summary"
@@ -247,6 +247,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_154213) do
     t.datetime "created_at", null: false
     t.integer "current_streak", default: 0, null: false
     t.json "days", default: []
+    t.datetime "deleted_at"
     t.string "icon", default: "✨"
     t.date "last_completed_date"
     t.string "title", null: false
@@ -272,6 +273,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_154213) do
   end
 
   create_table "routine_club_attendances", force: :cascade do |t|
+    t.float "achievement_rate"
     t.date "attendance_date", null: false
     t.integer "cheers_count", default: 0
     t.json "cheers_from_users", default: []
@@ -304,6 +306,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_07_154213) do
 
   create_table "routine_club_members", force: :cascade do |t|
     t.integer "absence_count", default: 0
+    t.float "achievement_rate"
     t.integer "attendance_count", default: 0
     t.decimal "attendance_rate", precision: 5, scale: 2, default: "0.0"
     t.string "contact_info"

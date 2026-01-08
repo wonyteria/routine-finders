@@ -98,20 +98,48 @@ class RoutineClubMember < ApplicationRecord
 
   def recalculate_growth_points!
     # Points logic:
-    # 1. 10 pts per present day
-    # 2. 5 pts per clap received
-    # 3. 50 pts Golden Fire bonus (per 7-day perfect streak)
+    # 1. 10 pts per present day (기본 출석)
+    # 2. 5 pts per clap received (동료 응원)
+    # 3. Bonus for routine achievement:
+    #    - 100% achievement: +20 pts bonus
+    #    - 50-99% achievement: +5 pts bonus
+    # 4. 20 pts Golden Fire bonus (per 7-day perfect streak)
 
     points = 0
-    points += attendances.where(status: :present).count * 10
-    points += attendances.sum(:cheers_count) * 5
+    attendances_data = attendances.where(status: :present)
 
-    # Golden Fire (7-day streaks)
-    # Simple check: how many perfect weeks (7 attendances with status present/excused)
-    # For now, let's just count total present/7
-    points += (attendances.where(status: :present).count / 7) * 50
+    # 1. Base Attendance
+    points += attendances_data.count * 10
+
+    # 2. Cheers
+    points += attendances_data.sum(:cheers_count) * 5
+
+    # 3. Achievement Bonuses
+    attendances_data.each do |a|
+      if a.achievement_rate.to_f >= 100.0
+        points += 20
+      elsif a.achievement_rate.to_f >= 50.0
+        points += 5
+      end
+    end
+
+    # 4. Golden Fire (7-day streaks)
+    points += (attendances_data.count / 7) * 20
 
     update!(growth_points: points)
+  end
+
+  def update_achievement_stats!
+    # 멤버십 참여 기간 내의 모든 활성화된 루틴 달성률의 평균을 구함
+    start_date = membership_start_date
+    end_date = [ Date.current, membership_end_date ].min
+    days = (end_date - start_date).to_i + 1
+    return if days <= 0
+
+    # 이 클럽의 membership 기간 동안의 유저 달성률 평균
+    # 여기서는 간단히 지금까지의 출석 기록에 저장된 achievement_rate 평균으로 계산
+    avg_rate = attendances.where(status: :present).average(:achievement_rate) || 0
+    update!(achievement_rate: avg_rate.to_f.round(1))
   end
 
   def remaining_passes
