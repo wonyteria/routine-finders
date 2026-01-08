@@ -1,0 +1,10 @@
+<%= turbo_stream.replace "cheer_btn_#{params[:attendance_id]}" do %>
+  <% attendance = RoutineClubAttendance.find(params[:attendance_id]) %>
+  <%= button_to cheer_routine_club_path(attendance.routine_club, attendance_id: attendance.id), 
+                method: :post,
+                id: "cheer_btn_#{attendance.id}",
+                class: "flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-xl transition-all group/btn shadow-sm" do %>
+    <span class="text-xs scale-125 transition-transform">👏</span>
+    <span class="text-[10px] font-black text-orange-600"><%= attendance.cheers_count %></span>
+  <% end %>
+<% end %>

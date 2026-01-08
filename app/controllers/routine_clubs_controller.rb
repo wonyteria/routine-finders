@@ -1,7 +1,7 @@
 class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
   before_action :require_admin, only: [ :new, :create ]
-  before_action :set_routine_club, only: [ :show, :join, :manage, :update_settings, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member ]
+  before_action :set_routine_club, only: [ :show, :edit, :update, :join, :manage, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member ]
   before_action :set_my_membership, only: [ :show, :use_pass ]
 
   def index
@@ -104,6 +104,9 @@ class RoutineClubsController < ApplicationController
     end
   end
 
+  def edit
+  end
+
   def update
     return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
 
@@ -177,10 +180,23 @@ class RoutineClubsController < ApplicationController
   def use_pass
     return redirect_to @routine_club, alert: "멤버만 사용할 수 있습니다." unless @my_membership
 
+    # Check remaining passes
+    if @my_membership.used_passes_count.to_i >= 3
+      return redirect_to personal_routines_path(tab: "club"), alert: "휴식권을 모두 소진했습니다. (3/3 사용)"
+    end
+
+    # Check today's attendance
+    today_attendance = @my_membership.attendances.find_by(attendance_date: Date.current)
+    if today_attendance&.status_present?
+      return redirect_to personal_routines_path(tab: "club"), alert: "이미 오늘 출석 처리되었습니다. 휴식권을 사용할 수 없습니다."
+    elsif today_attendance&.status_excused?
+      return redirect_to personal_routines_path(tab: "club"), alert: "오늘 이미 휴식권을 사용했습니다."
+    end
+
     if @my_membership.use_relaxation_pass!
-      redirect_to routine_club_path(@routine_club, tab: "dashboard"), notice: "휴식권이 성공적으로 사용되었습니다. 오늘 루틴은 면제 처리됩니다."
+      redirect_to personal_routines_path(tab: "club"), notice: "휴식권이 성공적으로 사용되었습니다. 오늘 루틴은 면제 처리됩니다."
     else
-      redirect_to routine_club_path(@routine_club, tab: "dashboard"), alert: "휴식권을 사용할 수 없는 상태이거나 횟수를 모두 소진했습니다."
+      redirect_to personal_routines_path(tab: "club"), alert: "휴식권 사용에 실패했습니다. 관리자에게 문의해주세요."
     end
   end
 
@@ -209,6 +225,26 @@ class RoutineClubsController < ApplicationController
     member.kick!(params[:reason])
 
     redirect_to @routine_club, notice: "#{member.user.nickname}님이 강퇴되었습니다."
+  end
+
+  def cheer
+    attendance = RoutineClubAttendance.find(params[:attendance_id])
+
+    # Cannot cheer for self
+    if attendance.routine_club_member.user_id == current_user.id
+      return respond_to do |format|
+        format.html { redirect_back fallback_location: personal_routines_path(tab: "club"), alert: "본인의 기록은 응원할 수 없습니다." }
+        format.turbo_stream { render turbo_stream: turbo_stream.prepend("body", html: "<div class='fixed top-20 left-1/2 -translate-x-1/2 z-[100] bg-rose-600 text-white px-6 py-3 rounded-2xl shadow-2xl font-black animate-bounce' onclick='this.remove()'>⚠️ 본인의 기록은 응원할 수 없습니다!</div>") }
+      end
+    end
+
+    attendance.add_cheer(current_user.id)
+    attendance.routine_club_member.recalculate_growth_points!
+
+    respond_to do |format|
+      format.html { redirect_back fallback_location: personal_routines_path(tab: "club"), notice: "응원을 보냈습니다!" }
+      format.turbo_stream
+    end
   end
 
   private

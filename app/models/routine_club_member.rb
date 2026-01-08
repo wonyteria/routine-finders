@@ -83,10 +83,17 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def use_relaxation_pass!(date = Date.current)
-    return false if used_passes_count >= 3
+    # Check if user has passes remaining
+    return false if used_passes_count.to_i >= 3
 
+    # Find or create attendance record for today
     attendance = attendances.find_or_initialize_by(attendance_date: date, routine_club: routine_club)
-    return false unless attendance.status_absent? || attendance.new_record?
+
+    # Can only use pass if:
+    # 1. New record (no attendance yet), OR
+    # 2. Already marked as absent
+    # Cannot use if already present or excused
+    return false if attendance.persisted? && (attendance.status_present? || attendance.status_excused?)
 
     transaction do
       attendance.update!(status: :excused)

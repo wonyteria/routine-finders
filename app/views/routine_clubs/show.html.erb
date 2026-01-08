@@ -15,9 +15,7 @@
       
       <!-- Main Content -->
       <div class="lg:col-span-2 space-y-8">
-        <% if params[:tab] == 'dashboard' && @is_member %>
-          <%= render 'dashboard' %>
-        <% else %>
+        
         
         <!-- Hero Section -->
         <div class="bg-white rounded-[48px] overflow-hidden shadow-xl border-2 border-orange-200">
@@ -447,7 +445,7 @@
             </div>
           <% end %>
         </div>
-        <% end %>
+        </div>
       </div>
 
       <!-- Sidebar -->
@@ -478,7 +476,7 @@
             <p class="text-emerald-100 font-medium mb-6 text-sm">
               환영합니다! 당신의 성장은<br/>지금 이 순간에도 진행 중입니다.
             </p>
-            <%= link_to "클럽 대시보드 바로가기", routine_club_path(@routine_club, tab: 'dashboard'), class: "block w-full py-4 bg-white text-emerald-600 rounded-2xl font-black hover:bg-emerald-50 transition-colors shadow-lg" %>
+            <%= link_to "클럽 대시보드 바로가기", personal_routines_path(tab: 'club'), class: "block w-full py-4 bg-white text-emerald-600 rounded-2xl font-black hover:bg-emerald-50 transition-colors shadow-lg" %>
           </div>
         <% elsif @routine_club.is_full? %>
           <!-- Full -->

@@ -15,6 +15,50 @@ ko:
       delimiter: ","
       strip_insignificant_zeros: true
 
+  datetime:
+    distance_in_words:
+      half_a_minute: "30초"
+      less_than_x_seconds:
+        one: "1초 미만"
+        other: "%{count}초 미만"
+      x_seconds:
+        one: "1초"
+        other: "%{count}초"
+      less_than_x_minutes:
+        one: "1분 미만"
+        other: "%{count}분 미만"
+      x_minutes:
+        one: "1분"
+        other: "%{count}분"
+      about_x_hours:
+        one: "약 1시간"
+        other: "약 %{count}시간"
+      x_days:
+        one: "하루"
+        other: "%{count}일"
+      about_x_months:
+        one: "약 1달"
+        other: "약 %{count}달"
+      x_months:
+        one: "1달"
+        other: "%{count}달"
+      about_x_years:
+        one: "약 1년"
+        other: "약 %{count}년"
+      over_x_years:
+        one: "1년 이상"
+        other: "%{count}년 이상"
+      almost_x_years:
+        one: "1년 이하"
+        other: "%{count}년 이하"
+    prompts:
+      year: "년"
+      month: "월"
+      day: "일"
+      hour: "시"
+      minute: "분"
+      second: "초"
+
   activerecord:
     errors:
       messages:

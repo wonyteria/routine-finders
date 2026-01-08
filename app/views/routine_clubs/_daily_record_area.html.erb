@@ -1,10 +1,11 @@
-<div class="bg-white rounded-[40px] p-8 lg:p-12 border border-slate-100 shadow-xl flex flex-col h-full relative overflow-hidden group">
-  <div class="absolute -right-20 bottom-0 w-64 h-64 bg-slate-50 rounded-full blur-3xl opacity-50 group-hover:scale-110 transition-transform"></div>
+<div class="bg-white rounded-[40px] p-8 lg:p-12 border border-slate-200 shadow-xl flex flex-col h-full relative overflow-hidden group">
+  <div class="absolute -right-24 -top-24 w-64 h-64 bg-slate-50 rounded-full blur-3xl opacity-50 group-hover:scale-110 transition-all duration-700"></div>
+  <div class="absolute -left-24 -bottom-24 w-64 h-64 bg-indigo-50/30 rounded-full blur-3xl opacity-30 group-hover:scale-110 transition-all duration-700"></div>
   
   <div class="relative z-10 flex items-center justify-between mb-10">
-    <div class="space-y-1">
+    <div class="space-y-1.5">
       <h2 class="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">오늘의 기록</h2>
-      <p class="text-sm text-slate-400 font-bold uppercase tracking-widest font-mono"><%= Date.current.strftime("%Y년 %m월 %d일") %></p>
+      <p class="text-xs text-slate-400 font-bold tracking-widest leading-none"><%= Date.current.strftime("%Y년 %m월 %d일") %></p>
     </div>
     
     <% 
@@ -14,7 +15,7 @@
     %>
 
     <% if today_attendance&.status_present? %>
-      <div class="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-2xl border border-emerald-100 font-black text-xs">
+      <div class="flex items-center gap-2 bg-emerald-500 text-white px-5 py-2.5 rounded-2xl shadow-lg shadow-emerald-200/50 font-black text-xs uppercase tracking-widest animate-in fade-in zoom-in">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
         기록 완료
       </div>
@@ -23,26 +24,35 @@
   
   <div class="relative z-10 flex-1 flex flex-col">
     <% if today_attendance&.status_present? %>
-      <div class="bg-slate-50/50 rounded-[32px] p-8 flex-1 border border-slate-100 flex flex-col justify-center text-center">
-        <div class="inline-flex items-center gap-2 mb-8 mx-auto">
-          <span class="px-3 py-1 bg-indigo-600 text-white text-[11px] font-black rounded-full shadow-lg shadow-indigo-100">달성률 <%= today_attendance.achievement_rate.to_i %>%</span>
+      <div class="bg-slate-50/80 backdrop-blur-sm rounded-[32px] p-10 flex-1 border border-slate-100 flex flex-col justify-center text-center shadow-inner relative overflow-hidden group/card">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl -mr-16 -mt-16"></div>
+        
+        <div class="inline-flex items-center gap-3 mb-10 mx-auto">
+          <div class="px-5 py-2 bg-indigo-600 text-white text-[12px] font-black rounded-2xl shadow-xl shadow-indigo-100 ring-4 ring-indigo-50">달성률 <%= today_attendance.achievement_rate.to_i %>%</div>
           <% if today_attendance.achievement_rate >= 100 %>
-            <span class="px-3 py-1 bg-amber-400 text-slate-900 text-[11px] font-black rounded-full shadow-lg shadow-amber-100 animation-pulse">완수 완료 ✨</span>
+            <div class="px-5 py-2 bg-amber-400 text-slate-900 text-[12px] font-black rounded-2xl shadow-xl shadow-amber-100 ring-4 ring-amber-50 animate-pulse">완수 완료 ✨</div>
           <% end %>
         </div>
         
         <% if today_attendance.proof_text.present? %>
-          <p class="text-xl lg:text-2xl text-slate-800 font-black italic leading-normal mb-10 decoration-indigo-100 decoration-4">
-            "<%= today_attendance.proof_text %>"
-          </p>
+          <div class="relative px-4">
+            <span class="absolute -top-6 -left-2 text-6xl text-slate-200 font-serif opacity-50">"</span>
+            <p class="text-xl lg:text-2xl text-slate-800 font-black italic leading-snug mb-12 relative z-10">
+              <%= today_attendance.proof_text %>
+            </p>
+            <span class="absolute -bottom-10 -right-2 text-6xl text-slate-200 font-serif opacity-50 rotate-180">"</span>
+          </div>
         <% end %>
         
-        <div class="flex items-center justify-center gap-4">
-          <button class="flex items-center gap-2 px-8 py-4 bg-white border border-slate-200 rounded-2xl hover:border-orange-400 transition-all font-black text-slate-700 shadow-sm active:scale-95 group/btn">
-            <svg class="w-6 h-6 text-orange-400 group-hover/btn:scale-125 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
-            </svg>
-            <span>응원 <%= today_attendance.cheers_count %></span>
+        <div class="flex items-center justify-center gap-4 mt-4">
+          <button class="flex items-center gap-3 px-10 py-5 bg-white border border-slate-200 rounded-[28px] hover:border-orange-400 hover:shadow-xl hover:scale-105 transition-all font-black text-slate-700 shadow-sm active:scale-95 group/btn">
+            <div class="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center group-hover/btn:bg-orange-100 transition-colors">
+              <span class="text-xl group-hover/btn:scale-125 transition-transform">👏</span>
+            </div>
+            <div class="text-left">
+              <p class="text-[10px] text-slate-400 leading-none mb-1 uppercase tracking-widest">내가 받은 응원</p>
+              <p class="text-lg leading-none font-black text-orange-600"><%= today_attendance.cheers_count %></p>
+            </div>
           </button>
         </div>
       </div>
@@ -50,31 +60,36 @@
       <%= form_with url: record_routine_club_path(@routine_club), method: :post, class: "flex-1 flex flex-col" do |f| %>
         <div class="flex-1 mb-8 relative">
           <%= f.text_area :proof_text, 
-                          placeholder: "나의 한 마디: 오늘 나에게 할 말을 간단하게 적어보세요.", 
-                          class: "w-full min-h-[140px] p-8 bg-slate-50 border border-slate-100 rounded-[32px] font-bold text-slate-700 placeholder:text-slate-300 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-200 focus:bg-white transition-all shadow-inner resize-none",
+                          placeholder: "오늘의 정진 한 마디: 나를 더 성장하게 하는 소중한 기록을 남겨보세요.", 
+                          class: "w-full h-full min-h-[180px] p-10 bg-slate-50 border-2 border-slate-100 rounded-[40px] font-bold text-slate-700 placeholder:text-slate-300 focus:ring-8 focus:ring-indigo-50 focus:border-indigo-200 focus:bg-white transition-all shadow-inner resize-none text-lg",
                           required: true %>
-          <div class="absolute right-6 bottom-6 opacity-20 text-3xl select-none">✍️</div>
+          <div class="absolute right-10 bottom-10 opacity-10 text-5xl hover:opacity-20 transition-opacity select-none cursor-default">✍️</div>
         </div>
 
-        <div class="bg-indigo-50 border border-indigo-100 rounded-[32px] p-6 lg:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div class="flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-white border border-indigo-100 flex items-center justify-center text-3xl shadow-sm">
+        <div class="bg-indigo-900 border border-indigo-800 rounded-[40px] p-8 lg:p-10 flex flex-col sm:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden group/footer">
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-800 to-slate-900 opacity-50"></div>
+          
+          <div class="relative z-10 flex items-center gap-6">
+            <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-4xl shadow-inner group-hover/footer:scale-110 transition-transform">
               <%= all_routines_done ? "💎" : "⏳" %>
             </div>
-            <div class="space-y-0.5 text-center sm:text-left">
-              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] leading-none">현재 상태</p>
-              <p class="text-lg font-black text-indigo-900 leading-tight">달성률: <%= today_achievement.to_i %>%</p>
+            <div class="space-y-1">
+              <p class="text-[11px] font-black text-indigo-300 uppercase tracking-widest leading-none">실시간 달성 상태</p>
+              <div class="flex items-baseline gap-1">
+                <p class="text-3xl font-black text-white tabular-nums tracking-tight"><%= today_achievement.to_i %></p>
+                <p class="text-sm font-bold text-indigo-400">%</p>
+              </div>
             </div>
           </div>
 
           <% if all_routines_done %>
-            <%= f.submit "오늘의 기록 저장하기", class: "w-full sm:w-auto px-10 py-5 bg-slate-900 text-white rounded-2xl font-black text-sm lg:text-base hover:bg-black shadow-xl hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap" %>
+            <%= f.submit "기록 저장하기", class: "relative z-10 w-full sm:w-auto px-12 py-6 bg-indigo-500 text-white rounded-[24px] font-black text-lg hover:bg-indigo-400 shadow-2xl shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap ring-8 ring-white/5" %>
           <% else %>
-            <div class="w-full sm:w-auto text-center sm:text-right">
-              <button type="button" disabled class="px-8 py-5 bg-slate-200 text-slate-400 rounded-2xl font-black text-xs lg:text-sm cursor-not-allowed border border-slate-300/50 uppercase tracking-widest">
-                잠금됨
+            <div class="relative z-10 w-full sm:w-auto text-center sm:text-right">
+              <button type="button" disabled class="px-10 py-6 bg-white/5 border border-white/10 text-white/30 rounded-[24px] font-black text-sm cursor-not-allowed uppercase tracking-widest backdrop-blur-sm">
+                기록 대기 중
               </button>
-              <p class="mt-2 text-[10px] font-bold text-indigo-600/60 leading-none">완수 후 기록 가능</p>
+              <p class="mt-3 text-[11px] font-bold text-indigo-300 opacity-60 leading-none">모든 루틴 완수 후 기록할 수 있습니다</p>
             </div>
           <% end %>
         </div>
