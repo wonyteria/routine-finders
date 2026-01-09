@@ -1,10 +1,34 @@
-<%= turbo_stream.replace "cheer_btn_#{params[:attendance_id]}" do %>
-  <% attendance = RoutineClubAttendance.find(params[:attendance_id]) %>
-  <%= button_to cheer_routine_club_path(attendance.routine_club, attendance_id: attendance.id), 
-                method: :post,
-                id: "cheer_btn_#{attendance.id}",
-                class: "flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-xl transition-all group/btn shadow-sm" do %>
-    <span class="text-xs scale-125 transition-transform">👏</span>
-    <span class="text-[10px] font-black text-orange-600"><%= attendance.cheers_count %></span>
-  <% end %>
+<% has_cheered = @attendance.cheered_by?(current_user.id) %>
+<% action_notice = has_cheered ? "응원을 보냈습니다!" : "응원을 취소했습니다." %>
+<script>console.log("Cheer Turbo Stream received for attendance <%= @attendance.id %>");</script>
+
+<%# 1. Update Main List Cheer Button %>
+<%= turbo_stream.replace "cheer-btn-main-#{@attendance.id}" do %>
+  <div id="cheer-btn-main-<%= @attendance.id %>" class="shrink-0 relative z-10">
+    <%= form_with url: cheer_routine_club_path(@attendance.routine_club, attendance_id: @attendance.id), method: :post, data: { turbo: true } do %>
+      <button type="submit" class="flex items-center gap-1.5 px-2.5 py-1.5 <%= has_cheered ? 'bg-orange-100 border-orange-400 scale-105' : 'bg-orange-50 border-2 border-orange-200 shadow-sm' %> rounded-lg hover:border-orange-400 hover:bg-orange-100 transition-all text-slate-700 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/20">
+        <span class="text-sm pointer-events-none transition-transform <%= 'scale-125' if has_cheered %>">👏</span>
+        <span class="text-xs font-black text-orange-600 tabular-nums pointer-events-none"><%= @attendance.cheers_count %></span>
+      </button>
+    <% end %>
+  </div>
+<% end %>
+
+<%# 2. Update Modal Cheer Button (if exists) %>
+<%= turbo_stream.replace "cheer-btn-modal-#{@attendance.id}" do %>
+  <div id="cheer-btn-modal-<%= @attendance.id %>" class="shrink-0 relative z-10">
+    <%= form_with url: cheer_routine_club_path(@attendance.routine_club, attendance_id: @attendance.id), method: :post, data: { turbo: true } do %>
+      <button type="submit" class="flex items-center gap-2 px-4 py-2.5 <%= has_cheered ? 'bg-orange-100 border-orange-400 scale-105' : 'bg-orange-50 border-2 border-orange-200 shadow-sm' %> rounded-lg hover:border-orange-400 hover:bg-orange-100 transition-all text-slate-700 active:scale-95 cursor-pointer focus:outline-none">
+        <span class="text-base pointer-events-none transition-transform <%= 'scale-125' if has_cheered %>">👏</span>
+        <span class="text-sm font-black text-orange-600 tabular-nums pointer-events-none"><%= @attendance.cheers_count %></span>
+      </button>
+    <% end %>
+  </div>
+<% end %>
+
+<%# 3. Show Toast Notification %>
+<%= turbo_stream.prepend "body" do %>
+  <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[110] <%= has_cheered ? 'bg-indigo-600' : 'bg-slate-600' %> text-white px-6 py-3 rounded-2xl shadow-2xl font-black animate-bounce" onclick="this.remove()">
+    <%= has_cheered ? "✨ 응원을 보냈습니다!" : "👋 응원을 취소했습니다." %>
+  </div>
 <% end %>

@@ -68,10 +68,10 @@ class RoutineClubReportService
   def self.determine_identity(log_rate, achievement_rate)
     score = (log_rate + achievement_rate) / 2
     case
-    when score >= 90 then "루파 로드 마스터 (Rufa Road Master)"
-    when score >= 70 then "정진하는 가이드 (Determined Guide)"
-    when score >= 40 then "성장의 개척자 (Growth Pioneer)"
-    else "시작하는 파인더 (Beginning Finder)"
+    when score >= 90 then "루파 로드 마스터"
+    when score >= 70 then "정진하는 가이드"
+    when score >= 40 then "성장의 개척자"
+    else "시작하는 파인더"
     end
   end
 

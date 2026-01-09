@@ -230,10 +230,10 @@ class RoutineClubsController < ApplicationController
   end
 
   def cheer
-    attendance = RoutineClubAttendance.find(params[:attendance_id])
+    @attendance = RoutineClubAttendance.find(params[:attendance_id])
 
     # Cannot cheer for self
-    if attendance.routine_club_member.user_id == current_user.id
+    if @attendance.routine_club_member.user_id == current_user.id
       return respond_to do |format|
         format.html { redirect_back fallback_location: personal_routines_path(tab: "club"), alert: "본인의 기록은 응원할 수 없습니다." }
         format.turbo_stream { render turbo_stream: turbo_stream.prepend("body", html: "<div class='fixed top-20 left-1/2 -translate-x-1/2 z-[100] bg-rose-600 text-white px-6 py-3 rounded-2xl shadow-2xl font-black animate-bounce' onclick='this.remove()'>⚠️ 본인의 기록은 응원할 수 없습니다!</div>") }
@@ -241,16 +241,16 @@ class RoutineClubsController < ApplicationController
     end
 
     # Toggle cheer
-    if attendance.cheered_by?(current_user.id)
-      attendance.remove_cheer(current_user.id)
+    if @attendance.cheered_by?(current_user.id)
+      @attendance.remove_cheer(current_user.id)
       action_notice = "응원을 취소했습니다."
     else
-      attendance.add_cheer(current_user.id)
+      @attendance.add_cheer(current_user.id)
       action_notice = "응원을 보냈습니다!"
     end
 
     # Synchronize with RufaClap if a related synergy activity exists
-    activity = RufaActivity.find_by(target_id: attendance.id, target_type: "RoutineClubAttendance")
+    activity = RufaActivity.find_by(target_id: @attendance.id, target_type: "RoutineClubAttendance")
     if activity
       clap = current_user.rufa_claps.find_by(rufa_activity: activity)
       if clap && action_notice.include?("취소")
@@ -260,11 +260,11 @@ class RoutineClubsController < ApplicationController
       end
     end
 
-    attendance.routine_club_member.recalculate_growth_points!
+    @attendance.routine_club_member.recalculate_growth_points!
 
     respond_to do |format|
       format.html { redirect_back fallback_location: personal_routines_path(tab: "club"), notice: action_notice }
-      format.turbo_stream
+      format.turbo_stream { render :cheer, formats: [ :turbo_stream ] }
     end
   end
 

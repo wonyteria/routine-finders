@@ -60,7 +60,7 @@ class PersonalRoutinesController < ApplicationController
     @my_club_memberships = current_user.routine_club_members.includes(:routine_club).where(status: [ :active, :warned ])
     @my_club_memberships.each do |m|
       if m.identity_title.blank?
-        m.update(identity_title: "시작하는 파인더 (Beginning Finder)")
+        m.update(identity_title: "시작하는 파인더")
       end
     end
     @pending_payments = current_user.routine_club_members.where(payment_status: :pending)

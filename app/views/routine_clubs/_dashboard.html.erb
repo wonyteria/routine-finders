@@ -10,43 +10,42 @@
 <% else %>
 <div class="space-y-8">
   
-  <!-- Stats Overview: Compact Single Row -->
-  <div class="flex flex-wrap gap-2 lg:gap-3">
+  <div class="flex flex-wrap gap-2 md:gap-3">
     <!-- 성장 에너지 -->
-    <div class="flex-1 min-w-[110px] bg-slate-900 rounded-xl p-3 text-white shadow-md relative overflow-hidden">
-      <p class="text-[8px] font-bold text-indigo-300 uppercase tracking-wider mb-1">성장 에너지</p>
+    <div class="flex-1 min-w-[80px] md:min-w-[110px] bg-slate-900 rounded-xl p-2.5 md:p-3 text-white shadow-md relative overflow-hidden">
+      <p class="text-[7px] md:text-[8px] font-bold text-indigo-300 uppercase tracking-wider mb-0.5 md:mb-1">성장 에너지</p>
       <div class="flex items-baseline gap-0.5">
-        <p class="text-xl font-black tracking-tight tabular-nums"><%= @my_membership.growth_points || 0 %></p>
-        <p class="text-[9px] font-bold text-indigo-400">P</p>
+        <p class="text-lg md:text-xl font-black tracking-tight tabular-nums"><%= @my_membership.growth_points || 0 %></p>
+        <p class="text-[8px] md:text-[9px] font-bold text-indigo-400">P</p>
       </div>
     </div>
 
     <!-- 달성률 -->
-    <div class="flex-1 min-w-[110px] bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
-      <p class="text-[8px] font-bold text-purple-400 uppercase tracking-wider mb-1">달성률</p>
+    <div class="flex-1 min-w-[80px] md:min-w-[110px] bg-white rounded-xl p-2.5 md:p-3 border border-slate-200 shadow-sm">
+      <p class="text-[7px] md:text-[8px] font-bold text-purple-400 uppercase tracking-wider mb-0.5 md:mb-1">달성률</p>
       <div class="flex items-baseline gap-0.5">
-        <p class="text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.achievement_rate.to_i %></p>
-        <p class="text-[9px] font-bold text-slate-400">%</p>
+        <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.achievement_rate.to_i %></p>
+        <p class="text-[8px] md:text-[9px] font-bold text-slate-400">%</p>
       </div>
     </div>
     
     <!-- 출석률 -->
-    <div class="flex-1 min-w-[110px] bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
-      <p class="text-[8px] font-bold text-emerald-500 uppercase tracking-wider mb-1">출석률</p>
+    <div class="flex-1 min-w-[80px] md:min-w-[110px] bg-white rounded-xl p-2.5 md:p-3 border border-slate-200 shadow-sm">
+      <p class="text-[7px] md:text-[8px] font-bold text-emerald-500 uppercase tracking-wider mb-0.5 md:mb-1">출석률</p>
       <div class="flex items-baseline gap-0.5">
-        <p class="text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.attendance_rate.to_i %></p>
-        <p class="text-[9px] font-bold text-slate-400">%</p>
+        <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.attendance_rate.to_i %></p>
+        <p class="text-[8px] md:text-[9px] font-bold text-slate-400">%</p>
       </div>
     </div>
     
     <!-- 휴식권 -->
-    <div class="flex-1 min-w-[110px] bg-white rounded-xl p-3 border border-slate-200 shadow-sm cursor-help" 
+    <div class="flex-1 min-w-[100px] md:min-w-[110px] bg-white rounded-xl p-2.5 md:p-3 border border-slate-200 shadow-sm cursor-help" 
          title="오늘 분량 면제 & 출석률 70% 보호">
-      <p class="text-[8px] font-bold text-blue-400 uppercase tracking-wider mb-1">휴식권</p>
+      <p class="text-[7px] md:text-[8px] font-bold text-blue-400 uppercase tracking-wider mb-0.5 md:mb-1">휴식권</p>
       <div class="flex items-center justify-between gap-1">
         <div class="flex items-baseline gap-0.5">
-          <p class="text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %></p>
-          <p class="text-[9px] font-bold text-slate-400">개</p>
+          <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %></p>
+          <p class="text-[8px] md:text-[9px] font-bold text-slate-400">개</p>
         </div>
         <% 
           today_attendance = @my_membership.attendances.find_by(attendance_date: Date.current)
@@ -54,22 +53,22 @@
         %>
         <% if can_use_pass %>
           <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
-                        class: "px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-[9px] font-black border border-blue-100 hover:bg-blue-600 hover:text-white transition-all", 
+                        class: "px-2 py-0.5 bg-blue-50 text-blue-600 rounded-lg text-[8px] md:text-[9px] font-black border border-blue-100 hover:bg-blue-600 hover:text-white transition-all whitespace-nowrap", 
                         data: { turbo_confirm: "휴식권을 사용하시겠습니까?", turbo: false } do %>
             사용
           <% end %>
         <% elsif today_attendance&.status_excused? %>
-          <span class="px-2 py-1 bg-green-50 text-green-600 rounded-lg text-[9px] font-black">완료</span>
+          <span class="px-2 py-0.5 bg-green-50 text-green-600 rounded-lg text-[8px] md:text-[9px] font-black">완료</span>
         <% end %>
       </div>
     </div>
     
     <!-- 누적 경고 -->
-    <div class="flex-1 min-w-[110px] bg-white rounded-xl p-3 border border-slate-200 shadow-sm relative overflow-hidden">
-      <p class="text-[8px] font-bold text-amber-500 uppercase tracking-wider mb-1">누적 경고</p>
+    <div class="flex-1 min-w-[80px] md:min-w-[110px] bg-white rounded-xl p-2.5 md:p-3 border border-slate-200 shadow-sm relative overflow-hidden">
+      <p class="text-[7px] md:text-[8px] font-bold text-amber-500 uppercase tracking-wider mb-0.5 md:mb-1">누적 경고</p>
       <div class="flex items-baseline gap-0.5">
-        <p class="text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.penalty_count %></p>
-        <p class="text-[9px] font-bold text-slate-400">회</p>
+        <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.penalty_count %></p>
+        <p class="text-[8px] md:text-[9px] font-bold text-slate-400">회</p>
       </div>
     </div>
   </div>
@@ -86,10 +85,10 @@
   <% end %>
 
   <!-- Community Board -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
     <!-- Announcements -->
-    <div class="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
-      <div class="flex items-center justify-between mb-6">
+    <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between mb-4 md:mb-6">
         <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
           <span class="text-2xl">📢</span> 공지사항
         </h2>
@@ -128,39 +127,31 @@
     </div>
 
     <!-- Gatherings -->
-    <div class="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-          <span class="text-2xl">🎉</span> 다가오는 모임
+    <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-200 shadow-sm">
+      <div class="flex items-center justify-between mb-4 md:mb-6">
+        <h2 class="text-lg md:text-xl font-black text-slate-900 flex items-center gap-2">
+          <span class="text-xl md:text-2xl">🤝</span> 모임 알림
         </h2>
-        <div class="flex gap-2">
-          <% if @is_host || current_user&.admin? %>
-            <button onclick="openGatheringModal()" class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg hover:bg-emerald-100 transition-colors">
-              모임 등록
-            </button>
-          <% end %>
-          <% if @gatherings.count > 1 %>
-            <button onclick="openAllGatheringsModal()" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">전체보기</button>
-          <% end %>
-        </div>
+        <button onclick="openAllGatheringsModal()" class="text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-colors">전체보기</button>
       </div>
-      
-      <% if @gatherings.any? %>
-        <div class="space-y-4">
-          <% @gatherings.limit(1).each do |gathering| %>
-            <div class="bg-emerald-50/50 rounded-2xl p-4 border border-emerald-100/50 hover:bg-emerald-50 transition-colors cursor-pointer" 
+
+      <div class="space-y-2 md:space-y-3">
+        <% if @gatherings&.any? %>
+          <% @gatherings.each do |gathering| %>
+            <div class="group bg-emerald-50/30 p-3 md:p-4 rounded-xl md:rounded-2xl border border-emerald-100/50 hover:bg-emerald-50 transition-all cursor-pointer" 
                  onclick="viewGathering(<%= gathering.id %>, '<%= j gathering.title %>', '<%= j gathering.description %>', '<%= gathering.gathering_at.strftime("%Y년 %m월 %d일 %H:%M") %>', '<%= j gathering.location %>', '<%= gathering.gathering_type %>', <%= gathering.max_attendees || 'null' %>)">
-              <div class="flex items-center justify-between mb-1">
-                <div class="flex items-center gap-2">
-                  <span class="px-2 py-0.5 <%= gathering.online? ? 'bg-sky-100 text-sky-600' : 'bg-orange-100 text-orange-600' %> text-[10px] font-black rounded-lg uppercase"><%= gathering.gathering_type == 'online' ? 'ON' : 'OFF' %></span>
-                  <span class="text-[10px] font-bold text-emerald-600"><%= gathering.gathering_at.strftime("%m/%d %H:%M") %></span>
-                </div>
-                <span class="text-[10px] font-bold text-slate-400">📍 <%= gathering.location %></span>
-              </div>
-              <h3 class="font-bold text-slate-900 line-clamp-1"><%= gathering.title %></h3>
-              <% if gathering.max_attendees %>
-                <p class="text-xs text-slate-400 mt-1">선착순 <%= gathering.max_attendees %>명</p>
-              <% end %>
+               <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[9px] md:text-[10px] font-bold text-emerald-600 uppercase tracking-widest"><%= gathering.gathering_at.strftime("%m월 %d일 (%a)") %></span>
+                  <div class="flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                    <span class="text-[8px] md:text-[9px] font-black text-emerald-600 uppercase"><%= gathering.gathering_type %></span>
+                  </div>
+               </div>
+               <h4 class="text-xs md:text-sm font-black text-slate-900 truncate mb-1"><%= gathering.title %></h4>
+               <p class="text-[9px] md:text-[10px] font-medium text-slate-400 truncate flex items-center gap-1">
+                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                 <%= gathering.location %>
+               </p>
             </div>
           <% end %>
         </div>
@@ -266,9 +257,9 @@
         %>
         
         <% if recent_attendances.any? %>
-          <div class="space-y-2">
-            <% recent_attendances.each do |attendance| %>
-              <div class="group bg-white hover:bg-slate-50 border border-slate-100 rounded-lg p-3 transition-all">
+          <div class="space-y-1.5 md:space-y-2">
+            <% recent_attendances.each_with_index do |attendance, index| %>
+              <div class="group bg-white hover:bg-slate-50 border border-slate-100 rounded-lg p-2 md:p-3 transition-all <%= 'hidden md:block' if index >= 3 %>">
                 <div class="flex items-center gap-2.5">
                   <div class="w-8 h-8 rounded-lg overflow-hidden ring-1 ring-slate-200 shrink-0">
                     <img src="<%= attendance.routine_club_member.user.profile_image %>" class="w-full h-full object-cover" />
@@ -283,12 +274,14 @@
                     </p>
                   </div>
                   <% has_cheered = attendance.cheered_by?(current_user.id) %>
-                  <%= form_with url: cheer_routine_club_path(@routine_club, attendance_id: attendance.id), method: :post, local: true, class: "shrink-0 relative z-10" do %>
-                    <button type="submit" class="flex items-center gap-1.5 px-2.5 py-1.5 <%= has_cheered ? 'bg-orange-100 border-orange-400 scale-105' : 'bg-orange-50 border-2 border-orange-200 shadow-sm' %> rounded-lg hover:border-orange-400 hover:bg-orange-100 transition-all text-slate-700 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/20">
-                      <span class="text-sm pointer-events-none transition-transform <%= 'scale-125' if has_cheered %>">👏</span>
-                      <span class="text-xs font-black text-orange-600 tabular-nums pointer-events-none"><%= attendance.cheers_count %></span>
-                    </button>
-                  <% end %>
+                    <div id="cheer-btn-main-<%= attendance.id %>" class="shrink-0 relative z-10">
+                      <%= form_with url: cheer_routine_club_path(@routine_club, attendance_id: attendance.id), method: :post, data: { turbo: true } do %>
+                        <button type="submit" class="flex items-center gap-1.5 px-2.5 py-1.5 <%= has_cheered ? 'bg-orange-100 border-orange-400 scale-105' : 'bg-orange-50 border-2 border-orange-200 shadow-sm' %> rounded-lg hover:border-orange-400 hover:bg-orange-100 transition-all text-slate-700 active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/20">
+                          <span class="text-sm pointer-events-none transition-transform <%= 'scale-125' if has_cheered %>">👏</span>
+                          <span class="text-xs font-black text-orange-600 tabular-nums pointer-events-none"><%= attendance.cheers_count %></span>
+                        </button>
+                      <% end %>
+                    </div>
                 </div>
               </div>
             <% end %>
@@ -342,34 +335,38 @@
     </div>
   </div>
 
-
-
   <!-- Weekly Reports: Bauhaus Style Cards -->
-  <div class="bg-white rounded-[32px] p-8 lg:p-10 border border-slate-100 shadow-sm">
-    <div class="flex items-center justify-between mb-8">
-      <div class="space-y-1">
-        <h2 class="text-2xl font-black text-slate-900 tracking-tight">주간 전술 리포트</h2>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">데이터로 기록하는 성장의 역사</p>
+  <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-10 border border-slate-100 shadow-sm">
+    <div class="flex items-center justify-between mb-4 md:mb-8">
+      <div class="space-y-0.5 md:space-y-1">
+        <h2 class="text-lg md:text-2xl font-black text-slate-900 tracking-tight">주간 루틴 리포트</h2>
+        <p class="text-[9px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">데이터로 기록하는 성장의 역사</p>
       </div>
+      <% 
+        reports = RoutineClubReport.where(routine_club: @routine_club, user: current_user).order(start_date: :desc)
+        show_view_all = reports.any? || Rails.env.development? 
+      %>
+      <% if show_view_all %>
+        <button onclick="openAllReportsModal()" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors">전체보기</button>
+      <% end %>
     </div>
     
-    <% reports = RoutineClubReport.where(routine_club: @routine_club, user: current_user).order(start_date: :desc).limit(5) %>
     <% if reports.any? %>
-      <div class="space-y-4">
-        <% reports.each do |report| %>
-          <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-              <div>
-                <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-xs font-black mb-2">
-                  주간 리포트
+      <div class="space-y-3 md:space-y-4">
+        <% reports.limit(1).each do |report| %>
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl md:rounded-3xl p-4 md:p-6">
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="inline-block px-2.5 py-1 bg-indigo-100 text-indigo-600 rounded-full text-[10px] md:text-xs font-black shrink-0">
+                  주간
                 </span>
-                <h3 class="text-lg font-black text-slate-900">
-                  <%= report.start_date.strftime("%m월 %d일") %> - <%= report.end_date.strftime("%m월 %d일") %>
+                <h3 class="text-sm md:text-lg font-black text-slate-900 leading-tight truncate">
+                  <%= report.start_date.strftime("%m/%d") %> - <%= report.end_date.strftime("%m/%d") %>
                 </h3>
               </div>
-              <div class="text-right">
-                <p class="text-sm font-bold text-slate-500">출석률</p>
-                <p class="text-2xl font-black text-indigo-600"><%= report.attendance_rate.to_i %>%</p>
+              <div class="text-right shrink-0">
+                <p class="text-[9px] md:text-sm font-bold text-slate-500 leading-none mb-0.5">출석률</p>
+                <p class="text-lg md:text-2xl font-black text-indigo-600 leading-none"><%= report.attendance_rate.to_i %>%</p>
               </div>
             </div>
             
@@ -408,7 +405,7 @@
               }
             ]
           %>
-          <% example_reports.each do |report| %>
+          <% example_reports.take(1).each do |report| %>
             <div class="bg-slate-50 border border-slate-200 rounded-3xl p-6 opacity-60 hover:opacity-100 transition-opacity">
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                 <div>
@@ -688,7 +685,51 @@
     </div>
   </div>
 
-</div>
+  <!-- All Reports Modal -->
+  <div id="allReportsModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+    <div class="bg-white rounded-[32px] p-8 max-w-2xl w-full shadow-2xl transform transition-all max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-black text-slate-900">주간 루틴 리포트 전체보기</h3>
+        <button onclick="closeAllReportsModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="space-y-3 md:space-y-4">
+        <% reports.each do |report| %>
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl md:rounded-3xl p-4 md:p-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+              <div>
+                <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-xs font-black mb-2">
+                  주간 리포트
+                </span>
+                <h3 class="text-base md:text-lg font-black text-slate-900 leading-tight">
+                  <%= report.start_date.strftime("%m월 %d일") %> - <%= report.end_date.strftime("%m월 %d일") %>
+                </h3>
+              </div>
+              <div class="text-left md:text-right">
+                <p class="text-[10px] md:text-sm font-bold text-slate-500 leading-none">출석률</p>
+                <p class="text-xl md:text-2xl font-black text-indigo-600"><%= report.attendance_rate.to_i %>%</p>
+              </div>
+            </div>
+            
+            <p class="text-sm md:text-slate-700 font-medium mb-3">
+              <%= report.summary %>
+            </p>
+            
+            <div class="bg-white rounded-xl p-4 border border-slate-100 flex items-center gap-3">
+              <div class="text-2xl">💌</div>
+              <p class="text-indigo-600 font-bold text-sm">
+                <%= report.cheering_message %>
+              </p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
 
 <script>
   function openAnnouncementModal() {
@@ -788,6 +829,11 @@
     if (event.target === allGatheringsModal) {
       closeAllGatheringsModal();
     }
+
+    const allReportsModal = document.getElementById('allReportsModal');
+    if (event.target === allReportsModal) {
+      closeAllReportsModal();
+    }
   });
 
   // All announcements list modal
@@ -828,6 +874,19 @@
     modal.classList.add('hidden');
     modal.classList.remove('flex');
   }
+
+  // All reports modal
+  function openAllReportsModal() {
+    const modal = document.getElementById('allReportsModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeAllReportsModal() {
+    const modal = document.getElementById('allReportsModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
 </script>
 
 <!-- All Activities Modal -->
@@ -865,27 +924,29 @@
       
       <% if all_attendances.any? %>
         <% all_attendances.each do |attendance| %>
-          <div class="group bg-white hover:bg-slate-50 border border-slate-100 rounded-lg p-3 transition-all">
-            <div class="flex items-center gap-2.5">
-              <div class="w-10 h-10 rounded-lg overflow-hidden ring-1 ring-slate-200 shrink-0">
+          <div class="group bg-white hover:bg-slate-50 border border-slate-100 rounded-lg p-2.5 md:p-3 transition-all">
+            <div class="flex items-center gap-2 md:gap-2.5">
+              <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg overflow-hidden ring-1 ring-slate-200 shrink-0">
                 <img src="<%= attendance.routine_club_member.user.profile_image %>" class="w-full h-full object-cover" />
               </div>
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <p class="text-sm font-black text-slate-900"><%= attendance.routine_club_member.user.nickname %></p>
-                  <span class="text-[10px] text-slate-400 font-medium"><%= time_ago_in_words(attendance.created_at) %> 전</span>
+                <div class="flex items-center gap-1.5 md:gap-2">
+                  <p class="text-xs md:text-sm font-black text-slate-900 truncate"><%= attendance.routine_club_member.user.nickname %></p>
+                  <span class="text-[8px] md:text-[10px] text-slate-400 font-medium shrink-0"><%= time_ago_in_words(attendance.created_at) %> 전</span>
                 </div>
-                <p class="text-xs text-slate-600 font-medium leading-snug line-clamp-2 mt-1">
+                <p class="text-[11px] md:text-xs text-slate-600 font-medium leading-snug line-clamp-2 mt-0.5">
                   <%= attendance.proof_text.present? ? attendance.proof_text : "오늘의 루틴을 완료했습니다!" %>
                 </p>
               </div>
               <% has_cheered = attendance.cheered_by?(current_user.id) %>
-              <%= form_with url: cheer_routine_club_path(@routine_club, attendance_id: attendance.id), method: :post, local: true, class: "shrink-0 relative z-10" do %>
-                <button type="submit" class="flex items-center gap-2 px-4 py-2.5 <%= has_cheered ? 'bg-orange-100 border-orange-400 scale-105' : 'bg-orange-50 border-2 border-orange-200 shadow-sm' %> rounded-lg hover:border-orange-400 hover:bg-orange-100 transition-all text-slate-700 active:scale-95 cursor-pointer focus:outline-none">
-                  <span class="text-base pointer-events-none transition-transform <%= 'scale-125' if has_cheered %>">👏</span>
-                  <span class="text-sm font-black text-orange-600 tabular-nums pointer-events-none"><%= attendance.cheers_count %></span>
-                </button>
-              <% end %>
+              <div id="cheer-btn-modal-<%= attendance.id %>" class="shrink-0 relative z-10">
+                <%= form_with url: cheer_routine_club_path(@routine_club, attendance_id: attendance.id), method: :post, data: { turbo: true } do %>
+                  <button type="submit" class="flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2.5 <%= has_cheered ? 'bg-orange-100 border-orange-400 scale-105' : 'bg-orange-50 border-2 border-orange-200 shadow-sm' %> rounded-lg hover:border-orange-400 hover:bg-orange-100 transition-all text-slate-700 active:scale-95 cursor-pointer focus:outline-none">
+                    <span class="text-sm md:text-base pointer-events-none transition-transform <%= 'scale-125' if has_cheered %>">👏</span>
+                    <span class="text-xs md:text-sm font-black text-orange-600 tabular-nums pointer-events-none"><%= attendance.cheers_count %></span>
+                  </button>
+                <% end %>
+              </div>
             </div>
           </div>
         <% end %>
