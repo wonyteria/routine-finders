@@ -5,10 +5,7 @@
      class="hidden fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all duration-300">
   
   <!-- 모달 컨텐츠 (Bottom Sheet on Mobile) -->
-  <div class="bg-white rounded-t-[32px] sm:rounded-threads-lg shadow-2xl w-full max-w-sm overflow-hidden border-t sm:border border-threads-border animate-slide-up sm:animate-in sm:zoom-in sm:fade-in duration-300"
-       data-controller="auth-tabs"
-       data-auth-tabs-active-class="text-threads-black border-threads-black"
-       data-auth-tabs-inactive-class="text-slate-400 border-transparent">
+  <div class="bg-white rounded-t-[32px] sm:rounded-threads-lg shadow-2xl w-full max-w-sm overflow-hidden border-t sm:border border-threads-border animate-slide-up sm:animate-in sm:zoom-in sm:fade-in duration-300">
     
     <!-- Grab Handle for Mobile -->
     <div class="sm:hidden flex justify-center pt-4">
@@ -37,42 +34,11 @@
             카카오로 시작하기
           </button>
         </form>
-
-        <!-- 구글 로그인 -->
-        <form action="/auth/google_oauth2" method="post" data-turbo="false" class="w-full">
-          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
-          <button type="submit" class="w-full flex items-center justify-center gap-3 bg-white text-slate-700 py-3.5 px-4 rounded-xl font-bold border border-slate-200 hover:bg-slate-50 transition-all shadow-sm">
-            <svg class="w-5 h-5" viewBox="0 0 24 24">
-              <path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0112 4.909c1.69 0 3.218.6 4.418 1.582L19.91 3C17.782 1.145 15.055 0 12 0 7.27 0 3.198 2.698 1.24 6.65l4.026 3.115z"/>
-              <path fill="#FBBC05" d="M16.04 18.013c-1.09.324-2.316.496-3.66.496-2.836 0-5.304-1.583-6.6-3.924L1.758 17.68C4.038 21.43 8.017 24 12.62 24c3.037 0 5.856-1.127 7.962-3.037l-4.542-2.95z"/>
-              <path fill="#4285F4" d="M19.98 11.393c.013.2.02.404.02.607 0 .613-.053 1.22-.158 1.821h-7.222v4.192h11.411c.14-.523.214-1.066.214-1.614V14.5c0-1.056-.16-2.072-.456-3.024l-3.809-1.083z"/>
-              <path fill="#34A853" d="M12 18.509c1.344 0 2.57-.172 3.66-.496l4.542 2.95c.241-.218.47-.447.688-.688l-4.223-2.736c.29-.952.45-1.968.45-3.039v-.607H12v4.616z"/>
-            </svg>
-            Google로 시작하기
-          </button>
-        </form>
       </div>
 
-      <div class="relative py-2">
-        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-100"></div></div>
-        <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-2 text-slate-400 font-bold tracking-widest">또는</span></div>
-      </div>
-
-      <!-- 이메일 로그인/가입 전환 -->
-      <div class="flex justify-center gap-6">
-        <button data-auth-tabs-target="loginTab" data-action="click->auth-tabs#showLogin" class="text-sm font-bold border-b-2 py-1 transition-all">이메일 로그인</button>
-        <button data-auth-tabs-target="registerTab" data-action="click->auth-tabs#showRegister" class="text-sm font-bold border-b-2 py-1 transition-all">회원가입</button>
-      </div>
-
-      <!-- 로그인 패널 -->
-      <div data-auth-tabs-target="loginPanel" class="animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <%= render "shared/login_form" %>
-      </div>
-
-      <!-- 회원가입 패널 -->
-      <div data-auth-tabs-target="registerPanel" class="hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <%= render "shared/register_form" %>
-      </div>
+      <p class="text-[10px] text-slate-400 text-center leading-relaxed px-4">
+        로그인 시 Routine Finders의 <a href="#" class="underline">이용약관</a> 및 <a href="#" class="underline">개인정보처리방침</a>에 동의하게 됩니다.
+      </p>
     </div>
   </div>
 </div>
