@@ -47,7 +47,7 @@ class RoutineClubsController < ApplicationController
   end
 
   def manage
-    return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
 
     @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
     @pending_payments = @routine_club.members.where(payment_status: :pending)
@@ -84,6 +84,21 @@ class RoutineClubsController < ApplicationController
     # Default sort for Cumulative
     @cumulative_sorted = @member_stats.sort_by { |s| -s[:cumulative_points] }
 
+    # Additional Statistics
+    # 1. 운영 일수
+    @days_running = (Date.current - @routine_club.start_date).to_i
+    @total_days = (@routine_club.end_date - @routine_club.start_date).to_i
+
+    # 2. 이번 주 출석률
+    week_range = (Date.current - 6.days)..Date.current
+    week_attendances = @routine_club.attendances.where(attendance_date: week_range)
+    week_present = week_attendances.where(status: [ :present, :excused ]).count
+    week_total = week_attendances.count
+    @weekly_attendance_rate = week_total > 0 ? (week_present.to_f / week_total * 100).round(1) : 0.0
+
+    # 3. 저조한 멤버 수 (출석률 60% 미만)
+    @low_performers_count = @members.select { |m| m.attendance_rate < 60 }.count
+
     # Community Data
     @announcements = @routine_club.announcements.order(created_at: :desc)
     @gatherings = @routine_club.gatherings.order(gathering_at: :asc)
@@ -105,10 +120,11 @@ class RoutineClubsController < ApplicationController
   end
 
   def edit
+    redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
   end
 
   def update
-    return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
 
     if @routine_club.update(routine_club_params)
       redirect_to manage_routine_club_path(@routine_club), notice: "설정이 성공적으로 저장되었습니다."
@@ -265,6 +281,28 @@ class RoutineClubsController < ApplicationController
     respond_to do |format|
       format.html { redirect_back fallback_location: personal_routines_path(tab: "club"), notice: action_notice }
       format.turbo_stream { render :cheer, formats: [ :turbo_stream ] }
+    end
+  end
+
+  def send_message
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
+
+    recipient = User.find(params[:recipient_id])
+    message = params[:message]
+
+    if message.present?
+      # Create notification for the recipient
+      Notification.create!(
+        user: recipient,
+        title: "#{@routine_club.title} 호스트로부터 메시지",
+        message: message,
+        notification_type: :club_message,
+        link: personal_routines_path(tab: "club")
+      )
+
+      redirect_to manage_routine_club_path(@routine_club), notice: "#{recipient.nickname}님에게 메시지를 전송했습니다."
+    else
+      redirect_to manage_routine_club_path(@routine_club), alert: "메시지 내용을 입력해주세요."
     end
   end
 

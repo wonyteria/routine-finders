@@ -107,6 +107,7 @@ Rails.application.routes.draw do
       post :kick_member
       post :record
       post :cheer
+      post :send_message
     end
     resources :announcements, only: [ :create, :destroy ]
     resources :gatherings, only: [ :create, :destroy ], controller: "routine_club_gatherings"

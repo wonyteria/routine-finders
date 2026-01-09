@@ -14,7 +14,8 @@ class Notification < ApplicationRecord
     club_payment_rejected: 10,
     club_kicked: 11,
     club_attendance_reminder: 12,
-    club_warning: 13
+    club_warning: 13,
+    club_message: 14
   }
 
   # Associations
