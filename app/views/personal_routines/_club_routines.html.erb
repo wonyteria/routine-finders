@@ -10,7 +10,7 @@
 
     <% unless is_recruiting %>
       <!-- Recruitment Notice Banner -->
-      <div class="mb-12 bg-white rounded-[40px] p-8 lg:p-12 border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col lg:flex-row items-center justify-center gap-8 relative overflow-hidden group">
+      <div class="mb-12 bg-white rounded-[40px] p-8 lg:p-12 border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col lg:flex-row items-center justify-between gap-6 relative overflow-hidden group">
         <div class="absolute right-0 top-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-indigo-100 transition-colors"></div>
         
         <div class="relative z-10 flex flex-col lg:flex-row items-center gap-8 text-center lg:text-left">
@@ -24,6 +24,15 @@
             </p>
           </div>
         </div>
+
+        <% if @official_club %>
+          <%= link_to routine_club_path(@official_club, anchor: "join-form"), class: "relative z-10 shrink-0 px-6 lg:px-8 py-3 lg:py-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white rounded-2xl font-black text-sm lg:text-base transition-all shadow-xl hover:shadow-2xl active:scale-95 whitespace-nowrap flex items-center gap-2" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            기존 멤버 참여
+          <% end %>
+        <% end %>
 
       </div>
     <% end %>
@@ -72,9 +81,18 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-amber-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <% end %>
             <% else %>
-              <div class="group relative w-full sm:w-auto px-8 lg:px-16 py-6 lg:py-8 bg-slate-800 text-slate-400 rounded-[28px] lg:rounded-[32px] font-black text-lg lg:text-xl border border-white/10 opacity-70">
-                <span class="relative z-10">지금은 정기 모집 기간이 아닙니다</span>
-              </div>
+              <%= form_with url: join_routine_club_path(@official_club), method: :post, class: "w-full sm:w-auto" do |f| %>
+                <%= hidden_field_tag :depositor_name, "베타테스터" %>
+                <%= hidden_field_tag :contact_info, "베타테스트" %>
+                <%= hidden_field_tag :beta_test, true %>
+                <button type="submit" class="group relative w-full sm:w-auto px-8 lg:px-16 py-6 lg:py-8 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white rounded-[28px] lg:rounded-[32px] font-black text-lg lg:text-xl transition-all shadow-xl hover:shadow-2xl active:scale-95 overflow-hidden flex items-center justify-center gap-3">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                  <span class="relative z-10">기존 멤버 참여</span>
+                  <div class="absolute inset-0 bg-gradient-to-r from-pink-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </button>
+              <% end %>
             <% end %>
           <% end %>
           <div class="flex flex-col sm:flex-row items-center gap-2 lg:gap-3 text-slate-500">

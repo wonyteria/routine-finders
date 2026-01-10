@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="scroll-smooth">
   <head>
     <title><%= content_for(:title) || "Routine Finders" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -84,6 +84,8 @@
         data-controller="modal" 
         data-modal-auto-open-value="<%= alert == '로그인이 필요합니다.' %>"
         style="font-family: 'Outfit', sans-serif;">
+    
+    <%= render 'shared/welcome_modal' %>
     
     <!-- Flash Messages Toast -->
     <% if notice.present? || alert.present? %>

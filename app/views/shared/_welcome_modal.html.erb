@@ -1,0 +1,93 @@
+<% if pending_welcome_membership %>
+  <div id="welcome-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in" style="z-index: 999999;">
+    <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-[48px] p-1 max-w-2xl w-full shadow-[0_0_100px_rgba(0,0,0,0.5)] animate-scale-in" style="z-index: 1000000;">
+      <div class="bg-white rounded-[44px] p-8 md:p-12 text-center relative overflow-hidden">
+        <!-- Background decoration -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-yellow-200 to-pink-200 rounded-full blur-3xl opacity-30 -translate-y-1/2 translate-x-1/2"></div>
+        
+        <div class="relative z-10">
+          <!-- Celebration Icon -->
+          <div class="text-8xl mb-6 animate-bounce-slow">🎉</div>
+          
+          <!-- Main Message -->
+          <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 leading-tight">
+            환영합니다!
+          </h2>
+          <p class="text-xl md:text-2xl font-bold text-indigo-600 mb-8">
+            <%= pending_welcome_membership.routine_club.title %> 멤버가 되신 것을 축하합니다!
+          </p>
+          
+          <!-- Quick Start Guide -->
+          <div class="bg-slate-50 rounded-3xl p-6 md:p-8 mb-8 text-left">
+            <h3 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">🚀</span>
+              지금 바로 시작하세요!
+            </h3>
+            <div class="space-y-3">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0">1</div>
+                <div>
+                  <p class="font-black text-slate-900 text-sm">루틴 등록하기</p>
+                  <p class="text-xs text-slate-500 font-medium">매일 실천할 루틴을 등록하세요</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0">2</div>
+                <div>
+                  <p class="font-black text-slate-900 text-sm">목표 설정하기</p>
+                  <p class="text-xs text-slate-500 font-medium">이번 시즌 목표를 구체적으로 작성하세요</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-pink-600 text-white flex items-center justify-center font-black text-sm flex-shrink-0">3</div>
+                <div>
+                  <p class="font-black text-slate-900 text-sm">멤버들과 시너지 나누기</p>
+                  <p class="text-xs text-slate-500 font-medium">응원과 격려로 함께 성장하세요</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Motivational Message -->
+          <div class="bg-gradient-to-r from-orange-50 to-pink-50 border-2 border-orange-200 rounded-2xl p-6 mb-8">
+            <p class="text-lg font-black text-slate-900 mb-2">💪 당신의 성장은 지금부터 시작됩니다!</p>
+            <p class="text-sm text-slate-600 font-medium">
+              루파 클럽과 함께 압도적인 성장을 경험하세요.
+            </p>
+          </div>
+          
+          <!-- CTA Button -->
+          <%= form_with url: mark_welcomed_routine_club_path(pending_welcome_membership.routine_club), method: :post, local: true do %>
+            <button type="submit" class="w-full px-12 py-5 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-3xl font-black text-xl hover:shadow-2xl hover:scale-105 transition-all active:scale-95">
+              루파 클럽 대시보드로 이동 🚀
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scale-in {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes bounce-slow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .animate-fade-in {
+      animation: fade-in 0.3s ease-out;
+    }
+    .animate-scale-in {
+      animation: scale-in 0.4s ease-out;
+    }
+    .animate-bounce-slow {
+      animation: bounce-slow 2s ease-in-out infinite;
+    }
+  </style>
+<% end %>

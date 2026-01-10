@@ -1,7 +1,25 @@
 class SessionsController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: :omniauth
+  skip_before_action :verify_authenticity_token, only: [ :omniauth, :dev_login ]
 
   def new
+  end
+
+  # 개발 환경 전용 자동 로그인
+  def dev_login
+    unless Rails.env.development?
+      redirect_to root_path, alert: "이 기능은 개발 환경에서만 사용할 수 있습니다."
+      return
+    end
+
+    # 테스트 사용자 찾거나 생성
+    user = User.find_or_create_by!(email: "test@example.com") do |u|
+      u.name = "테스트 사용자"
+      u.provider = "developer"
+      u.uid = "test_user_#{SecureRandom.hex(4)}"
+    end
+
+    session[:user_id] = user.id
+    redirect_to root_path, notice: "개발자 로그인 성공!"
   end
 
   def omniauth

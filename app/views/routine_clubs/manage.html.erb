@@ -165,6 +165,12 @@
                           <p class="text-[9px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1">연락처</p>
                           <p class="text-xs md:text-sm font-black text-emerald-600"><%= membership.contact_info.presence || "미입력" %></p>
                         </div>
+                        <div class="sm:col-span-2">
+                          <p class="text-[9px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1">스레드 계정</p>
+                          <p class="text-xs md:text-sm font-bold text-indigo-600">
+                            <%= membership.threads_nickname.present? ? "@#{membership.threads_nickname}" : "미입력" %>
+                          </p>
+                        </div>
                       </div>
                       
                       <div class="bg-white border border-amber-200 rounded-xl md:rounded-2xl p-2 md:p-4">

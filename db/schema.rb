@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_08_061804) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_10_095034) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -309,10 +309,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_061804) do
     t.float "achievement_rate"
     t.integer "attendance_count", default: 0
     t.decimal "attendance_rate", precision: 5, scale: 2, default: "0.0"
+    t.text "commitment"
     t.string "contact_info"
     t.datetime "created_at", null: false
     t.datetime "deposit_confirmed_at"
     t.string "depositor_name"
+    t.text "goal"
     t.integer "growth_points"
     t.string "identity_title"
     t.boolean "is_moderator", default: false
@@ -329,6 +331,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_08_061804) do
     t.datetime "updated_at", null: false
     t.integer "used_passes_count", default: 0
     t.integer "user_id", null: false
+    t.boolean "welcomed", default: false
     t.index ["payment_status"], name: "index_routine_club_members_on_payment_status"
     t.index ["routine_club_id", "user_id"], name: "index_routine_club_members_on_routine_club_id_and_user_id", unique: true
     t.index ["routine_club_id"], name: "index_routine_club_members_on_routine_club_id"

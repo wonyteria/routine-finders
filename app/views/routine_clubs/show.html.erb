@@ -11,10 +11,10 @@
       <% end %>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
       <!-- Main Content -->
-      <div class="lg:col-span-2 space-y-8">
+      <div class="lg:col-span-8 space-y-8">
         
         
         <!-- Hero Section -->
@@ -121,10 +121,21 @@
                 <div class="w-24 h-24 bg-slate-800 rounded-[32px] flex items-center justify-center text-5xl mx-auto border border-white/5 shadow-2xl">🔒</div>
                 <div class="space-y-4">
                   <h3 class="text-[20px] sm:text-3xl font-black text-white whitespace-nowrap">현재 정기 모집 기간이 아닙니다</h3>
-                  <p class="text-lg text-slate-500 font-bold leading-relaxed break-keep">
+                  <p class="text-lg text-slate-500 font-bold leading-relaxed break-keep border-b border-white/5 pb-6 mb-6">
                     루파 클럽은 최상의 몰입 환경을 유지하기 위해 <br class="hidden md:block"/>
                     정해진 분기별 기수 모집 기간에만 신규 멤버를 선발하고 있습니다.
                   </p>
+                  
+                  <!-- 기존 멤버 참여 버튼 -->
+                  <div class="flex flex-col items-center gap-4">
+                    <button onclick="document.getElementById('join-form').classList.remove('hidden'); document.getElementById('join-form').scrollIntoView({ behavior: 'smooth', block: 'start' });" class="px-8 py-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white rounded-2xl font-black text-lg transition-all shadow-xl hover:shadow-2xl active:scale-95 whitespace-nowrap flex items-center justify-center gap-2 mx-auto">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                      </svg>
+                      기존 멤버 참여
+                    </button>
+                    <p class="text-sm text-indigo-400 font-bold animate-pulse">⚡ 기존 멤버는 언제든지 참여하실 수 있습니다</p>
+                  </div>
                 </div>
                 <div class="pt-6 border-t border-white/5">
                   <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-3">Next Recruitment Schedule</p>
@@ -134,10 +145,11 @@
                 </div>
               </div>
             </div>
-          <% else %>
-            <!-- Join Form Card (Visible when open) -->
-            <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-slate-900 rounded-[40px] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden group mb-8">
-              <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/20 transition-all"></div>
+          <% end %>
+
+          <!-- Join Form Card (Always visible for members joining via link) -->
+          <div id="join-form" class="<%= 'hidden' if !@routine_club.recruitment_open? && current_user&.role != 'admin' %> bg-gradient-to-br from-indigo-500 via-purple-500 to-slate-900 rounded-[40px] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden group mb-8 scroll-mt-32">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/20 transition-all"></div>
               <div class="max-w-xl">
                 <% cur_gen = @routine_club.generation_number %>
                 <div class="inline-flex px-3 py-1 bg-white/20 backdrop-blur-md rounded-lg text-xs font-black uppercase tracking-widest mb-4">루파 클럽 <%= cur_gen %>기 신청</div>
@@ -147,18 +159,49 @@
                   가장 압도적인 한 단계 위로의 도약을 위해 지금 합류하세요.
                 </p>
                 <%= form_with url: join_routine_club_path(@routine_club), method: :post, class: "space-y-6" do |f| %>
+                  <%= hidden_field_tag :beta_test, true %>
+                  <!-- 1. 활동 각오 -->
+                  <div>
+                    <%= f.label :commitment, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
+                      루파 클럽 활동 각오 <span class="text-indigo-300">*</span>
+                    <% end %>
+                    <%= text_area_tag :commitment, nil, placeholder: "루파 클럽에 임하는 나만의 각오를 진정성 있게 적어주세요.", required: true, rows: 3, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/50 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all resize-none" %>
+                  </div>
+
+                  <!-- 2. 이루고 싶은 목표 -->
+                  <div>
+                    <%= f.label :goal, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
+                      이번 기수 목표 <span class="text-indigo-300">*</span>
+                    <% end %>
+                    <%= text_area_tag :goal, nil, placeholder: "구체적으로 이루고 싶은 수치나 변화를 적어주세요.", required: true, rows: 2, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/50 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all resize-none" %>
+                  </div>
+
+                  <!-- 3. 스레드 계정 (너비 축소) -->
+                  <div class="w-full md:w-1/2">
+                    <%= f.label :threads_nickname, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
+                      스레드 계정 (선택)
+                    <% end %>
+                    <div class="relative">
+                      <span class="absolute left-6 top-1/2 -translate-y-1/2 text-white font-bold pointer-events-none">@</span>
+                      <%= text_field_tag :threads_nickname, nil, placeholder: "", class: "w-full pl-11 pr-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/50 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
+                    </div>
+                  </div>
+
+                  <div class="h-px bg-white/10 my-6"></div>
+
+                  <!-- 4. 입금 정보 (하단 배치) -->
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-900">
                     <div>
                       <%= f.label :depositor_name, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
                         입금자 실명 <span class="text-indigo-300">*</span>
                       <% end %>
-                      <%= text_field_tag :depositor_name, nil, placeholder: "입금자명", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
+                      <%= text_field_tag :depositor_name, nil, placeholder: "입금자명", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/50 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
                     </div>
                     <div>
                       <%= f.label :contact_info, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
                         연락처 <span class="text-indigo-300">*</span>
                       <% end %>
-                      <%= text_field_tag :contact_info, nil, placeholder: "010-0000-0000", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
+                      <%= text_field_tag :contact_info, nil, placeholder: "010-0000-0000", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/50 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
                     </div>
                   </div>
                   <div class="flex flex-col md:flex-row items-center gap-6 pt-4">
@@ -173,7 +216,7 @@
                 <% end %>
               </div>
             </div>
-          <% end %>
+
         <% end %>
 
         <!-- Rules Section -->
@@ -403,53 +446,11 @@
               <p>• <span class="text-white font-black">환불 및 기간</span>: 정액제 참여 특성상 시스템 승인 후 중도 퇴출이나 본인 변심에 의한 환불이 절대 불가합니다.</p>
             </div>
           </section>
-
         </div>
 
-        <!-- Members Section -->
-        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
-              <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-              </svg>
-            </div>
-            <div class="flex-1">
-              <h2 class="text-2xl font-black text-slate-900">함께 달리는 멤버</h2>
-              <p class="text-sm text-slate-500 font-medium">현재 <%= @members.count %>명의 클러버가 변화를 만들고 있습니다</p>
-            </div>
-          </div>
-          
-          <% if @members.any? %>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <% @members.each do |member| %>
-                <div class="bg-indigo-50/50 rounded-2xl p-4 flex items-center gap-3 border border-indigo-100/50">
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-black text-sm">
-                    <%= member.user.nickname[0].upcase %>
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-black text-slate-900 truncate">
-                      <%= member.user.nickname %>
-                    </p>
-                    <p class="text-[10px] text-indigo-600 font-bold">
-                      LV.<%= member.user.level %> · 성공률 <%= member.attendance_rate.to_i %>%
-                    </p>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="bg-slate-50 rounded-3xl p-12 text-center">
-              <div class="text-4xl mb-3 opacity-30">👥</div>
-              <p class="text-slate-400 font-bold">첫 번째 루파 클러버가 되어보세요!</p>
-            </div>
-          <% end %>
-        </div>
-        </div>
-      </div>
-
-      <!-- Sidebar -->
-      <div class="lg:col-span-1 space-y-6">
+      <!-- Sidebar Area -->
+      <div class="lg:col-span-4 self-start">
+        <div class="lg:sticky lg:top-8 space-y-6">
         
         <!-- Join Card -->
         <% if @is_host %>
@@ -494,14 +495,26 @@
             <div class="relative z-10 space-y-6">
               <div class="w-20 h-20 bg-slate-800 rounded-[28px] flex items-center justify-center text-4xl mx-auto border border-white/5">🔒</div>
               <h3 class="text-xl font-black text-white">현재 정기 모집 기간이 아닙니다</h3>
-              <p class="text-slate-500 font-bold text-sm leading-relaxed">
+              <p class="text-slate-500 font-bold text-sm leading-relaxed border-b border-white/5 pb-4">
                 루파 클럽은 분기별 기수제로 운영됩니다.<br/>
                 가장 완벽한 몰입을 위해 모집 기간에만<br/>
                 신규 멤버를 선발하고 있습니다.
               </p>
-              <div class="pt-4">
+              
+              <!-- 기존 멤버 참여 버튼 -->
+              <div class="flex flex-col items-center gap-3">
+                <button onclick="document.getElementById('join-form').classList.remove('hidden'); document.getElementById('join-form').scrollIntoView({ behavior: 'smooth', block: 'start' });" class="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white rounded-2xl font-black text-sm transition-all shadow-xl hover:shadow-2xl active:scale-95 whitespace-nowrap flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                  기존 멤버 참여
+                </button>
+                <p class="text-xs text-indigo-400 font-bold">⚡ 기존 멤버는 언제든지 참여 가능</p>
+              </div>
+              
+              <div class="pt-4 border-t border-white/5">
                 <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Next Recruitment</p>
-                <div class="inline-flex px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-black">
+                <div class="inline-flex px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-white font-black text-sm">
                   <%= (@routine_club.get_quarter_start_date(Date.current + 3.months) - 14.days).strftime("%Y년 %m월 %d일") %> 예정
                 </div>
               </div>
@@ -611,6 +624,47 @@
           </div>
         </div>
 
+        <!-- Members Section (Moved to Sidebar) -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm transition-all hover:shadow-md">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h2 class="text-xl font-black text-slate-900 uppercase">함께 달리는 멤버</h2>
+              <p class="text-[11px] text-slate-500 font-bold"><%= @members.count %>명의 클러버</p>
+            </div>
+          </div>
+          
+          <% if @members.any? %>
+            <div class="grid grid-cols-2 lg:grid-cols-1 gap-3">
+              <% @members.each do |member| %>
+                <div class="bg-indigo-50/50 rounded-2xl p-4 flex items-center gap-3 border border-indigo-100/50">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-black text-sm shrink-0 shadow-sm">
+                    <%= member.user.nickname[0].upcase %>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-black text-slate-900 truncate">
+                      <%= member.user.nickname %>
+                    </p>
+                    <p class="text-[10px] text-indigo-600 font-bold">
+                      LV.<%= member.user.level %> · 성공률 <%= member.attendance_rate.to_i %>%
+                    </p>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="bg-slate-50 rounded-3xl p-8 text-center border border-dashed border-slate-200">
+              <div class="text-3xl mb-2 opacity-30">👥</div>
+              <p class="text-xs text-slate-400 font-bold">첫 번째 멤버가 되어보세요!</p>
+            </div>
+          <% end %>
+        </div>
+
+        </div>
       </div>
     </div>
 

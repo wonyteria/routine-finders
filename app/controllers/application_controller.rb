@@ -6,8 +6,9 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
   before_action :set_unviewed_badges
+  before_action :set_pending_welcome_membership
 
-  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in?, :pending_welcome_membership
 
   private
 
@@ -17,6 +18,21 @@ class ApplicationController < ActionController::Base
     else
       @unviewed_badges = []
     end
+  end
+
+  def set_pending_welcome_membership
+    if logged_in?
+      @pending_welcome_membership = current_user.routine_club_members
+                                                 .where(payment_status: :confirmed, welcomed: false)
+                                                 .includes(:routine_club)
+                                                 .first
+    else
+      @pending_welcome_membership = nil
+    end
+  end
+
+  def pending_welcome_membership
+    @pending_welcome_membership
   end
 
   def current_user

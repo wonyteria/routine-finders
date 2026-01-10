@@ -28,6 +28,9 @@ Rails.application.routes.draw do
   match "/auth/:provider/callback", to: "sessions#omniauth", via: [ :get, :post ]
   get "/auth/failure", to: redirect("/")
 
+  # Developer login (development only)
+  post "/dev_login", to: "sessions#dev_login" if Rails.env.development?
+
   # Account restoration
   get "/restore_account", to: "sessions#restore_account"
   post "/restore_account/confirm", to: "sessions#confirm_restore", as: :confirm_restore_account
@@ -108,6 +111,7 @@ Rails.application.routes.draw do
       post :record
       post :cheer
       post :send_message
+      post :mark_welcomed
     end
     resources :announcements, only: [ :create, :destroy ]
     resources :gatherings, only: [ :create, :destroy ], controller: "routine_club_gatherings"

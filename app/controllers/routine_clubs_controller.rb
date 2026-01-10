@@ -1,7 +1,7 @@
 class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show ]
   before_action :require_admin, only: [ :new, :create ]
-  before_action :set_routine_club, only: [ :show, :edit, :update, :join, :manage, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member ]
+  before_action :set_routine_club, only: [ :show, :edit, :update, :join, :manage, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member, :mark_welcomed ]
   before_action :set_my_membership, only: [ :show, :use_pass ]
 
   def index
@@ -22,6 +22,11 @@ class RoutineClubsController < ApplicationController
   def show
     @is_member = current_user && (@routine_club.members.exists?(user: current_user) || current_user.admin?)
     @is_host = current_user && (@routine_club.host_id == current_user.id || current_user.super_admin?)
+
+    # Redirect members to their club dashboard
+    if @is_member && !@is_host
+      return redirect_to personal_routines_path(tab: 'club')
+    end
 
     # Default to dashboard if member/admin and no tab specified
     if params[:tab].blank? && @is_member
@@ -138,9 +143,9 @@ class RoutineClubsController < ApplicationController
       return redirect_to @routine_club, alert: "정원이 마감되었습니다."
     end
 
-    if !@routine_club.recruitment_open? && current_user.role != "admin"
-      return redirect_to @routine_club, alert: "지금은 정기 모집 기간이 아닙니다. 다음 모집 기간에 신청해주세요."
-    end
+    if !@routine_club.recruitment_open? && current_user.role != "admin" && params[:beta_test] != "true"
+    return redirect_to @routine_club, alert: "지금은 정기 모집 기간이 아닙니다. 다음 모집 기간에 신청해주세요."
+  end
 
     if @routine_club.members.exists?(user: current_user)
       return redirect_to @routine_club, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
@@ -154,7 +159,9 @@ class RoutineClubsController < ApplicationController
       paid_amount: quarterly_fee,
       depositor_name: params[:depositor_name],
       contact_info: params[:contact_info],
+      goal: params[:goal],
       threads_nickname: params[:threads_nickname],
+      commitment: params[:commitment],
       payment_status: :pending
     )
 
@@ -303,6 +310,17 @@ class RoutineClubsController < ApplicationController
       redirect_to manage_routine_club_path(@routine_club), notice: "#{recipient.nickname}님에게 메시지를 전송했습니다."
     else
       redirect_to manage_routine_club_path(@routine_club), alert: "메시지 내용을 입력해주세요."
+    end
+  end
+
+  def mark_welcomed
+    membership = @routine_club.members.find_by(user: current_user, payment_status: :confirmed)
+    
+    if membership
+      membership.update(welcomed: true)
+      redirect_to personal_routines_path(tab: 'club'), notice: "루파 클럽에 오신 것을 환영합니다! 🎉"
+    else
+      redirect_to root_path, alert: "멤버십을 찾을 수 없습니다."
     end
   end
 

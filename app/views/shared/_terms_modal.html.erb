@@ -1,0 +1,145 @@
+<!-- 이용약관 모달 -->
+<div id="terms_modal" 
+     class="hidden fixed inset-0 z-[110] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+  
+  <!-- 모달 컨텐츠 -->
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col border border-slate-200 animate-in zoom-in fade-in duration-300" style="max-height: 85vh;">
+    
+    <!-- 헤더 -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50 flex-shrink-0">
+      <h2 class="text-xl font-bold text-slate-900">이용약관</h2>
+      <button onclick="closeTermsModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 내용 -->
+    <div class="px-6 py-6 overflow-y-auto flex-1 prose prose-sm max-w-none">
+      <h3 class="text-lg font-bold mb-4">제1조 (목적)</h3>
+      <p class="mb-4">
+        본 약관은 Routine Finders(이하 "서비스")의 이용과 관련하여 서비스 운영자와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
+      </p>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제2조 (정의)</h3>
+      <p class="mb-2">본 약관에서 사용하는 용어의 정의는 다음과 같습니다:</p>
+      <ol class="list-decimal pl-6 mb-4 space-y-2">
+        <li>"서비스"란 Routine Finders가 제공하는 루틴 챌린지, 커뮤니티, 모임 등의 온라인 플랫폼을 의미합니다.</li>
+        <li>"이용자"란 본 약관에 따라 서비스를 이용하는 회원 및 비회원을 말합니다.</li>
+        <li>"회원"이란 서비스에 가입하여 회원 아이디를 부여받은 자를 말합니다.</li>
+        <li>"챌린지"란 회원이 특정 루틴을 일정 기간 동안 수행하는 활동을 의미합니다.</li>
+        <li>"루파 클럽"이란 회원들이 함께 루틴을 수행하고 관리하는 커뮤니티를 의미합니다.</li>
+      </ol>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제3조 (약관의 효력 및 변경)</h3>
+      <ol class="list-decimal pl-6 mb-4 space-y-2">
+        <li>본 약관은 서비스를 이용하고자 하는 모든 이용자에게 적용됩니다.</li>
+        <li>운영자는 필요한 경우 관련 법령을 위배하지 않는 범위 내에서 본 약관을 변경할 수 있습니다.</li>
+        <li>약관이 변경되는 경우 변경사항을 시행일자 7일 전부터 서비스 내 공지사항을 통해 공지합니다.</li>
+        <li>이용자가 변경된 약관에 동의하지 않는 경우, 서비스 이용을 중단하고 탈퇴할 수 있습니다.</li>
+      </ol>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제4조 (회원가입)</h3>
+      <ol class="list-decimal pl-6 mb-4 space-y-2">
+        <li>이용자는 서비스가 정한 가입 절차에 따라 회원정보를 입력한 후 본 약관에 동의함으로써 회원가입을 신청합니다.</li>
+        <li>다음 각 호에 해당하는 경우 회원가입이 제한될 수 있습니다:
+          <ul class="list-disc pl-6 mt-2 space-y-1">
+            <li>허위 정보를 입력한 경우</li>
+            <li>타인의 정보를 도용한 경우</li>
+            <li>기술적 문제로 가입이 어려운 경우</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제5조 (서비스의 제공)</h3>
+      <p class="mb-2">서비스는 다음과 같은 기능을 제공합니다:</p>
+      <ul class="list-disc pl-6 mb-4 space-y-1">
+        <li>루틴 챌린지 생성 및 참여</li>
+        <li>루파 클럽 운영 및 참여</li>
+        <li>모임 생성 및 참여</li>
+        <li>루틴 인증 및 기록 관리</li>
+        <li>커뮤니티 활동 (응원, 댓글 등)</li>
+        <li>기타 추가 개발되는 기능</li>
+      </ul>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제6조 (서비스의 중단)</h3>
+      <ol class="list-decimal pl-6 mb-4 space-y-2">
+        <li>서버 점검, 시스템 장애, 통신 장애 등의 사유로 서비스가 일시적으로 중단될 수 있습니다.</li>
+        <li>서비스 중단으로 인한 손해에 대해서는 운영자의 고의 또는 중대한 과실이 있는 경우를 제외하고는 책임을 지지 않습니다.</li>
+      </ol>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제7조 (이용자의 의무)</h3>
+      <p class="mb-2">이용자는 다음 행위를 하여서는 안 됩니다:</p>
+      <ul class="list-disc pl-6 mb-4 space-y-1">
+        <li>허위 정보 등록 또는 타인의 정보 도용</li>
+        <li>서비스의 정보를 무단으로 변경하는 행위</li>
+        <li>타인의 저작권 등 지적재산권을 침해하는 행위</li>
+        <li>타인의 명예를 훼손하거나 불쾌감을 주는 행위</li>
+        <li>음란물, 폭력적 콘텐츠 등 공서양속에 반하는 정보를 게시하는 행위</li>
+        <li>서비스의 정상적인 운영을 방해하는 행위</li>
+      </ul>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제8조 (개인정보보호)</h3>
+      <p class="mb-4">
+        서비스는 이용자의 개인정보를 소중히 다루며, 서비스 제공에 필요한 최소한의 정보만을 수집합니다. 자세한 내용은 개인정보처리방침을 참고하시기 바랍니다.
+      </p>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제9조 (회원탈퇴)</h3>
+      <ol class="list-decimal pl-6 mb-4 space-y-2">
+        <li>회원은 언제든지 탈퇴를 요청할 수 있으며, 탈퇴 시 개인정보는 즉시 삭제됩니다.</li>
+        <li>다음의 경우 회원자격이 제한되거나 정지될 수 있습니다:
+          <ul class="list-disc pl-6 mt-2 space-y-1">
+            <li>허위 정보로 가입한 경우</li>
+            <li>다른 이용자의 서비스 이용을 방해하는 경우</li>
+            <li>법령 또는 본 약관을 위반하는 경우</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제10조 (면책사항)</h3>
+      <ol class="list-decimal pl-6 mb-4 space-y-2">
+        <li>서비스는 무료로 제공되며, 천재지변, 불가항력 등으로 인한 서비스 중단에 대해서는 책임을 지지 않습니다.</li>
+        <li>이용자의 귀책사유로 인한 서비스 이용 장애에 대해서는 책임을 지지 않습니다.</li>
+        <li>서비스를 통해 얻은 정보나 자료의 신뢰성, 정확성에 대해서는 이용자가 판단해야 하며, 이로 인한 손해에 대해 책임을 지지 않습니다.</li>
+      </ol>
+
+      <h3 class="text-lg font-bold mb-4 mt-6">제11조 (문의 및 분쟁해결)</h3>
+      <p class="mb-4">
+        서비스 이용과 관련한 문의사항이나 불만사항은 서비스 내 문의 기능을 통해 제기할 수 있으며, 운영자는 이를 성실히 검토하여 답변드리겠습니다.
+      </p>
+
+      <p class="mt-8 text-sm text-slate-500">
+        <strong>시행일:</strong> 2026년 1월 1일
+      </p>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex-shrink-0">
+      <button onclick="closeTermsModal()" class="w-full bg-slate-900 text-white py-3 px-4 rounded-xl font-bold hover:bg-slate-800 transition-colors">
+        확인
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openTermsModal() {
+    const modal = document.getElementById('terms_modal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeTermsModal() {
+    const modal = document.getElementById('terms_modal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  // 모달 배경 클릭 시 닫기
+  document.getElementById('terms_modal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeTermsModal();
+    }
+  });
+</script>
