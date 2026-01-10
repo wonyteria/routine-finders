@@ -4,14 +4,8 @@ class ChallengesController < ApplicationController
   skip_before_action :require_login, only: [ :index, :show ]
 
   def index
-    # 검색어, 카테고리, 상태 필터가 있거나 '전체보기' 모드인 경우
-    @is_search_mode = params[:keyword].present? || params[:category].present? || params[:status].present? || params[:mode] == "all"
-
-    if @is_search_mode
-      search_challenges
-    else
-      load_landing_data
-    end
+    # 챌린지 탐색을 기본으로 설정 (사용자 요청에 따라 랜딩 데이터 로딩 제거)
+    search_challenges
 
     # Get user's joined challenge IDs for displaying badges
     @joined_challenge_ids = current_user&.participations&.pluck(:challenge_id) || []
@@ -180,10 +174,6 @@ class ChallengesController < ApplicationController
   def join
     return redirect_to @challenge, alert: "이미 참여 중입니다." if current_user.participations.exists?(challenge: @challenge)
 
-    # 오프라인 모임(가더링) 참석 제한: 루파 클럽 멤버 전용
-    if @challenge.offline? && !current_user.is_rufa_club_member?
-      return redirect_to gatherings_path, alert: "오프라인 모임은 '루파 클럽' 멤버만 참여 가능합니다. 루파 클럽에 먼저 가입해주세요!"
-    end
 
     if @challenge.is_private? && params[:invitation_code] != @challenge.invitation_code
       return redirect_to @challenge, alert: "초대 코드가 올바르지 않습니다."
@@ -316,20 +306,8 @@ class ChallengesController < ApplicationController
     end
   end
 
-  def load_landing_data
-    @featured_challenges = Challenge.online_challenges.official.limit(4)
-    if @featured_challenges.empty?
-      @featured_challenges = Challenge.online_challenges.recruiting.where.not(thumbnail: nil).limit(4)
-      @featured_challenges = Challenge.online_challenges.recruiting.limit(4) if @featured_challenges.empty?
-      @featured_challenges = Challenge.generate_dummy_challenges.first(4) if @featured_challenges.empty? # Fallback to dummy
-    end
+  # Removed load_landing_data as landing mode is deprecated in favor of unified explore view
 
-    @hot_challenges = Challenge.online_challenges.recruiting.order(current_participants: :desc).limit(6)
-    @hot_challenges = Challenge.generate_dummy_challenges.first(6) if @hot_challenges.empty? # Fallback to dummy
-
-    @challenges = Challenge.online_challenges.recruiting.order(created_at: :desc).limit(12)
-    @challenges = Challenge.generate_dummy_challenges if @challenges.empty? # Fallback to dummy
-  end
 
   # Removed local generate_dummy_challenges as it's now in the model
 

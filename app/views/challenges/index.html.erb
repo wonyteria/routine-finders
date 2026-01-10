@@ -1,400 +1,183 @@
 <div class="pb-32">
-  <!-- Top Banner (Landing Mode Only) -->
-  <% unless @is_search_mode %>
-    <div class="mb-12 relative overflow-hidden rounded-threads-xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 text-white shadow-2xl shadow-indigo-200" data-controller="modal">
-      <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-      <!-- Animated Background Blobs -->
-      <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-      <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+  <!-- Main Banner (Always Shown) -->
+  <div class="mb-12 relative overflow-hidden rounded-threads-xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 text-white shadow-2xl shadow-indigo-200" data-controller="modal">
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+    <!-- Animated Background Blobs -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-      <div class="relative z-10 p-6 md:p-16 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
-        <div class="space-y-5 md:space-y-8 max-w-2xl text-center md:text-left">
-          <div class="space-y-3 md:space-y-4">
-            <span class="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-white/20 shadow-inner">New Year 2024</span>
-            <h1 class="text-2xl md:text-6xl font-black leading-tight tracking-tight">
-              작심삼일은 옛말,<br class="md:hidden">
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">함께하면 해낼 수 있어요.</span>
-            </h1>
-            <p class="text-xs md:text-xl font-medium text-indigo-100/80 leading-relaxed break-keep">
-              기록된 오늘이 내일의 당신을 만듭니다.
-            </p>
-          </div>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-             <%= link_to new_challenge_path, class: "group inline-flex px-6 py-3.5 md:px-8 md:py-4 bg-white text-indigo-700 rounded-xl md:rounded-[24px] font-black text-sm md:text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95 items-center justify-center gap-2" do %>
-               <span>챌린지 개설</span>
-               <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-             <% end %>
-             <button type="button" 
-                     data-action="click->modal#open"
-                     class="inline-flex px-6 py-3.5 md:px-8 md:py-4 bg-indigo-800/40 text-white rounded-xl md:rounded-[24px] font-black text-sm md:text-lg hover:bg-indigo-800/60 transition-all border border-indigo-500/30 backdrop-blur-sm items-center justify-center">
-               가이드
-             </button>
-          </div>
+    <div class="relative z-10 p-6 md:p-16 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
+      <div class="space-y-5 md:space-y-8 max-w-2xl text-center md:text-left">
+        <div class="space-y-3 md:space-y-4">
+          <span class="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-white/20 shadow-inner">New Year 2024</span>
+          <h1 class="text-2xl md:text-6xl font-black leading-tight tracking-tight">
+            작심삼일은 옛말,<br class="md:hidden">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">함께하면 해낼 수 있어요.</span>
+          </h1>
+          <p class="text-xs md:text-xl font-medium text-indigo-100/80 leading-relaxed break-keep">
+            기록된 오늘이 내일의 당신을 만듭니다.
+          </p>
         </div>
-        <div class="hidden lg:block relative shrink-0">
-           <!-- Illustration placeholder -->
-           <div class="w-80 h-80 relative">
-             <div class="absolute inset-0 bg-gradient-to-tr from-indigo-400 to-pink-400 rounded-full opacity-20 blur-2xl animate-pulse"></div>
-             <div class="relative z-10 w-full h-full bg-white/10 backdrop-blur-md rounded-[48px] border border-white/20 shadow-2xl flex items-center justify-center transform rotate-6 hover:rotate-0 transition-all duration-700">
-               <div class="text-center space-y-4 p-8">
-                 <div class="w-20 h-20 bg-white/20 rounded-2xl mx-auto flex items-center justify-center text-4xl">🔥</div>
-                 <div>
-                   <p class="font-black text-2xl">Streak 24</p>
-                   <p class="text-sm font-bold text-indigo-100">놀라운 연속 기록!</p>
-                 </div>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+           <%= link_to new_challenge_path, class: "group inline-flex px-6 py-3.5 md:px-8 md:py-4 bg-white text-indigo-700 rounded-xl md:rounded-[24px] font-black text-sm md:text-lg hover:bg-indigo-50 transition-all shadow-xl active:scale-95 items-center justify-center gap-2" do %>
+             <span>챌린지 개설</span>
+             <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+           <% end %>
+           <button type="button" 
+                   data-action="click->modal#open"
+                   class="inline-flex px-6 py-3.5 md:px-8 md:py-4 bg-indigo-800/40 text-white rounded-xl md:rounded-[24px] font-black text-sm md:text-lg hover:bg-indigo-800/60 transition-all border border-indigo-500/30 backdrop-blur-sm items-center justify-center">
+             가이드
+           </button>
+        </div>
+      </div>
+      <div class="hidden lg:block relative shrink-0">
+         <div class="w-80 h-80 relative">
+           <div class="absolute inset-0 bg-gradient-to-tr from-indigo-400 to-pink-400 rounded-full opacity-20 blur-2xl animate-pulse"></div>
+           <div class="relative z-10 w-full h-full bg-white/10 backdrop-blur-md rounded-[48px] border border-white/20 shadow-2xl flex items-center justify-center transform rotate-6 hover:rotate-0 transition-all duration-700">
+             <div class="text-center space-y-4 p-8">
+               <div class="w-20 h-20 bg-white/20 rounded-2xl mx-auto flex items-center justify-center text-4xl">🔥</div>
+               <div>
+                 <p class="font-black text-2xl">Streak 24</p>
+                 <p class="text-sm font-bold text-indigo-100">놀라운 연속 기록!</p>
                </div>
              </div>
            </div>
-        </div>
+         </div>
       </div>
+    </div>
 
-      <!-- Guide Modal Backdrop -->
-      <div data-modal-target="container" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6" data-action="click->modal#closeOnBackground">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity"></div>
-        
-        <!-- Modal Content -->
-        <div class="relative w-full max-w-4xl bg-white rounded-[48px] overflow-hidden shadow-2xl transform transition-all max-h-[90vh] flex flex-col text-slate-900">
-          <!-- Close Button -->
-          <button type="button" data-action="click->modal#close" class="absolute top-8 right-8 w-12 h-12 bg-slate-100 text-slate-400 hover:bg-slate-900 hover:text-white rounded-full flex items-center justify-center transition-all z-20">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
+    <!-- Guide Modal Backdrop -->
+    <div data-modal-target="container" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 sm:p-6" data-action="click->modal#closeOnBackground">
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity"></div>
+      
+      <!-- Modal Content -->
+      <div class="relative w-full max-w-4xl bg-white rounded-[48px] overflow-hidden shadow-2xl transform transition-all max-h-[90vh] flex flex-col text-slate-900">
+        <!-- Close Button -->
+        <button type="button" data-action="click->modal#close" class="absolute top-8 right-8 w-12 h-12 bg-slate-100 text-slate-400 hover:bg-slate-900 hover:text-white rounded-full flex items-center justify-center transition-all z-20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
 
-          <div class="flex-1 overflow-y-auto p-10 md:p-16 space-y-16 no-scrollbar text-left font-sans">
-            <!-- Intro Section -->
-            <div class="text-center space-y-4">
-              <div class="inline-flex px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-black uppercase tracking-widest">Guide Center</div>
-              <h2 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">루틴 파인더스 이용 가이드</h2>
-              <p class="text-slate-400 font-bold text-lg md:text-xl">성공적인 챌린지 운영과 참여를 위한 핵심 팁을 확인하세요.</p>
-            </div>
+        <div class="flex-1 overflow-y-auto p-10 md:p-16 space-y-16 no-scrollbar text-left font-sans">
+          <!-- Intro Section -->
+          <div class="text-center space-y-4">
+            <div class="inline-flex px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[11px] font-black uppercase tracking-widest">Guide Center</div>
+            <h2 class="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">루틴 파인더스 이용 가이드</h2>
+            <p class="text-slate-400 font-bold text-lg md:text-xl">성공적인 챌린지 운영과 참여를 위한 핵심 팁을 확인하세요.</p>
+          </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <!-- Hosting Guide -->
-              <div class="space-y-8 bg-indigo-50/50 p-10 rounded-[40px] border border-indigo-100 transition-all hover:bg-indigo-50">
-                <div class="flex items-center gap-4">
-                  <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-indigo-100/50">👑</div>
-                  <h3 class="text-2xl font-black text-slate-900">챌린지 개최 가이드</h3>
-                </div>
-                <ul class="space-y-6">
-                  <li class="flex gap-4">
-                    <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-indigo-600 shrink-0 border border-indigo-100 shadow-sm">1</span>
-                    <div class="space-y-1">
-                      <p class="font-black text-slate-900">상세한 인증 목표</p>
-                      <p class="text-xs font-bold text-slate-500 leading-relaxed">"운동하기" 보다는 "헬스장 입구 사진"처럼 구체적인 결과를 요구하세요.</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-4">
-                    <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-indigo-600 shrink-0 border border-indigo-100 shadow-sm">2</span>
-                    <div class="space-y-1">
-                      <p class="font-black text-slate-900">보증금으로 몰입도 UP</p>
-                      <p class="text-xs font-bold text-slate-500 leading-relaxed">단순 포인트보다는 만원 이상의 보증금이 참여율을 압도적으로 높입니다.</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-4">
-                    <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-indigo-600 shrink-0 border border-indigo-100 shadow-sm">3</span>
-                    <div class="space-y-1">
-                      <p class="font-black text-slate-900">데일리 소통과 응원</p>
-                      <p class="text-xs font-bold text-slate-500 leading-relaxed">호스트의 따뜻한 한마디가 완주까지 이어지는 가장 큰 힘이 됩니다.</p>
-                    </div>
-                  </li>
-                </ul>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- Hosting Guide -->
+            <div class="space-y-8 bg-indigo-50/50 p-10 rounded-[40px] border border-indigo-100 transition-all hover:bg-indigo-50">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-indigo-100/50">👑</div>
+                <h3 class="text-2xl font-black text-slate-900">챌린지 개최 가이드</h3>
               </div>
+              <ul class="space-y-6">
+                <li class="flex gap-4">
+                  <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-indigo-600 shrink-0 border border-indigo-100 shadow-sm">1</span>
+                  <div class="space-y-1">
+                    <p class="font-black text-slate-900">상세한 인증 목표</p>
+                    <p class="text-xs font-bold text-slate-500 leading-relaxed">"운동하기" 보다는 "헬스장 입구 사진"처럼 구체적인 결과를 요구하세요.</p>
+                  </div>
+                </li>
+                <li class="flex gap-4">
+                  <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-indigo-600 shrink-0 border border-indigo-100 shadow-sm">2</span>
+                  <div class="space-y-1">
+                    <p class="font-black text-slate-900">보증금으로 몰입도 UP</p>
+                    <p class="text-xs font-bold text-slate-500 leading-relaxed">단순 포인트보다는 만원 이상의 보증금이 참여율을 압도적으로 높입니다.</p>
+                  </div>
+                </li>
+                <li class="flex gap-4">
+                  <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-indigo-600 shrink-0 border border-indigo-100 shadow-sm">3</span>
+                  <div class="space-y-1">
+                    <p class="font-black text-slate-900">데일리 소통과 응원</p>
+                    <p class="text-xs font-bold text-slate-500 leading-relaxed">호스트의 따뜻한 한마디가 완주까지 이어지는 가장 큰 힘이 됩니다.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
 
-              <!-- Participating Guide -->
-              <div class="space-y-8 bg-orange-50/50 p-10 rounded-[40px] border border-orange-100 transition-all hover:bg-orange-50">
-                <div class="flex items-center gap-4">
-                  <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-orange-100/50">🏃‍♂️</div>
-                  <h3 class="text-2xl font-black text-slate-900">챌린지 참여 가이드</h3>
-                </div>
-                <ul class="space-y-6">
-                  <li class="flex gap-4">
-                    <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-orange-500 shrink-0 border border-orange-100 shadow-sm">1</span>
-                    <div class="space-y-1">
-                      <p class="font-black text-slate-900">인증 시간대 확인</p>
-                      <p class="text-xs font-bold text-slate-500 leading-relaxed">챌린지 상세페이지에서 인증 가능한 시간대를 꼭 미리 확인하세요.</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-4">
-                    <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-orange-500 shrink-0 border border-orange-100 shadow-sm">2</span>
-                    <div class="space-y-1">
-                      <p class="font-black text-slate-900">정직한 인증 사진</p>
-                      <p class="text-xs font-bold text-slate-500 leading-relaxed">부정한 방법으로 인증 시 패널티가 부여될 수 있으니 정직하게 참여해주세요.</p>
-                    </div>
-                  </li>
-                  <li class="flex gap-4">
-                    <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-orange-500 shrink-0 border border-orange-100 shadow-sm">3</span>
-                    <div class="space-y-1">
-                      <p class="font-black text-slate-900">함께 성장하는 커뮤니티</p>
-                      <p class="text-xs font-bold text-slate-500 leading-relaxed">다른 참가자들을 팔로우하고 서로의 기록에 박수를 보내며 함께 성장하세요.</p>
-                    </div>
-                  </li>
-                </ul>
+            <!-- Participating Guide -->
+            <div class="space-y-8 bg-orange-50/50 p-10 rounded-[40px] border border-orange-100 transition-all hover:bg-orange-50">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-orange-100/50">🏃‍♂️</div>
+                <h3 class="text-2xl font-black text-slate-900">챌린지 참여 가이드</h3>
               </div>
+              <ul class="space-y-6">
+                <li class="flex gap-4">
+                  <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-orange-500 shrink-0 border border-orange-100 shadow-sm">1</span>
+                  <div class="space-y-1">
+                    <p class="font-black text-slate-900">인증 시간대 확인</p>
+                    <p class="text-xs font-bold text-slate-500 leading-relaxed">챌린지 상세페이지에서 인증 가능한 시간대를 꼭 미리 확인하세요.</p>
+                  </div>
+                </li>
+                <li class="flex gap-4">
+                  <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-orange-500 shrink-0 border border-orange-100 shadow-sm">2</span>
+                  <div class="space-y-1">
+                    <p class="font-black text-slate-900">정직한 인증 사진</p>
+                    <p class="text-xs font-bold text-slate-500 leading-relaxed">부정한 방법으로 인증 시 패널티가 부여될 수 있으니 정직하게 참여해주세요.</p>
+                  </div>
+                </li>
+                <li class="flex gap-4">
+                  <span class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-xs font-black text-orange-500 shrink-0 border border-orange-100 shadow-sm">3</span>
+                  <div class="space-y-1">
+                    <p class="font-black text-slate-900">함께 성장하는 커뮤니티</p>
+                    <p class="text-xs font-bold text-slate-500 leading-relaxed">다른 참가자들을 팔로우하고 서로의 기록에 박수를 보내며 함께 성장하세요.</p>
+                  </div>
+                </li>
+              </ul>
             </div>
+          </div>
 
-            <div class="pt-10 border-t border-slate-100 flex flex-col items-center gap-6 pb-4">
-              <p class="text-slate-400 font-bold text-sm">루틴 파인더스는 당신의 모든 도전을 진심으로 응원합니다.</p>
-              <button type="button" data-action="click->modal#close" class="px-16 py-5 bg-indigo-600 text-white rounded-[24px] font-black text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-95">
-                안내 확인 완료
-              </button>
-            </div>
+          <div class="pt-10 border-t border-slate-100 flex flex-col items-center gap-6 pb-4">
+            <p class="text-slate-400 font-bold text-sm">루틴 파인더스는 당신의 모든 도전을 진심으로 응원합니다.</p>
+            <button type="button" data-action="click->modal#close" class="px-16 py-5 bg-indigo-600 text-white rounded-[24px] font-black text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 active:scale-95">
+              안내 확인 완료
+            </button>
           </div>
         </div>
       </div>
     </div>
-  <% end %>
+  </div>
 
-  <% if @is_search_mode %>
-    <div class="mb-8 px-4 space-y-2 pt-4">
-       <div class="flex items-center gap-3">
-         <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl shadow-sm shadow-indigo-100/50">🔍</div>
-         <div class="space-y-0.5">
-           <h1 class="text-xl md:text-4xl font-black text-slate-900 tracking-tight">
-             <% if @title.present? %>
-               <%= @title %>
-             <% elsif params[:mode] == 'all' %>
-               Explore Challenges
-             <% else %>
-               Search Results
-             <% end %>
-           </h1>
-           <p class="text-[10px] md:text-base font-bold text-slate-400">
-             <%= @description.present? ? @description : "나에게 딱 맞는 습관을 찾아보세요." %>
-           </p>
-         </div>
-       </div>
-    </div>
-  <% end %>
 
-  <% if @is_search_mode %>
-    <!-- Filters (Sticky) -->
-    <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-xl p-2 md:p-4 rounded-2xl md:rounded-threads-lg border border-white/50 shadow-lg shadow-slate-200/50 mb-8 md:mb-12 transition-all flex flex-col md:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0 w-full md:w-auto px-1">
+
+  <!-- Filters (Sticky) -->
+  <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-xl p-2 md:p-4 rounded-2xl md:rounded-threads-lg border border-white/50 shadow-lg shadow-slate-200/50 mb-8 md:mb-12 transition-all flex flex-col md:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0 w-full md:w-auto px-1">
+       <% 
+          current_status = params[:status].to_s 
+          status_options = [['전체', ''], ['모집중', 'recruiting'], ['진행중', 'active']]
+       %>
+       <% status_options.each do |label, value| %>
+         <%= link_to label, challenges_path(request.query_parameters.merge(status: value)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}" %>
+       <% end %>
+       <div class="shrink-0 w-px h-3 bg-slate-300 mx-1"></div>
+       <% current_category = params[:category] %>
+       <% %w[건강 학습 브랜딩 재테크 라이프 성찰].each do |cat_label| %>
          <% 
-            current_status = params[:status].to_s 
-            status_options = [['전체', ''], ['모집중', 'recruiting'], ['진행중', 'active']]
+            full_cat = %w[건강·운동 학습·자기계발 SNS·브랜딩 재테크·부업 취미·라이프 멘탈·성찰].find { |c| c.include?(cat_label) }
+            target_cat = (current_category == full_cat ? nil : full_cat) 
          %>
-         <% status_options.each do |label, value| %>
-           <%= link_to label, challenges_path(request.query_parameters.merge(status: value)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'}" %>
-         <% end %>
-         <div class="shrink-0 w-px h-3 bg-slate-300 mx-1"></div>
-         <% current_category = params[:category] %>
-         <% %w[건강 학습 브랜딩 재테크 라이프 성찰].each do |cat_label| %>
-           <% 
-              full_cat = %w[건강·운동 학습·자기계발 SNS·브랜딩 재테크·부업 취미·라이프 멘탈·성찰].find { |c| c.include?(cat_label) }
-              target_cat = (current_category == full_cat ? nil : full_cat) 
-           %>
-           <%= link_to cat_label, challenges_path(request.query_parameters.merge(category: target_cat)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border #{current_category == full_cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-200 hover:text-indigo-600'}" %>
-         <% end %>
-      </div>
-
-      <div class="flex items-center gap-2 shrink-0 md:block hidden">
-        <%= link_to new_challenge_path, class: "px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-xs hover:bg-indigo-700 transition-all shadow-md flex items-center gap-2" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-          챌린지 만들기
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
-  <% unless @is_search_mode %>
-    <!-- Section: 루파 Pick -->
-    <div class="mb-12 space-y-6" data-controller="scroll-nav">
-      <div class="flex items-end justify-between px-2">
-         <div class="space-y-1">
-           <h2 class="text-2xl font-black text-slate-900 flex items-center gap-2">
-             <span class="text-indigo-600 text-xl">👑</span>
-             루파 Pick
-           </h2>
-           <p class="text-xs font-bold text-slate-400 ml-8">운영진이 강력 추천하는 챌린지</p>
-         </div>
-         <div class="hidden md:flex gap-2">
-           <button data-action="click->scroll-nav#scrollLeft" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-           </button>
-           <button data-action="click->scroll-nav#scrollRight" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-           </button>
-         </div>
-      </div>
-      
-      <!-- Scroll Container (Large) -->
-      <div class="flex overflow-x-auto pb-8 -mx-4 hide-scrollbar snap-x scroll-smooth" data-scroll-nav-target="container">
-        <div class="shrink-0 w-8"></div> 
-        <div class="flex gap-6">
-        <% @featured_challenges.each do |challenge| %>
-           <% sl = challenge.status_label %>
-           <% theme_border = challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
-           <% is_host = current_user && challenge.host_id == current_user.id %>
-           <% is_joined = @joined_challenge_ids&.include?(challenge.id) %>
-
-           <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-[32px] overflow-hidden border-2 #{theme_border} shadow-lg shadow-opacity-10 group transition-all duration-300 relative flex flex-col" do %>
-             <div class="relative aspect-[4/3] overflow-hidden">
-               <img src="<%= challenge.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
-               <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                  <span class="px-2.5 py-1.5 rounded-lg text-[10px] font-black uppercase <%= sl[:class].gsub('shadow-lg', '').gsub(/shadow-\w+-\d+\/\d+/, '') %>"><%= sl[:text] %></span>
-                  <% if is_host %>
-                    <span class="bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">HOST</span>
-                  <% elsif is_joined %>
-                    <span class="bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">JOINED</span>
-                  <% end %>
-               </div>
-               <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-black text-slate-900 border border-white/50">
-                  <%= challenge.category %>
-               </div>
-             </div>
-             <div class="p-6 space-y-4 flex flex-col flex-1 text-left">
-               <div class="space-y-1">
-                 <h4 class="font-black text-slate-900 text-lg leading-tight line-clamp-2 group-hover:text-indigo-600 transition-colors"><%= challenge.title %></h4>
-                 <p class="text-xs text-slate-500 line-clamp-1" title="<%= challenge.summary %>"><%= challenge.summary %></p>
-               </div>
-               <div class="space-y-3 mt-auto">
-                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-black text-indigo-600"><%= challenge.cost_display_text %></span>
-                    <% if challenge.recruitment_d_day.present? %>
-                      <span class="text-[10px] font-black text-rose-500">D-<%= challenge.recruitment_d_day %> 마감</span>
-                    <% end %>
-                 </div>
-                 <div class="pt-3 border-t border-slate-100">
-                    <span class="text-xs font-bold text-slate-400"><%= challenge.current_participants %>명 도전 중</span>
-                 </div>
-               </div>
-             </div>
-           <% end %>
-        <% end %>
-        </div>
-        <div class="shrink-0 w-6"></div> <!-- End spacer -->
-      </div>
+         <%= link_to cat_label, challenges_path(request.query_parameters.merge(category: target_cat)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border #{current_category == full_cat ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20' : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-200 hover:text-indigo-600'}" %>
+       <% end %>
     </div>
 
-    <!-- Section: Hot Trending -->
-    <div class="mb-12 space-y-5" data-controller="scroll-nav">
-      <div class="flex items-end justify-between px-2">
-         <div class="space-y-0.5">
-           <h2 class="text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
-             <span class="text-orange-500 text-lg md:text-xl">🔥</span>
-             Hot Trending
-           </h2>
-           <p class="text-[10px] md:text-xs font-bold text-slate-400 ml-7 md:ml-8 leading-tight">참여자가 급증하고 있는 인기 챌린지</p>
-         </div>
-         <div class="hidden md:flex gap-2">
-           <button data-action="click->scroll-nav#scrollLeft" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-           </button>
-           <button data-action="click->scroll-nav#scrollRight" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-colors">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-           </button>
-         </div>
-      </div>
-      
-      <!-- Scroll Container -->
-      <!-- Scroll Container (Large) -->
-      <div class="flex overflow-x-auto pb-8 -mx-4 hide-scrollbar snap-x scroll-smooth" data-scroll-nav-target="container">
-        <div class="shrink-0 w-8"></div> <!-- Spacer for 32px alignment -->
-        <div class="flex gap-6">
-         <% @hot_challenges.each_with_index do |challenge, i| %>
-            <% sl = challenge.status_label %>
-            <% theme_border = challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
-            <% is_host = current_user && challenge.host_id == current_user.id %>
-            <% is_joined = @joined_challenge_ids&.include?(challenge.id) %>
-
-            <%= link_to challenge_path(challenge), class: "snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-[32px] overflow-hidden border-2 #{theme_border} shadow-lg shadow-opacity-10 group hover:-translate-y-2 transition-all duration-300 flex flex-col" do %>
-              <div class="relative aspect-[4/3] overflow-hidden">
-                <img src="<%= challenge.thumbnail_url %>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="">
-                <div class="absolute top-4 left-4 flex flex-wrap gap-2">
-                  <span class="flex items-center justify-center w-8 h-8 rounded-full bg-orange-500 text-white text-sm font-black shadow-lg border-2 border-white"><%= i + 1 %></span>
-                  <span class="px-2.5 py-1.5 rounded-lg text-[10px] font-black uppercase <%= sl[:class] %>"><%= sl[:text] %></span>
-                  <% if is_host %>
-                    <span class="bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">HOST</span>
-                  <% elsif is_joined %>
-                    <span class="bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-black border border-white/20 shadow-md">JOINED</span>
-                  <% end %>
-                </div>
-                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-black text-slate-900 border border-white/50">
-                   <%= challenge.category %>
-                </div>
-              </div>
-              <div class="p-6 space-y-4 flex flex-col flex-1">
-                 <div class="space-y-1">
-                   <h4 class="font-black text-slate-900 text-lg leading-tight line-clamp-2 group-hover:text-indigo-600 transition-colors"><%= challenge.title %></h4>
-                   <p class="text-xs text-slate-500 line-clamp-1" title="<%= challenge.summary %>"><%= challenge.summary %></p>
-                 </div>
-                 <div class="space-y-3 mt-auto">
-                   <div class="flex items-center justify-between">
-                      <span class="text-xs font-black text-indigo-600"><%= challenge.cost_display_text %></span>
-                      <% if challenge.recruitment_d_day.present? %>
-                        <span class="text-[10px] font-black text-rose-500">D-<%= challenge.recruitment_d_day %> 마감</span>
-                      <% end %>
-                   </div>
-                   <div class="pt-3 border-t border-slate-100">
-                      <span class="text-xs font-bold text-slate-400"><%= challenge.current_participants %>명 참여 중</span>
-                   </div>
-                 </div>
-              </div>
-            <% end %>
-         <% end %>
-         <!-- More Card -->
-         <div class="snap-start shrink-0 w-[200px] flex items-center justify-center">
-            <%= link_to challenges_path(mode: 'all'), class: "w-16 h-16 rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-all flex items-center justify-center" do %>
-               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            <% end %>
-          </div>
-        </div>
-        <div class="shrink-0 w-6"></div> <!-- End spacer -->
-      </div>
-    </div>
-
-    <!-- Ad Banner -->
-    <div class="mb-16 rounded-threads-lg overflow-hidden bg-slate-900 text-white relative group cursor-pointer shadow-xl shadow-slate-200">
-       <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-40 group-hover:scale-105 transition-transform duration-700"></div>
-       <div class="relative z-10 p-8 md:p-10 flex flex-col items-center justify-center text-center space-y-3">
-          <span class="bg-indigo-500/80 backdrop-blur px-2.5 py-0.5 rounded text-[10px] font-black uppercase">Event</span>
-          <h3 class="text-2xl md:text-3xl font-black">올해 목표 달성을 위한 특별한 제안</h3>
-          <p class="text-slate-300 font-medium text-sm">프리미엄 멤버십으로 2배 더 확실하게 관리받으세요.</p>
-       </div>
-    </div>
-  <% end %>
-
-  <!-- Section: All Challenges Grid -->
-  <div class="space-y-8" id="all-challenges">
-    <% unless @is_search_mode %>
-      <div class="flex items-end justify-between px-2">
-         <div class="space-y-2">
-           <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
-             <span class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl">🔍</span>
-             All Challenges
-           </h2>
-           <p class="text-sm font-bold text-slate-400 ml-14">나에게 딱 맞는 챌린지를 찾아보세요.</p>
-         </div>
-         
-         <%= link_to challenges_path(mode: 'all'), class: "mb-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all flex items-center gap-2" do %>
-           전체보기
-           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-         <% end %>
-      </div>
+    <%= link_to new_challenge_path, class: "hidden md:flex px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-xs hover:bg-indigo-700 transition-all shadow-md items-center gap-2" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+      챌린지 만들기
     <% end %>
+  </div>
 
+  <!-- Content Grid -->
+  <div class="space-y-8" id="all-challenges">
     <% if @challenges.empty? %>
       <div class="py-20 text-center space-y-4 bg-slate-50 rounded-threads-xl border border-dashed border-slate-200 mx-2">
-        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-3xl">
-          <%= @is_search_mode ? "🧐" : "✨" %>
-        </div>
+        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-3xl">🧐</div>
         <div class="space-y-1">
-          <% if @is_search_mode %>
-            <p class="text-xl font-black text-slate-900">조건에 맞는 챌린지가 없습니다.</p>
-            <p class="text-sm font-bold text-slate-400">필터를 변경하여 다른 챌린지를 찾아보세요.</p>
-          <% else %>
-            <p class="text-xl font-black text-slate-900">아직 등록된 챌린지가 없습니다.</p>
-            <p class="text-sm font-bold text-slate-400">가장 먼저 챌린지를 개설하고 사람들을 모아보세요!</p>
-          <% end %>
+          <p class="text-xl font-black text-slate-900">조건에 맞는 챌린지가 없습니다.</p>
+          <p class="text-sm font-bold text-slate-400">필터를 변경하여 다른 챌린지를 찾아보세요.</p>
         </div>
-        <% unless @is_search_mode %>
-          <div class="pt-4">
-             <%= link_to new_challenge_path, class: "inline-block px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200" do %>
-               첫 챌린지 만들기
-             <% end %>
-          </div>
-        <% end %>
       </div>
     <% else %>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-2 text-left">
@@ -414,7 +197,9 @@
                 <% elsif is_joined %>
                   <span class="bg-emerald-500 text-white px-2 py-1 rounded-lg text-[8px] font-black border border-white/20 shadow-md">JOINED</span>
                 <% end %>
-                <span class="bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[8px] font-black uppercase text-slate-900 border border-white/50 shadow-sm"><%= challenge.category.split('·').first %></span>
+                <% if challenge.category.present? %>
+                  <span class="bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg text-[8px] font-black uppercase text-slate-900 border border-white/50 shadow-sm"><%= challenge.category.split('·').first %></span>
+                <% end %>
               </div>
             </div>
             <div class="p-3.5 md:p-4 space-y-1.5 flex flex-col flex-1">
@@ -439,5 +224,4 @@
       </div>
     <% end %>
   </div>
-
-
+</div>

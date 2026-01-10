@@ -54,3 +54,6 @@ application.register("pwa-banner", PwaBannerController)
 
 import DropdownController from "controllers/dropdown_controller"
 application.register("dropdown", DropdownController)
+
+import AuthToggleController from "controllers/auth_toggle_controller"
+application.register("auth-toggle", AuthToggleController)

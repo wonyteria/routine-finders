@@ -10,14 +10,13 @@
         <div class="space-y-4">
           <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
             <span class="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-white/20">Gatherings</span>
-            <span class="inline-block px-3 py-1 rounded-full bg-amber-400 text-slate-900 text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.5)]">루파 클럽 전용</span>
           </div>
           <h1 class="text-3xl md:text-6xl font-black leading-tight tracking-tight">
             함께 모여<br class="md:hidden">
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-white">더 큰 시너지를</span>
           </h1>
           <p class="text-sm md:text-xl font-medium text-orange-100/80 leading-relaxed break-keep">
-            온라인부터 루파 클럽 전용 오프라인 모임까지,<br>
+            온라인부터 오프라인 모임까지,<br>
             관심사가 같은 사람들과 함께하세요.
           </p>
         </div>
@@ -50,36 +49,36 @@
     <div class="bg-white/90 backdrop-blur-xl p-3 md:p-4 rounded-[24px] md:rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="w-full flex flex-col gap-3 overflow-hidden">
         <!-- Row 1: Types & Status -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div class="flex items-center gap-2 md:gap-4 overflow-x-auto no-scrollbar pb-1">
           <% 
             current_location = params[:location_type].to_s
             location_options = [['전체', ''], ['온라인', 'online'], ['오프라인', 'offline']]
           %>
-          <div class="flex p-1 bg-slate-100 rounded-xl shrink-0">
+          <div class="flex p-1 bg-slate-100 rounded-xl md:rounded-[18px] shrink-0">
             <% location_options.each do |label, value| %>
-              <%= link_to label, gatherings_path(request.query_parameters.merge(location_type: value)), class: "px-3 py-1.5 rounded-lg text-[10px] font-black transition-all #{current_location == value ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}" %>
+              <%= link_to label, gatherings_path(request.query_parameters.merge(location_type: value)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all #{current_location == value ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}" %>
             <% end %>
           </div>
 
-          <div class="w-px h-4 bg-slate-200 shrink-0"></div>
+          <div class="w-px h-4 md:h-6 bg-slate-200 shrink-0"></div>
 
           <% 
             current_status = params[:status].to_s
             status_options = [['전체', ''], ['모집중', 'recruiting'], ['예정', 'upcoming'], ['종료', 'ended']]
           %>
-          <div class="flex gap-1 shrink-0">
+          <div class="flex gap-1 md:gap-2 shrink-0">
             <% status_options.each do |label, value| %>
-              <%= link_to label, gatherings_path(request.query_parameters.merge(status: value)), class: "px-3 py-2 rounded-xl text-[10px] font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-sm' : 'bg-white text-slate-500 border-slate-200'}" %>
+              <%= link_to label, gatherings_path(request.query_parameters.merge(status: value)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border #{current_status == value ? 'bg-slate-900 text-white border-slate-900 shadow-sm' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'}" %>
             <% end %>
           </div>
         </div>
 
         <!-- Row 2: Categories -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div class="flex items-center gap-2 md:gap-3 overflow-x-auto no-scrollbar pb-1">
           <% current_category = params[:category] %>
           <% %w[건강·운동 학습·자기계발 재테크·부업 취미·라이프 네트워킹].each do |cat| %>
             <% target_cat = (current_category == cat ? nil : cat) %>
-            <%= link_to cat, gatherings_path(request.query_parameters.merge(category: target_cat)), class: "whitespace-nowrap px-4 py-2 rounded-xl text-[10px] font-black transition-all border shrink-0 #{current_category == cat ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'bg-white text-slate-500 border-slate-200'}" %>
+            <%= link_to cat, gatherings_path(request.query_parameters.merge(category: target_cat)), class: "whitespace-nowrap px-3 py-2 rounded-lg text-[10px] md:text-xs font-black transition-all border shrink-0 #{current_category == cat ? 'bg-orange-600 text-white border-orange-600 shadow-sm' : 'bg-white text-slate-500 border-slate-200 hover:border-orange-200 hover:text-orange-600'}" %>
           <% end %>
         </div>
       </div>
@@ -102,21 +101,11 @@
   </div>
   
   <div class="mb-12">
-    <%= render "shared/rufa_member_status" %>
     <%= render "shared/rufa_club_nudge" %>
   </div>
 
   <!-- Gatherings Grid -->
   <div class="space-y-8">
-    <div class="flex items-end justify-between px-2">
-      <div class="space-y-2">
-        <h2 class="text-3xl font-black text-slate-900 flex items-center gap-3">
-          <span class="w-10 h-10 rounded-2xl bg-orange-50 flex items-center justify-center text-xl">🎯</span>
-          <%= @title %>
-        </h2>
-        <p class="text-sm font-bold text-slate-400 ml-14"><%= @description %></p>
-      </div>
-    </div>
 
     <% if @gatherings.empty? %>
       <div class="py-20 text-center space-y-4 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
@@ -149,8 +138,8 @@
                 <% elsif is_joined %>
                   <span class="bg-emerald-500 text-white px-2 py-1 rounded-lg text-[9px] font-black border border-white/20 shadow-md">JOINED</span>
                 <% end %>
-                <% if gathering.meeting_info.present? %>
-                  <span class="bg-amber-400 text-slate-900 px-2 py-1 rounded-lg text-[9px] font-black uppercase shadow-sm">루파 클럽</span>
+                <% if gathering.offline? %>
+                  <span class="bg-amber-400 text-slate-900 px-2 py-1 rounded-lg text-[9px] font-black uppercase shadow-sm">오프라인</span>
                 <% end %>
                 <% if gathering.online_meeting_link.present? %>
                   <span class="bg-blue-600 text-white px-2 py-1 rounded-lg text-[9px] font-black uppercase shadow-sm">온라인</span>

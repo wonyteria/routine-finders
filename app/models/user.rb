@@ -209,18 +209,23 @@ class User < ApplicationRecord
   # Rufa Club Standards
   def is_rufa_club_member?
     return true if admin?
-    routine_club_members.where(status: :active, payment_status: :confirmed).exists?
+    routine_club_members.where(status: [:active, :warned], payment_status: :confirmed).exists?
+  end
+
+  def exclude_rufa_promotions?
+    return true if admin?
+    routine_club_members.where(status: [:active, :warned], payment_status: [:confirmed, :pending]).exists?
   end
 
   def has_active_rufa_membership?
     return true if admin?
-    routine_club_members.where(status: :active, payment_status: :confirmed)
+    routine_club_members.where(status: [:active, :warned], payment_status: :confirmed)
                        .where("membership_start_date <= ?", Date.current)
                        .exists?
   end
 
   def pending_rufa_membership
-    routine_club_members.where(status: :active, payment_status: :confirmed)
+    routine_club_members.where(status: [:active, :warned], payment_status: :confirmed)
                        .where("membership_start_date > ?", Date.current)
                        .order(membership_start_date: :asc)
                        .first

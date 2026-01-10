@@ -154,7 +154,7 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def can_participate?
-    payment_status_confirmed? && status_active? && Date.current >= membership_start_date
+    payment_status_confirmed? && (status_active? || status_warned?) && Date.current >= membership_start_date
   end
 
   private
