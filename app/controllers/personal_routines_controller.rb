@@ -163,34 +163,27 @@ class PersonalRoutinesController < ApplicationController
 
     if @routine.save
       @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
-      @selected_date = Date.current
+      @selected_date = params[:date] || Date.current
       set_activity_data
       set_recommended_routines
       respond_to do |format|
-        format.html { redirect_to personal_routines_path, notice: "루틴이 추가되었습니다!" }
+        format.html { redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 추가되었습니다!" }
         format.turbo_stream
       end
     else
-      redirect_to personal_routines_path, alert: "루틴 추가에 실패했습니다."
+      redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), alert: "루틴 추가에 실패했습니다."
     end
   end
 
   def edit
-    if params[:date] && Date.parse(params[:date]) != Date.current
-      redirect_to personal_routines_path, alert: "루틴 수정은 오늘 날짜에서만 가능합니다."
-    end
+    # Allow editing regardless of date
   end
 
   def update
-    target_date = params[:date] ? Date.parse(params[:date]) : Date.current
-    if target_date != Date.current
-      return redirect_to personal_routines_path, alert: "루틴 수정은 오늘 날짜에서만 가능합니다."
-    end
-
     if @routine.update(routine_params)
       respond_to do |format|
         set_recommended_routines
-        format.html { redirect_to personal_routines_path, notice: "루틴이 수정되었습니다!" }
+        format.html { redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 수정되었습니다!" }
         format.turbo_stream
       end
     else
@@ -229,14 +222,22 @@ class PersonalRoutinesController < ApplicationController
     if current_user.is_rufa_club_member?
       current_user.routine_club_members.active.each do |m|
         attendance = m.attendances.find_or_initialize_by(attendance_date: target_date, routine_club: m.routine_club)
+        achievement_rate = current_user.daily_achievement_rate(target_date)
 
-        # 1. 자동 기록: 오늘 날짜이고 모든 루틴을 완료했을 경우
-        if target_date == Date.current && current_user.all_routines_completed?(target_date) && !attendance.status_present?
-          attendance.update(status: :present, achievement_rate: 100.0, proof_text: "오늘의 루틴을 모두 완료했습니다! (자동 기록)")
+        # 1. 출석 상태 업데이트: 성취도가 0보다 크면 'present'로 표시 (실시간 반영)
+        if achievement_rate > 0
+          attendance.status = :present
+          attendance.achievement_rate = achievement_rate
+
+          # 100% 첫 달성 시 자동 기록 문구 추가
+          if achievement_rate >= 100.0 && !attendance.proof_text.present?
+            attendance.proof_text = "오늘의 루틴을 모두 완료했습니다! (자동 기록)"
+          end
+          attendance.save!
         else
-          # 2. 통계 업데이트: 이미 기록이 있는 경우 달성률 최신화
+          # 모두 해제했을 경우 기록이 있으면 달성률 0으로 업데이트하고 상태를 absent로 변경하여 통계에서 제외
           if attendance.persisted?
-            attendance.update(achievement_rate: current_user.daily_achievement_rate(target_date))
+            attendance.update(achievement_rate: 0, status: :absent)
           end
         end
 
@@ -244,10 +245,11 @@ class PersonalRoutinesController < ApplicationController
         m.update_achievement_stats!
         m.recalculate_growth_points!
       end
+      @my_membership&.reload
     end
 
     respond_to do |format|
-      format.html { redirect_back fallback_location: personal_routines_path(date: @selected_date) }
+      format.html { redirect_back fallback_location: personal_routines_path(date: @selected_date, tab: params[:tab]) }
       format.turbo_stream
     end
   end
@@ -277,14 +279,14 @@ class PersonalRoutinesController < ApplicationController
     @routine.update(deleted_at: Time.current)
     set_activity_data
     set_recommended_routines
-    @selected_date = Date.current
+    @selected_date = params[:date] ? Date.parse(params[:date]) : Date.current
     @personal_routines = current_user.personal_routines.includes(:completions)
                                      .where("created_at <= ?", @selected_date.end_of_day)
                                      .where(deleted_at: nil)
                                      .order(created_at: :desc)
 
     respond_to do |format|
-      format.html { redirect_to personal_routines_path, notice: "루틴이 삭제되었습니다." }
+      format.html { redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 삭제되었습니다." }
       format.turbo_stream
     end
   end

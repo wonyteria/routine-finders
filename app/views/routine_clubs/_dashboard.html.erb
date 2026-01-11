@@ -11,7 +11,7 @@
 <!-- START: Dashboard White Box Container (opened at line 11) -->
 <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
   
-  <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+  <div id="rufa-club-stats-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
     <!-- 성장 에너지 -->
     <div class="bg-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
       <p class="text-[10px] md:text-xs font-black text-indigo-300 uppercase tracking-wider mb-1 md:mb-2">성장 에너지</p>
@@ -187,6 +187,10 @@
         <%= render 'shared/achievement_matrix', compact: false %>
       </div>
 
+      <!-- 오늘의 기록 (Daily Progress Record) -->
+      <div id="rufa-daily-record" class="flex flex-col w-full">
+        <%= render 'routine_clubs/daily_record_area' %>
+      </div>
     </div>
 
     <!-- RIGHT COLUMN: Gatherings -> Recent Activity Feed -->

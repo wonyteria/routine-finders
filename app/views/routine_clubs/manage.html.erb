@@ -757,6 +757,11 @@
       content.classList.add('hidden');
     });
     document.getElementById('manage-content-' + tab).classList.remove('hidden');
+
+    // Update URL
+    const url = new URL(window.location);
+    url.searchParams.set('tab', tab);
+    window.history.replaceState({}, '', url);
   }
 
   function switchPerfMode(mode) {

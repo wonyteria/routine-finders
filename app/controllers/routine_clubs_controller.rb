@@ -226,7 +226,7 @@ class RoutineClubsController < ApplicationController
   end
 
   def confirm_payment
-    return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
 
     member = @routine_club.members.find(params[:member_id])
     member.confirm_payment!
@@ -235,7 +235,7 @@ class RoutineClubsController < ApplicationController
   end
 
   def reject_payment
-    return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
 
     member = @routine_club.members.find(params[:member_id])
     member.reject_payment!(params[:reason])
@@ -244,7 +244,7 @@ class RoutineClubsController < ApplicationController
   end
 
   def kick_member
-    return redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host_id == current_user.id
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
 
     member = @routine_club.members.find(params[:member_id])
     member.kick!(params[:reason])
@@ -307,9 +307,9 @@ class RoutineClubsController < ApplicationController
         link: personal_routines_path(tab: "club")
       )
 
-      redirect_to manage_routine_club_path(@routine_club), notice: "#{recipient.nickname}님에게 메시지를 전송했습니다."
+      redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), notice: "#{recipient.nickname}님에게 메시지를 전송했습니다."
     else
-      redirect_to manage_routine_club_path(@routine_club), alert: "메시지 내용을 입력해주세요."
+      redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), alert: "메시지 내용을 입력해주세요."
     end
   end
 

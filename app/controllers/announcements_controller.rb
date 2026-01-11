@@ -30,9 +30,9 @@ class AnnouncementsController < ApplicationController
 
   def require_host
     if @parent.is_a?(RoutineClub)
-      redirect_to @parent, alert: "권한이 없습니다." unless @parent.host == current_user
+      redirect_to @parent, alert: "권한이 없습니다." unless @parent.host == current_user || current_user.admin?
     elsif @parent.is_a?(Challenge)
-      redirect_to @parent, alert: "권한이 없습니다." unless @parent.host == current_user
+      redirect_to @parent, alert: "권한이 없습니다." unless @parent.host == current_user || current_user.admin?
     end
   end
 

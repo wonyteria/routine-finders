@@ -6,16 +6,16 @@ class RoutineClubGatheringsController < ApplicationController
   def create
     @gathering = @routine_club.gatherings.build(gathering_params)
     if @gathering.save
-      redirect_to manage_routine_club_path(@routine_club), notice: "모임이 생성되었습니다."
+      redirect_back fallback_location: manage_routine_club_path(@routine_club, tab: "community"), notice: "모임이 생성되었습니다."
     else
-      redirect_to manage_routine_club_path(@routine_club), alert: "모임 생성에 실패했습니다."
+      redirect_back fallback_location: manage_routine_club_path(@routine_club, tab: "community"), alert: "모임 생성에 실패했습니다."
     end
   end
 
   def destroy
     @gathering = @routine_club.gatherings.find(params[:id])
     @gathering.destroy
-    redirect_to manage_routine_club_path(@routine_club), notice: "모임이 삭제되었습니다."
+    redirect_back fallback_location: manage_routine_club_path(@routine_club, tab: "community"), notice: "모임이 삭제되었습니다."
   end
 
   private
@@ -25,7 +25,7 @@ class RoutineClubGatheringsController < ApplicationController
   end
 
   def require_host
-    redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host == current_user
+    redirect_to @routine_club, alert: "권한이 없습니다." unless @routine_club.host == current_user || current_user.admin?
   end
 
   def gathering_params

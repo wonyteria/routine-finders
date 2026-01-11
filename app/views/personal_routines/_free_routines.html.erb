@@ -45,7 +45,7 @@
              # Count only routines scheduled for the selected day
              scheduled_count = @personal_routines.select { |r| (r.days || []).include?(current_date.wday.to_s) }.count 
            %>
-           <span class="px-2.5 py-1 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-wider" title="선택된 날짜에 수행해야 할 루틴의 총 개수입니다."><%= scheduled_count %> Active</span>
+           <span id="total-active-count" class="px-2.5 py-1 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-wider" title="선택된 날짜에 수행해야 할 루틴의 총 개수입니다."><%= scheduled_count %> Active</span>
         </div>
       </div>
       

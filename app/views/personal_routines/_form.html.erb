@@ -1,4 +1,6 @@
 <%= form_with model: routine, url: personal_routines_path, method: :post, id: "new_personal_routine", class: "relative z-10 space-y-5" do |f| %>
+  <%= hidden_field_tag :date, params[:date] %>
+  <%= hidden_field_tag :tab, params[:tab] %>
   <div class="space-y-4">
     <%= f.text_field :title, placeholder: "어떤 루틴인가요?", required: true, class: "w-full px-5 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-black text-sm focus:ring-4 ring-white/10 border-none transition-all" %>
     
