@@ -149,7 +149,7 @@
     </section>
 
   <% elsif current_user.has_active_rufa_membership? || current_user.admin? %>
-    <!-- Premium Member Dashboard Framework -->
+    <!-- START: Premium Member Dashboard Framework (opened at line 153) -->
     <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 bg-slate-50/80 backdrop-blur-sm rounded-[42px] p-3 lg:p-6 border border-slate-200/60 min-h-[750px]" id="rufa-premium-board">
       <% if current_user.admin? && !current_user.is_rufa_club_member? %>
         <div class="fixed bottom-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full z-50 text-xs font-bold shadow-lg">
@@ -220,12 +220,13 @@
                   <span class="text-[10px] lg:text-xs font-black">클럽 단톡방 합류</span>
                 </div>
                 <svg class="w-3 h-3 lg:w-4 lg:h-4 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+                <svg class="w-3 h-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
             <% end %>
           </div>
         </div>
       </aside>
 
-      <!-- Sub-tab Content Area -->
+      <!-- START: Sub-tab Content Area (main tag opened at line 229) -->
       <main class="flex-1 min-w-0 lg:pl-4">
         
         <!-- 0. Club Dashboard Tab (NEW) -->
@@ -809,8 +810,8 @@
          </div>
 
          <!-- Mobile Quick Stats Removed (Moved to top sidebar) -->
-      </main>
-    </div>
+       </main> <!-- END: Sub-tab Content Area (closes line 229) -->
+     </div> <!-- END: Premium Member Dashboard Framework (closes line 153) -->
   <% else %>
     <!-- Member Dashboard -->
     <%= render 'routine_clubs/dashboard' %>

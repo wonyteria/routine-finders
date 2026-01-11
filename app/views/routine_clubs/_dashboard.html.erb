@@ -8,6 +8,7 @@
     </div>
   </div>
 <% else %>
+<!-- START: Dashboard White Box Container (opened at line 11) -->
 <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
   
   <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
@@ -724,8 +725,10 @@
         <% end %>
       </div>
     </div>
-  </div>
+  </div> <!-- END: Weekly Reports Section -->
+  </div> <!-- END: Dashboard White Box Container (closes line 11) -->
 
+<!-- START: Global Scripts (outside white box) -->
 <script>
   function openAnnouncementModal() {
     const modal = document.getElementById('announcementModal');
@@ -1066,5 +1069,6 @@
     }
   }
 </script>
-</div>
+<!-- END: Global Scripts -->
+</div> <!-- END: else block (closes line 10) -->
 <% end %>
