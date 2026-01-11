@@ -301,33 +301,33 @@
               <!-- Integrated Stats Grid for Mobile -->
               <div class="grid grid-cols-4 lg:grid-cols-1 gap-2 md:gap-3">
                  <!-- Achievement Rate (2 cols on mobile) -->
-                 <div class="col-span-2 lg:col-span-1 bg-slate-900 rounded-[20px] md:rounded-3xl p-3 md:p-5 text-white shadow-lg relative overflow-hidden group">
+                 <div class="col-span-2 lg:col-span-1 bg-slate-900 rounded-[20px] md:rounded-3xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden group">
                    <div class="absolute -right-4 -top-4 w-12 h-12 bg-indigo-600/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-                   <p class="text-[7px] md:text-[9px] font-bold text-indigo-300 uppercase tracking-[0.15em] mb-1 md:mb-3">Achievement</p>
+                   <p class="text-[10px] md:text-sm font-black text-indigo-300 uppercase tracking-[0.15em] mb-2 md:mb-4">현재 달성률</p>
                    <div class="flex items-baseline gap-1">
-                     <p class="text-xl md:text-4xl font-black tracking-tighter tabular-nums"><%= @current_achievement_rate.to_i %></p>
-                     <p class="text-[10px] md:text-sm font-bold text-indigo-400 font-mono">%</p>
+                     <p class="text-2xl md:text-5xl font-black tracking-tighter tabular-nums"><%= @current_achievement_rate.to_i %></p>
+                     <p class="text-xs md:text-base font-bold text-indigo-400 font-mono">%</p>
                    </div>
-                   <div class="mt-2 md:mt-4 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                   <div class="mt-3 md:mt-5 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
                       <div class="h-full bg-indigo-400 transition-all duration-1000" style="width: <%= @current_achievement_rate.to_i %>%"></div>
                    </div>
                  </div>
     
                  <!-- Reward Points (1 col on mobile) -->
-                 <div class="col-span-1 bg-white rounded-[20px] md:rounded-3xl p-3 md:p-5 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
-                   <p class="text-[7px] md:text-[9px] font-bold text-amber-500 uppercase tracking-[0.15em] mb-1 md:mb-3 truncate">Points</p>
-                   <div class="flex items-baseline gap-0.5">
-                     <p class="text-xl md:text-3xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @my_official_membership&.growth_points || 0 %></p>
-                     <p class="text-[9px] md:text-xs font-bold text-slate-300 font-mono">P</p>
+                 <div class="col-span-1 bg-white rounded-[20px] md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
+                   <p class="text-[10px] md:text-sm font-black text-amber-500 uppercase tracking-[0.15em] mb-2 md:mb-4 truncate">성장 에너지</p>
+                   <div class="flex items-baseline gap-1">
+                     <p class="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @my_official_membership&.growth_points || 0 %></p>
+                     <p class="text-xs md:text-sm font-bold text-slate-300 font-mono">P</p>
                    </div>
                  </div>
     
                  <!-- Member Days (1 col on mobile) -->
-                 <div class="col-span-1 bg-white rounded-[20px] md:rounded-3xl p-3 md:p-5 border border-slate-100 shadow-sm group hover:border-purple-200 transition-colors">
-                   <p class="text-[7px] md:text-[9px] font-bold text-purple-400 uppercase tracking-[0.15em] mb-1 md:mb-3 truncate">Days</p>
-                   <div class="flex items-baseline gap-0.5">
-                     <p class="text-xl md:text-3xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @member_days %></p>
-                     <p class="text-[9px] md:text-xs font-bold text-slate-300 font-mono">D</p>
+                 <div class="col-span-1 bg-white rounded-[20px] md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm group hover:border-purple-200 transition-colors">
+                   <p class="text-[10px] md:text-sm font-black text-purple-400 uppercase tracking-[0.15em] mb-2 md:mb-4 truncate">활동 기간</p>
+                   <div class="flex items-baseline gap-1">
+                     <p class="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @member_days %></p>
+                     <p class="text-xs md:text-sm font-bold text-slate-300 font-mono">D</p>
                    </div>
                  </div>
               </div>
@@ -335,15 +335,15 @@
               <!-- Benchmark & Radar -->
               <div class="grid grid-cols-1 gap-2 md:gap-4">
                  <!-- Compact Benchmark -->
-                 <div class="bg-indigo-50/50 rounded-[20px] md:rounded-3xl p-3 md:p-5 border border-indigo-100 space-y-2 md:space-y-4">
+                 <div class="bg-indigo-50/50 rounded-[20px] md:rounded-3xl p-4 md:p-6 border border-indigo-100 space-y-3 md:space-y-6">
                     <div class="flex justify-between items-center">
-                       <p class="text-[7px] md:text-[9px] font-black text-indigo-400 uppercase tracking-[0.15em]">Benchmark</p>
-                       <span class="px-1.5 py-0.5 bg-indigo-600 text-[6px] md:text-[8px] font-black text-white rounded uppercase italic">Vs Avg</span>
+                       <p class="text-[10px] md:text-sm font-black text-indigo-400 uppercase tracking-[0.15em]">나의 랭킹 비교</p>
+<span class="px-2 py-0.5 bg-indigo-600 text-[8px] md:text-[10px] font-black text-white rounded uppercase italic">상위 점수 대비</span>
                     </div>
                     <div class="space-y-1.5 md:space-y-3">
                       <div class="flex items-center justify-between">
-                         <span class="text-[8px] md:text-[10px] font-bold text-slate-500">My Level</span>
-                         <span class="text-[10px] md:text-xs font-black text-indigo-600 tabular-nums"><%= @my_score %>p</span>
+                         <span class="text-[11px] md:text-sm font-black text-slate-500">나의 수준</span>
+<span class="text-sm md:text-base font-black text-indigo-600 tabular-nums"><%= @my_score %>p</span>
                       </div>
                       <div class="w-full h-2 md:h-3 bg-white rounded-full p-0.5 md:p-1 border border-indigo-100 overflow-hidden relative shadow-inner">
                          <div class="absolute top-0 bottom-0 w-0.5 bg-slate-200/50 z-10" style="left: <%= @top_avg_score %>%"></div>
@@ -353,15 +353,15 @@
                  </div>
     
                  <!-- Growth Analytics -->
-                 <div class="bg-white rounded-[20px] md:rounded-3xl p-3 md:p-5 border border-slate-100 space-y-2 md:space-y-4 shadow-sm">
+                 <div class="bg-white rounded-[20px] md:rounded-3xl p-4 md:p-6 border border-slate-100 space-y-3 md:space-y-6 shadow-sm">
                     <div class="flex justify-between items-center">
-                       <p class="text-[7px] md:text-[9px] font-black text-slate-400 uppercase tracking-[0.15em]">Growth Balance</p>
-                       <p class="text-[8px] md:text-[10px] font-black text-indigo-500 uppercase italic truncate"><%= @category_stats.max_by{|k,v| v}&.first %></p>
+                       <p class="text-[10px] md:text-sm font-black text-slate-400 uppercase tracking-[0.15em]">성장 밸런스</p>
+                       <p class="text-[11px] md:text-sm font-black text-indigo-500 uppercase italic truncate"><%= case @category_stats.max_by{|k,v| v}&.first when 'HEALTH' then '건강' when 'LIFE' then '생활' when 'MIND' then '정신' when 'STUDY' then '학습' when 'HOBBY' then '취미' else '경제' end %> 집중!</p>
                     </div>
-                    <div class="flex items-end gap-1 md:gap-1.5 h-10 md:h-16 px-0.5 md:px-1">
-                       <% ["HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY"].each do |cat| %>
+                    <div class="flex items-end gap-1.5 md:gap-2 h-14 md:h-24 px-1">
+                       <% [["HEALTH", "건강"], ["LIFE", "생활"], ["MIND", "정신"], ["STUDY", "학습"], ["HOBBY", "취미"], ["MONEY", "경제"]].each do |cat, label| %>
                          <div class="flex-1 group relative h-full flex flex-col justify-end">
-                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[7px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10"><%= cat %></div>
+                            <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20"><%= label %></div>
                             <% max_val = @category_stats.values.max.to_f; max_val = 1.0 if max_val == 0 %>
                             <% height_percent = (@category_stats[cat].to_f / max_val * 100).to_i %>
                             <div class="w-full rounded-t-sm md:rounded-t-md <%= case cat when 'HEALTH' then 'bg-rose-400' when 'LIFE' then 'bg-emerald-400' when 'MIND' then 'bg-indigo-400' when 'STUDY' then 'bg-purple-400' when 'HOBBY' then 'bg-orange-400' else 'bg-amber-400' end %> opacity-60 group-hover:opacity-100 transition-all duration-700" style="height: <%= [height_percent, 8].max %>%"></div>
