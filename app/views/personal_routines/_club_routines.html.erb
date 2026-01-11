@@ -239,6 +239,40 @@
           <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
             <!-- Left: Today's Check-in (Main Column) -->
             <div class="flex-1 w-full space-y-4">
+              <!-- Integrated Stats Grid Moved from Sidebar -->
+              <div class="grid grid-cols-3 gap-2 md:gap-4">
+                 <!-- Achievement Rate -->
+                 <div class="bg-slate-900 rounded-[20px] md:rounded-3xl p-3 md:p-6 text-white shadow-lg relative overflow-hidden group">
+                   <div class="absolute -right-4 -top-4 w-12 h-12 bg-indigo-600/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
+                   <p class="text-[8px] md:text-sm font-black text-indigo-300 uppercase tracking-[0.15em] mb-1 md:mb-4">달성률</p>
+                   <div class="flex items-baseline gap-1">
+                     <p class="text-xl md:text-5xl font-black tracking-tighter tabular-nums"><%= @current_achievement_rate.to_i %></p>
+                     <p class="text-[10px] md:text-base font-bold text-indigo-400 font-mono">%</p>
+                   </div>
+                   <div class="mt-2 md:mt-5 h-1 md:h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                      <div class="h-full bg-indigo-400 transition-all duration-1000" style="width: <%= @current_achievement_rate.to_i %>%"></div>
+                   </div>
+                 </div>
+    
+                 <!-- Reward Points -->
+                 <div class="bg-white rounded-[20px] md:rounded-3xl p-3 md:p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
+                   <p class="text-[8px] md:text-sm font-black text-amber-500 uppercase tracking-[0.15em] mb-1 md:mb-4 truncate">에너지</p>
+                   <div class="flex items-baseline gap-1">
+                     <p class="text-xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @my_official_membership&.growth_points || 0 %></p>
+                     <p class="text-[10px] md:text-sm font-bold text-slate-300 font-mono">P</p>
+                   </div>
+                 </div>
+    
+                 <!-- Member Days -->
+                 <div class="bg-white rounded-[20px] md:rounded-3xl p-3 md:p-6 border border-slate-100 shadow-sm group hover:border-purple-200 transition-colors">
+                   <p class="text-[8px] md:text-sm font-black text-purple-400 uppercase tracking-[0.15em] mb-1 md:mb-4 truncate">활동일</p>
+                   <div class="flex items-baseline gap-1">
+                     <p class="text-xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @member_days %></p>
+                     <p class="text-[10px] md:text-sm font-bold text-slate-300 font-mono">D</p>
+                   </div>
+                 </div>
+              </div>
+
               <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-4 md:space-y-6">
                  <div class="flex items-center justify-between">
                    <div class="space-y-0.5 md:space-y-1">
@@ -298,39 +332,8 @@
 
             <!-- Right: Performance & Analytics (Sidebar Column) -->
             <div class="w-full lg:w-72 shrink-0 space-y-2 md:space-y-4">
-              <!-- Integrated Stats Grid for Mobile -->
-              <div class="grid grid-cols-4 lg:grid-cols-1 gap-2 md:gap-3">
-                 <!-- Achievement Rate (2 cols on mobile) -->
-                 <div class="col-span-2 lg:col-span-1 bg-slate-900 rounded-[20px] md:rounded-3xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden group">
-                   <div class="absolute -right-4 -top-4 w-12 h-12 bg-indigo-600/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-                   <p class="text-[10px] md:text-sm font-black text-indigo-300 uppercase tracking-[0.15em] mb-2 md:mb-4">현재 달성률</p>
-                   <div class="flex items-baseline gap-1">
-                     <p class="text-2xl md:text-5xl font-black tracking-tighter tabular-nums"><%= @current_achievement_rate.to_i %></p>
-                     <p class="text-xs md:text-base font-bold text-indigo-400 font-mono">%</p>
-                   </div>
-                   <div class="mt-3 md:mt-5 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div class="h-full bg-indigo-400 transition-all duration-1000" style="width: <%= @current_achievement_rate.to_i %>%"></div>
-                   </div>
-                 </div>
-    
-                 <!-- Reward Points (1 col on mobile) -->
-                 <div class="col-span-1 bg-white rounded-[20px] md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
-                   <p class="text-[10px] md:text-sm font-black text-amber-500 uppercase tracking-[0.15em] mb-2 md:mb-4 truncate">성장 에너지</p>
-                   <div class="flex items-baseline gap-1">
-                     <p class="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @my_official_membership&.growth_points || 0 %></p>
-                     <p class="text-xs md:text-sm font-bold text-slate-300 font-mono">P</p>
-                   </div>
-                 </div>
-    
-                 <!-- Member Days (1 col on mobile) -->
-                 <div class="col-span-1 bg-white rounded-[20px] md:rounded-3xl p-4 md:p-6 border border-slate-100 shadow-sm group hover:border-purple-200 transition-colors">
-                   <p class="text-[10px] md:text-sm font-black text-purple-400 uppercase tracking-[0.15em] mb-2 md:mb-4 truncate">활동 기간</p>
-                   <div class="flex items-baseline gap-1">
-                     <p class="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @member_days %></p>
-                     <p class="text-xs md:text-sm font-bold text-slate-300 font-mono">D</p>
-                   </div>
-                 </div>
-              </div>
+              <!-- Stats moved to main column -->
+
 
               <!-- Benchmark & Radar -->
               <div class="grid grid-cols-1 gap-2 md:gap-4">
