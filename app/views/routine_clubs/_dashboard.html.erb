@@ -13,40 +13,40 @@
   
   <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
     <!-- 성장 에너지 -->
-    <div class="bg-slate-900 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
-      <p class="text-[7px] md:text-[8px] font-bold text-indigo-300 uppercase tracking-wider mb-0.5 md:mb-1">성장 에너지</p>
-      <div class="flex items-baseline gap-0.5">
-        <p class="text-lg md:text-xl font-black tracking-tight tabular-nums"><%= @my_membership.growth_points || 0 %></p>
-        <p class="text-[8px] md:text-[9px] font-bold text-indigo-400">P</p>
+    <div class="bg-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
+      <p class="text-[10px] md:text-xs font-black text-indigo-300 uppercase tracking-wider mb-1 md:mb-2">성장 에너지</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-2xl md:text-3xl font-black tracking-tight tabular-nums"><%= @my_membership.growth_points || 0 %></p>
+        <p class="text-xs md:text-sm font-bold text-indigo-400">P</p>
       </div>
     </div>
 
     <!-- 달성률 -->
-    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
-      <p class="text-[7px] md:text-[8px] font-bold text-purple-400 uppercase tracking-wider mb-0.5 md:mb-1">달성률</p>
-      <div class="flex items-baseline gap-0.5">
-        <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.achievement_rate.to_i %></p>
-        <p class="text-[8px] md:text-[9px] font-bold text-slate-400">%</p>
+    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+      <p class="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-wider mb-1 md:mb-2">달성률</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.achievement_rate.to_i %></p>
+        <p class="text-xs md:text-sm font-bold text-slate-400">%</p>
       </div>
     </div>
     
     <!-- 출석률 -->
-    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
-      <p class="text-[7px] md:text-[8px] font-bold text-emerald-500 uppercase tracking-wider mb-0.5 md:mb-1">출석률</p>
-      <div class="flex items-baseline gap-0.5">
-        <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.attendance_rate.to_i %></p>
-        <p class="text-[8px] md:text-[9px] font-bold text-slate-400">%</p>
+    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+      <p class="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-wider mb-1 md:mb-2">출석률</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.attendance_rate.to_i %></p>
+        <p class="text-xs md:text-sm font-bold text-slate-400">%</p>
       </div>
     </div>
     
     <!-- 휴식권 -->
-    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm cursor-help flex flex-col justify-between" 
+    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm cursor-help flex flex-col justify-between" 
          title="오늘 분량 면제 & 출석률 70% 보호">
-      <p class="text-[7px] md:text-[8px] font-bold text-blue-400 uppercase tracking-wider mb-0.5 md:mb-1">휴식권</p>
+      <p class="text-[10px] md:text-xs font-black text-blue-400 uppercase tracking-wider mb-1 md:mb-2">휴식권</p>
       <div class="flex items-center justify-between gap-1">
-        <div class="flex items-baseline gap-0.5">
-          <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %></p>
-          <p class="text-[8px] md:text-[9px] font-bold text-slate-400">개</p>
+        <div class="flex items-baseline gap-1">
+          <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %></p>
+          <p class="text-xs md:text-sm font-bold text-slate-400">개</p>
         </div>
         <% 
           today_attendance = @my_membership.attendances.find_by(attendance_date: Date.current)
@@ -65,11 +65,11 @@
     </div>
     
     <!-- 누적 경고 -->
-    <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm relative overflow-hidden flex flex-col justify-between">
-      <p class="text-[7px] md:text-[8px] font-bold text-amber-500 uppercase tracking-wider mb-0.5 md:mb-1">누적 경고</p>
-      <div class="flex items-baseline gap-0.5">
-        <p class="text-lg md:text-xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.penalty_count %></p>
-        <p class="text-[8px] md:text-[9px] font-bold text-slate-400">회</p>
+    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm relative overflow-hidden flex flex-col justify-between">
+      <p class="text-[10px] md:text-xs font-black text-amber-500 uppercase tracking-wider mb-1 md:mb-2">누적 경고</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.penalty_count %></p>
+        <p class="text-xs md:text-sm font-bold text-slate-400">회</p>
       </div>
     </div>
   </div>
