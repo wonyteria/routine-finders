@@ -11,76 +11,72 @@
 <!-- START: Dashboard White Box Container (opened at line 11) -->
 <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
   
-  <div id="rufa-club-stats-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-    <!-- 오늘의 달성률 (NEW) -->
-    <div class="bg-indigo-600 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
-      <p class="text-[10px] md:text-xs font-black text-indigo-100 uppercase tracking-wider mb-1 md:mb-2 italic">오늘의 달성률</p>
-      <div class="flex items-baseline gap-1">
-        <p class="text-2xl md:text-3xl font-black tracking-tight tabular-nums"><%= @daily_achievement_rate.to_i %></p>
-        <p class="text-xs md:text-sm font-bold text-indigo-300">%</p>
+  <div id="rufa-club-stats-grid" class="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 md:-mx-8 md:pl-8 md:pr-8 no-scrollbar scroll-smooth items-stretch">
+    <!-- 오늘의 달성률 -->
+    <div class="bg-indigo-600 rounded-xl px-3 py-3 text-white shadow-md shadow-indigo-100 relative overflow-hidden group min-w-[105px] flex-1 shrink-0">
+      <div class="relative z-10 flex flex-col h-full justify-between gap-0.5">
+        <p class="text-[9px] font-bold text-indigo-200 uppercase tracking-wider whitespace-nowrap">오늘 달성률</p>
+        <div class="flex items-baseline gap-0.5">
+          <p class="text-xl lg:text-2xl font-black tracking-tight"><%= @daily_achievement_rate.to_i %></p>
+          <p class="text-[10px] font-bold text-indigo-300">%</p>
+        </div>
       </div>
     </div>
 
     <!-- 성장 에너지 -->
-    <div class="bg-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
-      <p class="text-[10px] md:text-xs font-black text-indigo-300 uppercase tracking-wider mb-1 md:mb-2">성장 에너지</p>
-      <div class="flex items-baseline gap-1">
-        <p class="text-2xl md:text-3xl font-black tracking-tight tabular-nums"><%= @my_membership.growth_points || 0 %></p>
-        <p class="text-xs md:text-sm font-bold text-indigo-400">P</p>
+    <div class="bg-slate-900 rounded-xl px-3 py-3 text-white shadow-md shadow-slate-200 relative overflow-hidden group min-w-[105px] flex-1 shrink-0">
+      <div class="relative z-10 flex flex-col h-full justify-between gap-0.5">
+        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">성장 에너지</p>
+        <div class="flex items-baseline gap-0.5">
+          <p class="text-xl lg:text-2xl font-black tracking-tight text-white"><%= @my_membership.growth_points || 0 %></p>
+          <p class="text-[10px] font-bold text-slate-500">P</p>
+        </div>
       </div>
     </div>
 
-    <!-- 달성률 (월간 평균) -->
-    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
-      <p class="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-wider mb-1 md:mb-2">월간 평균 성취</p>
-      <div class="flex items-baseline gap-1">
-        <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.achievement_rate.to_i %></p>
-        <p class="text-xs md:text-sm font-bold text-slate-400">%</p>
+    <!-- 나의 위치 (상위 %) -->
+    <div class="rounded-xl px-3 py-3 text-white shadow-md shadow-pink-100 relative overflow-hidden group min-w-[105px] flex-1 shrink-0"
+         style="background: linear-gradient(135deg, #EC4899 0%, #E11D48 100%);">
+      <div class="relative z-10 flex flex-col h-full justify-between gap-0.5">
+        <p class="text-[9px] font-bold text-pink-100 uppercase tracking-wider whitespace-nowrap">나의 위치</p>
+        <div class="flex items-baseline gap-0.5">
+          <span class="text-[9px] font-bold text-pink-100 mr-0.5">상위</span>
+          <p class="text-xl lg:text-2xl font-black tracking-tight text-white"><%= @my_rank_percentile || 0 %></p>
+          <p class="text-[10px] font-bold text-pink-100">%</p>
+        </div>
       </div>
     </div>
-    
-    <!-- 출석률 -->
-    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
-      <p class="text-[10px] md:text-xs font-black text-emerald-500 uppercase tracking-wider mb-1 md:mb-2">출석률</p>
-      <div class="flex items-baseline gap-1">
-        <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.attendance_rate.to_i %></p>
-        <p class="text-xs md:text-sm font-bold text-slate-400">%</p>
+
+    <!-- 월간 평균 성취 -->
+    <div class="bg-white rounded-xl px-3 py-3 border border-slate-100 shadow-sm flex flex-col h-full justify-between gap-0.5 group hover:border-indigo-100 transition-colors min-w-[105px] flex-1 shrink-0">
+      <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-indigo-400 whitespace-nowrap">평균 성취</p>
+      <div class="flex items-baseline gap-0.5">
+        <p class="text-xl lg:text-2xl font-black text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors"><%= @my_membership.achievement_rate.to_i %></p>
+        <p class="text-[10px] font-bold text-slate-400">%</p>
       </div>
     </div>
     
     <!-- 휴식권 -->
-    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm cursor-help flex flex-col justify-between" 
+    <div class="bg-white rounded-xl px-3 py-3 border border-slate-100 shadow-sm flex flex-col h-full justify-between gap-0.5 cursor-help group hover:border-blue-200 transition-colors min-w-[105px] flex-1 shrink-0" 
          title="오늘 분량 면제 & 출석률 70% 보호">
-      <p class="text-[10px] md:text-xs font-black text-blue-400 uppercase tracking-wider mb-1 md:mb-2">휴식권</p>
-      <div class="flex items-center justify-between gap-1">
-        <div class="flex items-baseline gap-1">
-          <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %></p>
-          <p class="text-xs md:text-sm font-bold text-slate-400">개</p>
-        </div>
-        <% 
-          today_attendance = @my_membership.attendances.find_by(attendance_date: Date.current)
-          can_use_pass = @my_membership.remaining_passes > 0 && !today_attendance&.status_excused?
-        %>
-        <% if can_use_pass %>
-          <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
-                        class: "px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] md:text-xs font-black border border-blue-100 hover:bg-blue-600 hover:text-white transition-all whitespace-nowrap", 
-                        data: { turbo_confirm: "휴식권을 사용하시겠습니까?", turbo: false } do %>
-            사용
-          <% end %>
-        <% elsif today_attendance&.status_excused? %>
-          <span class="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-[10px] md:text-xs font-black">완료</span>
-        <% end %>
+      <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-blue-400 whitespace-nowrap">휴식권</p>
+      <div class="flex items-baseline gap-0.5">
+        <p class="text-xl lg:text-2xl font-black text-slate-900 tracking-tight group-hover:text-blue-500 transition-colors"><%= @my_membership.remaining_passes %></p>
+        <p class="text-[10px] font-bold text-slate-400">개</p>
       </div>
     </div>
     
     <!-- 누적 경고 -->
-    <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm relative overflow-hidden flex flex-col justify-between">
-      <p class="text-[10px] md:text-xs font-black text-amber-500 uppercase tracking-wider mb-1 md:mb-2">누적 경고</p>
-      <div class="flex items-baseline gap-1">
-        <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.penalty_count %></p>
-        <p class="text-xs md:text-sm font-bold text-slate-400">회</p>
+    <div class="bg-white rounded-xl px-3 py-3 border border-slate-100 shadow-sm flex flex-col h-full justify-between gap-0.5 group hover:border-amber-200 transition-colors min-w-[105px] flex-1 shrink-0">
+      <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-amber-500 whitespace-nowrap">누적 경고</p>
+      <div class="flex items-baseline gap-0.5">
+        <p class="text-xl lg:text-2xl font-black text-slate-900 tracking-tight group-hover:text-amber-500 transition-colors"><%= @my_membership.penalty_count %></p>
+        <p class="text-[10px] font-bold text-slate-400">회</p>
       </div>
     </div>
+    
+    <!-- Spacer -->
+    <div class="w-1 md:w-4 shrink-0"></div>
   </div>
 
   <% days_left = (@my_membership.membership_end_date - Date.current).to_i %>
@@ -234,15 +230,9 @@
         </div>
       </div>
 
-      <!-- 3. Achievement Matrix -->
-      <div id="rufa-achievement-matrix" class="flex flex-col w-full">
-        <%= render 'shared/achievement_matrix', compact: false %>
-      </div>
 
-      <!-- 오늘의 기록 (Daily Progress Record) -->
-      <div id="rufa-daily-record" class="flex flex-col w-full">
-        <%= render 'routine_clubs/daily_record_area' %>
-      </div>
+
+
     </div>
 
     <!-- RIGHT COLUMN: Gatherings -> Recent Activity Feed -->

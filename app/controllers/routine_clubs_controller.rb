@@ -37,6 +37,19 @@ class RoutineClubsController < ApplicationController
        @my_membership.recalculate_growth_points!
     end
 
+    # Calculate Rank Percentile
+    if @my_membership && @my_membership.active?
+      active_members = @routine_club.members.active.includes(:attendances)
+      total_members = active_members.count
+      if total_members > 0
+        my_rate = @my_membership.achievement_rate.to_f
+        better_count = active_members.count { |m| m.achievement_rate.to_f > my_rate }
+        @my_rank_percentile = ((better_count + 1).to_f / total_members * 100).ceil
+      else
+        @my_rank_percentile = 0
+      end
+    end
+
     @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
     @rankings = @members.order(growth_points: :desc).limit(10)
 
@@ -205,23 +218,26 @@ class RoutineClubsController < ApplicationController
   def use_pass
     return redirect_to @routine_club, alert: "멤버만 사용할 수 있습니다." unless @my_membership
 
+    # Determine target date
+    target_date = params[:date] ? Date.parse(params[:date]) : Date.current
+
     # Check remaining passes
     if @my_membership.used_passes_count.to_i >= 3
       return redirect_to personal_routines_path(tab: "club"), alert: "휴식권을 모두 소진했습니다. (3/3 사용)"
     end
 
-    # Check today's attendance
-    today_attendance = @my_membership.attendances.find_by(attendance_date: Date.current)
-    if today_attendance&.status_present?
-      return redirect_to personal_routines_path(tab: "club"), alert: "이미 오늘 출석 처리되었습니다. 휴식권을 사용할 수 없습니다."
-    elsif today_attendance&.status_excused?
-      return redirect_to personal_routines_path(tab: "club"), alert: "오늘 이미 휴식권을 사용했습니다."
+    # Check attendance for the target date
+    target_attendance = @my_membership.attendances.find_by(attendance_date: target_date)
+    if target_attendance&.status_present?
+      return redirect_to personal_routines_path(tab: "club"), alert: "해당 날짜(#{target_date})는 이미 출석 처리되었습니다."
+    elsif target_attendance&.status_excused?
+      return redirect_to personal_routines_path(tab: "club"), alert: "해당 날짜(#{target_date})에 이미 휴식권을 사용했습니다."
     end
 
-    if @my_membership.use_relaxation_pass!
-      redirect_to personal_routines_path(tab: "club"), notice: "휴식권이 성공적으로 사용되었습니다. 오늘 루틴은 면제 처리됩니다."
+    if @my_membership.use_relaxation_pass!(target_date)
+      redirect_to personal_routines_path(tab: "club"), notice: "#{target_date} 휴식권이 성공적으로 사용되었습니다."
     else
-      redirect_to personal_routines_path(tab: "club"), alert: "휴식권 사용에 실패했습니다. 관리자에게 문의해주세요."
+      redirect_to personal_routines_path(tab: "club"), alert: "휴식권 사용에 실패했습니다."
     end
   end
 
