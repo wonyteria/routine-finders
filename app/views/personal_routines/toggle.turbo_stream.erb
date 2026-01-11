@@ -81,7 +81,7 @@
   <%= @monthly_completions&.count || 0 %>
 <% end %>
 
-<%= turbo_stream.update "achievement-matrix" do %>
+<%= turbo_stream.replace "achievement-matrix" do %>
   <%= render partial: "shared/achievement_matrix", formats: [:html] %>
 <% end %>
 
