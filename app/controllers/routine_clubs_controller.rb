@@ -25,7 +25,7 @@ class RoutineClubsController < ApplicationController
 
     # Redirect members to their club dashboard
     if @is_member && !@is_host
-      return redirect_to personal_routines_path(tab: 'club')
+      return redirect_to personal_routines_path(tab: "club")
     end
 
     # Default to dashboard if member/admin and no tab specified
@@ -145,7 +145,7 @@ class RoutineClubsController < ApplicationController
 
     if !@routine_club.recruitment_open? && current_user.role != "admin" && params[:beta_test] != "true"
     return redirect_to @routine_club, alert: "지금은 정기 모집 기간이 아닙니다. 다음 모집 기간에 신청해주세요."
-  end
+    end
 
     if @routine_club.members.exists?(user: current_user)
       return redirect_to @routine_club, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
@@ -231,7 +231,7 @@ class RoutineClubsController < ApplicationController
     member = @routine_club.members.find(params[:member_id])
     member.confirm_payment!
 
-    redirect_to @routine_club, notice: "#{member.user.nickname}님의 입금이 확인되었습니다."
+    redirect_to manage_routine_club_path(@routine_club, tab: "pending"), notice: "#{member.user.nickname}님의 입금이 확인되었습니다."
   end
 
   def reject_payment
@@ -240,7 +240,7 @@ class RoutineClubsController < ApplicationController
     member = @routine_club.members.find(params[:member_id])
     member.reject_payment!(params[:reason])
 
-    redirect_to @routine_club, notice: "입금이 거부되었습니다."
+    redirect_to manage_routine_club_path(@routine_club, tab: "pending"), notice: "입금이 거부되었습니다."
   end
 
   def kick_member
@@ -249,7 +249,7 @@ class RoutineClubsController < ApplicationController
     member = @routine_club.members.find(params[:member_id])
     member.kick!(params[:reason])
 
-    redirect_to @routine_club, notice: "#{member.user.nickname}님이 강퇴되었습니다."
+    redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), notice: "#{member.user.nickname}님이 강퇴되었습니다."
   end
 
   def cheer
@@ -315,10 +315,10 @@ class RoutineClubsController < ApplicationController
 
   def mark_welcomed
     membership = @routine_club.members.find_by(user: current_user, payment_status: :confirmed)
-    
+
     if membership
       membership.update(welcomed: true)
-      redirect_to personal_routines_path(tab: 'club'), notice: "루파 클럽에 오신 것을 환영합니다! 🎉"
+      redirect_to personal_routines_path(tab: "club"), notice: "루파 클럽에 오신 것을 환영합니다! 🎉"
     else
       redirect_to root_path, alert: "멤버십을 찾을 수 없습니다."
     end
