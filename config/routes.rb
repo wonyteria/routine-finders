@@ -79,7 +79,7 @@ Rails.application.routes.draw do
   end
 
   # 호스트 전용 챌린지 관리
-  resources :hosted_challenges, only: [ :index, :show, :update ] do
+  resources :hosted_challenges, only: [ :index, :show, :update, :destroy ] do
     member do
       post :complete_refund
     end

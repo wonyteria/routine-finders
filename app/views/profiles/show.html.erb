@@ -371,13 +371,9 @@
           <%= link_to "전체 배지 보기", "#", class: "block w-full text-center mt-6 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-xs hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-100", data: { action: "click->tabs#change", id: "achievements" } %>
         </section>
 
-        <!-- Achievement Matrix relocated from top -->
-        <section class="bg-white p-4 rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-slate-50 mb-4">
-            <h3 class="text-sm font-black text-slate-900">성취 매트릭스</h3>
-          </div>
-          <%= render "shared/achievement_matrix", compact: true %>
-        </section>
+        <!-- Achievement Matrix -->
+        <%= render "shared/achievement_matrix", compact: true %>
+
       </div>
     </div>
   </div>

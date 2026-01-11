@@ -403,8 +403,37 @@
         </div>
       </div>
 
+      <!-- Danger Zone Section -->
+      <div class="mt-12 pt-10 border-t border-slate-200">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </div>
+          <h3 class="text-lg font-black text-red-600">위험 구역</h3>
+        </div>
+
+        <div class="p-8 bg-red-50 rounded-[32px] border-2 border-red-100 space-y-4">
+          <div>
+            <p class="font-black text-red-900 text-lg">챌린지 삭제</p>
+            <p class="text-sm font-medium text-red-700/70 leading-relaxed">
+              챌린지를 삭제하면 모든 참가 정보, 인증 기록, 데이터가 영구적으로 삭제되며 복구할 수 없습니다.<br>
+              <span class="font-bold">이미 참여자가 있는 경우 삭제가 불가능할 수 있습니다.</span>
+            </p>
+          </div>
+          
+          <div class="pt-2">
+            <%= link_to hosted_challenge_path(challenge), 
+                        data: { turbo_method: :delete, turbo_confirm: "정말로 이 챌린지를 삭제하시겠습니까? 삭제된 데이터는 복구할 수 없습니다." }, 
+                        class: "inline-flex items-center gap-2 px-6 py-4 bg-white text-red-600 border-2 border-red-200 rounded-2xl font-black text-sm hover:bg-red-600 hover:text-white hover:border-red-600 transition-all shadow-sm" do %>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              챌린지 영구 삭제
+            <% end %>
+          </div>
+        </div>
+      </div>
+
       <!-- Submit Button -->
-      <div class="flex items-center gap-4 pt-6">
+      <div class="flex items-center gap-4 pt-10">
         <button type="button" 
                 data-action="click->challenge-settings#showSummary"
                 class="px-8 py-5 bg-indigo-600 text-white rounded-[24px] font-black text-lg shadow-xl shadow-indigo-600/30 hover:bg-indigo-700 hover:-translate-y-1 transition-all cursor-pointer">

@@ -132,6 +132,17 @@ class HostedChallengesController < ApplicationController
     end
   end
 
+  def destroy
+    @challenge = current_user.hosted_challenges.find(params[:id])
+
+    if @challenge.participants.exists?
+      redirect_to hosted_challenge_path(@challenge, tab: "settings"), alert: "이미 참여자가 있는 챌린지는 삭제할 수 없습니다. 대신 참가자 탭에서 개별 관리해 주세요."
+    else
+      @challenge.destroy
+      redirect_to hosted_challenges_path, notice: "챌린지가 성공적으로 삭제되었습니다."
+    end
+  end
+
   private
 
   def challenge_params
