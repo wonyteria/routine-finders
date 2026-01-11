@@ -139,24 +139,7 @@ class PersonalRoutinesController < ApplicationController
     # 현재 사용자의 루파 상태
     @current_log_rate = current_user.monthly_routine_log_rate
     @current_achievement_rate = current_user.monthly_achievement_rate
-
-    @recommended_routines = [
-      { title: "아침 물 한 잔 마시기", category: "HEALTH", icon: "💧", users_count: 1247 },
-      { title: "스트레칭 5분", category: "HEALTH", icon: "🧘", users_count: 982 },
-      { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊", users_count: 856 },
-      { title: "감사 일기 쓰기", category: "MIND", icon: "✍️", users_count: 734 },
-      { title: "책 10페이지 읽기", category: "STUDY", icon: "📚", users_count: 691 },
-      { title: "플랭크 1분", category: "HEALTH", icon: "💪", users_count: 623 },
-      { title: "명상 5분", category: "MIND", icon: "🧠", users_count: 589 },
-      { title: "아침 햇빛 쐬기", category: "HEALTH", icon: "☀️", users_count: 512 },
-      { title: "자기 전 폰 안보기", category: "LIFE", icon: "📱", users_count: 487 },
-      { title: "하루 목표 3가지 작성", category: "STUDY", icon: "🎯", users_count: 456 },
-      { title: "스쿼트 20개", category: "HEALTH", icon: "🏋️", users_count: 423 },
-      { title: "영어 단어 10개 외우기", category: "STUDY", icon: "📖", users_count: 398 },
-      { title: "사이드 프로젝트 30분", category: "MONEY", icon: "💻", users_count: 367 },
-      { title: "블로그 글쓰기", category: "MONEY", icon: "💰", users_count: 334 },
-      { title: "운동 30분", category: "HEALTH", icon: "🏃", users_count: 312 }
-    ]
+    set_recommended_routines
 
     # 루파 성장 레이더용 카테고리별 통계
     @category_stats = current_user.personal_routines.joins(:completions)
@@ -182,6 +165,7 @@ class PersonalRoutinesController < ApplicationController
       @personal_routines = current_user.personal_routines.includes(:completions).order(created_at: :desc)
       @selected_date = Date.current
       set_activity_data
+      set_recommended_routines
       respond_to do |format|
         format.html { redirect_to personal_routines_path, notice: "루틴이 추가되었습니다!" }
         format.turbo_stream
@@ -205,6 +189,7 @@ class PersonalRoutinesController < ApplicationController
 
     if @routine.update(routine_params)
       respond_to do |format|
+        set_recommended_routines
         format.html { redirect_to personal_routines_path, notice: "루틴이 수정되었습니다!" }
         format.turbo_stream
       end
@@ -230,6 +215,7 @@ class PersonalRoutinesController < ApplicationController
 
     @routine.toggle_completion!(target_date)
     set_activity_data
+    set_recommended_routines
     @selected_date = target_date
 
     # 뷰 렌더링에 필요한 변수 설정 (현재 선택된 날짜 기준)
@@ -290,6 +276,7 @@ class PersonalRoutinesController < ApplicationController
 
     @routine.update(deleted_at: Time.current)
     set_activity_data
+    set_recommended_routines
     @selected_date = Date.current
     @personal_routines = current_user.personal_routines.includes(:completions)
                                      .where("created_at <= ?", @selected_date.end_of_day)
@@ -310,6 +297,26 @@ class PersonalRoutinesController < ApplicationController
                                  .group("personal_routine_completions.completed_on")
                                  .count
     @monthly_completions = @activity_data.select { |date, _| date >= Date.current.beginning_of_month && date <= Date.current.end_of_month }
+  end
+
+  def set_recommended_routines
+    @recommended_routines = [
+      { title: "아침 물 한 잔 마시기", category: "HEALTH", icon: "💧", users_count: 1247 },
+      { title: "스트레칭 5분", category: "HEALTH", icon: "🧘", users_count: 982 },
+      { title: "종합 영양제 먹기", category: "HEALTH", icon: "💊", users_count: 856 },
+      { title: "감사 일기 쓰기", category: "MIND", icon: "✍️", users_count: 734 },
+      { title: "책 10페이지 읽기", category: "STUDY", icon: "📚", users_count: 691 },
+      { title: "플랭크 1분", category: "HEALTH", icon: "💪", users_count: 623 },
+      { title: "명상 5분", category: "MIND", icon: "🧠", users_count: 589 },
+      { title: "아침 햇빛 쐬기", category: "HEALTH", icon: "☀️", users_count: 512 },
+      { title: "자기 전 폰 안보기", category: "LIFE", icon: "📱", users_count: 487 },
+      { title: "하루 목표 3가지 작성", category: "STUDY", icon: "🎯", users_count: 456 },
+      { title: "스쿼트 20개", category: "HEALTH", icon: "🏋️", users_count: 423 },
+      { title: "영어 단어 10개 외우기", category: "STUDY", icon: "📖", users_count: 398 },
+      { title: "사이드 프로젝트 30분", category: "MONEY", icon: "💻", users_count: 367 },
+      { title: "블로그 글쓰기", category: "MONEY", icon: "💰", users_count: 334 },
+      { title: "운동 30분", category: "HEALTH", icon: "🏃", users_count: 312 }
+    ]
   end
 
   def set_routine

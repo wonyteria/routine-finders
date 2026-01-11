@@ -1,6 +1,6 @@
 <% compact ||= false %>
 <section id="achievement-matrix"
-         class="bg-white rounded-[32px] md:rounded-[40px] <%= compact ? 'p-3 md:p-4' : 'p-4 md:p-6' %> border border-slate-100 shadow-sm space-y-4 md:space-y-6 relative overflow-hidden group"
+         class="bg-white rounded-[32px] md:rounded-[40px] <%= compact ? 'p-3 md:p-4' : 'p-8 lg:p-10' %> border border-slate-100 shadow-sm space-y-4 md:space-y-6 relative overflow-hidden group flex-1 flex flex-col"
          data-controller="tabs"
          data-tabs-query-param-value="matrix_tab"
          data-tabs-active-class="bg-indigo-600 text-white shadow-lg z-10"
@@ -22,7 +22,7 @@
   </div>
 
   <%# Month View Panel (Active by Default) %>
-  <div data-tabs-target="panel" data-id="month" class="relative z-10 space-y-4">
+  <div data-tabs-target="panel" data-id="month" class="relative z-10 space-y-4 flex-1 flex flex-col justify-between">
     <div class="grid grid-cols-7 gap-1 md:gap-1.5 w-full mx-auto" style="max-width: 400px;">
       <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
         <div class="text-[9px] font-black text-slate-300 text-center py-1 md:py-2"><%= day %></div>
@@ -73,7 +73,7 @@
   </div>
 
   <%# Year View Panel (Initially Hidden) - Optimized with 3-column Month Grid %>
-  <div data-tabs-target="panel" data-id="year" class="hidden relative z-10 space-y-2">
+  <div data-tabs-target="panel" data-id="year" class="hidden relative z-10 space-y-2 flex-1 flex flex-col justify-between">
     <div class="grid grid-cols-3 gap-x-2 gap-y-4">
       <% 
         # Show last 12 months including current

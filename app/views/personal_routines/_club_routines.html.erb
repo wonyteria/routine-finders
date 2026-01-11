@@ -149,17 +149,17 @@
     </section>
 
   <% elsif current_user.has_active_rufa_membership? || current_user.admin? %>
-    <!-- Premium Member Dashboard with Sub-navigation -->
-    <div class="flex flex-col lg:flex-row gap-6 lg:gap-8" id="rufa-premium-board" style="background-color: #f8fafc; color: #1e293b; min-height: 500px;">
+    <!-- Premium Member Dashboard Framework -->
+    <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 bg-slate-50/80 backdrop-blur-sm rounded-[42px] p-3 lg:p-6 border border-slate-200/60 min-h-[750px]" id="rufa-premium-board">
       <% if current_user.admin? && !current_user.is_rufa_club_member? %>
         <div class="fixed bottom-4 right-4 bg-red-600 text-white px-4 py-2 rounded-full z-50 text-xs font-bold shadow-lg">
           ADMIN MODE
         </div>
       <% end %>
       
-      <!-- New Grid-based Mobile Navigation -->
-      <aside class="w-full lg:w-64 shrink-0">
-        <div class="sticky top-[72px] lg:top-8 z-40 flex flex-col gap-4 lg:gap-6">
+      <!-- Sub-navigation Sidebar Card -->
+      <aside class="w-full lg:w-72 shrink-0 bg-white rounded-[32px] p-6 lg:p-7 shadow-sm border border-slate-100 h-fit sticky top-24">
+        <div class="flex flex-col gap-8">
           <!-- VIP & Identity Card (Desktop only - hidden on mobile) -->
           <div class="hidden lg:flex px-5 py-4 lg:px-6 lg:py-4 bg-slate-900 rounded-3xl lg:rounded-[32px] text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
              <div class="flex items-center gap-3 lg:gap-4 lg:min-w-0">
@@ -187,10 +187,10 @@
               ["ranking", "🏆", "랭킹", "멤버 랭킹"],
               ["architecture", "📐", "설계", "목표 설계"]
             ].each do |id, icon, short_label, full_label| %>
-              <button onclick="switchRufaTab('<%= id %>')" id="nav-<%= id %>" 
-                      class="rufa-nav-btn flex-shrink-0 flex flex-row items-center justify-center lg:justify-start gap-2 lg:gap-3 px-4 lg:px-6 py-2.5 lg:py-3.5 rounded-full lg:rounded-2xl font-black transition-all border border-slate-100 lg:border-none shadow-sm lg:shadow-none hover:opacity-80 snap-start <%= id == 'club_dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white lg:bg-transparent text-slate-400' %>">
-                <span class="text-sm lg:text-lg"><%= icon %></span>
-                <span class="text-[11px] lg:text-[13px] whitespace-nowrap">
+              <button type="button" onclick="switchRufaTab('<%= id %>')" id="nav-<%= id %>" 
+                      class="rufa-nav-btn w-full flex items-center gap-3 px-5 py-3 rounded-xl font-bold text-[13px] transition-all group <%= id == 'club_dashboard' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-slate-50 text-slate-500 border border-transparent hover:bg-slate-100' %>">
+                <span class="text-base"><%= icon %></span>
+                <span>
                   <span class="lg:hidden"><%= short_label %></span>
                   <span class="hidden lg:inline"><%= full_label %></span>
                 </span>
@@ -226,7 +226,7 @@
       </aside>
 
       <!-- Sub-tab Content Area -->
-      <main class="flex-1 space-y-3 lg:space-y-4">
+      <main class="flex-1 min-w-0 lg:pl-4">
         
         <!-- 0. Club Dashboard Tab (NEW) -->
         <div id="tab-club_dashboard" class="rufa-content-tab space-y-3 lg:space-y-4">
@@ -281,12 +281,16 @@
                          <% end %>
                        </div>
                      <% end %>
-                   <% else %>
-                     <div class="py-8 md:py-12 text-center bg-slate-50 rounded-[24px] md:rounded-[32px] border border-dashed border-slate-200">
-                        <div class="text-3xl md:text-4xl mb-3 md:mb-4">🏖️</div>
-                        <p class="text-[10px] md:text-xs font-black text-slate-300 uppercase tracking-widest">No routines today</p>
-                     </div>
-                   <% end %>
+                    <% else %>
+                      <div class="py-12 md:py-16 text-center bg-slate-50/50 rounded-[32px] border border-dashed border-slate-200">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl mb-4 mx-auto shadow-sm border border-slate-100">🏖️</div>
+                        <h3 class="text-slate-900 font-black text-lg mb-2">오늘은 루틴이 없습니다</h3>
+                        <p class="text-slate-400 text-[11px] font-bold mb-8 leading-relaxed">설정된 루틴이 없거나 오늘의 요일과 일치하지 않습니다.<br>'목표 설계' 탭에서 새로운 루틴을 추가해보세요!</p>
+                        <button type="button" onclick="switchRufaTab('architecture')" class="inline-block px-6 py-3 bg-slate-900 text-white rounded-xl font-black text-[11px] hover:bg-indigo-600 transition-all shadow-lg">
+                          루틴 설계 관리하기 →
+                        </button>
+                      </div>
+                    <% end %>
                  </div>
               </div>
             </div>
@@ -694,8 +698,10 @@
                     </div>
                   <% end %>
                 <% else %>
-                   <div class="py-12 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                     <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">첫 파장을 기다리고 있습니다</p>
+                   <div class="py-16 text-center bg-slate-50/50 rounded-[32px] border border-dashed border-slate-200">
+                     <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl mb-4 mx-auto shadow-sm border border-slate-100">✨</div>
+                     <p class="text-slate-400 text-xs font-black uppercase tracking-widest">첫 번째 시너지를 기다리고 있습니다</p>
+                     <p class="text-slate-300 text-[10px] font-bold mt-2">루틴을 완료하고 멤버들에게 성장의 에너지를 공유해보세요!</p>
                    </div>
                 <% end %>
               </div>
@@ -767,51 +773,49 @@
                  <% end %>
               </div>
            </div>
-        </div>
+         </div>
 
-      </main>
-      
-      
-      <!-- Mobile-only: Quick Links & Growth Identity at bottom -->
-      <div class="lg:hidden w-full space-y-4">
-        <!-- Quick Links (Mobile only) -->
-        <div class="grid grid-cols-2 gap-2">
-          <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-3 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group shadow-sm" do %>
-              <span class="text-[10px] font-black">성실함 리포트</span>
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
-          <% end %>
+         <!-- Mobile-only: Quick Links & Growth Identity at bottom -->
+         <div class="lg:hidden w-full space-y-4 mt-8">
+           <!-- Quick Links (Mobile only) -->
+           <div class="grid grid-cols-2 gap-2">
+             <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-3 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group shadow-sm" do %>
+                 <span class="text-[10px] font-black">성실함 리포트</span>
+                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
+             <% end %>
 
-          <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-3 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all group shadow-md" do %>
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center shadow-lg shadow-amber-400/20">
-                  <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
-                </div>
-                <span class="text-[10px] font-black">클럽 단톡방 합류</span>
-              </div>
-              <svg class="w-3 h-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-          <% end %>
-        </div>
-
-        <!-- VIP & Identity Card (Mobile only - at very bottom) -->
-        <div class="flex px-5 py-4 bg-slate-900 rounded-3xl text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
-           <div class="flex items-center gap-3 min-w-0">
-             <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
-             <div class="min-w-0">
-               <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">Growth Identity</p>
-               <p class="text-[13px] font-black truncate"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
-             </div>
+             <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-3 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all group shadow-md" do %>
+                 <div class="flex items-center gap-2">
+                   <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center shadow-lg shadow-amber-400/20">
+                     <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
+                   </div>
+                   <span class="text-[10px] font-black">클럽 단톡방 합류</span>
+                 </div>
+                 <svg class="w-3 h-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+             <% end %>
            </div>
-           <svg class="w-4 h-4 text-indigo-300/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-        </div>
-      </div>
-      
-      <!-- Mobile Quick Stats Removed (Moved to top sidebar) -->
+
+           <!-- VIP & Identity Card (Mobile only - at very bottom) -->
+           <div class="flex px-5 py-4 bg-slate-900 rounded-3xl text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
+                <div class="min-w-0">
+                  <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">Growth Identity</p>
+                  <p class="text-[13px] font-black truncate"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-indigo-300/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+           </div>
+         </div>
+
+         <!-- Mobile Quick Stats Removed (Moved to top sidebar) -->
+      </main>
     </div>
   <% else %>
     <!-- Member Dashboard -->
     <%= render 'routine_clubs/dashboard' %>
   <% end %>
-</div>
+
 
 <!-- Digital VIP Card Modal (Kept same logic, updated style slightly) -->
 <div id="vip-card-modal" class="fixed inset-0 z-[110] hidden items-center justify-center p-6 text-white">
@@ -888,17 +892,23 @@
     document.querySelectorAll('.rufa-nav-btn').forEach(btn => {
       // Reset to inactive state
       btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
-      btn.classList.add('bg-white', 'lg:bg-transparent', 'text-slate-400');
+      btn.classList.add('bg-slate-50', 'text-slate-500', 'border-transparent');
+      btn.classList.remove('border-slate-100');
     });
 
     const activeBtn = document.getElementById('nav-' + id);
-    // Apply active state
-    activeBtn.classList.remove('bg-white', 'lg:bg-transparent', 'text-slate-400');
-    activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+    // Apply active state if button exists
+    if (activeBtn) {
+      activeBtn.classList.remove('bg-slate-50', 'text-slate-500', 'border-transparent');
+      activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+    }
 
     // Scroll to top of content area on mobile
     if (window.innerWidth < 1024) {
-      window.scrollTo({ top: document.getElementById('rufa-premium-board').offsetTop - 20, behavior: 'smooth' });
+      const board = document.getElementById('rufa-premium-board');
+      if (board) {
+        window.scrollTo({ top: board.offsetTop - 20, behavior: 'smooth' });
+      }
     }
   }
 

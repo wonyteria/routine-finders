@@ -158,13 +158,13 @@
             <% end %>
           <% else %>
             <!-- 무료 챌린지: 모달 열기 -->
-            <button data-action="click->modal#open" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+            <button data-action="click->modal#open" class="w-full py-5 <%= theme_bg_class %> text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
               지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
             </button>
           <% end %>
         <% else %>
           <!-- 비로그인 사용자: 로그인 유도 -->
-          <button onclick="document.getElementById('auth-modal').classList.remove('hidden'); document.getElementById('auth-modal').classList.add('flex');" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+          <button onclick="document.getElementById('auth_modal').classList.remove('hidden'); document.getElementById('auth_modal').classList.add('flex');" class="w-full py-5 <%= theme_bg_class %> text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
             로그인하고 참여하기
           </button>
           <p class="text-center text-xs text-slate-400 mt-2">로그인 후 <%= @challenge.offline? ? "모임" : "챌린지" %>에 참여할 수 있어요</p>
@@ -213,13 +213,13 @@
             <p class="text-center text-xs text-slate-400 mt-2">입금 확인 후 참여가 완료됩니다</p>
           <% else %>
             <!-- 무료 챌린지: 모달 열기 -->
-            <button data-action="click->modal#open" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+            <button data-action="click->modal#open" class="w-full py-5 <%= theme_bg_class %> text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
               지금 <%= @challenge.offline? ? "모임" : "챌린지" %> 참여하기
             </button>
           <% end %>
         <% else %>
           <!-- 비로그인 사용자: 로그인 유도 -->
-          <button onclick="document.getElementById('auth-modal').classList.remove('hidden'); document.getElementById('auth-modal').classList.add('flex');" class="w-full py-5 #{theme_bg_class} text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
+          <button onclick="document.getElementById('auth_modal').classList.remove('hidden'); document.getElementById('auth_modal').classList.add('flex');" class="w-full py-5 <%= theme_bg_class %> text-white rounded-2xl font-black text-lg shadow-xl shadow-opacity-30 hover:brightness-110 transition-all">
             로그인하고 참여하기
           </button>
           <p class="text-center text-xs text-slate-400 mt-2">로그인 후 <%= @challenge.offline? ? "모임" : "챌린지" %>에 참여할 수 있어요</p>
