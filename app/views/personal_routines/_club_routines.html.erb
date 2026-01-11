@@ -380,18 +380,137 @@
           </div>
         </div>
 
-        <!-- 2. Synergy Tab (시너지 피드) - Needs similar container if not exist -->
+        <!-- 2. Synergy Tab (시너지 피드) -->
         <div id="tab-synergy" class="rufa-content-tab hidden">
-          <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm">
-            <%= render 'routine_clubs/synergy_feed', routine_club: @routine_club %>
-          </div>
+           <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs md:text-sm font-black text-slate-400 uppercase tracking-widest leading-none">시너지 피드</h3>
+                <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-100">
+                   <div class="flex -space-x-1.5">
+                     <% @rufa_rankings.take(3).each do |rank| %>
+                       <img src="<%= rank[:user].profile_image %>" class="w-5 h-5 rounded-full border-2 border-white shadow-sm" />
+                     <% end %>
+                   </div>
+                   <span class="text-[9px] font-black text-slate-600 uppercase tabular-nums ml-1"><%= @rufa_rankings.count %> Active</span>
+                </div>
+              </div>
+
+              <div class="space-y-4">
+                <% if @rufa_activities.any? %>
+                  <% @rufa_activities.each do |activity| %>
+                    <div class="flex gap-3 md:gap-4 group">
+                       <div class="shrink-0 pt-1">
+                         <img src="<%= activity.user.profile_image %>" class="w-8 h-8 md:w-10 md:h-10 rounded-xl shadow-md border border-slate-100" />
+                       </div>
+                       <div class="flex-1 space-y-2 pb-4 md:pb-6 group-last:pb-0 border-l-2 border-slate-50 pl-4 md:pl-6 relative text-left">
+                          <div class="absolute -left-[5px] top-4 w-2 h-2 bg-slate-200 rounded-full border-2 border-white"></div>
+                          
+                          <div class="bg-slate-50/50 p-3 md:p-5 rounded-2xl border border-slate-100/50 hover:bg-white transition-all hover:shadow-sm">
+                            <div class="flex items-center gap-2 mb-1">
+                              <span class="text-[11px] md:text-sm font-black text-slate-800"><%= activity.user.nickname %></span>
+                              <span class="text-[9px] md:text-[10px] font-bold text-slate-300 tabular-nums"><%= time_ago_in_words(activity.created_at) %>전</span>
+                            </div>
+                            <p class="text-[12px] md:text-[14px] font-bold text-slate-600 leading-relaxed"><%= activity.body %></p>
+                            
+                            <div class="mt-4 flex items-center justify-between">
+                                <div id="activity_claps_<%= activity.id %>">
+                                  <%= button_to rufa_activity_claps_path(activity), 
+                                              method: :post, 
+                                              class: "flex items-center gap-2.5 px-4 md:px-6 py-2 md:py-3 #{current_user.rufa_claps.exists?(rufa_activity: activity) ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-white text-slate-600 border-slate-100'} hover:bg-amber-50 rounded-full transition-all border group/clap shadow-sm",
+                                              data: { turbo: true } do %>
+                                    <span class="text-lg md:text-2xl group-hover/clap:scale-125 transition-transform duration-300"><%= current_user.rufa_claps.exists?(rufa_activity: activity) ? "👏" : "🙌" %></span>
+                                    <span class="text-xs md:text-sm font-black tabular-nums"><%= activity.claps_count.to_i %></span>
+                                  <% end %>
+                                </div>
+                                <div class="flex -space-x-1.5 opacity-60">
+                                  <% activity.claps.take(5).each do |clap| %>
+                                    <div class="w-5 h-5 rounded-full border-2 border-white bg-amber-50 flex items-center justify-center text-[8px] shadow-sm">👏</div>
+                                  <% end %>
+                                </div>
+                            </div>
+                          </div>
+                       </div>
+                    </div>
+                  <% end %>
+                <% else %>
+                   <div class="py-20 text-center bg-slate-50 rounded-[32px] border border-dashed border-slate-200">
+                     <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl mb-4 mx-auto shadow-sm border border-slate-100">✨</div>
+                     <p class="text-slate-400 text-sm font-black uppercase tracking-widest font-mono">Synergy is coming</p>
+                     <p class="text-slate-300 text-[11px] font-bold mt-2">멤버들에게 성장의 에너지를 가장 먼저 공유해보세요!</p>
+                   </div>
+                <% end %>
+              </div>
+           </div>
         </div>
 
         <!-- 3. Members Tab (멤버 루틴) -->
         <div id="tab-members" class="rufa-content-tab hidden">
-          <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm">
-             <%= render 'routine_clubs/members_area', routine_club: @routine_club %>
-          </div>
+            <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6">
+               <div class="flex items-center justify-between">
+                 <h3 class="text-xs md:text-sm font-black text-slate-400 uppercase tracking-widest leading-none">멤버 성취 루틴</h3>
+                 <div class="px-2.5 py-1.5 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2 shadow-sm">
+                   <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(79,70,229,0.5)]"></span>
+                   <span class="text-[9px] font-black text-slate-600 uppercase tabular-nums"><%= @rufa_rankings.count %> Active Members</span>
+                 </div>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+                 <% @rufa_rankings.each do |rank_data| %>
+                   <% member = rank_data[:user] %>
+                   <div class="bg-slate-50/50 rounded-2xl p-4 md:p-5 border border-slate-100/50 hover:bg-white transition-all shadow-sm hover:shadow-md group">
+                      <div class="flex items-center justify-between gap-4">
+                        <!-- Member Profile -->
+                        <div class="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
+                          <img src="<%= member.profile_image %>" class="w-10 h-10 md:w-12 md:h-12 rounded-xl object-cover shrink-0 shadow-sm border border-white" />
+                          <div class="min-w-0">
+                            <h4 class="text-xs md:text-base font-black text-slate-900 truncate leading-tight"><%= member.nickname %></h4>
+                            <p class="text-[9px] md:text-[10px] font-bold text-slate-400 truncate uppercase tracking-widest mt-0.5"><%= member.routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
+                          </div>
+                        </div>
+
+                        <!-- Summary Stats -->
+                        <div class="flex items-center gap-3 md:gap-6 shrink-0">
+                          <div class="text-right hidden sm:block">
+                            <p class="text-[7px] md:text-[8px] font-black text-slate-300 uppercase leading-none mb-1">Score</p>
+                            <p class="text-[11px] md:text-sm font-black text-slate-900 tabular-nums"><%= rank_data[:score].to_i %>P</p>
+                          </div>
+                          <div class="text-right">
+                            <p class="text-[7px] md:text-[8px] font-black text-slate-300 uppercase leading-none mb-1">Success</p>
+                            <p class="text-[11px] md:text-sm font-black text-emerald-500 tabular-nums"><%= member.monthly_achievement_rate.to_i %>%</p>
+                          </div>
+                          <!-- Toggle Button -->
+                          <button onclick="toggleMemberRoutines(<%= member.id %>)" class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-slate-100">
+                            <svg id="arrow-<%= member.id %>" class="w-3.5 h-3.5 md:w-4 md:h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Collapsible Routine List -->
+                      <div id="routines-<%= member.id %>" class="hidden mt-4 pt-4 border-t border-slate-200/50 space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <div class="flex items-center gap-2 text-indigo-500">
+                           <span class="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em]">Active Routines</span>
+                           <div class="h-px flex-1 bg-indigo-50"></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <% member_routines = member.personal_routines %>
+                          <% if member_routines.any? %>
+                            <% member_routines.each do |routine| %>
+                              <div class="flex items-center gap-2.5 p-2 md:p-3 bg-white rounded-xl border border-slate-100 shadow-xs">
+                                <span class="text-base md:text-xl shrink-0"><%= routine.icon %></span>
+                                <span class="text-[11px] md:text-xs font-bold text-slate-700 truncate"><%= routine.title %></span>
+                              </div>
+                            <% end %>
+                          <% else %>
+                            <p class="text-xs font-bold text-slate-300 italic py-2">아직 공개된 루틴이 없습니다.</p>
+                          <% end %>
+                        </div>
+                      </div>
+                   </div>
+                 <% end %>
+              </div>
+           </div>
         </div>
 
         <!-- 4. Architecture Tab (Goals + Routines) -->
@@ -643,198 +762,40 @@
             </div>
         </div>
 
-        <!-- 4. Synergy Tab (Feed) -->
-        <div id="tab-synergy" class="rufa-content-tab hidden space-y-3">
-           <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest leading-none">시너지 피드</h3>
-                <div class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-lg">
-                   <div class="flex -space-x-1">
-                     <% @rufa_rankings.take(3).each do |rank| %>
-                       <img src="<%= rank[:user].profile_image %>" class="w-4 h-4 rounded-full border border-white" />
-                     <% end %>
-                   </div>
-                   <span class="text-[8px] font-black text-slate-600 uppercase"><%= @rufa_rankings.count %> Active</span>
-                </div>
-              </div>
+        <!-- Mobile-only: Quick Links & Growth Identity at bottom -->
+        <div class="lg:hidden w-full space-y-4 mt-8">
+          <!-- Quick Links (Mobile only) -->
+          <div class="grid grid-cols-2 gap-2">
+            <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-3 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group shadow-sm" do %>
+                <span class="text-[10px] font-black">성실함 리포트</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
+            <% end %>
 
-              <div class="space-y-3">
-                <% if @rufa_activities.any? %>
-                  <% @rufa_activities.each do |activity| %>
-                    <div class="flex gap-2 md:gap-3 group">
-                       <div class="shrink-0 pt-1">
-                         <img src="<%= activity.user.profile_image %>" class="w-7 h-7 md:w-8 md:h-8 rounded-lg shadow-sm" />
-                       </div>
-                       <div class="flex-1 space-y-1.5 pb-3 md:pb-4 group-last:pb-0 border-l border-slate-100 pl-3 md:pl-4 relative text-left">
-                          <div class="absolute -left-[3px] top-3 md:top-4 w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
-                          
-                          <!-- Mobile: Card with button on side -->
-                          <div class="md:hidden flex gap-2 items-start">
-                            <div class="flex-1 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 hover:bg-white transition-all">
-                              <div class="flex items-center gap-1.5 mb-0.5">
-                                <span class="text-[10px] font-black text-slate-700"><%= activity.user.nickname %></span>
-                                <span class="text-[8px] font-bold text-slate-300 tabular-nums"><%= time_ago_in_words(activity.created_at) %>전</span>
-                              </div>
-                              <p class="text-[11px] font-bold text-slate-600 leading-snug"><%= activity.body %></p>
-                            </div>
-                            
-                            <!-- Clap button on the right -->
-                            <div class="shrink-0" id="activity_claps_<%= activity.id %>">
-                              <%= button_to rufa_activity_claps_path(activity), 
-                                          method: :post, 
-                                          class: "flex flex-col items-center gap-0.5 px-2 py-1.5 #{current_user.rufa_claps.exists?(rufa_activity: activity) ? 'bg-amber-100' : 'bg-white'} hover:bg-amber-50 rounded-xl transition-all border border-slate-100 group/clap shadow-sm",
-                                          data: { turbo: true } do %>
-                                <span class="text-base group-hover/clap:scale-125 transition-transform duration-300"><%= current_user.rufa_claps.exists?(rufa_activity: activity) ? "👏" : "🙌" %></span>
-                                <span class="text-[9px] font-black <%= activity.claps_count.to_i > 0 ? 'text-amber-600' : 'text-slate-400' %>"><%= activity.claps_count.to_i %></span>
-                              <% end %>
-                            </div>
-                          </div>
-                          
-                          <!-- Desktop: Original layout -->
-                          <div class="hidden md:block bg-slate-50/50 p-3 rounded-xl border border-slate-100/50 hover:bg-white transition-all">
-                            <div class="flex items-center gap-1.5 mb-0.5">
-                              <span class="text-[11px] font-black text-slate-700"><%= activity.user.nickname %></span>
-                              <span class="text-[9px] font-bold text-slate-300 tabular-nums"><%= time_ago_in_words(activity.created_at) %>전</span>
-                            </div>
-                            <p class="text-[12px] font-bold text-slate-600 leading-snug"><%= activity.body %></p>
-                            
-                            <!-- Desktop: Clap button at bottom -->
-                            <div class="hidden md:block mt-2">
-                               <div class="flex items-center justify-between">
-                                  <div id="activity_claps_desktop_<%= activity.id %>">
-                                    <%= button_to rufa_activity_claps_path(activity), 
-                                                method: :post, 
-                                                class: "flex items-center gap-3 px-6 py-3 #{current_user.rufa_claps.exists?(rufa_activity: activity) ? 'bg-amber-100' : 'bg-white'} hover:bg-amber-50 rounded-full transition-all border border-slate-100 group/clap shadow-sm",
-                                                data: { turbo: true } do %>
-                                      <span class="text-2xl group-hover/clap:scale-150 transition-transform duration-500"><%= current_user.rufa_claps.exists?(rufa_activity: activity) ? "👏" : "🙌" %></span>
-                                      <span class="text-sm font-black <%= activity.claps_count.to_i > 0 ? 'text-amber-600' : 'text-slate-400' %>"><%= activity.claps_count.to_i %></span>
-                                    <% end %>
-                                  </div>
-                                  <div class="flex -space-x-1">
-                                    <% activity.claps.take(3).each do |clap| %>
-                                      <div class="w-4 h-4 rounded-full border border-white bg-amber-50 flex items-center justify-center text-[7px]">👏</div>
-                                    <% end %>
-                                  </div>
-                               </div>
-                            </div>
-                          </div>
-                       </div>
-                    </div>
-                  <% end %>
-                <% else %>
-                   <div class="py-16 text-center bg-slate-50/50 rounded-[32px] border border-dashed border-slate-200">
-                     <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl mb-4 mx-auto shadow-sm border border-slate-100">✨</div>
-                     <p class="text-slate-400 text-xs font-black uppercase tracking-widest">첫 번째 시너지를 기다리고 있습니다</p>
-                     <p class="text-slate-300 text-[10px] font-bold mt-2">루틴을 완료하고 멤버들에게 성장의 에너지를 공유해보세요!</p>
-                   </div>
-                <% end %>
-              </div>
-           </div>
+            <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-3 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all group shadow-md" do %>
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center shadow-lg shadow-amber-400/20">
+                    <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
+                  </div>
+                  <span class="text-[10px] font-black">클럽 단톡방 합류</span>
+                </div>
+                <svg class="w-3 h-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            <% end %>
+          </div>
+
+          <!-- VIP & Identity Card (Mobile only) -->
+          <div class="flex px-5 py-4 bg-slate-900 rounded-3xl text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
+             <div class="flex items-center gap-3 min-w-0">
+               <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
+               <div class="min-w-0">
+                 <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">Growth Identity</p>
+                 <p class="text-[13px] font-black truncate"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
+               </div>
+             </div>
+             <svg class="w-4 h-4 text-indigo-300/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          </div>
         </div>
-
-        <!-- 5. Member Routines Tab -->
-        <div id="tab-members" class="rufa-content-tab hidden space-y-3">
-            <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
-               <div class="flex items-center justify-between">
-                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest leading-none">멤버 성취 루틴</h3>
-                 <div class="px-2 py-1 bg-slate-50 rounded-lg flex items-center gap-1 shrink-0">
-                   <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span>
-                   <span class="text-[8px] font-black text-slate-600 uppercase tabular-nums"><%= @rufa_rankings.count %> Active</span>
-                 </div>
-              </div>
-
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-                 <% @rufa_rankings.each do |rank_data| %>
-                   <% member = rank_data[:user] %>
-                   <div class="bg-white rounded-xl p-3 border border-slate-100 hover:border-indigo-100 transition-all shadow-sm">
-                      <div class="flex items-center justify-between gap-3">
-                        <!-- Member Profile -->
-                        <div class="flex items-center gap-3 min-w-0 flex-1">
-                          <img src="<%= member.profile_image %>" class="w-10 h-10 rounded-xl object-cover shrink-0" />
-                          <div class="min-w-0">
-                            <h4 class="text-xs font-black text-slate-900 truncate leading-tight"><%= member.nickname %></h4>
-                            <p class="text-[9px] font-bold text-slate-400 truncate uppercase tracking-tighter"><%= member.routine_club_members.active.first&.identity_title || "루파 파인더" %></p>
-                          </div>
-                        </div>
-
-                        <!-- Summary Stats -->
-                        <div class="flex items-center gap-4 shrink-0">
-                          <div class="text-right">
-                            <p class="text-[7px] font-black text-slate-300 uppercase leading-none mb-1">Score</p>
-                            <p class="text-[11px] font-black text-slate-900 tabular-nums"><%= rank_data[:score].to_i %>P</p>
-                          </div>
-                          <div class="text-right">
-                            <p class="text-[7px] font-black text-slate-300 uppercase leading-none mb-1">Success</p>
-                            <p class="text-[11px] font-black text-emerald-500 tabular-nums"><%= member.monthly_achievement_rate.to_i %>%</p>
-                          </div>
-                          <!-- Toggle Button -->
-                          <button onclick="toggleMemberRoutines(<%= member.id %>)" class="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
-                            <svg id="arrow-<%= member.id %>" class="w-3.5 h-3.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- Collapsible Routine List -->
-                      <div id="routines-<%= member.id %>" class="hidden mt-4 pt-4 border-t border-slate-100 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                        <p class="text-[9px] lg:text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em]">Active Routines</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          <% member_routines = member.personal_routines %>
-                          <% if member_routines.any? %>
-                            <% member_routines.each do |routine| %>
-                              <div class="flex items-center gap-2.5 p-2 bg-slate-50 rounded-xl lg:rounded-2xl">
-                                <span class="text-base lg:text-lg shrink-0"><%= routine.icon %></span>
-                                <span class="text-[11px] lg:text-xs font-bold text-slate-700 truncate"><%= routine.title %></span>
-                              </div>
-                            <% end %>
-                          <% else %>
-                            <p class="text-xs font-medium text-slate-300 italic">아직 공개된 루틴이 없습니다.</p>
-                          <% end %>
-                        </div>
-                      </div>
-                   </div>
-                 <% end %>
-              </div>
-           </div>
-         </div>
-
-         <!-- Mobile-only: Quick Links & Growth Identity at bottom -->
-         <div class="lg:hidden w-full space-y-4 mt-8">
-           <!-- Quick Links (Mobile only) -->
-           <div class="grid grid-cols-2 gap-2">
-             <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-3 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group shadow-sm" do %>
-                 <span class="text-[10px] font-black">성실함 리포트</span>
-                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
-             <% end %>
-
-             <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-3 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all group shadow-md" do %>
-                 <div class="flex items-center gap-2">
-                   <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center shadow-lg shadow-amber-400/20">
-                     <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
-                   </div>
-                   <span class="text-[10px] font-black">클럽 단톡방 합류</span>
-                 </div>
-                 <svg class="w-3 h-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-             <% end %>
-           </div>
-
-           <!-- VIP & Identity Card (Mobile only - at very bottom) -->
-           <div class="flex px-5 py-4 bg-slate-900 rounded-3xl text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
-                <div class="min-w-0">
-                  <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">Growth Identity</p>
-                  <p class="text-[13px] font-black truncate"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
-                </div>
-              </div>
-              <svg class="w-4 h-4 text-indigo-300/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-           </div>
-         </div>
-
-         <!-- Mobile Quick Stats Removed (Moved to top sidebar) -->
-       </main> <!-- END: Sub-tab Content Area (closes line 229) -->
-     </div> <!-- END: Premium Member Dashboard Framework (closes line 153) -->
+      </main> <!-- END: Sub-tab Content Area -->
+    </div> <!-- END: Premium Member Dashboard Framework -->
   <% else %>
     <!-- Member Dashboard -->
     <%= render 'routine_clubs/dashboard' %>
