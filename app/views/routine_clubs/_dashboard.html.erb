@@ -133,7 +133,14 @@
         <h2 class="text-lg md:text-xl font-black text-slate-900 flex items-center gap-2">
           <span class="text-xl md:text-2xl">🤝</span> 모임 알림
         </h2>
-        <button onclick="openAllGatheringsModal()" class="text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-colors">전체보기</button>
+        <div class="flex gap-2">
+          <% if @is_host || current_user&.admin? %>
+            <button onclick="openGatheringModal()" class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg hover:bg-emerald-100 transition-colors">
+              모임 등록
+            </button>
+          <% end %>
+          <button onclick="openAllGatheringsModal()" class="text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-colors">전체보기</button>
+        </div>
       </div>
 
       <div class="space-y-2 md:space-y-3">
