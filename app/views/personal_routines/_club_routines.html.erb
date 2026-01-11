@@ -160,8 +160,8 @@
       <!-- Sub-navigation Sidebar Card -->
       <aside class="w-full lg:w-72 shrink-0 bg-white rounded-[32px] p-6 lg:p-7 shadow-sm border border-slate-100 h-fit sticky top-24">
         <div class="flex flex-col gap-8">
-          <!-- VIP & Identity Card (Desktop only - hidden on mobile) -->
-          <div class="hidden lg:flex px-5 py-4 lg:px-6 lg:py-4 bg-slate-900 rounded-3xl lg:rounded-[32px] text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
+          <!-- VIP & Identity Card -->
+          <div class="flex px-5 py-4 lg:px-6 lg:py-4 bg-slate-900 rounded-3xl lg:rounded-[32px] text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
              <div class="flex items-center gap-3 lg:gap-4 lg:min-w-0">
                <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
                <div class="min-w-0">
@@ -205,8 +205,8 @@
             <% end %>
           </nav>
 
-          <!-- Quick Links (Desktop only - hidden on mobile) -->
-          <div class="hidden lg:grid grid-cols-2 lg:grid-cols-1 gap-2 pt-2 lg:pt-4 border-t border-slate-100/50">
+          <!-- Quick Links -->
+          <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 pt-2 lg:pt-4 border-t border-slate-100/50">
             <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-3 lg:p-4 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group shadow-sm" do %>
                 <span class="text-[10px] lg:text-xs font-black">성실함 리포트</span>
                 <svg class="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
@@ -220,7 +220,6 @@
                   <span class="text-[10px] lg:text-xs font-black">클럽 단톡방 합류</span>
                 </div>
                 <svg class="w-3 h-3 lg:w-4 lg:h-4 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-                <svg class="w-3 h-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
             <% end %>
           </div>
         </div>
@@ -379,6 +378,7 @@
             </div>
           </div>
         </div>
+      </div>
 
         <!-- 2. Synergy Tab (시너지 피드) -->
         <div id="tab-synergy" class="rufa-content-tab hidden">
@@ -398,35 +398,32 @@
               <div class="space-y-4">
                 <% if @rufa_activities.any? %>
                   <% @rufa_activities.each do |activity| %>
-                    <div class="flex gap-3 md:gap-4 group">
+                    <div class="flex gap-2 group">
                        <div class="shrink-0 pt-1">
-                         <img src="<%= activity.user.profile_image %>" class="w-8 h-8 md:w-10 md:h-10 rounded-xl shadow-md border border-slate-100" />
+                         <img src="<%= activity.user.profile_image %>" class="w-7 h-7 rounded-lg shadow-sm border border-slate-100" />
                        </div>
-                       <div class="flex-1 space-y-2 pb-4 md:pb-6 group-last:pb-0 border-l-2 border-slate-50 pl-4 md:pl-6 relative text-left">
-                          <div class="absolute -left-[5px] top-4 w-2 h-2 bg-slate-200 rounded-full border-2 border-white"></div>
+                       <div class="flex-1 pb-2 md:pb-3 group-last:pb-0 border-l border-slate-100 pl-3 relative text-left">
+                          <div class="absolute -left-[3.5px] top-3 w-1.5 h-1.5 bg-slate-200 rounded-full border border-white"></div>
                           
-                          <div class="bg-slate-50/50 p-3 md:p-5 rounded-2xl border border-slate-100/50 hover:bg-white transition-all hover:shadow-sm">
-                            <div class="flex items-center gap-2 mb-1">
-                              <span class="text-[11px] md:text-sm font-black text-slate-800"><%= activity.user.nickname %></span>
-                              <span class="text-[9px] md:text-[10px] font-bold text-slate-300 tabular-nums"><%= time_ago_in_words(activity.created_at) %>전</span>
+                          <div class="bg-slate-50/50 p-2 md:p-3 rounded-xl border border-slate-100/50 hover:bg-white transition-all hover:shadow-sm flex items-center justify-between gap-3">
+                            <div class="min-w-0 flex-1">
+                              <div class="flex items-center gap-2 mb-0.5">
+                                <span class="text-[10px] md:text-[11px] font-black text-slate-800"><%= activity.user.nickname %></span>
+                                <span class="text-[8px] md:text-[9px] font-bold text-slate-300 tabular-nums"><%= time_ago_in_words(activity.created_at) %>전</span>
+                              </div>
+                              <p class="text-[11px] md:text-[12px] font-bold text-slate-600 leading-snug line-clamp-2"><%= activity.body %></p>
                             </div>
-                            <p class="text-[12px] md:text-[14px] font-bold text-slate-600 leading-relaxed"><%= activity.body %></p>
                             
-                            <div class="mt-4 flex items-center justify-between">
-                                <div id="activity_claps_<%= activity.id %>">
-                                  <%= button_to rufa_activity_claps_path(activity), 
-                                              method: :post, 
-                                              class: "flex items-center gap-2.5 px-4 md:px-6 py-2 md:py-3 #{current_user.rufa_claps.exists?(rufa_activity: activity) ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-white text-slate-600 border-slate-100'} hover:bg-amber-50 rounded-full transition-all border group/clap shadow-sm",
-                                              data: { turbo: true } do %>
-                                    <span class="text-lg md:text-2xl group-hover/clap:scale-125 transition-transform duration-300"><%= current_user.rufa_claps.exists?(rufa_activity: activity) ? "👏" : "🙌" %></span>
-                                    <span class="text-xs md:text-sm font-black tabular-nums"><%= activity.claps_count.to_i %></span>
-                                  <% end %>
-                                </div>
-                                <div class="flex -space-x-1.5 opacity-60">
-                                  <% activity.claps.take(5).each do |clap| %>
-                                    <div class="w-5 h-5 rounded-full border-2 border-white bg-amber-50 flex items-center justify-center text-[8px] shadow-sm">👏</div>
-                                  <% end %>
-                                </div>
+                            <div class="shrink-0">
+                              <div id="activity_claps_<%= activity.id %>">
+                                <%= button_to rufa_activity_claps_path(activity), 
+                                            method: :post, 
+                                            class: "flex items-center gap-1.5 px-2 md:px-3 py-1 #{current_user.rufa_claps.exists?(rufa_activity: activity) ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-white text-slate-600 border-slate-200'} hover:bg-amber-50 rounded-lg transition-all border group/clap shadow-xs",
+                                            data: { turbo: true } do %>
+                                  <span class="text-sm md:text-base group-hover/clap:scale-110 transition-transform"><%= current_user.rufa_claps.exists?(rufa_activity: activity) ? "👏" : "🙌" %></span>
+                                  <span class="text-[10px] md:text-xs font-black tabular-nums"><%= activity.claps_count.to_i %></span>
+                                <% end %>
+                              </div>
                             </div>
                           </div>
                        </div>
@@ -762,37 +759,6 @@
             </div>
         </div>
 
-        <!-- Mobile-only: Quick Links & Growth Identity at bottom -->
-        <div class="lg:hidden w-full space-y-4 mt-8">
-          <!-- Quick Links (Mobile only) -->
-          <div class="grid grid-cols-2 gap-2">
-            <%= link_to routine_club_reports_path, class: "flex items-center justify-between p-3 bg-indigo-50 text-indigo-600 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all group shadow-sm" do %>
-                <span class="text-[10px] font-black">성실함 리포트</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7"/></svg>
-            <% end %>
-
-            <%= link_to "https://open.kakao.com/o/gt1WHswh", target: "_blank", class: "flex items-center justify-between p-3 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all group shadow-md" do %>
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center shadow-lg shadow-amber-400/20">
-                    <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 5.582 2 10c0 2.802 1.77 5.275 4.417 6.81l-.817 3.01c-.046.168.146.302.285.21l3.525-2.285c.82.16 1.68.255 2.59.255 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/></svg>
-                  </div>
-                  <span class="text-[10px] font-black">클럽 단톡방 합류</span>
-                </div>
-                <svg class="w-3 h-3 opacity-30 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-            <% end %>
-          </div>
-
-          <!-- VIP & Identity Card (Mobile only) -->
-          <div class="flex px-5 py-4 bg-slate-900 rounded-3xl text-white shadow-xl items-center justify-between group cursor-pointer" onclick="toggleVipCard()">
-             <div class="flex items-center gap-3 min-w-0">
-               <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-xl shrink-0">🔱</div>
-               <div class="min-w-0">
-                 <p class="text-[8px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">Growth Identity</p>
-                 <p class="text-[13px] font-black truncate"><%= @my_official_membership&.identity_title || "루파 파인더" %></p>
-               </div>
-             </div>
-             <svg class="w-4 h-4 text-indigo-300/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-          </div>
         </div>
       </main> <!-- END: Sub-tab Content Area -->
     </div> <!-- END: Premium Member Dashboard Framework -->
