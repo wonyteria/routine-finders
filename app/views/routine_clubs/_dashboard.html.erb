@@ -11,7 +11,16 @@
 <!-- START: Dashboard White Box Container (opened at line 11) -->
 <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
   
-  <div id="rufa-club-stats-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+  <div id="rufa-club-stats-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+    <!-- 오늘의 달성률 (NEW) -->
+    <div class="bg-indigo-600 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
+      <p class="text-[10px] md:text-xs font-black text-indigo-100 uppercase tracking-wider mb-1 md:mb-2 italic">오늘의 달성률</p>
+      <div class="flex items-baseline gap-1">
+        <p class="text-2xl md:text-3xl font-black tracking-tight tabular-nums"><%= @daily_achievement_rate.to_i %></p>
+        <p class="text-xs md:text-sm font-bold text-indigo-300">%</p>
+      </div>
+    </div>
+
     <!-- 성장 에너지 -->
     <div class="bg-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden flex flex-col justify-between">
       <p class="text-[10px] md:text-xs font-black text-indigo-300 uppercase tracking-wider mb-1 md:mb-2">성장 에너지</p>
@@ -21,9 +30,9 @@
       </div>
     </div>
 
-    <!-- 달성률 -->
+    <!-- 달성률 (월간 평균) -->
     <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
-      <p class="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-wider mb-1 md:mb-2">달성률</p>
+      <p class="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-wider mb-1 md:mb-2">월간 평균 성취</p>
       <div class="flex items-baseline gap-1">
         <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.achievement_rate.to_i %></p>
         <p class="text-xs md:text-sm font-bold text-slate-400">%</p>

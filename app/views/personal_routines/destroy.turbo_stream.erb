@@ -1,4 +1,13 @@
 <%= turbo_stream.remove "routine_#{@routine.id}_card" %>
+<%= turbo_stream.remove "total_routine_#{@routine.id}_item" %>
+
+<% if current_user.personal_routines.where(deleted_at: nil).none? %>
+  <%= turbo_stream.append "total-routine-list" do %>
+    <div id="no-total-routines-msg" class="py-16 text-center border-2 border-dashed border-slate-100 rounded-3xl">
+      <p class="text-xs font-bold text-slate-300 italic">아직 등록된 루틴이 없습니다.</p>
+    </div>
+  <% end %>
+<% end %>
 
 <%# Update stats in sidebar if needed %>
 <%= turbo_stream.update "total-active-count" do %>

@@ -834,25 +834,34 @@
   }
 
   function switchRufaTab(id) {
+    const targetTab = document.getElementById('tab-' + id);
+    if (!targetTab) {
+      console.error('Target tab not found:', id);
+      return;
+    }
+
     // Hide all tabs
     document.querySelectorAll('.rufa-content-tab').forEach(tab => tab.classList.add('hidden'));
     // Show selected tab
-    document.getElementById('tab-' + id).classList.remove('hidden');
+    targetTab.classList.remove('hidden');
     
-    // Update navigation styles to match ternary logic in ERB
+    // Update navigation styles
     document.querySelectorAll('.rufa-nav-btn').forEach(btn => {
-      // Reset to inactive state
       btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg');
       btn.classList.add('bg-slate-50', 'text-slate-500', 'border-transparent');
-      btn.classList.remove('border-slate-100');
     });
 
     const activeBtn = document.getElementById('nav-' + id);
-    // Apply active state if button exists
     if (activeBtn) {
       activeBtn.classList.remove('bg-slate-50', 'text-slate-500', 'border-transparent');
       activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg');
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
+
+    // Update URL without full page reload
+    const url = new URL(window.location);
+    url.searchParams.set('sub_tab', id);
+    window.history.replaceState({}, '', url);
 
     // Scroll to top of content area on mobile
     if (window.innerWidth < 1024) {
@@ -862,6 +871,24 @@
       }
     }
   }
+
+  // Handle initial tab from URL
+  document.addEventListener('turbo:load', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const subTab = urlParams.get('sub_tab') || 'club_dashboard';
+    if (document.getElementById('tab-' + subTab)) {
+      switchRufaTab(subTab);
+    }
+  });
+
+  // Re-run on popstate (back button)
+  window.addEventListener('popstate', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const subTab = urlParams.get('sub_tab') || 'club_dashboard';
+    if (document.getElementById('tab-' + subTab)) {
+      switchRufaTab(subTab);
+    }
+  });
 
   function switchRankingMode(mode) {
     const monthlyContainer = document.getElementById('monthly-ranking-container');

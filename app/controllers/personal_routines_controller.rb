@@ -8,7 +8,11 @@ class PersonalRoutinesController < ApplicationController
     # 개인 루틴 (무료)
     current_user.user_badges.where(is_viewed: false).update_all(is_viewed: true)
 
-    @selected_date = params[:date] ? Date.parse(params[:date]) : Date.current
+    @selected_date = begin
+      params[:date].present? ? Date.parse(params[:date]) : Date.current
+    rescue
+      Date.current
+    end
 
     # Filter routines that were active on the selected date
     if @selected_date == Date.current
@@ -110,6 +114,7 @@ class PersonalRoutinesController < ApplicationController
     # 루파 통계 (요약)
     @current_log_rate = current_user.monthly_routine_log_rate
     @current_achievement_rate = current_user.monthly_achievement_rate
+    @daily_achievement_rate = current_user.daily_achievement_rate(@selected_date)
     @total_completions = current_user.total_routine_completions
     @member_days = current_user.rufa_member_days
 

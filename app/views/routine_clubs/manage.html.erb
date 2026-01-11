@@ -473,6 +473,69 @@
       </div>
     </div>
 
+    <!-- Member Management Tab (Newly added) -->
+    <div id="manage-content-members" class="manage-tab-content hidden space-y-3 md:space-y-6">
+      <div class="bg-white rounded-2xl md:rounded-[40px] p-4 md:p-8 border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-6 md:mb-10">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl md:text-3xl shadow-lg shadow-indigo-50">👥</div>
+            <div>
+              <h2 class="text-lg md:text-2xl font-black text-slate-900">멤버 리스트</h2>
+              <p class="text-[9px] md:text-sm text-slate-400 font-bold uppercase tracking-widest mt-0.5 md:mt-1">현재 루파 클럽에 참여 중인 모든 멤버</p>
+            </div>
+          </div>
+          <div class="px-4 py-2 bg-slate-50 rounded-xl border border-slate-100 text-[10px] md:text-xs font-black text-slate-500">
+            총 <%= @members.count %>명 참여 중
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+          <% @members.each do |membership| %>
+            <div class="group bg-white border border-slate-100 rounded-2xl p-4 md:p-5 hover:border-indigo-200 hover:shadow-md transition-all">
+              <div class="flex items-center gap-3 md:gap-4 mb-4">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-black text-sm border border-slate-200 overflow-hidden shrink-0">
+                  <% if membership.user.profile_image.present? %>
+                    <img src="<%= membership.user.profile_image %>" class="w-full h-full object-cover" />
+                  <% else %>
+                    <%= membership.user.nickname[0].upcase %>
+                  <% end %>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1.5">
+                    <h4 class="text-sm md:text-base font-black text-slate-900 truncate leading-tight"><%= membership.user.nickname %></h4>
+                    <% if membership.user.admin? %>
+                      <span class="px-1 py-0.5 bg-slate-900 text-white text-[7px] font-black rounded shrink-0">HOST</span>
+                    <% end %>
+                  </div>
+                  <p class="text-[9px] md:text-[10px] font-bold text-slate-400 truncate mt-0.5"><%= membership.identity_title.presence || "루파 파인더" %></p>
+                </div>
+              </div>
+
+              <div class="space-y-2 md:space-y-3 pt-4 border-t border-slate-50">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Status</span>
+                  <span class="px-2 py-0.5 <%= membership.active? ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600' %> text-[9px] font-black rounded-lg uppercase"><%= membership.status %></span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Joined</span>
+                  <span class="text-[10px] font-bold text-slate-600"><%= membership.joined_at.strftime("%Y.%m.%d") %></span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Contact</span>
+                  <span class="text-[10px] font-bold text-indigo-600 truncate max-w-[120px] text-right"><%= membership.contact_info.presence || "미입력" %></span>
+                </div>
+              </div>
+
+              <div class="flex gap-2 mt-4 md:mt-5 pt-4 border-t border-slate-50">
+                <button onclick="openMessageModal(<%= membership.user.id %>, '<%= membership.user.nickname %>')" class="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-black text-[10px] hover:bg-indigo-600 hover:text-white transition-all">메시지</button>
+                <button class="flex-1 py-2 bg-slate-50 text-slate-400 rounded-xl font-black text-[10px] hover:bg-orange-50 hover:text-orange-600 transition-all">경고</button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <!-- Expiring Tab -->
     <div id="manage-content-expiring" class="manage-tab-content hidden">
       <div class="bg-white rounded-2xl md:rounded-[40px] p-4 md:p-8 border border-slate-200 shadow-sm">

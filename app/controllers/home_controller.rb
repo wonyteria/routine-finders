@@ -12,7 +12,18 @@ class HomeController < ApplicationController
       @hot_gatherings = Challenge.offline_gatherings.order(current_participants: :desc).limit(6)
       @personal_routines = @current_user&.personal_routines&.includes(:completions) || []
       @participations = @current_user&.participations&.includes(challenge: { participants: :user }) || []
+      @my_club_memberships = @current_user.routine_club_members.active.includes(:routine_club)
       set_activity_data
+
+      @total_activities = @activity_data.values.sum
+
+      # Calculate Current Streak
+      @current_streak = 0
+      check_date = Date.current
+      while @activity_data[check_date] > 0
+        @current_streak += 1
+        check_date -= 1.day
+      end
 
       # Top Badge Achievers for Home
       @top_achievers = User.joins(:user_badges)

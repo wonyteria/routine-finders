@@ -2,6 +2,13 @@
   <%= render "routine_card", routine: @routine %>
 <% end %>
 
+<%= turbo_stream.remove "no-routines-msg" %>
+<%= turbo_stream.remove "no-total-routines-msg" %>
+
+<%= turbo_stream.prepend "total-routine-list" do %>
+  <%= render "total_routine_item", routine: @routine %>
+<% end %>
+
 <%= turbo_stream.replace "new_personal_routine" do %>
   <%= render partial: "personal_routines/form", locals: { routine: PersonalRoutine.new } %>
 <% end %>
@@ -19,11 +26,6 @@
   <%= render "shared/achievement_matrix" %>
 <% end %>
 
-<%= turbo_stream.replace "recommended-routines-section" do %>
-  <div id="recommended-routines-section" class="flex gap-4 lg:gap-6 overflow-x-auto pb-6 -mx-1 px-1 no-scrollbar text-left">
-    <%= render "recommended_routines" %>
-  </div>
-<% end %>
 
 <%= turbo_stream.append "body" do %>
   <script>
