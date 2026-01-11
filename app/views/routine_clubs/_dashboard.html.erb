@@ -163,11 +163,11 @@
       <% end %>
     </div>
   </div>
-  <!-- 상단 3열 구조: 오늘의 루틴 + 오늘의 기록 + 성취 매트릭스 -->
-  <div class="grid grid-cols-1 lg:grid-cols-10 gap-6 lg:gap-8 items-start">
-    <!-- 오늘의 루틴 (Main Action Panel) - 40% -->
-    <div class="lg:col-span-4 flex flex-col">
-      <div class="bg-slate-900 rounded-[32px] p-8 lg:p-10 shadow-2xl relative overflow-hidden group flex-1 flex flex-col">
+  <!-- 상단 2열 구조: 오늘의 루틴 + 성취 매트릭스 -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
+    <!-- 오늘의 루틴 (Main Action Panel) -->
+    <div class="flex flex-col">
+      <div class="bg-slate-900 rounded-[32px] p-8 lg:p-10 shadow-2xl relative overflow-hidden group flex-1 flex flex-col min-h-[400px]">
         <div class="absolute -right-16 -top-16 w-48 h-48 bg-indigo-600/30 rounded-full blur-[80px]"></div>
         
         <div class="relative z-10 mb-10 flex items-center justify-between">
@@ -192,7 +192,7 @@
               <% end %>
             </div>
           <% else %>
-            <div class="flex-1 flex flex-col items-center justify-center py-12 text-center">
+            <div class="w-full flex-1 flex flex-col items-center justify-center py-12 text-center">
               <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-3xl mb-4 border border-white/5 shadow-inner">🏖️</div>
               <h3 class="text-white font-black text-lg mb-2">오늘은 루틴 휴식일입니다</h3>
               <p class="text-indigo-300/50 text-[11px] font-bold mb-8 leading-relaxed">설정된 루틴이 없거나 오늘의 요일과 일치하지 않습니다.<br>새로운 루틴을 설계하여 성장의 발판을 마련해보세요!</p>
@@ -216,8 +216,8 @@
       </div>
     </div>
 
-    <!-- 성취 매트릭스 (Performance Stats) - 40% -->
-    <div id="rufa-achievement-matrix" class="lg:col-span-4 flex flex-col">
+    <!-- 성취 매트릭스 (Performance Stats) -->
+    <div id="rufa-achievement-matrix" class="flex flex-col h-full">
       <%= render 'shared/achievement_matrix', compact: false %>
     </div>
   </div>
