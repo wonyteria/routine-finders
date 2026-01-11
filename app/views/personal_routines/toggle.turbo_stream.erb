@@ -124,11 +124,27 @@
       </div>
       
       <!-- 휴식권 -->
-      <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm cursor-help flex flex-col justify-between">
+      <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm cursor-help flex flex-col justify-between" 
+           title="오늘 분량 면제 & 출석률 70% 보호">
         <p class="text-[10px] md:text-xs font-black text-blue-400 uppercase tracking-wider mb-1 md:mb-2">휴식권</p>
-        <div class="flex items-baseline gap-1">
-          <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %></p>
-          <p class="text-xs md:text-sm font-bold text-slate-400">개</p>
+        <div class="flex items-center justify-between gap-1">
+          <div class="flex items-baseline gap-1">
+            <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_membership.remaining_passes %></p>
+            <p class="text-xs md:text-sm font-bold text-slate-400">개</p>
+          </div>
+          <% 
+            today_attendance = @my_membership.attendances.find_by(attendance_date: Date.current)
+            can_use_pass = @my_membership.remaining_passes > 0 && !today_attendance&.status_excused?
+          %>
+          <% if can_use_pass %>
+            <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
+                          class: "px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] md:text-xs font-black border border-blue-100 hover:bg-blue-600 hover:text-white transition-all whitespace-nowrap", 
+                          data: { turbo_confirm: "휴식권을 사용하시겠습니까?", turbo: false } do %>
+              사용
+            <% end %>
+          <% elsif today_attendance&.status_excused? %>
+            <span class="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-[10px] md:text-xs font-black">완료</span>
+          <% end %>
         </div>
       </div>
       
