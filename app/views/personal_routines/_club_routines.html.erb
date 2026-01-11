@@ -236,7 +236,7 @@
 
         <!-- 1. Dashboard Tab (나의 루틴) -->
         <div id="tab-dashboard" class="rufa-content-tab hidden">
-          <!-- Premium Board Container (Matches Club Dashboard) -->
+          <!-- Premium Board Container -->
           <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
             <div class="flex flex-col lg:flex-row gap-4 lg:gap-8 items-start">
             <!-- Left: Today's Check-in (Main Column) -->
@@ -380,8 +380,23 @@
           </div>
         </div>
 
-        <!-- 2. Architecture Tab (Goals + Routines) -->
-        <div id="tab-architecture" class="rufa-content-tab hidden space-y-2 md:space-y-3">
+        <!-- 2. Synergy Tab (시너지 피드) - Needs similar container if not exist -->
+        <div id="tab-synergy" class="rufa-content-tab hidden">
+          <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm">
+            <%= render 'routine_clubs/synergy_feed', routine_club: @routine_club %>
+          </div>
+        </div>
+
+        <!-- 3. Members Tab (멤버 루틴) -->
+        <div id="tab-members" class="rufa-content-tab hidden">
+          <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm">
+             <%= render 'routine_clubs/members_area', routine_club: @routine_club %>
+          </div>
+        </div>
+
+        <!-- 4. Architecture Tab (Goals + Routines) -->
+        <div id="tab-architecture" class="rufa-content-tab hidden">
+          <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
            <!-- Routine Management Section -->
            <div class="bg-white rounded-xl md:rounded-2xl p-3 md:p-5 border border-slate-100 shadow-sm space-y-2 md:space-y-4">
              <div class="flex items-center justify-between">
@@ -453,10 +468,12 @@
               </button>
             <% end %>
            </div>
+           </div>
         </div>
 
-        <!-- 3. Ranking Tab (Leaderboard) -->
-        <div id="tab-ranking" class="rufa-content-tab hidden space-y-3">
+        <!-- 5. Ranking Tab (Leaderboard) -->
+        <div id="tab-ranking" class="rufa-content-tab hidden">
+          <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
             <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4">
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="space-y-1">
