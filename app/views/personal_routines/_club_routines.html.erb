@@ -240,35 +240,35 @@
             <!-- Left: Today's Check-in (Main Column) -->
             <div class="flex-1 w-full space-y-4">
               <!-- Integrated Stats Grid Moved from Sidebar -->
-              <div class="grid grid-cols-3 gap-2 md:gap-4">
+              <div class="grid grid-cols-3 gap-3 md:gap-4">
                  <!-- Achievement Rate -->
-                 <div class="bg-slate-900 rounded-[20px] md:rounded-3xl p-3 md:p-6 text-white shadow-lg relative overflow-hidden group">
+                 <div class="bg-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-lg relative overflow-hidden group flex flex-col justify-between">
                    <div class="absolute -right-4 -top-4 w-12 h-12 bg-indigo-600/20 rounded-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
-                   <p class="text-[8px] md:text-sm font-black text-indigo-300 uppercase tracking-[0.15em] mb-1 md:mb-4">달성률</p>
+                   <p class="text-[10px] md:text-xs font-black text-indigo-300 uppercase tracking-wider mb-1 md:mb-2">달성률</p>
                    <div class="flex items-baseline gap-1">
-                     <p class="text-xl md:text-5xl font-black tracking-tighter tabular-nums"><%= @current_achievement_rate.to_i %></p>
-                     <p class="text-[10px] md:text-base font-bold text-indigo-400 font-mono">%</p>
+                     <p class="text-2xl md:text-3xl font-black tracking-tight tabular-nums"><%= @current_achievement_rate.to_i %></p>
+                     <p class="text-xs md:text-sm font-bold text-indigo-400 font-mono">%</p>
                    </div>
-                   <div class="mt-2 md:mt-5 h-1 md:h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                   <div class="mt-3 md:mt-4 h-1 w-full bg-white/10 rounded-full overflow-hidden">
                       <div class="h-full bg-indigo-400 transition-all duration-1000" style="width: <%= @current_achievement_rate.to_i %>%"></div>
                    </div>
                  </div>
     
                  <!-- Reward Points -->
-                 <div class="bg-white rounded-[20px] md:rounded-3xl p-3 md:p-6 border border-slate-100 shadow-sm group hover:border-amber-200 transition-colors">
-                   <p class="text-[8px] md:text-sm font-black text-amber-500 uppercase tracking-[0.15em] mb-1 md:mb-4 truncate">에너지</p>
+                 <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm group hover:border-amber-200 transition-colors flex flex-col justify-between">
+                   <p class="text-[10px] md:text-xs font-black text-amber-500 uppercase tracking-wider mb-1 md:mb-2 truncate">에너지</p>
                    <div class="flex items-baseline gap-1">
-                     <p class="text-xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @my_official_membership&.growth_points || 0 %></p>
-                     <p class="text-[10px] md:text-sm font-bold text-slate-300 font-mono">P</p>
+                     <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @my_official_membership&.growth_points || 0 %></p>
+                     <p class="text-xs md:text-sm font-bold text-slate-300 font-mono">P</p>
                    </div>
                  </div>
     
                  <!-- Member Days -->
-                 <div class="bg-white rounded-[20px] md:rounded-3xl p-3 md:p-6 border border-slate-100 shadow-sm group hover:border-purple-200 transition-colors">
-                   <p class="text-[8px] md:text-sm font-black text-purple-400 uppercase tracking-[0.15em] mb-1 md:mb-4 truncate">활동일</p>
+                 <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm group hover:border-purple-200 transition-colors flex flex-col justify-between">
+                   <p class="text-[10px] md:text-xs font-black text-purple-400 uppercase tracking-wider mb-1 md:mb-2 truncate">활동일</p>
                    <div class="flex items-baseline gap-1">
-                     <p class="text-xl md:text-4xl font-black text-slate-900 tracking-tighter tabular-nums"><%= @member_days %></p>
-                     <p class="text-[10px] md:text-sm font-bold text-slate-300 font-mono">D</p>
+                     <p class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight tabular-nums"><%= @member_days %></p>
+                     <p class="text-xs md:text-sm font-bold text-slate-300 font-mono">D</p>
                    </div>
                  </div>
               </div>
