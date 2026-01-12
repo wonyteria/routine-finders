@@ -13,9 +13,14 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <!-- Main Content -->
-      <div class="lg:col-span-8 space-y-8">
-        
+      <% if @is_member && params[:tab] == "dashboard" %>
+        <div class="lg:col-span-12">
+           <%= render "dashboard" %>
+        </div>
+      <% else %>
+        <!-- Main Content (Landing/Info) -->
+        <div class="lg:col-span-8 space-y-8">
+       
         
         <!-- Hero Section -->
         <div class="bg-white rounded-[48px] overflow-hidden shadow-xl border-2 border-orange-200">
@@ -666,6 +671,7 @@
 
         </div>
       </div>
+      <% end %>
     </div>
 
   </div>

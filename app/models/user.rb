@@ -295,7 +295,7 @@ class User < ApplicationRecord
   def rufa_member_days
     # 루파 클럽 멤버로 활동한 일수
     membership = routine_club_members.active.first
-    return 0 unless membership
+    return 0 unless membership && membership.joined_at
 
     (Date.current - membership.joined_at.to_date).to_i + 1
   end
@@ -303,5 +303,18 @@ class User < ApplicationRecord
   def lifetime_rufa_score
     # 누적 점수: 총 완료 횟수 기반
     total_routine_completions
+  end
+
+  def current_growth_identity
+    log = monthly_routine_log_rate
+    ach = monthly_achievement_rate
+    score = (log + ach) / 2
+
+    case
+    when score >= 90 then "루파 로드 마스터"
+    when score >= 70 then "정진하는 가이드"
+    when score >= 40 then "성장의 개척자"
+    else "시작하는 파인더"
+    end
   end
 end

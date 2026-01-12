@@ -11,6 +11,13 @@ class ProfilesController < ApplicationController
     @club_memberships = @user.routine_club_members.includes(:routine_club).order(created_at: :desc)
     @recent_reports = @user.routine_club_reports.order(start_date: :desc).limit(5)
 
+    # 비회원을 위한 실시간 성장 분석 데이터
+    if @recent_reports.empty?
+      @monthly_log_rate = @user.monthly_routine_log_rate
+      @monthly_ach_rate = @user.monthly_achievement_rate
+      @growth_identity = @user.current_growth_identity
+    end
+
     # 개인 루틴
     @personal_routines = @user.personal_routines.order(created_at: :desc)
 

@@ -86,6 +86,19 @@ class PersonalRoutinesController < ApplicationController
     @announcements = @official_club ? @official_club.announcements.order(created_at: :desc) : []
     @gatherings = @official_club ? @official_club.gatherings.order(gathering_at: :asc) : []
 
+    # Calculate Rank Percentile for Dashboard
+    if @my_membership && @my_membership.status_active?
+      active_members = @routine_club.members.active
+      total_members = active_members.count
+      if total_members > 0
+        my_rate = @my_membership.achievement_rate.to_f
+        better_count = active_members.where("achievement_rate > ?", my_rate).count
+        @my_rank_percentile = ((better_count + 1).to_f / total_members * 100).ceil
+      else
+        @my_rank_percentile = 0
+      end
+    end
+
     # 유저 목표 (단기/중기/장기)
     @user_goals = current_user.user_goals.index_by(&:goal_type)
     @short_term_goal = @user_goals["short_term"]&.body

@@ -79,7 +79,7 @@
     <div class="w-1 md:w-4 shrink-0"></div>
   </div>
 
-  <% days_left = (@my_membership.membership_end_date - Date.current).to_i %>
+  <% days_left = (@my_membership.membership_end_date.present? ? (@my_membership.membership_end_date - Date.current).to_i : 0) %>
   <% if days_left.between?(1, 14) %>
     <div class="bg-gradient-to-r from-orange-500 to-pink-500 rounded-[32px] p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl shadow-orange-200">
        <div class="space-y-1">

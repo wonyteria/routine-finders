@@ -1,7 +1,7 @@
 <div class="space-y-12">
   
-  <% if !(current_user.is_rufa_club_member? || current_user.admin?) %>
-    <!-- Premium Promotion View for Non-members -->
+  <% if !((@my_membership.present? && @my_membership.status_active?) || current_user.admin?) %>
+    <!-- Premium Promotion View for Non-members (Strictly for Official Club) -->
     <% 
       is_recruiting = @official_club&.recruitment_open?
       next_quarter_start = Date.current.beginning_of_quarter + 3.months
@@ -148,7 +148,7 @@
       </div>
     </section>
 
-  <% elsif current_user.has_active_rufa_membership? || current_user.admin? %>
+  <% elsif (@my_membership.present? && @my_membership.status_active?) || current_user.admin? %>
     <!-- START: Premium Member Dashboard Framework -->
     <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 bg-slate-50/80 backdrop-blur-sm rounded-[42px] p-3 lg:p-6 border border-slate-200/60 min-h-[850px]" id="rufa-premium-board">
       

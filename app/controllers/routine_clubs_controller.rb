@@ -17,14 +17,18 @@ class RoutineClubsController < ApplicationController
   end
 
   def guide
+    # Determine current member (viewer)
+    @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
+    @is_host = current_user && @routine_club.host == current_user
+    @my_membership = current_user&.routine_club_members&.find_by(routine_club: @routine_club, status: :active)
   end
 
   def show
     @is_member = current_user && (@routine_club.members.exists?(user: current_user) || current_user.admin?)
     @is_host = current_user && (@routine_club.host_id == current_user.id || current_user.super_admin?)
 
-    # Redirect members to their club dashboard
-    if @is_member && !@is_host
+    # Redirect members to their club dashboard (Only for Official Club)
+    if @is_member && !@is_host && @routine_club.is_official?
       return redirect_to personal_routines_path(tab: "club")
     end
 
@@ -38,12 +42,12 @@ class RoutineClubsController < ApplicationController
     end
 
     # Calculate Rank Percentile
-    if @my_membership && @my_membership.active?
-      active_members = @routine_club.members.active.includes(:attendances)
+    if @my_membership && @my_membership.status_active?
+      active_members = @routine_club.members.active
       total_members = active_members.count
       if total_members > 0
         my_rate = @my_membership.achievement_rate.to_f
-        better_count = active_members.count { |m| m.achievement_rate.to_f > my_rate }
+        better_count = active_members.where("achievement_rate > ?", my_rate).count
         @my_rank_percentile = ((better_count + 1).to_f / total_members * 100).ceil
       else
         @my_rank_percentile = 0
@@ -62,6 +66,14 @@ class RoutineClubsController < ApplicationController
 
     # User Routines for Dashboard Checklist
     @personal_routines = current_user&.personal_routines&.includes(:completions)&.order(created_at: :desc) || []
+    @daily_achievement_rate = current_user&.daily_achievement_rate(Date.current) || 0
+    @member_days = current_user&.rufa_member_days || 0
+    @my_score = current_user&.rufa_club_score || 0
+
+    active_members = @routine_club.members.active
+    @rufa_rankings = active_members.map { |m| { user: m.user, score: m.growth_points || 0 } }.sort_by { |r| -r[:score] }.take(10)
+    @top_avg_score = @rufa_rankings.any? ? (@rufa_rankings.sum { |r| r[:score] } / @rufa_rankings.size).round(1) : 0
+    @category_stats = current_user&.category_stats || {}
   end
 
   def manage
