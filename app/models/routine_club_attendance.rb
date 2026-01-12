@@ -15,7 +15,7 @@ class RoutineClubAttendance < ApplicationRecord
   # Scopes
   scope :today, -> { where(attendance_date: Date.current) }
   scope :this_week, -> { where(attendance_date: Date.current.beginning_of_week..Date.current.end_of_week) }
-  scope :recent, -> { order(attendance_date: :desc) }
+  scope :recent, -> { order(created_at: :desc) }
 
   # Methods
   def add_cheer(user_id)
