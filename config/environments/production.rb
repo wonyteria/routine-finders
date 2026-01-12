@@ -31,7 +31,13 @@ Rails.application.configure do
   config.force_ssl = true
 
   # Skip http-to-https redirect for health check endpoints.
-  config.ssl_options = { redirect: { exclude: ->(request) { [ "/", "/up" ].include?(request.path) } } }
+  # SSL 인증서가 www 도메인에만 적용되므로 www로 강제 리다이렉트합니다.
+  config.ssl_options = {
+    redirect: {
+      host: "www.routinefinders.life",
+      exclude: ->(request) { [ "/up" ].include?(request.path) }
+    }
+  }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]

@@ -3,11 +3,11 @@ puts "Starting dummy data seeding for Home page..."
 
 # 1. Create Users
 users_data = [
-  { nickname: "새벽형거인", bio: "3년차 미라클 모닝 전도사. 당신의 아침을 혁명으로 바꿉니다. 🙌", exp: 7500, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Giant" },
-  { nickname: "꾸준함의정석", bio: "마라톤 풀코스 5회 완주자. 지치지 않는 열정의 비결을 공유합니다. 🏃‍♂️", exp: 6200, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Steady" },
-  { nickname: "루틴마스터K", bio: "연간 100권 읽기 챌린지 운영 중. 지식의 복리 효과를 믿으세요. 📚", exp: 4800, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=MasterK" },
-  { nickname: "성장기록자", bio: "심리 상담사가 운영하는 마음 근육 강화 채널. 내면의 소리에 집중합니다. 🌱", exp: 3500, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Recorder" },
-  { nickname: "로지", bio: "갓생 사는 직장인의 현실적인 루틴 가이드. 매일 조금씩 성장해요. ✨", exp: 2500, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rosie" }
+  { nickname: "새벽형거인", bio: "3년차 미라클 모닝 전도사. 당신의 아침을 혁명으로 바꿉니다. 🙌", exp: 7500, avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=Giant&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" },
+  { nickname: "꾸준함의정석", bio: "마라톤 풀코스 5회 완주자. 지치지 않는 열정의 비결을 공유합니다. 🏃‍♂️", exp: 6200, avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=Steady&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" },
+  { nickname: "루틴마스터K", bio: "연간 100권 읽기 챌린지 운영 중. 지식의 복리 효과를 믿으세요. 📚", exp: 4800, avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=MasterK&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" },
+  { nickname: "성장기록자", bio: "심리 상담사가 운영하는 마음 근육 강화 채널. 내면의 소리에 집중합니다. 🌱", exp: 3500, avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=Recorder&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" },
+  { nickname: "로지", bio: "갓생 사는 직장인의 현실적인 루틴 가이드. 매일 조금씩 성장해요. ✨", exp: 2500, avatar: "https://api.dicebear.com/7.x/lorelei/svg?seed=Rosie&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" }
 ]
 
 created_users = users_data.each_with_index.map do |u, i|

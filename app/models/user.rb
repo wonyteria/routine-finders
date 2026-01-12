@@ -167,7 +167,7 @@ class User < ApplicationRecord
     if avatar.attached?
       Rails.application.routes.url_helpers.rails_blob_url(avatar, only_path: true)
     else
-      self[:profile_image].presence || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{id}"
+      self[:profile_image].presence || "https://api.dicebear.com/7.x/lorelei/svg?seed=#{id}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf"
     end
   end
 
@@ -209,23 +209,23 @@ class User < ApplicationRecord
   # Rufa Club Standards
   def is_rufa_club_member?
     return true if admin?
-    routine_club_members.where(status: [:active, :warned], payment_status: :confirmed).exists?
+    routine_club_members.where(status: [ :active, :warned ], payment_status: :confirmed).exists?
   end
 
   def exclude_rufa_promotions?
     return true if admin?
-    routine_club_members.where(status: [:active, :warned], payment_status: [:confirmed, :pending]).exists?
+    routine_club_members.where(status: [ :active, :warned ], payment_status: [ :confirmed, :pending ]).exists?
   end
 
   def has_active_rufa_membership?
     return true if admin?
-    routine_club_members.where(status: [:active, :warned], payment_status: :confirmed)
+    routine_club_members.where(status: [ :active, :warned ], payment_status: :confirmed)
                        .where("membership_start_date <= ?", Date.current)
                        .exists?
   end
 
   def pending_rufa_membership
-    routine_club_members.where(status: [:active, :warned], payment_status: :confirmed)
+    routine_club_members.where(status: [ :active, :warned ], payment_status: :confirmed)
                        .where("membership_start_date > ?", Date.current)
                        .order(membership_start_date: :asc)
                        .first

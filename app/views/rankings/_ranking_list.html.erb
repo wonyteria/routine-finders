@@ -6,7 +6,7 @@
         <span class="w-10 text-center font-black text-slate-300 text-lg group-hover:text-indigo-600 transition-colors"><%= rank.to_s.rjust(2, '0') %></span>
         
         <div class="w-16 h-16 rounded-[24px] bg-slate-100 p-0.5 border border-slate-200 group-hover:scale-105 transition-transform shrink-0">
-          <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/avataaars/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover rounded-[22px]" alt="">
+          <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/lorelei/svg?seed=#{user.nickname}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" %>" class="w-full h-full object-cover rounded-[22px]" alt="">
         </div>
 
         <div class="flex-1">

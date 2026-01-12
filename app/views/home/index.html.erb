@@ -238,7 +238,7 @@
         <% if @participations.any? %>
           <% @participations.each do |participation| %>
             <% challenge = participation.challenge %>
-            <% is_gathering = challenge.challenge_type_offline? %>
+            <% is_gathering = challenge.offline? %>
             <div class="bg-white rounded-[32px] lg:rounded-[40px] p-6 lg:p-8 border border-slate-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden h-full flex flex-col justify-between">
                <% if is_gathering %>
                  <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-12 -mt-12 transition-all group-hover:scale-150"></div>
