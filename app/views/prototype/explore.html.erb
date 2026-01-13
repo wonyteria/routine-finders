@@ -1,9 +1,12 @@
-<div class="space-y-10 pt-8">
-  <!-- 1. Search Bar -->
-  <div class="sticky top-0 z-10 pt-2 pb-4 bg-[#0C0B12]/80 backdrop-blur-md">
-    <div class="app-glass-card flex items-center px-5 py-3.5 gap-4 border-white/5">
-      <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      <input type="text" placeholder="어떤 성장을 찾으시나요?" class="bg-transparent border-none p-0 text-sm font-bold text-white placeholder-slate-600 focus:ring-0 w-full">
+<div class="space-y-8 pt-6">
+  <!-- 1. Header Area -->
+  <div class="px-2 flex justify-between items-end">
+    <div>
+      <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Explore</p>
+      <h2 class="text-2xl font-black text-white leading-tight">새로운 도전,<br/>어디서 시작할까요?</h2>
+    </div>
+    <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
+      <span class="text-lg">🔭</span>
     </div>
   </div>
 
@@ -33,7 +36,7 @@
 
   <!-- 3. Category Chips -->
   <section class="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4">
-    <% ['#전체', '#미라클모닝', '#오운완', '#독서기록', '#명상', '#갓생'].each_with_index do |tag, i| %>
+    <% ['챌린지', '모임'].each_with_index do |tag, i| %>
       <button class="shrink-0 px-6 py-3 rounded-2xl font-bold text-xs <%= i == 0 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'app-glass-card text-slate-500 border-white/5' %> active:scale-95 transition-all">
         <%= tag %>
       </button>

@@ -2,8 +2,8 @@
   <!-- 1. Hall of Fame (Podium) -->
   <section class="space-y-6">
     <div class="text-center space-y-1">
-      <h3 class="text-xs font-black text-indigo-400 uppercase tracking-[0.3em]">Hall of Fame</h3>
-      <p class="text-[10px] font-bold text-slate-500">이번 기수 가장 성실한 멤버들</p>
+      <h3 class="text-xs font-black text-indigo-400 uppercase tracking-[0.3em]">RUFA CLUB HALL OF FAME</h3>
+      <p class="text-[10px] font-bold text-slate-500">루파 클럽 멤버들의 명예의 전당</p>
     </div>
 
     <!-- Podium Visual -->
@@ -33,7 +33,10 @@
         </div>
         <div class="w-full h-32 bg-indigo-500/10 rounded-t-[20px] border border-indigo-500/30 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(124,77,255,0.2)]">
            <p class="text-sm font-black text-white line-clamp-1"><%= @top_users[0]&.nickname %></p>
-           <p class="text-[10px] font-bold text-indigo-400">1250P</p>
+           <div class="flex items-center gap-1 mt-1">
+             <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white">RUFA</span>
+             <p class="text-[10px] font-bold text-indigo-400">1250P</p>
+           </div>
         </div>
       </div>
 
@@ -87,8 +90,7 @@
                <span class="app-pill app-pill-dim"><%= activity.activity_type.to_s.upcase %></span>
             </div>
             <p class="text-sm font-bold text-slate-300 leading-relaxed">
-              <%= activity.activity_type == 'routine' ? activity.metadata['routine_title'] : activity.metadata['challenge_title'] %> 성공! 
-              <span class="text-indigo-400">#<%= activity.metadata['category'] %></span>
+              <%= activity.body %> 
             </p>
 
             <!-- Reaction: Clap -->
