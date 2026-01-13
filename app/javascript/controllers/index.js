@@ -63,3 +63,6 @@ application.register("proto-ui", ProtoUiController)
 
 import RoutineWizardController from "controllers/routine_wizard_controller"
 application.register("routine-wizard", RoutineWizardController)
+
+import ShareController from "controllers/share_controller"
+application.register("share", ShareController)

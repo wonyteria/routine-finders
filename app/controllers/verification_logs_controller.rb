@@ -1,21 +1,30 @@
 class VerificationLogsController < ApplicationController
   before_action :require_login
   before_action :set_challenge
-  before_action :set_participant, only: [ :create ]
+  before_action :set_participant, only: [ :new, :create ]
   before_action :set_verification_log, only: [ :approve, :reject ]
   before_action :require_host, only: [ :approve, :reject ]
 
+  def new
+    return redirect_to redirect_path_for_challenge, alert: "이 챌린지에 참여하고 있지 않습니다." unless @participant
+    @verification_log = @participant.verification_logs.build
+
+    if params[:source] == "prototype"
+      render layout: "prototype"
+    end
+  end
+
   def create
-    return redirect_to @challenge, alert: "이 챌린지에 참여하고 있지 않습니다." unless @participant
+    return redirect_to redirect_path_for_challenge, alert: "이 챌린지에 참여하고 있지 않습니다." unless @participant
 
     # 탈락 여부 확인
     if @participant.failed?
-      return redirect_to @challenge, alert: "죄송합니다. 최대 실패 횟수를 초과하여 더 이상 인증에 참여하실 수 없습니다."
+      return redirect_to redirect_path_for_challenge, alert: "죄송합니다. 최대 실패 횟수를 초과하여 더 이상 인증에 참여하실 수 없습니다."
     end
 
     # 오늘 이미 인증했는지 확인 (성공 또는 대기중인 인증이 있으면 차단)
     if @participant.verification_logs.today.where.not(status: :rejected).exists?
-      return redirect_to @challenge, alert: "오늘 이미 인증을 완료했습니다."
+      return redirect_to redirect_path_for_challenge, alert: "오늘 이미 인증을 완료했습니다."
     end
 
     @verification_log = @participant.verification_logs.build(verification_log_params)
@@ -24,17 +33,24 @@ class VerificationLogsController < ApplicationController
 
     # 인증 데이터 검증
     if !valid_verification_data?(@verification_log)
-      return redirect_to @challenge, alert: "인증 내용을 입력해주세요."
+      return redirect_to redirect_path_for_challenge, alert: "인증 내용을 입력해주세요."
     end
 
     if @verification_log.save
       # 호스트 승인이 필요없는 경우 자동 승인
       unless @challenge.mission_requires_host_approval
         @verification_log.update(status: :approved)
+        @participant.update_streak!
       end
-      redirect_to @challenge, notice: "인증이 완료되었습니다!"
+
+      notice_msg = "인증이 완료되었습니다!"
+      redirect_to redirect_path_for_challenge, notice: notice_msg
     else
-      redirect_to @challenge, alert: "인증에 실패했습니다: #{@verification_log.errors.full_messages.join(', ')}"
+      if params[:source] == "prototype" || (params[:verification_log] && params[:verification_log][:source] == "prototype")
+        render :new, layout: "prototype", status: :unprocessable_entity
+      else
+        redirect_to redirect_path_for_challenge, alert: "인증에 실패했습니다: #{@verification_log.errors.full_messages.join(', ')}"
+      end
     end
   end
 
@@ -80,7 +96,7 @@ class VerificationLogsController < ApplicationController
 
   def require_host
     unless @challenge.host_id == current_user.id
-      redirect_to @challenge, alert: "호스트만 접근할 수 있습니다."
+      redirect_to redirect_path_for_challenge, alert: "호스트만 접근할 수 있습니다."
     end
   end
 
@@ -104,6 +120,14 @@ class VerificationLogsController < ApplicationController
       log.image_url.present? || log.value.present?
     else
       false
+    end
+  end
+
+  def redirect_path_for_challenge
+    if params[:source] == "prototype"
+      challenge_path(@challenge, source: "prototype")
+    else
+      challenge_path(@challenge)
     end
   end
 end

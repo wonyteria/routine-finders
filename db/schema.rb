@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_10_095034) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_13_065758) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -95,6 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_10_095034) do
     t.integer "active_rate_threshold", default: 80
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
+    t.text "application_question"
     t.decimal "average_rating", precision: 3, scale: 2, default: "0.0"
     t.decimal "bonus_threshold", precision: 5, scale: 2, default: "1.0"
     t.string "category"

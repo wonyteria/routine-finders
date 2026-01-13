@@ -23,6 +23,10 @@ class HostedChallengesController < ApplicationController
     @challenge = current_user.hosted_challenges.find(params[:id])
     @tab = params[:tab] || "dashboard"
 
+    if params[:source] == "prototype"
+      render layout: "prototype"
+    end
+
     # 공통 데이터 - 최적화된 쿼리
     participants = @challenge.participants
     @stats = {
@@ -62,11 +66,12 @@ class HostedChallengesController < ApplicationController
     @challenge = current_user.hosted_challenges.find(params[:id])
     participant = @challenge.participants.find(params[:participant_id])
 
+    redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "refunds", source: "prototype") : hosted_challenge_path(@challenge, tab: "refunds")
     if participant.refund_applied?
       participant.update!(refund_status: :refund_completed)
-      redirect_to hosted_challenge_path(@challenge, tab: "refunds"), notice: "#{participant.user.nickname}님의 환급 처리가 완료되었습니다."
+      redirect_to redirect_path, notice: "#{participant.user.nickname}님의 환급 처리가 완료되었습니다."
     else
-      redirect_to hosted_challenge_path(@challenge, tab: "refunds"), alert: "환급 신청 상태가 아닙니다."
+      redirect_to redirect_path, alert: "환급 신청 상태가 아닙니다."
     end
   end
 
@@ -125,10 +130,11 @@ class HostedChallengesController < ApplicationController
       error_message = e.message
     end
 
+    redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: params[:tab], source: "prototype") : hosted_challenge_path(@challenge, tab: params[:tab])
     if success
-      redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), notice: "설정이 저장되었습니다."
+      redirect_to redirect_path, notice: "설정이 저장되었습니다."
     else
-      redirect_to hosted_challenge_path(@challenge, tab: params[:tab]), alert: "저장에 실패했습니다#{error_message ? ': ' + error_message : ''}"
+      redirect_to redirect_path, alert: "저장에 실패했습니다#{error_message ? ': ' + error_message : ''}"
     end
   end
 
@@ -136,10 +142,12 @@ class HostedChallengesController < ApplicationController
     @challenge = current_user.hosted_challenges.find(params[:id])
 
     if @challenge.participants.exists?
-      redirect_to hosted_challenge_path(@challenge, tab: "settings"), alert: "이미 참여자가 있는 챌린지는 삭제할 수 없습니다. 대신 참가자 탭에서 개별 관리해 주세요."
+      redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "settings", source: "prototype") : hosted_challenge_path(@challenge, tab: "settings")
+      redirect_to redirect_path, alert: "이미 참여자가 있는 챌린지는 삭제할 수 없습니다. 대신 참가자 탭에서 개별 관리해 주세요."
     else
       @challenge.destroy
-      redirect_to hosted_challenges_path, notice: "챌린지가 성공적으로 삭제되었습니다."
+      redirect_path = params[:source] == "prototype" ? hosted_challenges_path(source: "prototype") : hosted_challenges_path
+      redirect_to redirect_path, notice: "챌린지가 성공적으로 삭제되었습니다."
     end
   end
 

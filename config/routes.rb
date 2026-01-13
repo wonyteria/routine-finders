@@ -71,7 +71,7 @@ Rails.application.routes.draw do
       get :clone
       post :apply_refund
     end
-    resources :verification_logs, only: [ :create ] do
+    resources :verification_logs, only: [ :new, :create ] do
       member do
         post :approve
         post :reject

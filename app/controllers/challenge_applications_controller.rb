@@ -9,39 +9,59 @@ class ChallengeApplicationsController < ApplicationController
     @applications = @challenge.challenge_applications.includes(:user).recent
     @pending_applications = @applications.pending
     @processed_applications = @applications.where.not(status: :pending)
+
+    if params[:source] == "prototype"
+      render layout: "prototype"
+    end
   end
 
   # GET /challenges/:challenge_id/applications/new
   def new
     # Check if user is the host
     if current_user.id == @challenge.host_id
-      return redirect_to @challenge, alert: "호스트는 신청할 수 없습니다."
+      path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
+      return redirect_to path, alert: "호스트는 신청할 수 없습니다."
     end
 
     # Check if already a participant
     if current_user.participations.exists?(challenge: @challenge)
-      return redirect_to @challenge, alert: "이미 참여 중인 챌린지입니다."
+      path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
+      return redirect_to path, alert: "이미 참여 중인 챌린지입니다."
     end
 
     # Check for existing pending/approved application
     existing_application = @challenge.challenge_applications.find_by(user: current_user)
     if existing_application
       if existing_application.pending?
-        return redirect_to @challenge, alert: "이미 신청 후 승인 대기 중입니다."
+        path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
+        return redirect_to path, alert: "이미 신청 후 승인 대기 중입니다."
       elsif existing_application.approved?
-        return redirect_to @challenge, alert: "이미 승인된 신청입니다."
+        path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
+        return redirect_to path, alert: "이미 승인된 신청입니다."
       elsif existing_application.rejected?
         @rejected_application = existing_application
       end
     end
 
     @application = @challenge.challenge_applications.build
+
+    if params[:source] == "prototype"
+      render layout: "prototype"
+    end
   end
 
   # POST /challenges/:challenge_id/applications
   def create
     # First, handle re-application by cleaning up previous rejected application
-    @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all
+    @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all unless @challenge.id >= 10000
+
+    if @challenge.id >= 10000
+      # Mock success for dummy challenges
+      notice_msg = "신청이 완료되었습니다. 호스트의 승인을 기다려주세요. (데모 모드)"
+      path = params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype") ?
+             challenge_path(@challenge, source: "prototype") : @challenge
+      return redirect_to path, notice: notice_msg
+    end
 
     @application = @challenge.challenge_applications.build(application_params)
     @application.user = current_user
@@ -64,18 +84,34 @@ class ChallengeApplicationsController < ApplicationController
 
             @challenge.increment!(:current_participants)
           end
-          redirect_to @challenge, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
+          if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+            redirect_to challenge_path(@challenge, source: "prototype"), notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
+          else
+            redirect_to @challenge, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
+          end
         rescue => e
           @application.destroy
-          redirect_to @challenge, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
+          if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+            redirect_to challenge_path(@challenge, source: "prototype"), alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
+          else
+            redirect_to @challenge, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
+          end
         end
       else
         # 승인제인 경우 호스트에게 알림
         create_notification_for_host
-        redirect_to @challenge, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+        if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+          redirect_to challenge_path(@challenge, source: "prototype"), notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+        else
+          redirect_to @challenge, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+        end
       end
     else
-      render :new, status: :unprocessable_entity
+      if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+        render :new, status: :unprocessable_entity, layout: "prototype"
+      else
+        render :new, status: :unprocessable_entity
+      end
     end
   end
 
@@ -99,9 +135,11 @@ class ChallengeApplicationsController < ApplicationController
       create_notification_for_applicant(:approval)
     end
 
-    redirect_to challenge_applications_path(@challenge), notice: "신청을 승인했습니다."
+    redirect_path = params[:source] == "prototype" ? challenge_applications_path(@challenge, source: "prototype") : challenge_applications_path(@challenge)
+    redirect_to redirect_path, notice: "신청을 승인했습니다."
   rescue ActiveRecord::RecordInvalid => e
-    redirect_to challenge_applications_path(@challenge), alert: "승인 처리 중 오류가 발생했습니다: #{e.message}"
+    redirect_path = params[:source] == "prototype" ? challenge_applications_path(@challenge, source: "prototype") : challenge_applications_path(@challenge)
+    redirect_to redirect_path, alert: "승인 처리 중 오류가 발생했습니다: #{e.message}"
   end
 
   # POST /challenges/:challenge_id/applications/:id/reject
@@ -113,7 +151,8 @@ class ChallengeApplicationsController < ApplicationController
     # Notify applicant about rejection
     create_notification_for_applicant(:rejection, reject_reason)
 
-    redirect_to challenge_applications_path(@challenge), notice: "신청을 거절했습니다."
+    redirect_path = params[:source] == "prototype" ? challenge_applications_path(@challenge, source: "prototype") : challenge_applications_path(@challenge)
+    redirect_to redirect_path, notice: "신청을 거절했습니다."
   end
 
   private
@@ -139,7 +178,7 @@ class ChallengeApplicationsController < ApplicationController
   end
 
   def application_params
-    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info, :threads_nickname)
+    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info, :threads_nickname, :source)
   end
 
   def create_notification_for_host

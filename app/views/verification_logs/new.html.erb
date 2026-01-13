@@ -1,0 +1,141 @@
+<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative pb-32">
+  <style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border-radius: 2.5rem;
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+      outline: none;
+    }
+    .glow-btn {
+      background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+    }
+    .glow-btn:active { transform: scale(0.96); brightness: 1.1; }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .float-anim { animation: float 4s ease-in-out infinite; }
+  </style>
+
+  <!-- Navigation -->
+  <header class="sticky top-0 z-50 px-8 py-6 bg-[#0C0B12]/80 backdrop-blur-md flex items-center justify-between">
+    <%= link_to challenge_path(@challenge, source: 'prototype'), class: "w-11 h-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-slate-400 active:scale-95 transition-all" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <h1 class="text-sm font-black uppercase tracking-widest">인증하기</h1>
+    <div class="w-11"></div> <!-- Spacer -->
+  </header>
+
+  <div class="flex-1 px-8 pt-4 space-y-10">
+    <!-- Hero Section -->
+    <div class="text-center space-y-4">
+      <div class="w-20 h-20 mx-auto rounded-[2rem] bg-indigo-500/20 flex items-center justify-center text-4xl float-anim">
+        <% icon = case @challenge.verification_type
+           when 'photo' then '📸'
+           when 'metric' then '📊'
+           when 'url' then '🔗'
+           else '✨'
+           end %>
+        <%= icon %>
+      </div>
+      <div>
+        <h2 class="text-2xl font-black leading-tight">오늘의 성취 기록</h2>
+        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1"><%= @challenge.title %></p>
+      </div>
+    </div>
+
+    <!-- Form Section -->
+    <%= form_with model: [@challenge, @verification_log], class: "space-y-8" do |f| %>
+      <%= hidden_field_tag :source, 'prototype' %>
+      
+      <div class="space-y-6">
+        <% case @challenge.verification_type %>
+        <% when 'photo' %>
+          <div class="space-y-3">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">인증 사진 URL</label>
+            <%= f.text_field :image_url, placeholder: "https://...", class: "glass-input w-full px-6 py-5 font-bold", id: "verification_input" %>
+            <p class="text-[10px] text-slate-500 px-1 italic">* 추후 이미지 직접 업로드 기능이 제공될 예정입니다.</p>
+          </div>
+          <div class="space-y-3">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">오늘의 한마디 (선택)</label>
+            <%= f.text_area :value, placeholder: "오늘의 도전을 기록해보세요.", rows: 4, class: "glass-input w-full px-6 py-5 font-bold resize-none leading-relaxed" %>
+          </div>
+
+        <% when 'metric' %>
+          <div class="space-y-3">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">성취 수치 입력</label>
+            <%= f.text_field :value, placeholder: "예: 10km, 30분, 100페이지", class: "glass-input w-full px-6 py-5 text-xl font-black", id: "verification_input" %>
+          </div>
+
+        <% when 'url' %>
+          <div class="space-y-3">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">기록된 링크 (블로그/SNS)</label>
+            <%= f.text_field :value, placeholder: "https://...", class: "glass-input w-full px-6 py-5 font-bold", id: "verification_input" %>
+          </div>
+
+        <% when 'simple' %>
+          <%= f.hidden_field :value, value: 'completed' %>
+          <div class="glass-card p-8 text-center space-y-4">
+            <p class="text-sm font-bold text-slate-300 leading-relaxed">
+              성공적으로 미션을 수행하셨나요?<br>
+              아래 버튼을 눌러 소중한 기록을 남겨주세요!
+            </p>
+          </div>
+
+        <% else %> <!-- Complex or default -->
+          <div class="space-y-3">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">인증 내용</label>
+            <%= f.text_area :value, placeholder: "인증 내용을 자유롭게 입력하세요.", rows: 6, class: "glass-input w-full px-6 py-5 font-bold resize-none leading-relaxed", id: "verification_input" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Action -->
+      <div class="pt-6">
+        <%= f.submit "오늘의 챌린지 완료하기", id: "submit_btn", disabled: @challenge.verification_type != 'simple', class: "glow-btn w-full py-6 rounded-[2rem] text-sm font-black text-white hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" %>
+        <p class="text-[10px] text-center text-slate-600 font-bold mt-6 uppercase tracking-widest">Small steps lead to great changes</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const input = document.getElementById("verification_input");
+    const submitBtn = document.getElementById("submit_btn");
+
+    if (input && submitBtn) {
+      const validateInput = () => {
+        if (input.value.trim().length > 0) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("opacity-50", "cursor-not-allowed", "transform-none");
+        } else {
+          submitBtn.disabled = true;
+          submitBtn.classList.add("opacity-50", "cursor-not-allowed", "transform-none");
+        }
+      };
+
+      // Initial check
+      validateInput();
+
+      // Listener
+      input.addEventListener("input", validateInput);
+    }
+  });
+</script>

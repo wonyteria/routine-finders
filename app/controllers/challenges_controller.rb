@@ -96,12 +96,12 @@ class ChallengesController < ApplicationController
       @this_week_count = verifications_this_week
     end
 
-    # Specific tab data
+    # All data needed for the new vertical-scroll guest show
+    @participants = @challenge.participants.includes(:user).order(created_at: :desc)
+    @announcements_all = @challenge.announcements.order(created_at: :desc)
+
+    # Specific tab data (for non-prototype web view)
     case @tab
-    when "participants"
-      @participants = @challenge.participants.includes(:user).order(created_at: :desc)
-    when "announcements"
-      @announcements_all = @challenge.announcements.order(created_at: :desc)
     when "verifications"
       if @is_joined || @is_host
         @verification_logs = @challenge.verification_logs.includes(participant: :user).order(created_at: :desc).limit(50)
@@ -204,6 +204,11 @@ class ChallengesController < ApplicationController
       return redirect_to @challenge, alert: "모집 기간이 이미 종료된 챌린지입니다."
     end
 
+    if @challenge.id >= 10000
+      path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
+      return redirect_to path, notice: "챌린지에 참여했습니다! (데모 모드)"
+    end
+
     begin
       ActiveRecord::Base.transaction do
         @challenge.participants.create!(
@@ -213,7 +218,8 @@ class ChallengesController < ApplicationController
         )
         @challenge.increment!(:current_participants)
       end
-      redirect_to @challenge, notice: "챌린지에 참여했습니다!"
+      path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
+      redirect_to path, notice: "챌린지에 참여했습니다!"
     rescue => e
       redirect_to @challenge, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
     end
@@ -355,7 +361,7 @@ class ChallengesController < ApplicationController
       :v_photo, :v_simple, :v_metric, :v_url, :thumbnail_image, :save_account_to_profile,
       :certification_goal, :daily_goals, :reward_policy,
       :full_refund_threshold, :refund_date, :recruitment_start_date, :recruitment_end_date,
-      :chat_link,
+      :chat_link, :application_question, :requires_application_message,
       days: [],
       meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
     )

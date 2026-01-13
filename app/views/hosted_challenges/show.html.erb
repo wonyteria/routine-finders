@@ -1,3 +1,18 @@
+<% if params[:source] == 'prototype' %>
+  <style>
+    .host-prototype-env { background: #0C0B12; color: white; min-height: 100vh; padding: 2rem 1.5rem; }
+    .host-prototype-env .bg-white { background: rgba(255, 255, 255, 0.03) !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; color: white !important; }
+    .host-prototype-env .text-slate-900 { color: white !important; }
+    .host-prototype-env .text-slate-400, .host-prototype-env .text-slate-500, .host-prototype-env .text-slate-600 { color: #71717a !important; }
+    .host-prototype-env .border-slate-100, .host-prototype-env .border-slate-200 { border-color: rgba(255, 255, 255, 0.05) !important; }
+    .host-prototype-env .bg-slate-50, .host-prototype-env .bg-slate-50\/50 { background: rgba(255, 255, 255, 0.02) !important; }
+    .host-prototype-env input, .host-prototype-env textarea { background: rgba(255, 255, 255, 0.05) !important; color: white !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; }
+    .host-prototype-env .shadow-xl, .host-prototype-env .shadow-lg { box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5) !important; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+  <div class="host-prototype-env -mx-4 -mt-8">
+<% end %>
+
 <div class="space-y-8 pb-32">
   <% theme_color_class = @challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
   <% theme_bg_class = @challenge.offline? ? "bg-orange-600" : "bg-indigo-600" %>
@@ -383,3 +398,7 @@
     <% end %>
   </div>
 </div>
+
+<% if params[:source] == 'prototype' %>
+  </div>
+<% end %>

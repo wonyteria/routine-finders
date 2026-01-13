@@ -90,13 +90,13 @@
     <button id="prevBtn" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
     </button>
-    <div class="flex gap-1.5 h-1 px-4 flex-1 max-w-[200px] justify-center">
-      <% 8.times do |i| %>
+    <div class="flex gap-1.5 h-1 px-4 flex-1 max-w-[220px] justify-center">
+      <% 10.times do |i| %>
         <div class="step-dot pending-dot"></div>
       <% end %>
     </div>
     <div class="w-10 flex items-center justify-end">
-       <span id="stepCounter" class="text-[10px] font-black text-indigo-400">1/8</span>
+       <span id="stepCounter" class="text-[10px] font-black text-indigo-400">1/10</span>
     </div>
   </header>
 
@@ -115,6 +115,7 @@
     <%= f.hidden_field :failure_tolerance, id: "h_failure_tolerance", value: 3 %>
     <%= f.hidden_field :daily_goals, id: "h_daily_goals", value: "{}" %>
     <%= f.hidden_field :reward_policy, id: "h_reward_policy", value: "[]" %>
+    <%= f.hidden_field :requires_application_message, id: "h_requires_msg", value: "false" %>
 
     <div class="flex-1 min-h-0 py-4 flex flex-col relative z-10 overflow-y-auto hide-scrollbar pb-32">
       
@@ -325,9 +326,41 @@
            </div>
         </div>
       </section>
-
-      <!-- STEP 6: Cost Details -->
+      
+      <!-- STEP 6: Participant Information (NEW) -->
       <section id="step-5" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">참여자에게 <span class="text-indigo-500">궁금한 점</span>이<br/>있으신가요?</h2>
+        </div>
+        <div class="space-y-6">
+           <div class="p-6 bg-white/5 rounded-[32px] border border-white/5 space-y-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-[11px] font-black text-white">참여 신청 시 정보 받기</p>
+                  <p class="text-[9px] font-bold text-slate-500 mt-0.5">참여 희망자에게 사전에 질문을 던집니다</p>
+                </div>
+                <div class="toggle-pill cursor-pointer" id="toggle_participant_info">
+                  <div class="toggle-circle"></div>
+                </div>
+              </div>
+              
+              <div id="participant_question_box" class="hidden space-y-3 pt-2 border-t border-white/5">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Question to Participant</label>
+                <%= f.text_area :application_question, class: "glass-input w-full p-5 text-sm min-h-[120px] focus:scale-[1.01]", placeholder: "예: 이 챌린지에 참여하고 싶은 이유가 무엇인가요? 본인의 목표를 짧게 적어주세요." %>
+              </div>
+           </div>
+
+           <div class="p-5 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex items-start gap-3">
+              <span class="text-xl">🙋‍♂️</span>
+              <p class="text-[10px] font-bold text-slate-500 leading-relaxed">
+                질문을 등록하면 참여자가 <span class="text-indigo-400">신청서를 작성할 때</span> 이 질문에 대한 답변을 함께 제출하게 됩니다. 호스트님은 신청 내역에서 이 답변을 확인하고 참가를 수락할 수 있습니다.
+              </p>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 7: Cost Details -->
+      <section id="step-6" class="step-section hidden flex-1 flex flex-col gap-6">
         <div class="space-y-1">
           <h2 class="text-2xl font-black text-white tracking-tight leading-tight">참가비 정보를 <span class="text-indigo-500">안전</span>하게<br/>입력해 주세요.</h2>
         </div>
@@ -427,8 +460,8 @@
         </div>
       </section>
 
-      <!-- STEP 7: Achievement Logic -->
-      <section id="step-6" class="step-section hidden flex-1 flex flex-col gap-6">
+      <!-- STEP 8: Achievement Logic -->
+      <section id="step-7" class="step-section hidden flex-1 flex flex-col gap-6">
         <div class="space-y-1">
           <h2 class="text-2xl font-black text-white tracking-tight leading-tight">달성률에 따른 <span class="text-indigo-500">환급 기준</span>을<br/>정해주세요.</h2>
         </div>
@@ -459,8 +492,8 @@
         </div>
       </section>
 
-      <!-- STEP 8: Winner Benefit Design (NEW) -->
-      <section id="step-7" class="step-section hidden flex-1 flex flex-col gap-6">
+      <!-- STEP 9: Winner Benefit Design (NEW) -->
+      <section id="step-8" class="step-section hidden flex-1 flex flex-col gap-6">
         <div class="space-y-1">
           <h2 class="text-2xl font-black text-white tracking-tight leading-tight">우승자에게 줄 <span class="text-indigo-500">특별한 혜택</span>을<br/>설계해볼까요?</h2>
         </div>
@@ -483,8 +516,8 @@
         </div>
       </section>
 
-      <!-- STEP 9: Review & Submit -->
-      <section id="step-8" class="step-section hidden flex-1 flex flex-col gap-6">
+      <!-- STEP 10: Review & Submit -->
+      <section id="step-9" class="step-section hidden flex-1 flex flex-col gap-6">
         <div class="space-y-1">
           <h2 class="text-2xl font-black text-white tracking-tight leading-tight">마지막으로 <span class="text-indigo-500">챌린지 설계</span>를<br/>검토해주세요.</h2>
         </div>
@@ -548,9 +581,9 @@
         d.classList.toggle('pending-dot', i > currentStep);
         d.classList.toggle('completed-dot', i < currentStep);
       });
-      stepCounter.textContent = `${currentStep + 1}/8`; // Updated step count
+      stepCounter.textContent = `${currentStep + 1}/10`; // Updated step count
 
-      if (currentStep === 8) { // Updated step limit
+      if (currentStep === 9) { // Updated step limit
         nextBtn.classList.add('hidden');
         submitBtn.classList.remove('hidden');
 
@@ -618,7 +651,7 @@
          
          // Optional: Check logic (start > end, etc.)? Simplified for now.
       }
-      else if (step === 5) {
+      else if (step === 6) {
          const costType = document.getElementById('h_cost_type').value;
          if(costType !== 'free') {
            const amount = document.querySelector('input[name="challenge[amount]"]').value;
@@ -638,7 +671,7 @@
 
     // Nav
     nextBtn.addEventListener('click', () => {
-      if (currentStep < 8) { 
+      if (currentStep < 9) { 
         if(validateChallengeStep(currentStep)) {
           currentStep++;
           update();
@@ -870,6 +903,15 @@
         timeRow.style.opacity = "1";
         timeRow.style.pointerEvents = "auto";
       }
+    });
+
+    // Participant Info Toggle
+    const toggleParticipantInfo = document.getElementById('toggle_participant_info');
+    const participantQuestionBox = document.getElementById('participant_question_box');
+    toggleParticipantInfo.addEventListener('click', () => {
+      const active = toggleParticipantInfo.classList.toggle('active');
+      participantQuestionBox.classList.toggle('hidden', !active);
+      document.getElementById('h_requires_msg').value = active;
     });
 
     // Invitation Code Copy

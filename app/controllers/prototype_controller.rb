@@ -26,9 +26,16 @@ class PrototypeController < ApplicationController
 
   def explore
     @featured_club = RoutineClub.active_clubs.order(created_at: :desc).first
+
     # Categorize for better discovery
-    @active_challenges = Challenge.active.where(mode: :online).order(current_participants: :desc).limit(6)
-    @gatherings = Challenge.active.where(mode: :offline).order(created_at: :desc).limit(4)
+    real_active = Challenge.active.where(mode: :online).order(current_participants: :desc).limit(6).to_a
+    real_gatherings = Challenge.active.where(mode: :offline).order(created_at: :desc).limit(4).to_a
+
+    # Fill with dummy data if not enough real ones (for prototyping/demo)
+    dummies = Challenge.generate_dummy_challenges
+
+    @active_challenges = (real_active + dummies.select { |d| d.mode == "online" }).uniq { |c| c.title }.first(6)
+    @gatherings = (real_gatherings + dummies.select { |d| d.mode == "offline" }).uniq { |c| c.title }.first(4)
   end
 
   def synergy

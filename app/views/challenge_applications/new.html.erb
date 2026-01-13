@@ -1,220 +1,371 @@
-<div class="max-w-2xl mx-auto py-12 pb-32" data-controller="application-form">
-  <div class="flex items-center gap-4 mb-10">
-    <%= link_to challenge_path(@challenge), class: "p-2 rounded-xl hover:bg-slate-100 transition-colors" do %>
-      <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+<% if params[:source] == 'prototype' %>
+  <div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none relative">
+    <style>
+      .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 2rem;
+        backdrop-filter: blur(20px);
+      }
+      .glass-input {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 1.5rem;
+        color: white;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        outline: none;
+        appearance: none;
+        box-sizing: border-box;
+      }
+      .glass-input:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #818cf8;
+        box-shadow: 0 0 20px rgba(129, 140, 248, 0.25);
+      }
+      .glow-shadow {
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+      }
+      .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+
+    <!-- Top Navigation -->
+    <header class="flex items-center justify-between mb-4 px-8 shrink-0 z-20">
+      <%= link_to challenge_path(@challenge, source: 'prototype'), class: "w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+      <% end %>
+      <h1 class="text-base font-black text-white shrink-0"><%= @challenge.offline? ? "모임 참가 신청" : "챌린지 신청" %></h1>
+      <div class="w-10"></div> <!-- Spacer -->
+    </header>
+
+    <%= form_with model: [@challenge, @application], url: challenge_applications_path(@challenge), local: true, class: "flex-1 flex flex-col min-h-0 relative z-10" do |f| %>
+      <%= hidden_field_tag :source, 'prototype' %>
+      
+      <div class="flex-1 min-h-0 py-2 flex flex-col gap-6 overflow-y-auto hide-scrollbar px-8 pb-48">
+        <!-- Challenge Mini Preview -->
+        <div class="glass-line p-5 rounded-[2.5rem] bg-white/5 border border-white/5 flex items-center gap-4">
+          <div class="w-16 h-16 rounded-[1.25rem] bg-cover bg-center glow-shadow border border-white/10" style="background-image: url('<%= @challenge.thumbnail %>')"></div>
+          <div class="flex-1 min-w-0">
+             <h2 class="text-sm font-black text-white truncate"><%= @challenge.title %></h2>
+             <p class="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-tight">Host: <%= @challenge.host_name %></p>
+             <div class="flex gap-2 mt-2">
+                <span class="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-400 text-[8px] font-black uppercase">D-<%= (@challenge.start_date - Date.current).to_i %></span>
+                <span class="px-2 py-0.5 rounded-md bg-white/5 text-slate-500 text-[8px] font-black"><%= @challenge.current_participants %>/<%= @challenge.max_participants %> Members</span>
+             </div>
+          </div>
+        </div>
+
+        <!-- Application Question Session (DYNAMIC) -->
+        <div class="space-y-4">
+          <div class="space-y-3">
+            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">
+              <%= @challenge.application_question.presence || "Message to Host" %>
+              <% if @challenge.requires_application_message? %><span class="text-rose-500">*</span><% end %>
+            </label>
+            
+            <% if @challenge.application_question.present? %>
+              <div class="p-5 rounded-3xl bg-indigo-500/10 border border-indigo-500/20">
+                <p class="text-xs font-bold text-indigo-200 leading-relaxed italic">"<%= @challenge.application_question %>"</p>
+              </div>
+            <% end %>
+
+            <%= f.text_area :message, 
+                placeholder: @challenge.application_question.present? ? "호스트의 질문에 대한 답변을 정성껏 입력해주세요." : "호스트에게 전달할 메시지나 각오를 적어주세요.", 
+                rows: 3, 
+                required: @challenge.requires_application_message?,
+                class: "glass-input w-full px-6 py-5 text-sm min-h-[140px] focus:scale-[1.01] resize-none leading-relaxed" %>
+          </div>
+
+          <div class="space-y-3">
+            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Threads Account (Optional)</label>
+            <%= f.text_field :threads_nickname, 
+                placeholder: "@threads_id 또는 닉네임", 
+                class: "glass-input w-full px-6 py-5 text-sm focus:scale-[1.01]" %>
+          </div>
+        </div>
+
+        <!-- Payment Info (for paid) -->
+        <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
+          <div class="space-y-6 pt-2">
+            <h3 class="text-xs font-black text-white flex items-center gap-2 uppercase tracking-wide">
+               <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+               입금 및 정산 정보
+            </h3>
+            
+            <div class="p-6 bg-indigo-500/10 border border-indigo-500/20 rounded-[32px] space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Deposit Account</span>
+                <span class="text-[10px] font-bold text-slate-500 tabular-nums"><%= @challenge.host_bank %> | <%= @challenge.host_account_holder %></span>
+              </div>
+              <div class="flex items-center justify-between">
+                <p class="text-lg font-black text-white tabular-nums tracking-tighter"><%= @challenge.host_account %></p>
+                <button type="button" onclick="navigator.clipboard.writeText('<%= @challenge.host_account %>')" class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-indigo-400 active:scale-95 transition-all">COPY</button>
+              </div>
+              <div class="pt-4 border-t border-white/10 flex items-baseline justify-between">
+                <span class="text-[11px] font-black text-slate-400 uppercase">Subtotal Amount</span>
+                <span class="text-xl font-black bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent italic"><%= number_to_currency(@challenge.total_payment_amount) %></span>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1 flex justify-between items-center">
+                  <span>Name of Depositor</span>
+                  <% if current_user.saved_account_holder.present? %>
+                    <button type="button" 
+                            onclick="document.getElementById('depositor_name_field').value='<%= current_user.saved_account_holder %>'"
+                            class="text-[9px] text-indigo-400 hover:text-indigo-300 transition-colors">저장된 이름 사용</button>
+                  <% end %>
+                </label>
+                <%= f.text_field :depositor_name, 
+                    id: "depositor_name_field",
+                    placeholder: "실제 입금자 성함", 
+                    required: true,
+                    class: "glass-input w-full px-6 py-5 text-sm" %>
+              </div>
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Contact Info</label>
+                <%= f.text_field :contact_info, 
+                    placeholder: "연락처 (번호 또는 오픈채팅)", 
+                    required: true,
+                    class: "glass-input w-full px-6 py-5 text-sm" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Agreement Section -->
+        <div class="space-y-4 pt-4">
+          <label class="flex items-start gap-3 p-5 glass-card cursor-pointer group active:scale-[0.98] transition-all">
+             <input type="checkbox" required class="w-5 h-5 rounded-lg bg-white/5 border-white/10 text-indigo-500 focus:ring-indigo-500/40 mt-0.5">
+             <div>
+                <p class="text-xs font-black text-white">최종 신청 내용 및 환불 정책 확인</p>
+                <p class="text-[9px] font-bold text-slate-500 mt-1 leading-relaxed">
+                   인증 규칙 및 실패 시 페널티, 호스트가 정한 환불 정책을 충분히 확인하였으며 이에 동의합니다.
+                </p>
+             </div>
+          </label>
+        </div>
+
+        <div class="p-5 bg-white/5 rounded-2xl border border-white/5 flex items-start gap-4">
+           <span class="text-xl">⚠️</span>
+           <p class="text-[9px] font-medium text-slate-500 leading-relaxed">
+             <% if @challenge.requires_approval? %>
+               이 서비스는 호스트의 <span class="text-indigo-400">사전 승인</span>이 필요합니다. 신청 후 호스트가 승인하기 전까지는 참여 내역에 '대기'로 표시됩니다.
+             <% else %>
+               신청 즉시 참여가 확정됩니다. 입금이 확인되지 않을 경우 호스트에 의해 <span class="text-rose-400">참여가 취소</span>될 수 있습니다.
+             <% end %>
+           </p>
+        </div>
+      </div>
+
+      <!-- Static Bottom Action -->
+      <div class="py-6 px-8 shrink-0 z-20">
+         <button type="submit" class="w-full py-5 rounded-[2rem] bg-indigo-500 text-white font-black text-base shadow-2xl shadow-indigo-500/40 active:scale-95 transition-all glow-shadow flex items-center justify-center gap-2">
+           <%= @challenge.requires_approval? ? "신청서 제출하기" : "참여 확정하기" %>
+           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+         </button>
+      </div>
     <% end %>
-    <h1 class="text-3xl font-black text-slate-900"><%= @challenge.offline? ? "모임 참가 신청" : "챌린지 신청" %></h1>
+
+    <!-- Abstract Background Deco -->
+    <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
+    <div class="absolute -top-24 -left-24 w-64 h-64 bg-purple-500/10 blur-[100px] pointer-events-none"></div>
   </div>
 
-  <!-- Rejection Alert -->
-  <% if @rejected_application %>
-    <div class="bg-rose-50 border border-rose-200 rounded-[32px] p-6 mb-8 flex items-start gap-4">
-      <div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center flex-shrink-0">
-        <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-      </div>
-      <div>
-        <h3 class="text-rose-900 font-black mb-1">이전 신청이 거절되었습니다</h3>
-        <p class="text-rose-700 text-sm font-medium leading-relaxed">
-          거절 사유: <%= @rejected_application.reject_reason.presence || "사유가 입력되지 않았습니다." %>
-        </p>
-        <p class="text-rose-500 text-xs mt-2 font-bold">내용을 보완하여 다시 신청하실 수 있습니다.</p>
-      </div>
-    </div>
-  <% end %>
-
-  <!-- Challenge Info Card -->
-  <div class="bg-slate-50 rounded-[32px] p-6 mb-8">
-    <div class="flex items-center gap-4">
-      <div class="w-16 h-16 rounded-2xl bg-cover bg-center" style="background-image: url('<%= @challenge.thumbnail %>')"></div>
-      <div>
-        <h2 class="text-lg font-black text-slate-900"><%= @challenge.title %></h2>
-        <p class="text-sm font-medium text-slate-500">호스트: <%= @challenge.host_name %></p>
-      </div>
+<% else %>
+  <div class="max-w-2xl mx-auto py-12 pb-32" data-controller="application-form">
+    <div class="flex items-center gap-4 mb-10">
+      <%= link_to challenge_path(@challenge), class: "p-2 rounded-xl hover:bg-slate-100 transition-colors" do %>
+        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      <% end %>
+      <h1 class="text-3xl font-black text-slate-900"><%= @challenge.offline? ? "모임 참가 신청" : "챌린지 신청" %></h1>
     </div>
 
-    <!-- Challenge Details -->
-    <div class="grid grid-cols-2 gap-4 mt-4">
-      <div class="p-4 bg-white rounded-2xl">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">기간</p>
-        <p class="text-sm font-bold text-slate-900"><%= @challenge.start_date.strftime('%Y.%m.%d') %> ~ <%= @challenge.end_date.strftime('%m.%d') %></p>
-      </div>
-      <div class="p-4 bg-white rounded-2xl">
-        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">현재 참가자</p>
-        <p class="text-sm font-bold text-slate-900"><%= @challenge.current_participants %> / <%= @challenge.max_participants %>명</p>
-      </div>
-    </div>
-
-    <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
-      <div class="mt-4 p-4 bg-white rounded-2xl space-y-2">
-        <% if @challenge.participation_fee.present? && @challenge.participation_fee > 0 %>
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-bold text-slate-500">참가비</span>
-            <span class="text-lg font-black text-slate-900"><%= number_to_currency(@challenge.participation_fee) %></span>
-          </div>
-        <% end %>
-        <% if @challenge.cost_type_deposit? && @challenge.amount.present? && @challenge.amount > 0 %>
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-bold text-slate-500">보증금</span>
-            <span class="text-lg font-black text-slate-900"><%= number_to_currency(@challenge.amount) %></span>
-          </div>
-        <% elsif @challenge.cost_type_fee? && @challenge.amount.present? && @challenge.amount > 0 %>
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-bold text-slate-500">참가비</span>
-            <span class="text-lg font-black text-slate-900"><%= number_to_currency(@challenge.amount) %></span>
-          </div>
-        <% end %>
-        <% if (@challenge.participation_fee.present? && @challenge.participation_fee > 0) && (@challenge.amount.present? && @challenge.amount > 0) %>
-          <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
-            <span class="text-xs font-black text-indigo-600 uppercase">총 납부액</span>
-            <span class="text-xl font-black text-indigo-600"><%= number_to_currency(@challenge.total_payment_amount) %></span>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-
-  <%= form_with model: [@challenge, @application], url: challenge_applications_path(@challenge), local: true, class: "bg-white rounded-[40px] border border-slate-200 p-10 shadow-sm space-y-8" do |f| %>
-    <% if @application.errors.any? %>
-      <div class="p-4 bg-red-50 rounded-2xl border border-red-200">
-        <p class="text-sm font-bold text-red-600"><%= @application.errors.full_messages.join(", ") %></p>
+    <!-- Rejection Alert -->
+    <% if @rejected_application %>
+      <div class="bg-rose-50 border border-rose-200 rounded-[32px] p-6 mb-8 flex items-start gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center flex-shrink-0">
+          <svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <div>
+          <h3 class="text-rose-900 font-black mb-1">이전 신청이 거절되었습니다</h3>
+          <p class="text-rose-700 text-sm font-medium leading-relaxed">
+            거절 사유: <%= @rejected_application.reject_reason.presence || "사유가 입력되지 않았습니다." %>
+          </p>
+          <p class="text-rose-500 text-xs mt-2 font-bold">내용을 보완하여 다시 신청하실 수 있습니다.</p>
+        </div>
       </div>
     <% end %>
 
-    <!-- Application Message -->
-    <div class="space-y-8">
-      <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-        신청 메시지
-      </h2>
+    <!-- Challenge Info Card -->
+    <div class="bg-slate-50 rounded-[32px] p-6 mb-8">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-cover bg-center" style="background-image: url('<%= @challenge.thumbnail %>')"></div>
+        <div>
+          <h2 class="text-lg font-black text-slate-900"><%= @challenge.title %></h2>
+          <p class="text-sm font-medium text-slate-500">호스트: <%= @challenge.host_name %></p>
+        </div>
+      </div>
 
-      <div class="space-y-2">
-        <%= f.label :message, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
-          자기소개 및 참여 동기
-          <% if @challenge.requires_application_message? %>
-            <span class="text-red-500">*</span>
-          <% else %>
-            <span class="text-slate-300">(선택)</span>
+      <!-- Challenge Details -->
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <div class="p-4 bg-white rounded-2xl">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">기간</p>
+          <p class="text-sm font-bold text-slate-900"><%= @challenge.start_date.strftime('%Y.%m.%d') %> ~ <%= @challenge.end_date.strftime('%m.%d') %></p>
+        </div>
+        <div class="p-4 bg-white rounded-2xl">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">현재 참가자</p>
+          <p class="text-sm font-bold text-slate-900"><%= @challenge.current_participants %> / <%= @challenge.max_participants %>명</p>
+        </div>
+      </div>
+
+      <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
+        <div class="mt-4 p-4 bg-white rounded-2xl space-y-2">
+          <% if @challenge.participation_fee.present? && @challenge.participation_fee > 0 %>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-500">참가비</span>
+              <span class="text-lg font-black text-slate-900"><%= number_to_currency(@challenge.participation_fee) %></span>
+            </div>
           <% end %>
-        <% end %>
-        <%= f.text_area :message, 
-            placeholder: "호스트에게 전달할 메시지를 작성해주세요. 참여 동기, 목표, 자기소개 등을 적어주시면 좋아요!", 
-            rows: 4, 
-            required: @challenge.requires_application_message?,
-            class: "w-full bg-slate-50 border-none rounded-[24px] p-6 font-medium focus:ring-2 focus:ring-indigo-500" %>
-      </div>
+          <% if @challenge.cost_type_deposit? && @challenge.amount.present? && @challenge.amount > 0 %>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-500">보증금</span>
+              <span class="text-lg font-black text-slate-900"><%= number_to_currency(@challenge.amount) %></span>
+            </div>
+          <% elsif @challenge.cost_type_fee? && @challenge.amount.present? && @challenge.amount > 0 %>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-500">참가비</span>
+              <span class="text-lg font-black text-slate-900"><%= number_to_currency(@challenge.amount) %></span>
+            </div>
+          <% end %>
+          <% if (@challenge.participation_fee.present? && @challenge.participation_fee > 0) && (@challenge.amount.present? && @challenge.amount > 0) %>
+            <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+              <span class="text-xs font-black text-indigo-600 uppercase">총 납부액</span>
+              <span class="text-xl font-black text-indigo-600"><%= number_to_currency(@challenge.total_payment_amount) %></span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 
-    <!-- Depositor Info (for paid challenges) -->
-    <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
-      <div class="space-y-8 pt-8 border-t border-slate-100">
+    <%= form_with model: [@challenge, @application], url: challenge_applications_path(@challenge), local: true, class: "bg-white rounded-[40px] border border-slate-200 p-10 shadow-sm space-y-8" do |f| %>
+      <% if @application.errors.any? %>
+        <div class="p-4 bg-red-50 rounded-2xl border border-red-200">
+          <p class="text-sm font-bold text-red-600"><%= @application.errors.full_messages.join(", ") %></p>
+        </div>
+      <% end %>
+
+      <!-- Application Message -->
+      <div class="space-y-8">
         <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-          입금 정보
+          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          신청 메시지
         </h2>
 
-        <% if @challenge.host_account.present? %>
-          <div class="p-6 bg-indigo-50 rounded-3xl border border-indigo-100">
-            <div class="flex items-center justify-between mb-3">
-              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">입금 계좌</p>
-              <button type="button" onclick="navigator.clipboard.writeText('<%= @challenge.host_account %>')" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                복사
-              </button>
-            </div>
-            <p class="text-lg font-black text-indigo-900"><%= @challenge.host_account %></p>
-            <p class="text-sm font-bold text-indigo-600 mt-1"><%= number_to_currency(@challenge.total_payment_amount) %></p>
-          </div>
-        <% else %>
-          <div class="p-6 bg-amber-50 rounded-3xl border border-amber-100">
-            <div class="flex items-start gap-3">
-              <svg class="w-5 h-5 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-              <p class="text-sm font-bold text-amber-700">호스트가 아직 입금 계좌를 등록하지 않았습니다. 신청 후 호스트에게 문의해주세요.</p>
-            </div>
-          </div>
-        <% end %>
-
         <div class="space-y-2">
-          <%= f.label :depositor_name, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
-            입금자명 <span class="text-red-500">*</span>
+          <%= f.label :message, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
+            <%= @challenge.application_question.presence || "자기소개 및 참여 동기" %>
+            <% if @challenge.requires_application_message? %>
+              <span class="text-red-500">*</span>
+            <% else %>
+              <span class="text-slate-300">(선택)</span>
+            <% end %>
           <% end %>
-          
-          <% if current_user.saved_account_holder.present? %>
-            <div class="flex items-center gap-2 mb-3">
-              <button type="button" 
-                      data-action="click->application-form#useSavedName"
-                      data-name="<%= current_user.saved_account_holder %>"
-                      class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all">
-                저장된 이름 사용: <%= current_user.saved_account_holder %>
-              </button>
-            </div>
-          <% end %>
-          
-          <%= f.text_field :depositor_name, 
-              placeholder: "실제 입금하신 분의 성함", 
-              required: true,
-              data: { "application-form-target": "depositorName" },
-              class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
-          <p class="text-xs font-medium text-slate-400 ml-1">입금 확인을 위해 정확한 입금자명을 입력해주세요.</p>
-        </div>
-
-        <!-- Contact Info -->
-        <div class="space-y-2 pt-4">
-          <%= f.label :contact_info, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
-            연락처 (전화번호 또는 오픈채팅 URL) <span class="text-red-500">*</span>
-          <% end %>
-          <%= f.text_field :contact_info, 
-              placeholder: "예: 010-1234-5678 또는 카카오톡 오픈채팅 링크", 
-              required: true,
-              class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
-          <p class="text-xs font-medium text-slate-400 ml-1">입금 확인 및 원활한 소통을 위해 연락 가능한 정보를 입력해주세요.</p>
-        <div class="space-y-4 pt-4">
-          <%= f.label :threads_nickname, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
-            스레드 계정 <span class="text-slate-300">(선택)</span>
-          <% end %>
-          <%= f.text_field :threads_nickname, 
-              placeholder: "@threads_id 또는 닉네임", 
-              class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
-          <p class="text-xs font-medium text-slate-400 ml-1">스레드 닉네임을 입력하시면 멤버들과 더 쉽게 소통할 수 있어요.</p>
+          <%= f.text_area :message, 
+              placeholder: @challenge.application_question.present? ? "질문에 대한 성실한 답변을 입력해주세요." : "호스트에게 전달할 메시지를 작성해주세요. 참여 동기, 목표, 자기소개 등을 적어주시면 좋아요!", 
+              rows: 4, 
+              required: @challenge.requires_application_message?,
+              class: "w-full bg-slate-50 border-none rounded-[24px] p-6 font-medium focus:ring-2 focus:ring-indigo-500" %>
         </div>
       </div>
-    <% end %>
 
-    <!-- Agreement Checkboxes -->
-    <div class="space-y-4 pt-8 border-t border-slate-100">
-      <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        약관 동의
-      </h2>
+      <!-- Depositor Info (for paid challenges) -->
+      <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
+        <div class="space-y-8 pt-8 border-t border-slate-100">
+          <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+            입금 정보
+          </h2>
 
-      <div class="space-y-3">
-        <!-- Challenge Rules Agreement -->
-        <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors">
-          <input type="checkbox" 
-                 data-action="change->application-form#checkAgreement"
-                 data-application-form-target="agreement"
-                 required
-                 class="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500 mt-0.5">
-          <div class="flex-1">
-            <p class="font-bold text-slate-900 text-sm"><%= @challenge.offline? ? "모임 운영 규칙" : "챌린지 규칙" %>에 동의합니다 <span class="text-red-500">*</span></p>
-            <p class="text-xs text-slate-500 mt-1"><%= @challenge.offline? ? "참여 규칙, 입금 확인 및 환불 정책 등 모임 운영 규칙을 확인했습니다." : "인증 규칙, 미인증 시 페널티, 환불 정책 등 챌린지 운영 규칙을 확인했습니다." %></p>
+          <% if @challenge.host_account.present? %>
+            <div class="p-6 bg-indigo-50 rounded-3xl border border-indigo-100">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">입금 계좌</p>
+                <button type="button" onclick="navigator.clipboard.writeText('<%= @challenge.host_account %>')" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  복사
+                </button>
+              </div>
+              <p class="text-lg font-black text-indigo-900"><%= @challenge.host_account %></p>
+              <p class="text-sm font-bold text-indigo-600 mt-1"><%= number_to_currency(@challenge.total_payment_amount) %></p>
+            </div>
+          <% else %>
+            <div class="p-6 bg-amber-50 rounded-3xl border border-amber-100">
+              <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <p class="text-sm font-bold text-amber-700">호스트가 아직 입금 계좌를 등록하지 않았습니다. 신청 후 호스트에게 문의해주세요.</p>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="space-y-2">
+            <%= f.label :depositor_name, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
+              입금자명 <span class="text-red-500">*</span>
+            <% end %>
+            
+            <% if current_user.saved_account_holder.present? %>
+              <div class="flex items-center gap-2 mb-3">
+                <button type="button" 
+                        data-action="click->application-form#useSavedName"
+                        data-name="<%= current_user.saved_account_holder %>"
+                        class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-200 transition-all">
+                  저장된 이름 사용: <%= current_user.saved_account_holder %>
+                </button>
+              </div>
+            <% end %>
+            
+            <%= f.text_field :depositor_name, 
+                placeholder: "실제 입금하신 분의 성함", 
+                required: true,
+                data: { "application-form-target": "depositorName" },
+                class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
+            <p class="text-xs font-medium text-slate-400 ml-1">입금 확인을 위해 정확한 입금자명을 입력해주세요.</p>
           </div>
-        </label>
 
-        <!-- Personal Info Agreement -->
-        <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors">
-          <input type="checkbox" 
-                 data-action="change->application-form#checkAgreement"
-                 data-application-form-target="agreement"
-                 required
-                 class="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500 mt-0.5">
-          <div class="flex-1">
-            <p class="font-bold text-slate-900 text-sm">개인정보 제공에 동의합니다 <span class="text-red-500">*</span></p>
-            <p class="text-xs text-slate-500 mt-1"><%= @challenge.offline? ? "모임 운영을 위해 호스트에게 닉네임, 프로필 이미지가 공유됩니다." : "챌린지 운영을 위해 호스트에게 닉네임, 프로필 이미지가 공유됩니다." %></p>
+          <!-- Contact Info -->
+          <div class="space-y-2 pt-4">
+            <%= f.label :contact_info, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
+              연락처 (전화번호 또는 오픈채팅 URL) <span class="text-red-500">*</span>
+            <% end %>
+            <%= f.text_field :contact_info, 
+                placeholder: "예: 010-1234-5678 또는 카카오톡 오픈채팅 링크", 
+                required: true,
+                class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
+            <p class="text-xs font-medium text-slate-400 ml-1">입금 확인 및 원활한 소통을 위해 연락 가능한 정보를 입력해주세요.</p>
           </div>
-        </label>
 
-        <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
-          <!-- Refund Policy Agreement -->
+          <div class="space-y-4 pt-4">
+            <%= f.label :threads_nickname, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
+              스레드 계정 <span class="text-slate-300">(선택)</span>
+            <% end %>
+            <%= f.text_field :threads_nickname, 
+                placeholder: "@threads_id 또는 닉네임", 
+                class: "w-full bg-slate-50 border-none rounded-2xl p-5 font-bold focus:ring-2 focus:ring-indigo-500" %>
+            <p class="text-xs font-medium text-slate-400 ml-1">스레드 닉네임을 입력하시면 멤버들과 더 쉽게 소통할 수 있어요.</p>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Agreement Checkboxes -->
+      <div class="space-y-4 pt-8 border-t border-slate-100">
+        <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          약관 동의
+        </h2>
+
+        <div class="space-y-3">
+          <!-- Challenge Rules Agreement -->
           <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors">
             <input type="checkbox" 
                    data-action="change->application-form#checkAgreement"
@@ -222,51 +373,79 @@
                    required
                    class="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500 mt-0.5">
             <div class="flex-1">
-              <p class="font-bold text-slate-900 text-sm">환불 정책에 동의합니다 <span class="text-red-500">*</span></p>
-              <p class="text-xs text-slate-500 mt-1">
-                <% if @challenge.cost_type_deposit? %>
-                  보증금은 <%= @challenge.offline? ? "모임" : "챌린지" %> 종료 후 달성률에 따라 환급됩니다. 미인증 시 페널티가 차감될 수 있습니다.
-                <% else %>
-                  참가비는 <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 전까지만 환불 가능합니다.
-                <% end %>
-              </p>
+              <p class="font-bold text-slate-900 text-sm"><%= @challenge.offline? ? "모임 운영 규칙" : "챌린지 규칙" %>에 동의합니다 <span class="text-red-500">*</span></p>
+              <p class="text-xs text-slate-500 mt-1"><%= @challenge.offline? ? "참여 규칙, 입금 확인 및 환불 정책 등 모임 운영 규칙을 확인했습니다." : "인증 규칙, 미인증 시 페널티, 환불 정책 등 챌린지 운영 규칙을 확인했습니다." %></p>
             </div>
           </label>
-        <% end %>
-      </div>
-    </div>
 
-    <!-- Notice -->
-    <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-      <div class="flex items-start gap-3">
-        <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <div class="text-xs font-bold text-slate-500 leading-relaxed">
-          <% if @challenge.requires_approval? %>
-            <p class="mb-2">신청 후 호스트의 승인을 받아야 참여가 확정됩니다.</p>
-            <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
-              <p>입금 확인 후 승인이 진행되며, 미입금 시 신청이 거절될 수 있습니다.</p>
-            <% end %>
-          <% else %>
-            <p class="mb-2">입금자명 입력 후 즉시 참여가 완료됩니다.</p>
-            <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
-              <p>입금 확인은 호스트가 진행하며, 미입금 시 <%= @challenge.offline? ? "모임 참여" : "참여" %>가 취소될 수 있습니다.</p>
-            <% end %>
+          <!-- Personal Info Agreement -->
+          <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors">
+            <input type="checkbox" 
+                   data-action="change->application-form#checkAgreement"
+                   data-application-form-target="agreement"
+                   required
+                   class="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500 mt-0.5">
+            <div class="flex-1">
+              <p class="font-bold text-slate-900 text-sm">개인정보 제공에 동의합니다 <span class="text-red-500">*</span></p>
+              <p class="text-xs text-slate-500 mt-1"><%= @challenge.offline? ? "모임 운영을 위해 호스트에게 닉네임, 프로필 이미지가 공유됩니다." : "챌린지 운영을 위해 호스트에게 닉네임, 프로필 이미지가 공유됩니다." %></p>
+            </div>
+          </label>
+
+          <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
+            <!-- Refund Policy Agreement -->
+            <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors">
+              <input type="checkbox" 
+                     data-action="change->application-form#checkAgreement"
+                     data-application-form-target="agreement"
+                     required
+                     class="w-5 h-5 rounded-lg border-2 border-slate-300 text-indigo-600 focus:ring-indigo-500 mt-0.5">
+              <div class="flex-1">
+                <p class="font-bold text-slate-900 text-sm">환불 정책에 동의합니다 <span class="text-red-500">*</span></p>
+                <p class="text-xs text-slate-500 mt-1">
+                  <% if @challenge.cost_type_deposit? %>
+                    보증금은 <%= @challenge.offline? ? "모임" : "챌린지" %> 종료 후 달성률에 따라 환급됩니다. 미인증 시 페널티가 차감될 수 있습니다.
+                  <% else %>
+                    참가비는 <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 전까지만 환불 가능합니다.
+                  <% end %>
+                </p>
+              </div>
+            </label>
           <% end %>
         </div>
       </div>
-    </div>
 
-    <!-- Submit -->
-    <div class="pt-6">
-      <button type="submit" 
-              data-application-form-target="submitButton"
-              disabled
-              class="w-full py-6 bg-indigo-600 text-white rounded-2xl font-black text-xl shadow-xl hover:bg-indigo-700 transition-all cursor-pointer disabled:bg-slate-300 disabled:cursor-not-allowed disabled:shadow-none">
-        <%= @challenge.requires_approval? ? '신청하기' : '참여하기' %>
-      </button>
-      <p class="text-center text-xs text-slate-400 mt-3" data-application-form-target="agreementHint">
-        모든 약관에 동의해주세요
-      </p>
-    </div>
-  <% end %>
-</div>
+      <!-- Notice -->
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-slate-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div class="text-xs font-bold text-slate-500 leading-relaxed">
+            <% if @challenge.requires_approval? %>
+              <p class="mb-2">신청 후 호스트의 승인을 받아야 참여가 확정됩니다.</p>
+              <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
+                <p>입금 확인 후 승인이 진행되며, 미입금 시 신청이 거절될 수 있습니다.</p>
+              <% end %>
+            <% else %>
+              <p class="mb-2">입금자명 입력 후 즉시 참여가 완료됩니다.</p>
+              <% if @challenge.cost_type_deposit? || @challenge.cost_type_fee? %>
+                <p>입금 확인은 호스트가 진행하며, 미입금 시 <%= @challenge.offline? ? "모임 참여" : "참여" %>가 취소될 수 있습니다.</p>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="pt-6">
+        <button type="submit" 
+                data-application-form-target="submitButton"
+                disabled
+                class="w-full py-6 bg-indigo-600 text-white rounded-2xl font-black text-xl shadow-xl hover:bg-indigo-700 transition-all cursor-pointer disabled:bg-slate-300 disabled:cursor-not-allowed disabled:shadow-none">
+          <%= @challenge.requires_approval? ? '신청하기' : '참여하기' %>
+        </button>
+        <p class="text-center text-xs text-slate-400 mt-3" data-application-form-target="agreementHint">
+          모든 약관에 동의해주세요
+        </p>
+      </div>
+    <% end %>
+  </div>
+<% end %>
