@@ -34,6 +34,19 @@
             카카오로 시작하기
           </button>
         </form>
+
+        <% if Rails.env.development? %>
+          <!-- 개발자 로그인 (테스트용) -->
+          <form action="/dev_login" method="post" data-turbo="false" class="w-full">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            <button type="submit" class="w-full flex items-center justify-center gap-3 bg-slate-700 text-white py-3.5 px-4 rounded-xl font-bold hover:bg-slate-600 transition-all shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+              </svg>
+              개발자 로그인 (테스트)
+            </button>
+          </form>
+        <% end %>
       </div>
 
       <p class="text-[10px] text-slate-400 text-center leading-relaxed px-4">
