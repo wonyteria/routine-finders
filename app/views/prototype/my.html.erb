@@ -1,0 +1,166 @@
+<div class="space-y-10 pt-8 pb-10">
+  <!-- 1. Profile Summary -->
+  <section class="text-center space-y-4">
+    <div class="relative inline-block">
+      <div class="w-24 h-24 rounded-[32px] border-4 border-indigo-500 overflow-hidden shadow-2xl relative z-10">
+        <img src="<%= current_user&.profile_image %>" class="w-full h-full object-cover">
+      </div>
+      <div class="absolute -bottom-2 -right-2 bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-black border-4 border-[#0C0B12] z-20">Lv.8</div>
+    </div>
+    <div class="space-y-1">
+      <h2 class="text-xl font-black text-white"><%= current_user&.nickname %></h2>
+      <p class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Steady Runner Since 2024</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="flex justify-center gap-8 pt-4">
+      <div class="text-center">
+        <p class="text-lg font-black text-white tabular-nums"><%= @total_activities %></p>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Activities</p>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+      <div class="text-center">
+        <p class="text-lg font-black text-white tabular-nums"><%= @current_streak %>일</p>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Streaks</p>
+      </div>
+      <div class="w-px h-8 bg-white/10"></div>
+      <div class="text-center">
+        <p class="text-lg font-black text-white tabular-nums">482P</p>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Points</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Growth Report (Graph Placeholder) -->
+  <section class="space-y-4">
+    <div class="flex justify-between items-center px-2">
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Growth Intel</h3>
+      <button class="text-[10px] font-bold text-indigo-400">자세히 보기</button>
+    </div>
+
+    <div class="app-glass-card p-6 aspect-video bg-gradient-to-br from-indigo-500/5 to-transparent flex flex-col justify-between">
+      <div class="flex justify-between items-start">
+        <div class="space-y-1">
+          <p class="text-[10px] font-bold text-slate-500">이번 주 달성률</p>
+          <h4 class="text-2xl font-black text-white">82% <span class="text-xs text-emerald-500 font-bold ml-1">↑ 12%</span></h4>
+        </div>
+        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">📈</div>
+      </div>
+      
+      <!-- Dummy Graph -->
+      <div class="flex items-end justify-between h-20 gap-2">
+         <% [30, 45, 80, 60, 95, 70, 85].each_with_index do |h, i| %>
+           <div class="flex-1 rounded-t-lg transition-all duration-1000 <%= i == 6 ? 'bg-indigo-500 shadow-[0_0_15px_rgba(124,77,255,0.5)]' : 'bg-white/10' %>" style="height: <%= h %>%"></div>
+         <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Achievement Wallet -->
+  <section class="space-y-4">
+    <div class="flex justify-between items-center px-2">
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Identity Wallet</h3>
+    </div>
+
+    <div class="flex gap-4 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-4">
+      <% [
+          {title: '새벽의 지배자', emoji: '🌅', desc: '새벽 6시 이전 루틴 30회 달성'},
+          {title: '불굴의 노력가', emoji: '🏋️', desc: '운동 루틴 14일 연속 성공'},
+          {title: '성실함의 상징', emoji: '💎', desc: '전체 달성률 100% 지속'},
+          {title: '박수 요정', emoji: '👏', desc: '메이트 응원 100회 돌파'}
+         ].each_with_index do |badge, i| %>
+        <button data-action="click->proto-ui#openModal" 
+                data-modal-id="badge-detail-<%= i %>"
+                class="shrink-0 w-32 aspect-[3/4] app-glass-card p-4 flex flex-col justify-between border-transparent overflow-hidden relative group text-left active:scale-95 transition-all">
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent rotate-12 -translate-y-8"></div>
+          <span class="text-2xl relative z-10"><%= badge[:emoji] %></span>
+          <p class="text-[11px] font-black text-white leading-tight relative z-10"><%= badge[:title] %></p>
+          <div class="absolute bottom-1 right-1 opacity-10 text-4xl font-black italic">IT</div>
+        </button>
+
+        <!-- Badge Detail Modal (Inside Loop for simplicity in prototype) -->
+        <div id="badge-detail-<%= i %>" class="hidden fixed inset-0 z-[300]">
+          <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 aspect-[3/4.5] app-glass-card border-white/20 p-8 flex flex-col items-center justify-between text-center overflow-hidden">
+             <!-- Shimmer Effect -->
+             <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
+             
+             <div class="space-y-6 relative z-10">
+               <div class="w-24 h-24 rounded-[32px] bg-white/5 border border-white/10 flex items-center justify-center text-5xl mx-auto shadow-2xl shadow-indigo-500/20">
+                 <%= badge[:emoji] %>
+               </div>
+               <div class="space-y-2">
+                 <h4 class="text-2xl font-black text-white"><%= badge[:title] %></h4>
+                 <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Growth Identity Card</p>
+               </div>
+               <p class="text-sm font-bold text-slate-400 leading-relaxed"><%= badge[:desc] %></p>
+             </div>
+
+             <div class="w-full space-y-4 relative z-10">
+                <div class="h-px w-full bg-white/10"></div>
+                <div class="flex justify-around">
+                   <div class="text-center">
+                     <p class="text-xs font-black text-white">2024.12.24</p>
+                     <p class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Acquired</p>
+                   </div>
+                   <div class="text-center">
+                     <p class="text-xs font-black text-white">Top 2%</p>
+                     <p class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Global</p>
+                   </div>
+                </div>
+                <button class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm flex items-center justify-center gap-2">
+                  <span class="text-lg">📤</span> 공유하기
+                </button>
+             </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- 4. Host Management (Toggle Layout) -->
+  <section class="space-y-4">
+    <%= link_to hosted_challenges_path, class: "block" do %>
+      <div class="app-glass-card p-6 flex items-center justify-between border-amber-500/10 bg-amber-500/5 group app-tap-active">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
+          <div class="text-left">
+            <h4 class="text-sm font-black text-white leading-none">호스트 센터</h4>
+            <p class="text-[11px] font-bold text-amber-500/60 mt-2">내가 개설한 챌린지 관리하기</p>
+          </div>
+        </div>
+        <div class="w-12 h-6 bg-slate-800 rounded-full relative p-1 flex items-center bg-amber-500/20 border border-amber-500/30">
+           <div class="w-4 h-4 bg-amber-500 rounded-full shadow-lg"></div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <!-- 5. Settings List -->
+  <section class="app-glass-card divide-y divide-white/5 overflow-hidden">
+    <%= link_to edit_profile_path, class: "flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors" do %>
+      <div class="flex items-center gap-4">
+        <span class="text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></span>
+        <span class="text-sm font-bold text-slate-300">프로필 정보 수정</span>
+      </div>
+      <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+    <% end %>
+    
+    <div class="flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer">
+      <div class="flex items-center gap-4">
+        <span class="text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg></span>
+        <span class="text-sm font-bold text-slate-300">푸시 알림 설정</span>
+      </div>
+      <div class="w-10 h-5 bg-slate-800 rounded-full relative p-0.5 flex items-center justify-end px-1">
+         <div class="w-4 h-4 bg-slate-600 rounded-full"></div>
+      </div>
+    </div>
+
+    <%= button_to logout_path, method: :delete, class: "w-full flex items-center justify-between p-5 hover:bg-red-500/5 active:bg-red-500/10 transition-colors border-none bg-transparent cursor-pointer" do %>
+      <div class="flex items-center gap-4">
+        <span class="text-red-500/50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>
+        <span class="text-sm font-bold text-red-500/80">로그아웃</span>
+      </div>
+    <% end %>
+  </section>
+</div>

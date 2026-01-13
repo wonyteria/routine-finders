@@ -57,3 +57,9 @@ application.register("dropdown", DropdownController)
 
 import AuthToggleController from "controllers/auth_toggle_controller"
 application.register("auth-toggle", AuthToggleController)
+
+import ProtoUiController from "controllers/proto_ui_controller"
+application.register("proto-ui", ProtoUiController)
+
+import RoutineWizardController from "controllers/routine_wizard_controller"
+application.register("routine-wizard", RoutineWizardController)

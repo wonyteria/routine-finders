@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="scroll-smooth">
+  <head>
+    <title>Routine Finders App Prototype</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <style>
+      :root {
+        --app-bg: #0C0B12;
+        --app-surface: #1B1A24;
+        --app-surface-accent: #252433;
+        --app-primary: #7C4DFF;
+        --app-primary-glow: rgba(124, 77, 255, 0.4);
+        --app-text-main: #FFFFFF;
+        --app-text-dim: #8E8D9E;
+        --app-border: rgba(255, 255, 255, 0.06);
+      }
+
+      body {
+        background-color: var(--app-bg);
+        color: var(--app-text-main);
+        font-family: 'Pretendard', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .app-glass-card {
+        background: var(--app-surface);
+        border: 1px solid var(--app-border);
+        border-radius: 32px;
+      }
+
+      .app-fab-gradient {
+        background: linear-gradient(135deg, #7C4DFF 0%, #651FFF 100%);
+        box-shadow: 0 10px 25px rgba(124, 77, 255, 0.4);
+      }
+
+      /* Transitions for Taps */
+      .app-tap-active:active {
+        transform: scale(0.96);
+        transition: transform 0.1s ease;
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen" data-controller="proto-ui">
+    <main class="w-full max-w-md mx-auto min-h-screen relative pb-32 px-4 shadow-2xl bg-[#0C0B12]">
+      <%= yield %>
+    </main>
+
+    <!-- App Bottom Navigation Bar -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-sm h-20 bg-[#16151D]/80 backdrop-blur-3xl rounded-[32px] border border-white/10 flex items-center justify-around px-8 z-[100] shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+      <%= link_to prototype_home_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_home_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+        <span class="text-2xl">🏠</span>
+      <% end %>
+
+      <%= link_to prototype_explore_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_explore_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+        <span class="text-2xl">🔍</span>
+      <% end %>
+
+      <%= link_to prototype_hub_path, class: "w-16 h-16 app-fab-gradient rounded-full flex items-center justify-center -translate-y-6 shadow-2xl border-4 border-[#0C0B12] active:scale-90 transition-transform" do %>
+        <span class="text-2xl text-white font-black">+</span>
+      <% end %>
+
+      <%= link_to prototype_synergy_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_synergy_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+        <span class="text-2xl">✨</span>
+      <% end %>
+
+      <%= link_to prototype_my_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_my_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+        <span class="text-2xl">👤</span>
+      <% end %>
+    </nav>
+
+    <!-- Routine Record Bottom Sheet -->
+    <div id="record-sheet" class="hidden fixed inset-0 z-[210]">
+      <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)]">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
+        <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
+        
+        <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
+          <div class="space-y-4">
+            <%= f.text_area :body, 
+                            placeholder: "오늘 어떤 루틴을 지켰나요? 자신에게 한 마디 남겨보세요.", 
+                            class: "w-full min-h-[160px] bg-white/5 border-2 border-white/10 rounded-3xl p-6 text-white text-base font-bold placeholder:text-white/20 focus:border-indigo-500 focus:ring-0 transition-all resize-none shadow-inner" %>
+            
+            <div class="flex items-center gap-3 p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
+              <span class="text-xl">✨</span>
+              <p class="text-[11px] font-bold text-indigo-300">작성한 기록은 '시너지' 피드에 공유되어 다른 멤버들의 성장을 응원하게 됩니다.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+             <button type="button" data-action="click->proto-ui#closeModal" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm">취소</button>
+             <%= f.submit "기록 저장하기", class: "flex-1 py-4 rounded-2xl app-fab-gradient text-white font-black text-sm shadow-xl active:scale-95 transition-all cursor-pointer" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </body>
+</html>

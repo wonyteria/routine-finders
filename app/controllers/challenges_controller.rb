@@ -113,6 +113,10 @@ class ChallengesController < ApplicationController
     @can_write_review = @is_joined &&
                         @participant.joined_at <= 7.days.ago &&
                         !@challenge.reviews.exists?(user: current_user)
+
+    if params[:source] == "prototype"
+      render layout: "prototype"
+    end
   end
 
   def clone
@@ -144,7 +148,19 @@ class ChallengesController < ApplicationController
   end
 
   def create
-    params_hash = challenge_params
+    [ :days, :daily_goals, :reward_policy ].each do |attr|
+    if params[:challenge] && params[:challenge][attr].is_a?(String)
+      begin
+        params[:challenge][attr] = JSON.parse(params[:challenge][attr])
+        if attr == :days && params[:challenge][attr].is_a?(Array)
+          params[:challenge][attr] = params[:challenge][attr].map(&:to_s)
+        end
+      rescue JSON::ParserError
+      end
+    end
+  end
+
+  params_hash = challenge_params
 
     # Convert full_refund_threshold from percentage (0-100) to decimal (0-1)
     if params_hash[:full_refund_threshold].present?
@@ -162,7 +178,12 @@ class ChallengesController < ApplicationController
           saved_account_holder: @challenge.host_account_holder
         )
       end
-      redirect_to hosted_challenge_path(@challenge), notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
+
+      if params[:source] == "prototype"
+        redirect_to prototype_explore_path, notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
+      else
+        redirect_to hosted_challenge_path(@challenge), notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
+      end
     else
       @saved_account = current_user.saved_account
       @has_saved_account = current_user.has_saved_account?
@@ -330,7 +351,7 @@ class ChallengesController < ApplicationController
       :mission_frequency, :mission_is_late_detection_enabled,
       :mission_allow_exceptions, :mission_is_consecutive, :mission_requires_host_approval,
       :verification_start_time, :verification_end_time, :re_verification_allowed,
-      :is_private, :admission_type, :host_bank, :host_account, :host_account_holder,
+      :is_private, :invitation_code, :admission_type, :host_bank, :host_account, :host_account_holder,
       :v_photo, :v_simple, :v_metric, :v_url, :thumbnail_image, :save_account_to_profile,
       :certification_goal, :daily_goals, :reward_policy,
       :full_refund_threshold, :refund_date, :recruitment_start_date, :recruitment_end_date,

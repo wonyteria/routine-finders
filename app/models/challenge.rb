@@ -91,8 +91,19 @@ class Challenge < ApplicationRecord
   def thumbnail
     if thumbnail_image.attached?
       Rails.application.routes.url_helpers.rails_blob_url(thumbnail_image, only_path: true)
+    elsif self[:thumbnail].present?
+      self[:thumbnail]
     else
-      self[:thumbnail].presence || "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800"
+      # Smart Category Defaults
+      case category&.upcase
+      when "HEALTH" then "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=800"
+      when "LIFE"   then "https://images.unsplash.com/photo-1506784919141-93b4820dc7df?auto=format&fit=crop&q=80&w=800"
+      when "MIND"   then "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=800"
+      when "HOBBY"  then "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&q=80&w=800"
+      when "STUDY"  then "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800"
+      when "MONEY"  then "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800"
+      else "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800"
+      end
     end
   end
 
@@ -137,12 +148,9 @@ class Challenge < ApplicationRecord
     parts.join(" + ")
   end
 
-  # Thumbnail URL with fallback
+  # Thumbnail URL with fallback (Sync with thumbnail method)
   def thumbnail_url
-    return thumbnail if thumbnail.present?
-
-    # Default Placeholder
-    "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=2000"
+    thumbnail
   end
 
   # Recruitment D-Day helper

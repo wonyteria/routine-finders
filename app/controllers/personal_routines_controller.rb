@@ -177,6 +177,13 @@ class PersonalRoutinesController < ApplicationController
   end
 
   def create
+    if params[:personal_routine] && params[:personal_routine][:days].is_a?(String)
+      begin
+        params[:personal_routine][:days] = JSON.parse(params[:personal_routine][:days]).map(&:to_s)
+      rescue JSON::ParserError
+        # Keep as is or handle error
+      end
+    end
     @routine = current_user.personal_routines.build(routine_params)
 
     if @routine.save
@@ -185,8 +192,15 @@ class PersonalRoutinesController < ApplicationController
       set_activity_data
       set_recommended_routines
       respond_to do |format|
-        format.html { redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 추가되었습니다!" }
+        format.html do
+          if params[:source] == "prototype"
+            redirect_to prototype_home_path, notice: "새로운 루틴이 추가되었습니다!"
+          else
+            redirect_to personal_routines_path(tab: "personal"), notice: "Personal routine was successfully created."
+          end
+        end
         format.turbo_stream
+        format.json { render :show, status: :created, location: @routine }
       end
     else
       redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), alert: "루틴 추가에 실패했습니다."

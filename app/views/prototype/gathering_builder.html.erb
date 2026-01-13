@@ -1,0 +1,489 @@
+<div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none">
+  <style>
+    /* Premium Selection & Theme */
+    .premium-selection {
+      border-color: #818cf8 !important;
+      background: rgba(99, 102, 241, 0.2) !important;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), inset 0 0 10px rgba(99, 102, 241, 0.2) !important;
+      transform: scale(1.02);
+      z-index: 5;
+    }
+    .selected-cat {
+      background: #FFFFFF !important;
+      color: #0C0B12 !important;
+      border: none !important;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
+      transform: translateY(-2px);
+      z-index: 5;
+    }
+    .unselected-opt {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      opacity: 0.5;
+      z-index: 1;
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.25rem;
+      color: white;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: #818cf8;
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.2);
+    }
+    function previewImage(input, previewId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById(previewId);
+          preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+          preview.classList.remove('bg-white/5', 'border-dashed');
+          preview.classList.add('border-solid', 'border-emerald-500/20');
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    /* Stepper Dots */
+    .step-dot {
+      height: 4px;
+      border-radius: 2px;
+      transition: all 0.5s ease;
+    }
+    .active-dot {
+      background: #818cf8;
+      width: 24px;
+      box-shadow: 0 0 10px #818cf8;
+    }
+    .completed-dot { background: #818cf8; width: 8px; opacity: 0.5; }
+    .pending-dot { background: rgba(255, 255, 255, 0.1); width: 8px; }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+
+  <!-- Header & Stepper -->
+  <header class="flex items-center justify-between mb-2 px-8 shrink-0 z-20">
+    <button id="prevBtn" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="flex gap-1.5 h-1 px-4 flex-1 max-w-[150px] justify-center">
+      <% 4.times do |i| %>
+        <div class="step-dot pending-dot"></div>
+      <% end %>
+    </div>
+    <div class="w-10 flex items-center justify-end">
+       <span id="stepCounter" class="text-[10px] font-black text-indigo-400">1/4</span>
+    </div>
+  </header>
+
+  <%= form_with model: @gathering, url: challenges_path(source: 'prototype'), class: "flex-1 flex flex-col px-8 min-h-0 relative" do |f| %>
+    <%= f.hidden_field :cost_type, value: 'free', id: 'h_cost_type' %>
+    <%= f.hidden_field :admission_type, value: 'approval', id: 'h_admission' %>
+    <%= f.hidden_field :host_bank, value: '신한', id: 'h_bank' %>
+    <%= f.hidden_field :end_date, id: 'h_end_date' %>
+    <%= f.hidden_field :mode, value: 'offline', id: 'h_mode' %>
+    <%= f.hidden_field :meeting_type, value: 'single', id: 'h_meeting_type' %>
+    <%= f.hidden_field :category, value: 'HOBBY', id: 'h_category' %>
+
+    <div class="flex-1 min-h-0 py-4 flex flex-col relative z-10 overflow-y-auto hide-scrollbar pb-32">
+      
+      <!-- STEP 1: Core Info -->
+      <section id="step-0" class="step-section flex-1 flex flex-col gap-8">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">어떤 <span class="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">모임</span>을<br/>만들어볼까요?</h2>
+        </div>
+
+        <div class="space-y-8">
+           <!-- 1. Type Selection & Category -->
+           <div class="space-y-4">
+             <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
+               <button type="button" data-val="single" class="type-opt p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all premium-selection">
+                 <span class="text-2xl">🗓️</span>
+                 <span class="text-sm font-black text-white">원데이 모임</span>
+                 <span class="text-[9px] font-bold text-slate-400">1회성 만남</span>
+               </button>
+               <button type="button" data-val="regular" class="type-opt p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all unselected-opt">
+                 <span class="text-2xl">🔄</span>
+                 <span class="text-sm font-black text-white">정기 모임</span>
+                 <span class="text-[9px] font-bold text-slate-400">지속적 만남</span>
+               </button>
+             </div>
+             
+             <!-- Category Selection -->
+             <div class="space-y-2 p-1 overflow-visible">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Category</label>
+               <div class="grid grid-cols-3 gap-2">
+                 <% @categories.each do |cat| %>
+                   <button type="button" data-val="<%= cat[:key] %>" class="cat-opt p-3 rounded-xl border flex flex-col items-center gap-1 transition-all <%= cat[:key] == 'HOBBY' ? 'selected-cat' : 'unselected-opt' %>">
+                     <span class="text-xl"><%= cat[:icon] %></span>
+                     <span class="text-[10px] font-black"><%= cat[:label] %></span>
+                   </button>
+                 <% end %>
+               </div>
+             </div>
+           </div>
+
+           <!-- 2. Basic Details -->
+           <div class="space-y-4 pt-4 border-t border-white/5">
+              <div class="space-y-2 p-1 overflow-visible">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Cover Image</label>
+                <div class="relative group cursor-pointer" onclick="document.getElementById('challenge_thumbnail_image').click()">
+                  <div id="thumbnail_preview" class="aspect-[16/9] w-full rounded-2xl bg-white/5 border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-3 group-hover:bg-white/[0.08] group-hover:border-emerald-500/30 transition-all overflow-hidden">
+                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">📸</div>
+                    <div class="text-center">
+                      <p class="text-[11px] font-black text-white group-hover:text-emerald-400 transition-colors">멋진 커버 사진을 골라보세요</p>
+                      <p class="text-[9px] font-bold text-slate-600 mt-1 uppercase">16:9 추천 (Max 5MB)</p>
+                    </div>
+                  </div>
+                  <%= f.file_field :thumbnail_image, class: "hidden", onchange: "previewImage(this, 'thumbnail_preview')" %>
+                </div>
+              </div>
+
+             <div class="space-y-2 p-1 overflow-visible">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Meetup Title</label>
+               <%= f.text_field :title, class: "glass-input w-full p-4 text-base focus:scale-[1.01]", placeholder: "예: 강남역 아침 카페 독서 모임" %>
+             </div>
+
+             <div class="space-y-2 p-1 overflow-visible">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">One-line Summary</label>
+               <%= f.text_field :summary, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "모임을 한 마디로 소개해주세요." %>
+             </div>
+
+             <div class="space-y-2 p-1 overflow-visible">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Description</label>
+               <%= f.text_area :description, class: "glass-input w-full p-6 text-sm min-h-[160px] leading-relaxed focus:scale-[1.01]", placeholder: "모임의 목적, 분위기, 준비물, 진행 방식 등을 구체적으로 적어주세요." %>
+             </div>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: Time & Place -->
+      <section id="step-1" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">언제, 어디서 <span class="text-emerald-500">만날까요?</span></h2>
+        </div>
+        <div class="space-y-6">
+           <!-- Mode Selection -->
+           <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
+             <button type="button" data-val="offline" class="mode-opt p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all premium-selection">
+               <span class="text-2xl">🏃</span>
+               <span class="text-sm font-black text-white">오프라인 모임</span>
+             </button>
+             <button type="button" data-val="online" class="mode-opt p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all unselected-opt">
+               <span class="text-2xl">💻</span>
+               <span class="text-sm font-black text-white">온라인 모임</span>
+             </button>
+           </div>
+
+           <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
+             <div class="space-y-2">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Date</label>
+               <%= f.date_field :start_date, value: Date.current + 7.days, onclick: "this.showPicker()", class: "glass-input w-full p-4 text-xs" %>
+             </div>
+             <div class="space-y-2">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Start Time</label>
+               <%= f.fields_for :meeting_info do |m| %>
+                 <%= m.time_field :meeting_time, class: "glass-input w-full p-4 text-xs", onclick: "this.showPicker()" %>
+               <% end %>
+             </div>
+           </div>
+           
+           <div class="space-y-4">
+             <%= f.fields_for :meeting_info do |m| %>
+               <div class="space-y-2 p-1 overflow-visible">
+                 <label id="lbl_place_name" class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Place Name</label>
+                 <%= m.text_field :place_name, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "예: 투썸플레이스 강남대로점" %>
+               </div>
+               <div id="div_address" class="space-y-2 p-1 overflow-visible">
+                 <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Address</label>
+                 <%= m.text_field :address, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "상세 주소를 입력해주세요" %>
+               </div>
+             <% end %>
+             
+             <div class="space-y-2 p-1 overflow-visible">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Chat Link (Optional)</label>
+               <%= f.text_field :chat_link, class: "glass-input w-full p-4 text-xs focus:scale-[1.01]", placeholder: "카카오톡 오픈채팅방 링크 등" %>
+             </div>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 3: Participation & Cost -->
+      <section id="step-2" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">참여 <span class="text-emerald-500">인원과 비용</span>을<br/>설정해주세요.</h2>
+        </div>
+        <div class="space-y-6">
+           <div class="space-y-3 p-1">
+             <div class="flex justify-between items-center px-1">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Max Attendees</label>
+               <span id="max_val" class="text-emerald-400 font-black text-base">4명</span>
+             </div>
+             <%= f.fields_for :meeting_info do |m| %>
+               <%= m.range_field :max_attendees, min: 2, max: 50, step: 1, value: 4, id: "max_slider", class: "w-full h-1.5 bg-white/10 rounded-full appearance-none accent-emerald-500" %>
+             <% end %>
+           </div>
+
+           <div class="grid grid-cols-2 gap-4 p-1 overflow-visible">
+             <button type="button" data-val="first_come" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all unselected-opt">선착순 입장</button>
+             <button type="button" data-val="approval" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all premium-selection">호스트 승인제</button>
+           </div>
+
+           <div class="space-y-4">
+              <div class="grid grid-cols-2 gap-2 p-1 overflow-visible">
+                <button type="button" data-val="free" class="cost-opt py-4 rounded-2xl border transition-all flex flex-col items-center gap-1 selected-cat">
+                  <span class="text-xs font-black">무료 모임</span>
+                </button>
+                <button type="button" data-val="fee" class="cost-opt py-4 rounded-2xl border transition-all flex flex-col items-center gap-1 unselected-opt">
+                  <span class="text-xs font-black">유료 모임</span>
+                </button>
+              </div>
+
+              <div id="cost_box" class="hidden space-y-4 animate-fade-in">
+                <div class="relative p-1 overflow-visible">
+                  <%= f.hidden_field :amount, value: 10000, id: "h_amount" %>
+                  <input type="text" id="amount_display" value="10,000" class="glass-input w-full p-4 text-2xl text-right pr-12 focus:scale-[1.01]" placeholder="0" />
+                  <span class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 font-bold">원</span>
+                </div>
+                
+                <div class="space-y-3 p-1 overflow-visible">
+                  <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Settlement Account</label>
+                  <div class="grid grid-cols-4 gap-2">
+                    <% @banks.each do |bank| %>
+                      <button type="button" class="bank-opt py-2 rounded-lg border text-[9px] font-black transition-all unselected-opt <%= bank == '신한' ? 'selected-cat' : '' %>"><%= bank %></button>
+                    <% end %>
+                  </div>
+                  <%= f.text_field :host_account, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "계좌번호 입력" %>
+                </div>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 4: Review -->
+      <section id="step-3" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">마지막으로 <span class="text-emerald-500">모임 정보</span>를<br/>확인해주세요.</h2>
+        </div>
+        <div class="space-y-6">
+           <div class="bg-white/5 rounded-[40px] p-8 space-y-6 border border-white/5 relative overflow-hidden group">
+              <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-500/10 blur-3xl"></div>
+              <div class="space-y-2 relative z-10">
+                <h3 id="rev_title" class="text-xl font-black text-white">강남역 카페 독서 모임</h3>
+                <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold">
+                  <span>📍</span>
+                  <span id="rev_place">투썸플레이스 강남대로점</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 relative z-10">
+                <div class="space-y-1">
+                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Date & Time</p>
+                  <p id="rev_date" class="text-xs font-black text-white">2026.01.20 | 오후 2시</p>
+                </div>
+                <div class="space-y-1">
+                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Attendees</p>
+                  <p id="rev_max" class="text-xs font-black text-white">최대 4명</p>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-white/5 relative z-10">
+                <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Cost</p>
+                <p id="rev_cost" class="text-sm font-black text-white">무료</p>
+              </div>
+           </div>
+           
+           <div class="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-[32px]">
+              <p class="text-[10px] font-bold text-slate-500 text-center leading-relaxed">
+                모임의 참여도를 높이기 위해 <br/>
+                <span class="text-emerald-400">유료 참여</span>로 전환하는 것을 추천드립니다.
+              </p>
+           </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="py-4 pb-24 shrink-0 z-20">
+      <button id="nextBtn" type="button" class="w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-base shadow-2xl shadow-emerald-500/40 active:scale-95 transition-all">다음 단계로</button>
+      <button id="submitBtn" type="submit" class="hidden w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-lg shadow-2xl shadow-emerald-500/40 active:scale-90 transition-all">모임 개설 완료</button>
+    </div>
+  <% end %>
+
+  <script>
+    (function() {
+      let currentStep = 0;
+      const sections = document.querySelectorAll('.step-section');
+      const dots = document.querySelectorAll('.step-dot');
+      const stepCounter = document.getElementById('stepCounter');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      const prevBtn = document.getElementById('prevBtn');
+
+      function update() {
+        sections.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep));
+        dots.forEach((d, i) => {
+          d.classList.toggle('active-dot', i === currentStep);
+          d.classList.toggle('pending-dot', i > currentStep);
+          d.classList.toggle('completed-dot', i < currentStep);
+        });
+        stepCounter.textContent = `${currentStep+1}/4`;
+        
+        if (currentStep === 3) {
+          nextBtn.classList.add('hidden');
+          submitBtn.classList.remove('hidden');
+          
+          // Review Sync
+          document.getElementById('rev_title').textContent = document.querySelector('input[name="challenge[title]"]').value || "무제 모임";
+          document.getElementById('rev_place').textContent = document.querySelector('input[name="challenge[meeting_info_attributes][place_name]"]').value || "장소 미정";
+          
+          const date = document.querySelector('input[name="challenge[start_date]"]').value;
+          const time = document.querySelector('input[name="challenge[meeting_info_attributes][meeting_time]"]').value;
+          document.getElementById('rev_date').textContent = `${date} | ${time}`;
+          document.getElementById('rev_max').textContent = `최대 ${document.getElementById('max_slider').value}명`;
+          
+          const costType = document.getElementById('h_cost_type').value;
+          const amount = document.getElementById('amount_display').value;
+          document.getElementById('rev_cost').textContent = costType === 'free' ? "무료" : amount + "원";
+        } else {
+          nextBtn.classList.remove('hidden');
+          submitBtn.classList.add('hidden');
+        }
+      }
+
+      // Validation Logic
+      function validateStep(step) {
+        if (step === 0) {
+           const title = document.querySelector('input[name="challenge[title]"]').value.trim();
+           const summary = document.querySelector('input[name="challenge[summary]"]').value.trim();
+           const description = document.querySelector('textarea[name="challenge[description]"]').value.trim();
+           
+           if(!title) { alert('모임 이름을 입력해주세요.'); return false; }
+           if(!summary) { alert('한 줄 소개를 입력해주세요.'); return false; }
+           if(!description) { alert('모임 상세 설명을 입력해주세요.'); return false; }
+        }
+        else if (step === 1) {
+           const date = document.querySelector('input[name="challenge[start_date]"]').value;
+           const time = document.querySelector('input[name="challenge[meeting_info_attributes][meeting_time]"]').value;
+           const mode = document.getElementById('h_mode').value;
+           const place = document.querySelector('input[name="challenge[meeting_info_attributes][place_name]"]').value.trim();
+           
+           if(!date) { alert('모임 날짜를 선택해주세요.'); return false; }
+           if(!time) { alert('모임 시간을 선택해주세요.'); return false; }
+           
+           if(mode === 'online') {
+              if(!place) { alert('온라인 플랫폼 또는 링크를 입력해주세요.'); return false; }
+           } else {
+              if(!place) { alert('모임 장소를 입력해주세요.'); return false; }
+              const address = document.querySelector('input[name="challenge[meeting_info_attributes][address]"]').value.trim();
+              if(!address) { alert('상세 주소를 입력해주세요.'); return false; }
+           }
+        }
+        else if (step === 2) {
+           const costType = document.getElementById('h_cost_type').value;
+           if(costType === 'fee') {
+             const amount = document.getElementById('h_amount').value;
+             const account = document.querySelector('input[name="challenge[host_account]"]').value.trim();
+             if(!amount || parseInt(amount) <= 0) { alert('참가비를 올바르게 입력해주세요.'); return false; }
+             if(!account) { alert('정산받을 계좌번호를 입력해주세요.'); return false; }
+           }
+        }
+        return true;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (currentStep < 3) { 
+           if(validateStep(currentStep)) {
+             currentStep++; 
+             update();
+           }
+        }
+      });
+      prevBtn.addEventListener('click', () => {
+        if (currentStep > 0) { currentStep--; update(); }
+        else { window.history.back(); }
+      });
+
+      // Selection Logic
+      const handleSelect = (btns, hiddenId, activeClass) => {
+        btns.forEach(btn => {
+          btn.addEventListener('click', () => {
+             btns.forEach(b => {
+               b.classList.remove(activeClass, 'selected-cat', 'premium-selection');
+               b.classList.add('unselected-opt');
+             });
+             btn.classList.add(activeClass);
+             btn.classList.remove('unselected-opt');
+             document.getElementById(hiddenId).value = btn.dataset.val;
+             
+             if (hiddenId === 'h_cost_type') {
+               document.getElementById('cost_box').classList.toggle('hidden', btn.dataset.val === 'free');
+             }
+          });
+        });
+      };
+
+      handleSelect(document.querySelectorAll('.mode-opt'), 'h_mode', 'premium-selection');
+      handleSelect(document.querySelectorAll('.type-opt'), 'h_meeting_type', 'premium-selection');
+      handleSelect(document.querySelectorAll('.cat-opt'), 'h_category', 'selected-cat');
+      handleSelect(document.querySelectorAll('.admission-opt'), 'h_admission', 'premium-selection');
+      handleSelect(document.querySelectorAll('.cost-opt'), 'h_cost_type', 'selected-cat');
+      handleSelect(document.querySelectorAll('.bank-opt'), 'h_bank', 'selected-cat');
+
+      // Address Visibility Toggle
+      document.querySelectorAll('.mode-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+           const isOnline = btn.dataset.val === 'online';
+           const placeLabel = document.getElementById('lbl_place_name');
+           const addrDiv = document.getElementById('div_address');
+           
+           if(isOnline) {
+             placeLabel.textContent = "Platform / Link";
+             if(addrDiv) addrDiv.style.display = 'none';
+             document.querySelector('input[name="challenge[meeting_info_attributes][place_name]"]').placeholder = "예: Zoom, Discord, Google Meet";
+           } else {
+             placeLabel.textContent = "Place Name";
+             if(addrDiv) addrDiv.style.display = 'block';
+             document.querySelector('input[name="challenge[meeting_info_attributes][place_name]"]').placeholder = "예: 투썸플레이스 강남대로점";
+           }
+        });
+      });
+
+      // Date Sync
+      const startDateInput = document.querySelector('input[name="challenge[start_date]"]');
+      const endDateInput = document.getElementById('h_end_date');
+      startDateInput.addEventListener('change', () => {
+        endDateInput.value = startDateInput.value;
+      });
+      // Initial sync
+      if(startDateInput.value) endDateInput.value = startDateInput.value;
+
+      document.getElementById('max_slider').addEventListener('input', (e) => {
+        document.getElementById('max_val').textContent = e.target.value + "명";
+      });
+
+      // Amount Formatting
+      const amountDisplay = document.getElementById('amount_display');
+      const amountHidden = document.getElementById('h_amount');
+
+      const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const unformatNumber = (str) => str.replace(/,/g, "");
+
+      amountDisplay.addEventListener('input', (e) => {
+        let value = unformatNumber(e.target.value);
+        if(!isNaN(value) && value !== "") {
+           amountHidden.value = value;
+           e.target.value = formatNumber(value);
+        } else {
+           amountHidden.value = 0;
+           e.target.value = "";
+        }
+      });
+
+      update();
+    })();
+  </script>
+</div>

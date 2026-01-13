@@ -1,0 +1,887 @@
+<div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none" data-controller="prototype-wizard">
+  <style>
+    /* Premium Selection & Theme */
+    .premium-selection {
+      border-color: #818cf8 !important;
+      background: rgba(99, 102, 241, 0.2) !important;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), inset 0 0 10px rgba(99, 102, 241, 0.2) !important;
+      transform: scale(1.02);
+      z-index: 5;
+    }
+    .selected-cat {
+      background: #FFFFFF !important;
+      color: #0C0B12 !important;
+      border: none !important;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
+      transform: translateY(-2px);
+      z-index: 5;
+    }
+    .unselected-opt {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      opacity: 0.5;
+      z-index: 1;
+    }
+    .step-section { 
+      transition: all 0.5s cubic-bezier(0.2, 1, 0.2, 1); 
+    }
+    .glass-input {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.25rem;
+      color: white;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: #818cf8;
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.2);
+    }
+    /* Stepper Dots */
+    .step-dot {
+      height: 4px;
+      border-radius: 2px;
+      transition: all 0.5s ease;
+    }
+    .active-dot {
+      background: #818cf8;
+      width: 24px;
+      box-shadow: 0 0 10px #818cf8;
+    }
+    .completed-dot { background: #818cf8; width: 8px; opacity: 0.5; }
+    .pending-dot { background: rgba(255, 255, 255, 0.1); width: 8px; }
+
+    /* Custom Checkbox/Toggle */
+    .toggle-pill {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    .toggle-pill.active { background: #818cf8; }
+    .toggle-circle {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+    }
+    .toggle-pill.active .toggle-circle { left: 23px; }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    
+    .animate-bounce-subtle {
+      animation: bounce-subtle 2s infinite;
+    }
+    @keyframes bounce-subtle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+  </style>
+
+  <!-- Header & Stepper -->
+  <header class="flex items-center justify-between mb-2 px-8 shrink-0 z-20">
+    <button id="prevBtn" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="flex gap-1.5 h-1 px-4 flex-1 max-w-[200px] justify-center">
+      <% 8.times do |i| %>
+        <div class="step-dot pending-dot"></div>
+      <% end %>
+    </div>
+    <div class="w-10 flex items-center justify-end">
+       <span id="stepCounter" class="text-[10px] font-black text-indigo-400">1/8</span>
+    </div>
+  </header>
+
+  <%= form_with model: @challenge, url: challenges_path(source: 'prototype'), class: "flex-1 flex flex-col px-8 min-h-0 relative" do |f| %>
+    <!-- Hidden Bindings -->
+    <%= f.hidden_field :category, id: "h_category", value: "HEALTH" %>
+    <%= f.hidden_field :mode, value: "online" %>
+    <input type="hidden" id="h_goal_mode" value="fixed">
+    <%= f.hidden_field :days, id: "h_days", value: '["월","화","수","목","금"]' %>
+    <%= f.hidden_field :verification_type, id: "h_v_type", value: "photo" %>
+    <%= f.hidden_field :cost_type, id: "h_cost_type", value: "deposit" %>
+    <%= f.hidden_field :is_private, id: "h_is_private", value: "false" %>
+    <%= f.hidden_field :admission_type, id: "h_admission", value: "approval" %>
+    <%= f.hidden_field :invitation_code, id: "h_inv_code", value: "RF-8292" %>
+    <%= f.hidden_field :full_refund_threshold, id: "h_full_refund", value: 85 %>
+    <%= f.hidden_field :failure_tolerance, id: "h_failure_tolerance", value: 3 %>
+    <%= f.hidden_field :daily_goals, id: "h_daily_goals", value: "{}" %>
+    <%= f.hidden_field :reward_policy, id: "h_reward_policy", value: "[]" %>
+
+    <div class="flex-1 min-h-0 py-4 flex flex-col relative z-10 overflow-y-auto hide-scrollbar pb-32">
+      
+      <!-- STEP 1: Basic Info -->
+      <section id="step-0" class="step-section flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">어떤 <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">챌린지</span>를<br/>열어볼까요?</h2>
+        </div>
+        <div class="space-y-5">
+           <div class="space-y-2">
+             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Category</label>
+             <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
+               <% @categories.each do |cat| %>
+                <button type="button" data-val="<%= cat[:key] %>" class="cat-opt py-3.5 rounded-xl font-bold text-xs transition-all border <%= cat[:key] == 'HEALTH' ? 'selected-cat' : 'unselected-opt' %>">
+                   <span class="mr-1"><%= cat[:icon] %></span> #<%= cat[:label] %>
+                </button>
+               <% end %>
+             </div>
+           </div>
+           <div class="space-y-2 p-1 overflow-visible">
+             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Thumbnail Cover</label>
+             <div class="relative group cursor-pointer" onclick="document.getElementById('challenge_thumbnail_image').click()">
+               <div id="thumbnail_preview" class="aspect-[16/9] w-full rounded-2xl bg-white/5 border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-3 group-hover:bg-white/[0.08] group-hover:border-indigo-500/30 transition-all overflow-hidden">
+                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🖼️</div>
+                 <div class="text-center">
+                   <p class="text-[11px] font-black text-white group-hover:text-indigo-400 transition-colors">이미지 업로드하기</p>
+                   <p class="text-[9px] font-bold text-slate-600 mt-1 uppercase">JPG, PNG (Max 5MB)</p>
+                 </div>
+               </div>
+               <%= f.file_field :thumbnail_image, class: "hidden", onchange: "previewImage(this, 'thumbnail_preview')" %>
+             </div>
+           </div>
+
+           <div class="space-y-2 p-1 overflow-visible">
+             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Title</label>
+             <%= f.text_field :title, class: "glass-input w-full p-4 text-base focus:scale-[1.01]", placeholder: "예: 매일 아침 독서하기" %>
+           </div>
+           <div class="space-y-2 p-1 overflow-visible">
+             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">One-line Summary</label>
+             <%= f.text_field :summary, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "참여하고 싶게 만드는 매력적인 한 문장" %>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: Mission Goal -->
+      <section id="step-1" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">무엇을 <span class="text-indigo-500">인증</span>하면<br/>성공인가요?</h2>
+        </div>
+        <div class="space-y-6">
+           <div class="flex gap-2">
+             <button type="button" data-val="fixed" class="mode-opt flex-1 py-4 rounded-2xl border font-black text-sm transition-all selected-cat">전체 공통 목표</button>
+             <button type="button" data-val="daily" class="mode-opt flex-1 py-4 rounded-2xl border font-black text-sm transition-all unselected-opt">요일별 목표</button>
+           </div>
+
+           <!-- Content for Fixed Goal -->
+           <div id="goal_fixed" class="space-y-2 p-1 overflow-visible">
+             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Daily Common Goal</label>
+             <%= f.text_area :certification_goal, class: "glass-input w-full p-6 text-sm min-h-[140px] leading-relaxed focus:scale-[1.01]", placeholder: "매일 수행할 구체적인 행동을 적어주세요." %>
+           </div>
+
+           <!-- Content for Daily Goal (HIDDEN BY DEFAULT) -->
+           <div id="goal_daily" class="hidden space-y-4">
+              <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Daily Specific Goals</label>
+              <% ["월", "화", "수", "목", "금", "토", "일"].each do |day| %>
+                <div class="flex items-center gap-3 group/day">
+                  <div class="day-label w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-[11px] font-black text-slate-500 shrink-0 transition-colors" data-day="<%= day %>"><%= day %></div>
+                  <div class="relative flex-1">
+                    <input type="text" 
+                           data-day-input="<%= day %>"
+                           placeholder="<%= day %>요일은 쉬어가는 날인가요?" 
+                           class="daily-goal-input glass-input w-full p-3.5 text-xs pr-16">
+                    <span class="day-off-badge absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-700 uppercase tracking-tighter">Day Off</span>
+                  </div>
+                </div>
+              <% end %>
+              <p class="text-[10px] font-bold text-indigo-400/60 text-center pt-2">💡 목표를 입력하지 않은 날은 자동으로 '휴식일'이 됩니다.</p>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 3: Schedule -->
+      <section id="step-2" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">모집부터 <span class="text-indigo-500">수행</span>까지<br/>일정을 정해주세요.</h2>
+        </div>
+        <div class="space-y-6">
+           <div class="space-y-3 p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
+             <label class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Recruitment Period (모집)</label>
+             <div class="flex gap-2 items-center">
+               <%= f.date_field :recruitment_start_date, value: Date.current, onclick: "this.showPicker()", class: "glass-input flex-1 p-3 text-[11px] min-h-[44px]" %>
+               <span class="text-slate-700 text-xs">~</span>
+               <%= f.date_field :recruitment_end_date, value: Date.current+7.days, onclick: "this.showPicker()", class: "glass-input flex-1 p-3 text-[11px] min-h-[44px]" %>
+             </div>
+           </div>
+           <div class="space-y-3 p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl">
+             <label class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Challenge Period (수행)</label>
+             <div class="flex gap-2 items-center">
+               <%= f.date_field :start_date, value: Date.current+8.days, onclick: "this.showPicker()", class: "glass-input flex-1 p-3 text-[11px] min-h-[44px]" %>
+               <span class="text-slate-700 text-xs">~</span>
+               <%= f.date_field :end_date, value: Date.current+22.days, onclick: "this.showPicker()", class: "glass-input flex-1 p-3 text-[11px] min-h-[44px]" %>
+             </div>
+           </div>
+           <div class="space-y-3">
+            <div class="flex justify-between items-center pl-1">
+              <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Weekly Schedule</p>
+              <p id="auto_sync_msg" class="hidden text-[9px] font-bold text-indigo-500 animate-pulse">요일별 목표와 동기화됨</p>
+            </div>
+            <div class="flex justify-between gap-1">
+              <% ['월', '화', '수', '목', '금', '토', '일'].each do |day| %>
+                <button type="button" data-val="<%= day %>" class="day-opt flex-1 aspect-square rounded-xl flex items-center justify-center font-black text-sm transition-all border <%= ['월','화','수','목','금'].include?(day) ? 'selected-cat' : 'unselected-opt' %>"><%= day %></button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4: Verification Rules -->
+      <section id="step-3" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">챌린지 <span class="text-indigo-500">인증</span>을<br/>어떻게 할까요?</h2>
+        </div>
+        <div class="space-y-5">
+           <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
+             <% @verification_types.each do |v| %>
+               <button type="button" data-val="<%= v[:key] %>" class="v-type-opt p-4 rounded-2xl border flex items-center gap-3 transition-all <%= v[:key] == 'photo' ? 'premium-selection' : 'unselected-opt' %>">
+                 <span class="text-xl"><%= v[:icon] %></span>
+                 <div class="text-left">
+                   <p class="text-[11px] font-black text-white"><%= v[:label] %></p>
+                   <p class="text-[8px] font-bold text-slate-500"><%= v[:desc] %></p>
+                 </div>
+               </button>
+             <% end %>
+           </div>
+           <div class="space-y-3 p-4 bg-white/5 rounded-2xl">
+             <div class="flex justify-between items-center mb-1">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Available Time</label>
+               <div class="flex items-center gap-2">
+                 <span class="text-[9px] font-black text-slate-500">하루 종일</span>
+                 <div class="toggle-pill cursor-pointer active scale-75" id="toggle_allday">
+                   <div class="toggle-circle"></div>
+                 </div>
+               </div>
+             </div>
+             <div class="flex gap-3 items-center transition-opacity" id="time_inputs_row">
+               <%= f.time_field :verification_start_time, id: "v_start_time", value: "00:00", onclick: "this.showPicker()", class: "glass-input flex-1 p-3.5 text-sm text-center" %>
+               <span class="text-slate-700 font-bold">~</span>
+               <%= f.time_field :verification_end_time, id: "v_end_time", value: "23:59", onclick: "this.showPicker()", class: "glass-input flex-1 p-3.5 text-sm text-center" %>
+             </div>
+           </div>
+           <div class="space-y-2">
+              <div class="flex items-center justify-between p-4 glass-input border-white/5">
+                <p class="text-[11px] font-bold text-slate-300">호스트 직접 승인 필요</p>
+                <div class="toggle-pill cursor-pointer" id="toggle_approval">
+                  <div class="toggle-circle shadow-md"></div>
+                </div>
+                <%= f.hidden_field :mission_requires_host_approval, id: "h_requires_approval", value: "false" %>
+              </div>
+              <div class="flex items-center justify-between p-4 glass-input border-white/5">
+                <p class="text-[11px] font-bold text-slate-300">실패 시 당일 재인증 가능</p>
+                <div class="toggle-pill cursor-pointer active" id="toggle_reverify">
+                  <div class="toggle-circle shadow-md"></div>
+                </div>
+                <%= f.hidden_field :re_verification_allowed, id: "h_reverify", value: "true" %>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 5: Participation Settings -->
+      <section id="step-4" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">누구에게 <span class="text-indigo-500">참여</span> 기회를<br/>제공할까요?</h2>
+        </div>
+        <div class="space-y-6">
+           <div class="grid grid-cols-2 gap-4 p-1 overflow-visible">
+             <button type="button" data-name="is_private" data-val="false" class="entry-opt p-6 rounded-[28px] border flex flex-col items-center gap-3 transition-all premium-selection">
+               <span class="text-2xl">🌍</span>
+               <p class="text-xs font-black">공개 챌린지</p>
+             </button>
+             <button type="button" data-name="is_private" data-val="true" class="entry-opt p-6 rounded-[28px] border flex flex-col items-center gap-3 transition-all unselected-opt">
+               <span class="text-2xl">🔒</span>
+               <p class="text-xs font-black">비공개 챌린지</p>
+             </button>
+           </div>
+           
+           <!-- Private Code Section (DYNAMIC) -->
+           <div id="private_code_box" class="hidden p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl animate-bounce-subtle cursor-pointer active:scale-95 transition-all group/code">
+             <div class="flex justify-between items-center">
+               <div class="space-y-0.5">
+                 <label class="text-[9px] font-black text-amber-500 uppercase tracking-widest pl-1">Invitation Code</label>
+                 <p class="text-[8px] font-bold text-amber-600/60 pl-1 group-hover/code:text-amber-400 transition-colors">클릭하여 복사</p>
+               </div>
+               <span id="copy_target" class="text-xs font-black text-white tabular-nums tracking-widest bg-white/5 px-3 py-2 rounded-lg border border-white/5">RF-8292</span>
+             </div>
+           </div>
+
+           <div class="grid grid-cols-2 gap-4 p-1 overflow-visible">
+             <button type="button" data-name="admission" data-val="first_come" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all unselected-opt">선착순 입장</button>
+             <button type="button" data-name="admission" data-val="approval" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all premium-selection">호스트 수락 후 입장</button>
+           </div>
+           <div class="space-y-3 pt-2">
+             <div class="flex justify-between items-center px-1">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Max Participants</label>
+               <span id="max_val" class="text-indigo-400 font-black text-base">30명</span>
+             </div>
+             <%= f.range_field :max_participants, min: 2, max: 100, step: 1, value: 30, id: "max_slider", class: "w-full h-1.5 bg-white/10 rounded-full appearance-none accent-indigo-500" %>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 6: Cost Details -->
+      <section id="step-5" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">참가비 정보를 <span class="text-indigo-500">안전</span>하게<br/>입력해 주세요.</h2>
+        </div>
+        <div class="space-y-5">
+           <div class="grid grid-cols-3 gap-2 overflow-visible p-1">
+             <% [
+                 { id: "free", label: "무료", desc: "자유로운 참여" },
+                 { id: "fee", label: "참가비", desc: "수익 창출형" },
+                 { id: "deposit", label: "보증금", desc: "동기 부여형" }
+             ].each do |cost| %>
+               <button type="button" data-val="<%= cost[:id] %>" class="cost-opt py-4 rounded-2xl border transition-all flex flex-col items-center gap-1 <%= cost[:id] == 'deposit' ? 'selected-cat' : 'unselected-opt' %>">
+                 <span class="text-xs font-black"><%= cost[:label] %></span>
+                 <span class="text-[8px] font-bold opacity-60"><%= cost[:desc] %></span>
+               </button>
+             <% end %>
+           </div>
+
+           <!-- Guidance Message (DYNAMIC) -->
+           <div id="cost_guide_msg" class="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl">
+             <p class="text-[10px] font-bold text-indigo-400/80 leading-relaxed tabular-nums">
+               💡 <span id="cost_guide_text">보증금 방식은 참여자의 동기부여를 높이고 성실한 참여를 유도하기에 가장 좋습니다.</span>
+             </p>
+           </div>
+
+           <!-- Amount Container (DYNAMIC) -->
+           <div id="cost_amount_box" class="space-y-2 p-1 overflow-visible">
+             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Amount (KRW)</label>
+             <div class="relative">
+               <%= f.number_field :amount, value: 10000, class: "glass-input w-full p-4 text-2xl text-right pr-12 focus:scale-[1.01] transition-transform", placeholder: "0" %>
+               <span class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 font-bold">원</span>
+             </div>
+           </div>
+
+           <!-- Deposit Specific Options (DYNAMIC) -->
+           <div id="deposit_options" class="space-y-4">
+             <!-- Toggle: Add Fee -->
+             <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4">
+               <div class="flex items-center justify-between">
+                 <div>
+                   <p class="text-[11px] font-black text-white">참가비도 함께 받기</p>
+                   <p class="text-[9px] font-bold text-slate-500 mt-0.5">보증금 외 별도의 운영비를 추가합니다</p>
+                 </div>
+                 <div class="toggle-pill cursor-pointer" id="toggle_add_fee">
+                   <div class="toggle-circle"></div>
+                 </div>
+               </div>
+               <div id="add_fee_input" class="hidden pt-2">
+                 <div class="relative">
+                   <%= f.number_field :participation_fee, value: 5000, class: "glass-input w-full p-3.5 text-sm text-right pr-10 focus:ring-2 focus:ring-indigo-500/20", placeholder: "0" %>
+                   <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs font-bold">원</span>
+                 </div>
+               </div>
+             </div>
+
+             <!-- Penalty per failure -->
+             <div class="p-4 bg-slate-900/50 rounded-2xl border border-white/5 space-y-3">
+               <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">실패 차감액 설정</label>
+               <div class="relative">
+                 <%= f.number_field :penalty_per_failure, value: 2000, class: "glass-input w-full p-4 text-xl text-right pr-12 text-indigo-400 focus:scale-[1.01]", placeholder: "0" %>
+                 <span class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-600 font-bold">원</span>
+               </div>
+               <p class="text-[9px] font-bold text-slate-600 pl-1 leading-relaxed">1회 실패 시마다 보증금에서 차감되는 금액입니다.</p>
+             </div>
+
+             <!-- Refund Date -->
+             <div class="space-y-2 p-1">
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Refund Date (환급 예정일)</label>
+               <%= f.date_field :refund_date, value: (Date.current + 1.month).end_of_month, onclick: "this.showPicker()", class: "glass-input w-full p-4 text-sm" %>
+             </div>
+           </div>
+
+           <!-- Bank Info Container (DYNAMIC) -->
+           <div id="cost_bank_box" class="space-y-4 p-1 overflow-visible">
+             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Settlement Account (정산 계좌)</label>
+             <div class="grid grid-cols-5 gap-2 p-1 overflow-visible">
+               <% @banks.each do |bank| %>
+                 <button type="button" class="bank-opt py-2 rounded-lg border text-[10px] font-black transition-all unselected-opt <%= bank == '신한' ? 'selected-cat' : '' %>"><%= bank %></button>
+               <% end %>
+               <%= f.hidden_field :host_bank, id: "h_bank", value: "신한" %>
+             </div>
+             <div class="space-y-4">
+                <%= f.text_field :host_account_holder, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "예금주 성함" %>
+                <%= f.text_field :host_account, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "계좌번호 (- 없이 숫자만)" %>
+             </div>
+           </div>
+
+           <!-- Safety Disclaimer -->
+           <div class="p-5 bg-amber-500/5 border border-amber-500/10 rounded-[28px] space-y-2.5">
+              <div class="flex items-center gap-2 text-amber-500">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="text-[10px] font-black uppercase tracking-wider">안전한 운영을 위한 안내</span>
+              </div>
+              <p class="text-[9px] font-bold text-slate-500 leading-relaxed">
+                참가비 및 보증금은 주최자의 <span class="text-amber-500/80">세심한 관리와 투명한 운영</span>이 필요합니다. 정산 과정에서 발생하는 모든 분쟁에 대한 책임은 전적으로 주최자에게 있습니다.
+              </p>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 7: Achievement Logic -->
+      <section id="step-6" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">달성률에 따른 <span class="text-indigo-500">환급 기준</span>을<br/>정해주세요.</h2>
+        </div>
+        <div class="space-y-6">
+           <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
+              <div class="bg-indigo-500/10 rounded-3xl p-6 border border-indigo-500/10 space-y-2 focus-within:ring-2 focus-within:ring-indigo-500/50 transition-all">
+                <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">전액 환불 기준</p>
+                <div class="flex items-baseline gap-1">
+                  <input type="number" id="input_full_refund" value="85" class="w-full bg-transparent border-none p-0 text-2xl font-black text-white focus:ring-0 text-right pr-1">
+                  <span class="text-slate-600 font-bold shrink-0">%</span>
+                </div>
+              </div>
+              <div class="bg-purple-500/10 rounded-3xl p-6 border border-purple-500/10 space-y-2 focus-within:ring-2 focus-within:ring-purple-500/50 transition-all">
+                <p class="text-[9px] font-black text-purple-400 uppercase tracking-widest">최대 실패 허용</p>
+                <div class="flex items-baseline gap-1">
+                  <input type="number" id="input_failure_tolerance" value="3" class="w-full bg-transparent border-none p-0 text-2xl font-black text-white focus:ring-0 text-right pr-1">
+                  <span class="text-slate-600 font-bold shrink-0">회</span>
+                </div>
+              </div>
+           </div>
+           <div class="p-6 bg-white/5 rounded-[32px] border border-white/5 space-y-3">
+              <div class="flex items-center gap-2 text-indigo-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p class="text-[11px] font-black uppercase tracking-wider">안내</p>
+              </div>
+              <p class="text-[10px] font-bold text-slate-500 leading-relaxed">전액 환불 기준은 보증금을 100% 돌려받기 위한 최소 달성률입니다. 최대 실패 허용은 이 횟수를 초과해 실패할 경우 챌린지 실패로 간주됩니다.</p>
+           </div>
+        </div>
+      </section>
+
+      <!-- STEP 8: Winner Benefit Design (NEW) -->
+      <section id="step-7" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">우승자에게 줄 <span class="text-indigo-500">특별한 혜택</span>을<br/>설계해볼까요?</h2>
+        </div>
+        <div class="space-y-6">
+          <div id="reward_list" class="space-y-3">
+             <!-- Reward rows injected here -->
+          </div>
+          <button type="button" id="add_reward_btn" class="w-full py-5 rounded-[28px] border-2 border-dashed border-white/10 text-slate-500 font-black text-sm hover:border-indigo-500/40 hover:text-indigo-400 transition-all flex items-center justify-center gap-2 group">
+            <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+            우승 혜택/순위 추가하기
+          </button>
+          
+          <div class="p-6 bg-indigo-500/5 rounded-[32px] border border-indigo-500/10 space-y-4">
+             <div class="flex items-center gap-2 text-indigo-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p class="text-[10px] font-black uppercase tracking-wider">공정한 순위 산정 안내</p>
+             </div>
+             <p class="text-[9px] font-bold text-slate-500 leading-relaxed">실천율이 동일할 경우 루틴 파인더스의 정교한 알고리즘(연속 달성일, 활동 지수 등)을 통해 최종 순위가 결정됩니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 9: Review & Submit -->
+      <section id="step-8" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight leading-tight">마지막으로 <span class="text-indigo-500">챌린지 설계</span>를<br/>검토해주세요.</h2>
+        </div>
+        <div class="space-y-6">
+           <!-- Review Card -->
+           <div class="bg-white/5 rounded-[40px] p-8 space-y-6 border border-white/5 relative overflow-hidden group">
+              <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="space-y-1 relative z-10">
+                <div class="flex justify-between items-start">
+                  <h3 id="review_title" class="text-xl font-black text-white">매일 물 마시기</h3>
+                  <span id="review_cat" class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-black text-indigo-400">#건강·운동</span>
+                </div>
+                <p class="text-xs font-bold text-slate-500">RF 챌린지 시스템 적용됨</p>
+              </div>
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 relative z-10">
+                <div class="space-y-1">
+                  <p class="text-[9px] font-black text-slate-600 uppercase">Verification</p>
+                  <p id="review_vtype" class="text-sm font-black text-white">사진 인증</p>
+                </div>
+                <div class="space-y-1">
+                  <p class="text-[9px] font-black text-slate-600 uppercase">Cost</p>
+                  <p id="review_cost" class="text-sm font-black text-white">10,000원</p>
+                </div>
+              </div>
+           </div>
+           <div class="p-6 bg-slate-900 border border-white/5 rounded-[32px]">
+              <p class="text-[10px] font-bold text-slate-500 text-center leading-relaxed">부적절한 챌린지는 운영 정책에 따라 <br/>사전 통보 없이 삭제될 수 있습니다.</p>
+           </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Global Footer Button -->
+    <div class="py-4 pb-24 shrink-0 z-20">
+      <button id="nextBtn" type="button" class="w-full py-5 rounded-3xl bg-indigo-500 text-white font-black text-base shadow-2xl shadow-indigo-500/40 active:scale-95 transition-all">
+        다음 단계로
+      </button>
+      <button id="submitBtn" type="submit" class="hidden w-full py-5 rounded-3xl bg-indigo-500 text-white font-black text-lg shadow-2xl shadow-indigo-500/40 active:scale-90 transition-all">
+        챌린지 개설 완료
+      </button>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  (function() {
+    const sections = document.querySelectorAll('.step-section');
+    const dots = document.querySelectorAll('.step-dot');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const stepCounter = document.getElementById('stepCounter'); // Renamed from 'counter'
+
+    let currentStep = 0;
+
+    function update() {
+      sections.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep));
+      dots.forEach((d, i) => {
+        d.classList.toggle('active-dot', i === currentStep);
+        d.classList.toggle('pending-dot', i > currentStep);
+        d.classList.toggle('completed-dot', i < currentStep);
+      });
+      stepCounter.textContent = `${currentStep + 1}/8`; // Updated step count
+
+      if (currentStep === 8) { // Updated step limit
+        nextBtn.classList.add('hidden');
+        submitBtn.classList.remove('hidden');
+
+        // Update Review Card in Final Step
+        document.getElementById('review_title').textContent = document.querySelector('input[name="challenge[title]"]').value || "무제 챌린지";
+        document.getElementById('review_cat').textContent = "#" + (document.getElementById('h_category').value || "HEALTH");
+        
+        const vtypeMap = { photo: "사진 인증", simple: "간편 인증", metric: "수치 기록", url: "링크 제출" };
+        document.getElementById('review_vtype').textContent = vtypeMap[document.getElementById('h_v_type').value];
+        
+        const costType = document.getElementById('h_cost_type').value;
+        if (costType === 'free') {
+          document.getElementById('review_cost').textContent = "무료 참여";
+        } else {
+          document.getElementById('review_cost').textContent = (document.querySelector('input[name="challenge[amount]"]').value || "0") + "원";
+        }
+
+      } else {
+        nextBtn.classList.remove('hidden');
+        submitBtn.classList.add('hidden');
+      }
+    }
+
+    function previewImage(input, previewId) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById(previewId);
+          preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+          preview.classList.remove('bg-white/5', 'border-dashed');
+          preview.classList.add('border-solid', 'border-indigo-500/20');
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Validation Logic
+    function validateChallengeStep(step) {
+      if (step === 0) {
+         const title = document.querySelector('input[name="challenge[title]"]').value.trim();
+         const summary = document.querySelector('input[name="challenge[summary]"]').value.trim();
+         if(!title) { alert('챌린지 이름을 입력해주세요.'); return false; }
+         if(!summary) { alert('한 줄 소개를 입력해주세요.'); return false; }
+      }
+      else if (step === 1) {
+         const goalMode = document.getElementById('h_goal_mode').value;
+         if(goalMode === 'fixed') {
+             const goal = document.querySelector('textarea[name="challenge[certification_goal]"]').value.trim();
+             if(!goal) { alert('인증 목표를 입력해주세요.'); return false; }
+         } else {
+             // For daily, check if at least one day has input? Or just warn?
+             // Since 'days' are derived from inputs, we check if h_days has content.
+             const days = JSON.parse(document.getElementById('h_days').value || "[]");
+             if(days.length === 0) { alert('최소 하루 이상의 요일별 목표를 설정해주세요.'); return false; }
+         }
+      }
+      else if (step === 2) {
+         const rs = document.querySelector('input[name="challenge[recruitment_start_date]"]').value;
+         const re = document.querySelector('input[name="challenge[recruitment_end_date]"]').value;
+         const s = document.querySelector('input[name="challenge[start_date]"]').value;
+         const e = document.querySelector('input[name="challenge[end_date]"]').value;
+         
+         if(!rs || !re) { alert('모집 기간을 설정해주세요.'); return false; }
+         if(!s || !e) { alert('챌린지 수행 기간을 설정해주세요.'); return false; }
+         
+         // Optional: Check logic (start > end, etc.)? Simplified for now.
+      }
+      else if (step === 5) {
+         const costType = document.getElementById('h_cost_type').value;
+         if(costType !== 'free') {
+           const amount = document.querySelector('input[name="challenge[amount]"]').value;
+           const bank = document.getElementById('h_bank').value;
+           const account = document.querySelector('input[name="challenge[host_account]"]').value.trim();
+           const holder = document.querySelector('input[name="challenge[host_account_holder]"]').value.trim();
+           
+           if(!amount || parseInt(amount) <= 0) { alert('금액을 올바르게 입력해주세요.'); return false; }
+           if(!bank) { alert('정산 은행을 선택해주세요.'); return false; }
+           if(!holder) { alert('예금주명을 입력해주세요.'); return false; }
+           if(!account) { alert('계좌번호를 입력해주세요.'); return false; }
+         }
+      }
+      
+      return true;
+    }
+
+    // Nav
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < 8) { 
+        if(validateChallengeStep(currentStep)) {
+          currentStep++;
+          update();
+        }
+      } else {
+        document.querySelector('form').submit();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 0) {
+        currentStep--;
+        update();
+      } else {
+        window.history.back();
+      }
+    });
+
+    // Reward Policy Logic
+    const rewardList = document.getElementById('reward_list');
+    const addRewardBtn = document.getElementById('add_reward_btn');
+    const hRewardPolicy = document.getElementById('h_reward_policy'); // Assuming this hidden field exists or will be added
+
+    function updateRewardJSON() {
+      const rows = rewardList.querySelectorAll('.reward-row');
+      const data = Array.from(rows).map(row => ({
+        rank: row.querySelector('.rank-input').value,
+        benefit: row.querySelector('.benefit-input').value
+      }));
+      hRewardPolicy.value = JSON.stringify(data);
+    }
+
+    function addRewardRow(rank = "", benefit = "") {
+      const div = document.createElement('div');
+      div.className = "reward-row flex items-center gap-2 p-3 bg-white/5 rounded-2xl border border-white/5 animate-fade-in";
+      div.innerHTML = `
+        <input type="text" placeholder="순위 (예: 1위)" value="${rank}" class="rank-input bg-transparent border-none p-0 text-xs font-black text-indigo-400 w-20 focus:ring-0">
+        <div class="h-4 w-[1px] bg-white/10"></div>
+        <input type="text" placeholder="혜택 (예: 스타벅스 쿠폰)" value="${benefit}" class="benefit-input bg-transparent border-none p-0 text-xs font-bold text-white flex-1 focus:ring-0">
+        <button type="button" class="remove-reward-btn p-2 text-slate-500 hover:text-red-400 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      `;
+      div.querySelector('.remove-reward-btn').addEventListener('click', () => {
+        div.remove();
+        updateRewardJSON();
+      });
+      div.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', updateRewardJSON);
+      });
+      rewardList.appendChild(div);
+      updateRewardJSON();
+    }
+
+    addRewardBtn.addEventListener('click', () => addRewardRow());
+    // Add one default row
+    addRewardRow("전체", "전액 환급 및 보너스 상금");
+
+    // Multi-Selection Logic
+    const handleSelect = (btns, hiddenId, activeClass, callback) => {
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => {
+             b.classList.remove(activeClass, 'selected-cat', 'premium-selection');
+             b.classList.add('unselected-opt');
+          });
+          btn.classList.add(activeClass);
+          btn.classList.remove('unselected-opt');
+          if(hiddenId) document.getElementById(hiddenId).value = btn.dataset.val || btn.textContent.trim();
+          if(callback) callback(btn.dataset.val);
+          update();
+        });
+      });
+    };
+
+    handleSelect(document.querySelectorAll('.cat-opt'), 'h_category', 'selected-cat');
+    
+    // Mission Goal Mode Toggle (Fixed vs Daily)
+    handleSelect(document.querySelectorAll('.mode-opt'), 'h_goal_mode', 'selected-cat', (val) => {
+      document.getElementById('goal_fixed').classList.toggle('hidden', val !== 'fixed');
+      document.getElementById('goal_daily').classList.toggle('hidden', val !== 'daily');
+      document.getElementById('auto_sync_msg').classList.toggle('hidden', val !== 'daily');
+      
+      if (val === 'daily') {
+        syncDailyGoalsToSchedule();
+      }
+    });
+
+    // Daily Goal Input Handlers
+    const dailyInputs = document.querySelectorAll('.daily-goal-input');
+    dailyInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        const day = input.dataset.dayInput;
+        const label = document.querySelector(`.day-label[data-day="${day}"]`);
+        const badge = input.parentElement.querySelector('.day-off-badge');
+        
+        if (input.value.trim() !== "") {
+          label.classList.add('text-indigo-400', 'bg-indigo-500/10', 'border-indigo-500/20');
+          label.classList.remove('text-slate-500', 'bg-white/5', 'border-white/5');
+          badge.classList.add('hidden');
+        } else {
+          label.classList.remove('text-indigo-400', 'bg-indigo-500/10', 'border-indigo-500/20');
+          label.classList.add('text-slate-500', 'bg-white/5', 'border-white/5');
+          badge.classList.remove('hidden');
+        }
+        
+        if (document.getElementById('h_goal_mode').value === 'daily') {
+          syncDailyGoalsToSchedule();
+        }
+      });
+    });
+
+    function syncDailyGoalsToSchedule() {
+      const activeDays = [];
+      const dailyGoalsJson = {};
+      dailyInputs.forEach(input => {
+        const day = input.dataset.dayInput;
+        const btn = document.querySelector(`.day-opt[data-val="${day}"]`);
+        
+        if (input.value.trim() !== "") {
+          btn.classList.add('selected-cat');
+          btn.classList.remove('unselected-opt');
+          activeDays.push(day);
+          dailyGoalsJson[day] = input.value;
+        } else {
+          btn.classList.remove('selected-cat');
+          btn.classList.add('unselected-opt');
+        }
+      });
+      document.getElementById('h_days').value = JSON.stringify(activeDays);
+      document.getElementById('h_daily_goals').value = JSON.stringify(dailyGoalsJson);
+    }
+
+    // Thresholds
+    document.getElementById('input_full_refund').addEventListener('input', (e) => {
+      document.getElementById('h_full_refund').value = e.target.value;
+    });
+    document.getElementById('input_failure_tolerance').addEventListener('input', (e) => {
+      document.getElementById('h_failure_tolerance').value = e.target.value;
+    });
+
+    handleSelect(document.querySelectorAll('.v-type-opt'), 'h_v_type', 'premium-selection');
+    
+    // Schedule Days
+    document.querySelectorAll('.day-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected-cat');
+        btn.classList.toggle('unselected-opt');
+        const days = Array.from(document.querySelectorAll('.day-opt.selected-cat')).map(b => b.dataset.val);
+        document.getElementById('h_days').value = JSON.stringify(days);
+      });
+    });
+
+    // Entry / Admission
+    document.querySelectorAll('.entry-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.entry-opt').forEach(b => b.className = "entry-opt p-6 rounded-[28px] border flex flex-col items-center gap-3 transition-all unselected-opt");
+        btn.className = "entry-opt p-6 rounded-[28px] border flex flex-col items-center gap-3 transition-all premium-selection";
+        document.getElementById('h_is_private').value = btn.dataset.val;
+        document.getElementById('private_code_box').classList.toggle('hidden', btn.dataset.val === 'false');
+      });
+    });
+
+    document.querySelectorAll('.admission-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admission-opt').forEach(b => b.className = "admission-opt p-4 rounded-xl border font-black text-sm transition-all unselected-opt");
+        btn.className = "admission-opt p-4 rounded-xl border font-black text-sm transition-all premium-selection";
+        document.getElementById('h_admission').value = btn.dataset.val;
+      });
+    });
+
+    // Slider
+    document.getElementById('max_slider').addEventListener('input', (e) => {
+      document.getElementById('max_val').textContent = e.target.value + "명";
+    });
+
+    // Cost Toggle
+    const costGuides = {
+      free: "비용 없이 누구나 자유롭게 참여할 수 있는 챌린지에 적합합니다.",
+      fee: "주최자의 노하우를 제공하고 수익을 창출하는 전문적인 챌린지에 권장합니다.",
+      deposit: "보증금 방식은 참여자의 동기부여를 높이고 성실한 참여를 유도하기에 가장 좋습니다."
+    };
+
+    handleSelect(document.querySelectorAll('.cost-opt'), 'h_cost_type', 'selected-cat', (val) => {
+      document.getElementById('cost_amount_box').classList.toggle('hidden', val === 'free');
+      document.getElementById('cost_bank_box').classList.toggle('hidden', val === 'free');
+      document.getElementById('deposit_options').classList.toggle('hidden', val !== 'deposit');
+      document.getElementById('cost_guide_text').textContent = costGuides[val];
+      
+      const label = document.querySelector('#cost_amount_box label');
+      if (val === 'fee') label.textContent = "Participation Fee (참가비)";
+      if (val === 'deposit') label.textContent = "Deposit Amount (보증금)";
+    });
+
+    const toggleAddFee = document.getElementById('toggle_add_fee');
+    const addFeeInput = document.getElementById('add_fee_input');
+    toggleAddFee.addEventListener('click', () => {
+      const active = toggleAddFee.classList.toggle('active');
+      addFeeInput.classList.toggle('hidden', !active);
+    });
+
+    handleSelect(document.querySelectorAll('.bank-opt'), 'h_bank', 'selected-cat');
+
+    // Toggles
+    const setupToggle = (id, hiddenId) => {
+      const el = document.getElementById(id);
+      el.addEventListener('click', () => {
+        const active = el.classList.toggle('active');
+        document.getElementById(hiddenId).value = active;
+      });
+    };
+    setupToggle('toggle_approval', 'h_requires_approval');
+    setupToggle('toggle_reverify', 'h_reverify');
+
+    // All Day Toggle Logic
+    const alldayToggle = document.getElementById('toggle_allday');
+    const timeRow = document.getElementById('time_inputs_row');
+    const startTime = document.getElementById('v_start_time');
+    const endTime = document.getElementById('v_end_time');
+
+    alldayToggle.addEventListener('click', () => {
+      const isAllDay = alldayToggle.classList.toggle('active');
+      if (isAllDay) {
+        startTime.value = "00:00";
+        endTime.value = "23:59";
+        timeRow.style.opacity = "0.4";
+        timeRow.style.pointerEvents = "none";
+      } else {
+        timeRow.style.opacity = "1";
+        timeRow.style.pointerEvents = "auto";
+      }
+    });
+
+    // Invitation Code Copy
+    const privateCodeBox = document.getElementById('private_code_box');
+    privateCodeBox.addEventListener('click', () => {
+      const code = document.getElementById('copy_target').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        // Simple subtle feedback could be better than alert, but alert matches request
+        alert("초대 코드가 클립보드에 복사되었습니다: " + code);
+      });
+    });
+
+    update();
+  })();
+</script>

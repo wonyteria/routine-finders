@@ -1,0 +1,103 @@
+<div class="space-y-10 pt-8">
+  <!-- 1. Hall of Fame (Podium) -->
+  <section class="space-y-6">
+    <div class="text-center space-y-1">
+      <h3 class="text-xs font-black text-indigo-400 uppercase tracking-[0.3em]">Hall of Fame</h3>
+      <p class="text-[10px] font-bold text-slate-500">이번 기수 가장 성실한 멤버들</p>
+    </div>
+
+    <!-- Podium Visual -->
+    <div class="relative h-60 flex items-end justify-center gap-2 px-4">
+      <!-- Top 2 -->
+      <div class="flex flex-col items-center gap-3 w-24">
+        <div class="relative">
+          <div class="w-16 h-16 rounded-full border-4 border-slate-400 overflow-hidden shadow-2xl">
+            <img src="<%= @top_users[1]&.profile_image %>" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -top-2 -right-2 w-7 h-7 bg-slate-400 rounded-full flex items-center justify-center text-white font-black border-2 border-[#0C0B12] text-xs shadow-lg">2</div>
+        </div>
+        <div class="w-full h-24 bg-slate-800/40 rounded-t-[20px] border border-white/5 flex flex-col items-center justify-center">
+           <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[1]&.nickname %></p>
+           <p class="text-[9px] font-bold text-slate-500">920P</p>
+        </div>
+      </div>
+
+      <!-- Top 1 (Center) -->
+      <div class="flex flex-col items-center gap-3 w-28 -translate-y-4">
+        <div class="relative">
+          <div class="absolute inset-0 bg-indigo-500 blur-2xl opacity-40 animate-pulse"></div>
+          <div class="relative w-20 h-20 rounded-full border-4 border-amber-400 overflow-hidden shadow-2xl">
+            <img src="<%= @top_users[0]&.profile_image %>" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -top-3 -right-3 w-9 h-9 bg-amber-400 rounded-full flex items-center justify-center text-white font-black border-4 border-[#0C0B12] text-sm shadow-xl">👑</div>
+        </div>
+        <div class="w-full h-32 bg-indigo-500/10 rounded-t-[20px] border border-indigo-500/30 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(124,77,255,0.2)]">
+           <p class="text-sm font-black text-white line-clamp-1"><%= @top_users[0]&.nickname %></p>
+           <p class="text-[10px] font-bold text-indigo-400">1250P</p>
+        </div>
+      </div>
+
+      <!-- Top 3 -->
+      <div class="flex flex-col items-center gap-3 w-24">
+        <div class="relative">
+          <div class="w-16 h-16 rounded-full border-4 border-amber-700/50 overflow-hidden shadow-2xl">
+            <img src="<%= @top_users[2]&.profile_image %>" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -top-2 -right-2 w-7 h-7 bg-amber-700/80 rounded-full flex items-center justify-center text-white font-black border-2 border-[#0C0B12] text-xs shadow-lg">3</div>
+        </div>
+        <div class="w-full h-20 bg-slate-800/20 rounded-t-[20px] border border-white/5 flex flex-col items-center justify-center">
+           <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[2]&.nickname %></p>
+           <p class="text-[9px] font-bold text-slate-500">880P</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Activity Feed -->
+  <section class="space-y-6">
+    <div class="flex justify-between items-end px-2">
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Live Stream</h3>
+      <div class="flex gap-4">
+        <button class="text-[10px] font-black text-indigo-400 underline underline-offset-4">자유 피드</button>
+        <button class="text-[10px] font-black text-slate-600">클럽 인증</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6">
+      <% @recent_activities.each do |activity| %>
+        <div class="space-y-4">
+          <!-- Feed Header -->
+          <div class="flex items-center justify-between">
+            <%= link_to user_path(activity.user), class: "flex items-center gap-3" do %>
+              <div class="w-8 h-8 rounded-xl overflow-hidden border border-white/10">
+                <img src="<%= activity.user.profile_image %>" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <p class="text-xs font-black text-white"><%= activity.user.nickname %></p>
+                <p class="text-[9px] font-bold text-slate-600"><%= time_ago_in_words(activity.created_at) %>전</p>
+              </div>
+            <% end %>
+            <button class="p-2 text-slate-700"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+          </div>
+
+          <!-- Feed Content (Simplified) -->
+          <div class="app-glass-card p-6 bg-white/[0.02] border-white/5 relative group cursor-pointer active:scale-[0.98] transition-all">
+            <div class="flex justify-between items-start mb-4">
+               <span class="text-3xl"><%= activity.activity_type == 'routine' ? '⚡' : '🔥' %></span>
+               <span class="app-pill app-pill-dim"><%= activity.activity_type.to_s.upcase %></span>
+            </div>
+            <p class="text-sm font-bold text-slate-300 leading-relaxed">
+              <%= activity.activity_type == 'routine' ? activity.metadata['routine_title'] : activity.metadata['challenge_title'] %> 성공! 
+              <span class="text-indigo-400">#<%= activity.metadata['category'] %></span>
+            </p>
+
+            <!-- Reaction: Clap -->
+            <button class="absolute -bottom-4 -right-2 w-12 h-12 app-glass-card rounded-full flex items-center justify-center text-xl shadow-xl hover:scale-110 active:scale-90 transition-all border-indigo-500/20 bg-[#1B1A24]">
+               👏
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

@@ -1,4 +1,14 @@
 Rails.application.routes.draw do
+  get "prototype/home"
+  get "prototype/explore"
+  get "prototype/synergy"
+  get "prototype/my"
+  post "prototype/record", to: "prototype#record"
+  get "prototype/routine_builder", to: "prototype#routine_builder"
+  get "prototype/live", to: "prototype#live"
+  get "prototype/hub", to: "prototype#hub"
+  get "prototype/challenge_builder", to: "prototype#challenge_builder"
+  get "prototype/gathering_builder", to: "prototype#gathering_builder"
   # Main Web Application Routes
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
