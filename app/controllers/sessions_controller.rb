@@ -105,7 +105,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    session.delete(:user_id)
+    reset_session
     redirect_to root_path, notice: "로그아웃되었습니다.", status: :see_other
   end
 end
