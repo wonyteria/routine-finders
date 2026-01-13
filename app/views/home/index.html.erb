@@ -14,35 +14,7 @@
         end
       end
     %>
-    <!-- Hero Banner: Balanced Compact Redesign -->
-    <section class="relative h-[280px] lg:h-[340px] mt-6 lg:mt-0 rounded-[32px] lg:rounded-[48px] overflow-hidden shadow-lg shadow-indigo-100/20 bg-gradient-to-br from-indigo-700 via-indigo-600 to-slate-900 group">
-      <div class="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl"></div>
-      
-      <div class="relative z-20 h-full flex flex-col justify-center px-8 lg:px-16 text-white">
-        <% if @main_banners.any? %>
-          <% banner = @main_banners.first %>
-          <div class="space-y-5 pt-6 pb-4">
-            <% if banner.badge_text.present? %>
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-[9px] lg:text-[11px] font-black tracking-[0.1em] uppercase border border-white/5 w-fit mt-2">
-                <%= banner.badge_text %>
-              </span>
-            <% end %>
-            <h1 class="text-2xl lg:text-5xl font-black leading-tight tracking-tight break-keep pb-2">
-              <%= raw banner.title.gsub("\n", "<br/>") %>
-            </h1>
-          </div>
-        <% else %>
-          <div class="space-y-5 pt-6 pb-4">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-[9px] lg:text-[11px] font-black tracking-[0.1em] uppercase border border-white/5 w-fit mt-2">
-              Start your growth
-            </span>
-            <h1 class="text-2xl lg:text-5xl font-black leading-tight tracking-tight break-keep pb-2">
-              함께해서 더 강력한<br/>습관의 힘
-            </h1>
-          </div>
-        <% end %>
-      </div>
-    </section>
+
 
     <% # end removal fix %>
     
