@@ -10,35 +10,130 @@
  */
 
 .hide-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
+
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+  display: none;
+  /* Chrome, Safari and Opera */
 }
 
 /* Custom Thin Scrollbar for Horizontal Scrollers */
 .scrollbar-thin {
   scrollbar-width: thin;
 }
+
 .scrollbar-thin::-webkit-scrollbar {
   height: 4px;
   width: 4px;
 }
+
 .scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #e2e8f0; /* slate-200 */
+  background: #e2e8f0;
+  /* slate-200 */
   border-radius: 10px;
 }
+
 .scrollbar-thin:hover::-webkit-scrollbar-thumb {
-  background: #cbd5e1; /* slate-300 */
+  background: #cbd5e1;
+  /* slate-300 */
 }
+
 .scrollbar-thumb-indigo-100::-webkit-scrollbar-thumb {
   background: #e0e7ff;
 }
+
 .scrollbar-thumb-indigo-200::-webkit-scrollbar-thumb {
   background: #c7d2fe;
 }
 
+
+/* Midnight & Glow: The Official App Design System */
+:root {
+  --app-bg: #0C0B12;
+  --app-surface: #1B1A24;
+  --app-surface-accent: #252433;
+  --app-primary: #7C4DFF;
+  --app-primary-glow: rgba(124, 77, 255, 0.4);
+  --app-success: #00E676;
+  --app-warning: #FFD600;
+  --app-danger: #FF5252;
+  --app-text-main: #FFFFFF;
+  --app-text-dim: #8E8D9E;
+  --app-border: rgba(255, 255, 255, 0.06);
+}
+
+.midnight-theme-bg {
+  background-color: var(--app-bg) !important;
+  color: var(--app-text-main);
+  min-height: 100vh;
+}
+
+.app-glass-card {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.app-glass-card-hover:hover {
+  background: var(--app-surface-accent);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.glow-text-primary {
+  text-shadow: 0 0 20px var(--app-primary-glow);
+}
+
+.glow-border-primary {
+  border-color: var(--app-primary) !important;
+  box-shadow: 0 0 15px var(--app-primary-glow);
+}
+
+.app-pill {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.app-pill-live {
+  background: var(--app-danger);
+  color: white;
+}
+
+.app-pill-active {
+  background: var(--app-primary);
+  color: white;
+}
+
+.app-pill-dim {
+  background: var(--app-surface-accent);
+  color: var(--app-text-dim);
+}
+
+.app-fab-gradient {
+  background: linear-gradient(135deg, #7C4DFF 0%, #651FFF 100%);
+  box-shadow: 0 10px 25px rgba(124, 77, 255, 0.4);
+}
+
+.orbit-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(124, 77, 255, 0.1) 0%, transparent 70%);
+}
