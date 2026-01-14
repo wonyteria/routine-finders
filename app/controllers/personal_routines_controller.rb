@@ -160,12 +160,7 @@ class PersonalRoutinesController < ApplicationController
     set_recommended_routines
 
     # 루파 성장 레이더용 카테고리별 통계
-    @category_stats = current_user.personal_routines.joins(:completions)
-                                  .where(personal_routine_completions: { completed_on: Date.current.beginning_of_month..Date.current.end_of_month })
-                                  .group(:category).count
-    # 기본 카테고리 보정 (데이터가 없을 경우 0)
-    @rufa_categories = [ "HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY" ]
-    @rufa_categories.each { |cat| @category_stats[cat] ||= 0 }
+    @category_stats = current_user.category_stats
 
     # 점수 트렌드 (최근 7일간의 달성률 변화)
     @achievement_trend = (0..6).map do |i|

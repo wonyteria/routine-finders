@@ -317,4 +317,14 @@ class User < ApplicationRecord
     else "시작하는 파인더"
     end
   end
+
+  def category_stats(start_date = Date.current.beginning_of_month, end_date = Date.current.end_of_month)
+    stats = personal_routines.joins(:completions)
+                             .where(personal_routine_completions: { completed_on: start_date..end_date })
+                             .group(:category).count
+
+    categories = [ "HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY" ]
+    categories.each { |cat| stats[cat] ||= 0 }
+    stats
+  end
 end

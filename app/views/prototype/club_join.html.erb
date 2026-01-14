@@ -1,122 +1,150 @@
-<div class="space-y-12 py-10">
-  <!-- Hero Section -->
-  <div class="relative text-center space-y-6">
+<div class="space-y-12 py-10 pb-24">
+  <!-- 1. Hero Section: Generation Focus -->
+  <div class="relative px-6 text-center space-y-6">
     <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20">
       <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-      <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">The Ultimate System</span>
+      <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Official Membership</span>
     </div>
     
-    <h1 class="text-3xl font-black text-white tracking-tight leading-tight px-6">
-      Focus on Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Growth</span>,<br>
-      We Provide the System.
-    </h1>
-    
-    <p class="text-sm text-slate-400 font-bold leading-relaxed px-8">
-      단순한 참여를 넘어,<br>
-      완벽한 루틴을 완성하는 시스템을 경험하세요.
-    </p>
-
-    <div class="pt-4 px-6">
-      <button onclick="document.getElementById('join-section').scrollIntoView({behavior: 'smooth'})" class="w-full py-4 bg-indigo-600 text-white rounded-[24px] font-black text-base shadow-lg shadow-indigo-600/30 active:scale-95 transition-all">
-        지금 기수 참여하기
-      </button>
-    </div>
-  </div>
-
-  <!-- Benefits Section -->
-  <div class="space-y-4 px-2">
-    <!-- Benefit 1: Rest Passes -->
-    <div class="app-glass-card p-6 flex gap-4 items-center">
-      <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center flex-shrink-0 text-white shadow-inner">
-        <span class="text-2xl">🎫</span>
-      </div>
-      <div>
-        <h3 class="text-base font-black text-white">Systematic Rest</h3>
-        <p class="text-xs font-bold text-slate-500 mt-0.5">기수당 3매의 휴식권으로 스트릭 보호</p>
-      </div>
+    <div class="space-y-2">
+      <h1 class="text-4xl font-black text-white tracking-tight leading-tight">
+        루파 클럽 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"><%= @routine_club.generation_number %>기</span><br>
+        멤버십 모집
+      </h1>
+      <p class="text-sm text-slate-400 font-bold leading-relaxed px-4">
+        완벽한 루틴 시스템과 강력한 커뮤니티가<br>당신의 성장을 가속화합니다.
+      </p>
     </div>
 
-    <!-- Benefit 2: Energy Points & Ranking -->
-    <div class="app-glass-card p-6 flex gap-4 items-center">
-      <div class="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
-        <span class="text-2xl">🔥</span>
+    <!-- Period & Price Tag -->
+    <div class="flex justify-center gap-3">
+      <div class="px-4 py-2 rounded-2xl bg-white/5 border border-white/5 space-y-0.5">
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Duration</p>
+        <p class="text-xs font-black text-white">3개월 정규 기수</p>
       </div>
-      <div>
-        <h3 class="text-base font-black text-white">Growth Synergy</h3>
-        <p class="text-xs font-bold text-slate-500 mt-0.5">리얼타임 랭킹과 에너지 포인트 시스템</p>
-      </div>
-    </div>
-
-    <!-- Benefit 3: Expulsion System -->
-    <div class="app-glass-card p-6 flex gap-4 items-center">
-      <div class="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center flex-shrink-0">
-        <span class="text-2xl">🚫</span>
-      </div>
-      <div>
-        <h3 class="text-base font-black text-white">Strict Environment</h3>
-        <p class="text-xs font-bold text-slate-500 mt-0.5">10-Penalty 킥으로 검증된 몰입 환경 유지</p>
-      </div>
-    </div>
-
-    <!-- Benefit 4: Certification -->
-    <div class="app-glass-card p-6 flex gap-4 items-center">
-      <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-        <span class="text-2xl">🏅</span>
-      </div>
-      <div>
-        <h3 class="text-base font-black text-white">Official Honor</h3>
-        <p class="text-xs font-bold text-slate-500 mt-0.5">완주 시 부여되는 공식 기수 인증 배지</p>
+      <div class="px-4 py-2 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-0.5">
+        <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Pricing</p>
+        <p class="text-xs font-black text-indigo-400">일 100원 (기수제)</p>
       </div>
     </div>
   </div>
 
-  <!-- Join Application Section -->
-  <div id="join-section" class="px-2 pb-10">
-    <div class="app-glass-card p-8 space-y-8 bg-gradient-to-b from-[#1B1A24] to-[#16151D]">
-      <div class="text-center">
-        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Membership Application</p>
-        <h2 class="text-2xl font-black text-white">신청서 작성</h2>
-      </div>
+  <!-- 2. Core Functions: The System -->
+  <section class="space-y-6 px-6">
+    <div class="space-y-1">
+      <h2 class="text-xl font-black text-white px-1">핵심 활동 시스템</h2>
+      <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-1">The Core Engine</p>
+    </div>
 
-      <div class="bg-black/20 rounded-2xl p-5 space-y-4">
-        <div class="flex justify-between items-center text-[11px] font-bold text-slate-500 italic">
-          <span>Membership Period</span>
-          <span class="text-white not-italic"><%= @routine_club.start_date.strftime("%Y.%m.%d") %> ~ <%= @routine_club.end_date.strftime("%Y.%m.%d") %></span>
+    <div class="grid grid-cols-1 gap-4">
+      <% [
+        { icon: "⚡", title: "시너지 피드", desc: "멤버들의 루틴 달성이 실시간 피드로 공유됩니다. 서로의 기록에 박수를 보내며 함께 성장하세요.", color: "indigo" },
+        { icon: "💬", title: "프라이빗 단톡방", desc: "기수 멤버들만 참여하는 단톡방에서 실시간 정보 공유와 끈끈한 네트워킹을 즐기세요.", color: "emerald" },
+        { icon: "🏆", title: "실시간 랭킹", desc: "성실도를 기반으로 한 실시간 기수 랭킹 시스템.", color: "amber" },
+        { icon: "🤝", title: "성장 메이트", desc: "공통의 목표를 가진 동료들이 서로를 돕고 격려하며 한계를 돌파합니다.", color: "purple" }
+      ].each do |item| %>
+        <div class="p-6 rounded-[32px] bg-white/[0.03] border border-white/5 flex gap-4 items-center group active:scale-[0.98] transition-all">
+          <div class="w-14 h-14 rounded-2xl bg-<%= item[:color] %>-500/10 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
+            <%= item[:icon] %>
+          </div>
+          <div>
+            <h4 class="text-base font-black text-white"><%= item[:title] %></h4>
+            <p class="text-xs font-bold text-slate-500 mt-1 leading-relaxed"><%= item[:desc] %></p>
+          </div>
         </div>
-        <div class="flex justify-between items-center text-[11px] font-bold text-slate-500 italic">
-          <span>Quarterly Fee</span>
-          <span class="text-lg font-black text-indigo-400 not-italic">₩<%= number_with_delimiter(@routine_club.monthly_fee) %></span>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- 3. Membership Benefits Detail -->
+  <section class="px-6 space-y-6">
+    <div class="p-8 rounded-[40px] bg-gradient-to-br from-indigo-600 to-purple-700 relative overflow-hidden shadow-2xl shadow-indigo-600/20">
+      <!-- Decor -->
+      <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 blur-3xl rounded-full"></div>
+      
+      <div class="relative z-10 space-y-6">
+        <div class="space-y-1">
+          <h3 class="text-xl font-black text-white">멤버십 혜택 요약</h3>
+          <p class="text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">Exclusive Membership Benefits</p>
+        </div>
+        
+        <ul class="space-y-4">
+          <% [
+            "7기 전용 **프라이빗 카카오 단톡방** 운영",
+            "동료 멤버들과의 **실시간 고민 상담 및 피드백**",
+            "기수당 3매의 **휴식권(Rest Pass)** 제공",
+            "루파 클럽 전용 **시너지 피드** 무제한 이용",
+            "주기적 **성실함 리포트** 발행",
+            "공식 **기수 완료 배지** 및 프로필 커스텀"
+          ].each do |benefit| %>
+            <li class="flex items-start gap-3">
+              <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[10px] mt-0.5 inline-block shrink-0">✓</span>
+              <p class="text-sm font-bold text-white/90 leading-snug"><%= benefit.gsub(/\*\*(.*?)\*\*/, '<span class="text-amber-300 font-black">\1</span>').html_safe %></p>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Join Application Section -->
+  <div id="join-section" class="px-4">
+    <div class="app-glass-card p-8 space-y-8 bg-gradient-to-b from-[#1B1A24] to-[#16151D]">
+      <div class="text-center space-y-1">
+        <h2 class="text-2xl font-black text-white"><%= @routine_club.generation_number %>기 멤버십 신청</h2>
+        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Membership Application Form</p>
+      </div>
+
+      <div class="bg-black/40 rounded-[28px] p-6 space-y-4 border border-white/5">
+        <div class="flex justify-between items-center">
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest italic">Period</span>
+          <span class="text-sm font-black text-white"><%= @routine_club.start_date.strftime("%Y.%m.%d") %> ~ <%= @routine_club.end_date.strftime("%Y.%m.%d") %></span>
+        </div>
+        <div class="flex justify-between items-center pt-4 border-t border-white/5">
+          <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest italic">Total Fee (90 days)</span>
+          <span class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">₩<%= number_with_delimiter(@routine_club.calculate_quarterly_fee) %></span>
         </div>
       </div>
 
       <% if @is_member %>
-         <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center">
-           <p class="text-emerald-400 font-black text-sm">이미 이번 기수 멤버입니다 🎉</p>
+         <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-[28px] p-8 text-center space-y-3">
+           <div class="text-4xl">🎊</div>
+           <p class="text-emerald-400 font-black text-base">이미 <%= @routine_club.generation_number %>기 멤버입니다!</p>
+           <p class="text-xs font-bold text-emerald-400/60 leading-relaxed">준비된 시스템과 함께<br/>최고의 성장을 만들어보세요.</p>
          </div>
       <% else %>
         <%= form_with url: join_routine_club_path(@routine_club), method: :post, class: "space-y-6" do |f| %>
           <div class="space-y-2">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-2">입금자명</label>
-            <%= f.text_field :depositor_name, required: true, placeholder: "홍길동", class: "w-full bg-black/20 border border-white/5 rounded-2xl p-4 text-white text-sm placeholder-slate-700 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
+            <%= f.text_field :depositor_name, required: true, placeholder: "홍길동", class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-2">연락처</label>
-            <%= f.text_field :contact_info, required: true, placeholder: "010-1234-5678", class: "w-full bg-black/20 border border-white/5 rounded-2xl p-4 text-white text-sm placeholder-slate-700 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">연락처 (오픈채팅/전화번호)</label>
+            <%= f.text_field :contact_info, required: true, placeholder: "010-1234-5678", class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
           </div>
 
           <div class="space-y-2">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-2">가입 포부</label>
-            <%= f.text_area :goal, rows: 3, placeholder: "이번 기수 동안 이루고 싶은 목표는 무엇인가요?", class: "w-full bg-black/20 border border-white/5 rounded-2xl p-4 text-white text-sm placeholder-slate-700 focus:border-indigo-500/50 outline-none transition-all font-bold resize-none" %>
+            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">THREADS NICKNAME (ID)</label>
+            <%= f.text_field :threads_nickname, placeholder: "@nickname", class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
           </div>
 
-          <div class="pt-4">
-            <button type="submit" class="w-full py-5 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl font-black text-white text-base shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
-              멤버십 신청 보내기
+          <div class="space-y-2">
+            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">이번 기수 가입 포부</label>
+            <%= f.text_area :goal, rows: 4, placeholder: "이번 기수 동안 이루고 싶은 목표와 다짐을 적어주세요. (최소 10자)", class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold resize-none", required: true %>
+          </div>
+
+          <div class="pt-6">
+            <button type="submit" class="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-[28px] font-black text-white text-lg shadow-2xl shadow-indigo-600/40 active:scale-95 transition-all">
+              멤버십 신청 및 결제 완료
             </button>
-            <p class="text-center text-[10px] text-slate-600 mt-4 font-bold leading-normal">
-              신청 후 입금이 확인되면 기수 전용 시스템 권한이 부여됩니다.
-            </p>
+            <div class="mt-6 p-5 bg-white/5 rounded-2xl border border-dashed border-white/10">
+              <p class="text-[10px] text-slate-500 font-bold leading-relaxed text-center">
+                본 기수는 **선착순 30명**으로 제한됩니다.<br>
+                신청 및 입금 확인 순서대로 멤버십이 활성화되며,<br>
+                미확인 시 대기 목록으로 전환될 수 있습니다.
+              </p>
+            </div>
           </div>
         <% end %>
       <% end %>

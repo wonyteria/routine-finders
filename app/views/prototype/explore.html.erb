@@ -36,23 +36,70 @@
 
   <!-- 3. Category Chips -->
   <section class="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4">
-    <% ['챌린지', '모임'].each_with_index do |tag, i| %>
-      <button class="shrink-0 px-6 py-3 rounded-2xl font-bold text-xs <%= i == 0 ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'app-glass-card text-slate-500 border-white/5' %> active:scale-95 transition-all">
-        <%= tag %>
-      </button>
+    <% [
+      { label: '전체', type: 'all' },
+      { label: '챌린지', type: 'challenge' },
+      { label: '모임', type: 'gathering' }
+    ].each do |item| %>
+      <%= link_to item[:label], prototype_explore_path(type: item[:type], sort: @sort_type), 
+          class: "shrink-0 px-6 py-3 rounded-2xl font-bold text-xs #{ @tab_type == item[:type] ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : 'app-glass-card text-slate-500 border-white/5' } active:scale-95 transition-all" %>
     <% end %>
   </section>
 
-  <!-- 4. Active Challenges Grid -->
+  <!-- 4. Feature #1: Closing Soon -->
+  <% if @tab_type == 'all' && @closing_soon.any? %>
+  <section class="space-y-4">
+    <div class="px-1 flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+      <h3 class="text-lg font-black text-white">마감 임박! 지금 합류하세요</h3>
+    </div>
+    
+    <div class="flex gap-4 overflow-x-auto hide-scrollbar -mx-4 px-4">
+      <% @closing_soon.each do |c| %>
+        <%= link_to challenge_path(c, source: 'prototype'), class: "shrink-0 w-64 p-5 rounded-[32px] bg-gradient-to-br from-red-500/20 to-orange-500/10 border border-red-500/20 active:scale-95 transition-all block relative overflow-hidden" do %>
+          <div class="absolute -right-6 -top-6 w-24 h-24 bg-red-500/10 blur-2xl"></div>
+          <div class="flex justify-between items-start mb-4 relative z-10">
+            <span class="px-3 py-1 bg-red-500 rounded-full text-[9px] font-black text-white uppercase tracking-widest shadow-lg shadow-red-500/40">
+              D-<%= (c.recruitment_end_date - Date.current).to_i %>
+            </span>
+            <div class="flex -space-x-2">
+               <% [1,2,3].each do |i| %>
+                 <div class="w-6 h-6 rounded-full border-2 border-slate-900 bg-slate-800 overflow-hidden">
+                   <img src="https://i.pravatar.cc/100?u=<%= c.id + i %>" class="w-full h-full object-cover grayscale">
+                 </div>
+               <% end %>
+               <div class="w-6 h-6 rounded-full border-2 border-slate-900 bg-red-500 flex items-center justify-center text-[8px] font-black text-white">
+                 +
+               </div>
+            </div>
+          </div>
+          <div class="space-y-1 relative z-10">
+            <h4 class="text-sm font-black text-white line-clamp-1"><%= c.title %></h4>
+            <p class="text-[10px] font-bold text-red-400">잔여 <%= [1, 3, 5].sample %>석 • 오늘 마감 예정</p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+  <% end %>
+
+  <!-- 5. Challenges Section -->
+  <% if @tab_type == 'all' || @tab_type == 'challenge' %>
   <section class="space-y-5">
-    <div class="flex justify-between items-end px-1">
+    <div class="flex justify-between items-center px-1">
       <div class="space-y-1">
         <h3 class="text-lg font-black text-white">성장을 돕는 챌린지</h3>
         <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Active Challenges</p>
       </div>
-      <%= link_to "더보기", challenges_path, class: "text-[11px] font-bold text-indigo-400 p-2" %>
+      <% if @tab_type == 'challenge' %>
+        <div class="flex gap-1">
+          <% [['최신순', 'recent'], ['인기순', 'popular'], ['금액순', 'amount']].each do |label, key| %>
+            <%= link_to label, prototype_explore_path(type: 'challenge', sort: key), 
+                class: "px-3 py-1.5 rounded-xl text-[10px] font-black transition-all #{ @sort_type == key ? 'bg-white/10 text-indigo-400 border border-indigo-500/30' : 'text-slate-500' }" %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
-
     <div class="grid grid-cols-2 gap-4">
       <% @active_challenges.each do |challenge| %>
         <%= link_to challenge_path(challenge, source: 'prototype'), class: "group relative app-glass-card border-white/5 bg-white/[0.02] overflow-hidden active:scale-95 transition-all block" do %>
@@ -80,57 +127,71 @@
       <% end %>
     </div>
   </section>
+  <% end %>
 
-  <!-- 5. Gatherings (Online & Offline Mix) -->
+  <!-- 6. Gatherings Section -->
+  <% if @tab_type == 'all' || @tab_type == 'gathering' %>
   <section class="space-y-5 pb-10">
-    <div class="flex justify-between items-end px-1">
+    <div class="flex justify-between items-center px-1">
       <div class="space-y-1">
         <h3 class="text-lg font-black text-white">다양한 모임 & 이벤트</h3>
-        <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Gatherings & Live</p>
+        <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Gatherings & Events</p>
       </div>
+      <% if @tab_type == 'gathering' %>
+        <div class="flex gap-1">
+          <% [['최신순', 'recent'], ['인기순', 'popular'], ['금액순', 'amount']].each do |label, key| %>
+            <%= link_to label, prototype_explore_path(type: 'gathering', sort: key), 
+                class: "px-3 py-1.5 rounded-xl text-[10px] font-black transition-all #{ @sort_type == key ? 'bg-white/10 text-indigo-400 border border-indigo-500/30' : 'text-slate-500' }" %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
-
-    <div class="flex gap-4 overflow-x-auto hide-scrollbar -mx-4 px-4">
+    <div class="grid grid-cols-2 gap-4">
       <% @gatherings.each do |gathering| %>
-        <%= link_to challenge_path(gathering, source: 'prototype'), class: "shrink-0 w-72 h-44 app-glass-card border-none bg-gradient-to-br from-slate-800 to-slate-900 overflow-hidden relative group active:scale-95 transition-all block" do %>
-          <!-- Pattern Overlay -->
-          <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-          
-          <div class="absolute inset-0 p-6 flex flex-col justify-between z-10">
-            <div class="flex justify-between items-start">
-              <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-xl">
+        <%= link_to challenge_path(gathering, source: 'prototype'), class: "group relative app-glass-card border-white/5 bg-white/[0.02] overflow-hidden active:scale-95 transition-all block" do %>
+          <!-- Thumbnail Area -->
+          <div class="aspect-[4/3] relative overflow-hidden">
+            <% if gathering.thumbnail.present? %>
+              <img src="<%= gathering.thumbnail %>" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <% else %>
+              <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-3xl text-white/20">
                 <%= gathering.mode_offline? ? '📍' : '📽️' %>
               </div>
-              <span class="px-3 py-1 bg-white/10 rounded-full text-[9px] font-black text-white/60 border border-white/5 uppercase tracking-widest">
-                <%= gathering.mode_offline? ? 'Offline' : 'Online' %>
+            <% end %>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            
+            <!-- Badge -->
+            <div class="absolute top-2 left-2">
+              <span class="px-2 py-0.5 <%= gathering.mode_offline? ? 'bg-emerald-500/80' : 'bg-indigo-500/80' %> backdrop-blur-md rounded-lg text-[8px] font-black text-white uppercase tracking-tighter shadow-lg">
+                <%= gathering.mode_offline? ? 'OFFLINE' : 'ONLINE LIVE' %>
               </span>
             </div>
-            
-            <div class="space-y-2">
-              <h4 class="text-base font-black text-white group-hover:text-amber-400 transition-colors line-clamp-1"><%= gathering.title %></h4>
-              <div class="flex items-center justify-between gap-3">
-                <p class="text-[10px] font-bold text-slate-400 truncate"><%= gathering.start_date.strftime("%m월 %d일") %> • <%= gathering.meeting_info&.place_name || "어디서나 참여" %></p>
-                <div class="flex items-center gap-2 whitespace-nowrap shrink-0">
-                  <span class="text-[10px] font-black text-amber-500"><%= gathering.amount > 0 ? "#{number_with_delimiter(gathering.amount)}원" : "무료" %></span>
-                  <span class="w-1 h-1 rounded-full bg-white/20"></span>
-                  <span class="text-[9px] font-bold text-slate-500">모집 중</span>
-                </div>
+
+            <!-- Date -->
+            <div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+               <div class="flex items-center gap-1">
+                 <div class="w-1 h-1 rounded-full bg-emerald-500"></div>
+                 <span class="text-[9px] font-bold text-white/80"><%= gathering.start_date.strftime("%m/%d") %> 시작</span>
+               </div>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="p-4 space-y-2">
+            <h4 class="text-sm font-black text-white line-clamp-1 group-hover:text-amber-400 transition-colors"><%= gathering.title %></h4>
+            <div class="space-y-1">
+              <p class="text-[10px] font-bold text-slate-500 line-clamp-1">
+                <span class="text-white/40">📍</span> <%= gathering.meeting_info&.place_name || "온라인 미팅" %>
+              </p>
+              <div class="flex items-center justify-between gap-2 border-t border-white/5 pt-1.5 mt-1.5">
+                <span class="text-[10px] font-black text-amber-500"><%= gathering.amount > 0 ? "#{number_with_delimiter(gathering.amount)}원" : "무료 참여" %></span>
+                <span class="text-[9px] font-bold text-slate-600">모집 중</span>
               </div>
             </div>
           </div>
-          
-          <!-- Background Glow -->
-          <div class="absolute -right-10 -bottom-10 w-32 h-32 <%= gathering.mode_offline? ? 'bg-amber-500/10' : 'bg-indigo-500/10' %> blur-3xl rounded-full group-hover:scale-150 transition-transform duration-1000"></div>
         <% end %>
       <% end %>
-
-      <!-- Discovery more card -->
-      <div class="shrink-0 w-44 h-44 app-glass-card flex flex-col items-center justify-center gap-3 border-dashed border-white/10 opacity-60">
-        <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
-          <svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-        </div>
-        <p class="text-[11px] font-bold text-slate-500">모두 보기</p>
-      </div>
     </div>
   </section>
+  <% end %>
 </div>

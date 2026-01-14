@@ -159,7 +159,18 @@
           </a>
 
           <!-- 4. RUFA Club Join (Highlight at Bottom) -->
-          <a href="<%= prototype_club_join_path %>" class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
+          <% 
+            is_recruiting = @official_club&.recruitment_open?
+            is_member = current_user&.routine_club_members&.active&.exists?(routine_club: @official_club)
+            
+            next_quarter_start = Date.current.beginning_of_quarter + 3.months
+            recruitment_start = next_quarter_start - 14.days
+            recruitment_msg = "지금은 정기 모집 기간이 아닙니다.\\n다음 모집은 #{recruitment_start.strftime('%m월 %d일')}에 시작될 예정입니다."
+          %>
+          
+          <a href="<%= is_recruiting || is_member ? prototype_club_join_path : 'javascript:void(0)' %>" 
+             onclick="<%= !is_recruiting && !is_member ? "alert('#{recruitment_msg}')" : "" %>"
+             class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
                 <span class="text-2xl">⚡</span>

@@ -26,21 +26,32 @@ class PrototypeController < ApplicationController
 
   def explore
     @featured_club = RoutineClub.active_clubs.order(created_at: :desc).first
+    @tab_type = params[:type] || "all"
+    @sort_type = params[:sort] || "recent"
 
-    # Categorize for better discovery
-    # Categorize for better discovery (show both active and upcoming/recruiting)
-    real_active = Challenge.where(mode: :online)
-                          .where("end_date >= ?", Date.current)
-                          .order(created_at: :desc).limit(6).to_a
-    real_gatherings = Challenge.where(mode: :offline)
-                             .where("end_date >= ?", Date.current)
-                             .order(created_at: :desc).limit(4).to_a
+    # 1. Closing Soon (Recruitment ends within 3 days)
+    @closing_soon = Challenge.where("recruitment_end_date >= ? AND recruitment_end_date <= ?", Date.current, Date.current + 3.days)
+                            .order(:recruitment_end_date).limit(5)
 
-    # Fill with dummy data if not enough real ones (for prototyping/demo)
+    # 2. Base Queries
+    challenges_query = Challenge.where(mode: :online).where("end_date >= ?", Date.current)
+    gatherings_query = Challenge.where(mode: :offline).where("end_date >= ?", Date.current)
+
+    # 3. Apply Sorting
+    order_clause = case @sort_type
+    when "popular"
+                     { current_participants: :desc }
+    when "amount"
+                     { amount: :desc }
+    else
+                     { created_at: :desc }
+    end
+
+    # Fill with dummy data if not enough real ones
     dummies = Challenge.generate_dummy_challenges
 
-    @active_challenges = (real_active + dummies.select { |d| d.mode == "online" }).uniq { |c| c.title }.first(6)
-    @gatherings = (real_gatherings + dummies.select { |d| d.mode == "offline" }).uniq { |c| c.title }.first(4)
+    @active_challenges = (challenges_query.order(order_clause).limit(6).to_a + dummies.select { |d| d.mode == "online" }).uniq { |c| c.title }.first(6)
+    @gatherings = (gatherings_query.order(order_clause).limit(6).to_a + dummies.select { |d| d.mode == "offline" }).uniq { |c| c.title }.first(6)
   end
 
   def synergy
@@ -124,13 +135,17 @@ class PrototypeController < ApplicationController
 
   def club_join
     @routine_club = RoutineClub.order(created_at: :desc).first
+    # Force dates for 7th generation prototype if needed
+    if @routine_club && @routine_club.generation_number == 7
+      @routine_club.start_date = Date.new(2026, 1, 1)
+      @routine_club.end_date = Date.new(2026, 3, 31)
+    end
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
   end
 
   private
 
   def set_shared_data
-    nil unless current_user
-    # Any data needed across all tabs
+    @official_club = RoutineClub.official.first
   end
 end
