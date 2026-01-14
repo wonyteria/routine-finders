@@ -82,8 +82,36 @@
     </nav>
     <% end %>
 
-    <!-- FAB Menu Sheet (Simple List Style) -->
-    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[210]">
+    <!-- 1. Routine Record Bottom Sheet (Original Functional) -->
+    <div id="record-sheet" class="hidden fixed inset-0 z-[210]">
+      <div onclick="document.getElementById('record-sheet').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)]">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
+        <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
+        
+        <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
+          <div class="space-y-4">
+            <%= f.text_area :body, 
+                            placeholder: "오늘 어떤 루틴을 지켰나요? 자신에게 한 마디 남겨보세요.", 
+                            class: "w-full min-h-[160px] bg-white/5 border-2 border-white/10 rounded-3xl p-6 text-white text-base font-bold placeholder:text-white/20 focus:border-indigo-500 focus:ring-0 transition-all resize-none shadow-inner" %>
+            
+            <div class="flex items-center gap-3 p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
+              <span class="text-xl">✨</span>
+              <p class="text-[11px] font-bold text-indigo-300">작성한 기록은 '시너지' 피드에 공유되어 다른 멤버들의 성장을 응원하게 됩니다.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+             <button type="button" onclick="document.getElementById('record-sheet').classList.add('hidden')" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm">취소</button>
+             <%= f.submit "기록 저장하기", class: "flex-1 py-4 rounded-2xl app-fab-gradient text-white font-black text-sm shadow-xl active:scale-95 transition-all cursor-pointer" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 2. FAB Menu Sheet (Simple List Style) -->
+    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[215]">
       <div onclick="document.getElementById('fab-menu-sheet').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
       <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)]">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
@@ -131,7 +159,7 @@
           </a>
 
           <!-- 4. RUFA Club Join (Highlight at Bottom) -->
-          <a href="/routine_clubs/guide" class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
+          <a href="<%= prototype_club_join_path %>" class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
                 <span class="text-2xl">⚡</span>

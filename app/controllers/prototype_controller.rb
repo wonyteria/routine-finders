@@ -28,8 +28,13 @@ class PrototypeController < ApplicationController
     @featured_club = RoutineClub.active_clubs.order(created_at: :desc).first
 
     # Categorize for better discovery
-    real_active = Challenge.active.where(mode: :online).order(current_participants: :desc).limit(6).to_a
-    real_gatherings = Challenge.active.where(mode: :offline).order(created_at: :desc).limit(4).to_a
+    # Categorize for better discovery (show both active and upcoming/recruiting)
+    real_active = Challenge.where(mode: :online)
+                          .where("end_date >= ?", Date.current)
+                          .order(created_at: :desc).limit(6).to_a
+    real_gatherings = Challenge.where(mode: :offline)
+                             .where("end_date >= ?", Date.current)
+                             .order(created_at: :desc).limit(4).to_a
 
     # Fill with dummy data if not enough real ones (for prototyping/demo)
     dummies = Challenge.generate_dummy_challenges
@@ -115,6 +120,11 @@ class PrototypeController < ApplicationController
       { key: "MIND", label: "멘탈·성찰", icon: "🧘" }
     ]
     @banks = [ "신한", "국민", "우리", "하나", "농협", "카카오뱅크", "토스뱅크" ]
+  end
+
+  def club_join
+    @routine_club = RoutineClub.order(created_at: :desc).first
+    @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
   end
 
   private

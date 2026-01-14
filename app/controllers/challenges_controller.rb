@@ -148,7 +148,7 @@ class ChallengesController < ApplicationController
   end
 
   def create
-    [ :days, :daily_goals, :reward_policy ].each do |attr|
+    [ :days, :daily_goals, :reward_policy, :certification_goal ].each do |attr|
     if params[:challenge] && params[:challenge][attr].is_a?(String)
       begin
         params[:challenge][attr] = JSON.parse(params[:challenge][attr])
@@ -361,7 +361,7 @@ class ChallengesController < ApplicationController
       :v_photo, :v_simple, :v_metric, :v_url, :thumbnail_image, :save_account_to_profile,
       :certification_goal, :daily_goals, :reward_policy,
       :full_refund_threshold, :refund_date, :recruitment_start_date, :recruitment_end_date,
-      :chat_link, :application_question, :requires_application_message,
+      :chat_link, :application_question, :requires_application_message, :preparation_items, :refund_policy,
       days: [],
       meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
     )

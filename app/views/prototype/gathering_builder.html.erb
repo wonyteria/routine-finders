@@ -63,6 +63,50 @@
     .pending-dot { background: rgba(255, 255, 255, 0.1); width: 8px; }
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* Custom Checkbox/Toggle */
+    .toggle-pill {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      display: flex;
+      items-center: center;
+    }
+    .toggle-pill::after {
+      content: 'OFF';
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 8px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.05em;
+    }
+    .toggle-pill.active { background: #818cf8; box-shadow: 0 0 15px rgba(129, 140, 248, 0.4); }
+    .toggle-pill.active::after {
+      content: 'ON';
+      left: 10px;
+      right: auto;
+      color: white;
+    }
+    .toggle-circle {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .toggle-pill.active .toggle-circle { left: 28px; }
   </style>
 
   <!-- Header & Stepper -->
@@ -90,15 +134,15 @@
     <%= f.hidden_field :category, value: 'HOBBY', id: 'h_category' %>
     <%= f.hidden_field :requires_application_message, id: "h_requires_msg", value: "false" %>
 
-    <div class="flex-1 min-h-0 py-4 flex flex-col relative z-10 overflow-y-auto hide-scrollbar pb-32">
+    <div class="flex-1 min-h-0 py-4 flex flex-col relative z-10 overflow-y-auto hide-scrollbar pb-10">
       
       <!-- STEP 1: Core Info -->
-      <section id="step-0" class="step-section flex-1 flex flex-col gap-8">
+      <section id="step-0" class="step-section flex-1 flex flex-col gap-6">
         <div class="space-y-1">
           <h2 class="text-2xl font-black text-white tracking-tight leading-tight">어떤 <span class="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">모임</span>을<br/>만들어볼까요?</h2>
         </div>
 
-        <div class="space-y-8">
+        <div class="space-y-6">
            <!-- 1. Type Selection & Category -->
            <div class="space-y-4">
              <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
@@ -128,36 +172,53 @@
              </div>
            </div>
 
-           <!-- 2. Basic Details -->
-           <div class="space-y-4 pt-4 border-t border-white/5">
+            <!-- 2. Basic Details -->
+            <div class="space-y-4 pt-4 border-t border-white/5">
               <div class="space-y-2 p-1 overflow-visible">
-                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Cover Image</label>
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Meetup Title</label>
+                <%= f.text_field :title, class: "glass-input w-full p-4 text-base focus:scale-[1.01]", placeholder: "예: 강남역 아침 카페 독서 모임" %>
+              </div>
+
+              <div class="space-y-2 p-1 overflow-visible">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">One-line Summary</label>
+                <%= f.text_field :summary, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "모임을 한 마디로 소개해주세요." %>
+              </div>
+
+              <div class="space-y-2 p-1 overflow-visible">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Description</label>
+                <%= f.text_area :description, class: "glass-input w-full p-6 text-sm min-h-[140px] leading-relaxed focus:scale-[1.01]", placeholder: "모임의 목적, 분위기, 진행 방식 등을 구체적으로 적어주세요." %>
+              </div>
+
+              <div class="space-y-2 p-1 overflow-visible">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Preparation & Notice (준비물/공지)</label>
+                <%= f.text_area :preparation_items, class: "glass-input w-full p-5 text-sm min-h-[100px] leading-relaxed focus:scale-[1.01]", placeholder: "참여자가 미리 준비해야 할 물건이나 꼭 알아야 할 유의사항이 있다면 적어주세요." %>
+              </div>
+
+              <div class="space-y-3 p-1 overflow-visible">
+                <div class="flex justify-between items-end pl-1">
+                  <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Thumbnail Cover</label>
+                  <span class="text-[9px] font-bold text-emerald-400/60">권장 사이즈: 1280 x 720px</span>
+                </div>
+                
                 <div class="relative group cursor-pointer" onclick="document.getElementById('challenge_thumbnail_image').click()">
-                  <div id="thumbnail_preview" class="aspect-[16/9] w-full rounded-2xl bg-white/5 border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-3 group-hover:bg-white/[0.08] group-hover:border-emerald-500/30 transition-all overflow-hidden">
-                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">📸</div>
-                    <div class="text-center">
-                      <p class="text-[11px] font-black text-white group-hover:text-emerald-400 transition-colors">멋진 커버 사진을 골라보세요</p>
-                      <p class="text-[9px] font-bold text-slate-600 mt-1 uppercase">16:9 추천 (Max 5MB)</p>
+                  <div id="thumbnail_preview" class="aspect-[16/9] w-full rounded-2xl bg-white/5 border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-3 group-hover:bg-white/[0.08] group-hover:border-emerald-500/30 transition-all overflow-hidden relative">
+                    <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🖼️</div>
+                    <div class="text-center px-4">
+                      <p class="text-[11px] font-black text-white group-hover:text-emerald-400 transition-colors">클릭하여 이미지 업로드</p>
+                      <p class="text-[9px] font-bold text-slate-600 mt-1 uppercase">JPG, PNG (Max 5MB)</p>
                     </div>
                   </div>
                   <%= f.file_field :thumbnail_image, class: "hidden", onchange: "previewImage(this, 'thumbnail_preview')" %>
                 </div>
+
+                <div class="flex items-start gap-2 px-2 mt-2">
+                  <span class="text-xs">💡</span>
+                  <p class="text-[10px] font-bold text-slate-500 leading-relaxed">
+                    이미지를 업로드하지 않으면 고른 <span class="text-emerald-400">카테고리에 맞는 기본 커버</span>가 자동으로 생성됩니다.
+                  </p>
+                </div>
               </div>
-
-             <div class="space-y-2 p-1 overflow-visible">
-               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Meetup Title</label>
-               <%= f.text_field :title, class: "glass-input w-full p-4 text-base focus:scale-[1.01]", placeholder: "예: 강남역 아침 카페 독서 모임" %>
-             </div>
-
-             <div class="space-y-2 p-1 overflow-visible">
-               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">One-line Summary</label>
-               <%= f.text_field :summary, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "모임을 한 마디로 소개해주세요." %>
-             </div>
-
-             <div class="space-y-2 p-1 overflow-visible">
-               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Description</label>
-               <%= f.text_area :description, class: "glass-input w-full p-6 text-sm min-h-[160px] leading-relaxed focus:scale-[1.01]", placeholder: "모임의 목적, 분위기, 준비물, 진행 방식 등을 구체적으로 적어주세요." %>
-             </div>
+            </div>
            </div>
         </div>
       </section>
@@ -180,17 +241,28 @@
              </button>
            </div>
 
-           <div class="grid grid-cols-2 gap-3 p-1 overflow-visible">
+           <div class="grid grid-cols-2 gap-3 p-1">
              <div class="space-y-2">
-               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Date</label>
+               <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Meeting Date</label>
                <%= f.date_field :start_date, value: Date.current + 7.days, onclick: "this.showPicker()", class: "glass-input w-full p-4 text-xs" %>
              </div>
              <div class="space-y-2">
                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Start Time</label>
                <%= f.fields_for :meeting_info do |m| %>
-                 <%= m.time_field :meeting_time, class: "glass-input w-full p-4 text-xs", onclick: "this.showPicker()" %>
+                 <%= m.time_field :meeting_time, class: "glass-input w-full p-4 text-xs", onclick: "this.showPicker()", value: "14:00" %>
                <% end %>
              </div>
+           </div>
+
+           <!-- Recruitment Period -->
+           <div class="space-y-3 p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
+              <label class="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Recruitment Period (모집 기간)</label>
+              <div class="flex gap-2 items-center">
+                <%= f.date_field :recruitment_start_date, value: Date.current, onclick: "this.showPicker()", class: "glass-input flex-1 p-3 text-[10px]" %>
+                <span class="text-slate-700 text-xs">~</span>
+                <%= f.date_field :recruitment_end_date, value: Date.current + 6.days, onclick: "this.showPicker()", class: "glass-input flex-1 p-3 text-[10px]" %>
+              </div>
+              <p class="text-[8px] font-bold text-slate-600 pl-1 mt-1">모집이 종료되면 더 이상 신청을 받을 수 없습니다.</p>
            </div>
            
            <div class="space-y-4">
@@ -244,6 +316,24 @@
                 </button>
               </div>
 
+              <!-- Participation Restriction (New) -->
+              <div class="pt-4 border-t border-white/5 space-y-4 p-1 overflow-visible">
+                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Participation Restriction</label>
+                <div class="p-5 rounded-[28px] bg-indigo-500/5 border border-indigo-500/10 flex items-center justify-between group/premium cursor-pointer active:scale-[0.98] transition-all" id="btn_rufa_only">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">⚡</div>
+                    <div>
+                      <p class="text-[11px] font-black text-white">루파 클럽 전용</p>
+                      <p class="text-[9px] font-bold text-indigo-400/60 mt-0.5">멤버십 회원들만 참여할 수 있습니다</p>
+                    </div>
+                  </div>
+                  <div class="toggle-pill" id="toggle_rufa_only">
+                    <div class="toggle-circle"></div>
+                  </div>
+                  <%= f.hidden_field :for_rufa_club_members_only, id: "h_rufa_only", value: "false" %>
+                </div>
+              </div>
+
               <div id="cost_box" class="hidden space-y-4 animate-fade-in">
                 <div class="relative p-1 overflow-visible">
                   <%= f.hidden_field :amount, value: 10000, id: "h_amount" %>
@@ -251,14 +341,25 @@
                   <span class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 font-bold">원</span>
                 </div>
                 
-                <div class="space-y-3 p-1 overflow-visible">
-                  <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Settlement Account</label>
-                  <div class="grid grid-cols-4 gap-2">
-                    <% @banks.each do |bank| %>
-                      <button type="button" class="bank-opt py-2 rounded-lg border text-[9px] font-black transition-all unselected-opt <%= bank == '신한' ? 'selected-cat' : '' %>"><%= bank %></button>
-                    <% end %>
+                <div class="space-y-4 p-1 overflow-visible">
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Settlement Account (정산 계좌)</label>
+                    <div class="grid grid-cols-4 gap-2">
+                      <% @banks.each do |bank| %>
+                        <button type="button" class="bank-opt py-2 rounded-lg border text-[9px] font-black transition-all unselected-opt <%= bank == '신한' ? 'selected-cat' : '' %>" data-val="<%= bank %>"><%= bank %></button>
+                      <% end %>
+                      <%= f.hidden_field :host_bank, id: "h_bank", value: "신한" %>
+                    </div>
                   </div>
-                  <%= f.text_field :host_account, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "계좌번호 입력" %>
+                  <div class="grid grid-cols-2 gap-3">
+                    <%= f.text_field :host_account_holder, class: "glass-input w-full p-4 text-xs focus:scale-[1.01]", placeholder: "예금주 성함" %>
+                    <%= f.text_field :host_account, class: "glass-input w-full p-4 text-xs focus:scale-[1.01]", placeholder: "계좌번호 (- 없이)" %>
+                  </div>
+                </div>
+
+                <div class="space-y-2 p-1 pt-2 border-t border-white/5">
+                  <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Refund Policy (환불 정책)</label>
+                  <%= f.text_area :refund_policy, class: "glass-input w-full p-4 text-[11px] min-h-[80px] leading-relaxed", placeholder: "예: 모임 3일 전 100% 환불, 이후 환불 불가 등의 기준을 적어주세요." %>
                 </div>
               </div>
            </div>
@@ -288,11 +389,30 @@
               </div>
            </div>
 
-           <div class="p-5 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-start gap-3">
-              <span class="text-xl">🤝</span>
-              <p class="text-[10px] font-bold text-slate-500 leading-relaxed">
-                모임 성격에 맞는 분들을 모시기 위해 필요한 정보를 미리 물어보세요. 호스트님은 <span class="text-emerald-400">참여 신청 관리</span>에서 답변을 확인한 후 수락 여부를 결정할 수 있습니다.
-              </p>
+           <div class="space-y-3">
+             <div class="p-5 bg-white/5 border border-white/5 rounded-2xl flex items-start gap-3">
+                <span class="text-xl">📋</span>
+                <div class="space-y-1">
+                  <p class="text-[10px] font-black text-slate-300">플랫폼이 대신 받아드리는 정보</p>
+                  <p class="text-[9px] font-bold text-slate-500 leading-relaxed">
+                    다음 정보는 질문을 등록하지 않아도 루틴 파인더스가 <span class="text-emerald-400">신청 과정에서 수집</span>하여 호스트님께 전달합니다:<br/>
+                    • 닉네임 및 프로필 이미지<br/>
+                    • <span class="text-emerald-400/80">실제 입금자 성함 및 연락처</span> (입금 확인용)<br/>
+                    • 과거 챌린지 수행 성공률<br/>
+                    • 루파 클럽 멤버십 여부 및 성장 아이덴티티
+                  </p>
+                </div>
+             </div>
+
+             <div class="p-5 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex items-start gap-3">
+                <span class="text-xl">🙋‍♂️</span>
+                <div class="space-y-1">
+                  <p class="text-[10px] font-black text-emerald-400">직접 물어보고 싶은 질문</p>
+                  <p class="text-[9px] font-bold text-slate-500 leading-relaxed tabular-nums">
+                    질문을 등록하면 참여자가 <span class="text-emerald-400">신청서를 작성할 때</span> 답변을 함께 제출하게 됩니다. 호스트님은 신청 결과에서 이 답변을 보고 참가를 수락할 수 있습니다.
+                  </p>
+                </div>
+             </div>
            </div>
         </div>
       </section>
@@ -314,17 +434,27 @@
               </div>
               <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 relative z-10">
                 <div class="space-y-1">
-                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Date & Time</p>
+                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Meeting Date</p>
                   <p id="rev_date" class="text-xs font-black text-white">2026.01.20 | 오후 2시</p>
                 </div>
+                <div class="space-y-1">
+                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Recruitment</p>
+                  <p id="rev_recruitment" class="text-[10px] font-black text-emerald-400">~ 2026.01.19</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 relative z-10">
                 <div class="space-y-1">
                   <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Attendees</p>
                   <p id="rev_max" class="text-xs font-black text-white">최대 4명</p>
                 </div>
+                <div class="space-y-1">
+                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Cost</p>
+                  <p id="rev_cost" class="text-sm font-black text-white">무료</p>
+                </div>
               </div>
-              <div class="pt-4 border-t border-white/5 relative z-10">
-                <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Cost</p>
-                <p id="rev_cost" class="text-sm font-black text-white">무료</p>
+              <div id="rev_refund_box" class="pt-4 border-t border-white/5 relative z-10 hidden">
+                <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Refund Policy</p>
+                <p id="rev_refund" class="text-[10px] font-bold text-slate-400 leading-relaxed line-clamp-2"></p>
               </div>
            </div>
            
@@ -340,9 +470,9 @@
     </div>
 
     <!-- Footer Buttons -->
-    <div class="py-4 pb-24 shrink-0 z-20">
+    <div class="py-4 pb-12 shrink-0 z-20">
       <button id="nextBtn" type="button" class="w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-base shadow-2xl shadow-emerald-500/40 active:scale-95 transition-all">다음 단계로</button>
-      <button id="submitBtn" type="submit" class="hidden w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-lg shadow-2xl shadow-emerald-500/40 active:scale-90 transition-all">모임 개설 완료</button>
+      <button id="submitBtn" type="button" class="hidden w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-lg shadow-2xl shadow-emerald-500/40 active:scale-90 transition-all">모임 개설 완료</button>
     </div>
   <% end %>
 
@@ -356,6 +486,13 @@
       const submitBtn = document.getElementById('submitBtn');
       const prevBtn = document.getElementById('prevBtn');
 
+      function smartScroll(el) {
+        if (!el) return;
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+
       function update() {
         sections.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep));
         dots.forEach((d, i) => {
@@ -365,6 +502,12 @@
         });
         stepCounter.textContent = `${currentStep+1}/5`;
         
+        // Auto scroll to top on step change
+        const activeSection = sections[currentStep];
+        if (activeSection) {
+          activeSection.parentElement.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         if (currentStep === 4) {
           nextBtn.classList.add('hidden');
           submitBtn.classList.remove('hidden');
@@ -378,9 +521,17 @@
           document.getElementById('rev_date').textContent = `${date} | ${time}`;
           document.getElementById('rev_max').textContent = `최대 ${document.getElementById('max_slider').value}명`;
           
+          const rStart = document.querySelector('input[name="challenge[recruitment_start_date]"]').value;
+          const rEnd = document.querySelector('input[name="challenge[recruitment_end_date]"]').value;
+          document.getElementById('rev_recruitment').textContent = `${rStart.slice(5)} ~ ${rEnd.slice(5)}`;
+          
           const costType = document.getElementById('h_cost_type').value;
           const amount = document.getElementById('amount_display').value;
           document.getElementById('rev_cost').textContent = costType === 'free' ? "무료" : amount + "원";
+
+          const refund = document.querySelector('textarea[name="challenge[refund_policy]"]').value;
+          document.getElementById('rev_refund_box').classList.toggle('hidden', costType === 'free' || !refund);
+          document.getElementById('rev_refund').textContent = refund;
         } else {
           nextBtn.classList.remove('hidden');
           submitBtn.classList.add('hidden');
@@ -419,8 +570,10 @@
            const costType = document.getElementById('h_cost_type').value;
            if(costType === 'fee') {
              const amount = document.getElementById('h_amount').value;
+             const holder = document.querySelector('input[name="challenge[host_account_holder]"]').value.trim();
              const account = document.querySelector('input[name="challenge[host_account]"]').value.trim();
              if(!amount || parseInt(amount) <= 0) { alert('참가비를 올바르게 입력해주세요.'); return false; }
+             if(!holder) { alert('예금주 성함을 입력해주세요.'); return false; }
              if(!account) { alert('정산받을 계좌번호를 입력해주세요.'); return false; }
            }
         }
@@ -434,6 +587,9 @@
              update();
            }
         }
+      });
+      submitBtn.addEventListener('click', () => {
+        document.querySelector('form').submit();
       });
       prevBtn.addEventListener('click', () => {
         if (currentStep > 0) { currentStep--; update(); }
@@ -455,6 +611,7 @@
              if (hiddenId === 'h_cost_type') {
                document.getElementById('cost_box').classList.toggle('hidden', btn.dataset.val === 'free');
              }
+             smartScroll(btn);
           });
         });
       };
@@ -523,6 +680,29 @@
         const active = toggleParticipantInfo.classList.toggle('active');
         participantQuestionBox.classList.toggle('hidden', !active);
         document.getElementById('h_requires_msg').value = active;
+        smartScroll(toggleParticipantInfo);
+      });
+
+      // Rufa Only Toggle
+      const toggleRufaOnly = document.getElementById('toggle_rufa_only');
+      const btnRufaOnly = document.getElementById('btn_rufa_only');
+      btnRufaOnly.addEventListener('click', () => {
+        const active = toggleRufaOnly.classList.toggle('active');
+        document.getElementById('h_rufa_only').value = active;
+        
+        if (active) {
+          btnRufaOnly.classList.add('premium-selection');
+          btnRufaOnly.classList.remove('bg-indigo-500/5', 'border-indigo-500/10');
+        } else {
+          btnRufaOnly.classList.remove('premium-selection');
+          btnRufaOnly.classList.add('bg-indigo-500/5', 'border-indigo-500/10');
+        }
+        smartScroll(btnRufaOnly);
+      });
+
+      // Bind focus to all inputs
+      document.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('focus', () => smartScroll(el));
       });
 
       update();
