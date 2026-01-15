@@ -630,23 +630,26 @@
         </div>
       </section>
 
-      <!-- STEP 10: Review & Submit -->
+       <!-- STEP 10: Review & Submit -->
       <section id="step-9" class="step-section hidden flex-1 flex flex-col gap-6">
         <div class="space-y-1">
           <h2 class="text-2xl font-black text-white tracking-tight leading-tight">마지막으로 <span class="text-indigo-500">챌린지 설계</span>를<br/>검토해주세요.</h2>
         </div>
-        <div class="space-y-6">
-           <!-- Review Card -->
-           <div class="bg-white/5 rounded-[40px] p-8 space-y-6 border border-white/5 relative overflow-hidden group">
-              <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div class="space-y-1 relative z-10">
+        <div class="space-y-4">
+           <!-- Review Card: Basic Info -->
+           <div class="bg-white/5 rounded-[32px] p-6 space-y-4 border border-white/5">
+              <div class="space-y-1">
                 <div class="flex justify-between items-start">
-                  <h3 id="review_title" class="text-xl font-black text-white">매일 물 마시기</h3>
+                  <h3 id="review_title" class="text-lg font-black text-white">매일 물 마시기</h3>
                   <span id="review_cat" class="px-3 py-1 bg-white/5 rounded-full text-[10px] font-black text-indigo-400">#건강·운동</span>
                 </div>
-                <p class="text-xs font-bold text-slate-500">RF 챌린지 시스템 적용됨</p>
+                <p id="review_summary" class="text-xs font-bold text-slate-400"></p>
+                <div id="review_preparation_box" class="hidden pt-3 border-t border-white/10">
+                  <p class="text-[9px] font-black text-slate-600 uppercase mb-1">준비물/공지</p>
+                  <p id="review_preparation" class="text-[10px] font-bold text-slate-400 leading-relaxed"></p>
+                </div>
               </div>
-              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 relative z-10 text-center">
+              <div class="grid grid-cols-2 gap-3 text-center">
                 <div class="space-y-1">
                   <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Challenge Period</p>
                   <p id="review_period" class="text-[10px] font-black text-indigo-400">2026.01.20 ~ 02.04</p>
@@ -656,21 +659,88 @@
                   <p id="review_recruitment" class="text-[10px] font-black text-emerald-400">~ 2026.01.19</p>
                 </div>
               </div>
-              <div id="review_refund_box" class="pt-4 border-t border-white/5 relative z-10 hidden text-center">
-                <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Refund Policy</p>
-                <p id="review_refund" class="text-[9px] font-bold text-slate-400 leading-relaxed line-clamp-2 px-4"></p>
-              </div>
-              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5 relative z-10">
-                <div class="space-y-1">
-                  <p class="text-[9px] font-black text-slate-600 uppercase">Verification</p>
-                  <p id="review_vtype" class="text-sm font-black text-white">사진 인증</p>
-                </div>
-                <div class="space-y-1">
-                  <p class="text-[9px] font-black text-slate-600 uppercase">Cost</p>
-                  <p id="review_cost" class="text-sm font-black text-white">10,000원</p>
-                </div>
-              </div>
            </div>
+
+           <!-- Review: Mission Goals -->
+           <div class="bg-white/5 rounded-[32px] p-6 space-y-3 border border-white/5">
+             <p class="text-xs font-black text-indigo-400 uppercase tracking-wider">Daily Mission</p>
+             <div id="review_goals" class="space-y-2">
+               <!-- Goals will be injected here -->
+             </div>
+             <div class="flex gap-2 flex-wrap" id="review_days_wrap">
+               <p class="text-[9px] font-black text-slate-600 uppercase">Active Days:</p>
+               <div id="review_days" class="flex gap-1 flex-wrap"></div>
+             </div>
+           </div>
+
+           <!-- Review: Verification & Participation -->
+           <div class="grid grid-cols-2 gap-3">
+             <div class="bg-white/5 rounded-[24px] p-5 space-y-2 border border-white/5">
+               <p class="text-[9px] font-black text-slate-600 uppercase">Verification</p>
+               <p id="review_vtype" class="text-sm font-black text-white">사진 인증</p>
+               <p id="review_vtime" class="text-[9px] font-bold text-slate-500"></p>
+               <div id="review_vapproval" class="hidden pt-2 border-t border-white/5">
+                 <p class="text-[9px] font-bold text-amber-400">✓ 호스트 승인 필요</p>
+               </div>
+             </div>
+             <div class="bg-white/5 rounded-[24px] p-5 space-y-2 border border-white/5">
+               <p class="text-[9px] font-black text-slate-600 uppercase">Participation</p>
+               <p id="review_admission" class="text-sm font-black text-white">선착순</p>
+               <p id="review_max" class="text-[9px] font-bold text-slate-500">최대 30명</p>
+               <div id="review_rufa_only" class="hidden pt-2 border-t border-white/5">
+                 <p class="text-[9px] font-bold text-indigo-400">⚡ 루파 클럽 전용</p>
+               </div>
+             </div>
+           </div>
+
+           <!-- Review: Cost & Achievement -->
+           <div class="bg-white/5 rounded-[32px] p-6 space-y-4 border border-white/5">
+             <div class="flex justify-between items-center">
+               <div>
+                 <p class="text-[9px] font-black text-slate-600 uppercase">Cost Type</p>
+                 <p id="review_cost" class="text-xl font-black text-white">10,000원</p>
+               </div>
+               <div id="review_penalty_box" class="hidden text-right">
+                 <p class="text-[9px] font-black text-slate-600 uppercase">Penalty</p>
+                 <p id="review_penalty" class="text-sm font-black text-red-400"></p>
+               </div>
+             </div>
+             <div id="review_achievement_box" class="hidden grid grid-cols-2 gap-3 pt-3 border-t border-white/5">
+               <div class="text-center">
+                 <p class="text-[9px] font-black text-slate-600 uppercase">Full Refund</p>
+                 <p id="review_full_refund" class="text-lg font-black text-indigo-400">85%</p>
+               </div>
+               <div class="text-center">
+                 <p class="text-[9px] font-black text-slate-600 uppercase">Max Failures</p>
+                 <p id="review_max_failures" class="text-lg font-black text-purple-400">3회</p>
+               </div>
+             </div>
+             <div id="review_bank_box" class="hidden pt-3 border-t border-white/5">
+               <p class="text-[9px] font-black text-slate-600 uppercase mb-1">Settlement Account</p>
+               <p id="review_bank" class="text-xs font-bold text-slate-400"></p>
+             </div>
+             <div id="review_refund_policy_box" class="hidden pt-3 border-t border-white/5">
+               <p class="text-[9px] font-black text-slate-600 uppercase mb-1">Refund Policy</p>
+               <p id="review_refund_policy" class="text-[9px] font-bold text-slate-400 leading-relaxed line-clamp-3"></p>
+             </div>
+           </div>
+
+           <!-- Review: Rewards (if any) -->
+           <div id="review_rewards_box" class="hidden bg-white/5 rounded-[32px] p-6 space-y-3 border border-white/5">
+             <p class="text-xs font-black text-indigo-400 uppercase tracking-wider">Winner Benefits</p>
+             <div id="review_rewards" class="space-y-2">
+               <!-- Rewards will be injected here -->
+             </div>
+           </div>
+
+           <!-- Review: Additional Info -->
+           <div id="review_additional_box" class="hidden bg-white/5 rounded-[24px] p-5 space-y-2 border border-white/5">
+             <p class="text-[9px] font-black text-slate-600 uppercase">Additional Settings</p>
+             <div id="review_additional" class="space-y-1 text-[9px] font-bold text-slate-400">
+               <!-- Additional settings will be injected here -->
+             </div>
+           </div>
+
            <div class="p-6 bg-slate-900 border border-white/5 rounded-[32px]">
               <p class="text-[10px] font-bold text-slate-500 text-center leading-relaxed">부적절한 챌린지는 운영 정책에 따라 <br/>사전 통보 없이 삭제될 수 있습니다.</p>
            </div>
@@ -735,20 +805,21 @@
         nextBtn.classList.add('hidden');
         submitBtn.classList.remove('hidden');
 
-        // Update Review Card in Final Step
+        // === 1. Basic Info ===
         document.getElementById('review_title').textContent = document.querySelector('input[name="challenge[title]"]').value || "무제 챌린지";
+        document.getElementById('review_summary').textContent = document.querySelector('input[name="challenge[summary]"]').value || "";
         document.getElementById('review_cat').textContent = "#" + (document.getElementById('h_category').value || "HEALTH");
         
-        const vtypeMap = { photo: "사진 인증", simple: "간편 인증", metric: "수치 기록", url: "링크 제출" };
-        document.getElementById('review_vtype').textContent = vtypeMap[document.getElementById('h_v_type').value];
-        
-        const costType = document.getElementById('h_cost_type').value;
-        if (costType === 'free') {
-          document.getElementById('review_cost').textContent = "무료 참여";
+        // Preparation items
+        const preparation = document.querySelector('textarea[name="challenge[preparation_items]"]').value;
+        if (preparation) {
+          document.getElementById('review_preparation').textContent = preparation;
+          document.getElementById('review_preparation_box').classList.remove('hidden');
         } else {
-          document.getElementById('review_cost').textContent = formatNumber(document.querySelector('input[name="challenge[amount]"]').value || "0") + "원";
+          document.getElementById('review_preparation_box').classList.add('hidden');
         }
-
+        
+        // === 2. Schedule ===
         const cStart = document.querySelector('input[name="challenge[start_date]"]').value;
         const cEnd = document.querySelector('input[name="challenge[end_date]"]').value;
         document.getElementById('review_period').textContent = `${cStart.slice(5)} ~ ${cEnd.slice(5)}`;
@@ -756,20 +827,158 @@
         const rEnd = document.querySelector('input[name="challenge[recruitment_end_date]"]').value;
         document.getElementById('review_recruitment').textContent = `~ ${rEnd.slice(5)}`;
 
-        const refund = document.querySelector('textarea[name="challenge[refund_policy]"]').value;
-        document.getElementById('review_refund_box').classList.toggle('hidden', costType === 'free' || !refund);
-        document.getElementById('review_refund').textContent = refund;
-        
-        // Review Goals
+        // === 3. Mission Goals ===
         const mode = document.getElementById('h_goal_mode').value;
-        const goalDisplay = document.getElementById('review_vtype');
+        const goalsContainer = document.getElementById('review_goals');
+        goalsContainer.innerHTML = '';
+        
         if (mode === 'fixed') {
           const items = JSON.parse(document.getElementById('h_certification_goal').value || "[]");
-          goalDisplay.textContent = items.length > 0 ? `${items[0]}${items.length > 1 ? ' 외 ' + (items.length - 1) + '건' : ''}` : "목표 미설정";
+          if (items.length > 0) {
+            items.forEach(item => {
+              goalsContainer.innerHTML += `<p class="text-sm font-bold text-white">• ${item}</p>`;
+            });
+          } else {
+            goalsContainer.innerHTML = '<p class="text-sm font-bold text-slate-500">목표 미설정</p>';
+          }
         } else {
           const daily = JSON.parse(document.getElementById('h_daily_goals').value || "{}");
           const daysData = Object.keys(daily);
-          goalDisplay.textContent = daysData.length > 0 ? `요일별 챌린지 (${daysData.length}일)` : "목표 미설정";
+          if (daysData.length > 0) {
+            daysData.forEach(day => {
+              const goals = daily[day];
+              goalsContainer.innerHTML += `<div class="space-y-1"><p class="text-xs font-black text-indigo-400">${day}요일</p>`;
+              goals.forEach(g => {
+                goalsContainer.innerHTML += `<p class="text-sm font-bold text-white pl-3">• ${g}</p>`;
+              });
+              goalsContainer.innerHTML += `</div>`;
+            });
+          } else {
+            goalsContainer.innerHTML = '<p class="text-sm font-bold text-slate-500">목표 미설정</p>';
+          }
+        }
+
+        // Active Days
+        const days = JSON.parse(document.getElementById('h_days').value || "[]");
+        const daysContainer = document.getElementById('review_days');
+        daysContainer.innerHTML = days.map(d => 
+          `<span class="px-2 py-1 bg-indigo-500/20 rounded-lg text-[9px] font-black text-indigo-400">${d}</span>`
+        ).join('');
+
+        // === 4. Verification ===
+        const vtypeMap = { photo: "사진 인증", simple: "간편 인증", metric: "수치 기록", url: "링크 제출" };
+        document.getElementById('review_vtype').textContent = vtypeMap[document.getElementById('h_v_type').value];
+        
+        const vStart = document.querySelector('input[name="challenge[verification_start_time]"]').value;
+        const vEnd = document.querySelector('input[name="challenge[verification_end_time]"]').value;
+        document.getElementById('review_vtime').textContent = `${vStart} ~ ${vEnd}`;
+        
+        const requiresApproval = document.getElementById('h_requires_approval').value === 'true';
+        document.getElementById('review_vapproval').classList.toggle('hidden', !requiresApproval);
+
+        // === 5. Participation ===
+        const admissionMap = { first_come: "선착순 입장", approval: "호스트 승인 후 입장" };
+        document.getElementById('review_admission').textContent = admissionMap[document.getElementById('h_admission').value];
+        
+        const maxPart = document.querySelector('input[name="challenge[max_participants]"]').value;
+        document.getElementById('review_max').textContent = `최대 ${maxPart}명`;
+        
+        const rufaOnly = document.getElementById('h_rufa_only').value === 'true';
+        document.getElementById('review_rufa_only').classList.toggle('hidden', !rufaOnly);
+
+        // === 6. Cost & Achievement ===
+        const costType = document.getElementById('h_cost_type').value;
+        const costTypeMap = { free: "무료", fee: "참가비", deposit: "보증금" };
+        
+        if (costType === 'free') {
+          document.getElementById('review_cost').textContent = "무료 참여";
+          document.getElementById('review_penalty_box').classList.add('hidden');
+          document.getElementById('review_achievement_box').classList.add('hidden');
+          document.getElementById('review_bank_box').classList.add('hidden');
+          document.getElementById('review_refund_policy_box').classList.add('hidden');
+        } else {
+          const amount = document.querySelector('input[name="challenge[amount]"]').value || "0";
+          document.getElementById('review_cost').textContent = `${costTypeMap[costType]} ${formatNumber(amount)}원`;
+          
+          // Penalty (deposit only)
+          if (costType === 'deposit') {
+            const penalty = document.querySelector('input[name="challenge[penalty_per_failure]"]').value || "0";
+            document.getElementById('review_penalty').textContent = `${formatNumber(penalty)}원/회`;
+            document.getElementById('review_penalty_box').classList.remove('hidden');
+            
+            // Achievement thresholds
+            const fullRefund = document.getElementById('input_full_refund').value;
+            const maxFailures = document.getElementById('input_failure_tolerance').value;
+            document.getElementById('review_full_refund').textContent = `${fullRefund}%`;
+            document.getElementById('review_max_failures').textContent = `${maxFailures}회`;
+            document.getElementById('review_achievement_box').classList.remove('hidden');
+          } else {
+            document.getElementById('review_penalty_box').classList.add('hidden');
+            document.getElementById('review_achievement_box').classList.add('hidden');
+          }
+          
+          // Bank info
+          const bank = document.getElementById('h_bank').value;
+          const holder = document.querySelector('input[name="challenge[host_account_holder]"]').value;
+          const account = document.querySelector('input[name="challenge[host_account]"]').value;
+          if (holder && account) {
+            document.getElementById('review_bank').textContent = `${bank} ${account} (${holder})`;
+            document.getElementById('review_bank_box').classList.remove('hidden');
+          } else {
+            document.getElementById('review_bank_box').classList.add('hidden');
+          }
+          
+          // Refund policy
+          const refundPolicy = document.querySelector('textarea[name="challenge[refund_policy]"]').value;
+          if (refundPolicy) {
+            document.getElementById('review_refund_policy').textContent = refundPolicy;
+            document.getElementById('review_refund_policy_box').classList.remove('hidden');
+          } else {
+            document.getElementById('review_refund_policy_box').classList.add('hidden');
+          }
+        }
+
+        // === 7. Rewards ===
+        const rewards = JSON.parse(document.getElementById('h_reward_policy').value || "[]");
+        if (rewards.length > 0) {
+          const rewardsContainer = document.getElementById('review_rewards');
+          rewardsContainer.innerHTML = rewards.map(r => 
+            `<div class="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+              <span class="text-sm font-black text-white">${r.rank}</span>
+              <span class="text-xs font-bold text-indigo-400">${r.benefit || r.reward || r.description || ''}</span>
+            </div>`
+          ).join('');
+          document.getElementById('review_rewards_box').classList.remove('hidden');
+        } else {
+          document.getElementById('review_rewards_box').classList.add('hidden');
+        }
+
+        // === 8. Additional Settings ===
+        const additionalContainer = document.getElementById('review_additional');
+        const additionalItems = [];
+        
+        const isPrivate = document.getElementById('h_is_private').value === 'true';
+        if (isPrivate) {
+          const invCode = document.getElementById('h_inv_code').value;
+          additionalItems.push(`🔒 비공개 챌린지 (초대코드: ${invCode})`);
+        }
+        
+        const requiresMsg = document.getElementById('h_requires_msg').value === 'true';
+        if (requiresMsg) {
+          const question = document.querySelector('textarea[name="challenge[application_question]"]').value;
+          additionalItems.push(`📝 참여 신청 시 질문: "${question}"`);
+        }
+        
+        const reVerify = document.getElementById('h_reverify').value === 'true';
+        if (reVerify) {
+          additionalItems.push(`✓ 실패 시 당일 재인증 가능`);
+        }
+        
+        if (additionalItems.length > 0) {
+          additionalContainer.innerHTML = additionalItems.map(item => `<p>• ${item}</p>`).join('');
+          document.getElementById('review_additional_box').classList.remove('hidden');
+        } else {
+          document.getElementById('review_additional_box').classList.add('hidden');
         }
 
       } else {

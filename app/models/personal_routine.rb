@@ -22,10 +22,15 @@ class PersonalRoutine < ApplicationRecord
       # 완료 취소
       completion.destroy
       update_stats!
+      user.update_level! # Update level after stats change
     else
       # 완료 처리
       completions.create!(completed_on: date)
       update_stats!
+      user.update_level! # Update level (may trigger level up!)
+
+      # 배지 체크 (비동기로 처리하면 더 좋음)
+      BadgeService.new(user).check_and_award_all!
 
       # 루파 클럽 멤버일 경우 활동 피드 생성 (오늘 날짜인 경우에만 생성 권장, 하지만 일단 유연하게 둠)
       # 단, 과거 기록 수정 시 피드가 도배되는 것을 방지하기 위해 오늘인 경우에만 피드 생성 등의 로직 고려 가능.

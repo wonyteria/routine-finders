@@ -1,169 +1,150 @@
-<div class="space-y-10">
-  <!-- Verification Rules -->
+<div class="space-y-12">
+  <!-- 1. Daily Mission & Schedule -->
   <div class="space-y-6">
     <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
       <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+      </div>
+      데일리 미션 및 일정
+    </h2>
+
+    <div class="space-y-4">
+      <!-- Active Days -->
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">활동 요일</p>
+        <div class="flex gap-2">
+          <% (challenge.days || []).each do |day| %>
+            <span class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-black rounded-xl shadow-sm"><%= day %></span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Mission Goals -->
+      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">미션 목표</p>
+        
+        <% if challenge.daily_goals.present? %>
+          <div class="space-y-4">
+            <% challenge.daily_goals.each do |day, goals| %>
+              <div class="space-y-2">
+                <p class="text-xs font-black text-indigo-600 underline underline-offset-4 decoration-2"><%= day %>요일</p>
+                <div class="pl-2 space-y-1">
+                  <% Array(goals).each do |goal| %>
+                    <p class="text-sm font-bold text-slate-800 flex items-start gap-2">
+                      <span class="text-indigo-400 mt-1">•</span>
+                      <%= goal %>
+                    </p>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% elsif challenge.certification_goal.present? %>
+          <div class="space-y-2">
+            <% Array(challenge.certification_goal).each do |goal| %>
+              <p class="text-sm font-bold text-slate-800 flex items-start gap-2">
+                <span class="text-indigo-400 mt-1">•</span>
+                <%= goal %>
+              </p>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm font-medium text-slate-400 italic">상세 미션 내용이 설정되지 않았습니다.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Verification Details -->
+  <div class="space-y-6">
+    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       </div>
-      <%= challenge.offline? ? "참여 인증 규칙" : "인증 규칙" %>
+      인증 및 달성 기준
     </h2>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Verification Method -->
-      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
-        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <div class="p-6 bg-white rounded-3xl border border-slate-100 flex items-start gap-4 shadow-sm">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0 text-indigo-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         </div>
         <div>
           <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">인증 방식</p>
-          <div class="flex flex-wrap gap-1">
-            <% methods = [] %>
-            <% methods << "사진 업로드" if challenge.v_photo? %>
-            <% methods << "단순 체크" if challenge.v_simple? %>
-            <% methods << "수치 입력" if challenge.v_metric? %>
-            <% methods << "URL 공유" if challenge.v_url? %>
-            <% if methods.any? %>
-              <p class="font-bold text-slate-900"><%= methods.join(", ") %></p>
-            <% else %>
-              <p class="font-bold text-slate-900"><%= { simple: '간단 완료 체크', metric: '수치 데이터 입력', photo: '사진 업로드 인증', url: '공유 URL 링크 인증', complex: '복합형 인증' }[challenge.verification_type.to_sym] %></p>
-            <% end %>
-          </div>
-          <p class="text-xs text-slate-500 mt-1">지정된 모든 인증을 완료해야 인정됩니다.</p>
-        </div>
-      </div>
-
-      <!-- Verification Time -->
-      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
-        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">인증 가능 시간</p>
           <p class="font-bold text-slate-900">
-            <%= challenge.verification_start_time&.strftime('%H:%M') || '00:00' %> - <%= challenge.verification_end_time&.strftime('%H:%M') || '23:59' %>
+            <%= { simple: '간단 완료 체크', metric: '수치 데이터 입력', photo: '사진 업로드 인증', url: '공유 URL 링크 인증' }[challenge.verification_type&.to_sym] || '기본 인증' %>
           </p>
-          <p class="text-xs text-slate-500 mt-1">지정된 시간 내에만 인증이 가능합니다.</p>
+          <p class="text-[11px] text-slate-500 mt-1"><%= challenge.verification_start_time&.strftime('%H:%M') %> ~ <%= challenge.verification_end_time&.strftime('%H:%M') %> 시간 내 인증</p>
         </div>
       </div>
 
-      <!-- Failure Tolerance -->
-      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
-        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      <!-- Achievement Threshold -->
+      <div class="p-6 bg-white rounded-3xl border border-slate-100 flex items-start gap-4 shadow-sm">
+        <div class="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center shrink-0 text-rose-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
         </div>
         <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">최대 실패 허용</p>
-          <p class="font-bold text-slate-900"><%= challenge.failure_tolerance %>회까지</p>
-          <p class="text-xs text-slate-500 mt-1">허용 횟수를 초과하면 <%= challenge.offline? ? "모임" : "챌린지" %>에서 탈락합니다.</p>
-        </div>
-      </div>
-
-      <!-- Approval Method -->
-      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
-        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-        </div>
-        <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">인증 승인 방식</p>
-          <p class="font-bold text-slate-900"><%= challenge.mission_requires_host_approval ? '호스트 직접 승인' : '시스템 자동 승인' %></p>
-          <p class="text-xs text-slate-500 mt-1"><%= challenge.mission_requires_host_approval ? '호스트가 인증 내용을 검토 후 최종 승인합니다.' : '인증 완료 시 즉시 인정됩니다.' %></p>
-        </div>
-      </div>
-
-      <!-- Re-verification -->
-      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
-        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-        </div>
-        <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">재인증 허용</p>
-          <p class="font-bold text-slate-900"><%= challenge.re_verification_allowed ? '허용' : '불가' %></p>
-          <p class="text-xs text-slate-500 mt-1"><%= challenge.re_verification_allowed ? '거절 시 당일 재시도가 가능합니다.' : '거절 시 재시도가 불가능합니다.' %></p>
-        </div>
-      </div>
-
-      <!-- Entry Type -->
-      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex items-start gap-4">
-        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-        </div>
-        <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">참여 방식</p>
-          <p class="font-bold text-slate-900"><%= challenge.admission_type_approval? ? '선별형 참여' : '자유 참여' %> | <%= challenge.is_private? ? '비공개' : '공개' %></p>
-          <p class="text-xs text-slate-500 mt-1"><%= challenge.admission_type_approval? ? '호스트의 승인이 필요합니다.' : '누구나 즉시 참여할 수 있습니다.' %></p>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">성공 및 환급 기준</p>
+          <p class="font-bold text-slate-900">달성률 <%= challenge.full_refund_threshold %>% 이상</p>
+          <p class="text-[11px] text-slate-500 mt-1">최대 <%= challenge.failure_tolerance %>회 실패까지 전액 환급 가능</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Ranking Rules -->
-  <div class="space-y-6">
-    <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
-      </div>
-      순위 산정 규칙
-    </h2>
-
-    <div class="p-8 bg-slate-50 rounded-[40px] border border-slate-100 space-y-6">
-      <p class="text-sm font-bold text-slate-600 leading-relaxed">
-        <%= challenge.offline? ? "모임" : "챌린지" %> 종료 후 달성률이 동일한 동점자가 발생할 경우, 루틴 파인더스만의 <span class="text-indigo-600">성실도 알고리즘</span>을 통해 최종 순위가 결정됩니다.
-      </p>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="space-y-3">
-          <div class="flex items-center gap-2">
-            <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black">1</span>
-            <span class="text-xs font-black text-slate-900">성실도 지표</span>
-          </div>
-          <p class="text-[11px] font-medium text-slate-500 leading-relaxed pl-8">실천율 및 최대 연속 달성(Streak) 기록을 가장 우선시합니다.</p>
+  <!-- 3. Payment & Settlement -->
+  <% unless challenge.cost_type_free? %>
+    <div class="space-y-6">
+      <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
         </div>
+        비용 및 정산 안내
+      </h2>
 
-        <div class="space-y-3">
-          <div class="flex items-center gap-2">
-            <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-black">2</span>
-            <span class="text-xs font-black text-slate-900">활동 지표</span>
+      <div class="space-y-4">
+        <!-- Bank Info -->
+        <% if challenge.host_bank.present? && challenge.host_account.present? %>
+          <div class="p-8 bg-slate-50 rounded-[40px] border border-slate-100 flex items-center justify-between">
+            <div>
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">정산 계좌 정보</p>
+              <p class="text-xl font-black text-slate-900 tracking-tight">
+                <%= challenge.host_bank %> <span class="text-indigo-600"><%= challenge.host_account %></span>
+              </p>
+              <p class="text-xs font-bold text-slate-500 mt-1">예금주: <%= challenge.host_account_holder %></p>
+            </div>
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-2xl">🏦</div>
           </div>
-          <p class="text-[11px] font-medium text-slate-500 leading-relaxed pl-8">서비스 접속률 및 커뮤니티 활동 지수를 합산하여 반영합니다.</p>
-        </div>
+        <% end %>
 
-        <div class="space-y-3">
-          <div class="flex items-center gap-2">
-            <span class="flex-shrink-0 w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-[10px] font-black">3</span>
-            <span class="text-xs font-black text-slate-900">루틴 진심도</span>
+        <!-- Refund Policy -->
+        <% if challenge.refund_policy.present? %>
+          <div class="p-8 bg-indigo-50/50 rounded-[40px] border border-indigo-100/50 space-y-3">
+            <p class="text-[10px] font-black text-indigo-600 uppercase tracking-widest">환불 정책</p>
+            <p class="text-sm font-bold text-slate-700 leading-relaxed whitespace-pre-wrap"><%= challenge.refund_policy %></p>
           </div>
-          <p class="text-[11px] font-medium text-slate-500 leading-relaxed pl-8">관리 중인 개인 루틴의 개수와 전반적인 성실도를 체크합니다.</p>
-        </div>
-      </div>
-
-      <div class="pt-6 border-t border-slate-200/60">
-        <p class="text-[11px] font-bold text-slate-400 italic">
-          * 모든 지표가 동일할 경우, <%= challenge.offline? ? "모임" : "챌린지" %>에 먼저 참여 신청을 완료한 순서(선착순)에 따라 최종 순위가 확정됩니다.
-        </p>
+        <% end %>
       </div>
     </div>
-  </div>
+  <% end %>
 
   <!-- Important Notes -->
-  <div class="p-8 bg-gradient-to-br from-rose-50 to-orange-50 rounded-[40px] border border-rose-100">
+  <div class="p-8 bg-rose-50 rounded-[40px] border border-rose-100">
     <div class="flex items-start gap-4">
       <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-rose-600 shrink-0">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
       </div>
       <div class="space-y-3">
-        <p class="text-sm font-black text-rose-900">주의사항</p>
-        <ul class="space-y-2 text-sm font-medium text-slate-600">
+        <p class="text-sm font-black text-rose-900">도전 시 주의사항</p>
+        <ul class="space-y-2 text-xs font-bold text-slate-600">
           <li class="flex items-start gap-2">
-            <span class="text-rose-500 mt-0.5">•</span>
-            <span><%= challenge.offline? ? "모임" : "챌린지" %> 시작 후에는 규칙 변경이 불가능합니다.</span>
+            <span class="text-rose-500">•</span>
+            <span>중도 포기 시 보증금/참가비는 환불되지 않습니다.</span>
           </li>
           <li class="flex items-start gap-2">
-            <span class="text-rose-500 mt-0.5">•</span>
-            <span>부정 인증이 적발될 경우 즉시 탈락 처리되며, <%= challenge.offline? ? "참가 비용" : "보증금" %>은 환급되지 않습니다.</span>
-          </li>
-          <li class="flex items-start gap-2">
-            <span class="text-rose-500 mt-0.5">•</span>
-            <span><%= challenge.offline? ? "모임" : "챌린지" %> 중도 탈퇴 시 보증금은 환급되지 않으며, 이미 지불한 참가비는 반환되지 않습니다.</span>
+            <span class="text-rose-500">•</span>
+            <span>부적절한 인증(허위 사진 등) 적발 시 즉시 탈락 처리될 수 있습니다.</span>
           </li>
         </ul>
       </div>

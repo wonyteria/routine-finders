@@ -53,6 +53,9 @@ class Participant < ApplicationRecord
       completion_rate: new_rate
     )
     check_status!
+
+    # 배지 체크
+    BadgeService.new(user).check_and_award_all!
   end
 
   def record_failure!

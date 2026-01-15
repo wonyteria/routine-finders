@@ -55,13 +55,24 @@ class PrototypeController < ApplicationController
   end
 
   def synergy
-    @top_users = User.active.limit(3) # Placeholder for Hall of Fame
+    # Hall of Fame: Monthly rankings for active Rufa Club members
+    active_members = User.joins(:routine_club_members)
+                        .where(routine_club_members: { status: :active })
+                        .distinct
+
+    @monthly_rankings = active_members.map { |u| { user: u, score: u.rufa_club_score } }
+                                      .sort_by { |r| -r[:score] }
+                                      .take(20) # Top 20 for full leaderboard
+
+    @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
     @recent_activities = RufaActivity.order(created_at: :desc).limit(10)
   end
 
   def my
     @total_activities = current_user&.total_routine_completions || 0
     @current_streak = current_user&.personal_routines&.maximum(:current_streak) || 0
+    @current_month_points = current_user&.current_month_points || 0
+    @total_platform_score = current_user&.total_platform_score || 0
     @achievements = current_user&.user_badges&.includes(:badge)&.limit(3) || []
   end
 

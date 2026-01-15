@@ -1,16 +1,89 @@
 <% if params[:source] == 'prototype' %>
   <style>
-    .host-prototype-env { background: #0C0B12; color: white; min-height: 100vh; padding: 2rem 1.5rem; }
-    .host-prototype-env .bg-white { background: rgba(255, 255, 255, 0.03) !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; color: white !important; }
-    .host-prototype-env .text-slate-900 { color: white !important; }
-    .host-prototype-env .text-slate-400, .host-prototype-env .text-slate-500, .host-prototype-env .text-slate-600 { color: #71717a !important; }
-    .host-prototype-env .border-slate-100, .host-prototype-env .border-slate-200 { border-color: rgba(255, 255, 255, 0.05) !important; }
-    .host-prototype-env .bg-slate-50, .host-prototype-env .bg-slate-50\/50 { background: rgba(255, 255, 255, 0.02) !important; }
-    .host-prototype-env input, .host-prototype-env textarea { background: rgba(255, 255, 255, 0.05) !important; color: white !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; }
-    .host-prototype-env .shadow-xl, .host-prototype-env .shadow-lg { box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5) !important; }
+    .host-prototype-env { 
+      background: #0C0B12; 
+      color: #f8fafc; 
+      min-height: 100vh;
+      position: relative;
+      z-index: 10;
+    }
+    /* Cover the main container's padding and light background */
+    .host-prototype-wrapper {
+      background: #0C0B12;
+      margin: -2rem -1rem; /* Adjusting for application.html.erb main padding */
+      padding: 2rem 1rem 8rem 1rem;
+    }
+    @media (min-width: 640px) {
+      .host-prototype-wrapper { margin: -2rem -1.5rem; padding: 2rem 1.5rem 8rem 1.5rem; }
+    }
+    @media (min-width: 1024px) {
+      .host-prototype-wrapper { margin: -2rem -2rem; padding: 2rem 2rem 8rem 2rem; }
+    }
+    .host-prototype-env .app-glass-card { 
+      background: rgba(255, 255, 255, 0.03); 
+      border: 1px solid rgba(255, 255, 255, 0.08); 
+      backdrop-filter: blur(20px);
+      border-radius: 2.5rem;
+    }
+    .host-prototype-env .glass-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.25rem;
+      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+    }
+    .host-prototype-env .glass-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
+    .host-prototype-env .tab-active { color: white; position: relative; }
+    .host-prototype-env .tab-active::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: currentColor; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+    
     .no-scrollbar::-webkit-scrollbar { display: none; }
+    
+    /* Global Overrides for Partials within Host Env */
+    .host-prototype-env .bg-white, 
+    .host-prototype-env .bg-slate-50, 
+    .host-prototype-env .bg-indigo-50, 
+    .host-prototype-env .bg-orange-50,
+    .host-prototype-env .bg-emerald-50,
+    .host-prototype-env .bg-amber-50,
+    .host-prototype-env .bg-slate-100 { 
+      background: rgba(255, 255, 255, 0.02) !important; 
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 2rem !important;
+    }
+    .host-prototype-env .text-slate-900, .host-prototype-env .text-slate-800, .host-prototype-env .text-amber-900, .host-prototype-env .text-emerald-900, .host-prototype-env .text-slate-700 { color: #f8fafc !important; }
+    .host-prototype-env .text-slate-600, .host-prototype-env .text-slate-500, .host-prototype-env .text-slate-400 { color: #94a3b8 !important; }
+    .host-prototype-env .border-slate-200, .host-prototype-env .border-slate-100 { border-color: rgba(255, 255, 255, 0.08) !important; }
+    
+    .host-prototype-env table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .host-prototype-env thead tr { background: rgba(255, 255, 255, 0.02) !important; }
+    .host-prototype-env th { color: #64748b !important; font-weight: 900 !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; }
+    .host-prototype-env td { border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important; color: #cbd5e1 !important; }
+    .host-prototype-env tr:hover td { background: rgba(255, 255, 255, 0.01) !important; }
+
+    .host-prototype-env input[type="text"], 
+    .host-prototype-env input[type="number"], 
+    .host-prototype-env input[type="date"], 
+    .host-prototype-env input[type="time"], 
+    .host-prototype-env input[type="file"],
+    .host-prototype-env textarea,
+    .host-prototype-env select { 
+      background: rgba(255, 255, 255, 0.03) !important; 
+      border: 1px solid rgba(255, 255, 255, 0.1) !important; 
+      color: white !important;
+      border-radius: 1.25rem !important;
+      padding: 1rem 1.25rem !important;
+    }
+    .host-prototype-env input:focus, .host-prototype-env textarea:focus, .host-prototype-env select:focus {
+      border-color: rgba(99, 102, 241, 0.4) !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+    }
+    .host-prototype-env label { color: #94a3b8 !important; }
+    
+    .host-prototype-env .app-glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-radius: 2.5rem; }
+    .host-prototype-env .glass-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.25rem; transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1); }
   </style>
-  <div class="host-prototype-env -mx-4 -mt-8">
+  <div class="host-prototype-env host-prototype-wrapper">
 <% end %>
 
 <div class="space-y-8 pb-32">
@@ -18,364 +91,227 @@
   <% theme_bg_class = @challenge.offline? ? "bg-orange-600" : "bg-indigo-600" %>
   <% theme_light_bg = @challenge.offline? ? "bg-orange-50" : "bg-indigo-50" %>
   <% theme_text_class = @challenge.offline? ? "text-orange-600" : "text-indigo-600" %>
-  <!-- Header -->
-  <div class="flex items-center justify-between">
-    <%= link_to hosted_challenges_path, class: "p-4 bg-white border border-slate-200 rounded-3xl text-slate-500 hover:#{theme_text_class} shadow-sm transition-all" do %>
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-    <% end %>
-    <div class="flex items-center gap-3">
-      <%= link_to challenge_path(@challenge), class: "px-5 py-2.5 #{theme_bg_class} text-white rounded-2xl font-bold text-sm hover:brightness-110 transition-all shadow-lg shadow-opacity-20" do %>
-        <div class="flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-          공개 페이지 보기
-        </div>
+  <!-- 1. Top Navigation & Header -->
+  <header class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <%= link_to hosted_challenges_path(source: params[:source]), class: "glass-btn w-11 h-11 flex items-center justify-center text-slate-400" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
       <% end %>
+      <div>
+        <h1 class="text-xl font-black tracking-tight text-white line-clamp-1"><%= @challenge.title %></h1>
+        <p class="text-[10px] font-black <%= theme_text_class %> uppercase tracking-widest mt-0.5">Admin Management Suite</p>
+      </div>
     </div>
-  </div>
+    
+    <div class="flex items-center gap-2">
+      <%= link_to challenge_path(@challenge, source: params[:source]), 
+                  target: "_blank",
+                  class: "glass-btn px-6 py-2.5 text-[11px] font-black text-white hover:bg-white/10 active:scale-95 transition-all" do %>
+        PREVIEW LIVE
+      <% end %>
 
-  <!-- Challenge Header Card -->
-  <div class="bg-white rounded-[40px] border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
-    <!-- Compact Header -->
-    <div class="p-8 border-b border-slate-200">
-      <div class="flex items-center gap-6">
-        <% if @challenge.thumbnail_image.attached? %>
-          <%= image_tag @challenge.thumbnail_image, class: "w-24 h-24 rounded-3xl object-cover shadow-lg" %>
-        <% else %>
-          <img src="<%= @challenge.thumbnail %>" class="w-24 h-24 rounded-3xl object-cover shadow-lg" alt="">
-        <% end %>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="px-3 py-1.5 rounded-full text-xs font-black uppercase <%= @challenge.offline? ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' %>">
-              <%= @challenge.offline? ? 'OFFLINE' : 'ONLINE' %>
-            </span>
-            <% if @challenge.requires_approval? %>
-              <span class="px-3 py-1.5 rounded-full text-xs font-black uppercase bg-amber-100 text-amber-700">승인제</span>
-            <% end %>
-            <% if @challenge.is_official %>
-              <span class="px-3 py-1.5 rounded-full text-xs font-black uppercase bg-emerald-100 text-emerald-700">OFFICIAL</span>
-            <% end %>
-          </div>
-          <h1 class="text-3xl font-black text-slate-900 mb-2"><%= @challenge.title %></h1>
-          <p class="text-slate-500 font-medium"><%= @challenge.start_date.strftime('%Y.%m.%d') %> ~ <%= @challenge.end_date.strftime('%Y.%m.%d') %></p>
+      <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#hide">
+        <button data-action="click->dropdown#toggle" 
+                class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400 hover:text-white active:scale-95 transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+        </button>
+
+        <div data-dropdown-target="menu" 
+             class="hidden absolute right-0 mt-3 w-48 app-glass-card border-white/10 shadow-2xl py-2 z-[100] animate-slide-up bg-[#1B1A24]">
+          <button onclick="navigator.clipboard.writeText('<%= challenge_url(@challenge) %>'); alert('링크가 복사되었습니다!');" 
+                  class="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black text-slate-400 hover:text-white hover:bg-white/5 transition-all text-left uppercase tracking-widest border-none cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            Copy Link
+          </button>
+          
+          <%= link_to hosted_challenge_path(@challenge, tab: "settings", source: params[:source]), 
+                      class: "flex items-center gap-3 px-4 py-3 text-[11px] font-black text-slate-400 hover:text-white hover:bg-white/5 transition-all uppercase tracking-widest" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+            Suite Settings
+          <% end %>
+
+          <div class="h-px bg-white/5 my-1 mx-4"></div>
+
+          <%= button_to hosted_challenge_path(@challenge, source: params[:source]), 
+                        method: :delete, 
+                        data: { turbo_confirm: "정말로 이 챌린지를 삭제하시겠습니까? 삭제된 데이터는 복구할 수 없습니다." }, 
+                        class: "w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black text-rose-500 hover:bg-rose-500/10 transition-all text-left uppercase tracking-widest border-none bg-transparent cursor-pointer" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Delete Loop
+          <% end %>
         </div>
       </div>
     </div>
+  </header>
 
-    <!-- Key Stats Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border-b border-slate-200">
-      <div class="p-6 text-center border-r border-slate-200">
-        <p class="text-3xl font-black <%= theme_text_class %> mb-1"><%= @stats[:total_participants] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">총 참가자</p>
-      </div>
-      <div class="p-6 text-center border-r border-slate-200">
-        <div class="flex items-center justify-center gap-2 mb-1">
-          <p class="text-2xl font-black text-green-600"><%= @stats[:active_today] %></p>
-          <span class="text-slate-300 text-xl font-black">/</span>
-          <p class="text-2xl font-black text-slate-400"><%= @stats[:unverified_today] %></p>
+  <!-- 2. Performance Metric Cards -->
+  <section class="relative">
+    <div class="absolute -top-24 -left-24 w-80 h-80 bg-indigo-500/10 blur-[120px] pointer-events-none"></div>
+    <div class="app-glass-card p-1">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-x divide-white/5">
+        <div class="p-6 text-center group">
+          <p class="text-4xl font-black italic mb-1 group-hover:scale-110 transition-transform"><%= @stats[:total_participants] %></p>
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Growth Loopers</p>
         </div>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">오늘 완료/미완료</p>
-      </div>
-      <div class="p-6 text-center border-r border-slate-200">
-        <p class="text-3xl font-black text-slate-900 mb-1"><%= @stats[:avg_completion_rate] %>%</p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">평균 달성률</p>
-      </div>
-      <div class="p-6 text-center border-r border-slate-200">
-        <p class="text-3xl font-black text-orange-500 mb-1"><%= @stats[:streak_keepers] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">스트릭 유지</p>
-      </div>
-      <div class="p-6 text-center border-r border-slate-200">
-        <p class="text-3xl font-black text-red-600 mb-1"><%= @stats[:dropped_out] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">탈락 인원</p>
-      </div>
-      <div class="p-6 text-center">
-        <p class="text-3xl font-black <%= @stats[:pending_verifications] > 0 ? 'text-amber-600' : 'text-slate-300' %> mb-1"><%= @stats[:pending_verifications] %></p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">인증 대기</p>
+        <div class="p-6 text-center group">
+          <p class="text-4xl font-black text-emerald-400 italic mb-1 group-hover:scale-110 transition-transform"><%= @stats[:active_today] %></p>
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Daily Success</p>
+        </div>
+        <div class="p-6 text-center group">
+          <p class="text-4xl font-black text-indigo-400 italic mb-1 group-hover:scale-110 transition-transform"><%= @stats[:avg_completion_rate] %>%</p>
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Avg Pulse</p>
+        </div>
+        <div class="p-6 text-center group">
+          <p class="text-4xl font-black text-amber-400 italic mb-1 group-hover:scale-110 transition-transform"><%= @stats[:streak_keepers] %></p>
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Hot Streaks</p>
+        </div>
+        <div class="p-6 text-center group">
+          <p class="text-4xl font-black text-rose-500 italic mb-1 group-hover:scale-110 transition-transform"><%= @stats[:dropped_out] %></p>
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Lost Pulse</p>
+        </div>
+        <div class="p-6 text-center group">
+          <p class="text-4xl font-black <%= @stats[:pending_verifications] > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-600' %> italic mb-1 group-hover:scale-110 transition-transform">
+            <%= @stats[:pending_verifications] %>
+          </p>
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Wait Logs</p>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- Management Tabs -->
-    <div class="border-b border-slate-200 bg-slate-50/50">
-      <nav class="flex gap-0 px-4 lg:px-8 overflow-x-auto hide-scrollbar whitespace-nowrap">
-        <% 
-          active_tab_class = "#{theme_color_class.gsub('border-', 'border-b-') .gsub('400', '600')} #{theme_text_class}"
-          inactive_tab_class = "border-transparent text-slate-400 hover:text-slate-600"
-        %>
-        <%= link_to hosted_challenge_path(@challenge, tab: "dashboard"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'dashboard' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-          대시보드
-        <% end %>
-        <% if @challenge.requires_approval? %>
-          <%= link_to hosted_challenge_path(@challenge, tab: "applications"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'applications' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-            신청 관리
-            <% if @stats[:pending_applications] > 0 %>
-              <span class="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full"><%= @stats[:pending_applications] %></span>
-            <% end %>
-          <% end %>
-        <% end %>
-        <%= link_to hosted_challenge_path(@challenge, tab: "participants"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'participants' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-          참가자
-        <% end %>
-        <%= link_to hosted_challenge_path(@challenge, tab: "announcements"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'announcements' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-          공지사항
-        <% end %>
-        <%= link_to hosted_challenge_path(@challenge, tab: "reviews"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'reviews' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-          리뷰
-        <% end %>
-        <% if @challenge.cost_type_deposit? %>
-          <%= link_to hosted_challenge_path(@challenge, tab: "refunds"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'refunds' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-            환급 관리
-            <% if @stats[:pending_refunds] > 0 %>
-              <span class="ml-2 px-2 py-0.5 <%= theme_bg_class %> text-white text-[10px] rounded-full"><%= @stats[:pending_refunds] %></span>
-            <% end %>
-          <% end %>
-        <% end %>
-        <%= link_to hosted_challenge_path(@challenge, tab: "settings"), class: "px-5 lg:px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'settings' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-          <div class="flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            설정
-          </div>
-        <% end %>
-      </nav>
-    </div>
-
-    <!-- Collapsible Challenge Details -->
-    <details class="border-b border-slate-200 group">
-      <summary class="px-5 lg:px-8 py-5 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 transition-colors">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl <%= theme_light_bg %> flex items-center justify-center <%= theme_text_class %>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <!-- Collapsible Challenge Details (Relocated) -->
+    <details class="app-glass-card group overflow-hidden border-none mb-8">
+      <summary class="px-5 lg:px-8 py-6 cursor-pointer list-none flex items-center justify-between hover:bg-white/5 transition-all">
+        <div class="flex items-center gap-4">
+          <div class="w-11 h-11 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
           <div>
-            <h3 class="text-lg font-black text-slate-900">챌린지 상세 정보</h3>
-            <p class="text-xs font-medium text-slate-400">개설 시 입력한 모든 정보 보기</p>
+            <h3 class="text-base font-black text-white">챌린지 상세 정보</h3>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Full Challenge Specifications</p>
           </div>
         </div>
-        <svg class="w-6 h-6 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        <div class="glass-btn w-9 h-9 flex items-center justify-center text-slate-500 group-open:rotate-180 transition-transform">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+        </div>
       </summary>
       
-      <div class="p-6 lg:p-12 space-y-8 lg:space-y-10 bg-slate-50/30">
+      <div class="p-8 lg:p-10 space-y-10 bg-white/[0.01] border-t border-white/5">
         <!-- Summary -->
         <% if @challenge.summary.present? %>
-          <div class="space-y-3">
+          <div class="space-y-4">
             <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-xl <%= theme_light_bg %> flex items-center justify-center <%= theme_text_class %>">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-              </div>
-              <h4 class="text-sm font-black text-slate-900 uppercase tracking-wider">한 줄 요약</h4>
+              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-400/10 rounded-lg">Summary</p>
             </div>
-            <p class="text-base font-bold text-slate-700 pl-11"><%= @challenge.summary %></p>
+            <p class="text-lg font-black text-white pl-1"><%= @challenge.summary %></p>
           </div>
         <% end %>
 
         <!-- Description -->
         <% if @challenge.description.present? %>
-          <div class="space-y-3">
+          <div class="space-y-4">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-xl <%= theme_light_bg %> flex items-center justify-center <%= theme_text_class %>">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              </div>
-              <h4 class="text-sm font-black text-slate-900 uppercase tracking-wider">상세 설명</h4>
+              <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-3 py-1 bg-white/5 rounded-lg text-white">Description</p>
             </div>
-            <div class="p-6 bg-white rounded-[24px] border border-slate-200">
-              <p class="text-sm font-medium text-slate-700 leading-relaxed whitespace-pre-wrap"><%= @challenge.description %></p>
+            <div class="p-8 bg-white/[0.03] rounded-[32px] border border-white/5">
+              <p class="text-sm font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= @challenge.description %></p>
             </div>
           </div>
         <% end %>
 
         <!-- Challenge Info Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Schedule -->
-          <div class="p-6 bg-white rounded-[24px] border border-slate-200 space-y-3">
+          <div class="p-6 bg-white/[0.03] rounded-[32px] border border-white/5 space-y-4">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              </div>
-              <p class="text-xs font-black text-slate-400 uppercase tracking-wider">진행 기간</p>
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Schedule</p>
             </div>
-            <p class="text-lg font-black text-slate-900"><%= @challenge.start_date.strftime('%m.%d') %> - <%= @challenge.end_date.strftime('%m.%d') %></p>
+            <p class="text-xl font-black text-white"><%= @challenge.start_date.strftime('%m.%d') %> - <%= @challenge.end_date.strftime('%m.%d') %></p>
             <% if @challenge.days.present? %>
-              <div class="flex flex-wrap gap-1.5 pt-1">
+              <div class="flex flex-wrap gap-2 pt-1">
                 <% @challenge.days.each do |day| %>
-                  <span class="px-2 py-1 bg-indigo-50 rounded-lg text-xs font-black text-indigo-600"><%= day %></span>
+                  <span class="px-3 py-1 bg-indigo-500/10 rounded-xl text-[10px] font-black text-indigo-400"><%= day %></span>
                 <% end %>
               </div>
             <% end %>
           </div>
 
           <!-- Cost Info -->
-          <div class="p-6 bg-white rounded-[24px] border border-slate-200 space-y-3">
+          <div class="p-6 bg-white/[0.03] rounded-[32px] border border-white/5 space-y-4">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </div>
-              <p class="text-xs font-black text-slate-400 uppercase tracking-wider">참가 비용</p>
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Cost Structure</p>
             </div>
             <% if @challenge.cost_type_free? %>
-              <p class="text-lg font-black text-slate-900">무료</p>
+              <p class="text-xl font-black text-white">FREE</p>
             <% else %>
-              <div class="space-y-2">
+              <div class="space-y-3">
                 <% if @challenge.participation_fee.present? && @challenge.participation_fee > 0 %>
                   <div class="flex items-center justify-between">
-                    <span class="text-sm font-bold text-slate-600">참가비</span>
-                    <span class="text-lg font-black text-slate-900"><%= number_with_delimiter(@challenge.participation_fee) %>원</span>
+                    <span class="text-xs font-bold text-slate-500">Fee</span>
+                    <span class="text-lg font-black text-white"><%= number_with_delimiter(@challenge.participation_fee) %>₩</span>
                   </div>
                 <% end %>
-                <% if @challenge.cost_type_deposit? && @challenge.amount.present? && @challenge.amount > 0 %>
+                <% if @challenge.cost_type_deposit? %>
                   <div class="flex items-center justify-between">
-                    <span class="text-sm font-bold text-slate-600">보증금</span>
-                    <span class="text-lg font-black text-slate-900"><%= number_with_delimiter(@challenge.amount) %>원</span>
-                  </div>
-                <% elsif @challenge.cost_type_fee? && @challenge.amount.present? && @challenge.amount > 0 %>
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm font-bold text-slate-600">참가비</span>
-                    <span class="text-lg font-black text-slate-900"><%= number_with_delimiter(@challenge.amount) %>원</span>
-                  </div>
-                <% end %>
-                <% if (@challenge.participation_fee.present? && @challenge.participation_fee > 0) && (@challenge.amount.present? && @challenge.amount > 0) %>
-                  <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
-                    <span class="text-xs font-black text-amber-600 uppercase">총 납부액</span>
-                    <span class="text-xl font-black text-amber-600"><%= number_with_delimiter(@challenge.total_payment_amount) %>원</span>
+                    <span class="text-xs font-bold text-slate-500">Deposit</span>
+                    <span class="text-lg font-black text-white"><%= number_with_delimiter(@challenge.amount) %>₩</span>
                   </div>
                 <% end %>
               </div>
-              <% if @challenge.cost_type_deposit? && @challenge.penalty_per_failure.present? %>
-                <p class="text-xs font-bold text-amber-700/70">실패 시 <%= number_with_delimiter(@challenge.penalty_per_failure) %>원 차감</p>
-              <% end %>
             <% end %>
           </div>
-
-          <!-- Deposit Refund Threshold (for deposit-type challenges) -->
-          <% if @challenge.cost_type_deposit? && @challenge.full_refund_threshold.present? %>
-            <div class="p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[24px] border-2 border-emerald-100 space-y-3">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <p class="text-xs font-black text-emerald-700 uppercase tracking-wider">전액 환급 기준</p>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="text-4xl font-black text-emerald-600"><%= (@challenge.full_refund_threshold * 100).to_i %></span>
-                <span class="text-2xl font-black text-emerald-600">%</span>
-              </div>
-              <p class="text-xs font-bold text-emerald-700/70">이 달성률 이상 시 보증금 100% 환급</p>
-            </div>
-          <% end %>
-
-          <!-- Refund Date (for deposit-type challenges) -->
-          <% if @challenge.cost_type_deposit? && @challenge.refund_date.present? %>
-            <div class="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[24px] border-2 border-indigo-100 space-y-3">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                </div>
-                <p class="text-xs font-black text-indigo-700 uppercase tracking-wider">환급 예정일</p>
-              </div>
-              <p class="text-2xl font-black text-indigo-600"><%= @challenge.refund_date.strftime('%Y년 %m월 %d일') %></p>
-              <p class="text-xs font-bold text-indigo-700/70">이 날짜에 보증금 환급이 완료됩니다</p>
-            </div>
-          <% end %>
 
           <!-- Mission Goal -->
-          <% if @challenge.certification_goal.present? || @challenge.daily_goals.present? %>
-            <div class="p-6 bg-white rounded-[24px] border border-slate-200 space-y-3">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </div>
-                <p class="text-xs font-black text-slate-400 uppercase tracking-wider">인증 목표</p>
-              </div>
-              <% if @challenge.certification_goal.present? %>
-                <p class="text-sm font-bold text-slate-700"><%= @challenge.certification_goal %></p>
-              <% elsif @challenge.daily_goals.present? %>
-                <% 
-                  daily_goals_data = @challenge.daily_goals.is_a?(String) ? (JSON.parse(@challenge.daily_goals) rescue {}) : @challenge.daily_goals 
-                %>
-                <% if daily_goals_data.present? && daily_goals_data.is_a?(Hash) %>
-                  <div class="space-y-1.5">
-                    <% daily_goals_data.each do |day, goal| %>
-                      <div class="flex items-center gap-2 text-xs">
-                        <span class="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center font-black text-emerald-600"><%= day %></span>
-                        <span class="font-bold text-slate-700"><%= goal %></span>
-                      </div>
-                    <% end %>
-                  </div>
-                <% end %>
-              <% end %>
-            </div>
-          <% end %>
-
-          <!-- Verification Method -->
-          <div class="p-6 bg-white rounded-[24px] border border-slate-200 space-y-3">
+          <div class="p-6 bg-white/[0.03] rounded-[32px] border border-white/5 space-y-4">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
-              </div>
-              <p class="text-xs font-black text-slate-400 uppercase tracking-wider">인증 방식</p>
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Target Goal</p>
             </div>
-            <div class="flex flex-wrap gap-1.5">
-              <% if @challenge.v_photo %>
-                <span class="px-2 py-1 bg-purple-50 rounded-lg text-xs font-black text-purple-600">사진</span>
-              <% end %>
-              <% if @challenge.v_simple %>
-                <span class="px-2 py-1 bg-purple-50 rounded-lg text-xs font-black text-purple-600">간편</span>
-              <% end %>
-              <% if @challenge.v_metric %>
-                <span class="px-2 py-1 bg-purple-50 rounded-lg text-xs font-black text-purple-600">수치</span>
-              <% end %>
-              <% if @challenge.v_url %>
-                <span class="px-2 py-1 bg-purple-50 rounded-lg text-xs font-black text-purple-600">URL</span>
-              <% end %>
-            </div>
-            <% if @challenge.verification_start_time.present? && @challenge.verification_end_time.present? %>
-              <p class="text-xs font-bold text-purple-700/70">
-                <%= @challenge.verification_start_time.strftime('%H:%M') %> - <%= @challenge.verification_end_time.strftime('%H:%M') %>
-              </p>
-            <% end %>
+            <p class="text-sm font-black text-white leading-relaxed"><%= @challenge.certification_goal %></p>
           </div>
-
-          <!-- Host Bio -->
-          <% if @challenge.custom_host_bio.present? %>
-            <div class="p-6 bg-indigo-600 rounded-[24px] text-white space-y-3 md:col-span-2">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-white">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                </div>
-                <p class="text-xs font-black text-white/80 uppercase tracking-wider">호스트 소개</p>
-              </div>
-              <p class="text-sm font-bold leading-relaxed whitespace-pre-wrap"><%= @challenge.custom_host_bio %></p>
-            </div>
-          <% end %>
         </div>
 
-        <!-- Rewards -->
-        <% 
-          reward_policy_data = @challenge.reward_policy.is_a?(String) ? (JSON.parse(@challenge.reward_policy) rescue []) : @challenge.reward_policy 
-        %>
-        <% if reward_policy_data.present? && reward_policy_data.is_a?(Array) && reward_policy_data.any? %>
-          <div class="space-y-3">
+        <!-- Host Bio -->
+        <% if @challenge.custom_host_bio.present? %>
+          <div class="p-8 bg-indigo-600/10 rounded-[40px] border border-indigo-500/20 space-y-4">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
+              <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
               </div>
-              <h4 class="text-sm font-black text-slate-900 uppercase tracking-wider">우승 혜택</h4>
+              <h4 class="text-xs font-black text-indigo-400 uppercase tracking-widest">Host Identity</h4>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              <% reward_policy_data.each_with_index do |reward, index| %>
-                <div class="p-5 bg-white rounded-[20px] border border-amber-100 space-y-2">
-                  <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xs font-black"><%= index + 1 %></span>
-                    <p class="text-sm font-black text-slate-900"><%= reward['rank'] %></p>
-                  </div>
-                  <p class="text-base font-black text-amber-600"><%= reward['reward'] %></p>
-                  <% if reward['description'].present? %>
-                    <p class="text-xs font-medium text-slate-600"><%= reward['description'] %></p>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
+            <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= @challenge.custom_host_bio %></p>
           </div>
         <% end %>
       </div>
     </details>
+
+  <!-- 3. Navigation Controls -->
+  <nav class="app-glass-card overflow-hidden">
+    <div class="flex items-center px-2 py-1 overflow-x-auto no-scrollbar whitespace-nowrap">
+      <% 
+        nav_tabs = [
+          ["dashboard", "대시보드", "M13 10V3L4 14h7v7l9-11h-7z"],
+          ["participants", "참가자 관리", "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"],
+          ["announcements", "공지사항", "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"],
+          ["reviews", "리뷰 관리", "M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"]
+        ]
+        nav_tabs.insert(1, ["applications", "승인 대기", "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"]) if @challenge.requires_approval?
+        nav_tabs.push(["refunds", "정산/환급", "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"]) if @challenge.cost_type_deposit?
+        nav_tabs.push(["settings", "운영 설정", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"])
+      %>
+      <% nav_tabs.each do |id, label, icon| %>
+        <%= link_to hosted_challenge_path(@challenge, tab: id, source: params[:source]), 
+                    class: "flex items-center gap-2.5 px-6 py-5 text-[10px] font-black tracking-widest transition-all #{ @tab == id ? 'tab-active ' + theme_text_class : 'text-slate-500 hover:text-white' }" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= icon %>"/></svg>
+          <%= label %>
+        <% end %>
+      <% end %>
+    </div>
+  </nav>
+
   </div>
 
   <!-- Tab Content -->

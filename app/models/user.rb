@@ -327,4 +327,132 @@ class User < ApplicationRecord
     categories.each { |cat| stats[cat] ||= 0 }
     stats
   end
+
+
+  # Comprehensive Level System
+  # Level increases based on total platform activity score
+
+  # Activity point configuration
+  ACTIVITY_POINTS = {
+    routine_completion: 10,      # 루틴 1회 완료
+    challenge_completion: 50,    # 챌린지 완료
+    challenge_hosting: 100,      # 챌린지 개설
+    clap: 2,                     # 박수 보내기
+    feed_post: 5,                # 피드 작성
+    badge: 30,                   # 배지 획득
+    club_membership: 200         # 루파 클럽 기수 참여
+  }.freeze
+
+  # Level thresholds (비선형 성장)
+  LEVEL_THRESHOLDS = [
+    { level: 1, min_score: 0 },
+    { level: 2, min_score: 100 },
+    { level: 3, min_score: 300 },
+    { level: 4, min_score: 600 },
+    { level: 5, min_score: 1000 },
+    { level: 6, min_score: 1500 },
+    { level: 7, min_score: 2100 },
+    { level: 8, min_score: 2800 },
+    { level: 9, min_score: 3600 },
+    { level: 10, min_score: 4500 }
+  ].freeze
+
+  def total_platform_score
+    score = 0
+
+    # 1. 루틴 활동
+    score += total_routine_completions * ACTIVITY_POINTS[:routine_completion]
+
+    # 2. 챌린지 참여
+    score += participations.where(status: :completed).count * ACTIVITY_POINTS[:challenge_completion]
+    score += hosted_challenges.count * ACTIVITY_POINTS[:challenge_hosting]
+
+    # 3. 커뮤니티 활동
+    score += rufa_claps.count * ACTIVITY_POINTS[:clap]
+    score += rufa_activities.count * ACTIVITY_POINTS[:feed_post]
+
+    # 4. 성취 및 배지
+    score += user_badges.count * ACTIVITY_POINTS[:badge]
+
+    # 5. 루파 클럽 활동
+    if is_rufa_club_member?
+      score += routine_club_members.where(status: :active).count * ACTIVITY_POINTS[:club_membership]
+    end
+
+    score
+  end
+
+  def total_routine_completions
+    # 모든 유저: 전체 루틴 완료 횟수
+    personal_routines.joins(:completions).count
+  end
+
+  def calculate_level
+    score = total_platform_score
+
+    # 레벨 10 이하는 테이블 참조
+    threshold = LEVEL_THRESHOLDS.reverse.find { |t| score >= t[:min_score] }
+    return threshold[:level] if threshold && threshold[:level] <= 10
+
+    # 레벨 11 이상: 4500점 이후 500점씩 증가
+    if score >= 4500
+      level = 10 + ((score - 4500) / 500)
+      [ level, 99 ].min
+    else
+      1
+    end
+  end
+
+  def update_level!
+    new_level = calculate_level
+    if new_level != level
+      old_level = level
+      update_column(:level, new_level)
+
+      { leveled_up: new_level > old_level, old_level: old_level, new_level: new_level }
+    else
+      { leveled_up: false, old_level: level, new_level: level }
+    end
+  end
+
+  def level_progress
+    current_score = total_platform_score
+    current_level_threshold = LEVEL_THRESHOLDS.find { |t| t[:level] == level }&.dig(:min_score) || 0
+
+    if level < 10
+      next_level_threshold = LEVEL_THRESHOLDS.find { |t| t[:level] == level + 1 }&.dig(:min_score) || (current_level_threshold + 500)
+    else
+      next_level_threshold = current_level_threshold + 500
+    end
+
+    score_in_level = current_score - current_level_threshold
+    score_needed = next_level_threshold - current_level_threshold
+
+    ((score_in_level.to_f / score_needed) * 100).round
+  end
+
+  def score_to_next_level
+    current_score = total_platform_score
+    current_level_threshold = LEVEL_THRESHOLDS.find { |t| t[:level] == level }&.dig(:min_score) || 0
+
+    if level < 10
+      next_level_threshold = LEVEL_THRESHOLDS.find { |t| t[:level] == level + 1 }&.dig(:min_score) || (current_level_threshold + 500)
+    else
+      next_level_threshold = current_level_threshold + 500
+    end
+
+    next_level_threshold - current_score
+  end
+
+  def current_month_points
+    if is_rufa_club_member?
+      rufa_club_score.round(1)
+    else
+      personal_routines.joins(:completions)
+                      .where(personal_routine_completions: {
+                        completed_on: Date.current.beginning_of_month..Date.current
+                      })
+                      .count
+    end
+  end
 end

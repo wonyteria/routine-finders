@@ -23,10 +23,6 @@ class HostedChallengesController < ApplicationController
     @challenge = current_user.hosted_challenges.find(params[:id])
     @tab = params[:tab] || "dashboard"
 
-    if params[:source] == "prototype"
-      render layout: "prototype"
-    end
-
     # 공통 데이터 - 최적화된 쿼리
     participants = @challenge.participants
     @stats = {
@@ -57,8 +53,12 @@ class HostedChallengesController < ApplicationController
       if @challenge.cost_type_deposit?
         load_refunds_data
       else
-        redirect_to hosted_challenge_path(@challenge, tab: "dashboard"), alert: "환급 관리는 보증금 챌린지에서만 사용 가능합니다."
+        redirect_to hosted_challenge_path(@challenge, tab: "dashboard"), alert: "환급 관리는 보증금 챌린지에서만 사용 가능합니다." and return
       end
+    end
+
+    if params[:source] == "prototype"
+      render layout: "prototype"
     end
   end
 

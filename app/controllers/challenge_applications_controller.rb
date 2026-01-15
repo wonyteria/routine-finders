@@ -117,6 +117,7 @@ class ChallengeApplicationsController < ApplicationController
 
   # POST /challenges/:challenge_id/applications/:id/approve
   def approve
+    message = params[:message]
     ActiveRecord::Base.transaction do
       @application.approve!
 
@@ -132,26 +133,26 @@ class ChallengeApplicationsController < ApplicationController
       @challenge.increment!(:current_participants)
 
       # Notify applicant about approval
-      create_notification_for_applicant(:approval)
+      create_notification_for_applicant(:approval, message)
     end
 
-    redirect_path = params[:source] == "prototype" ? challenge_applications_path(@challenge, source: "prototype") : challenge_applications_path(@challenge)
+    redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "applications", source: "prototype") : challenge_applications_path(@challenge)
     redirect_to redirect_path, notice: "신청을 승인했습니다."
   rescue ActiveRecord::RecordInvalid => e
-    redirect_path = params[:source] == "prototype" ? challenge_applications_path(@challenge, source: "prototype") : challenge_applications_path(@challenge)
+    redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "applications", source: "prototype") : challenge_applications_path(@challenge)
     redirect_to redirect_path, alert: "승인 처리 중 오류가 발생했습니다: #{e.message}"
   end
 
   # POST /challenges/:challenge_id/applications/:id/reject
   def reject
-    reject_reason = params[:reject_reason]
+    message = params[:message] || params[:reject_reason]
 
-    @application.reject!(reject_reason)
+    @application.reject!(message)
 
     # Notify applicant about rejection
-    create_notification_for_applicant(:rejection, reject_reason)
+    create_notification_for_applicant(:rejection, message)
 
-    redirect_path = params[:source] == "prototype" ? challenge_applications_path(@challenge, source: "prototype") : challenge_applications_path(@challenge)
+    redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "applications", source: "prototype") : challenge_applications_path(@challenge)
     redirect_to redirect_path, notice: "신청을 거절했습니다."
   end
 
@@ -195,23 +196,23 @@ class ChallengeApplicationsController < ApplicationController
     )
   end
 
-  def create_notification_for_applicant(type, reason = nil)
+  def create_notification_for_applicant(type, message = nil)
     case type
     when :approval
       Notification.create!(
         user: @application.user,
         notification_type: :approval,
         title: "챌린지 신청 승인",
-        message: "'#{@challenge.title}' 챌린지 신청이 승인되었습니다!",
-        data: { challenge_id: @challenge.id }
+        message: "'#{@challenge.title}' 챌린지 신청이 승인되었습니다!#{message.present? ? "\n호스트 메시지: #{message}" : ""}",
+        data: { challenge_id: @challenge.id, message: message }
       )
     when :rejection
       Notification.create!(
         user: @application.user,
         notification_type: :rejection,
         title: "챌린지 신청 거절",
-        message: "'#{@challenge.title}' 챌린지 신청이 거절되었습니다.#{reason.present? ? " 사유: #{reason}" : ""}",
-        data: { challenge_id: @challenge.id, reason: reason }
+        message: "'#{@challenge.title}' 챌린지 신청이 거절되었습니다.#{message.present? ? " 사유: #{message}" : ""}",
+        data: { challenge_id: @challenge.id, message: message }
       )
     end
   end

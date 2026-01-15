@@ -9,6 +9,8 @@ class RufaClapsController < ApplicationController
       @clap.destroy
     else
       current_user.rufa_claps.create(rufa_activity: @activity)
+      # 배지 체크 (박수 횟수 배지)
+      BadgeService.new(current_user).check_and_award_all!
     end
 
     respond_to do |format|

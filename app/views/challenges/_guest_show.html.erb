@@ -4,13 +4,13 @@
   /* Premium Dark Mode Overrides */
   .detail-content-env h2, .detail-content-env h3 { color: #ffffff !important; font-weight: 900 !important; }
   .detail-content-env p, .detail-content-env li, .detail-content-env span { color: #a1a1aa !important; }
-  .detail-content-env .bg-white, .detail-content-env .bg-slate-50, .detail-content-env .bg-indigo-50, .detail-content-env .bg-orange-50 { 
+  .detail-content-env .bg-white, .detail-content-env .bg-slate-50, .detail-content-env .bg-indigo-50, .detail-content-env .bg-orange-50, .detail-content-env .bg-emerald-50, .detail-content-env .bg-amber-50 { 
     background-color: rgba(255, 255, 255, 0.03) !important; 
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 24px !important;
   }
-  .detail-content-env .text-slate-900, .detail-content-env .text-orange-900 { color: #ffffff !important; }
-  .detail-content-env .text-slate-600, .detail-content-env .text-slate-700 { color: #a1a1aa !important; }
+  .detail-content-env .text-slate-900, .detail-content-env .text-orange-900, .detail-content-env .text-emerald-900, .detail-content-env .text-amber-900 { color: #ffffff !important; }
+  .detail-content-env .text-slate-600, .detail-content-env .text-slate-700, .detail-content-env .text-emerald-600, .detail-content-env .text-amber-600 { color: #a1a1aa !important; }
 
   /* Hide Scrollbar */
   .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -148,7 +148,7 @@
       </div>
       
       <% if @is_host %>
-         <%= link_to hosted_challenge_path(@challenge), class: "px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all" do %>
+         <%= link_to hosted_challenge_path(@challenge, source: params[:source]), class: "px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all" do %>
            관리하기
          <% end %>
       <% elsif @is_joined %>

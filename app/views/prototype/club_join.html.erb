@@ -89,6 +89,29 @@
 
   <!-- 4. Join Application Section -->
   <div id="join-section" class="px-4">
+    <% 
+      is_recruiting = @routine_club.recruitment_open?
+      next_quarter_start = Date.current.beginning_of_quarter + 3.months
+      recruitment_start = next_quarter_start - 14.days
+    %>
+    
+    <!-- Recruitment Status Notice (Only shown when closed) -->
+    <% unless is_recruiting || @is_member %>
+      <div class="mb-6 p-6 rounded-[28px] bg-amber-500/10 border-2 border-amber-500/30 text-center space-y-3">
+        <div class="text-3xl">⏰</div>
+        <div>
+          <p class="text-amber-400 font-black text-lg">현재 정기 모집 기간이 아닙니다</p>
+          <p class="text-amber-300/60 text-xs font-bold mt-2 leading-relaxed">
+            루파 클럽은 분기별 정기 모집으로 운영됩니다.<br/>
+            아래 혜택과 시스템을 확인하시고 다음 모집을 기다려주세요!
+          </p>
+        </div>
+        <div class="pt-3 border-t border-amber-500/20">
+          <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Next Recruitment</p>
+          <p class="text-amber-300 font-black text-base"><%= recruitment_start.strftime("%Y년 %m월 %d일") %> 오픈 예정</p>
+        </div>
+      </div>
+    <% end %>
     <div class="app-glass-card p-8 space-y-8 bg-gradient-to-b from-[#1B1A24] to-[#16151D]">
       <div class="text-center space-y-1">
         <h2 class="text-2xl font-black text-white"><%= @routine_club.generation_number %>기 멤버십 신청</h2>
@@ -111,6 +134,21 @@
            <div class="text-4xl">🎊</div>
            <p class="text-emerald-400 font-black text-base">이미 <%= @routine_club.generation_number %>기 멤버입니다!</p>
            <p class="text-xs font-bold text-emerald-400/60 leading-relaxed">준비된 시스템과 함께<br/>최고의 성장을 만들어보세요.</p>
+         </div>
+      <% elsif !is_recruiting %>
+         <!-- Recruitment Closed: Show disabled form state -->
+         <div class="opacity-50 pointer-events-none space-y-6">
+           <div class="space-y-2">
+             <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
+             <input type="text" disabled placeholder="모집 기간에 신청 가능합니다" class="w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-600 font-bold" />
+           </div>
+           <div class="space-y-2">
+             <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">연락처</label>
+             <input type="text" disabled placeholder="모집 기간에 신청 가능합니다" class="w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-600 font-bold" />
+           </div>
+           <button disabled class="w-full py-6 bg-slate-700 rounded-[28px] font-black text-white text-lg cursor-not-allowed">
+             <%= recruitment_start.strftime("%m월 %d일") %>부터 신청 가능
+           </button>
          </div>
       <% else %>
         <%= form_with url: join_routine_club_path(@routine_club), method: :post, class: "space-y-6" do |f| %>
