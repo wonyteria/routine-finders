@@ -1,0 +1,257 @@
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-controller="modal">
+  <!-- Left Column: Verifications & Logics -->
+  <div class="lg:col-span-2 space-y-8">
+    <!-- Participant Status Logic Section -->
+    <div class="bg-indigo-900 rounded-[40px] p-10 text-white relative overflow-hidden group">
+      <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all"></div>
+      
+      <div class="flex items-center justify-between mb-8 relative z-10">
+        <div>
+          <h2 class="text-xl font-black">참가자 상태 분류 기준</h2>
+          <p class="text-indigo-300 text-xs font-bold mt-1">챌린지 운영 정책에 맞춰 관리 기준을 설정할 수 있습니다.</p>
+        </div>
+        <button data-action="click->modal#open" class="px-5 py-2.5 bg-indigo-800/50 hover:bg-indigo-600 text-white rounded-2xl text-[11px] font-black transition-all border border-indigo-700/50 shadow-sm">
+          기준 설정 수정
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+        <div class="bg-indigo-800/30 rounded-3xl p-5 border border-indigo-700/30">
+          <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-3">🔥 달성 중</p>
+          <div class="space-y-2">
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">• 연속 실패 0회</p>
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">• 달성률 ≥ <%= challenge.active_rate_threshold %>%</p>
+          </div>
+        </div>
+        <div class="bg-indigo-800/30 rounded-3xl p-5 border border-indigo-700/30">
+          <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-3">⚠️ 부진</p>
+          <div class="space-y-2">
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">• 연속 실패 1~<%= challenge.non_participating_failures_threshold - 1 %>회</p>
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">• 달성률 <%= challenge.sluggish_rate_threshold %>~<%= challenge.active_rate_threshold - 1 %>%</p>
+          </div>
+        </div>
+        <div class="bg-indigo-800/30 rounded-3xl p-5 border border-indigo-700/30">
+          <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-3">❌ 미참여</p>
+          <div class="space-y-2">
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">• 연속 실패 ≥ <%= challenge.non_participating_failures_threshold %>회</p>
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">• 달성률 < <%= challenge.sluggish_rate_threshold %>%</p>
+          </div>
+        </div>
+        <div class="bg-red-500/20 rounded-3xl p-5 border border-red-500/20">
+          <p class="text-xs font-black text-red-400 uppercase tracking-widest mb-3">☠️ 탈락</p>
+          <div class="space-y-2">
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">• 허용 실패 횟수 초과</p>
+            <p class="text-[11px] font-bold text-white/80 leading-relaxed">(최대 <%= challenge.failure_tolerance %>회)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if pending_verifications.any? %>
+      <div class="bg-amber-50 rounded-[40px] border border-amber-200 p-8 shadow-sm">
+        <h2 class="text-xl font-black text-amber-900 mb-6 flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          승인 대기 중 (<%= pending_verifications.count %>건)
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <% pending_verifications.each do |log| %>
+            <div class="bg-white rounded-[28px] p-6 border border-amber-100 shadow-sm transition-all hover:shadow-md">
+              <div class="flex items-start justify-between gap-4 mb-4">
+                <div class="flex items-center gap-3">
+                  <img src="<%= log.participant.user.profile_image %>" alt="" class="w-10 h-10 rounded-2xl object-cover">
+                  <div>
+                    <p class="font-black text-slate-900 text-sm"><%= log.participant.user.nickname %></p>
+                    <p class="text-[10px] font-bold text-slate-400"><%= log.created_at.in_time_zone('Asia/Seoul').strftime('%m/%d %H:%M') %></p>
+                  </div>
+                </div>
+              </div>
+              
+              <% if log.image_url.present? %>
+                <img src="<%= log.image_url %>" alt="" class="w-full h-48 rounded-2xl object-cover mb-4">
+              <% end %>
+
+              <div class="space-y-2">
+                <!-- 기본 버튼 그룹 -->
+                <div id="action-buttons-<%= log.id %>" class="flex items-center gap-2">
+                  <%= button_to approve_challenge_verification_log_path(challenge, log), method: :post, class: "flex-1 py-2.5 bg-green-500 text-white rounded-xl font-black text-xs hover:bg-green-600 transition-all shadow-lg shadow-green-500/20" do %>
+                    승인
+                  <% end %>
+                  <button type="button" onclick="document.getElementById('reject-form-<%= log.id %>').classList.remove('hidden'); document.getElementById('action-buttons-<%= log.id %>').classList.add('hidden');" class="flex-1 py-2.5 bg-red-50 text-red-600 rounded-xl font-black text-xs hover:bg-red-100 transition-all">
+                    거절
+                  </button>
+                </div>
+
+                <!-- 거절 사유 입력 폼 (초기 숨김) -->
+                <div id="reject-form-<%= log.id %>" class="hidden bg-red-50 p-3 rounded-xl border border-red-100">
+                  <%= form_with url: reject_challenge_verification_log_path(challenge, log), method: :post, local: true do |f| %>
+                    <%= f.text_field :reject_reason, placeholder: "거절 사유를 입력하세요 (예: 사진 흐림)", class: "w-full text-xs p-2 mb-2 rounded-lg border border-red-200 focus:outline-none focus:border-red-400", required: true %>
+                    <div class="flex gap-2">
+                      <%= f.submit "거절 확정", class: "flex-1 py-1.5 bg-red-500 text-white text-[10px] font-bold rounded-lg hover:bg-red-600" %>
+                      <button type="button" onclick="document.getElementById('reject-form-<%= log.id %>').classList.add('hidden'); document.getElementById('action-buttons-<%= log.id %>').classList.remove('hidden');" class="px-3 py-1.5 bg-white text-slate-500 text-[10px] font-bold rounded-lg border border-slate-200 hover:bg-slate-50">
+                        취소
+                      </button>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Recent Verifications -->
+    <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-8">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-xl font-black text-slate-900">최근 인증 기록</h2>
+        <span class="text-xs font-bold text-slate-400">마지막 20건</span>
+      </div>
+      <% if recent_verifications.any? %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <% recent_verifications.each do |log| %>
+            <div class="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
+              <img src="<%= log.participant.user.profile_image %>" alt="" class="w-10 h-10 rounded-xl object-cover shadow-sm">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-black text-slate-900 text-sm"><%= log.participant.user.nickname %></span>
+                  <span class="px-2 py-0.5 rounded-lg text-[9px] font-black <%= { pending: 'bg-amber-100 text-amber-700', approved: 'bg-green-100 text-green-700', rejected: 'bg-red-100 text-red-700' }[log.status.to_sym] %>">
+                    <%= { pending: '대기', approved: '승인', rejected: '거절' }[log.status.to_sym] %>
+                  </span>
+                </div>
+                <p class="text-[10px] font-bold text-slate-400 mt-0.5"><%= log.created_at.in_time_zone('Asia/Seoul').strftime('%m/%d %H:%M') %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-16">
+          <p class="text-sm font-bold text-slate-300">아직 인증 기록이 없습니다</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Side Column: Quick Access & Info -->
+  <div class="space-y-8">
+    <!-- Active Participants Card -->
+    <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-8">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-lg font-black text-slate-900">참가자</h2>
+          <p class="text-[10px] font-bold text-slate-400">Total <%= participants.count %></p>
+        </div>
+        <%= link_to "전체보기", hosted_challenge_path(challenge, tab: "participants"), class: "text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1.5 rounded-xl hover:bg-indigo-600 hover:text-white transition-all" %>
+      </div>
+
+      <% if participants.any? %>
+        <div class="space-y-2">
+          <% participants.limit(8).each do |participant| %>
+            <div class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition-all">
+              <div class="flex items-center gap-3">
+                <img src="<%= participant.user.profile_image %>" alt="" class="w-9 h-9 rounded-xl object-cover shadow-sm">
+                <div>
+                  <p class="font-black text-slate-900 text-xs leading-tight"><%= participant.user.nickname %></p>
+                  <p class="text-[9px] font-bold text-slate-400 mt-1"><%= participant.completion_rate.to_i %>% 달성</p>
+                </div>
+              </div>
+              <% badge = participant.status_badge_info %>
+              <span class="px-2 py-1 rounded-lg text-[9px] font-black <%= badge[:class] %>">
+                <%= badge[:label] %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <p class="text-xs font-bold text-slate-300">참가자가 없습니다</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="bg-slate-900 rounded-[40px] p-8 text-white">
+      <h2 class="text-lg font-black mb-6">운영 퀵 액션</h2>
+      <div class="space-y-3">
+        <button class="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-3xl transition-all group">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-indigo-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            </div>
+            <span class="text-sm font-black text-white/90">전체 리마인드</span>
+          </div>
+          <svg class="w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button class="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-3xl transition-all group">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 bg-blue-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+            </div>
+            <span class="text-sm font-black text-white/90">신규 공지 작성</span>
+          </div>
+          <svg class="w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Thresholds (MOVED OUTSIDE) -->
+  <div data-modal-target="container" 
+       data-action="click->modal#closeOnBackground" 
+       class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-[40px] w-full max-max-lg overflow-hidden shadow-2xl max-w-lg">
+      <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div>
+          <h2 class="text-xl font-black text-slate-900">상태 분류 기준 설정</h2>
+          <p class="text-xs font-bold text-slate-400 mt-1">참가자들을 관리할 기준을 정해주세요.</p>
+        </div>
+        <button data-action="click->modal#close" class="p-2 hover:bg-slate-200 rounded-xl transition-all">
+          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <%= form_with model: challenge, url: hosted_challenge_path(challenge), method: :patch, class: "p-8 space-y-6" do |f| %>
+        <%= hidden_field_tag :tab, "dashboard" %>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">🔥 달성 중 기준 (달성률 %)</label>
+            <div class="mt-2 relative">
+              <%= f.number_field :active_rate_threshold, class: "w-full p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", min: 0, max: 100 %>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">% 이상</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">❌ 미참여 기준 (연속 실패 횟수)</label>
+            <div class="mt-2 relative">
+              <%= f.number_field :non_participating_failures_threshold, class: "w-full p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", min: 1 %>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">회 연속 실패</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">⚠️ 부진 기준 (달성률 % 미만)</label>
+            <div class="mt-2 relative">
+              <%= f.number_field :sluggish_rate_threshold, class: "w-full p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", min: 0, max: 100 %>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">% 미만</span>
+            </div>
+          </div>
+
+          <div>
+             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">☠️ 탈락 기준 (전체 허용 실패 횟수)</label>
+             <div class="mt-2 relative">
+               <%= f.number_field :failure_tolerance, class: "w-full p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", min: 1 %>
+               <span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">회 초과</span>
+             </div>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <%= f.submit "설정 저장하기", class: "w-full py-4 bg-indigo-600 text-white rounded-[24px] font-black hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
