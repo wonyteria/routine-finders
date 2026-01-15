@@ -96,18 +96,6 @@
         <% end %>
       </div>
 
-      <!-- Quick Actions (Prototype) -->
-      <div class="app-glass-card p-8 bg-indigo-600/5">
-        <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">빠른 작업</h3>
-        <div class="space-y-3">
-          <%= link_to hosted_challenge_path(challenge, tab: "announcements", source: "prototype"), class: "flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group" do %>
-            <span class="text-[10px] font-black text-slate-300 group-hover:text-white uppercase tracking-widest">공지사항 발송</span>
-            <svg class="w-4 h-4 text-slate-600 group-hover:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
     <!-- Logic Modal (Prototype) -->
     <div id="threshold-modal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-xl flex items-center justify-center p-6">
       <%= form_with model: challenge, url: hosted_challenge_path(challenge), method: :patch, class: "app-glass-card p-12 max-w-lg w-full shadow-2xl space-y-10 border-white/10" do |f| %>

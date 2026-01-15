@@ -1,107 +1,263 @@
 <% if params[:source] == 'prototype' %>
-  <div class="space-y-12" data-controller="challenge-settings">
-    <div class="app-glass-card p-10 lg:p-12">
-      <div class="flex items-center gap-5 mb-12">
-        <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+  <div class="space-y-5 md:space-y-6" data-controller="challenge-settings">
+    <div class="app-glass-card p-4 md:p-6">
+      <div class="flex items-center gap-3 mb-5 md:mb-6">
+        <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+          <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
         </div>
         <div>
-          <h2 class="text-2xl font-black text-white italic">운영 환경 설정</h2>
-          <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">챌린지의 기본 파라미터 및 운영 데이터를 조정합니다</p>
+          <h2 class="text-base md:text-lg font-black text-white italic">운영 환경 설정</h2>
+          <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">챌린지 파라미터 조정</p>
         </div>
       </div>
 
-      <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings", source: "prototype"), method: :patch, class: "space-y-16", data: { challenge_settings_target: "form" } do |f| %>
+      <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings", source: "prototype"), method: :patch, class: "space-y-6 md:space-y-8", data: { challenge_settings_target: "form" } do |f| %>
         
-        <!-- Section: Identity -->
-        <section class="space-y-8">
-          <div class="flex items-center gap-3 pb-4 border-b border-white/5">
-            <span class="text-indigo-400 font-black italic">01.</span>
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">챌린지 정체성 (Identity)</h3>
+        <!-- 01. 기본 정보 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-indigo-400 font-black italic text-xs md:text-sm">01.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">기본 정보</h3>
           </div>
 
-          <div class="grid grid-cols-1 gap-8">
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">챌린지 제목</label>
-              <%= f.text_field :title, class: "w-full p-6 bg-white/5 border border-white/10 rounded-[28px] font-black text-xl text-white italic focus:border-indigo-500 outline-none transition-all" %>
+          <div class="space-y-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">카테고리</label>
+              <%= f.select :category, 
+                           ['건강·운동', '학습·자기계발', 'SNS·브랜딩', '재테크·부업', '취미·라이프', '멘탈·성찰', '기타'],
+                           { include_blank: "선택" },
+                           class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer" %>
             </div>
 
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">한 줄 요약</label>
-              <%= f.text_field :summary, class: "w-full p-6 bg-white/5 border border-white/10 rounded-[28px] font-black text-white focus:border-indigo-500 outline-none transition-all" %>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">챌린지 제목</label>
+              <%= f.text_field :title, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-black text-sm md:text-base text-white italic focus:border-indigo-500 outline-none transition-all" %>
             </div>
 
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">상세 설명 (Specifications)</label>
-              <%= f.text_area :description, class: "w-full p-8 bg-white/5 border border-white/10 rounded-[32px] font-medium text-slate-300 focus:border-indigo-500 outline-none transition-all min-h-[250px]" %>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">한 줄 요약</label>
+              <%= f.text_field :summary, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all" %>
             </div>
 
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">호스트 소개</label>
-              <%= f.text_area :custom_host_bio, class: "w-full p-8 bg-white/5 border border-white/10 rounded-[32px] font-medium text-slate-300 focus:border-indigo-500 outline-none transition-all min-h-[150px]" %>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">상세 설명</label>
+              <%= f.text_area :description, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-indigo-500 outline-none transition-all", rows: 5 %>
             </div>
-          </div>
-        </section>
 
-        <!-- Section: Chronos -->
-        <section class="space-y-8">
-          <div class="flex items-center gap-3 pb-4 border-b border-white/5">
-            <span class="text-emerald-400 font-black italic">02.</span>
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">일정 동기화 (Chronos)</h3>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">챌린지 시작일</label>
-              <%= f.date_field :start_date, class: "w-full p-6 bg-white/5 border border-white/10 rounded-[28px] font-black text-white focus:border-emerald-500 outline-none transition-all" %>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">호스트 소개</label>
+              <%= f.text_area :custom_host_bio, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-indigo-500 outline-none transition-all", rows: 3 %>
             </div>
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">챌린지 종료일</label>
-              <%= f.date_field :end_date, class: "w-full p-6 bg-white/5 border border-white/10 rounded-[28px] font-black text-white focus:border-emerald-500 outline-none transition-all" %>
+
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">채팅방 링크 (선택)</label>
+              <%= f.text_field :chat_link, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all" %>
             </div>
           </div>
         </section>
 
-        <!-- Section: Protocols -->
-        <section class="space-y-8">
-          <div class="flex items-center gap-3 pb-4 border-b border-white/5">
-            <span class="text-purple-400 font-black italic">03.</span>
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">인증 프로토콜</h3>
+        <!-- 02. 인증 목표 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-emerald-400 font-black italic text-xs md:text-sm">02.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">인증 목표</h3>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 목표</label>
+            <%= f.text_field :certification_goal, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-emerald-500 outline-none transition-all" %>
+          </div>
+        </section>
+
+        <!-- 03. 일정 설정 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-purple-400 font-black italic text-xs md:text-sm">03.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">일정 설정</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">시작일</label>
+              <%= f.date_field :start_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">종료일</label>
+              <%= f.date_field :end_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모집 시작일</label>
+              <%= f.date_field :recruitment_start_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모집 마감일</label>
+              <%= f.date_field :recruitment_end_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+            </div>
+          </div>
+        </section>
+
+        <!-- 04. 인증 방식 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-amber-400 font-black italic text-xs md:text-sm">04.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">인증 방식</h3>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 시작 시간</label>
-              <%= f.time_field :verification_start_time, class: "w-full p-6 bg-white/5 border border-white/10 rounded-[28px] font-black text-white focus:border-purple-500 outline-none transition-all" %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 시작</label>
+              <%= f.time_field :verification_start_time, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-amber-500 outline-none transition-all" %>
             </div>
-            <div class="space-y-4">
-              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 마감 시간</label>
-              <%= f.time_field :verification_end_time, class: "w-full p-6 bg-white/5 border border-white/10 rounded-[28px] font-black text-white focus:border-purple-500 outline-none transition-all" %>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 마감</label>
+              <%= f.time_field :verification_end_time, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-amber-500 outline-none transition-all" %>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 유형</label>
+            <%= f.select :verification_type, 
+                         Challenge.verification_types.keys.map { |k| [k == 'simple' ? '간편 인증' : k == 'photo' ? '사진 인증' : k == 'url' ? 'URL 인증' : k == 'metric' ? '수치 인증' : '복합 인증', k] },
+                         {},
+                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-amber-500 outline-none transition-all appearance-none cursor-pointer" %>
+          </div>
+
+          <div class="space-y-3">
+            <div class="p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
+              <div>
+                <p class="font-black text-xs text-white">재인증 허용</p>
+                <p class="text-[8px] font-bold text-slate-500 mt-0.5">실패 시 재시도 기회</p>
+              </div>
+              <%= f.check_box :re_verification_allowed, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-indigo-600 transition-colors" %>
+            </div>
+
+            <div class="p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
+              <div>
+                <p class="font-black text-xs text-white">인증 승인제</p>
+                <p class="text-[8px] font-bold text-slate-500 mt-0.5">호스트가 직접 승인</p>
+              </div>
+              <%= f.check_box :mission_requires_host_approval, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-amber-500 transition-colors" %>
             </div>
           </div>
         </section>
 
-        <!-- Danger Zone (Integrated) -->
-        <section class="mt-20 p-10 bg-rose-500/5 rounded-[40px] border border-rose-500/10 space-y-6">
+        <!-- 05. 참여 조건 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-cyan-400 font-black italic text-xs md:text-sm">05.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">참여 조건</h3>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">공개 여부</label>
+            <%= f.select :is_private,
+                         [['공개 챌린지', false], ['비공개 챌린지', true]],
+                         {},
+                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer" %>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">승인 방식</label>
+            <%= f.select :admission_type,
+                         [['선착순', 'first_come'], ['승인제', 'approval']],
+                         {},
+                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer" %>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">최대 인원</label>
+            <%= f.number_field :max_participants, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-cyan-500 outline-none transition-all" %>
+          </div>
+        </section>
+
+        <!-- 06. 비용 및 계좌 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-rose-400 font-black italic text-xs md:text-sm">06.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">비용 및 계좌</h3>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">비용 방식</label>
+            <%= f.select :cost_type,
+                         [['무료', 'free'], ['참가비', 'fee'], ['보증금', 'deposit']],
+                         {},
+                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all appearance-none cursor-pointer" %>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보증금/참가비 (원)</label>
+              <%= f.number_field :cost, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">추가 참가비 (원)</label>
+              <%= f.number_field :participation_fee, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">은행명</label>
+            <%= f.text_field :host_bank, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">예금주</label>
+              <%= f.text_field :host_account_holder, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">계좌번호</label>
+              <%= f.text_field :host_account, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+            </div>
+          </div>
+        </section>
+
+        <!-- 07. 혜택 설계 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-green-400 font-black italic text-xs md:text-sm">07.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">혜택 설계</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">전액 환급 기준 (%)</label>
+              <%= f.number_field :full_refund_threshold, min: 0, max: 100, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보너스 지급 기준 (%)</label>
+              <%= f.number_field :bonus_threshold, min: 0, max: 100, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+            </div>
+          </div>
+        </section>
+
+        <!-- Danger Zone -->
+        <section class="mt-6 md:mt-8 p-4 md:p-6 bg-rose-500/5 rounded-xl md:rounded-2xl border border-rose-500/10 space-y-3">
           <div>
-            <h3 class="text-lg font-black text-rose-500 italic uppercase">위험 구역 (Danger Zone)</h3>
-            <p class="text-[10px] font-bold text-rose-500/60 uppercase tracking-widest mt-1">챌린지의 모든 데이터를 파괴하고 영구히 삭제합니다</p>
+            <h3 class="text-sm md:text-base font-black text-rose-500 italic uppercase">위험 구역</h3>
+            <p class="text-[8px] md:text-[9px] font-bold text-rose-500/60 uppercase tracking-widest mt-0.5">챌린지 영구 삭제</p>
           </div>
           <%= link_to hosted_challenge_path(challenge, source: "prototype"), 
-                      data: { turbo_method: :delete, turbo_confirm: "REALLY TERMINATE THIS LOOP?" }, 
-                      class: "inline-flex items-center gap-3 px-8 py-4 bg-rose-600/10 text-rose-500 border border-rose-500/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all shadow-xl shadow-rose-600/10" do %>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                      data: { turbo_method: :delete, turbo_confirm: "정말로 이 챌린지를 삭제하시겠습니까?" }, 
+                      class: "inline-flex items-center gap-2 px-4 md:px-5 py-2.5 md:py-3 bg-rose-600/10 text-rose-500 border border-rose-500/20 rounded-xl font-black text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all" do %>
+            <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             챌린지 영구 삭제
           <% end %>
         </section>
 
-        <!-- Global Save -->
-        <div class="flex items-center gap-6 pt-10 border-t border-white/5">
+        <!-- Save Button -->
+        <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 pt-5 md:pt-6 border-t border-white/5">
           <button type="submit" 
-                  class="flex-1 py-6 bg-indigo-600 text-white rounded-[32px] font-black text-base shadow-2xl shadow-indigo-600/40 hover:bg-indigo-500 hover:-translate-y-1 active:scale-95 transition-all cursor-pointer">
-            변경 사항 저장 (Apply)
+                  class="flex-1 py-3.5 md:py-4 bg-indigo-600 text-white rounded-xl md:rounded-2xl font-black text-xs md:text-sm shadow-2xl shadow-indigo-600/40 hover:bg-indigo-500 hover:-translate-y-1 active:scale-95 transition-all cursor-pointer">
+            변경 사항 저장
           </button>
-          <%= link_to "되돌리기", hosted_challenge_path(challenge, tab: "dashboard", source: "prototype"), class: "px-10 py-6 bg-white/5 text-slate-500 rounded-[32px] font-black hover:bg-white/10 transition-all uppercase tracking-widest" %>
+          <%= link_to "취소", hosted_challenge_path(challenge, tab: "dashboard", source: "prototype"), 
+                      data: { turbo_frame: "hosted_challenge_tabs" },
+                      class: "px-5 md:px-6 py-3.5 md:py-4 bg-white/5 text-slate-500 rounded-xl md:rounded-2xl font-black text-xs md:text-sm hover:bg-white/10 transition-all uppercase tracking-widest text-center" %>
         </div>
       <% end %>
     </div>

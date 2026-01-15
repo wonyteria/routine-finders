@@ -4,6 +4,7 @@ class AnnouncementsController < ApplicationController
   before_action :require_host
 
   def new
+    flash.discard # Clear any existing flash messages
     @announcement = @parent.announcements.build
     @challenge = @parent if @parent.is_a?(Challenge)
     @routine_club = @parent if @parent.is_a?(RoutineClub)
