@@ -80,18 +80,13 @@ class HostedChallengesController < ApplicationController
 
     params_hash = challenge_params
 
-    # Convert percentage thresholds (0-100) to decimal (0-1)
+    # Convert percentage thresholds (0-100) to decimal (0-1) for full_refund_threshold only
     if params_hash[:full_refund_threshold].present?
       params_hash[:full_refund_threshold] = params_hash[:full_refund_threshold].to_f / 100.0
     end
 
-    if params_hash[:active_rate_threshold].present?
-      params_hash[:active_rate_threshold] = params_hash[:active_rate_threshold].to_f / 100.0
-    end
-
-    if params_hash[:sluggish_rate_threshold].present?
-      params_hash[:sluggish_rate_threshold] = params_hash[:sluggish_rate_threshold].to_f / 100.0
-    end
+    # active_rate_threshold and sluggish_rate_threshold are stored as integers (0-100)
+    # No conversion needed
 
     success = false
     error_message = nil

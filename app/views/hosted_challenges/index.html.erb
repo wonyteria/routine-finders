@@ -1,9 +1,11 @@
 <% if params[:source] == 'prototype' %>
   <style>
     .host-prototype-env { background: #0C0B12; color: #f8fafc; min-height: 100vh; position: relative; z-index: 10; }
-    .host-prototype-wrapper { background: #0C0B12; margin: -2rem -1rem; padding: 2rem 1rem 8rem 1rem; }
-    @media (min-width: 640px) { .host-prototype-wrapper { margin: -2rem -1.5rem; padding: 2rem 1.5rem 8rem 1.5rem; } }
-    @media (min-width: 1024px) { .host-prototype-wrapper { margin: -2rem -2rem; padding: 2rem 2rem 8rem 2rem; } }
+    /* Body background override for prototype */
+    body:has(.host-prototype-env) { background: #0C0B12 !important; }
+    .host-prototype-wrapper { background: #0C0B12; padding: env(safe-area-inset-top, 2rem) 1.25rem 8rem 1.25rem; }
+    @media (min-width: 640px) { .host-prototype-wrapper { padding: 3rem 1.5rem 8rem 1.5rem; } }
+    @media (min-width: 1024px) { .host-prototype-wrapper { padding: 4rem 2rem 8rem 2rem; } }
     .host-prototype-env .app-glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-radius: 2.5rem; }
     .host-prototype-env .glass-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.25rem; transition: all 0.3s; }
   </style>
@@ -12,12 +14,12 @@
     <div class="space-y-10 pb-32">
       <header class="flex items-end justify-between">
         <div>
-          <h1 class="text-4xl font-black text-white italic">HOST CENTER</h1>
-          <p class="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mt-2">Managing <%= @hosted_challenges.count %> active loops</p>
+          <h1 class="text-4xl font-black text-white italic">호스트 센터</h1>
+          <p class="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mt-2">총 <%= @hosted_challenges.count %>개의 챌린지를 운영 중입니다</p>
         </div>
         <div class="flex gap-3">
           <%= link_to new_challenge_path(source: 'prototype'), class: "glass-btn px-6 py-3 text-white font-black text-[11px] uppercase tracking-widest hover:bg-white/10" do %>
-            New Loop
+            새 챌린지 개설
           <% end %>
         </div>
       </header>
@@ -35,8 +37,8 @@
                   <p class="text-[9px] font-black text-slate-500 mt-1 uppercase tracking-widest"><%= challenge.start_date.strftime('%m/%d') %> — <%= challenge.end_date.strftime('%m/%d') %></p>
                 </div>
                 <div class="flex items-center gap-4">
-                  <span class="text-[10px] font-black text-indigo-400"><%= challenge.current_participants %> LPRs</span>
-                  <% if (c = @pending_counts[challenge.id] || 0) > 0 %><span class="text-[10px] font-black text-amber-500"><%= c %> LOGS</span><% end %>
+                  <span class="text-[10px] font-black text-indigo-400">참가자 <%= challenge.current_participants %>명</span>
+                  <% if (c = @pending_counts[challenge.id] || 0) > 0 %><span class="text-[10px] font-black text-amber-500">인증 <%= c %>건</span><% end %>
                 </div>
               </div>
             </div>

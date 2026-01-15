@@ -2,67 +2,79 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "controllers/application"
+import { application } from "./application"
 
-import ApplicationFormController from "controllers/application_form_controller"
+import ApplicationFormController from "./application_form_controller"
 application.register("application-form", ApplicationFormController)
 
-import AuthTabsController from "controllers/auth_tabs_controller"
+import AuthTabsController from "./auth_tabs_controller"
 application.register("auth-tabs", AuthTabsController)
 
-import BadgeAwardController from "controllers/badge_award_controller"
-application.register("badge-award", BadgeAwardController)
-
-import ChallengeFormController from "controllers/challenge_form_controller"
-application.register("challenge-form", ChallengeFormController)
-
-import CostTypeController from "controllers/cost_type_controller"
-application.register("cost-type", CostTypeController)
-
-import FlashController from "controllers/flash_controller"
-application.register("flash", FlashController)
-
-import HelloController from "controllers/hello_controller"
-application.register("hello", HelloController)
-
-import ModalController from "controllers/modal_controller"
-application.register("modal", ModalController)
-
-import RatingController from "controllers/rating_controller"
-application.register("rating", RatingController)
-
-import TabsController from "controllers/tabs_controller"
-application.register("tabs", TabsController)
-
-import ThresholdInputController from "controllers/threshold_input_controller"
-application.register("threshold-input", ThresholdInputController)
-
-import ChallengeSettingsController from "controllers/challenge_settings_controller"
-application.register("challenge-settings", ChallengeSettingsController)
-
-import ScrollNavController from "controllers/scroll_nav_controller"
-application.register("scroll-nav", ScrollNavController)
-
-import GatheringFormController from "controllers/gathering_form_controller"
-application.register("gathering-form", GatheringFormController)
-
-import ToggleListController from "controllers/toggle_list_controller"
-application.register("toggle-list", ToggleListController)
-
-import PwaBannerController from "controllers/pwa_banner_controller"
-application.register("pwa-banner", PwaBannerController)
-
-import DropdownController from "controllers/dropdown_controller"
-application.register("dropdown", DropdownController)
-
-import AuthToggleController from "controllers/auth_toggle_controller"
+import AuthToggleController from "./auth_toggle_controller"
 application.register("auth-toggle", AuthToggleController)
 
-import ProtoUiController from "controllers/proto_ui_controller"
+import BadgeAwardController from "./badge_award_controller"
+application.register("badge-award", BadgeAwardController)
+
+import ChallengeFormController from "./challenge_form_controller"
+application.register("challenge-form", ChallengeFormController)
+
+import ChallengeSettingsController from "./challenge_settings_controller"
+application.register("challenge-settings", ChallengeSettingsController)
+
+import CostTypeController from "./cost_type_controller"
+application.register("cost-type", CostTypeController)
+
+import DropdownController from "./dropdown_controller"
+application.register("dropdown", DropdownController)
+
+import FlashController from "./flash_controller"
+application.register("flash", FlashController)
+
+import GatheringFormController from "./gathering_form_controller"
+application.register("gathering-form", GatheringFormController)
+
+import HelloController from "./hello_controller"
+application.register("hello", HelloController)
+
+import ModalController from "./modal_controller"
+application.register("modal", ModalController)
+
+import NotificationToggleController from "./notification_toggle_controller"
+application.register("notification-toggle", NotificationToggleController)
+
+import ProtoUiController from "./proto_ui_controller"
 application.register("proto-ui", ProtoUiController)
 
-import RoutineWizardController from "controllers/routine_wizard_controller"
+import PwaBannerController from "./pwa_banner_controller"
+application.register("pwa-banner", PwaBannerController)
+
+import RatingController from "./rating_controller"
+application.register("rating", RatingController)
+
+import RoutineWizardController from "./routine_wizard_controller"
 application.register("routine-wizard", RoutineWizardController)
 
-import ShareController from "controllers/share_controller"
+import ScrollNavController from "./scroll_nav_controller"
+application.register("scroll-nav", ScrollNavController)
+
+import ShareController from "./share_controller"
 application.register("share", ShareController)
+
+import SliderController from "./slider_controller"
+application.register("slider", SliderController)
+
+import SnsLinksController from "./sns_links_controller"
+application.register("sns-links", SnsLinksController)
+
+import TabsController from "./tabs_controller"
+application.register("tabs", TabsController)
+
+import ThresholdInputController from "./threshold_input_controller"
+application.register("threshold-input", ThresholdInputController)
+
+import ToggleController from "./toggle_controller"
+application.register("toggle", ToggleController)
+
+import ToggleListController from "./toggle_list_controller"
+application.register("toggle-list", ToggleListController)

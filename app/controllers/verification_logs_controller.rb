@@ -75,10 +75,11 @@ class VerificationLogsController < ApplicationController
   private
 
   def redirect_to_origin(notice, type = :notice)
+    source_params = params[:source] == "prototype" ? { source: "prototype" } : {}
     if request.referer&.include?("hosted_challenges")
-      redirect_to hosted_challenge_path(@challenge, tab: "dashboard"), type => notice
+      redirect_to hosted_challenge_path(@challenge, source_params.merge(tab: "dashboard")), type => notice
     else
-      redirect_to challenge_path(@challenge, tab: "verifications"), type => notice
+      redirect_to challenge_path(@challenge, source_params.merge(tab: "verifications")), type => notice
     end
   end
 

@@ -124,6 +124,7 @@
     <% end %>
 
     <!-- Navigation -->
+    <% unless params[:source] == 'prototype' %>
     <nav class="sticky top-0 z-50 bg-white border-b border-threads-border">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
@@ -221,6 +222,7 @@
         </div>
       </div>
     </nav>
+    <% end %>
 
     <!-- Mobile Bottom Navigation -->
     <%= render "shared/bottom_nav" %>
@@ -282,7 +284,8 @@
     </div>
 
     <!-- Main Content -->
-    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32 lg:pb-8">
+    <% main_classes = params[:source] == 'prototype' ? "flex-1 w-full" : "flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32 lg:pb-8" %>
+    <main class="<%= main_classes %>">
       <%= yield %>
     </main>
 

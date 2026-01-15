@@ -3,19 +3,48 @@ class AnnouncementsController < ApplicationController
   before_action :set_parent
   before_action :require_host
 
+  def new
+    @announcement = @parent.announcements.build
+    @challenge = @parent if @parent.is_a?(Challenge)
+    @routine_club = @parent if @parent.is_a?(RoutineClub)
+  end
+
   def create
     @announcement = @parent.announcements.build(announcement_params)
+    @challenge = @parent if @parent.is_a?(Challenge)
+    @routine_club = @parent if @parent.is_a?(RoutineClub)
+
     if @announcement.save
-      redirect_back fallback_location: root_path, notice: "공지사항이 등록되었습니다."
+      redirect_to (params[:source] == "prototype" && @challenge) ? hosted_challenge_path(@challenge, tab: "announcements", source: "prototype") : request.referer || root_path, notice: "공지사항이 등록되었습니다."
     else
-      redirect_back fallback_location: root_path, alert: "공지사항 등록에 실패했습니다."
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit
+    @announcement = @parent.announcements.find(params[:id])
+    @challenge = @parent if @parent.is_a?(Challenge)
+    @routine_club = @parent if @parent.is_a?(RoutineClub)
+  end
+
+  def update
+    @announcement = @parent.announcements.find(params[:id])
+    @challenge = @parent if @parent.is_a?(Challenge)
+    @routine_club = @parent if @parent.is_a?(RoutineClub)
+
+    if @announcement.update(announcement_params)
+      redirect_to (params[:source] == "prototype" && @challenge) ? hosted_challenge_path(@challenge, tab: "announcements", source: "prototype") : request.referer || root_path, notice: "공지사항이 수정되었습니다."
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
     @announcement = @parent.announcements.find(params[:id])
     @announcement.destroy
-    redirect_back fallback_location: root_path, notice: "공지사항이 삭제되었습니다."
+    @challenge = @parent if @parent.is_a?(Challenge)
+
+    redirect_to (params[:source] == "prototype" && @challenge) ? hosted_challenge_path(@challenge, tab: "announcements", source: "prototype") : request.referer || root_path, notice: "공지사항이 삭제되었습니다."
   end
 
   private

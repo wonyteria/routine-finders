@@ -1,58 +1,59 @@
 <% if current_user %>
-  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-slate-100 px-6 py-2 transition-transform duration-300" 
+  <% is_proto = params[:source] == 'prototype' %>
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 <%= is_proto ? 'bg-[#0C0B12]/80 backdrop-blur-2xl border-t border-white/5' : 'bg-white/95 backdrop-blur-xl border-t border-threads-border' %> px-6 py-2 transition-transform duration-300" 
        id="mobile-bottom-nav">
     <div class="flex justify-between items-center max-w-lg mx-auto pb-safe">
       <%= link_to root_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
-        <div class="p-2 rounded-2xl transition-all <%= current_page?(root_path) ? 'bg-threads-black text-white shadow-lg' : 'text-slate-400 group-hover:bg-slate-50' %>">
+        <div class="p-2 rounded-2xl transition-all <%= current_page?(root_path) ? (is_proto ? 'bg-indigo-600 text-white shadow-lg' : 'bg-threads-black text-white shadow-lg') : (is_proto ? 'text-slate-600 group-hover:bg-white/5' : 'text-slate-400 group-hover:bg-slate-50') %>">
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 3L4 9v12h5v-7h6v7h5V9z"/>
           </svg>
         </div>
-        <span class="text-[10px] font-bold <%= current_page?(root_path) ? 'text-threads-black' : 'text-slate-400' %>">홈</span>
+        <span class="text-[10px] font-bold <%= current_page?(root_path) ? (is_proto ? 'text-white' : 'text-threads-black') : (is_proto ? 'text-slate-600' : 'text-slate-400') %>">홈</span>
       <% end %>
 
       <%= link_to personal_routines_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
-        <div class="p-2 rounded-2xl transition-all <%= current_page?(personal_routines_path) ? 'bg-threads-black text-white shadow-lg' : 'text-slate-400 group-hover:bg-slate-50' %>">
+        <div class="p-2 rounded-2xl transition-all <%= current_page?(personal_routines_path) ? (is_proto ? 'bg-indigo-600 text-white shadow-lg' : 'bg-threads-black text-white shadow-lg') : (is_proto ? 'text-slate-600 group-hover:bg-white/5' : 'text-slate-400 group-hover:bg-slate-50') %>">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
           </svg>
         </div>
-        <span class="text-[10px] font-bold <%= current_page?(personal_routines_path) ? 'text-threads-black' : 'text-slate-400' %>">루틴</span>
+        <span class="text-[10px] font-bold <%= current_page?(personal_routines_path) ? (is_proto ? 'text-white' : 'text-threads-black') : (is_proto ? 'text-slate-600' : 'text-slate-400') %>">루틴</span>
       <% end %>
 
       <%= link_to challenges_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
-        <div class="p-2 rounded-2xl transition-all <%= current_page?(challenges_path) ? 'bg-threads-black text-white shadow-lg' : 'text-slate-400 group-hover:bg-slate-50' %>">
+        <div class="p-2 rounded-2xl transition-all <%= current_page?(challenges_path) ? (is_proto ? 'bg-indigo-600 text-white shadow-lg' : 'bg-threads-black text-white shadow-lg') : (is_proto ? 'text-slate-600 group-hover:bg-white/5' : 'text-slate-400 group-hover:bg-slate-50') %>">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"/>
           </svg>
         </div>
-        <span class="text-[10px] font-bold <%= current_page?(challenges_path) ? 'text-threads-black' : 'text-slate-400' %>">챌린지</span>
+        <span class="text-[10px] font-bold <%= current_page?(challenges_path) ? (is_proto ? 'text-white' : 'text-threads-black') : (is_proto ? 'text-slate-600' : 'text-slate-400') %>">챌린지</span>
       <% end %>
 
       <%= link_to gatherings_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
-        <div class="p-2 rounded-2xl transition-all <%= current_page?(gatherings_path) ? 'bg-threads-black text-white shadow-lg' : 'text-slate-400 group-hover:bg-slate-50' %>">
+        <div class="p-2 rounded-2xl transition-all <%= current_page?(gatherings_path) ? (is_proto ? 'bg-indigo-600 text-white shadow-lg' : 'bg-threads-black text-white shadow-lg') : (is_proto ? 'text-slate-600 group-hover:bg-white/5' : 'text-slate-400 group-hover:bg-slate-50') %>">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.998 5.998 0 00-12 0m12 0c0-3.313-2.687-6-6-6s-6 2.687-6 6m12 0a3 3 0 11-6 0m6 0c0 3.313-2.687 6-6 6s-6-2.687-6-6m6-12a3 3 0 100-6 3 3 0 000 6z"/>
           </svg>
         </div>
-        <span class="text-[10px] font-bold <%= current_page?(gatherings_path) ? 'text-threads-black' : 'text-slate-400' %>">모임</span>
+        <span class="text-[10px] font-bold <%= current_page?(gatherings_path) ? (is_proto ? 'text-white' : 'text-threads-black') : (is_proto ? 'text-slate-600' : 'text-slate-400') %>">모임</span>
       <% end %>
 
       <%= link_to rankings_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
-        <div class="p-2 rounded-2xl transition-all <%= current_page?(rankings_path) ? 'bg-threads-black text-white shadow-lg' : 'text-slate-400 group-hover:bg-slate-50' %>">
+        <div class="p-2 rounded-2xl transition-all <%= current_page?(rankings_path) ? (is_proto ? 'bg-indigo-600 text-white shadow-lg' : 'bg-threads-black text-white shadow-lg') : (is_proto ? 'text-slate-600 group-hover:bg-white/5' : 'text-slate-400 group-hover:bg-slate-50') %>">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
           </svg>
         </div>
-        <span class="text-[10px] font-bold <%= current_page?(rankings_path) ? 'text-threads-black' : 'text-slate-400' %>">명예의전당</span>
+        <span class="text-[10px] font-bold <%= current_page?(rankings_path) ? (is_proto ? 'text-white' : 'text-threads-black') : (is_proto ? 'text-slate-600' : 'text-slate-400') %>">명예의전당</span>
       <% end %>
 
       <%= link_to profile_path, class: "flex-1 flex flex-col items-center gap-1 group active:scale-90 transition-transform duration-75" do %>
-        <div class="p-0.5 rounded-2xl transition-all <%= current_page?(profile_path) ? 'ring-2 ring-threads-black p-1' : 'text-slate-400 group-hover:bg-slate-50' %>">
+        <div class="p-0.5 rounded-2xl transition-all <%= current_page?(profile_path) ? (is_proto ? 'ring-2 ring-white p-1' : 'ring-2 ring-threads-black p-1') : (is_proto ? 'text-slate-600 group-hover:bg-white/5' : 'text-slate-400 group-hover:bg-slate-50') %>">
           <img src="<%= current_user.profile_image %>" alt="Profile" class="w-7 h-7 rounded-xl object-cover">
         </div>
-        <span class="text-[10px] font-bold <%= current_page?(profile_path) ? 'text-threads-black' : 'text-slate-400' %>">프로필</span>
+        <span class="text-[10px] font-bold <%= current_page?(profile_path) ? (is_proto ? 'text-white' : 'text-threads-black') : (is_proto ? 'text-slate-600' : 'text-slate-400') %>">프로필</span>
       <% end %>
     </div>
   </div>
