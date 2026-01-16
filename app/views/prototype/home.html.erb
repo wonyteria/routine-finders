@@ -1,8 +1,13 @@
 <div class="space-y-8 pt-8">
-  <!-- 1. Header: Profile | Logo | Notification -->
+  <!-- 1. Header: Logo | Profile | Notification -->
   <header class="flex items-center justify-between">
-    <!-- Left: Profile -->
-    <%= link_to prototype_my_path, class: "flex items-center gap-3 app-tap-active" do %>
+    <!-- Left: Logo -->
+    <%= link_to prototype_home_path, class: "app-tap-active" do %>
+      <%= image_tag "rf_symbol_v9.png", class: "h-10 w-auto object-contain" %>
+    <% end %>
+    
+    <!-- Center: Profile -->
+    <%= link_to prototype_my_path, class: "absolute left-1/2 -translate-x-1/2 flex items-center gap-3 app-tap-active" do %>
       <div class="w-10 h-10 rounded-2xl bg-indigo-500 overflow-hidden shadow-lg shadow-indigo-500/20 border border-white/10">
         <% if current_user %>
           <img src="<%= current_user.profile_image %>" class="w-full h-full object-cover">
@@ -18,11 +23,6 @@
         </div>
       </div>
     <% end %>
-    
-    <!-- Center: Logo -->
-    <div class="absolute left-1/2 -translate-x-1/2">
-      <%= image_tag "rf_symbol_v9.png", class: "h-8 w-auto object-contain" %>
-    </div>
     
     <!-- Right: Notification -->
     <%= link_to notifications_path, class: "relative app-glass-card w-10 h-10 flex items-center justify-center app-tap-active" do %>
