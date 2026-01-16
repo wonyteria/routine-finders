@@ -58,6 +58,9 @@ class HostedChallengesController < ApplicationController
     end
 
     if params[:source] == "prototype"
+      @total_days = (@challenge.end_date - @challenge.start_date).to_i + 1
+      @current_day = ((Date.current - @challenge.start_date).to_i + 1).clamp(0, @total_days)
+      @progress_percent = (@current_day.to_f / @total_days * 100).round
       render layout: "prototype"
     end
   end
@@ -146,6 +149,138 @@ class HostedChallengesController < ApplicationController
     end
   end
 
+  def batch_approve_verifications
+    @challenge = current_user.hosted_challenges.find(params[:id])
+    ids = params[:log_ids] || []
+    if ids.any?
+      logs = @challenge.verification_logs.where(id: ids, status: :pending)
+      logs.each do |log|
+        log.update(status: :approved)
+        log.participant.update_streak!
+      end
+      notice = "#{logs.count}건의 인증을 승인했습니다."
+    else
+      notice = "선택된 항목이 없습니다."
+    end
+    redirect_to hosted_challenge_path(@challenge, source: params[:source], tab: "dashboard"), notice: notice
+  end
+
+  def batch_reject_verifications
+    @challenge = current_user.hosted_challenges.find(params[:id])
+    ids = params[:log_ids] || []
+    reason = params[:reject_reason]
+    if ids.any?
+      logs = @challenge.verification_logs.where(id: ids, status: :pending)
+      logs.each do |log|
+        log.update(status: :rejected, reject_reason: reason)
+        log.participant.check_status!
+      end
+      notice = "#{logs.count}건의 인증을 거절했습니다."
+    else
+      notice = "선택된 항목이 없습니다."
+    end
+    redirect_to hosted_challenge_path(@challenge, source: params[:source], tab: "dashboard"), notice: notice
+  end
+
+  def batch_approve_applications
+    @challenge = current_user.hosted_challenges.find(params[:id])
+    ids = params[:application_ids] || []
+    if ids.any?
+      apps = @challenge.challenge_applications.where(id: ids, status: :pending)
+      apps.each do |app|
+        ActiveRecord::Base.transaction do
+          app.update!(status: :approved)
+          @challenge.participants.create!(
+            user: app.user,
+            joined_at: Time.current,
+            refund_bank_name: app.refund_bank_name,
+            refund_account_number: app.refund_account_number,
+            refund_account_name: app.refund_account_name
+          )
+          # Notification
+          Notification.create!(
+            user: app.user,
+            title: "신청 승인 완료",
+            content: "'#{@challenge.title}' 챌린지 신청이 승인되었습니다!",
+            link: challenge_path(@challenge),
+            notification_type: :challenge_approval
+          )
+        end
+      end
+      notice = "#{apps.count}건의 신청을 승인했습니다."
+    else
+      notice = "선택된 항목이 없습니다."
+    end
+    redirect_to hosted_challenge_path(@challenge, source: params[:source], tab: "applications"), notice: notice
+  end
+
+  def batch_reject_applications
+    @challenge = current_user.hosted_challenges.find(params[:id])
+    ids = params[:application_ids] || []
+    reason = params[:reject_reason]
+    if ids.any?
+      apps = @challenge.challenge_applications.where(id: ids, status: :pending)
+      apps.each do |app|
+        app.update(status: :rejected, reject_reason: reason)
+        Notification.create!(
+          user: app.user,
+          title: "신청 반려 안내",
+          content: "'#{@challenge.title}' 챌린지 신청이 반려되었습니다.",
+          link: challenge_path(@challenge),
+          notification_type: :challenge_rejection
+        )
+      end
+      notice = "#{apps.count}건의 신청을 반려했습니다."
+    else
+      notice = "선택된 항목이 없습니다."
+    end
+    redirect_to hosted_challenge_path(@challenge, source: params[:source], tab: "applications"), notice: notice
+  end
+
+  def nudge_participants
+    @challenge = current_user.hosted_challenges.find(params[:id])
+    group = params[:group]
+    content = params[:content]
+
+    if content.blank?
+      redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: params[:tab], source: "prototype") : hosted_challenge_path(@challenge, tab: params[:tab])
+      redirect_to request.referer || redirect_path, alert: "독려 메시지 내용을 입력해주세요."
+      return
+    end
+
+    target_participants = case group
+    when "sluggish"
+      @challenge.participants.where(status: :lagging)
+    when "unverified_today"
+      @challenge.participants.where(today_verified: [ false, nil ])
+    when "all"
+      @challenge.participants
+    else
+      []
+    end
+
+    if target_participants.any?
+      names = target_participants.limit(5).map { |p| p.user.nickname }
+      names_text = names.join(", ")
+      names_text += " 외 #{target_participants.count - 5}명" if target_participants.count > 5
+
+      target_participants.each do |p|
+        Notification.create!(
+          user: p.user,
+          title: "운영자 독려 메시지",
+          content: content,
+          link: challenge_path(@challenge),
+          notification_type: :nudge
+        )
+      end
+      notice = "#{names_text}님에게 독려 메시지를 성공적으로 발송했습니다. (총 #{target_participants.count}명)"
+    else
+      notice = "발송 대상 루퍼가 없어 메시지를 보내지 않았습니다."
+    end
+
+    redirect_to request.referer || hosted_challenge_path(@challenge, source: params[:source]), notice: notice
+  end
+
   private
 
   def challenge_params
@@ -172,6 +307,22 @@ class HostedChallengesController < ApplicationController
     @participants = @challenge.participants.includes(:user, :verification_logs).order(created_at: :desc)
     @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user).order(created_at: :desc)
     @recent_verifications = @challenge.verification_logs.includes(participant: :user).order(created_at: :desc).limit(20)
+
+    # Trend Data (Last 7 Days)
+    @trends = (6.downto(0)).map do |i|
+      date = Date.today - i.days
+      logs_count = @challenge.verification_logs.where("DATE(created_at) = ?", date).where(status: :approved).count
+      rate = @challenge.current_participants > 0 ? (logs_count.to_f / @challenge.current_participants * 100).round(1) : 0
+      { date: date.strftime("%m/%d"), rate: rate }
+    end
+
+    # Settlement Simulation (for Deposit Challenges)
+    if @challenge.cost_type_deposit?
+      success_count = @challenge.participants.where("completion_rate >= ?", (@challenge.full_refund_threshold || 0.8) * 100).count
+      fail_count = @challenge.current_participants - success_count
+      @potential_prize_pool = fail_count * (@challenge.amount || 0)
+      @estimated_bonus = success_count > 0 ? (@potential_prize_pool / success_count) : 0
+    end
   end
 
   def load_applications_data

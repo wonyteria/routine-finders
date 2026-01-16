@@ -249,8 +249,8 @@
           <% end %>
         </section>
 
-        <!-- Save Button -->
-        <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 pt-5 md:pt-6 border-t border-white/5">
+        <!-- Desktop Save Button (Hidden on Mobile for Sticky) -->
+        <div class="hidden md:flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 pt-5 md:pt-6 border-t border-white/5">
           <button type="submit" 
                   class="flex-1 py-3.5 md:py-4 bg-indigo-600 text-white rounded-xl md:rounded-2xl font-black text-xs md:text-sm shadow-2xl shadow-indigo-600/40 hover:bg-indigo-500 hover:-translate-y-1 active:scale-95 transition-all cursor-pointer">
             변경 사항 저장
@@ -258,6 +258,16 @@
           <%= link_to "취소", hosted_challenge_path(challenge, tab: "dashboard", source: "prototype"), 
                       data: { turbo_frame: "hosted_challenge_tabs" },
                       class: "px-5 md:px-6 py-3.5 md:py-4 bg-white/5 text-slate-500 rounded-xl md:rounded-2xl font-black text-xs md:text-sm hover:bg-white/10 transition-all uppercase tracking-widest text-center" %>
+        </div>
+
+        <!-- Mobile Floating Sticky Save Button -->
+        <div class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[200] md:hidden animate-slide-up">
+          <div class="app-glass-card p-4 !rounded-[32px] border-white/10 bg-[#16151D]/90 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+            <button type="submit" 
+                    class="w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-indigo-600/20">
+              환경 설정 저장하기
+            </button>
+          </div>
         </div>
       <% end %>
     </div>

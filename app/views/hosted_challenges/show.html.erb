@@ -124,6 +124,14 @@
       color: #ffffff !important;
       font-weight: 900 !important;
     }
+    
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-up {
+      animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
   </style>
 
   <div class="host-prototype-env host-prototype-wrapper">
@@ -134,56 +142,87 @@
       <% theme_text_class = @challenge.offline? ? "text-orange-600" : "text-indigo-600" %>
 
       <!-- 1. 상단 네비게이션 & 헤더 -->
-      <header class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <%= link_to hosted_challenges_path(source: params[:source]), class: "glass-btn w-11 h-11 flex items-center justify-center text-slate-400" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-          <% end %>
-          <div>
-            <h1 class="text-xl font-black tracking-tight text-white line-clamp-1"><%= @challenge.title %></h1>
-            <p class="text-[10px] font-black <%= theme_text_class %> uppercase tracking-widest mt-0.5">운영자 관리 센터</p>
-          </div>
-        </div>
-        
-        <div class="flex items-center gap-2">
-          <%= link_to challenge_path(@challenge, source: params[:source]), 
-                      target: "_blank",
-                      class: "glass-btn px-6 py-2.5 text-[11px] font-black text-white hover:bg-white/10 active:scale-95 transition-all" do %>
-            공개 페이지 미리보기
-          <% end %>
-
-          <div class="relative" data-controller="dropdown" data-action="click@window->dropdown#hide">
-            <button type="button" 
-                    data-action="click->dropdown#toggle" 
-                    class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400 hover:text-white active:scale-95 transition-all focus:outline-none">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
-            </button>
-
-            <div data-dropdown-target="menu" 
-                 class="hidden absolute right-0 mt-3 w-48 app-glass-card border-white/10 shadow-2xl py-2 z-[100] animate-slide-up bg-[#1B1A24]">
-              <button onclick="navigator.clipboard.writeText('<%= challenge_url(@challenge) %>'); alert('링크가 복사되었습니다!');" 
-                      class="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black text-slate-400 hover:text-white hover:bg-white/5 transition-all text-left uppercase tracking-widest border-none cursor-pointer">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                초대 링크 복사
+      <header class="space-y-6">
+        <!-- Flash Messages (Prototype) -->
+        <% if notice.present? || alert.present? %>
+          <div class="fixed top-20 left-1/2 -translate-x-1/2 z-[500] w-[90%] max-w-sm animate-slide-up">
+            <div class="p-5 flex items-center gap-4 border <%= notice ? 'border-emerald-500/40 bg-[#0F1715]/95' : 'border-rose-500/40 bg-[#1A1012]/95' %> backdrop-blur-3xl rounded-[32px] shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+              <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 <%= notice ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)]' : 'bg-rose-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.4)]' %>">
+                <% if notice %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                <% else %>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <% end %>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[11px] font-black text-white italic leading-tight">
+                  <%= notice || alert %>
+                </p>
+              </div>
+              <button onclick="this.closest('.fixed').remove()" class="p-2 text-slate-500 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
-              
-              <%= link_to hosted_challenge_path(@challenge, tab: "settings", source: params[:source]), 
-                          class: "flex items-center gap-3 px-4 py-3 text-[11px] font-black text-slate-400 hover:text-white hover:bg-white/5 transition-all uppercase tracking-widest" do %>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
-                상세 설정
-              <% end %>
-
-              <div class="h-px bg-white/5 my-1 mx-4"></div>
-
-              <%= button_to hosted_challenge_path(@challenge, source: params[:source]), 
-                            method: :delete, 
-                            data: { turbo_confirm: "정말로 이 챌린지를 삭제하시겠습니까? 삭제된 데이터는 복구할 수 없습니다." }, 
-                            class: "w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black text-rose-500 hover:bg-rose-500/10 transition-all text-left uppercase tracking-widest border-none bg-transparent cursor-pointer" do %>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                챌린지 삭제
-              <% end %>
             </div>
           </div>
+        <% end %>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <%= link_to hosted_challenges_path(source: params[:source]), class: "glass-btn w-11 h-11 flex items-center justify-center text-slate-400" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+            <% end %>
+            <div>
+              <h1 class="text-xl font-black tracking-tight text-white line-clamp-1"><%= @challenge.title %></h1>
+              <p class="text-[10px] font-black <%= theme_text_class %> uppercase tracking-widest mt-0.5">운영자 관리 센터</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <%= link_to challenge_path(@challenge, source: params[:source]), 
+                        target: "_blank",
+                        class: "glass-btn px-6 py-2.5 text-[11px] font-black text-white hover:bg-white/10 active:scale-95 transition-all" do %>
+              공개 페이지 미리보기
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Progress Timeline Bar -->
+        <div class="app-glass-card p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500 pulse-glow"></span>
+              <p class="text-[10px] font-black text-white uppercase tracking-widest">진행 타임라인</p>
+            </div>
+            <p class="text-[11px] font-black text-indigo-400 italic">Day <%= @current_day %> <span class="text-slate-600">/ <%= @total_days %></span></p>
+          </div>
+          <div class="w-full h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
+            <div class="h-full bg-gradient-to-r from-indigo-600 to-purple-500 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all duration-1000" style="width: <%= @progress_percent %>%"></div>
+          </div>
+          <div class="flex justify-between mt-2 px-1">
+            <span class="text-[8px] font-black text-slate-600 uppercase tracking-tighter"><%= @challenge.start_date.strftime('%m/%d') %> START</span>
+            <span class="text-[8px] font-black text-slate-600 uppercase tracking-tighter"><%= @challenge.end_date.strftime('%m/%d') %> END</span>
+          </div>
+        </div>
+
+        <!-- Quick Operator Shortcuts -->
+        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+          <button type="button" 
+                  onclick="openNudgeModal('unverified_today', '아직 오늘의 인증을 완료하지 않은 루퍼들에게 응원 메시지를 보낼까요?')"
+                  class="shrink-0 glass-btn px-3 py-2.5 flex items-center gap-1.5 text-[10px] font-black text-amber-500 hover:bg-amber-500/10 transition-all border-amber-500/20 whitespace-nowrap">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            미인증 독려
+          </button>
+          <button type="button" 
+                  onclick="openNudgeModal('sluggish', '최근 활동이 뜸한 루퍼들에게 경고 및 격려 메시지를 보낼까요?')"
+                  class="shrink-0 glass-btn px-3 py-2.5 flex items-center gap-1.5 text-[10px] font-black text-rose-500 hover:bg-rose-500/10 transition-all border-rose-500/20 whitespace-nowrap">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            부진 경고
+          </button>
+          <%= link_to new_challenge_announcement_path(@challenge, source: 'prototype'), 
+                      class: "shrink-0 glass-btn px-3 py-2.5 flex items-center gap-1.5 text-[10px] font-black text-indigo-400 hover:bg-indigo-500/10 transition-all whitespace-nowrap" do %>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            공지 발송
+          <% end %>
         </div>
       </header>
 
@@ -343,6 +382,61 @@
       </turbo-frame>
     </div>
   </div>
+
+  <!-- Nudge Confirmation Modal -->
+  <div id="nudge-modal" class="fixed inset-0 z-[300] hidden bg-black/90 backdrop-blur-xl flex items-center justify-center p-6">
+    <div class="bg-[#16151D] p-8 max-w-md w-full space-y-6 animate-slide-up border border-white/10 rounded-[40px] shadow-[0_40px_80px_rgba(0,0,0,0.9)]">
+      <div class="text-center">
+        <div id="nudge-icon-container" class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border transition-all shadow-lg">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </div>
+        <h3 id="nudge-title" class="text-lg font-black text-white italic">독려 메시지 발송</h3>
+        <p id="nudge-desc" class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1 whitespace-nowrap overflow-hidden text-ellipsis px-2">발송 대상을 확인하고 메시지를 입력하세요</p>
+      </div>
+      
+      <%= form_with url: nudge_participants_hosted_challenge_path(@challenge), method: :post do |f| %>
+        <%= hidden_field_tag :source, 'prototype' %>
+        <%= hidden_field_tag :group, '', id: 'nudge-group-input' %>
+        <div class="space-y-4">
+          <%= text_area_tag :content, nil, id: 'nudge-content-input', required: true, placeholder: "응원 메시지를 입력해주세요", class: "w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-indigo-500 outline-none h-24 resize-none" %>
+          <div class="flex gap-3">
+            <button type="button" onclick="closeNudgeModal()" class="flex-1 py-4 bg-white/5 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest">취소</button>
+            <%= f.submit "즉시 발송하기", class: "flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-indigo-600/20" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <script>
+    function openNudgeModal(group, description) {
+      const modal = document.getElementById('nudge-modal');
+      const groupInput = document.getElementById('nudge-group-input');
+      const contentInput = document.getElementById('nudge-content-input');
+      const descText = document.getElementById('nudge-desc');
+      const iconContainer = document.getElementById('nudge-icon-container');
+      const titleText = document.getElementById('nudge-title');
+
+      groupInput.value = group;
+      descText.innerText = description;
+
+      if (group === 'unverified_today') {
+        titleText.innerText = "미인증 독려 메시지";
+        iconContainer.className = "w-16 h-16 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-500/20";
+        contentInput.value = "'<%= j @challenge.title %>' 리더가 보낸 응원 메시지가 도착했습니다. 아직 오늘의 루틴 인증을 하지 않으셨네요! 잊지 말고 꼭 완료해 주세요. 🔥";
+      } else {
+        titleText.innerText = "부진 루퍼 경고 메시지";
+        iconContainer.className = "w-16 h-16 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-500/20";
+        contentInput.value = "이루고자 했던 목표, 아직 기억하시나요? 최근 활동이 조금 뜸해 보여 응원의 메시지를 보냅니다. 다시 힘을 내서 함께 달려봐요! 💪";
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeNudgeModal() {
+      document.getElementById('nudge-modal').classList.add('hidden');
+    }
+  </script>
 
 <% else %>
   <!-- ORIGINAL WEB UI: Safe & Untouched -->

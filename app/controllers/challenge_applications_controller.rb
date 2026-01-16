@@ -79,7 +79,10 @@ class ChallengeApplicationsController < ApplicationController
               paid_amount: @challenge.total_payment_amount,
               joined_at: Time.current,
               contact_info: @application.contact_info,
-              threads_nickname: @application.threads_nickname
+              threads_nickname: @application.threads_nickname,
+              refund_bank_name: @application.refund_bank_name,
+              refund_account_number: @application.refund_account_number,
+              refund_account_name: @application.refund_account_name
             )
 
             @challenge.increment!(:current_participants)
@@ -127,7 +130,10 @@ class ChallengeApplicationsController < ApplicationController
         paid_amount: @challenge.total_payment_amount,
         joined_at: Time.current,
         contact_info: @application.contact_info,
-        threads_nickname: @application.threads_nickname
+        threads_nickname: @application.threads_nickname,
+        refund_bank_name: @application.refund_bank_name,
+        refund_account_number: @application.refund_account_number,
+        refund_account_name: @application.refund_account_name
       )
 
       @challenge.increment!(:current_participants)
@@ -179,7 +185,7 @@ class ChallengeApplicationsController < ApplicationController
   end
 
   def application_params
-    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info, :threads_nickname, :source)
+    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info, :threads_nickname, :source, :refund_bank_name, :refund_account_number, :refund_account_name)
   end
 
   def create_notification_for_host

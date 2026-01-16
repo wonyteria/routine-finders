@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_13_065758) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_16_010409) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -81,6 +81,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_065758) do
     t.datetime "created_at", null: false
     t.string "depositor_name"
     t.text "message"
+    t.string "refund_account_name"
+    t.string "refund_account_number"
+    t.string "refund_bank_name"
     t.text "reject_reason"
     t.integer "status", default: 0, null: false
     t.string "threads_nickname"

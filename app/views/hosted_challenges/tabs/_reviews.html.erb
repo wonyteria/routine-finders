@@ -1,28 +1,28 @@
 <% if params[:source] == 'prototype' %>
-  <div class="space-y-10">
-    <div class="app-glass-card p-10">
-      <div class="flex items-center justify-between mb-10">
+  <div class="space-y-6 md:space-y-8">
+    <div class="app-glass-card p-4 md:p-6">
+      <div class="flex items-center justify-between mb-6 md:mb-8">
         <div>
-          <h2 class="text-2xl font-black text-white italic">참가자 피드백</h2>
-          <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">참가자들이 남긴 리뷰와 만족도 데이터</p>
+          <h2 class="text-base md:text-lg font-black text-white italic">참가자 피드백</h2>
+          <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">참가자들이 남긴 리뷰와 만족도 데이터</p>
         </div>
         <% if reviews.any? %>
-          <div class="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/10">
-            <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-            <span class="text-xl font-black text-white italic"><%= challenge.average_rating.to_f.round(1) %></span>
+          <div class="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 bg-white/5 rounded-xl md:rounded-2xl border border-white/10">
+            <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <span class="text-sm md:text-base font-black text-white italic"><%= challenge.average_rating.to_f.round(1) %></span>
           </div>
         <% end %>
       </div>
 
       <% if reviews.any? %>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <% reviews.each do |review| %>
-            <div class="p-8 rounded-[32px] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
-              <div class="flex items-start gap-5 mb-6">
-                <img src="<%= review.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover grayscale group-hover:grayscale-0 transition-opacity">
+            <div class="p-5 md:p-6 rounded-2xl md:rounded-[32px] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
+              <div class="flex items-start gap-4 md:gap-5 mb-4 md:mb-6">
+                <img src="<%= review.user.profile_image %>" class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl object-cover grayscale group-hover:grayscale-0 transition-opacity">
                 <div class="flex-1">
                   <div class="flex items-center justify-between">
-                    <p class="font-black text-white italic text-base"><%= review.user.nickname %></p>
+                    <p class="font-black text-white italic text-sm md:text-base"><%= review.user.nickname %></p>
                     <div class="flex items-center gap-0.5">
                       <% 5.times do |i| %>
                         <svg class="w-3.5 h-3.5 <%= i < review.rating ? 'text-amber-400' : 'text-slate-700' %>" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>

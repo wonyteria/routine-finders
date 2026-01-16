@@ -93,6 +93,11 @@ Rails.application.routes.draw do
   resources :hosted_challenges, only: [ :index, :show, :update, :destroy ] do
     member do
       post :complete_refund
+      post :batch_approve_verifications
+      post :batch_reject_verifications
+      post :batch_approve_applications
+      post :batch_reject_applications
+      post :nudge_participants
     end
   end
 
