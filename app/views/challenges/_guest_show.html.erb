@@ -30,9 +30,9 @@
     
     <!-- Top Nav -->
     <div class="absolute top-10 left-6 right-6 flex justify-between items-center z-50">
-      <button onclick="history.back()" class="w-10 h-10 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white app-tap-active">
+      <%= link_to prototype_explore_path, class: "w-10 h-10 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white app-tap-active" do %>
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-      </button>
+      <% end %>
       <button 
         data-controller="share"
         data-share-title-value="<%= @challenge.title %>"
