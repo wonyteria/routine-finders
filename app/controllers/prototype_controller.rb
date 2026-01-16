@@ -5,8 +5,8 @@ class PrototypeController < ApplicationController
   def home
     # 1. Total Daily Tasks Calculation (Routines + Challenges + Gatherings)
     @todays_routines = current_user ? current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
-    @joined_challenges_active = current_user ? current_user.participations.active.joins(:challenge).where(challenges: { meeting_type: :online }) : []
-    @todays_gatherings = current_user ? current_user.participations.active.joins(challenge: :meeting_info).where(meeting_infos: { meeting_date: Date.current }) : []
+    @joined_challenges_active = current_user ? current_user.participations.active.joins(:challenge).where(challenges: { mode: :online }) : []
+    @todays_gatherings = current_user ? current_user.participations.active.joins(:challenge).where(challenges: { mode: :offline, start_date: Date.current }) : []
 
     # Counts
     routine_total = @todays_routines.count
@@ -30,8 +30,8 @@ class PrototypeController < ApplicationController
 
     # 3. Live Feed Data
     @recent_reflections = RufaActivity.where(activity_type: [ "routine_record", "reflection" ]).order(created_at: :desc).limit(10)
-    @recent_challenge_joins = Participant.joins(:challenge).where(challenges: { meeting_type: :online }).order(created_at: :desc).limit(5)
-    @recent_gathering_joins = Participant.joins(:challenge).where(challenges: { meeting_type: :offline }).order(created_at: :desc).limit(5)
+    @recent_challenge_joins = Participant.joins(:challenge).where(challenges: { mode: :online }).order(created_at: :desc).limit(5)
+    @recent_gathering_joins = Participant.joins(:challenge).where(challenges: { mode: :offline }).order(created_at: :desc).limit(5)
 
     # 4. Content for Dashboard
     if current_user
