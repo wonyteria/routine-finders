@@ -55,7 +55,11 @@ class GatheringsController < ApplicationController
     @gathering.mode = :offline # Force offline mode for gatherings
 
     if @gathering.save
-      redirect_to challenge_path(@gathering), notice: "모임이 성공적으로 개설되었습니다!"
+      if params[:source] == "prototype"
+        redirect_to hosted_challenge_path(@gathering, source: "prototype"), notice: "모임이 성공적으로 개설되었습니다!"
+      else
+        redirect_to challenge_path(@gathering), notice: "모임이 성공적으로 개설되었습니다!"
+      end
     else
       render :new, status: :unprocessable_entity
     end

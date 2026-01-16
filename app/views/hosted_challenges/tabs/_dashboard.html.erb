@@ -4,35 +4,69 @@
     <div class="lg:col-span-2 space-y-10">
       <!-- Trend Chart & Settlement Simulation -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- 1. Daily Completion Trends (SVG Chart) -->
+        <!-- 1. Gathering Occupancy or Completion Trends -->
         <div class="app-glass-card p-6">
           <div class="flex items-center justify-between mb-8">
             <div>
-              <h3 class="text-sm font-black text-white italic">참여율 트렌드</h3>
-              <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">최근 7일간의 인증 동향</p>
+              <h3 class="text-sm font-black text-white italic"><%= challenge.offline? ? "모임 모집 현황" : "참여율 트렌드" %></h3>
+              <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5"><%= challenge.offline? ? "현재 모집된 루퍼 비율" : "최근 7일간의 인증 동향" %></p>
             </div>
-            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-glow"></div>
+            <div class="w-2.5 h-2.5 rounded-full <%= challenge.offline? ? 'bg-indigo-500' : 'bg-emerald-500' %> pulse-glow"></div>
           </div>
           
-          <div class="h-32 flex items-end justify-between gap-1 px-2">
-            <% @trends.each do |trend| %>
-              <div class="flex-1 flex flex-col items-center gap-2 group/bar">
-                <div class="relative w-full flex items-end justify-center h-24">
-                  <div class="w-2 md:w-3 bg-indigo-500/20 rounded-full h-full absolute"></div>
-                  <div class="w-2 md:w-3 bg-indigo-500 rounded-full transition-all duration-1000 group-hover/bar:bg-indigo-400 group-hover/bar:shadow-[0_0_15px_rgba(99,102,241,0.6)]" style="height: <%= trend[:rate] %>%;"></div>
-                  <!-- Tooltip -->
-                  <div class="absolute -top-6 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
-                    <%= trend[:rate] %>%
-                  </div>
+          <% if challenge.offline? %>
+            <div class="flex flex-col items-center justify-center h-32 space-y-4">
+              <div class="relative w-32 h-32 flex items-center justify-center">
+                <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
+                  <% occupancy = (challenge.current_participants.to_f / (challenge.meeting_info&.max_attendees || 1) * 100).to_i %>
+                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="#818cf8" stroke-width="8" 
+                          stroke-dasharray="251.2" stroke-dashoffset="<%= 251.2 * (1 - occupancy / 100.0) %>" 
+                          stroke-linecap="round" class="transition-all duration-1000"></circle>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-xl font-black text-white italic leading-none"><%= occupancy %>%</span>
+                  <span class="text-[8px] font-black text-slate-600 uppercase mt-1"><%= challenge.current_participants %> / <%= challenge.meeting_info&.max_attendees %></span>
                 </div>
-                <span class="text-[8px] font-black text-slate-600 uppercase"><%= trend[:date] %></span>
               </div>
-            <% end %>
-          </div>
+            </div>
+          <% else %>
+            <div class="h-32 flex items-end justify-between gap-1 px-2">
+              <% @trends.each do |trend| %>
+                <div class="flex-1 flex flex-col items-center gap-2 group/bar">
+                  <div class="relative w-full flex items-end justify-center h-24">
+                    <div class="w-2 md:w-3 bg-indigo-500/20 rounded-full h-full absolute"></div>
+                    <div class="w-2 md:w-3 bg-indigo-500 rounded-full transition-all duration-1000 group-hover/bar:bg-indigo-400 group-hover/bar:shadow-[0_0_15px_rgba(99,102,241,0.6)]" style="height: <%= trend[:rate] %>%;"></div>
+                    <!-- Tooltip -->
+                    <div class="absolute -top-6 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
+                      <%= trend[:rate] %>%
+                    </div>
+                  </div>
+                  <span class="text-[8px] font-black text-slate-600 uppercase"><%= trend[:date] %></span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </div>
 
-        <!-- 2. Settlement Simulator (for Deposit) -->
-        <% if challenge.cost_type_deposit? %>
+        <!-- 2. Management Memo (Gathering) or Settlement (Challenge) -->
+        <% if challenge.offline? %>
+          <div class="app-glass-card p-6 border-white/10 bg-white/[0.02]">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h3 class="text-sm font-black text-white italic">운영자 메모</h3>
+                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">참가자들과 공유할 중요 사항</p>
+              </div>
+              <span class="p-2 bg-white/5 rounded-xl">📝</span>
+            </div>
+            <div class="space-y-4">
+              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                <p class="text-[11px] font-medium text-slate-400 leading-relaxed">준비물: <%= challenge.preparation_items.presence || "없음" %></p>
+              </div>
+              <%= link_to hosted_challenge_path(challenge, tab: "announcements", source: 'prototype'), class: "block w-full py-3 rounded-xl bg-indigo-600/20 text-indigo-400 text-[10px] font-black text-center uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all" do %>공지사항 작성하기<% end %>
+            </div>
+          </div>
+        <% elsif challenge.cost_type_deposit? %>
           <div class="app-glass-card p-6 overflow-hidden relative">
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
             <div class="flex items-center justify-between mb-6">
@@ -197,6 +231,72 @@
 
     <!-- Right Column: Secondary Data (1/3) -->
     <div class="space-y-10">
+      <!-- 3. Host Toolkit (Management Quick Actions) -->
+      <div class="app-glass-card p-6 border-indigo-500/10 bg-indigo-500/[0.02]">
+        <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 italic">운영 툴킷</h3>
+        <div class="grid grid-cols-1 gap-3">
+          <% if challenge.offline? %>
+            <!-- Gathering Specific Buttons -->
+            <button onclick="openNudgeModal('gathering_remind')" class="w-full py-4 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-between px-5 group hover:bg-indigo-600 transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">📍</span>
+                <div class="text-left">
+                  <p class="text-xs font-black text-white group-hover:text-white">모임 정보 리마인드</p>
+                  <p class="text-[8px] font-bold text-slate-500 group-hover:text-indigo-200">일정 및 장소 알림 발송</p>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-slate-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            </button>
+
+            <button onclick="openNudgeModal('gathering_prep')" class="w-full py-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between px-5 group hover:bg-amber-500 transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🎒</span>
+                <div class="text-left">
+                  <p class="text-xs font-black text-white group-hover:text-white">준비물 체크 알림</p>
+                  <p class="text-[8px] font-bold text-slate-500 group-hover:text-amber-100">참가자에게 리마인드 발송</p>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-slate-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          <% else %>
+            <!-- Challenge Specific Buttons -->
+            <button onclick="openNudgeModal('unverified_today')" class="w-full py-4 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-between px-5 group hover:bg-indigo-600 transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🔔</span>
+                <div class="text-left">
+                  <p class="text-xs font-black text-white group-hover:text-white">미인증자 독려</p>
+                  <p class="text-[8px] font-bold text-slate-500 group-hover:text-indigo-200">오늘 미인증 루퍼에게 알림</p>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-slate-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            </button>
+
+            <button onclick="openNudgeModal('sluggish')" class="w-full py-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between px-5 group hover:bg-amber-500 transition-all">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">⚠️</span>
+                <div class="text-left">
+                  <p class="text-xs font-black text-white group-hover:text-white">부진 인원 경고</p>
+                  <p class="text-[8px] font-bold text-slate-500 group-hover:text-amber-100">달성률이 낮은 루퍼 깨우기</p>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-slate-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          <% end %>
+
+          <!-- Button: Group Announcement (Always show) -->
+          <%= link_to new_challenge_announcement_path(challenge, source: 'prototype'), class: "w-full py-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between px-5 group hover:bg-emerald-500 transition-all" do %>
+            <div class="flex items-center gap-3">
+              <span class="text-xl">📢</span>
+              <div class="text-left">
+                <p class="text-xs font-black text-white group-hover:text-white">단체 공지 발송</p>
+                <p class="text-[8px] font-bold text-slate-500 group-hover:text-emerald-100">중요 안내사항 전체 전달</p>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-slate-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          <% end %>
+        </div>
+      </div>
+
       <!-- Recent Activity Log (Prototype) -->
       <div class="app-glass-card p-5 md:p-6">
         <h3 class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-6 md:mb-8 italic">최근 활동 로그</h3>
@@ -238,7 +338,7 @@
         <div class="space-y-8">
           <!-- Active Threshold -->
           <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
-            <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-4">정상 달성 임계값 (Active)</p>
+            <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-4">정상 달성 기준 (Active)</p>
             <div class="flex items-center gap-4">
               <%= f.range_field :active_rate_threshold, 
                                 value: challenge.active_rate_threshold.to_i,
@@ -254,7 +354,7 @@
 
           <!-- Sluggish Threshold -->
           <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
-            <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] mb-4">관리 필요 임계값 (Sluggish)</p>
+            <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] mb-4">주의 관리 기준 (Sluggish)</p>
             <div class="flex items-center gap-4">
               <%= f.range_field :sluggish_rate_threshold, 
                                 value: challenge.sluggish_rate_threshold.to_i,

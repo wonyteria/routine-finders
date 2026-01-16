@@ -180,7 +180,7 @@ class ChallengesController < ApplicationController
       end
 
       if params[:source] == "prototype"
-        redirect_to prototype_explore_path, notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
+        redirect_to hosted_challenge_path(@challenge, source: "prototype"), notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
       else
         redirect_to hosted_challenge_path(@challenge), notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
       end

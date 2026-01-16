@@ -1,53 +1,115 @@
 <% if params[:source] == 'prototype' %>
-  <style>
-    .host-prototype-env { background: #0C0B12; color: #f8fafc; min-height: 100vh; position: relative; z-index: 10; }
-    /* Body background override for prototype */
-    body:has(.host-prototype-env) { background: #0C0B12 !important; }
-    .host-prototype-wrapper { background: #0C0B12; padding: env(safe-area-inset-top, 2rem) 1.25rem 8rem 1.25rem; }
-    @media (min-width: 640px) { .host-prototype-wrapper { padding: 3rem 1.5rem 8rem 1.5rem; } }
-    @media (min-width: 1024px) { .host-prototype-wrapper { padding: 4rem 2rem 8rem 2rem; } }
-    .host-prototype-env .app-glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-radius: 2.5rem; }
-    .host-prototype-env .glass-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.25rem; transition: all 0.3s; }
-  </style>
-
-  <div class="host-prototype-env host-prototype-wrapper">
-    <div class="space-y-10 pb-32">
-      <header class="flex items-end justify-between">
-        <div>
-          <h1 class="text-4xl font-black text-white italic">호스트 센터</h1>
-          <p class="text-slate-500 font-black text-[10px] uppercase tracking-[0.2em] mt-2">총 <%= @hosted_challenges.count %>개의 챌린지를 운영 중입니다</p>
+  <div class="space-y-8 pt-8">
+    
+    <!-- 1. Header (Aligned with Prototype Home) -->
+    <header class="flex items-center justify-between">
+      <div>
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+          <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none italic">Operator Console</p>
         </div>
-        <div class="flex gap-3">
-          <%= link_to new_challenge_path(source: 'prototype'), class: "glass-btn px-6 py-3 text-white font-black text-[11px] uppercase tracking-widest hover:bg-white/10" do %>
-            새 챌린지 개설
-          <% end %>
-        </div>
-      </header>
+        <h1 class="text-2xl font-black text-white italic tracking-tighter">운영 센터</h1>
+      </div>
+      
+      <button type="button" onclick="document.getElementById('creation-selection-sheet').classList.remove('hidden')" class="w-12 h-12 app-glass-card flex items-center justify-center text-white app-tap-active group">
+        <span class="text-xl group-hover:rotate-90 transition-transform font-black">+</span>
+      </button>
+    </header>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <% @hosted_challenges.each do |challenge| %>
-          <%= link_to hosted_challenge_path(challenge, source: 'prototype'), class: "app-glass-card overflow-hidden group hover:bg-white/[0.05] transition-all" do %>
-            <div class="flex">
-              <div class="w-32 h-32 flex-shrink-0">
-                <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700">
+    <!-- 2. Challenge List -->
+    <section class="space-y-4">
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none px-2 italic">Managed Pulsations</h3>
+      
+      <div class="space-y-3">
+        <% if @hosted_challenges.any? %>
+          <% @hosted_challenges.each do |challenge| %>
+            <%= link_to hosted_challenge_path(challenge, source: 'prototype'), class: "app-glass-card block overflow-hidden group app-tap-active transition-all" do %>
+              <div class="flex items-center p-4 gap-4">
+                <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 relative border border-white/5">
+                  <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                </div>
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class="px-1.5 py-0.5 rounded-lg text-[7px] font-black uppercase tracking-wider <%= challenge.offline? ? 'bg-amber-500/20 text-amber-500 border border-amber-500/30' : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' %>">
+                      <%= challenge.offline? ? 'Gathering' : 'Challenge' %>
+                    </span>
+                  </div>
+                  <h3 class="text-base font-black text-white group-hover:text-indigo-400 transition-colors truncate mb-1 italic leading-none"><%= challenge.title %></h3>
+                  
+                  <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-1.5">
+                      <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                      <span class="text-[10px] font-bold text-slate-500"><%= challenge.current_participants %>명 활동</span>
+                    </div>
+                    <% pending = @pending_counts[challenge.id] || 0 %>
+                    <% if pending > 0 %>
+                      <div class="flex items-center gap-1.5">
+                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+                        <span class="text-[10px] font-black text-amber-500">인증 <%= pending %>건</span>
+                      </div>
+                    <% end %>
+                  </div>
+                  <p class="text-[10px] font-bold text-slate-600 mt-2"><%= challenge.start_date.strftime('%m.%d') %> — <%= challenge.end_date.strftime('%m.%d') %></p>
+                </div>
+                
+                <div class="text-slate-700">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+                </div>
               </div>
-              <div class="flex-1 p-6 flex flex-col justify-between">
-                <div>
-                  <h3 class="text-base font-black text-white line-clamp-1 group-hover:text-indigo-400 transition-colors uppercase italic"><%= challenge.title %></h3>
-                  <p class="text-[9px] font-black text-slate-500 mt-1 uppercase tracking-widest"><%= challenge.start_date.strftime('%m/%d') %> — <%= challenge.end_date.strftime('%m/%d') %></p>
-                </div>
-                <div class="flex items-center gap-4">
-                  <span class="text-[10px] font-black text-indigo-400">참가자 <%= challenge.current_participants %>명</span>
-                  <% if (c = @pending_counts[challenge.id] || 0) > 0 %><span class="text-[10px] font-black text-amber-500">인증 <%= c %>건</span><% end %>
-                </div>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="app-glass-card py-16 text-center border-dashed border-white/10">
+            <p class="text-sm font-bold text-slate-500">운영 중인 챌린지가 없습니다.</p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- 3. Creation Selection Bottom Sheet (Prototype Only) -->
+    <div id="creation-selection-sheet" class="hidden fixed inset-0 z-[220]">
+      <div onclick="document.getElementById('creation-selection-sheet').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
+      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)]">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <h3 class="text-xl font-black text-white mb-2 text-center">새로운 시점 만들기</h3>
+        <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">New Creation</p>
+        
+        <div class="space-y-4">
+          <!-- 1. Create Challenge -->
+          <%= link_to prototype_challenge_builder_path, class: "block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all" do %>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#0C0B12] flex items-center justify-center border border-white/10">
+                <span class="text-2xl">🚩</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-white font-bold text-base">챌린지 개설하기</p>
+                <p class="text-slate-500 text-xs font-bold mt-0.5">함께 성장하는 온라인 목표 달성</p>
               </div>
             </div>
           <% end %>
-        <% end %>
+
+          <!-- 2. Create Gathering -->
+          <%= link_to prototype_gathering_builder_path, class: "block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all" do %>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#0C0B12] flex items-center justify-center border border-white/10">
+                <span class="text-2xl">💬</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-white font-bold text-base">모임 개설하기</p>
+                <p class="text-slate-500 text-xs font-bold mt-0.5">오프라인에서 취향과 경험 공유</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="mt-8 text-center">
+            <button type="button" onclick="document.getElementById('creation-selection-sheet').classList.add('hidden')" class="px-8 py-3 rounded-full bg-white/5 text-slate-500 font-bold text-sm hover:bg-white/10 transition-colors">닫기</button>
+        </div>
       </div>
     </div>
   </div>
-
 <% else %>
   <!-- ORIGINAL WEB UI: Safe & Untouched -->
   <div class="space-y-10 pb-32">

@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  layout :set_layout
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -69,5 +70,13 @@ class ApplicationController < ActionController::Base
   def redirect_back_or(default)
     redirect_to(session[:forwarding_url] || default)
     session.delete(:forwarding_url)
+  end
+
+  def set_layout
+    params[:source] == "prototype" ? "prototype" : "application"
+  end
+
+  def default_url_options
+    params[:source] == "prototype" ? { source: "prototype" } : {}
   end
 end

@@ -116,20 +116,20 @@
     </div>
   </section>
 
-  <!-- 4. Host Management -->
+  <!-- 4. Host Management (Integrated Link) -->
   <section class="space-y-4">
-    <button data-action="click->proto-ui#openModal" data-modal-id="host-center" class="w-full">
+    <%= link_to hosted_challenges_path(source: 'prototype'), class: "block w-full" do %>
       <div class="app-glass-card p-6 flex items-center justify-between border-amber-500/10 bg-amber-500/5 group app-tap-active">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
           <div class="text-left">
             <h4 class="text-sm font-black text-white leading-none">호스트 센터</h4>
-            <p class="text-[11px] font-bold text-amber-500/60 mt-2">내가 개설한 챌린지 관리하기</p>
+            <p class="text-[11px] font-bold text-amber-500/60 mt-2">내가 개설한 챌린지 및 모임 관리</p>
           </div>
         </div>
         <svg class="w-5 h-5 text-amber-500/60 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </div>
-    </button>
+    <% end %>
   </section>
 
   <!-- 5. Settings List -->
