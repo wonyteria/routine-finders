@@ -21,7 +21,7 @@
         <h2 class="text-sm font-black text-white"><%= current_user&.nickname || "Guest" %></h2>
         <div class="flex items-center gap-1.5 mt-0.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <p class="text-[10px] font-bold text-slate-500">Active Now</p>
+          <p class="text-[10px] font-bold text-slate-500">현재 활동 중</p>
         </div>
       </div>
     <% end %>
@@ -149,11 +149,11 @@
       
       <!-- Center Progress -->
       <div class="text-center space-y-2 relative z-10">
-        <p class="text-[10px] font-black tracking-[0.3em] text-indigo-400 uppercase">Focus Rate</p>
+        <p class="text-[10px] font-black tracking-[0.3em] text-indigo-400 uppercase">오늘의 집중도</p>
         <h2 id="prototype-focus-percentage" class="text-6xl font-black text-white tabular-nums" style="text-shadow: 0 0 30px rgba(124, 77, 255, 0.4);">
           <%= @progress %><span class="text-xl ml-1 opacity-40">%</span>
         </h2>
-        <p id="prototype-done-count" class="text-[12px] font-bold text-slate-500"><%= @completed_count %> / <%= @todays_routines.count %> Done</p>
+        <p id="prototype-done-count" class="text-[12px] font-bold text-slate-500"><%= @completed_count %> / <%= @todays_routines.count %> 완료</p>
       </div>
 
       <!-- Floating Animated Icons -->
@@ -164,8 +164,8 @@
 
   <!-- 4. Routine List -->
   <section class="space-y-4">
-    <div class="flex justify-between items-end">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">Today's Routine</h3>
+    <div class="flex justify-between items-end px-2">
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">오늘의 루틴</h3>
     </div>
 
     <div class="space-y-3">
@@ -202,13 +202,13 @@
   <!-- 5. My Dynamic Pulse: Hosted & Joined Content -->
   <% if @hosted_challenges.any? || @joined_challenges.any? %>
     <section class="space-y-4">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none px-2">My Dynamic Pulse</h3>
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none px-2">나의 실시간 성취</h3>
       <div class="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-2">
         <% @hosted_challenges.each do |challenge| %>
           <%= link_to challenge_path(challenge, source: 'prototype'), class: "shrink-0 w-64 app-glass-card p-5 border-amber-500/20 bg-amber-500/5 relative overflow-hidden group active:scale-95 transition-all block" do %>
             <div class="absolute -right-4 -top-4 w-16 h-16 bg-amber-500/10 blur-xl rounded-full"></div>
             <div class="flex items-start justify-between relative z-10 mb-3">
-              <span class="px-2 py-0.5 bg-amber-500/20 rounded-lg text-[8px] font-black text-amber-500 uppercase">Hosting</span>
+              <span class="px-2 py-0.5 bg-amber-500/20 rounded-lg text-[8px] font-black text-amber-500 uppercase">운영 중</span>
               <span class="text-sm">⚡️</span>
             </div>
             <h4 class="text-sm font-black text-white line-clamp-1 mb-1"><%= challenge.title %></h4>
@@ -228,16 +228,16 @@
           <%= link_to challenge_path(challenge, source: 'prototype'), class: "shrink-0 w-64 app-glass-card p-5 border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden group active:scale-95 transition-all block" do %>
             <div class="absolute -right-4 -top-4 w-16 h-16 bg-indigo-500/10 blur-xl rounded-full"></div>
             <div class="flex items-start justify-between relative z-10 mb-3">
-              <span class="px-2 py-0.5 bg-indigo-500/20 rounded-lg text-[8px] font-black text-indigo-400 uppercase">Participating</span>
+              <span class="px-2 py-0.5 bg-indigo-500/20 rounded-lg text-[8px] font-black text-indigo-400 uppercase">참여 중</span>
               <span class="text-sm">🔥</span>
             </div>
             <h4 class="text-sm font-black text-white line-clamp-1 mb-1"><%= challenge.title %></h4>
             <div class="flex items-center justify-between mt-4">
               <div class="flex items-center gap-1.5">
                 <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
-                <p class="text-[9px] font-bold text-indigo-400">85% Achieved</p>
+                <p class="text-[9px] font-bold text-indigo-400">85% 달성 중</p>
               </div>
-              <p class="text-[10px] font-bold text-slate-500">Day 4/14</p>
+              <p class="text-[10px] font-bold text-slate-500">4일차 / 14일</p>
             </div>
           <% end %>
         <% end %>
@@ -269,7 +269,7 @@
           <div class="space-y-1">
             <div class="flex items-center gap-2">
               <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></div>
-              <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">Live Now</span>
+              <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">현재 라이브 중</span>
             </div>
             <h4 class="text-sm font-black text-white">루파 라이브룸</h4>
           </div>
