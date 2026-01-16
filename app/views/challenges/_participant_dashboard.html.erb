@@ -46,9 +46,9 @@
   <div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 -mt-8 pb-32">
     <!-- Top Nav -->
     <header class="sticky top-0 z-50 px-8 py-6 bg-[#0C0B12]/80 backdrop-blur-md flex items-center justify-between">
-      <button onclick="history.back()" class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400">
+      <%= link_to prototype_explore_path, class: "glass-btn w-11 h-11 flex items-center justify-center text-slate-400" do %>
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-      </button>
+      <% end %>
       <div class="flex-1 text-center px-4">
         <h1 class="text-sm font-black truncate"><%= @challenge.title %></h1>
         <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= @d_day %></p>
