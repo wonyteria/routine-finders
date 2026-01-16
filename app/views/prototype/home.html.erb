@@ -1,7 +1,8 @@
 <div class="space-y-8 pt-8">
-  <!-- 1. Header: User Status -->
+  <!-- 1. Header: Profile | Logo | Notification -->
   <header class="flex items-center justify-between">
-    <div class="flex items-center gap-3">
+    <!-- Left: Profile -->
+    <%= link_to prototype_my_path, class: "flex items-center gap-3 app-tap-active" do %>
       <div class="w-10 h-10 rounded-2xl bg-indigo-500 overflow-hidden shadow-lg shadow-indigo-500/20 border border-white/10">
         <% if current_user %>
           <img src="<%= current_user.profile_image %>" class="w-full h-full object-cover">
@@ -16,40 +17,102 @@
           <p class="text-[10px] font-bold text-slate-500">Active Now</p>
         </div>
       </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <div class="px-3 py-1.5 app-glass-card flex items-center gap-2 border-indigo-500/10 active:scale-95 transition-transform">
-        <span class="text-xs">🔥</span>
-        <span class="text-xs font-black text-white tabular-nums">7</span>
+    <% end %>
+    
+    <!-- Center: Logo -->
+    <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+      <div class="w-7 h-7 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+        <span class="text-white text-xs font-black">RF</span>
       </div>
+      <span class="text-xs font-black text-white tracking-tight">루틴파인더스</span>
     </div>
+    
+    <!-- Right: Notification -->
+    <%= link_to notifications_path, class: "relative app-glass-card w-10 h-10 flex items-center justify-center app-tap-active" do %>
+      <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+      </svg>
+      <% if current_user&.notifications&.unread&.any? %>
+        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-black text-white border-2 border-[#0C0B12]">
+          <%= [current_user.notifications.unread.count, 9].min %>
+        </span>
+      <% end %>
+    <% end %>
   </header>
 
-  <!-- 2. Routine Record Input & Rotating Feed -->
+  <!-- 2. Commitment Input & Live Feed -->
   <div class="space-y-3">
-    <div class="app-glass-card flex items-center px-5 py-4 gap-4 border-white/5 cursor-pointer hover:bg-white/[0.03] transition-colors app-tap-active group" data-action="click->proto-ui#openModal" data-modal-id="record-sheet">
-      <span class="text-xl group-hover:rotate-12 transition-transform">✍️</span>
-      <p class="text-[13px] font-bold text-slate-500">오늘의 루틴 기록 남기기...</p>
+    <div class="app-glass-card flex items-center px-5 py-4 gap-4 border-white/5 cursor-pointer hover:bg-white/[0.03] transition-colors app-tap-active group" data-action="click->proto-ui#openModal" data-modal-id="commitment-sheet">
+      <span class="text-xl group-hover:scale-110 transition-transform">💪</span>
+      <p class="text-[13px] font-bold text-slate-500">오늘의 다짐을 적어보세요...</p>
       <div class="ml-auto">
         <svg class="w-5 h-5 text-indigo-500 opacity-50" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </div>
     </div>
 
-    <!-- Rotating Other Members' Records -->
+    <!-- Live Feed with LIVE indicator -->
     <div class="overflow-hidden h-6 relative mx-2">
-      <div class="flex flex-col animate-vertical-slide">
-        <% if @recent_reflections.any? %>
-          <% (@recent_reflections + [@recent_reflections.first]).each do |activity| %>
+      <div class="flex items-center gap-2 absolute left-0 top-0 z-10">
+        <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 border border-red-500/30">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+          <span class="text-[8px] font-black text-red-400 uppercase tracking-wider">LIVE</span>
+        </div>
+      </div>
+      <div class="flex flex-col animate-vertical-slide pl-16">
+        <% 
+          # Combine different activity types
+          activities = []
+          
+          # Recent reflections (루틴 기록)
+          if @recent_reflections.any?
+            @recent_reflections.each do |reflection|
+              activities << {
+                type: :reflection,
+                user: reflection.user,
+                text: "#{reflection.user.nickname}님이 루틴을 완료했어요: \"#{reflection.body.truncate(25) rescue '성실하게 루틴 완료!'}\""
+              }
+            end
+          end
+          
+          # Recent challenge participations (챌린지 참여)
+          if defined?(@recent_challenge_joins) && @recent_challenge_joins.any?
+            @recent_challenge_joins.each do |participant|
+              activities << {
+                type: :challenge_join,
+                user: participant.user,
+                text: "#{participant.user.nickname}님이 '#{participant.challenge.title}' 챌린지에 참여했어요 🎯"
+              }
+            end
+          end
+          
+          # Recent gatherings (모임 참여)
+          if defined?(@recent_gathering_joins) && @recent_gathering_joins.any?
+            @recent_gathering_joins.each do |participant|
+              activities << {
+                type: :gathering_join,
+                user: participant.user,
+                text: "#{participant.user.nickname}님이 '#{participant.challenge.title}' 모임에 참여했어요 📍"
+              }
+            end
+          end
+          
+          # Shuffle and limit
+          activities = activities.shuffle.take(5)
+          activities << activities.first if activities.any? # Loop
+        %>
+        
+        <% if activities.any? %>
+          <% activities.each do |activity| %>
             <div class="h-6 flex items-center gap-2 opacity-60">
-              <img src="<%= activity.user.profile_image %>" class="w-4 h-4 rounded-full border border-white/10">
+              <img src="<%= activity[:user].profile_image %>" class="w-4 h-4 rounded-full border border-white/10">
               <p class="text-[10px] font-bold text-slate-400 truncate">
-                <span class="text-white"><%= activity.user.nickname %></span>님이 기록을 지켰어요: "<%= activity.body.truncate(30) rescue '성실하게 루틴 완료!' %>"
+                <%= activity[:text] %>
               </p>
             </div>
           <% end %>
         <% else %>
           <div class="h-6 flex items-center gap-2 opacity-40">
-            <span class="text-[10px] font-bold text-slate-500">지금 첫 번째 기록을 남겨보세요!</span>
+            <span class="text-[10px] font-bold text-slate-500">지금 첫 번째 활동을 시작해보세요!</span>
           </div>
         <% end %>
       </div>

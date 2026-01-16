@@ -14,6 +14,16 @@ class PrototypeController < ApplicationController
     # Fetch recent reflections for the rotating UI
     @recent_reflections = RufaActivity.where(activity_type: [ "routine_record", "reflection" ]).order(created_at: :desc).limit(10)
 
+    # Fetch recent challenge/gathering joins for live feed
+    @recent_challenge_joins = Participant.joins(:challenge)
+                                         .where(challenges: { challenge_type: :online })
+                                         .order(created_at: :desc)
+                                         .limit(5)
+    @recent_gathering_joins = Participant.joins(:challenge)
+                                         .where(challenges: { challenge_type: :offline })
+                                         .order(created_at: :desc)
+                                         .limit(5)
+
     # Fetch user's hosted/joined content for dashboard
     if current_user
       @hosted_challenges = Challenge.where(host: current_user).order(created_at: :desc).limit(2)
