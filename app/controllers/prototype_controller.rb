@@ -16,11 +16,11 @@ class PrototypeController < ApplicationController
 
     # Fetch recent challenge/gathering joins for live feed
     @recent_challenge_joins = Participant.joins(:challenge)
-                                         .where(challenges: { challenge_type: :online })
+                                         .where(challenges: { meeting_type: :online })
                                          .order(created_at: :desc)
                                          .limit(5)
     @recent_gathering_joins = Participant.joins(:challenge)
-                                         .where(challenges: { challenge_type: :offline })
+                                         .where(challenges: { meeting_type: :offline })
                                          .order(created_at: :desc)
                                          .limit(5)
 
