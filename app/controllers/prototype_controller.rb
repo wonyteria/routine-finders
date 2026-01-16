@@ -3,31 +3,40 @@ class PrototypeController < ApplicationController
   before_action :set_shared_data
 
   def home
+    # 1. Total Daily Tasks Calculation (Routines + Challenges + Gatherings)
     @todays_routines = current_user ? current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
-    @completed_count = @todays_routines.select(&:completed_today?).count
-    @progress = @todays_routines.any? ? (@completed_count.to_f / @todays_routines.count * 100).to_i : 0
+    @joined_challenges_active = current_user ? current_user.participations.active.joins(:challenge).where(challenges: { meeting_type: :online }) : []
+    @todays_gatherings = current_user ? current_user.participations.active.joins(challenge: :meeting_info).where(meeting_infos: { meeting_date: Date.current }) : []
 
-    # Check for active club membership
+    # Counts
+    routine_total = @todays_routines.count
+    challenge_total = @joined_challenges_active.count
+    gathering_total = @todays_gatherings.count
+    @total_task_count = routine_total + challenge_total + gathering_total
+
+    # Completed Counts
+    routine_done = @todays_routines.select(&:completed_today?).count
+    # Simplified: assume verification_logs for today exists for completed challenges
+    challenge_done = current_user ? VerificationLog.where(participant: current_user.participations, created_at: Date.current.all_day).pluck(:participant_id).uniq.count : 0
+    # Simplified: assume attendance for today exists for gatherings
+    gathering_done = current_user ? @todays_gatherings.select { |p| p.attended_on?(Date.current) rescue false }.count : 0 # fallback to false for prototype
+
+    @completed_count = routine_done + challenge_done + gathering_done
+    @progress = @total_task_count.positive? ? (@completed_count.to_f / @total_task_count * 100).to_i : 0
+
+    # 2. Check for active club membership
     @membership = current_user&.routine_club_members&.active&.first
     @is_club_member = @membership.present?
 
-    # Fetch recent reflections for the rotating UI
+    # 3. Live Feed Data
     @recent_reflections = RufaActivity.where(activity_type: [ "routine_record", "reflection" ]).order(created_at: :desc).limit(10)
+    @recent_challenge_joins = Participant.joins(:challenge).where(challenges: { meeting_type: :online }).order(created_at: :desc).limit(5)
+    @recent_gathering_joins = Participant.joins(:challenge).where(challenges: { meeting_type: :offline }).order(created_at: :desc).limit(5)
 
-    # Fetch recent challenge/gathering joins for live feed
-    @recent_challenge_joins = Participant.joins(:challenge)
-                                         .where(challenges: { meeting_type: :online })
-                                         .order(created_at: :desc)
-                                         .limit(5)
-    @recent_gathering_joins = Participant.joins(:challenge)
-                                         .where(challenges: { meeting_type: :offline })
-                                         .order(created_at: :desc)
-                                         .limit(5)
-
-    # Fetch user's hosted/joined content for dashboard
+    # 4. Content for Dashboard
     if current_user
-      @hosted_challenges = Challenge.where(host: current_user).order(created_at: :desc).limit(2)
-      @joined_challenges = current_user.challenges.active.limit(2)
+      @hosted_challenges = Challenge.where(host: current_user).order(created_at: :desc)
+      @joined_challenges = current_user.challenges.active.where.not(id: @hosted_challenges.pluck(:id))
     else
       @hosted_challenges = []
       @joined_challenges = []
