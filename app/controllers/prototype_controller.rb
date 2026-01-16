@@ -125,6 +125,7 @@ class PrototypeController < ApplicationController
   def live
     @active_members = User.order("RANDOM()").limit(8)
     @current_club = RoutineClub.official.first
+    @is_club_member = current_user&.routine_club_members&.active&.exists?
   end
 
   def hub

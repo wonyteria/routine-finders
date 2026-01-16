@@ -11,9 +11,11 @@
     <%= link_to prototype_home_path, class: "w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white" do %>
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
     <% end %>
-    <div class="flex items-center gap-2 px-4 py-1.5 bg-rose-600/20 rounded-full border border-rose-500/30">
-       <div class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></div>
-       <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest">Live Room</span>
+    <div class="flex items-center gap-2 px-4 py-1.5 <%= @is_club_member ? 'bg-rose-600/20 border-rose-500/30' : 'bg-indigo-600/20 border-indigo-500/30' %> rounded-full border">
+       <div class="w-1.5 h-1.5 rounded-full <%= @is_club_member ? 'bg-rose-500' : 'bg-indigo-500' %> animate-pulse"></div>
+       <span class="text-[10px] font-black <%= @is_club_member ? 'text-rose-500' : 'text-indigo-500' %> uppercase tracking-widest">
+         <%= @is_club_member ? 'Live Now' : 'Sneak Peek' %>
+       </span>
     </div>
     <button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white"><span class="text-xl">⚙️</span></button>
   </header>
@@ -56,20 +58,34 @@
   </main>
 
   <!-- Actions -->
-  <footer class="mt-12 space-y-6">
-    <div class="flex flex-col gap-4 px-4">
-      <button class="w-full py-5 rounded-[28px] bg-white text-[#07060A] font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95 transition-all">
-        <span class="text-2xl">📹</span>
-        줌(Zoom) 라이브 입장하기
-      </button>
-      
-      <button class="w-full py-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
-        <span class="text-2xl">🎧</span>
-        루틴 집중 음악 듣기
-      </button>
+  <footer class="mt-8 space-y-6 pb-12">
+    <div class="flex flex-col gap-3 px-6">
+      <% if @is_club_member %>
+        <button class="w-full py-5 rounded-[28px] bg-white text-[#07060A] font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95 transition-all">
+          <span class="text-2xl">📹</span>
+          줌(Zoom) 라이브 입장하기
+        </button>
+        
+        <button class="w-full py-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
+          <span class="text-2xl">🎧</span>
+          루틴 집중 음악 듣기
+        </button>
+      <% else %>
+        <!-- Locked State for General Users -->
+        <%= link_to prototype_club_join_path, class: "w-full py-5 rounded-[28px] bg-indigo-500 text-white font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(99,102,241,0.2)] active:scale-95 transition-all" do %>
+          <span>🔒</span>
+          RUFA 클럽 합류하고 입장하기
+        <% end %>
+        
+        <div class="w-full py-5 rounded-[28px] bg-white/5 border border-white/10 text-slate-500 font-black text-lg flex items-center justify-center gap-3 opacity-50">
+          <span class="text-xl">🎧</span>
+          집중 음악 (멤버 전용)
+        </div>
+        <p class="text-[10px] font-bold text-indigo-400/60 text-center animate-pulse">지금 합류하면 1,200원 할인가로 시작할 수 있어요!</p>
+      <% end %>
     </div>
     
-    <div class="text-center">
+    <div class="text-center pt-2">
       <p class="text-[10px] font-bold text-slate-700 uppercase tracking-[0.2em]">Live Session Ends in <span class="text-white">42:15</span></p>
     </div>
   </footer>
