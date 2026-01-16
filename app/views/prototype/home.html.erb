@@ -225,46 +225,81 @@
   
   <!-- 5. RUFA Club LIVE Nudge (For Members) or Promo (For Solo/Guest) -->
   <% if @is_club_member %>
-    <section class="mb-8">
-      <%= link_to prototype_live_path, class: "block w-full p-6 app-fab-gradient rounded-[32px] flex items-center justify-between group app-tap-active shadow-xl shadow-indigo-500/10" do %>
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-2xl animate-pulse">📹</div>
-          <div class="text-left">
-            <p class="text-base font-black text-white">라이브 루틴방 입장</p>
-            <p class="text-[11px] font-bold text-white/70">멤버들과 함께 몰입해요!</p>
+    <section class="mb-6">
+      <%= link_to prototype_live_path, class: "group relative block w-full bg-slate-900/50 border border-indigo-500/20 rounded-[28px] overflow-hidden app-tap-active shadow-xl shadow-indigo-500/10" do %>
+        <!-- Subtle Animated Gradient Background -->
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-transparent opacity-50"></div>
+        
+        <div class="p-4 flex items-center justify-between relative z-10">
+          <div class="flex items-center gap-3">
+            <!-- Iconic Live Indicator -->
+            <div class="relative w-10 h-10 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-white/5 group-hover:scale-110 transition-transform duration-500">
+              <div class="absolute -top-1 -right-1 flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-900"></span>
+              </div>
+              📹
+            </div>
+            
+            <div class="text-left">
+              <div class="flex items-center gap-1.5 mb-0.5">
+                <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">JOIN NOW</span>
+                <p class="text-sm font-black text-white">라이브 루틴방 입장</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <!-- Avatar Cluster Mockup -->
+                <div class="flex -space-x-1.5">
+                  <% [1, 2, 3].each do |i| %>
+                    <div class="w-4 h-4 rounded-full border border-slate-900 bg-slate-800 flex items-center justify-center text-[7px] font-bold text-indigo-300">U</div>
+                  <% end %>
+                </div>
+                <p class="text-[10px] font-bold text-slate-500">메이트 12명이 몰입 중!</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-xl group-hover:rotate-12 transition-transform">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          
+          <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 group-hover:bg-indigo-500 group-hover:text-white transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </div>
         </div>
       <% end %>
     </section>
   <% elsif current_user %>
-    <section class="mb-8">
-      <%= link_to prototype_live_path, class: "group relative app-glass-card border-indigo-500/20 bg-indigo-500/5 p-6 flex flex-col justify-between overflow-hidden active:scale-95 transition-all block" do %>
-        <div class="absolute -right-8 -top-8 w-24 h-24 bg-indigo-500/10 blur-2xl rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-        <div class="flex justify-between items-start relative z-10">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></div>
-              <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">현재 라이브 중</span>
+    <section class="mb-6">
+      <%= link_to prototype_live_path, class: "group relative block w-full bg-slate-900/50 border border-indigo-500/20 rounded-[28px] overflow-hidden app-tap-active shadow-xl shadow-indigo-500/5" do %>
+        <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent"></div>
+        
+        <div class="p-4 flex items-center justify-between relative z-10">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-xl border border-white/5 transition-all duration-700 group-hover:rotate-6">
+              📹
             </div>
-            <h4 class="text-sm font-black text-white">루파 라이브룸</h4>
+            <div class="text-left">
+              <div class="flex items-center gap-2 mb-0.5">
+                <div class="flex h-1.5 w-1.5 relative">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
+                </div>
+                <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">RUFA LIVE ROOM</span>
+              </div>
+              <h4 class="text-sm font-black text-white">동료들의 실시간 몰입</h4>
+              <p class="text-[10px] font-bold text-slate-500 mt-0.5">혼자 하기 힘든 루틴, 여기서 함께해요.</p>
+            </div>
           </div>
-          <span class="text-xl">📹</span>
+          
+          <div class="px-3 py-1.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-[9px] font-black text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all uppercase">구경하기</div>
         </div>
-        <p class="text-[10px] font-bold text-slate-500 relative z-10">현재 <span class="text-indigo-400">12명</span>의 메이트가<br/>함께 루틴 중</p>
       <% end %>
     </section>
   <% else %>
      <!-- Guest Onboarding Banner -->
-     <section class="mb-8">
-        <div class="app-glass-card p-8 bg-gradient-to-br from-indigo-500 to-purple-600 border-none relative overflow-hidden group">
+     <section class="mb-6">
+        <div class="app-glass-card p-5 bg-gradient-to-br from-indigo-500 to-purple-600 border-none relative overflow-hidden group">
           <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-          <div class="relative z-10 space-y-6">
-            <h3 class="text-2xl font-black text-white leading-tight">내 삶의 주도권을<br/>찾는 여정, <span class="text-amber-300">루틴파인더스</span></h3>
-            <p class="text-xs font-bold text-white/70 leading-relaxed">이미 2,400+명의 멤버들이 자신만의 몰입 시간을 만들어가고 있습니다.</p>
-            <%= link_to landing_path, class: "inline-block w-full py-4 bg-white text-indigo-600 rounded-2xl font-black text-center text-sm shadow-xl active:scale-95 transition-all" do %>
+          <div class="relative z-10 space-y-4">
+            <h3 class="text-lg font-black text-white leading-tight">내 삶의 주도권을 찾는 여정,<br/><span class="text-amber-300">루틴파인더스</span></h3>
+            <p class="text-[10px] font-bold text-white/70 leading-relaxed text-balance">이미 2,400+명의 멤버들이 자신만의 몰입 시간을 만들어가고 있습니다.</p>
+            <%= link_to landing_path, class: "inline-block w-full py-3 bg-white text-indigo-600 rounded-xl font-black text-center text-xs shadow-xl active:scale-95 transition-all" do %>
               지금 바로 시작하기
             <% end %>
           </div>
@@ -274,21 +309,21 @@
 
   <!-- 6. Content Management: Host Center (If applicable) -->
   <% if @hosted_challenges.any? %>
-    <section class="space-y-4 pt-2 mb-8">
+    <section class="space-y-4 pt-2 mb-6">
       <div class="flex justify-between items-end px-2">
         <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">호스트 관리 센터</h3>
       </div>
-      <div class="app-glass-card p-6 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 relative overflow-hidden group">
+      <div class="app-glass-card p-5 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 relative overflow-hidden group">
         <div class="absolute -right-8 -top-8 w-24 h-24 bg-amber-500/10 blur-2xl rounded-full"></div>
         <div class="flex items-center justify-between relative z-10">
           <div class="space-y-1">
-            <h4 class="text-lg font-black text-white">운영 중인 도전 <%= @hosted_challenges.count %>개</h4>
-            <p class="text-xs font-bold text-slate-400">참여자들의 열정을 깨우러 가볼까요?</p>
+            <h4 class="text-base font-black text-white">운영 중 도전 <%= @hosted_challenges.count %>개</h4>
+            <p class="text-[10px] font-bold text-slate-400">참여자들의 열정을 깨우러 가볼까요?</p>
           </div>
-          <div class="text-3xl">⚡️</div>
+          <div class="text-2xl">⚡️</div>
         </div>
-        <div class="mt-6">
-          <%= link_to hosted_challenges_path, class: "flex items-center justify-center gap-2 py-3 bg-amber-500 text-black font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all" do %>
+        <div class="mt-4">
+          <%= link_to hosted_challenges_path, class: "flex items-center justify-center gap-2 py-3 bg-amber-500 text-black font-black text-[11px] rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all" do %>
             <span>호스트 센터 입장하기</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           <% end %>
