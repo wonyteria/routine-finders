@@ -223,32 +223,7 @@
     </div>
   </section>
   
-  <!-- 5. Content Management: Host Center (If applicable) -->
-  <% if @hosted_challenges.any? %>
-    <section class="space-y-4 pt-2 mb-8">
-      <div class="flex justify-between items-end px-2">
-        <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">호스트 관리 센터</h3>
-      </div>
-      <div class="app-glass-card p-6 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 relative overflow-hidden group">
-        <div class="absolute -right-8 -top-8 w-24 h-24 bg-amber-500/10 blur-2xl rounded-full"></div>
-        <div class="flex items-center justify-between relative z-10">
-          <div class="space-y-1">
-            <h4 class="text-lg font-black text-white">운영 중인 도전 <%= @hosted_challenges.count %>개</h4>
-            <p class="text-xs font-bold text-slate-400">참여자들의 열정을 깨우러 가볼까요?</p>
-          </div>
-          <div class="text-3xl">⚡️</div>
-        </div>
-        <div class="mt-6">
-          <%= link_to hosted_challenges_path, class: "flex items-center justify-center gap-2 py-3 bg-amber-500 text-black font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all" do %>
-            <span>호스트 센터 입장하기</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-          <% end %>
-        </div>
-      </div>
-    </section>
-  <% end %>
-
-  <!-- 6. RUFA Club LIVE Nudge (For Members) or Promo (For Solo/Guest) -->
+  <!-- 5. RUFA Club LIVE Nudge (For Members) or Promo (For Solo/Guest) -->
   <% if @is_club_member %>
     <section class="mb-8">
       <%= link_to prototype_live_path, class: "block w-full p-6 app-fab-gradient rounded-[32px] flex items-center justify-between group app-tap-active shadow-xl shadow-indigo-500/10" do %>
@@ -281,10 +256,9 @@
         <p class="text-[10px] font-bold text-slate-500 relative z-10">현재 <span class="text-indigo-400">12명</span>의 메이트가<br/>함께 루틴 중</p>
       <% end %>
     </section>
-  <% end %>
-
+  <% else %>
      <!-- Guest Onboarding Banner -->
-     <section class="pt-2">
+     <section class="mb-8">
         <div class="app-glass-card p-8 bg-gradient-to-br from-indigo-500 to-purple-600 border-none relative overflow-hidden group">
           <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
           <div class="relative z-10 space-y-6">
@@ -296,5 +270,56 @@
           </div>
         </div>
      </section>
+  <% end %>
+
+  <!-- 6. Content Management: Host Center (If applicable) -->
+  <% if @hosted_challenges.any? %>
+    <section class="space-y-4 pt-2 mb-8">
+      <div class="flex justify-between items-end px-2">
+        <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">호스트 관리 센터</h3>
+      </div>
+      <div class="app-glass-card p-6 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 relative overflow-hidden group">
+        <div class="absolute -right-8 -top-8 w-24 h-24 bg-amber-500/10 blur-2xl rounded-full"></div>
+        <div class="flex items-center justify-between relative z-10">
+          <div class="space-y-1">
+            <h4 class="text-lg font-black text-white">운영 중인 도전 <%= @hosted_challenges.count %>개</h4>
+            <p class="text-xs font-bold text-slate-400">참여자들의 열정을 깨우러 가볼까요?</p>
+          </div>
+          <div class="text-3xl">⚡️</div>
+        </div>
+        <div class="mt-6">
+          <%= link_to hosted_challenges_path, class: "flex items-center justify-center gap-2 py-3 bg-amber-500 text-black font-black text-xs rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all" do %>
+            <span>호스트 센터 입장하기</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
+  <!-- 7. My Real-time Achievement (Only Joined Content) -->
+  <% if @joined_challenges.any? %>
+    <section class="space-y-4">
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none px-2">나의 실시간 성취</h3>
+      <div class="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-2">
+        <% @joined_challenges.each do |challenge| %>
+          <%= link_to challenge_path(challenge, source: 'prototype'), class: "shrink-0 w-64 app-glass-card p-5 border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden group active:scale-95 transition-all block" do %>
+            <div class="absolute -right-4 -top-4 w-16 h-16 bg-indigo-500/10 blur-xl rounded-full"></div>
+            <div class="flex items-start justify-between relative z-10 mb-3">
+              <span class="px-2 py-0.5 bg-indigo-500/20 rounded-lg text-[8px] font-black text-indigo-400 uppercase">참여 중</span>
+              <span class="text-sm">🔥</span>
+            </div>
+            <h4 class="text-sm font-black text-white line-clamp-1 mb-1"><%= challenge.title %></h4>
+            <div class="flex items-center justify-between mt-4">
+              <div class="flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
+                <p class="text-[9px] font-bold text-indigo-400">85% 달성 중</p>
+              </div>
+              <p class="text-[10px] font-bold text-slate-500">4일차 / 14일</p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
   <% end %>
 </div>
