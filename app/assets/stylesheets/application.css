@@ -147,3 +147,17 @@
   justify-content: center;
   background: radial-gradient(circle at center, rgba(124, 77, 255, 0.1) 0%, transparent 70%);
 }
+
+/* Select dropdown option styling for dark theme */
+select option {
+  background-color: #1B1A24;
+  color: #E2E8F0;
+  padding: 8px;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+  background-color: #7C4DFF;
+  color: #FFFFFF;
+}
