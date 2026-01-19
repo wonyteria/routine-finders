@@ -1,3 +1,36 @@
+<!-- 7. Success Modals (Conditional) -->
+<% if params[:joined_club] %>
+  <div id="club-success-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-6">
+    <div onclick="this.closest('#club-success-modal').remove()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-pop">
+      <div class="w-24 h-24 bg-indigo-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-indigo-500/50">🎉</div>
+      <div class="space-y-2">
+        <h3 class="text-2xl font-black text-white">클럽 가입 신청 완료!</h3>
+        <p class="text-sm font-bold text-slate-400">호스트가 입금을 확인한 후<br/>정식 멤버로 활성화됩니다.</p>
+      </div>
+      <div class="w-full pt-4">
+        <button onclick="this.closest('#club-success-modal').remove()" class="w-full py-4 bg-indigo-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none">확인했습니다</button>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if params[:created_challenge] %>
+  <div id="challenge-success-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-6">
+    <div onclick="this.closest('#challenge-success-modal').remove()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-pop">
+      <div class="w-24 h-24 bg-emerald-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-emerald-500/50">⚡</div>
+      <div class="space-y-2">
+        <h3 class="text-2xl font-black text-white">챌린지 개설 완료!</h3>
+        <p class="text-sm font-bold text-slate-400">새로운 도약의 시작입니다.<br/>호스트 센터에서 관리해보세요.</p>
+      </div>
+      <div class="w-full pt-4">
+        <button onclick="this.closest('#challenge-success-modal').remove()" class="w-full py-4 bg-emerald-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none">확인했습니다</button>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <div class="space-y-8 pt-8">
   <!-- 1. Header: Logo | Profile | Notification -->
   <header class="flex items-center justify-between">

@@ -9,31 +9,31 @@
     </div>
     <div class="space-y-1">
       <h2 class="text-xl font-black text-white"><%= current_user&.nickname %></h2>
-      <p class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">Steady Runner Since 2024</p>
+      <p class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">2024년부터 함께한 꾸준한 루파</p>
     </div>
 
     <!-- Quick Stats -->
     <div class="flex justify-center gap-8 pt-4">
       <div class="text-center">
         <p class="text-lg font-black text-white tabular-nums"><%= @total_activities %></p>
-        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Activities</p>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">활동 기록</p>
       </div>
       <div class="w-px h-8 bg-white/10"></div>
       <div class="text-center">
         <p class="text-lg font-black text-white tabular-nums"><%= @current_streak %>일</p>
-        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Streaks</p>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">연속 성공</p>
       </div>
       <div class="w-px h-8 bg-white/10"></div>
       <div class="text-center">
         <p class="text-lg font-black text-white tabular-nums"><%= @current_month_points %><%= current_user&.is_rufa_club_member? ? 'P' : '' %></p>
-        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest"><%= current_user&.is_rufa_club_member? ? 'Monthly' : 'This Month' %></p>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest"><%= current_user&.is_rufa_club_member? ? '월간 포인트' : '이번 달 점수' %></p>
       </div>
     </div>
   </section>
 
   <section class="space-y-4" data-controller="growth-filter">
     <div class="flex justify-between items-center px-2">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Growth Intel</h3>
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">성장 분석</h3>
       <div class="flex bg-white/5 p-1 rounded-xl gap-1">
         <% ['주간', '월간', '연간'].each_with_index do |label, i| %>
           <button data-action="click->growth-filter#change" 
@@ -95,14 +95,14 @@
   <!-- 3. Identity Wallet -->
   <section class="space-y-4">
     <div class="px-2">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Identity Wallet</h3>
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">배지 보관함</h3>
     </div>
     
     <div class="app-glass-card p-6 overflow-hidden">
       <!-- 1. Earned Badges Header & Scroll -->
       <div class="space-y-4">
         <div class="flex justify-between items-center px-1">
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">Your achievements</p>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">획득한 배지</p>
           <button onclick="const m = document.getElementById('milestones-area'); 
                            const t = this.querySelector('span');
                            m.classList.toggle('hidden');
@@ -140,7 +140,7 @@
       <!-- 2. Hidden Next Milestones (Progress Visualization) -->
       <% if @milestones&.any? %>
         <div id="milestones-area" class="hidden mt-8 pt-8 border-t border-white/5 space-y-4 animate-slide-down">
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none px-1">Upcoming Milestones</p>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none px-1">달성 예정 목표</p>
           <div class="space-y-3">
             <% @milestones.each do |m| %>
               <% progress = (m[:current].to_f / m[:target] * 100).clamp(0, 100).round %>
@@ -409,7 +409,7 @@
       <div class="app-glass-card p-5 bg-amber-500/5 border border-amber-500/20">
         <div class="flex items-center justify-between mb-3">
           <p class="text-sm font-black text-white">진행 중인 챌린지</p>
-          <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-black rounded-full">ACTIVE</span>
+          <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-black rounded-full">운영중</span>
         </div>
         <p class="text-xs font-bold text-slate-400">현재 호스팅 중인 챌린지가 없습니다</p>
       </div>
@@ -649,7 +649,7 @@
          </div>
          <div class="space-y-2">
            <h4 class="text-2xl font-black text-white"><%= ub.badge.name %></h4>
-           <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest"><%= ub.badge.level %> Identity Card</p>
+           <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest"><%= ub.badge.level %> 등급 배지</p>
          </div>
          <p class="text-sm font-bold text-slate-400 leading-relaxed text-center px-4">
            "<%= ub.badge.description %>"
@@ -661,11 +661,11 @@
           <div class="flex justify-around">
              <div class="text-center">
                <p class="text-xs font-black text-white"><%= ub.granted_at&.strftime("%Y.%m.%d") || "2024.12.24" %></p>
-               <p class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Acquired</p>
+                <p class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">획득일</p>
              </div>
              <div class="text-center">
                <p class="text-xs font-black text-white">Lv.<%= ub.badge.requirement_value.to_i %></p>
-               <p class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">Goal</p>
+                <p class="text-[8px] font-bold text-slate-600 uppercase tracking-widest">달성 기준</p>
              </div>
           </div>
           <button onclick="if(navigator.share) { 

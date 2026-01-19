@@ -3,6 +3,8 @@
   <head>
     <title>Routine Finders App Prototype</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="flash-notice" content="<%= notice %>">
+    <meta name="flash-alert" content="<%= alert %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     
@@ -52,7 +54,7 @@
     </style>
   </head>
 
-  <body class="min-h-screen" data-controller="proto-ui">
+  <body class="min-h-screen" data-controller="proto-ui toast">
     <main data-controller="modal" class="w-full max-w-md mx-auto min-h-screen relative pb-40 px-4 shadow-2xl bg-[#0C0B12]">
       <%= yield %>
     </main>

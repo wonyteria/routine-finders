@@ -195,7 +195,11 @@ class RoutineClubsController < ApplicationController
 
     if @membership.save
       RoutineClubNotificationService.notify_host_new_payment(@routine_club, @membership)
-      redirect_to @routine_club, notice: "참여 신청이 완료되었습니다. 입금 확인 후 참여가 승인됩니다."
+      if params[:source] == "prototype" || request.referer&.include?("prototype")
+        redirect_to prototype_home_path(joined_club: true, club_id: @routine_club.id), notice: "참여 신청이 완료되었습니다. 입금 확인 후 참여가 승인됩니다."
+      else
+        redirect_to @routine_club, notice: "참여 신청이 완료되었습니다. 입금 확인 후 참여가 승인됩니다."
+      end
     else
       redirect_to @routine_club, alert: "참여 신청에 실패했습니다."
     end

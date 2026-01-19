@@ -17,7 +17,91 @@ export default class extends Controller {
 
     connect() {
         this.currentStep = 1
+        this.loadDraft()
         this.showStep()
+
+        // Setup change listeners for auto-save
+        this.element.addEventListener("input", () => this.saveDraft())
+        this.element.addEventListener("change", () => this.saveDraft())
+    }
+
+    saveDraft() {
+        const formData = {}
+        const inputs = this.element.querySelectorAll("input, textarea, select")
+        inputs.forEach(input => {
+            if (input.type === "checkbox" || input.type === "radio") {
+                formData[input.id || input.name] = input.checked
+            } else if (input.type !== "password" && input.type !== "file") {
+                formData[input.id || input.name] = input.value
+            }
+        })
+
+        // Also save current step
+        formData["_current_step"] = this.currentStep
+
+        localStorage.setItem("challenge_builder_draft", JSON.stringify(formData))
+    }
+
+    loadDraft() {
+        const draft = localStorage.getItem("challenge_builder_draft")
+        if (!draft) return
+
+        try {
+            const formData = JSON.parse(draft)
+            const inputs = this.element.querySelectorAll("input, textarea, select")
+
+            inputs.forEach(input => {
+                const value = formData[input.id || input.name]
+                if (value !== undefined) {
+                    if (input.type === "checkbox" || input.type === "radio") {
+                        input.checked = value
+                    } else {
+                        input.value = value
+                    }
+                }
+            })
+
+            if (formData["_current_step"]) {
+                this.currentStep = parseInt(formData["_current_step"])
+            }
+
+            // Trigger UI updates for selected options
+            this.syncDataToUI()
+        } catch (e) {
+            console.error("Error loading draft:", e)
+        }
+    }
+
+    clearDraft() {
+        localStorage.removeItem("challenge_builder_draft")
+    }
+
+    syncDataToUI() {
+        // Sync button groups based on hidden input values
+        const hiddenInputs = this.element.querySelectorAll('input[type="hidden"]')
+        hiddenInputs.forEach(hidden => {
+            const name = hidden.name.match(/\[(.*?)\]/)?.[1]
+            if (name) {
+                const buttons = this.element.querySelectorAll(`[data-name="${name}"][data-value="${hidden.value}"]`)
+                buttons.forEach(btn => btn.click())
+            }
+        })
+
+        // Sync days
+        const days = ["월", "화", "수", "목", "금", "토", "일"]
+        days.forEach(day => {
+            const checkbox = this.element.querySelector(`#day_${day}`)
+            const button = this.element.querySelector(`button[data-day="${day}"]`)
+            if (checkbox && button) {
+                this.updateDayUI(button, checkbox.checked)
+            }
+        })
+
+        // Sync cost type
+        const costTypeInput = this.element.querySelector('input[name="challenge[cost_type]"]')
+        if (costTypeInput) {
+            this.updateCostFields(costTypeInput.value)
+        }
     }
 
     next() {
@@ -616,6 +700,7 @@ export default class extends Controller {
     submitForm() {
         // Disable Turbo for this submission to ensure a clean redirect to the new challenge page
         const form = this.element.querySelector("form")
+        this.clearDraft()
         form.setAttribute("data-turbo", "false")
         form.submit()
     }
