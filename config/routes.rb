@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   get "prototype/explore"
   get "prototype/synergy"
   get "prototype/my"
+  get "prototype/notifications"
+  get "prototype/pwa"
+  post "prototype/notifications/clear", to: "prototype#clear_notifications"
   post "prototype/record", to: "prototype#record"
   get "prototype/routine_builder", to: "prototype#routine_builder"
   get "prototype/live", to: "prototype#live"
@@ -10,6 +13,7 @@ Rails.application.routes.draw do
   get "prototype/challenge_builder", to: "prototype#challenge_builder"
   get "prototype/gathering_builder", to: "prototype#gathering_builder"
   get "prototype/club_join", to: "prototype#club_join"
+  post "prototype/mark_badges_viewed", to: "prototype#mark_badges_viewed"
   get "prototype/lecture_intro", to: "prototype#lecture_intro"
   # Main Web Application Routes
 

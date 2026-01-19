@@ -1,7 +1,7 @@
 class PrototypeController < ApplicationController
   layout "prototype"
   before_action :set_shared_data
-  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record ]
+  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa ]
 
   def home
     # 1. Total Daily Tasks Calculation (Routines + Challenges + Gatherings)
@@ -99,7 +99,82 @@ class PrototypeController < ApplicationController
     @current_streak = current_user&.personal_routines&.maximum(:current_streak) || 0
     @current_month_points = current_user&.current_month_points || 0
     @total_platform_score = current_user&.total_platform_score || 0
-    @achievements = current_user&.user_badges&.includes(:badge)&.limit(3) || []
+    @achievements = current_user&.user_badges&.includes(:badge)&.limit(10) || []
+
+    if current_user
+      # Calculate progress for next milestones
+      @milestones = []
+
+      # 1. Verification Count (Routine)
+      current_verifications = current_user.personal_routines.joins(:completions).count
+      next_v_badge = Badge.where(badge_type: :verification_count)
+                          .where("requirement_value > ?", current_verifications)
+                          .order(requirement_value: :asc).first
+      if next_v_badge
+        @milestones << {
+          name: next_v_badge.name,
+          icon: "💎",
+          current: current_verifications,
+          target: next_v_badge.requirement_value.to_i,
+          unit: "회"
+        }
+      end
+
+      # 2. Max Streak
+      max_streak = current_user.personal_routines.maximum(:current_streak) || 0
+      next_s_badge = Badge.where(badge_type: :max_streak)
+                          .where("requirement_value > ?", max_streak)
+                          .order(requirement_value: :asc).first
+      if next_s_badge
+        @milestones << {
+          name: next_s_badge.name,
+          icon: "🔥",
+          current: max_streak,
+          target: next_s_badge.requirement_value.to_i,
+          unit: "일"
+        }
+      end
+
+      # 3. Cheer Count (Mock or Real based on claps)
+      current_cheers = current_user.rufa_claps.count
+      next_c_badge = Badge.where(badge_type: :cheer_count)
+                          .where("requirement_value > ?", current_cheers)
+                          .order(requirement_value: :asc).first
+      if next_c_badge
+        @milestones << {
+          name: next_c_badge.name,
+          icon: "👏",
+          current: current_cheers,
+          target: next_c_badge.requirement_value.to_i,
+          unit: "회"
+        }
+      end
+    end
+  end
+
+  def notifications
+    if current_user.notifications.none? && !session[:notifications_cleared]
+      # Create mock notifications for demo purposes
+      current_user.notifications.create!([
+        { notification_type: :announcement, title: "파인더님, 환영합니다! 🚀", content: "성장에 진심인 파인더님을 위해 '루틴 파인더스'가 준비한 첫 선물을 확인해보세요.", created_at: Time.current },
+        { notification_type: :badge_award, title: "새로운 배지 획득! 🏆", content: "'첫걸음' 배지를 획득하셨습니다. 성취 리포트에서 확인해보세요.", created_at: 2.hours.ago },
+        { notification_type: :reminder, title: "루틴 체크 시간이 얼마 남지 않았어요 ✨", content: "오늘 설정하신 '물 2L 마시기' 루틴, 지금 바로 인증하고 파인더들의 응원을 받아보세요.", created_at: 1.day.ago },
+        { notification_type: :approval, title: "챌린지 입성 완료! ✅", content: "'새벽 6시 기상' 챌린지 신청이 승인되었습니다. 멋진 팀원들이 기다리고 있어요!", created_at: 2.days.ago }
+      ])
+    end
+
+    @notifications = current_user.notifications.order(created_at: :desc).limit(50)
+    # Mark as read concurrently (or just mark all if entering this page)
+    current_user.notifications.where(is_read: false).update_all(is_read: true)
+  end
+
+  def clear_notifications
+    current_user.notifications.destroy_all
+    session[:notifications_cleared] = true
+    redirect_to prototype_notifications_path, notice: "모든 알림을 삭제했습니다."
+  end
+
+  def pwa
   end
 
   def record
@@ -204,9 +279,15 @@ class PrototypeController < ApplicationController
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
   end
 
+  def mark_badges_viewed
+    current_user&.user_badges&.where(is_viewed: false)&.update_all(is_viewed: true)
+    head :ok
+  end
+
   private
 
   def set_shared_data
     @official_club = RoutineClub.official.first
+    @new_badges = current_user ? current_user.user_badges.where(is_viewed: false).includes(:badge) : []
   end
 end

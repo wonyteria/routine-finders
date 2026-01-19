@@ -34,7 +34,7 @@
     <% end %>
     
     <!-- Right: Notification -->
-    <%= link_to notifications_path, class: "relative app-glass-card w-10 h-10 flex items-center justify-center app-tap-active" do %>
+    <%= link_to prototype_notifications_path, class: "relative app-glass-card w-10 h-10 flex items-center justify-center app-tap-active" do %>
       <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
       </svg>
@@ -449,5 +449,67 @@
         <% end %>
       </div>
     </section>
+  <% end %>
+
+  <% if current_user %>
+    <!-- Welcome & PWA Nudge Modal -->
+    <div id="welcome-pwa-modal" class="hidden fixed inset-0 z-[1000] flex items-center justify-center p-6">
+      <div class="absolute inset-0 bg-black/90 backdrop-blur-xl transition-opacity duration-500 ease-out" 
+           onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')"></div>
+      
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-float-up transform transition-all duration-500">
+        <!-- Decoration Icons -->
+        <div class="absolute -top-12 left-1/2 -translate-x-1/2 flex gap-4">
+          <div class="w-16 h-16 rounded-3xl bg-indigo-500 shadow-2xl shadow-indigo-500/40 flex items-center justify-center text-3xl animate-bounce">🚀</div>
+        </div>
+
+        <div class="pt-6 space-y-2">
+          <h3 class="text-2xl font-black text-white">파인더님, 반가워요!</h3>
+          <p class="text-[13px] font-bold text-slate-400 leading-relaxed px-2">
+            나를 찾는 여정에 오신 것을 환영합니다.<br/>
+            <span class="text-indigo-400">앱으로 설치</span>하면 더 빠르고 쾌적하게<br/>루틴을 관리할 수 있어요! ✨
+          </p>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <%= link_to prototype_pwa_path, 
+                      onclick: "document.getElementById('welcome-pwa-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')",
+                      class: "block w-full py-4 bg-white text-[#0C0B12] rounded-2xl font-black text-sm shadow-xl shadow-white/10 active:scale-95 transition-all" do %>
+            앱 설치 가이드 확인하기
+          <% end %>
+          
+          <button onclick="this.closest('#welcome-pwa-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+                  class="block w-full py-3 text-slate-500 font-bold text-xs hover:text-white transition-colors">
+            나중에 할게요
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('welcome-pwa-modal');
+        const hasSeenWelcome = localStorage.getItem('has_seen_welcome_pwa_<%= current_user.id %>');
+        
+        if (!hasSeenWelcome && modal) {
+          // Small delay for more natural entrance
+          setTimeout(() => {
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            localStorage.setItem('has_seen_welcome_pwa_<%= current_user.id %>', 'true');
+          }, 800);
+        }
+      });
+    </script>
+    
+    <style>
+      @keyframes float-up {
+        from { opacity: 0; transform: translateY(20px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .animate-float-up {
+        animation: float-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+    </style>
   <% end %>
 </div>

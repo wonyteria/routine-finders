@@ -1,0 +1,91 @@
+<div class="space-y-8 pt-8 pb-32">
+  <!-- Header: Back Button | Title | Mark all as read -->
+  <header class="flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <%= link_to prototype_home_path, class: "w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors app-tap-active" do %>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
+        </svg>
+      <% end %>
+      <h1 class="text-2xl font-black text-white">알림</h1>
+    </div>
+    
+    <% if @notifications.any? %>
+      <%= button_to prototype_notifications_clear_path, method: :post, class: "text-[10px] font-black text-indigo-400 uppercase tracking-widest px-3 py-1.5 rounded-full bg-indigo-500/10 active:scale-95 transition-all cursor-pointer" do %>
+        전체 삭제
+      <% end %>
+    <% end %>
+  </header>
+
+  <% if @notifications.any? %>
+    <div class="space-y-8">
+      <% @notifications.group_by { |n| n.created_at.to_date }.each do |date, notifications| %>
+        <div class="space-y-4">
+          <h2 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] pl-1 flex items-center gap-2">
+            <span class="w-1 h-1 rounded-full bg-slate-700"></span>
+            <% if date == Date.current %>
+              오늘
+            <% elsif date == Date.yesterday %>
+              어제
+            <% else %>
+              <%= date.strftime("%m월 %d일") %>
+            <% end %>
+          </h2>
+          
+          <div class="space-y-3">
+            <% notifications.each do |notification| %>
+              <% style = case notification.notification_type&.to_sym
+                         when :reminder then { icon: "✨", color: "bg-amber-500/20 text-amber-400" }
+                         when :badge_award then { icon: "🏆", color: "bg-yellow-500/20 text-yellow-400" }
+                         when :approval then { icon: "✅", color: "bg-emerald-500/20 text-emerald-400" }
+                         when :rejection then { icon: "❌", color: "bg-red-500/20 text-red-400" }
+                         when :club_message then { icon: "💬", color: "bg-blue-500/20 text-blue-400" }
+                         when :announcement then { icon: "📢", color: "bg-indigo-500/20 text-indigo-400" }
+                         when :application then { icon: "📝", color: "bg-pink-500/20 text-pink-400" }
+                         else { icon: "💎", color: "bg-slate-500/20 text-slate-400" }
+                         end %>
+              
+              <div class="app-glass-card p-4 flex gap-4 border-white/5 active:scale-[0.98] transition-all cursor-pointer group relative overflow-hidden">
+                <!-- Background decoration for unread (visual only for prototype) -->
+                <% if notification.created_at > 1.hour.ago %>
+                  <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-500/5 blur-xl rounded-full -mr-4 -mt-4"></div>
+                <% end %>
+
+                <div class="w-12 h-12 rounded-2xl <%= style[:color] %> flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <%= style[:icon] %>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2 mb-1">
+                    <h3 class="text-sm font-black text-white truncate group-hover:text-indigo-300 transition-colors"><%= notification.title %></h3>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <span class="text-[9px] font-bold text-slate-600"><%= time_ago_in_words(notification.created_at) %> 전</span>
+                      <% if notification.created_at > 1.hour.ago %>
+                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                      <% end %>
+                    </div>
+                  </div>
+                  <p class="text-[11px] font-bold text-slate-400 leading-relaxed line-clamp-2">
+                    <%= notification.content %>
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Empty State -->
+    <div class="flex flex-col items-center justify-center py-20 px-10 text-center">
+      <div class="w-20 h-20 rounded-[32px] bg-white/[0.03] flex items-center justify-center mb-6">
+        <svg class="w-10 h-10 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-black text-white mb-2">새로운 알림이 없어요</h3>
+      <p class="text-xs font-bold text-slate-500 leading-relaxed">
+        나를 찾는 루틴 소식과<br/>커뮤니티의 소중한 반응이 이곳에 모여요.
+      </p>
+    </div>
+  <% end %>
+</div>

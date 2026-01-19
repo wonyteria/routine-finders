@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_16_010409) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_19_074632) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -511,6 +511,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_16_010409) do
     t.boolean "is_featured_host"
     t.integer "level", default: 1, null: false
     t.string "nickname", null: false
+    t.json "notification_preferences"
     t.integer "ongoing_count", default: 0, null: false
     t.string "password_digest"
     t.string "profile_image"

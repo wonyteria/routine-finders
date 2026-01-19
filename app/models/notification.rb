@@ -1,4 +1,5 @@
 class Notification < ApplicationRecord
+  alias_attribute :message, :content
   # Enums
   enum :notification_type, {
     reminder: 0,

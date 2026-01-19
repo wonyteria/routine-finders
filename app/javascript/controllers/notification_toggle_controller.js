@@ -4,16 +4,16 @@ export default class extends Controller {
     static targets = ["button", "indicator"]
 
     connect() {
+        console.log("Notification Toggle Controller Connected");
         // 저장된 설정 불러오기
         this.isOn = localStorage.getItem('notifications_enabled') === 'true'
-        this.updateUI()
 
-        // 이미 권한이 있으면 UI 업데이트
-        if (Notification.permission === 'granted') {
+        // 브라우저 권한 상태 확인
+        if ('Notification' in window && Notification.permission === 'granted') {
             this.isOn = true
-            this.updateUI()
-            localStorage.setItem('notifications_enabled', 'true')
         }
+
+        this.updateUI()
     }
 
     switch() {
@@ -62,16 +62,17 @@ export default class extends Controller {
     }
 
     updateUI() {
+        console.log("Updating UI, isOn:", this.isOn);
         if (this.isOn) {
-            // Turn ON
-            this.buttonTarget.classList.remove("justify-end", "bg-slate-800")
-            this.buttonTarget.classList.add("justify-start", "bg-indigo-500")
+            // Turn ON (Move to Right)
+            this.buttonTarget.classList.remove("justify-start", "bg-slate-800")
+            this.buttonTarget.classList.add("justify-end", "bg-indigo-500")
             this.indicatorTarget.classList.remove("bg-slate-600")
             this.indicatorTarget.classList.add("bg-white")
         } else {
-            // Turn OFF
-            this.buttonTarget.classList.remove("justify-start", "bg-indigo-500")
-            this.buttonTarget.classList.add("justify-end", "bg-slate-800")
+            // Turn OFF (Move to Left)
+            this.buttonTarget.classList.remove("justify-end", "bg-indigo-500")
+            this.buttonTarget.classList.add("justify-start", "bg-slate-800")
             this.indicatorTarget.classList.remove("bg-white")
             this.indicatorTarget.classList.add("bg-slate-600")
         }

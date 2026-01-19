@@ -234,6 +234,7 @@ class PersonalRoutinesController < ApplicationController
     end
 
     @routine.toggle_completion!(target_date)
+    BadgeService.new(current_user).check_and_award_all!
     set_activity_data
     set_recommended_routines
     @selected_date = target_date
