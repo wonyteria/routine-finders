@@ -2,7 +2,7 @@
 <% is_prototype = params[:source] == "prototype" %>
 
 <%= form_with model: [parent, announcement], local: true, 
-              class: "#{is_prototype ? 'app-glass-card p-6 md:p-10 lg:p-12 space-y-8 md:space-y-10 border-none' : 'bg-white rounded-[40px] border border-slate-200 p-10 shadow-sm space-y-8'}",
+              class: "#{is_prototype ? 'app-glass-card p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8 border-none' : 'bg-white rounded-[40px] border border-slate-200 p-10 shadow-sm space-y-8'}",
               data: { controller: "announcement-form" } do |f| %>
   <%= hidden_field_tag :source, "prototype" if is_prototype %>
   

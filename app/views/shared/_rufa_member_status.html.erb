@@ -27,7 +27,7 @@
           </div>
           <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
             <p class="text-sm font-bold text-slate-400">
-              루파 클럽 <%= membership.routine_club.generation_number(membership.membership_start_date) %>기 활동 시작까지 
+              루파클럽 <%= membership.routine_club.generation_number(membership.membership_start_date) %>기 활동 시작까지 
               <span class="text-white font-black"><%= (membership.membership_start_date - Date.current).to_i %>일</span> 남았습니다.
             </p>
           </div>
@@ -107,7 +107,7 @@
                 <% end %>
               </div>
               <p class="text-xs md:text-sm text-white/70 font-medium">
-                루파 클럽 멤버십 종료일: <span class="font-black text-yellow-300"><%= membership.membership_end_date.strftime("%Y년 %m월 %d일") %></span>
+                루파클럽 멤버십 종료일: <span class="font-black text-yellow-300"><%= membership.membership_end_date.strftime("%Y년 %m월 %d일") %></span>
               </p>
             </div>
           </div>

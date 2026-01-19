@@ -169,7 +169,7 @@
     <!-- 3. Dynamic Tabs Section -->
     <div class="space-y-4">
       <nav id="tab-nav-container" class="app-glass-card p-1.5 sticky top-4 z-[200] border-white/10 shadow-3xl mx-1 bg-[#16151D]/90 backdrop-blur-3xl">
-        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar scroll-smooth">
+        <div class="flex items-center gap-1 overflow-x-auto scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
           <% 
             nav_tabs = [
               ["dashboard", "대시보드", "M13 10V3L4 14h7v7l9-11h-7z"],
@@ -212,6 +212,34 @@
         </div>
       </turbo-frame>
     </div>
+
+    <script>
+      // Auto-scroll active tab to center
+      document.addEventListener('DOMContentLoaded', () => {
+        scrollActiveTabToCenter();
+      });
+      
+      document.addEventListener('turbo:load', () => {
+        scrollActiveTabToCenter();
+      });
+      
+      function scrollActiveTabToCenter() {
+        const container = document.querySelector('#tab-nav-container .overflow-x-auto');
+        const activeTab = container?.querySelector('.bg-indigo-500\\/20');
+        
+        if (container && activeTab) {
+          const containerWidth = container.offsetWidth;
+          const tabLeft = activeTab.offsetLeft;
+          const tabWidth = activeTab.offsetWidth;
+          const scrollPosition = tabLeft - (containerWidth / 2) + (tabWidth / 2);
+          
+          container.scrollTo({
+            left: scrollPosition,
+            behavior: 'smooth'
+          });
+        }
+      }
+    </script>
   </div>
 
   <!-- Nudge Confirmation Modal (Simplified for Prototype) -->

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get "prototype/challenge_builder", to: "prototype#challenge_builder"
   get "prototype/gathering_builder", to: "prototype#gathering_builder"
   get "prototype/club_join", to: "prototype#club_join"
+  get "prototype/lecture_intro", to: "prototype#lecture_intro"
   # Main Web Application Routes
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

@@ -251,7 +251,7 @@
         <% if @club_memberships.any? %>
           <section>
             <div class="flex items-center justify-between mb-6 px-4">
-              <h3 class="text-xl font-black text-slate-900">참여 중인 루틴 클럽</h3>
+              <h3 class="text-xl font-black text-slate-900">참여 중인 루파클럽</h3>
               <%= link_to "전체보기", "#", class: "text-xs font-bold text-indigo-600", data: { action: "click->tabs#change", id: "clubs" } %>
             </div>
             <div class="space-y-4">
@@ -509,9 +509,9 @@
 
     <!-- Rupin Tab (루파 클럽 + Routines) -->
     <div data-tabs-target="panel" data-id="rupin" class="hidden space-y-16">
-      <!-- 1. 루파 클럽 Section -->
+      <!-- 1. 루파클럽 Section -->
       <section class="space-y-6">
-        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">루파 클럽</h3>
+        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">루파클럽</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <% @club_memberships.each do |membership| %>
             <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
@@ -560,8 +560,8 @@
           <% if @club_memberships.empty? %>
              <div class="col-span-1 sm:col-span-2">
                 <div class="p-12 md:p-16 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center space-y-4">
-                  <p class="text-slate-400 font-black">참여 중인 루파 클럽이 없습니다.</p>
-                  <%= link_to "루파 클럽 둘러보기 →", routine_clubs_path, class: "text-indigo-600 font-black text-sm" %>
+                  <p class="text-slate-400 font-black">참여 중인 루파클럽이 없습니다.</p>
+                  <%= link_to "루파클럽 둘러보기 →", routine_clubs_path, class: "text-indigo-600 font-black text-sm" %>
                 </div>
              </div>
           <% end %>
@@ -687,7 +687,7 @@
 
                 <div class="p-6 bg-white/5 rounded-3xl border border-white/5 text-center md:text-left">
                   <p class="text-slate-300 text-sm md:text-base font-bold leading-relaxed italic">
-                    "<%= @user.nickname %>님, <%= @monthly_ach_rate >= 70 ? '훌륭합니다! 꾸준한 성취가 눈에 띄네요.' : '조금 더 힘을 내볼까요? 꾸준한 기록이 성장을 만듭니다.' %> 루파 클럽에 가입하시면 더 정교한 분석 리포트를 받아보실 수 있습니다."
+                    "<%= @user.nickname %>님, <%= @monthly_ach_rate >= 70 ? '훌륭합니다! 꾸준한 성취가 눈에 띄네요.' : '조금 더 힘을 내볼까요? 꾸준한 기록이 성장을 만듭니다.' %> 루파클럽에 가입하시면 더 정교한 분석 리포트를 받아보실 수 있습니다."
                   </p>
                 </div>
               </div>

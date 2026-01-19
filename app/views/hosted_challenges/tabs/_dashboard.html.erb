@@ -1,65 +1,65 @@
 <% if params[:source] == 'prototype' %>
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10" data-controller="modal">
-    <!-- Left Column: Primary Monitoring (2/3) -->
-    <div class="lg:col-span-2 space-y-10">
-      <!-- Trend Chart & Settlement Simulation -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- 1. Gathering Occupancy or Completion Trends -->
-        <div class="app-glass-card p-6">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h3 class="text-sm font-black text-white italic"><%= challenge.offline? ? "모임 모집 현황" : "참여율 트렌드" %></h3>
-              <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5"><%= challenge.offline? ? "현재 모집된 루퍼 비율" : "최근 7일간의 인증 동향" %></p>
+  <div class="space-y-6" data-controller="modal">
+    <!-- Cards Section (Stacked Vertically) -->
+    <div class="space-y-6">
+    <!-- Card 1: Trend Chart -->
+    <div class="app-glass-card p-6 flex flex-col w-full">
+        <div class="flex items-center justify-between mb-6">
+            <div class="min-w-0 flex-1">
+              <h3 class="text-xs font-black text-white italic truncate"><%= challenge.offline? ? "모임 모집" : "참여율 트렌드" %></h3>
+              <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate"><%= challenge.offline? ? "모집 비율" : "7일 인증 동향" %></p>
             </div>
-            <div class="w-2.5 h-2.5 rounded-full <%= challenge.offline? ? 'bg-indigo-500' : 'bg-emerald-500' %> pulse-glow"></div>
+            <div class="w-2 h-2 rounded-full <%= challenge.offline? ? 'bg-indigo-500' : 'bg-emerald-500' %> pulse-glow flex-shrink-0 ml-2"></div>
           </div>
           
-          <% if challenge.offline? %>
-            <div class="flex flex-col items-center justify-center h-32 space-y-4">
-              <div class="relative w-32 h-32 flex items-center justify-center">
-                <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
-                  <% occupancy = (challenge.current_participants.to_f / (challenge.meeting_info&.max_attendees || 1) * 100).to_i %>
-                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="#818cf8" stroke-width="8" 
-                          stroke-dasharray="251.2" stroke-dashoffset="<%= 251.2 * (1 - occupancy / 100.0) %>" 
-                          stroke-linecap="round" class="transition-all duration-1000"></circle>
-                </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                  <span class="text-xl font-black text-white italic leading-none"><%= occupancy %>%</span>
-                  <span class="text-[8px] font-black text-slate-600 uppercase mt-1"><%= challenge.current_participants %> / <%= challenge.meeting_info&.max_attendees %></span>
+          <div class="flex-1 flex items-center justify-center">
+            <% if challenge.offline? %>
+              <div class="flex flex-col items-center justify-center space-y-4">
+                <div class="relative w-32 h-32 flex items-center justify-center">
+                  <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
+                    <% occupancy = (challenge.current_participants.to_f / (challenge.meeting_info&.max_attendees || 1) * 100).to_i %>
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#818cf8" stroke-width="8" 
+                            stroke-dasharray="251.2" stroke-dashoffset="<%= 251.2 * (1 - occupancy / 100.0) %>" 
+                            stroke-linecap="round" class="transition-all duration-1000"></circle>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-xl font-black text-white italic leading-none"><%= occupancy %>%</span>
+                    <span class="text-[8px] font-black text-slate-600 uppercase mt-1"><%= challenge.current_participants %> / <%= challenge.meeting_info&.max_attendees %></span>
+                  </div>
                 </div>
               </div>
-            </div>
-          <% else %>
-            <div class="h-32 flex items-end justify-between gap-1 px-2">
-              <% @trends.each do |trend| %>
-                <div class="flex-1 flex flex-col items-center gap-2 group/bar">
-                  <div class="relative w-full flex items-end justify-center h-24">
-                    <div class="w-2 md:w-3 bg-indigo-500/20 rounded-full h-full absolute"></div>
-                    <div class="w-2 md:w-3 bg-indigo-500 rounded-full transition-all duration-1000 group-hover/bar:bg-indigo-400 group-hover/bar:shadow-[0_0_15px_rgba(99,102,241,0.6)]" style="height: <%= trend[:rate] %>%;"></div>
-                    <!-- Tooltip -->
-                    <div class="absolute -top-6 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
-                      <%= trend[:rate] %>%
+            <% else %>
+              <div class="w-full h-32 flex items-end justify-between gap-1 px-2">
+                <% @trends.each do |trend| %>
+                  <div class="flex-1 flex flex-col items-center gap-2 group/bar">
+                    <div class="relative w-full flex items-end justify-center h-24">
+                      <div class="w-2 md:w-3 bg-indigo-500/20 rounded-full h-full absolute"></div>
+                      <div class="w-2 md:w-3 bg-indigo-500 rounded-full transition-all duration-1000 group-hover/bar:bg-indigo-400 group-hover/bar:shadow-[0_0_15px_rgba(99,102,241,0.6)]" style="height: <%= trend[:rate] %>%;"></div>
+                      <!-- Tooltip -->
+                      <div class="absolute -top-6 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        <%= trend[:rate] %>%
+                      </div>
                     </div>
+                    <span class="text-[8px] font-black text-slate-600 uppercase"><%= trend[:date] %></span>
                   </div>
-                  <span class="text-[8px] font-black text-slate-600 uppercase"><%= trend[:date] %></span>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         </div>
 
-        <!-- 2. Management Memo (Gathering) or Settlement (Challenge) -->
-        <% if challenge.offline? %>
-          <div class="app-glass-card p-6 border-white/10 bg-white/[0.02]">
+    <!-- Card 2: Settlement / Memo -->
+    <% if challenge.offline? %>
+          <div class="app-glass-card p-6 border-white/10 bg-white/[0.02] flex flex-col w-full">
             <div class="flex items-center justify-between mb-6">
-              <div>
-                <h3 class="text-sm font-black text-white italic">운영자 메모</h3>
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">참가자들과 공유할 중요 사항</p>
+              <div class="min-w-0 flex-1">
+                <h3 class="text-xs font-black text-white italic truncate">운영자 메모</h3>
+                <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">중요 사항</p>
               </div>
-              <span class="p-2 bg-white/5 rounded-xl">📝</span>
+              <span class="p-2 bg-white/5 rounded-xl flex-shrink-0 ml-2">📝</span>
             </div>
-            <div class="space-y-4">
+            <div class="flex-1 flex flex-col justify-between space-y-4">
               <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
                 <p class="text-[11px] font-medium text-slate-400 leading-relaxed">준비물: <%= challenge.preparation_items.presence || "없음" %></p>
               </div>
@@ -67,17 +67,17 @@
             </div>
           </div>
         <% elsif challenge.cost_type_deposit? %>
-          <div class="app-glass-card p-6 overflow-hidden relative">
+          <div class="app-glass-card p-6 overflow-hidden relative flex flex-col w-full">
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
             <div class="flex items-center justify-between mb-6">
-              <div>
-                <h3 class="text-sm font-black text-white italic">실시간 정산 시뮬레이션</h3>
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">현재 기준 예상 배분액</p>
+              <div class="min-w-0 flex-1">
+                <h3 class="text-xs font-black text-white italic truncate">실시간 정산</h3>
+                <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">예상 배분액</p>
               </div>
-              <span class="p-2 bg-emerald-500/10 rounded-xl">💰</span>
+              <span class="p-2 bg-emerald-500/10 rounded-xl flex-shrink-0 ml-2">💰</span>
             </div>
 
-            <div class="space-y-5 relative z-10">
+            <div class="flex-1 flex flex-col justify-center space-y-5 relative z-10">
               <div class="flex items-end justify-between border-b border-white/5 pb-3">
                 <p class="text-[10px] font-black text-slate-400 uppercase">예상 상금 풀</p>
                 <p class="text-lg font-black text-white italic"><%= number_with_delimiter(@potential_prize_pool) %>원</p>
@@ -92,16 +92,45 @@
             </div>
           </div>
         <% else %>
-          <div class="app-glass-card p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-50">
+          <div class="app-glass-card p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-50 w-full">
             <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl">🛡️</div>
             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">보증금이 없는 챌린지는<br>정산 데이터가 생성되지 않습니다</p>
           </div>
+      <% end %>
+
+    <!-- Card 3: Activity Log -->
+      <!-- Recent Activity Log -->
+      <div class="app-glass-card p-5 md:p-6">
+        <h3 class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-6 md:mb-8 italic">최근 활동 로그</h3>
+        <% if recent_verifications.any? %>
+          <div class="space-y-6">
+            <% recent_verifications.each do |log| %>
+              <div class="flex items-start gap-4 group">
+                <div class="relative">
+                  <img src="<%= log.participant.user.profile_image %>" class="w-8 h-8 rounded-xl object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
+                  <div class="absolute -right-1 -bottom-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0C0B12]"></div>
+                </div>
+                <div class="flex-1 border-b border-white/5 pb-4 group-last:border-0">
+                  <p class="text-[11px] font-black text-slate-300 group-hover:text-white transition-colors">
+                    <span class="text-white"><%= log.participant.user.nickname %></span>님이 인증을 업데이트했습니다
+                  </p>
+                  <p class="text-[9px] font-black text-slate-600 uppercase mt-1"><%= time_ago_in_words(log.created_at) %> 전</p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="py-10 text-center">
+            <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">검출된 활동이 없습니다</p>
+          </div>
         <% end %>
       </div>
+    </div>
 
-      <!-- Verification Pending with Batch Actions -->
-      <% if pending_verifications.any? %>
-        <div class="app-glass-card p-4 md:p-6 border-amber-500/10 bg-amber-500/[0.02]" data-controller="batch-action">
+    <!-- Verification Section (Full Width) -->
+    <!-- Verification Pending with Batch Actions -->
+    <% if pending_verifications.any? %>
+      <div class="app-glass-card p-4 md:p-6 border-amber-500/10 bg-amber-500/[0.02]" data-controller="batch-action">
           <%= form_with url: batch_approve_verifications_hosted_challenge_path(challenge), method: :post, id: "batch-verification-form" do |f| %>
             <%= hidden_field_tag :source, 'prototype' %>
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
@@ -227,36 +256,7 @@
         });
       }
     </script>
-    </div>
-
-    <!-- Right Column: Secondary Data (1/3) -->
-    <div class="space-y-10">
-      <!-- Recent Activity Log (Prototype) -->
-      <div class="app-glass-card p-5 md:p-6">
-        <h3 class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-6 md:mb-8 italic">최근 활동 로그</h3>
-        <% if recent_verifications.any? %>
-          <div class="space-y-6">
-            <% recent_verifications.each do |log| %>
-              <div class="flex items-start gap-4 group">
-                <div class="relative">
-                  <img src="<%= log.participant.user.profile_image %>" class="w-8 h-8 rounded-xl object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
-                  <div class="absolute -right-1 -bottom-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0C0B12]"></div>
-                </div>
-                <div class="flex-1 border-b border-white/5 pb-4 group-last:border-0">
-                  <p class="text-[11px] font-black text-slate-300 group-hover:text-white transition-colors">
-                    <span class="text-white"><%= log.participant.user.nickname %></span>님이 인증을 업데이트했습니다
-                  </p>
-                  <p class="text-[9px] font-black text-slate-600 uppercase mt-1"><%= time_ago_in_words(log.created_at) %> 전</p>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <div class="py-10 text-center">
-            <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">검출된 활동이 없습니다</p>
-          </div>
-        <% end %>
-      </div>
+  </div>
 
     <!-- Logic Modal (Prototype) -->
     <div id="threshold-modal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-xl flex items-center justify-center p-6">

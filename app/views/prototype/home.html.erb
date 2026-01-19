@@ -154,6 +154,10 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    @keyframes orbit-spin-reverse {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
     .animate-orbit-1 { animation: orbit-spin 40s linear infinite; }
     .animate-orbit-2 { animation: orbit-spin 65s linear infinite reverse; }
     .animate-orbit-3 { animation: orbit-spin 50s linear infinite; }
@@ -183,12 +187,13 @@
             <% display_users.each_with_index do |user, idx| %>
               <% 
                  orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
+                 duration = rand(40..100)
+                 delay = rand(-duration..0)
                  top_percent = rand(12..38)
-                 initial_rotate = rand(0..360)
                  opacity = rand(0.3..0.7)
                  size = rand(2..4)
               %>
-              <div class="absolute inset-0 <%= orbit_class %>" style="transform: rotate(<%= initial_rotate %>deg); animation-duration: <%= rand(40..100) %>s">
+              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
                 <div class="absolute rounded-full bg-indigo-300 shadow-[0_0_6px_rgba(165,180,252,0.8)]" 
                      style="top: <%= top_percent %>%; left: 50%; width: <%= size %>px; height: <%= size %>px; opacity: <%= opacity %>; transform: translateX(-50%);">
                 </div>
@@ -215,13 +220,18 @@
             <% display_users.each_with_index do |user, idx| %>
               <% 
                  orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
+                 is_reverse = (idx % 3 == 1)
+                 duration = is_reverse ? 65 : (idx % 3 == 2 ? 50 : 40)
+                 initial_angle = idx * (360.0 / display_users.size)
+                 delay = -(initial_angle / 360.0) * duration
                  top_percent = [15, 20, 25, 30, 10, 35][idx % 6]
-                 initial_rotate = idx * (360 / [display_users.size, 1].max)
               %>
-              <div class="absolute inset-0 <%= orbit_class %>" style="transform: rotate(<%= initial_rotate %>deg)">
-                <div class="absolute w-7 h-7 rounded-full border-2 border-white/10 overflow-hidden shadow-lg shadow-black/20" 
-                     style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%) rotate(-<%= initial_rotate %>deg);">
-                  <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
+                <div class="absolute w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden shadow-lg shadow-black/20" 
+                     style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%)">
+                  <div class="w-full h-full" style="animation: <%= is_reverse ? 'orbit-spin 65s linear infinite' : (idx % 3 == 2 ? 'orbit-spin-reverse 50s' : 'orbit-spin-reverse 40s') %> linear infinite; animation-delay: <%= delay %>s">
+                    <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+                  </div>
                 </div>
               </div>
             <% end %>
@@ -356,7 +366,7 @@
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
                 </div>
-                <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">RUFA LIVE ROOM</span>
+                <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">루파클럽 라이브 ROOM</span>
               </div>
               <h4 class="text-sm font-black text-white">동료들의 실시간 몰입</h4>
               <p class="text-[10px] font-bold text-slate-500 mt-0.5">혼자 하기 힘든 루틴, 여기서 함께해요.</p>

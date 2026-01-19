@@ -131,9 +131,30 @@ class PrototypeController < ApplicationController
   end
 
   def live
-    @active_members = User.order("RANDOM()").limit(8)
+    @active_members = User.order("RANDOM()").limit(22)
     @current_club = RoutineClub.official.first
     @is_club_member = current_user&.routine_club_members&.active&.exists?
+  end
+
+  def lecture_intro
+    @hide_nav = true
+    @is_club_member = current_user&.routine_club_members&.active&.exists?
+    @lecture = {
+      title: "성공하는 리더들의 '회복 탄력성' 강화 전략",
+      instructor: "이수진 (MINDSET Lab 대표)",
+      time: "오늘 오후 8:00 - 9:00",
+      description: "오늘의 강의에서는 예기치 못한 실패와 스트레스 상황에서도 다시 일어설 수 있는 '회복 탄력성'을 기르는 3가지 핵심 기술을 배웁니다. 루파클럽 멤버들만을 위해 준비된 특별한 인사이트를 놓치지 마세요.",
+      curriculum: [
+        "1단계: 내 마음의 상태 객관화하기",
+        "2단계: 부정적 편향을 깨는 인지 재구조화",
+        "3단계: 일상에서 실천하는 회복 탄력성 루틴"
+      ],
+      benefits: [
+        "강의 요약 PDF 리포트 제공",
+        "실시간 Q&A 세션 참여",
+        "회복 탄력성 자가진단 툴킷"
+      ]
+    }
   end
 
   def hub

@@ -22,37 +22,87 @@
 
   <!-- Live Content -->
   <main class="flex-1 flex flex-col items-center justify-center text-center space-y-12">
-    <!-- Active Member Orbits -->
-    <div class="relative w-72 h-72 flex items-center justify-center">
+    <!-- Active Member Orbits (Social Proof) -->
+    <div class="relative w-80 h-80 flex items-center justify-center">
+      <!-- Orbit Glow Background -->
+      <div class="absolute inset-0 bg-indigo-500/5 blur-[60px] rounded-full animate-pulse"></div>
+      
       <!-- Orbit Rings -->
       <div class="absolute inset-0 border border-white/5 rounded-full"></div>
-      <div class="absolute inset-6 border border-white/5 rounded-full"></div>
+      <div class="absolute inset-10 border border-white/5 rounded-full"></div>
       
-      <!-- Center Text -->
-      <div class="relative z-20 space-y-1">
-        <h2 class="text-4xl font-black text-white"><%= @active_members.count %></h2>
-        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Active Now</p>
+      <!-- Center Count Display -->
+      <div class="relative z-20 bg-[#07060A]/60 backdrop-blur-md w-32 h-32 rounded-full border border-white/10 flex flex-col items-center justify-center space-y-0.5 shadow-2xl">
+        <h2 class="text-4xl font-black text-white tabular-nums"><%= @active_members.count %></h2>
+        <p class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em] leading-none">Active Now</p>
       </div>
 
-      <!-- Floating Member Avatars -->
-      <% @active_members.each_with_index do |user, i| %>
+      <!-- Living Orbits (Active Members) -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
         <% 
-            angle = (360 / @active_members.count) * i
-            radius = i.even? ? 130 : 100
+           display_users = @active_members.to_a
         %>
-        <div class="absolute transition-all duration-1000 animate-float" 
-             style="transform: rotate(<%= angle %>deg) translate(<%= radius %>px) rotate(-<%= angle %>deg)">
-           <div class="relative group">
-             <div class="absolute inset-0 bg-indigo-500 blur-lg opacity-0 group-hover:opacity-40 transition-opacity"></div>
-             <img src="<%= user.profile_image %>" class="w-10 h-10 rounded-2xl border-2 border-white/10 shadow-2xl relative z-10 transition-transform hover:scale-125">
-             <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#07060A]"></div>
-           </div>
+        <% if display_users.any? %>
+          <% if display_users.size > 30 %>
+            <!-- "Milky Way" Mode: Dense Particles -->
+            <% display_users.each_with_index do |user, idx| %>
+              <% 
+                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
+                 duration = rand(40..100)
+                 delay = rand(-duration..0)
+                 top_percent = rand(8..42)
+                 opacity = rand(0.2..0.6)
+                 size = rand(2..4)
+              %>
+              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
+                <div class="absolute rounded-full bg-indigo-300 shadow-[0_0_6px_rgba(165,180,252,0.6)]" 
+                     style="top: <%= top_percent %>%; left: 50%; width: <%= size %>px; height: <%= size %>px; opacity: <%= opacity %>; transform: translateX(-50%);">
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <!-- "Satellite" Mode: Individual Profiles -->
+            <% display_users.each_with_index do |user, idx| %>
+              <% 
+                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
+                 is_reverse = (idx % 3 == 1)
+                 duration = is_reverse ? 70 : (idx % 3 == 2 ? 60 : 45)
+                 initial_angle = idx * (360.0 / display_users.size)
+                 delay = -(initial_angle / 360.0) * duration
+                 top_percent = [8, 15, 22, 29, 36, 43][idx % 6]
+              %>
+              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
+                <div class="absolute w-9 h-9 rounded-full border-2 border-white/10 overflow-hidden shadow-xl" 
+                     style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%)">
+                  <div class="w-full h-full" style="animation: <%= is_reverse ? 'orbit-spin 70s linear infinite' : (idx % 3 == 2 ? 'orbit-spin-reverse 60s' : 'orbit-spin-reverse 45s') %> linear infinite; animation-delay: <%= delay %>s">
+                    <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <!-- Facepile Badge below the orbit -->
+      <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30">
+        <div class="bg-indigo-950/40 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-2xl flex items-center gap-2 shadow-2xl whitespace-nowrap">
+          <div class="flex -space-x-1.5">
+            <% display_users.take(3).each do |u| %>
+              <div class="w-4 h-4 rounded-full border border-indigo-900 overflow-hidden shadow-inner">
+                <img src="<%= u.profile_image %>" class="w-full h-full object-cover">
+              </div>
+            <% end %>
+          </div>
+          <p class="text-[9px] font-black text-indigo-100/90 tracking-tight">
+            지금 몰입하고 있는 메이트들
+          </p>
         </div>
-      <% end %>
+      </div>
     </div>
 
     <div class="space-y-4 px-8">
-      <h3 class="text-2xl font-black text-white leading-tight">함께 몰입하는<br/><span class="text-indigo-400">루파 클럽 <%= @current_club&.generation_number %>기</span></h3>
+      <h3 class="text-2xl font-black text-white leading-tight">함께 몰입하는<br/><span class="text-indigo-400">루파클럽 <%= @current_club&.generation_number %>기</span></h3>
       <p class="text-xs font-bold text-slate-500 leading-relaxed">혼자라면 포기했을 새벽 6시,<br/>지금 <%= @active_members.count %>명의 메이트가 당신과 함께하고 있습니다.</p>
     </div>
   </main>
@@ -66,21 +116,21 @@
           줌(Zoom) 라이브 입장하기
         </button>
         
-        <button class="w-full py-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
-          <span class="text-2xl">🎧</span>
-          루틴 집중 음악 듣기
-        </button>
+        <%= link_to prototype_lecture_intro_path(source: 'prototype'), class: "w-full py-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all" do %>
+          <span class="text-2xl">🎓</span>
+          루파클럽 스페셜 강의실 입장
+        <% end %>
       <% else %>
         <!-- Locked State for General Users -->
         <%= link_to prototype_club_join_path, class: "w-full py-5 rounded-[28px] bg-indigo-500 text-white font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(99,102,241,0.2)] active:scale-95 transition-all" do %>
           <span>🔒</span>
-          RUFA 클럽 합류하고 입장하기
+          루파클럽 합류하고 입장하기
         <% end %>
         
-        <div class="w-full py-5 rounded-[28px] bg-white/5 border border-white/10 text-slate-500 font-black text-lg flex items-center justify-center gap-3 opacity-50">
-          <span class="text-xl">🎧</span>
-          집중 음악 (멤버 전용)
-        </div>
+        <%= link_to prototype_lecture_intro_path(source: 'prototype'), class: "w-full py-5 rounded-[28px] bg-white/5 border border-white/10 text-slate-500 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all" do %>
+          <span class="text-xl">🎓</span>
+          스페셜 강의 (멤버 전용)
+        <% end %>
         <p class="text-[10px] font-bold text-indigo-400/60 text-center animate-pulse">지금 합류하면 1,200원 할인가로 시작할 수 있어요!</p>
       <% end %>
     </div>
@@ -104,7 +154,17 @@
     50% { transform: translateY(-10px); }
   }
   .animate-float {
-    /* Each member gets a slightly different delay via JS or inline later if needed */
     animation: float 4s ease-in-out infinite;
   }
+  @keyframes orbit-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes orbit-spin-reverse {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+  }
+  .animate-orbit-1 { animation: orbit-spin 45s linear infinite; }
+  .animate-orbit-2 { animation: orbit-spin 70s linear infinite reverse; }
+  .animate-orbit-3 { animation: orbit-spin 60s linear infinite; }
 </style>
