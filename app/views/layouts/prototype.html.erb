@@ -82,18 +82,20 @@
     </nav>
     <% end %>
 
-    <!-- 1. Routine Record Bottom Sheet (Original Functional) -->
+    <!-- 1. Routine Record Bottom Sheet -->
     <div id="record-sheet" class="hidden fixed inset-0 z-[210]">
-      <div onclick="document.getElementById('record-sheet').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)]">
+      <div onclick="document.getElementById('record-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)] z-10">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
         <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
         
         <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
+          <%= f.hidden_field :activity_type, value: "routine_record" %>
           <div class="space-y-4">
             <%= f.text_area :body, 
                             placeholder: "오늘 어떤 루틴을 지켰나요? 자신에게 한 마디 남겨보세요.", 
+                            autofocus: true,
                             class: "w-full min-h-[160px] bg-white/5 border-2 border-white/10 rounded-3xl p-6 text-white text-base font-bold placeholder:text-white/20 focus:border-indigo-500 focus:ring-0 transition-all resize-none shadow-inner" %>
             
             <div class="flex items-center gap-3 p-4 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
@@ -103,8 +105,38 @@
           </div>
 
           <div class="flex gap-3">
-             <button type="button" onclick="document.getElementById('record-sheet').classList.add('hidden')" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm">취소</button>
+             <button type="button" onclick="document.getElementById('record-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm">취소</button>
              <%= f.submit "기록 저장하기", class: "flex-1 py-4 rounded-2xl app-fab-gradient text-white font-black text-sm shadow-xl active:scale-95 transition-all cursor-pointer" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 1-2. Today's Commitment Bottom Sheet -->
+    <div id="commitment-sheet" class="hidden fixed inset-0 z-[210]">
+      <div onclick="document.getElementById('commitment-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)] z-10">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 다짐</h3>
+        <p class="text-xs font-bold text-rose-400 mb-8 text-center uppercase tracking-widest leading-none">Declare your commitment</p>
+        
+        <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
+          <%= f.hidden_field :activity_type, value: "reflection" %>
+          <div class="space-y-4">
+            <%= f.text_area :body, 
+                            placeholder: "오늘 하루를 어떻게 보내고 싶나요? 당당하게 선언해보세요!", 
+                            autofocus: true,
+                            class: "w-full min-h-[160px] bg-white/5 border-2 border-white/10 rounded-3xl p-6 text-white text-base font-bold placeholder:text-white/20 focus:border-rose-500/50 focus:ring-0 transition-all resize-none shadow-inner" %>
+            
+            <div class="flex items-center gap-3 p-4 bg-rose-500/10 rounded-2xl border border-rose-500/20">
+              <span class="text-xl">🔥</span>
+              <p class="text-[11px] font-bold text-rose-300">오늘의 다짐은 나뿐만 아니라 동료들에게도 큰 자극이 됩니다.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+             <button type="button" onclick="document.getElementById('commitment-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm">취소</button>
+             <%= f.submit "다짐 선언하기", class: "flex-1 py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 text-white font-black text-sm shadow-xl shadow-rose-500/20 active:scale-95 transition-all cursor-pointer" %>
           </div>
         <% end %>
       </div>

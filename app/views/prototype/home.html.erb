@@ -41,13 +41,17 @@
 
   <!-- 2. Commitment Input & Live Feed -->
   <div class="space-y-3">
-    <div class="app-glass-card flex items-center px-5 py-4 gap-4 border-white/5 cursor-pointer hover:bg-white/[0.03] transition-colors app-tap-active group" data-action="click->proto-ui#openModal" data-modal-id="commitment-sheet">
-      <span class="text-xl group-hover:scale-110 transition-transform">💪</span>
-      <p class="text-[13px] font-bold text-slate-500">오늘의 다짐을 적어보세요...</p>
-      <div class="ml-auto">
-        <svg class="w-5 h-5 text-indigo-500 opacity-50" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-      </div>
-    </div>
+    <%= form_with url: prototype_record_path, method: :post, class: "app-glass-card flex items-center px-5 py-3.5 gap-4 border-white/5 hover:bg-white/[0.03] transition-colors group" do |f| %>
+      <%= f.hidden_field :activity_type, value: "reflection" %>
+      <span class="text-xl group-hover:scale-110 transition-transform shrink-0">💪</span>
+      <%= f.text_field :body, 
+                       placeholder: "오늘의 다짐을 적어보세요...", 
+                       class: "w-full bg-transparent border-none p-0 text-[13px] font-bold text-white placeholder:text-slate-500 focus:ring-0",
+                       onkeydown: "if(event.key === 'Enter') { event.preventDefault(); this.form.submit(); }" %>
+      <button type="submit" class="ml-auto shrink-0 app-tap-active">
+        <svg class="w-5 h-5 text-indigo-500 opacity-80" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    <% end %>
 
     <!-- Live Feed with LIVE indicator -->
     <div class="overflow-hidden h-6 relative mx-2">
@@ -63,35 +67,31 @@
           # Combine different activity types
           activities = []
           
-          # Recent reflections (루틴 기록)
-          if @recent_reflections.any?
-            @recent_reflections.each do |reflection|
+          # Recent reflections (루틴 기록 & 다짐)
+          if @recent_reflections.present?
+            @recent_reflections.each do |activity|
+              if activity.activity_type == "reflection"
+                text = "#{activity.user.nickname}님 다짐: '#{activity.body.truncate(20) rescue '공백'}' ✨"
+              else
+                text = "#{activity.user.nickname}님 루틴 완료: '#{activity.body.truncate(20) rescue '공백'}' ✅"
+              end
+              
               activities << {
                 type: :reflection,
-                user: reflection.user,
-                text: "#{reflection.user.nickname}님이 루틴을 완료했어요: \"#{reflection.body.truncate(25) rescue '성실하게 루틴 완료!'}\""
+                user: activity.user,
+                text: text
               }
             end
           end
           
-          # Recent challenge participations (챌린지 참여)
-          if defined?(@recent_challenge_joins) && @recent_challenge_joins.any?
-            @recent_challenge_joins.each do |participant|
+          # Recent participations (챌린지 & 모임 참여)
+          if defined?(@recent_joins) && @recent_joins.present?
+            @recent_joins.each do |participant|
+              type_text = participant.challenge.meeting_type.present? ? "모임" : "챌린지"
               activities << {
-                type: :challenge_join,
+                type: :join,
                 user: participant.user,
-                text: "#{participant.user.nickname}님이 '#{participant.challenge.title}' 챌린지에 참여했어요 🎯"
-              }
-            end
-          end
-          
-          # Recent gatherings (모임 참여)
-          if defined?(@recent_gathering_joins) && @recent_gathering_joins.any?
-            @recent_gathering_joins.each do |participant|
-              activities << {
-                type: :gathering_join,
-                user: participant.user,
-                text: "#{participant.user.nickname}님이 '#{participant.challenge.title}' 모임에 참여했어요 📍"
+                text: "#{participant.user.nickname}님이 '#{participant.challenge.title}' #{type_text}에 참여했어요 ✨"
               }
             end
           end
@@ -150,6 +150,13 @@
     .animate-reverse-spin-slow {
       animation: reverse-spin-slow 25s linear infinite;
     }
+    @keyframes orbit-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-orbit-1 { animation: orbit-spin 40s linear infinite; }
+    .animate-orbit-2 { animation: orbit-spin 65s linear infinite reverse; }
+    .animate-orbit-3 { animation: orbit-spin 50s linear infinite; }
   </style>
 
   <!-- 3. Visual Focus: The Orbit -->
@@ -159,6 +166,75 @@
       <div class="absolute inset-0 flex items-center justify-center opacity-10">
         <div class="w-[85%] h-[85%] border border-white rounded-full <%= @progress == 100 ? 'animate-spin-slow text-amber-500' : '' %>"></div>
         <div class="absolute w-[65%] h-[65%] border border-dashed border-white rounded-full <%= @progress == 100 ? 'animate-reverse-spin-slow text-amber-300' : '' %>"></div>
+      </div>
+
+      <!-- Living Orbits (Other Users) -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <% 
+           # FOR DEMO: If users are less than 100, mock more to show Milky Way
+           display_users = @orbit_users.to_a
+           if display_users.size < 100
+             (100 - display_users.size).times { display_users << Struct.new(:profile_image).new("https://i.pravatar.cc/50?u=#{rand(1000)}") }
+           end
+        %>
+        <% if display_users.any? %>
+          <% if display_users.size > 15 %>
+            <!-- "Milky Way" Mode: Pure Dense Particles -->
+            <% display_users.each_with_index do |user, idx| %>
+              <% 
+                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
+                 top_percent = rand(12..38)
+                 initial_rotate = rand(0..360)
+                 opacity = rand(0.3..0.7)
+                 size = rand(2..4)
+              %>
+              <div class="absolute inset-0 <%= orbit_class %>" style="transform: rotate(<%= initial_rotate %>deg); animation-duration: <%= rand(40..100) %>s">
+                <div class="absolute rounded-full bg-indigo-300 shadow-[0_0_6px_rgba(165,180,252,0.8)]" 
+                     style="top: <%= top_percent %>%; left: 50%; width: <%= size %>px; height: <%= size %>px; opacity: <%= opacity %>; transform: translateX(-50%);">
+                </div>
+              </div>
+            <% end %>
+
+            <!-- Center descriptive badge with Facepile -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div class="mt-44 bg-indigo-950/40 backdrop-blur-xl border border-white/10 px-3.5 py-2 rounded-2xl flex items-center gap-3 shadow-2xl">
+                <div class="flex -space-x-2">
+                  <% display_users.take(3).each_with_index do |u, i| %>
+                    <div class="w-5 h-5 rounded-full border border-indigo-900 overflow-hidden shadow-inner">
+                      <img src="<%= u.profile_image %>" class="w-full h-full object-cover">
+                    </div>
+                  <% end %>
+                </div>
+                <p class="text-[10px] font-black text-indigo-100/90 tracking-tight">
+                  <span class="text-indigo-400"><%= display_users.size %>명</span>의 동료가 함께 빛나는 중
+                </p>
+              </div>
+            </div>
+          <% else %>
+            <!-- "Satellite" Mode: Individual Profiles for few users -->
+            <% display_users.each_with_index do |user, idx| %>
+              <% 
+                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
+                 top_percent = [15, 20, 25, 30, 10, 35][idx % 6]
+                 initial_rotate = idx * (360 / [display_users.size, 1].max)
+              %>
+              <div class="absolute inset-0 <%= orbit_class %>" style="transform: rotate(<%= initial_rotate %>deg)">
+                <div class="absolute w-7 h-7 rounded-full border-2 border-white/10 overflow-hidden shadow-lg shadow-black/20" 
+                     style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%) rotate(-<%= initial_rotate %>deg);">
+                  <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+                </div>
+              </div>
+            <% end %>
+            <!-- Label for few users -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div class="mt-44 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
+                <p class="text-[9px] font-black text-slate-400 tracking-tight uppercase">
+                   실시간 성취 중인 동료들
+                </p>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
       </div>
       
       <!-- Celebration Particles (Only at 100%) -->
@@ -335,7 +411,7 @@
   <!-- 7. My Real-time Achievement (Only Joined Content) -->
   <% if @joined_challenges.any? %>
     <section class="space-y-4">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none px-2">나의 실시간 성취</h3>
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none px-2">참여중인 챌린지&모임</h3>
       <div class="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-2">
         <% @joined_challenges.each do |challenge| %>
           <%= link_to challenge_path(challenge, source: 'prototype'), class: "shrink-0 w-64 app-glass-card p-5 border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden group active:scale-95 transition-all block" do %>

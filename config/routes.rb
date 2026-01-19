@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Root path
-  root "home#index"
+  root "prototype#home"
   get "landing", to: "home#landing"
   get "pwa_guide", to: "home#pwa_guide"
   get "achievement_report", to: "home#achievement_report"

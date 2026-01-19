@@ -107,7 +107,7 @@
             <img src="<%= challenge.thumbnail %>" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
             <div class="absolute top-2 left-2 flex gap-1">
-              <span class="px-2 py-0.5 bg-indigo-500/80 backdrop-blur-md rounded-lg text-[8px] font-black text-white uppercase tracking-tighter">ONLINE</span>
+              <span class="px-2 py-0.5 bg-indigo-500/80 backdrop-blur-md rounded-lg text-[8px] font-black text-white uppercase tracking-tighter"><%= challenge.mode.upcase %></span>
             </div>
             <div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
                <div class="flex items-center gap-1">
@@ -181,7 +181,7 @@
             <h4 class="text-sm font-black text-white line-clamp-1 group-hover:text-amber-400 transition-colors"><%= gathering.title %></h4>
             <div class="space-y-1">
               <p class="text-[10px] font-bold text-slate-500 line-clamp-1">
-                <span class="text-white/40">📍</span> <%= gathering.meeting_info&.place_name || "온라인 미팅" %>
+                <span class="text-white/40"><%= gathering.mode_offline? ? '📍' : '🎬' %></span> <%= gathering.meeting_info&.place_name || gathering.online_meeting_link || "온라인 미팅" %>
               </p>
               <div class="flex items-center justify-between gap-2 border-t border-white/5 pt-1.5 mt-1.5">
                 <span class="text-[10px] font-black text-amber-500"><%= gathering.amount > 0 ? "#{number_with_delimiter(gathering.amount)}원" : "무료 참여" %></span>
