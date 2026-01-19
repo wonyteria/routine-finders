@@ -7,7 +7,7 @@
   <script src="https://unpkg.com/feather-icons"></script>
 <% end %>
 
-<div class="bg-white text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden font-['Pretendard','Plus_Jakarta_Sans',-apple-system,BlinkMacSystemFont,system-ui,Roboto,'Helvetica_Neue','Segoe_UI','Apple_SD_Gothic_Neo','Noto_Sans_KR','Malgun_Gothic','Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol',sans-serif]">
+<div class="bg-white text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden font-['Pretendard','Plus_Jakarta_Sans',-apple-system,BlinkMacSystemFont,system-ui,Roboto,'Helvetica_Neue','Segoe_UI','Apple_SD_Gothic_Neo','Noto_Sans_KR','Malgun_Gothic','Apple_Color_Emoji','Segoe_UI_Emoji','Segoe_UI_Symbol',sans-serif]" data-controller="proto-ui">
   
   <!-- Hero Section -->
   <section class="relative min-h-screen flex flex-col items-center justify-center px-6 text-center overflow-hidden">
@@ -41,7 +41,7 @@
              내 대시보드 열기
            <% end %>
         <% else %>
-           <button data-action="click->modal#open"
+           <button data-action="click->proto-ui#openModal" data-modal-id="login-modal"
                           class="px-8 py-5 sm:px-12 sm:py-6 bg-slate-900 text-white rounded-2xl sm:rounded-[28px] font-black text-lg sm:text-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-indigo-100 flex items-center justify-center gap-3 sm:gap-4 group w-full sm:w-max border-none">
              <svg class="w-6 h-6 sm:w-7 sm:h-7 text-indigo-400 group-hover:animate-pulse" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
@@ -268,7 +268,7 @@
                 <span>내 대시보드로 이동</span>
             <% end %>
           <% else %>
-            <button data-action="click->modal#open"
+            <button data-action="click->proto-ui#openModal" data-modal-id="login-modal"
                           class="group inline-flex items-center justify-center gap-3 px-8 py-5 lg:px-12 lg:py-6 bg-white text-indigo-600 rounded-2xl lg:rounded-[28px] font-black text-lg lg:text-xl shadow-xl transition-all hover:scale-105 active:scale-95 border-none">
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
@@ -295,6 +295,43 @@
        <p class="text-slate-400 font-bold text-sm">© 2026 Routine Finders Team. All rights reserved.</p>
     </footer>
   </section>
+
+<!-- Login Modal (Kakao Style) -->
+<div id="login-modal" class="hidden fixed inset-0 z-[100]">
+  <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white rounded-3xl p-8 shadow-2xl animate-slide-up">
+    <!-- Close Button -->
+    <button data-action="click->proto-ui#closeModal" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 transition-colors">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+
+    <div class="text-center space-y-6">
+      <div class="mx-auto w-16 h-16 mb-2">
+         <%= image_tag "rf_symbol_v9.png", class: "w-full h-full object-contain" %>
+      </div>
+      <div>
+        <h3 class="text-2xl font-black text-slate-900 mb-2">반가워요! 👋</h3>
+        <p class="text-slate-500 font-bold text-sm leading-relaxed">루틴 파인더스와 함께<br/>나만의 성취 궤적을 만들어보세요.</p>
+      </div>
+
+      <div class="pt-4 space-y-3">
+        <!-- Kakao Login Button (Demo) -->
+        <%= button_to "/dev_login", method: :post, data: { turbo: false }, class: "w-full py-4 bg-[#FEE500] hover:bg-[#FDD835] active:scale-[0.98] transition-all rounded-xl flex items-center justify-center gap-3 text-black/85 font-black text-base shadow-lg shadow-yellow-400/20 border-none cursor-pointer" do %>
+           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+             <path d="M12 3C5.9 3 1 6.9 1 11.8c0 3.1 1.9 5.8 4.8 7.3-.2.8-.7 2.8-.8 3.2 0 .1 0 .2.2.2.1 0 .2 0 .3-.2.4-.5 3.7-2.5 4.3-3 .7.1 1.4.2 2.2.2 6.1 0 11-3.9 11-8.8C23 6.9 18.1 3 12 3z"/>
+           </svg>
+           카카오로 3초 만에 시작하기
+        <% end %>
+        
+        <div class="flex items-center justify-center gap-4 text-[10px] font-bold text-slate-500 pt-2">
+          <button onclick="document.getElementById('privacy-modal').classList.remove('hidden')" class="hover:text-slate-600 transition-colors bg-transparent border-none p-0 cursor-pointer font-bold text-[10px]">개인정보처리방침</button>
+          <span class="w-px h-2.5 bg-slate-200"></span>
+          <button onclick="document.getElementById('terms-modal').classList.remove('hidden')" class="hover:text-slate-600 transition-colors bg-transparent border-none p-0 cursor-pointer font-bold text-[10px]">이용약관</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </div>
 

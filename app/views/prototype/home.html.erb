@@ -9,21 +9,28 @@
     <% end %>
     
     <!-- Center: Profile -->
-    <%= link_to prototype_my_path, class: "absolute left-1/2 -translate-x-1/2 flex items-center gap-3 app-tap-active" do %>
-      <div class="w-10 h-10 rounded-2xl bg-indigo-500 overflow-hidden shadow-lg shadow-indigo-500/20 border border-white/10">
-        <% if current_user %>
+    <!-- Center: Profile or Login -->
+    <% if current_user %>
+      <%= link_to prototype_my_path, class: "absolute left-1/2 -translate-x-1/2 flex items-center gap-3 app-tap-active" do %>
+        <div class="w-10 h-10 rounded-2xl bg-indigo-500 overflow-hidden shadow-lg shadow-indigo-500/20 border border-white/10">
           <img src="<%= current_user.profile_image %>" class="w-full h-full object-cover">
-        <% else %>
-          <div class="w-full h-full flex items-center justify-center text-white font-black">?</div>
-        <% end %>
-      </div>
-      <div>
-        <h2 class="text-sm font-black text-white"><%= current_user&.nickname || "Guest" %></h2>
-        <div class="flex items-center gap-1.5 mt-0.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <p class="text-[10px] font-bold text-slate-500">현재 활동 중</p>
         </div>
-      </div>
+        <div>
+          <h2 class="text-sm font-black text-white"><%= current_user&.nickname || "User" %></h2>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <p class="text-[10px] font-bold text-slate-500">현재 활동 중</p>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <button type="button" 
+              data-action="click->proto-ui#openModal" 
+              data-modal-id="login-modal" 
+              onclick="document.getElementById('login-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
+              class="absolute left-1/2 -translate-x-1/2 px-5 py-2.5 bg-indigo-600 rounded-full font-black text-white text-sm shadow-lg shadow-indigo-600/30 active:scale-95 transition-all w-fit flex items-center justify-center whitespace-nowrap cursor-pointer z-[110]">
+        로그인 / 회원가입
+      </button>
     <% end %>
     
     <!-- Right: Notification -->

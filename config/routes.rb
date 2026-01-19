@@ -54,6 +54,7 @@ Rails.application.routes.draw do
   # Legacy routes for compatibility
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
+  get "logout", to: "sessions#destroy"
 
   # Admin routes
   namespace :admin do

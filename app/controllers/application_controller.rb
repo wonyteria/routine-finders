@@ -47,7 +47,11 @@ class ApplicationController < ActionController::Base
   def require_login
     unless current_user
       store_location
-      redirect_to root_path, alert: "로그인이 필요합니다."
+      if params[:source] == "prototype" || request.path.start_with?("/prototype")
+        redirect_to prototype_home_path(show_login: true), alert: "로그인이 필요합니다."
+      else
+        redirect_to root_path, alert: "로그인이 필요합니다."
+      end
     end
   end
 

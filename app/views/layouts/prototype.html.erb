@@ -211,5 +211,107 @@
         </div>
       </div>
     </div>
+    
+    <!-- 1. 이용약관 모달 -->
+    <div id="terms-modal" class="hidden fixed inset-0 z-[600]">
+      <div onclick="document.getElementById('terms-modal').classList.add('hidden')" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 max-h-[80vh] overflow-y-auto">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <h3 class="text-xl font-black text-white mb-6 text-center">서비스 이용안내 및 약관</h3>
+        <div class="space-y-6 text-sm text-slate-400 font-bold leading-relaxed px-2">
+          <div class="space-y-2">
+            <p class="text-white">제 1조 (플랫폼의 성격)</p>
+            <p>'루틴 파인더스'(이하 "플랫폼")는 개인 개발자가 성장의 즐거움을 나누기 위해 제작한 개인 운영 플랫폼입니다. 누구나 자유롭게 자신만의 루틴을 세우고, 챌린지와 모임을 개설하여 함께 성장하는 것을 목표로 합니다.</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-white">제 2조 (서비스의 제공)</p>
+            <p>본 플랫폼은 개인의 기록을 돕는 루틴 기록 도구와 타인과 소통할 수 있는 챌린지 및 모임 운영 도구를 제공합니다. 플랫폼은 도구를 제공할 뿐, 각 챌린지와 모임의 운영 주체는 해당 기능을 개설한 사용자(호스트)에게 있습니다.</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-white">제 3조 (이용자의 권리와 책임)</p>
+            <p>1. 사용자는 플랫폼 내에서 타인에게 긍정적인 자극과 응원을 전하는 것을 원칙으로 합니다.</p>
+            <p>2. 개인이 운영하는 공간인 만큼 타인의 명예를 훼손하거나 커뮤니티의 질서를 어지럽히는 행위에 대해서는 운영자가 이용을 제한할 수 있습니다.</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-white">제 4조 (서비스 운영에 관한 사항)</p>
+            <p>개인 개발자가 관리하는 플랫폼 특성상 예기치 못한 점검이나 기능 업데이트가 잦을 수 있습니다. 운영자는 최선을 다해 안정적인 서비스를 제공하려 노력하되, 시스템 장애로 인한 데이터 손실 등에 대해서는 완전한 책임을 지기 어려움을 양해 부탁드립니다.</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-white">제 5조 (저작권 및 상호 존중)</p>
+            <p>본 서비스 내의 디자인과 로직은 운영자의 소중한 자산입니다. 또한 사용자가 올린 게시글의 저작권은 사용자에게 있으며, 서로의 개인적 창작물과 노력을 존중해야 합니다.</p>
+          </div>
+          <div class="pt-8 text-center">
+            <button onclick="document.getElementById('terms-modal').classList.add('hidden')" class="w-full py-4 bg-indigo-600 rounded-2xl text-white font-black text-sm hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-600/20">플랫폼과 함께 성장하겠습니다</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 개인정보처리방침 모달 -->
+    <div id="privacy-modal" class="hidden fixed inset-0 z-[600]">
+      <div onclick="document.getElementById('privacy-modal').classList.add('hidden')" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 max-h-[80vh] overflow-y-auto">
+        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <h3 class="text-xl font-black text-white mb-6 text-center">개인정보 처리 및 보호 안내</h3>
+        <div class="space-y-6 text-sm text-slate-400 font-bold leading-relaxed px-2">
+          <div class="space-y-2">
+            <p class="text-white">1. 최소한의 정보만 수집합니다</p>
+            <p>운영자는 카카오 로그인을 통해 제공받는 최소한의 정보(닉네임, 프로필 이미지 등)와 사용자가 직접 작성하는 루틴 기록만을 수집하며, 이를 상업적으로 판매하거나 불법적으로 사용하지 않습니다.</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-white">2. 정보의 소중한 활용</p>
+            <p>수집된 정보는 플랫폼 내에서 친구들과 루틴 현황을 공유하고, 본인이 개설한 챌린지나 모임을 관리하기 위한 용도로만 사용됩니다.</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-white">3. 보관 및 파기 원칙</p>
+            <p>사용자의 데이터는 플랫폼 이용 기간 동안 안전하게 보관되며, 탈퇴 시 지체 없이 파기됩니다. 다만, 커뮤니티 성격상 본인이 작성하여 타인과 공유한 게시물은 서비스 품질 유지를 위해 남을 수 있습니다.</p>
+          </div>
+          <div class="space-y-2">
+            <p class="text-white">4. 개인 개발자의 약속</p>
+            <p>운영자는 사용자의 개인정보를 제3자에게 임의로 제공하지 않으며, 보안 수칙을 가이드에 따라 철저히 준수하여 정보를 보호하겠습니다.</p>
+          </div>
+          <div class="pt-8 text-center">
+            <button onclick="document.getElementById('privacy-modal').classList.add('hidden')" class="w-full py-4 bg-emerald-600 rounded-2xl text-white font-black text-sm hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-600/20">운영자를 신뢰하고 시작합니다</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global Login Modal (Kakao Style for Prototype) -->
+    <div id="login-modal" class="hidden fixed inset-0 z-[500]">
+      <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm app-glass-card border-none bg-[#1B1A24] p-8 shadow-2xl animate-slide-up">
+        <!-- Close Button -->
+        <button data-action="click->proto-ui#closeModal" class="absolute top-4 right-4 p-2 text-slate-500 hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <div class="text-center space-y-8">
+          <div class="mx-auto w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center border border-white/10 shadow-lg mb-4">
+             <%= image_tag "rf_symbol_v9.png", class: "w-12 h-12 object-contain" %>
+          </div>
+          <div>
+            <h3 class="text-2xl font-black text-white mb-2">환영합니다!</h3>
+            <p class="text-slate-400 font-bold text-sm leading-relaxed">루틴 파인더스에서<br/>당신의 성장을 기록해보세요.</p>
+          </div>
+
+          <div class="pt-2 space-y-3">
+            <!-- Kakao Login Button -->
+            <%= button_to "/dev_login", method: :post, data: { turbo: false }, class: "w-full py-4 bg-[#FEE500] hover:bg-[#FDD835] active:scale-[0.98] transition-all rounded-2xl flex items-center justify-center gap-3 text-[#191919] font-black text-base shadow-lg shadow-yellow-400/10 border-none cursor-pointer" do %>
+               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                 <path d="M12 3C5.9 3 1 6.9 1 11.8c0 3.1 1.9 5.8 4.8 7.3-.2.8-.7 2.8-.8 3.2 0 .1 0 .2.2.2.1 0 .2 0 .3-.2.4-.5 3.7-2.5 4.3-3 .7.1 1.4.2 2.2.2 6.1 0 11-3.9 11-8.8C23 6.9 18.1 3 12 3z"/>
+               </svg>
+               카카오로 3초 만에 시작하기
+            <% end %>
+            
+            <div class="flex items-center justify-center gap-4 text-[10px] font-bold text-slate-500 pt-4">
+              <button onclick="document.getElementById('privacy-modal').classList.remove('hidden')" class="hover:text-slate-300 transition-colors bg-transparent border-none p-0 cursor-pointer">개인정보처리방침</button>
+              <span class="w-px h-2.5 bg-white/10"></span>
+              <button onclick="document.getElementById('terms-modal').classList.remove('hidden')" class="hover:text-slate-300 transition-colors bg-transparent border-none p-0 cursor-pointer">이용약관</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

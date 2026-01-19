@@ -84,15 +84,15 @@
         <!-- Host Preview Card -->
         <div class="app-glass-card p-6 border-white/10 bg-white/[0.02] flex items-center gap-4">
           <div class="relative">
-            <img src="<%= @challenge.host.profile_image %>" class="w-14 h-14 rounded-2xl border-2 border-indigo-500/30">
+            <img src="<%= @challenge.host&.profile_image || asset_path('rf_symbol_v9.png') %>" class="w-14 h-14 rounded-2xl border-2 border-indigo-500/30 object-cover bg-white/5">
             <div class="absolute -right-1 -bottom-1 w-5 h-5 bg-indigo-500 rounded-full border-2 border-[#0C0B12] flex items-center justify-center">
                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"/></svg>
             </div>
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase">Challenge Host</p>
-            <h3 class="text-base font-black text-white"><%= @challenge.host_name %></h3>
-            <p class="text-[11px] font-medium text-slate-400 mt-0.5"><%= @challenge.host.bio.present? ? @challenge.host.bio.truncate(40) : "이 도전을 이끄는 열정적인 루퍼입니다." %></p>
+            <h3 class="text-base font-black text-white"><%= @challenge.host_name || "플랫폼 운영자" %></h3>
+            <p class="text-[11px] font-medium text-slate-400 mt-0.5"><%= @challenge.host&.bio.present? ? @challenge.host.bio.truncate(40) : "이 도전을 이끄는 열정적인 루퍼입니다." %></p>
           </div>
         </div>
         <%= render "challenges/tabs/intro", challenge: @challenge %>

@@ -77,8 +77,10 @@
         </button>
 
         <!-- Badge Detail Modal (Inside Loop for simplicity in prototype) -->
-        <div id="badge-detail-<%= i %>" class="hidden fixed inset-0 z-[300]">
-          <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+        <div id="badge-detail-<%= i %>" class="hidden fixed inset-0 z-[600]">
+          <div data-action="click->proto-ui#closeModal" 
+               onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+               class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
           <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 aspect-[3/4.5] app-glass-card border-white/20 p-8 flex flex-col items-center justify-between text-center overflow-hidden">
              <!-- Shimmer Effect -->
              <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
@@ -134,7 +136,11 @@
 
   <!-- 5. Settings List -->
   <section class="app-glass-card divide-y divide-white/5 overflow-hidden">
-    <button data-action="click->proto-ui#openModal" data-modal-id="edit-profile" class="w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors">
+    <button type="button" 
+            data-action="click->proto-ui#openModal" 
+            data-modal-id="edit-profile" 
+            onclick="document.getElementById('edit-profile').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
+            class="w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer">
       <div class="flex items-center gap-4">
         <span class="text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></span>
         <span class="text-sm font-bold text-slate-300">프로필 정보 수정</span>
@@ -152,7 +158,7 @@
       </button>
     </div>
 
-    <%= button_to logout_path, method: :delete, class: "w-full flex items-center justify-between p-5 hover:bg-red-500/5 active:bg-red-500/10 transition-colors border-none bg-transparent cursor-pointer" do %>
+    <%= link_to logout_path, data: { turbo_method: :delete }, class: "w-full flex items-center justify-between p-5 hover:bg-red-500/5 active:bg-red-500/10 transition-colors cursor-pointer block" do %>
       <div class="flex items-center gap-4">
         <span class="text-red-500/50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>
         <span class="text-sm font-bold text-red-500/80">로그아웃</span>
@@ -162,12 +168,17 @@
 </div>
 
 <!-- Growth Detail Modal -->
-<div id="growth-detail" class="hidden fixed inset-0 z-[300]">
-  <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+<div id="growth-detail" class="hidden fixed inset-0 z-[600]">
+  <div data-action="click->proto-ui#closeModal" 
+       onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+       class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[80vh] overflow-y-auto">
     <div class="flex justify-between items-center">
       <h3 class="text-xl font-black text-white">성장 인텔리전스</h3>
-      <button data-action="click->proto-ui#closeModal" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+      <button type="button" 
+              data-action="click->proto-ui#closeModal" 
+              onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+              class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
@@ -204,7 +215,9 @@
 
 <!-- Host Center Modal -->
 <div id="host-center" class="hidden fixed inset-0 z-[300]">
-  <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+  <div data-action="click->proto-ui#closeModal" 
+       onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+       class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6">
     <div class="flex justify-between items-center">
       <div>
@@ -238,12 +251,17 @@
 </div>
 
 <!-- Edit Profile Modal -->
-<div id="edit-profile" class="hidden fixed inset-0 z-[300]">
-  <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+<div id="edit-profile" class="hidden fixed inset-0 z-[600]">
+  <div data-action="click->proto-ui#closeModal" 
+       onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+       class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[80vh] overflow-y-auto">
     <div class="flex justify-between items-center">
       <h3 class="text-xl font-black text-white">프로필 수정</h3>
-      <button data-action="click->proto-ui#closeModal" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+      <button type="button" 
+              data-action="click->proto-ui#closeModal" 
+              onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+              class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
@@ -251,10 +269,16 @@
     <div class="space-y-5">
       <div class="flex justify-center">
         <div class="relative">
-          <div class="w-24 h-24 rounded-[32px] border-4 border-indigo-500 overflow-hidden">
-            <img src="<%= current_user&.profile_image %>" class="w-full h-full object-cover">
+          <div class="w-24 h-24 rounded-[32px] border-4 border-indigo-500 overflow-hidden bg-white/5">
+            <img id="profile-preview" src="<%= current_user&.profile_image %>" class="w-full h-full object-cover">
           </div>
-          <button class="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center shadow-lg active:scale-90 transition-transform">
+          <!-- Hidden File Input -->
+          <input type="file" id="profile-upload" class="hidden" accept="image/*" 
+                 onchange="const reader = new FileReader(); reader.onload = (e) => { document.getElementById('profile-preview').src = e.target.result; }; reader.readAsDataURL(this.files[0]);">
+          
+          <button type="button" 
+                  onclick="document.getElementById('profile-upload').click()"
+                  class="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center shadow-lg active:scale-90 transition-transform cursor-pointer">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </button>
         </div>
@@ -275,7 +299,15 @@
         <div data-controller="sns-links">
           <div class="flex justify-between items-center mb-3">
             <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">SNS 링크</label>
-            <button type="button" data-action="click->sns-links#addLink" class="text-xs font-black text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+            <button type="button" 
+                    data-action="click->sns-links#addLink" 
+                    onclick="const container = this.closest('[data-controller]').querySelector('[data-sns-links-target=\'container\']');
+                             const template = this.closest('[data-controller]').querySelector('template');
+                             const clone = template.content.cloneNode(true);
+                             container.appendChild(clone);
+                             const empty = container.querySelector('[data-sns-links-target=\'emptyState\']');
+                             if(empty) empty.classList.add('hidden');"
+                    class="text-xs font-black text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
               추가
             </button>
@@ -293,7 +325,15 @@
                        data-action="input->sns-links#detectPlatform"
                        data-sns-links-target="input"
                        class="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all" />
-                <button type="button" data-action="click->sns-links#removeLink" class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button" 
+                        data-action="click->sns-links#removeLink" 
+                        onclick="const item = this.closest('.group');
+                                 const container = item.parentElement;
+                                 item.remove();
+                                 if(container.querySelectorAll('.group').length === 0) {
+                                   container.querySelector('[data-sns-links-target=\'emptyState\']').classList.remove('hidden');
+                                 }"
+                        class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               </div>
@@ -310,6 +350,14 @@
       <button class="w-full py-4 rounded-2xl bg-indigo-500 text-white font-black text-sm active:scale-95 transition-all">
         저장하기
       </button>
+
+      <div class="flex justify-center pt-2">
+        <button type="button" 
+                onclick="if(confirm('정말 루틴 파인더스를 탈퇴하시겠습니까? 기록된 모든 데이터가 영구적으로 삭제됩니다.')) { alert('탈퇴 처리가 완료되었습니다. 그동안 함께 해주셔서 감사합니다.'); window.location.href='/landing'; }"
+                class="text-[10px] font-bold text-slate-700 hover:text-red-500 transition-colors uppercase tracking-widest p-2">
+          탈퇴하기
+        </button>
+      </div>
     </div>
   </div>
 </div>

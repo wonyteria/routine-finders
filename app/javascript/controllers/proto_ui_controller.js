@@ -1,6 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+    connect() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('show_login') === 'true') {
+            const modal = document.getElementById('login-modal')
+            if (modal) {
+                modal.classList.remove('hidden')
+                document.body.classList.add('overflow-hidden')
+            }
+        }
+    }
+
     openModal(event) {
         const modalId = event.currentTarget.dataset.modalId
         const modal = document.getElementById(modalId)

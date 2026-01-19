@@ -1,6 +1,7 @@
 class PrototypeController < ApplicationController
   layout "prototype"
   before_action :set_shared_data
+  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record ]
 
   def home
     # 1. Total Daily Tasks Calculation (Routines + Challenges + Gatherings)
