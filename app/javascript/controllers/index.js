@@ -16,6 +16,9 @@ application.register("auth-toggle", AuthToggleController)
 import BadgeAwardController from "controllers/badge_award_controller"
 application.register("badge-award", BadgeAwardController)
 
+import CalendarScrollController from "controllers/calendar_scroll_controller"
+application.register("calendar-scroll", CalendarScrollController)
+
 import ChallengeFormController from "controllers/challenge_form_controller"
 application.register("challenge-form", ChallengeFormController)
 

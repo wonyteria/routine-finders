@@ -35,15 +35,15 @@
               </div>
             </td>
             <td class="px-6 py-8">
-              <div class="flex items-center gap-5">
-                <div class="w-14 h-14 rounded-[20px] bg-slate-100 p-0.5 shadow-sm border border-slate-200 shrink-0">
+              <%= link_to user_profile_path(user), class: "flex items-center gap-5 group/user" do %>
+                <div class="w-14 h-14 rounded-[20px] bg-slate-100 p-0.5 shadow-sm border border-slate-200 shrink-0 group-hover/user:scale-110 transition-transform">
                   <img src="<%= user.profile_image || "https://api.dicebear.com/7.x/lorelei/svg?seed=#{user.nickname}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf" %>" class="w-full h-full object-cover rounded-[18px]" alt="">
                 </div>
                 <div>
-                  <h4 class="text-lg font-black text-slate-900 leading-tight"><%= user.nickname %></h4>
+                  <h4 class="text-lg font-black text-slate-900 leading-tight group-hover/user:text-indigo-600 transition-colors"><%= user.nickname %></h4>
                   <p class="text-xs font-bold text-slate-400">Joined <%= user.created_at.strftime("%Y.%m") %></p>
                 </div>
-              </div>
+              <% end %>
             </td>
             <td class="px-6 py-8">
               <div class="flex flex-col items-center">
