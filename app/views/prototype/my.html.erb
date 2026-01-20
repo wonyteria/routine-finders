@@ -397,18 +397,24 @@
       </div>
     </div>
 
-    <!-- Hidden Mock Data for Modal Switching -->
+    <!-- Real Data for Modal Switching -->
     <template id="mock-week-detail">
         <div class="grid grid-cols-2 gap-4">
           <div class="app-glass-card p-4 bg-white/[0.02]">
             <p class="text-[10px] font-bold text-slate-500 mb-2">주간 달성률</p>
-            <p class="text-2xl font-black text-white">82%</p>
-            <p class="text-xs font-bold text-emerald-500 mt-1">↑ 12%</p>
+            <p class="text-2xl font-black text-white"><%= @weekly_completion %>%</p>
+            <% if @weekly_growth > 0 %>
+              <p class="text-xs font-bold text-emerald-500 mt-1">↑ <%= @weekly_growth %>%</p>
+            <% elsif @weekly_growth < 0 %>
+              <p class="text-xs font-bold text-red-500 mt-1">↓ <%= @weekly_growth.abs %>%</p>
+            <% else %>
+              <p class="text-xs font-bold text-slate-500 mt-1">-</p>
+            <% end %>
           </div>
           <div class="app-glass-card p-4 bg-white/[0.02]">
             <p class="text-[10px] font-bold text-slate-500 mb-2">연속 기록</p>
-            <p class="text-2xl font-black text-white">7일</p>
-            <p class="text-xs font-bold text-indigo-400 mt-1">🔥 진행중</p>
+            <p class="text-2xl font-black text-white"><%= @current_streak %>일</p>
+            <p class="text-xs font-bold text-indigo-400 mt-1"><%= @current_streak > 0 ? '🔥 진행중' : '시작 대기' %></p>
           </div>
         </div>
         <div class="app-glass-card p-5 bg-white/[0.02] space-y-3">
@@ -417,9 +423,9 @@
             <div class="flex items-center justify-between">
               <span class="text-sm font-bold text-slate-400"><%= day %></span>
               <div class="flex-1 mx-4 h-2 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-indigo-500 rounded-full" style="width: <%= [30, 45, 80, 60, 95, 70, 85][i] %>%"></div>
+                <div class="h-full bg-indigo-500 rounded-full" style="width: <%= @weekly_data[i] %>%"></div>
               </div>
-              <span class="text-xs font-black text-white tabular-nums"><%= [30, 45, 80, 60, 95, 70, 85][i] %>%</span>
+              <span class="text-xs font-black text-white tabular-nums"><%= @weekly_data[i] %>%</span>
             </div>
           <% end %>
         </div>
@@ -429,13 +435,19 @@
         <div class="grid grid-cols-2 gap-4">
           <div class="app-glass-card p-4 bg-white/[0.02]">
             <p class="text-[10px] font-bold text-slate-500 mb-2">월간 달성률</p>
-            <p class="text-2xl font-black text-white">76%</p>
-            <p class="text-xs font-bold text-indigo-400 mt-1">↑ 8%</p>
+            <p class="text-2xl font-black text-white"><%= @monthly_completion %>%</p>
+            <% if @monthly_growth > 0 %>
+              <p class="text-xs font-bold text-emerald-500 mt-1">↑ <%= @monthly_growth %>%</p>
+            <% elsif @monthly_growth < 0 %>
+              <p class="text-xs font-bold text-red-500 mt-1">↓ <%= @monthly_growth.abs %>%</p>
+            <% else %>
+              <p class="text-xs font-bold text-slate-500 mt-1">-</p>
+            <% end %>
           </div>
           <div class="app-glass-card p-4 bg-white/[0.02]">
             <p class="text-[10px] font-bold text-slate-500 mb-2">누적 포인트</p>
-            <p class="text-2xl font-black text-white">2,450P</p>
-            <p class="text-[10px] font-bold text-slate-600 mt-1">클럽 멤버십 혜택</p>
+            <p class="text-2xl font-black text-white"><%= number_with_delimiter(@current_month_points) %>P</p>
+            <p class="text-[10px] font-bold text-slate-600 mt-1"><%= current_user&.is_rufa_club_member? ? '클럽 멤버십 혜택' : '이번 달 점수' %></p>
           </div>
         </div>
         <div class="app-glass-card p-5 bg-white/[0.02] space-y-3">
@@ -444,9 +456,9 @@
             <div class="flex items-center justify-between">
               <span class="text-sm font-bold text-slate-400"><%= week %></span>
               <div class="flex-1 mx-4 h-2 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-indigo-500 rounded-full" style="width: <%= [65, 72, 58, 88][i] %>%"></div>
+                <div class="h-full bg-indigo-500 rounded-full" style="width: <%= @monthly_data[i] %>%"></div>
               </div>
-              <span class="text-xs font-black text-white tabular-nums"><%= [65, 72, 58, 88][i] %>%</span>
+              <span class="text-xs font-black text-white tabular-nums"><%= @monthly_data[i] %>%</span>
             </div>
           <% end %>
         </div>
@@ -456,24 +468,30 @@
         <div class="grid grid-cols-2 gap-4">
           <div class="app-glass-card p-4 bg-white/[0.02]">
             <p class="text-[10px] font-bold text-slate-500 mb-2">올해 달성률</p>
-            <p class="text-2xl font-black text-white">68%</p>
-            <p class="text-xs font-bold text-slate-500 mt-1">기록 시작: 11월</p>
+            <p class="text-2xl font-black text-white"><%= @yearly_completion %>%</p>
+            <% if @yearly_growth > 0 %>
+              <p class="text-xs font-bold text-emerald-500 mt-1">↑ <%= @yearly_growth %>%</p>
+            <% elsif @yearly_growth < 0 %>
+              <p class="text-xs font-bold text-red-500 mt-1">↓ <%= @yearly_growth.abs %>%</p>
+            <% else %>
+              <p class="text-xs font-bold text-slate-500 mt-1">신규 진입</p>
+            <% end %>
           </div>
           <div class="app-glass-card p-4 bg-white/[0.02]">
             <p class="text-[10px] font-bold text-slate-500 mb-2">획득한 배지</p>
-            <p class="text-2xl font-black text-white">12개</p>
+            <p class="text-2xl font-black text-white"><%= @achievements.count %>개</p>
             <p class="text-[10px] font-bold text-slate-600 mt-1">Identity Wallet</p>
           </div>
         </div>
         <div class="app-glass-card p-5 bg-white/[0.02] space-y-3">
           <p class="text-xs font-black text-white">월별 히스토리</p>
-          <% ['11월', '12월', '1월'].each_with_index do |month, i| %>
+          <% (1..Date.current.month).each do |month_num| %>
             <div class="flex items-center justify-between">
-              <span class="text-sm font-bold text-slate-400"><%= month %></span>
+              <span class="text-sm font-bold text-slate-400"><%= month_num %>월</span>
               <div class="flex-1 mx-4 h-2 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-indigo-500 rounded-full" style="width: <%= [45, 52, 68][i] %>%"></div>
+                <div class="h-full bg-indigo-500 rounded-full" style="width: <%= @yearly_data[month_num - 1] %>%"></div>
               </div>
-              <span class="text-xs font-black text-white tabular-nums"><%= [45, 52, 68][i] %>%</span>
+              <span class="text-xs font-black text-white tabular-nums"><%= @yearly_data[month_num - 1] %>%</span>
             </div>
           <% end %>
         </div>
