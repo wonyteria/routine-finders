@@ -23,4 +23,12 @@ class RufaActivity < ApplicationRecord
       body: "오늘의 루틴 '#{title}'을(를) 완수하며 성장했습니다!"
     )
   end
+
+  def self.create_reflection_activity(user, body)
+    create!(
+      user: user,
+      activity_type: "reflection",
+      body: body
+    )
+  end
 end

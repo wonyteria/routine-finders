@@ -281,10 +281,10 @@
 
     <!-- Global Login Modal (Kakao Style for Prototype) -->
     <div id="login-modal" class="hidden fixed inset-0 z-[500]">
-      <div data-action="click->proto-ui#closeModal" class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity"></div>
+      <div onclick="document.getElementById('login-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity cursor-pointer"></div>
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm app-glass-card border-none bg-[#1B1A24] p-8 shadow-2xl animate-slide-up">
         <!-- Close Button -->
-        <button data-action="click->proto-ui#closeModal" class="absolute top-4 right-4 p-2 text-slate-500 hover:text-white transition-colors">
+        <button onclick="document.getElementById('login-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute top-4 right-4 p-2 text-slate-500 hover:text-white transition-colors cursor-pointer z-10">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 

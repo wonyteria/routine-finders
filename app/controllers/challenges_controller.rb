@@ -180,7 +180,7 @@ class ChallengesController < ApplicationController
       end
 
       if params[:source] == "prototype"
-        redirect_to hosted_challenge_path(@challenge, source: "prototype"), notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
+        redirect_to prototype_home_path(created_challenge: true), notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
       else
         redirect_to hosted_challenge_path(@challenge), notice: "#{@challenge.offline? ? '모임' : '챌린지'}가 성공적으로 개설되었습니다!"
       end
@@ -230,8 +230,8 @@ class ChallengesController < ApplicationController
     return redirect_to @challenge, alert: "참여 정보가 없습니다." unless participant
 
     if participant.update(status: :abandoned, refund_amount: 0)
-      @challenge.decrement!(:current_participants)
-      redirect_to challenges_path, notice: "챌린지를 중도 포기했습니다."
+      path = params[:source] == "prototype" ? prototype_explore_path : challenges_path
+      redirect_to path, notice: "챌린지를 중도 포기했습니다."
     else
       redirect_to @challenge, alert: "탈퇴 처리에 실패했습니다."
     end

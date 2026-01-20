@@ -425,9 +425,13 @@
           <div class="relative z-10 space-y-4">
             <h3 class="text-lg font-black text-white leading-tight">내 삶의 주도권을 찾는 여정,<br/><span class="text-amber-300">루틴파인더스</span></h3>
             <p class="text-[10px] font-bold text-white/70 leading-relaxed text-balance">이미 2,400+명의 멤버들이 자신만의 몰입 시간을 만들어가고 있습니다.</p>
-            <%= link_to landing_path, class: "inline-block w-full py-3 bg-white text-indigo-600 rounded-xl font-black text-center text-xs shadow-xl active:scale-95 transition-all" do %>
+            <button type="button" 
+                    data-action="click->proto-ui#openModal" 
+                    data-modal-id="login-modal" 
+                    onclick="document.getElementById('login-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
+                    class="inline-block w-full py-3 bg-white text-indigo-600 rounded-xl font-black text-center text-xs shadow-xl active:scale-95 transition-all cursor-pointer">
               지금 바로 시작하기
-            <% end %>
+            </button>
           </div>
         </div>
      </section>

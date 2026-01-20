@@ -400,7 +400,7 @@
         <h3 class="text-xl font-black text-white">호스트 센터</h3>
         <p class="text-xs font-bold text-amber-400 mt-1">내가 개설한 챌린지 관리</p>
       </div>
-      <button data-action="click->proto-ui#closeModal" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+      <button onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
@@ -636,8 +636,7 @@
 </div>
 <% @achievements.each_with_index do |ub, i| %>
   <div id="badge-detail-<%= i %>" class="hidden fixed inset-0 z-[600]">
-    <div data-action="click->proto-ui#closeModal" 
-         onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+    <div onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
          class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm app-glass-card border-white/20 p-8 flex flex-col items-center justify-between text-center overflow-hidden">
        <!-- Shimmer Effect -->

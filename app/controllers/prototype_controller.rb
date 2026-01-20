@@ -27,9 +27,9 @@ class PrototypeController < ApplicationController
     @membership = current_user&.routine_club_members&.active&.first
     @is_club_member = @membership.present?
 
-    # 3. Live Feed Data
-    @recent_reflections = RufaActivity.where(activity_type: [ "routine_record", "reflection" ]).order(created_at: :desc).limit(10)
-    @recent_activities = RufaActivity.order(created_at: :desc).limit(10)
+    # 3. Live Feed Data (Active users only)
+    @recent_activities = RufaActivity.joins(:user).where(users: { active: true }).order(created_at: :desc).limit(10)
+    @recent_reflections = @recent_activities.where(activity_type: [ "routine_record", "reflection" ])
 
     # Orbiting Users (Recent successes to show on home visualization)
     @orbit_users = User.joins(:rufa_activities)
@@ -91,7 +91,7 @@ class PrototypeController < ApplicationController
                                       .take(20) # Top 20 for full leaderboard
 
     @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
-    @recent_activities = RufaActivity.order(created_at: :desc).limit(10)
+    @recent_activities = RufaActivity.joins(:user).where(users: { active: true }).order(created_at: :desc).limit(20)
   end
 
   def my
