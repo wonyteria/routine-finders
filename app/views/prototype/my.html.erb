@@ -31,6 +31,88 @@
     </div>
   </section>
 
+  <!-- 2. Goals Section (Weekly/Monthly/Yearly) -->
+  <section class="space-y-4">
+    <div class="flex justify-between items-center px-2">
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">나의 목표</h3>
+      <button data-action="click->proto-ui#openModal" 
+              data-modal-id="edit-goals" 
+              onclick="document.getElementById('edit-goals').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
+              class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer">수정</button>
+    </div>
+
+    <div class="grid grid-cols-1 gap-3">
+      <% 
+        weekly_needs_update = current_user.weekly_goal_updated_at.nil? || current_user.weekly_goal_updated_at < Date.current.beginning_of_week
+        monthly_needs_update = current_user.monthly_goal_updated_at.nil? || current_user.monthly_goal_updated_at < Date.current.beginning_of_month
+        yearly_needs_update = current_user.yearly_goal_updated_at.nil? || current_user.yearly_goal_updated_at < Date.current.beginning_of_year
+      %>
+      
+      <!-- Weekly Goal -->
+      <div class="app-glass-card p-5 <%= weekly_needs_update ? 'border-amber-500/30 bg-amber-500/5' : 'border-indigo-500/20 bg-indigo-500/5' %>">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🎯</span>
+            <div>
+              <p class="text-xs font-black text-white">주간 목표</p>
+              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.strftime('%Y년 %m월 %주차') %></p>
+            </div>
+          </div>
+          <% if weekly_needs_update %>
+            <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[8px] font-black rounded-full">갱신 필요</span>
+          <% end %>
+        </div>
+        <% if current_user.weekly_goal.present? && !weekly_needs_update %>
+          <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= current_user.weekly_goal %></p>
+        <% else %>
+          <p class="text-sm font-medium text-slate-500 italic">이번 주 목표를 설정해보세요</p>
+        <% end %>
+      </div>
+
+      <!-- Monthly Goal -->
+      <div class="app-glass-card p-5 <%= monthly_needs_update ? 'border-amber-500/30 bg-amber-500/5' : 'bg-white/[0.02]' %>">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🌙</span>
+            <div>
+              <p class="text-xs font-black text-white">월간 목표</p>
+              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.strftime('%Y년 %m월') %></p>
+            </div>
+          </div>
+          <% if monthly_needs_update %>
+            <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[8px] font-black rounded-full">갱신 필요</span>
+          <% end %>
+        </div>
+        <% if current_user.monthly_goal.present? && !monthly_needs_update %>
+          <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= current_user.monthly_goal %></p>
+        <% else %>
+          <p class="text-sm font-medium text-slate-500 italic">이번 달 목표를 설정해보세요</p>
+        <% end %>
+      </div>
+
+      <!-- Yearly Goal -->
+      <div class="app-glass-card p-5 <%= yearly_needs_update ? 'border-amber-500/30 bg-amber-500/5' : 'bg-white/[0.02]' %>">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">⭐</span>
+            <div>
+              <p class="text-xs font-black text-white">연간 목표</p>
+              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.year %>년</p>
+            </div>
+          </div>
+          <% if yearly_needs_update %>
+            <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[8px] font-black rounded-full">갱신 필요</span>
+          <% end %>
+        </div>
+        <% if current_user.yearly_goal.present? && !yearly_needs_update %>
+          <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= current_user.yearly_goal %></p>
+        <% else %>
+          <p class="text-sm font-medium text-slate-500 italic">올해 목표를 설정해보세요</p>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
   <section class="space-y-4" data-controller="growth-filter">
     <div class="flex justify-between items-center px-2">
       <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">성장 분석</h3>
@@ -693,3 +775,63 @@
     </div>
   </div>
 <% end %>
+
+<!-- Edit Goals Modal -->
+<div id="edit-goals" class="hidden fixed inset-0 z-[600]">
+  <div onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+       class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
+  
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+    <div class="flex justify-between items-center">
+      <h3 class="text-xl font-black text-white">목표 설정</h3>
+      <button type="button" 
+              onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+              class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    
+    <%= form_with url: prototype_update_goals_path, method: :patch, class: "space-y-5" do |f| %>
+      <!-- Weekly Goal -->
+      <div>
+        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4 mb-2 block flex items-center gap-2">
+          <span>🎯</span> 주간 목표
+        </label>
+        <%= f.text_area :weekly_goal, 
+                        value: current_user.weekly_goal,
+                        rows: 2,
+                        placeholder: "이번 주에 이루고 싶은 목표를 적어보세요",
+                        class: "w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all resize-none" %>
+        <p class="text-[9px] font-bold text-slate-600 mt-2 pl-4">매주 월요일마다 새로운 목표를 설정해보세요</p>
+      </div>
+
+      <!-- Monthly Goal -->
+      <div>
+        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4 mb-2 block flex items-center gap-2">
+          <span>🌙</span> 월간 목표
+        </label>
+        <%= f.text_area :monthly_goal, 
+                        value: current_user.monthly_goal,
+                        rows: 2,
+                        placeholder: "이번 달에 달성하고 싶은 목표를 적어보세요",
+                        class: "w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all resize-none" %>
+        <p class="text-[9px] font-bold text-slate-600 mt-2 pl-4">매월 1일마다 새로운 목표를 설정해보세요</p>
+      </div>
+
+      <!-- Yearly Goal -->
+      <div>
+        <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4 mb-2 block flex items-center gap-2">
+          <span>⭐</span> 연간 목표
+        </label>
+        <%= f.text_area :yearly_goal, 
+                        value: current_user.yearly_goal,
+                        rows: 3,
+                        placeholder: "올해 이루고 싶은 큰 목표를 적어보세요",
+                        class: "w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all resize-none" %>
+        <p class="text-[9px] font-bold text-slate-600 mt-2 pl-4">매년 1월 1일마다 새로운 목표를 설정해보세요</p>
+      </div>
+
+      <%= f.submit "저장하기", class: "w-full py-4 rounded-2xl bg-indigo-500 text-white font-black text-sm active:scale-95 transition-all cursor-pointer" %>
+    <% end %>
+  </div>
+</div>

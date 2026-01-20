@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_19_074632) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_20_044925) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -510,6 +510,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_19_074632) do
     t.integer "host_total_participants", default: 0
     t.boolean "is_featured_host"
     t.integer "level", default: 1, null: false
+    t.text "monthly_goal"
+    t.datetime "monthly_goal_updated_at"
     t.string "nickname", null: false
     t.json "notification_preferences"
     t.integer "ongoing_count", default: 0, null: false
@@ -529,6 +531,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_19_074632) do
     t.string "uid"
     t.datetime "updated_at", null: false
     t.integer "wallet_balance", default: 0, null: false
+    t.text "weekly_goal"
+    t.datetime "weekly_goal_updated_at"
+    t.text "yearly_goal"
+    t.datetime "yearly_goal_updated_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["email_verification_token"], name: "index_users_on_email_verification_token", unique: true
     t.index ["nickname"], name: "index_users_on_nickname"

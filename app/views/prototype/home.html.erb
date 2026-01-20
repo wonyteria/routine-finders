@@ -215,6 +215,35 @@
         } %>
   </section>
 
+  <!-- 3.5. Weekly Goal (Read-only, links to My page for editing) -->
+  <% if current_user %>
+    <% weekly_needs_update = current_user.weekly_goal_updated_at.nil? || current_user.weekly_goal_updated_at < Date.current.beginning_of_week %>
+    <%= link_to prototype_my_path, class: "block" do %>
+      <div class="app-glass-card p-5 <%= weekly_needs_update ? 'border-amber-500/30 bg-amber-500/5' : 'border-indigo-500/20 bg-indigo-500/5' %> app-tap-active">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🎯</span>
+            <div>
+              <p class="text-xs font-black text-white">이번 주 목표</p>
+              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.strftime('%Y년 %m월 %주차') %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <% if weekly_needs_update %>
+              <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[8px] font-black rounded-full">갱신 필요</span>
+            <% end %>
+            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <% if current_user.weekly_goal.present? && !weekly_needs_update %>
+          <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= current_user.weekly_goal %></p>
+        <% else %>
+          <p class="text-sm font-medium text-slate-500 italic">이번 주 목표를 설정하려면 탭하세요</p>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
   <!-- 4. Routine List -->
   <section class="space-y-4">
     <div class="flex justify-between items-end px-2">

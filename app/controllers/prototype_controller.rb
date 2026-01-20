@@ -293,6 +293,22 @@ class PrototypeController < ApplicationController
     head :ok
   end
 
+  def update_goals
+    if current_user
+      current_user.update(
+        weekly_goal: params[:weekly_goal],
+        monthly_goal: params[:monthly_goal],
+        yearly_goal: params[:yearly_goal],
+        weekly_goal_updated_at: Time.current,
+        monthly_goal_updated_at: Time.current,
+        yearly_goal_updated_at: Time.current
+      )
+      redirect_to prototype_my_path, notice: "목표가 성공적으로 저장되었습니다!"
+    else
+      redirect_to prototype_login_path, alert: "로그인이 필요합니다."
+    end
+  end
+
   private
 
   def set_shared_data
