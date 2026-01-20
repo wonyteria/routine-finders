@@ -370,22 +370,26 @@ class PrototypeController < ApplicationController
 
   def update_profile
     if current_user
+      # Support both nested (params[:user]) and flat parameters
+      p = params[:user].presence || params
+
       update_params = {}
-      update_params[:nickname] = params[:nickname] if params[:nickname].present?
-      update_params[:bio] = params[:bio] if params[:bio].present?
+      update_params[:nickname] = p[:nickname] if p[:nickname].present?
+      update_params[:bio] = p[:bio] if p[:bio].present?
 
       # Handle profile image upload correctly via ActiveStorage
-      if params[:profile_image].present?
-        update_params[:avatar] = params[:profile_image]
+      img = params[:profile_image] || p[:profile_image] || params[:avatar] || p[:avatar]
+      if img.present?
+        current_user.avatar.attach(img)
         # Clear legacy string column to let the profile_image method prefer avatar
         update_params[:profile_image] = nil
       end
 
       # Handle SNS links if provided
-      if params[:sns_links].present?
-        # Basic mapping logic for prototype (can be improved as needed)
+      sns = params[:sns_links] || p[:sns_links]
+      if sns.present?
         links = {}
-        params[:sns_links].each do |link|
+        sns.each do |link|
           next if link.blank?
           if link.include?("instagram.com")
             links["instagram"] = link
@@ -407,7 +411,7 @@ class PrototypeController < ApplicationController
       if current_user.update(update_params)
         redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!"
       else
-        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다."
+        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{current_user.errors.full_messages.join(', ')}"
       end
     else
       redirect_to prototype_login_path, alert: "로그인이 필요합니다."

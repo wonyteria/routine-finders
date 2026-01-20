@@ -758,7 +758,7 @@
   <div onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
        class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
   
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[85vh] overflow-y-auto">
     <div class="flex justify-between items-center">
       <h3 class="text-xl font-black text-white">프로필 수정</h3>
       <button type="button" 
@@ -768,17 +768,15 @@
       </button>
     </div>
     
-    <%= form_with url: prototype_update_profile_path, method: :patch, multipart: true, class: "space-y-5" do |f| %>
+    <%= form_with url: prototype_update_profile_path, method: :patch, multipart: true, class: "space-y-6" do |f| %>
+      <!-- Profile Image Section -->
       <div class="flex justify-center">
         <div class="relative">
           <div class="w-24 h-24 rounded-[32px] border-4 border-indigo-500 overflow-hidden bg-white/5">
             <img id="profile-preview" src="<%= current_user&.profile_image %>" class="w-full h-full object-cover">
           </div>
-          <%= f.file_field :profile_image, 
-                          id: "profile-upload", 
-                          class: "hidden", 
-                          accept: "image/*",
-                          onchange: "const reader = new FileReader(); reader.onload = (e) => { document.getElementById('profile-preview').src = e.target.result; }; reader.readAsDataURL(this.files[0]);" %>
+          <input type="file" name="profile_image" id="profile-upload" class="hidden" accept="image/*" 
+                 onchange="const reader = new FileReader(); reader.onload = (e) => { document.getElementById('profile-preview').src = e.target.result; }; reader.readAsDataURL(this.files[0]);">
           
           <button type="button" 
                   onclick="document.getElementById('profile-upload').click()"
@@ -788,21 +786,18 @@
         </div>
       </div>
       
-      <div class="space-y-3">
+      <!-- Basic Info Section -->
+      <div class="space-y-4">
         <div>
           <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4 mb-2 block">닉네임</label>
-          <%= f.text_field :nickname, 
-                          value: current_user&.nickname, 
-                          class: "w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all" %>
+          <input type="text" name="nickname" value="<%= current_user&.nickname %>" 
+                 class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all" />
         </div>
         
         <div>
           <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4 mb-2 block">자기소개</label>
-          <%= f.text_area :bio, 
-                         value: current_user&.bio,
-                         rows: 3, 
-                         placeholder: "나를 표현하는 한 줄", 
-                         class: "w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all resize-none" %>
+          <textarea name="bio" rows="3" placeholder="나를 표현하는 한 줄" 
+                    class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all resize-none"><%= current_user&.bio %></textarea>
         </div>
 
         <!-- SNS Links Section -->
@@ -810,8 +805,8 @@
           <div class="flex justify-between items-center mb-3">
             <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">SNS 링크</label>
             <button type="button" 
-                    onclick="const container = this.closest('.space-y-5').querySelector('.sns-links-container');
-                             const template = this.closest('.space-y-5').querySelector('.sns-link-template');
+                    onclick="const container = this.closest('form').querySelector('.sns-links-container');
+                             const template = this.closest('form').querySelector('.sns-link-template');
                              const clone = template.content.cloneNode(true);
                              container.appendChild(clone);
                              const empty = container.querySelector('.sns-empty-state');
@@ -829,32 +824,47 @@
                 <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
                   <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
                 </div>
-                <input type="url" 
-                       name="sns_links[]"
-                       placeholder="SNS 링크 URL 입력" 
+                <input type="url" name="sns_links[]" placeholder="SNS 링크 URL 입력" 
                        class="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all" />
                 <button type="button" 
-                        onclick="const item = this.closest('.group');
-                                 const container = item.parentElement;
-                                 item.remove();
-                                 if(container.querySelectorAll('.group').length === 0) {
-                                   container.querySelector('.sns-empty-state').classList.remove('hidden');
-                                 }"
+                        onclick="this.closest('.group').remove(); if(this.closest('.sns-links-container').querySelectorAll('.group').length === 0) this.closest('.sns-links-container').querySelector('.sns-empty-state').classList.remove('hidden');"
                         class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               </div>
             </template>
             
+            <!-- Existing SNS Links -->
+            <% (current_user&.sns_links || {}).each do |platform, url| %>
+              <div class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0">
+                  <% icon = case platform; when 'instagram'; '📱'; when 'threads'; '🧵'; when 'youtube'; '📺'; when 'twitter'; '🐦'; when 'blog'; '📝'; else; '🔗'; end %>
+                  <span class="text-sm"><%= icon %></span>
+                </div>
+                <input type="url" name="sns_links[]" value="<%= url %>" 
+                       class="flex-1 bg-black/40 border border-white/5 rounded-xl p-3 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all" />
+                <button type="button" 
+                        onclick="this.closest('.group').remove(); if(this.closest('.sns-links-container').querySelectorAll('.group').length === 0) this.closest('.sns-links-container').querySelector('.sns-empty-state').classList.remove('hidden');"
+                        class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+            <% end %>
+
             <!-- Initial empty state -->
-            <p class="sns-empty-state text-xs font-bold text-slate-600 text-center py-4">
+            <p class="sns-empty-state text-xs font-bold text-slate-600 text-center py-4 <%= (current_user&.sns_links || {}).any? ? 'hidden' : '' %>">
               SNS 링크를 추가해보세요
             </p>
           </div>
         </div>
       </div>
       
-      <%= f.submit "저장하기", class: "w-full py-4 rounded-2xl bg-indigo-500 text-white font-black text-sm active:scale-95 transition-all cursor-pointer" %>
+      <button type="submit" class="w-full py-4 rounded-2xl bg-indigo-500 text-white font-black text-sm active:scale-95 transition-all cursor-pointer shadow-lg shadow-indigo-500/20">
+        저장하기
+      </button>
+    <% end %>
+  </div>
+</div>
     <% end %>
   </div>
 </div>
