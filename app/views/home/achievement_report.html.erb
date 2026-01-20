@@ -300,7 +300,7 @@
              <div>
                <h4 class="text-lg font-bold text-emerald-400 mb-2">My Assets</h4>
                <div class="flex items-baseline gap-2">
-                 <h2 class="text-4xl font-black">450,000</h2>
+                 <h2 class="text-4xl font-black"><%= number_with_delimiter(@growth_stats[:wallet_balance]) %></h2>
                  <span class="text-sm font-bold text-slate-400">Total</span>
                </div>
              </div>
@@ -308,13 +308,13 @@
              <div class="space-y-4 flex-1">
                <div class="space-y-2">
                  <div class="flex justify-between text-xs font-bold text-slate-400">
-                   <span>방어율</span>
-                   <span class="text-white">98%</span>
+                   <span>자산 방어율</span>
+                   <span class="text-white">준비 중</span>
                  </div>
                  <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                   <div class="h-full bg-emerald-500 w-[98%]"></div>
+                   <div class="h-full bg-emerald-500 w-[100%]"></div>
                  </div>
-                 <p class="text-[10px] text-slate-500">벌금으로 사라질 뻔한 98%의 자산을 지켰습니다.</p>
+                 <p class="text-[10px] text-slate-500">벌금 트래킹 시 방어율이 계산됩니다.</p>
                </div>
              </div>
 
@@ -327,33 +327,34 @@
         <!-- History List -->
         <div class="md:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-sm p-6 space-y-4 text-sm">
            <h4 class="text-base font-bold text-slate-900 mb-2">최근 입출금 내역</h4>
-           <div class="space-y-2">
-              <% [
-                { title: "물 마시기 환급", date: "05.15", amount: "+10,000", color: "emerald", type: "in" },
-                { title: "러닝 모임 참가비", date: "05.14", amount: "-25,000", color: "rose", type: "out" },
-                { title: "기상 챌린지 환급", date: "05.10", amount: "+50,000", color: "emerald", type: "in" },
-                { title: "독서 챌린지 보증금", date: "05.08", amount: "-10,000", color: "slate", type: "out" }
-              ].each do |item| %>
-              <div class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-default">
-                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-<%= item[:color] %>-50 text-<%= item[:color] %>-600 flex items-center justify-center">
-                       <% if item[:type] == 'in' %>
-                         <i data-feather="arrow-down-left" class="w-4 h-4"></i>
-                       <% else %>
-                         <i data-feather="arrow-up-right" class="w-4 h-4"></i>
-                       <% end %>
+            <div class="space-y-2">
+               <% if @recent_transactions.any? %>
+                 <% @recent_transactions.each do |item| %>
+                 <div class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-default border border-transparent hover:border-slate-100">
+                    <div class="flex items-center gap-3">
+                       <div class="w-8 h-8 rounded-lg bg-<%= item[:color] %>-50 text-<%= item[:color] %>-600 flex items-center justify-center shadow-sm">
+                          <% if item[:type] == 'in' %>
+                            <i data-feather="arrow-down-left" class="w-4 h-4"></i>
+                          <% else %>
+                            <i data-feather="arrow-up-right" class="w-4 h-4"></i>
+                          <% end %>
+                       </div>
+                       <div class="min-w-0">
+                         <p class="font-bold text-slate-900 truncate text-[13px]"><%= item[:title] %></p>
+                         <p class="text-[10px] text-slate-400 font-medium"><%= item[:date] %></p>
+                       </div>
                     </div>
-                    <div>
-                      <p class="font-bold text-slate-900"><%= item[:title] %></p>
-                      <p class="text-[10px] text-slate-400 font-medium"><%= item[:date] %></p>
-                    </div>
+                    <span class="font-black shrink-0 text-[13px] <%= item[:type] == 'in' ? 'text-emerald-600' : 'text-slate-900' %>">
+                      <%= item[:amount] > 0 ? (item[:type] == 'in' ? '+' : '-') : '' %><%= number_with_delimiter(item[:amount]) %>원
+                    </span>
                  </div>
-                 <span class="font-black <%= item[:type] == 'in' ? 'text-emerald-600' : 'text-slate-900' %>">
-                   <%= item[:amount] %>원
-                 </span>
-              </div>
-              <% end %>
-           </div>
+                 <% end %>
+               <% else %>
+                 <div class="py-12 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <p class="text-xs font-bold text-slate-400">최근 입출금 내역이 없습니다.</p>
+                 </div>
+               <% end %>
+            </div>
         </div>
       </div>
     </div>
@@ -363,10 +364,10 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Stats -->
         <% [
-           { label: "받은 응원", value: "428", icon: "heart", color: "rose" },
-           { label: "보낸 응원", value: "1,052", icon: "thumbs-up", color: "indigo" },
-           { label: "베스트 루틴", value: "5", icon: "star", color: "amber" },
-           { label: "모임 평점", value: "4.9", icon: "message-circle", color: "emerald" }
+           { label: "받은 응원", value: number_with_delimiter(@social_stats[:received_cheers]), icon: "heart", color: "rose" },
+           { label: "보낸 응원", value: number_with_delimiter(@social_stats[:sent_cheers]), icon: "thumbs-up", color: "indigo" },
+           { label: "베스트 루틴", value: @social_stats[:best_routine_count], icon: "star", color: "amber" },
+           { label: "모임 평점", value: @social_stats[:rating], icon: "message-circle", color: "emerald" }
         ].each do |stat| %>
           <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
              <div class="w-10 h-10 rounded-xl bg-<%= stat[:color] %>-50 text-<%= stat[:color] %>-500 flex items-center justify-center">
@@ -387,19 +388,22 @@
               <i data-feather="award" class="w-4 h-4 text-indigo-500"></i> 명예의 전당
             </h4>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <% [
-                { name: "김코딩", streak: "452", emoji: "🔥", rank: 1 },
-                { name: "나", streak: "128", emoji: "✨", me: true, rank: 12 },
-                { name: "새벽인간", streak: "92", emoji: "☀️", rank: 15 }
-              ].each do |user| %>
-                 <div class="relative p-4 rounded-2xl border <%= user[:me] ? 'border-indigo-500 bg-indigo-50/10 ring-1 ring-indigo-500' : 'border-slate-100 bg-slate-50/50' %> flex flex-col items-center text-center gap-2">
-                    <span class="absolute top-2 left-3 text-[10px] font-black text-slate-300">#<%= user[:rank] %></span>
-                    <div class="text-2xl mb-1"><%= user[:emoji] %></div>
-                    <div>
-                      <p class="text-sm font-black text-slate-900"><%= user[:name] %></p>
-                      <p class="text-xs font-bold text-slate-500"><%= user[:streak] %>일 연속</p>
-                    </div>
-                 </div>
+              <% if @top_achievers.any? %>
+                <% @top_achievers.each_with_index do |user, idx| %>
+                   <% is_me = (user.id == current_user.id) %>
+                   <div class="relative p-4 rounded-2xl border <%= is_me ? 'border-indigo-500 bg-indigo-50/10 ring-1 ring-indigo-500' : 'border-slate-100 bg-slate-50/50' %> flex flex-col items-center text-center gap-2">
+                      <span class="absolute top-2 left-3 text-[10px] font-black text-slate-300">#<%= idx + 1 %></span>
+                      <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-slate-200">
+                        <img src="<%= user.profile_image.presence || "https://api.dicebear.com/7.x/lorelei/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover">
+                      </div>
+                      <div>
+                        <p class="text-sm font-black text-slate-900 truncate max-w-[80px]"><%= user.nickname %></p>
+                        <p class="text-[10px] font-bold text-slate-500"><%= user.badge_count %>개의 배지</p>
+                      </div>
+                   </div>
+                <% end %>
+              <% else %>
+                <div class="col-span-3 py-8 text-center text-slate-400 text-xs">순위 데이터가 충분하지 않습니다.</div>
               <% end %>
             </div>
          </div>
@@ -413,7 +417,7 @@
              </div>
              <h4 class="text-lg font-black leading-tight">동기부여의 아이콘!</h4>
              <p class="text-xs text-indigo-100 font-medium leading-relaxed px-4">
-               당신의 인증은 평균 <br/> <b class="text-white">12명</b>에게 영감을 줍니다.
+               당신의 인증은 평균 <br/> <b class="text-white"><%= @inspiration_count %>명</b>에게 영감을 줍니다.
              </p>
            </div>
          </div>

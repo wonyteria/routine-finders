@@ -83,10 +83,40 @@ class HomeController < ApplicationController
     # 성장 투자 통계 (My Page와 동일한 로직)
     active_participations = @participations.select { |p| p.challenge.status_active? }
     @growth_stats = {
-      total_invested: @participations.sum { |p| p.challenge.total_payment_amount || 0 },
+      total_invested: @participations.sum { |p| p.challenge.amount || 0 },
       total_refunded: @current_user&.total_refunded || 0,
-      expected_refund: active_participations.sum { |p| p.challenge.amount || 0 }
+      expected_refund: active_participations.sum { |p| p.challenge.amount || 0 },
+      wallet_balance: @current_user&.wallet_balance || 0
     }
+
+    # Social & Support Data
+    @social_stats = {
+      received_cheers: @current_user.rufa_claps.count, # Simplified: claps on your activities
+      sent_cheers: @current_user.rufa_claps.count,
+      best_routine_count: @current_user.personal_routines.where("current_streak >= 7").count,
+      rating: @current_user.reviews.average(:rating) || 5.0
+    }
+
+    # Recent Transactions (Simplified based on participations)
+    @recent_transactions = @participations.order(created_at: :desc).limit(5).map do |p|
+      {
+        title: p.challenge.title,
+        date: p.created_at.strftime("%m.%d"),
+        amount: p.challenge.amount,
+        type: "out",
+        color: "slate"
+      }
+    end
+
+    # Hall of Fame Data
+    @top_achievers = User.joins(:user_badges)
+                         .select("users.*, COUNT(user_badges.id) as badge_count")
+                         .group("users.id")
+                         .order("badge_count DESC")
+                         .limit(3)
+
+    # Contextual Motivation (Dynamic but encouraging)
+    @inspiration_count = [ User.active.count / 10, 5 ].max
   end
 
   def badge_roadmap

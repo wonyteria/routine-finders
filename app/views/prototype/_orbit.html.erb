@@ -10,7 +10,12 @@
   glow_class = progress == 100 ? 'shadow-[0_0_50px_rgba(251,191,36,0.3)] border-amber-400/50' : 'border-white/5'
   
   # Calculate display stats
-  total_particles = ((progress * 0.7).to_i + 15) # Dynamic count for visual flair
+  # Use real orbiting users count if available, otherwise fallback to a small realistic base + activity progress
+  real_active_count = orbit_users.respond_to?(:count) ? orbit_users.count : (orbit_users&.size || 0)
+  total_particles = real_active_count + (current_user ? 1 : 0)
+  
+  # Ensure visual flair even with few users
+  display_particle_count = [total_particles, (progress * 0.3).to_i + 5].max
 %>
 
 <div id="prototype-orbit-section" class="relative group">

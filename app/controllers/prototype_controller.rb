@@ -42,6 +42,16 @@ class PrototypeController < ApplicationController
                        .distinct
                        .limit(100)
 
+    # Global Live Count (Users active in the last 30 minutes or today)
+    @total_active_metes = User.joins(:rufa_activities)
+                              .where("rufa_activities.created_at >= ?", 30.minutes.ago)
+                              .distinct.count
+    # Fallback to at least some activity if no one in 30m
+    @total_active_metes = [ @total_active_metes, @orbit_users.count ].max
+    # Add a base realistic small number if platform is empty during prototyping,
+    # but the goal is to move towards real data.
+    @total_active_metes = [ @total_active_metes, 1 ].max if current_user
+
     # 4. Content for Dashboard
     if current_user
       @hosted_challenges = Challenge.where(host: current_user).order(created_at: :desc)
