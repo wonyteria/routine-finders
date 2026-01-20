@@ -368,6 +368,27 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def update_profile
+    if current_user
+      update_params = {}
+      update_params[:nickname] = params[:nickname] if params[:nickname].present?
+      update_params[:bio] = params[:bio] if params[:bio].present?
+
+      # Handle profile image upload
+      if params[:profile_image].present?
+        update_params[:profile_image] = params[:profile_image]
+      end
+
+      if current_user.update(update_params)
+        redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!"
+      else
+        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다."
+      end
+    else
+      redirect_to prototype_login_path, alert: "로그인이 필요합니다."
+    end
+  end
+
   private
 
   def set_shared_data

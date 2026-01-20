@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   get "prototype/club_join", to: "prototype#club_join"
   post "prototype/mark_badges_viewed", to: "prototype#mark_badges_viewed"
   patch "prototype/update_goals", to: "prototype#update_goals", as: :prototype_update_goals
+  patch "prototype/update_profile", to: "prototype#update_profile", as: :prototype_update_profile
   get "prototype/lecture_intro", to: "prototype#lecture_intro"
   # Main Web Application Routes
 
