@@ -1,0 +1,122 @@
+<% 
+  # Orbit Logic Partial
+  progress = progress || 0
+  completed_count = completed_count || 0
+  total_task_count = total_task_count || 0
+  orbit_users = orbit_users || []
+  
+  # Base visuals setup
+  status_color = progress == 100 ? 'amber' : 'indigo'
+  glow_class = progress == 100 ? 'shadow-[0_0_50px_rgba(251,191,36,0.3)] border-amber-400/50' : 'border-white/5'
+  
+  # Calculate display stats
+  total_particles = ((progress * 0.7).to_i + 15) # Dynamic count for visual flair
+%>
+
+<div id="prototype-orbit-section" class="relative group">
+  <div class="w-full aspect-square max-h-80 mx-auto rounded-[48px] overflow-hidden border <%= glow_class %> bg-[#0F0E17] flex items-center justify-center relative transition-all duration-1000">
+    
+    <!-- 🍱 Layer 1: Distinguishable Orbit Lines (Static Base) -->
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <!-- Outer Orbit (Solid) - Routine Zone -->
+      <div class="absolute w-[80%] h-[80%] border border-white/20 rounded-full"></div>
+      <!-- Middle Orbit (Dashed) - Social Zone -->
+      <div class="absolute w-[60%] h-[60%] border border-dashed border-white/10 rounded-full"></div>
+      <!-- Inner Orbit (Dotted) - Focus Zone -->
+      <div class="absolute w-[40%] h-[40%] border border-dotted border-white/10 rounded-full"></div>
+    </div>
+
+    <!-- 🌌 Layer 2: Inner Orbit - "Focus Sparks" (Fast & Intense) -->
+    <div class="absolute inset-0 z-0 pointer-events-none">
+      <% inner_sparks = (progress / 10).to_i + 5 %>
+      <% (1..inner_sparks).each do |i| %>
+        <div class="absolute inset-0 animate-orbit-1" style="animation-duration: 30s; animation-delay: -<%= i * (30.0/inner_sparks) %>s">
+          <div class="absolute w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
+               style="top: 30%; left: 50%; transform: translateX(-50%); opacity: 0.8;"></div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 👥 Layer 3: Middle Orbit - "Social Echoes" (Reverse & Communal) -->
+    <div class="absolute inset-0 z-0 pointer-events-none">
+       <% (1..6).each do |i| %>
+        <div class="absolute inset-0 animate-orbit-2" style="animation-duration: 55s; animation-delay: -<%= i * (55.0/6) %>s">
+          <div class="absolute w-5 h-5 rounded-full border border-indigo-500/30 overflow-hidden bg-slate-900 shadow-lg" 
+               style="top: 20%; left: 50%; transform: translateX(-50%);">
+            <img src="https://i.pravatar.cc/50?u=<%= i + 500 %>" class="w-full h-full object-cover opacity-60">
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- 🚩 Layer 4: Outer Orbit - "Routine Satellites" (The Action Zone) -->
+    <div class="absolute inset-0 z-10 pointer-events-none">
+      <% 
+        display_items = (todays_routines || []).presence || [Struct.new(:icon, :completed_today?).new("✨", false), Struct.new(:icon, :completed_today?).new("🧘", false), Struct.new(:icon, :completed_today?).new("🔥", false)]
+        item_count = display_items.size
+      %>
+      <% display_items.each_with_index do |item, idx| %>
+        <% 
+           is_done = item.respond_to?(:completed_today?) ? item.completed_today? : false
+           duration = 45 # Perfect sync with line
+           delay = -(idx * (duration.to_f / [item_count, 1].max))
+        %>
+        <div class="absolute inset-0 animate-orbit-3" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
+          <div class="absolute transition-all duration-1000 <%= is_done ? 'scale-125' : 'scale-90 opacity-40' %>" 
+               style="top: 10%; left: 50%; transform: translateX(-50%);">
+            <div class="relative group/orbit-item">
+              <!-- Aura for completed items -->
+              <div class="absolute inset-0 rounded-full blur-xl transition-all duration-1000 <%= is_done ? 'bg-indigo-500/50 scale-150' : 'bg-transparent' %>"></div>
+              
+              <div class="relative app-glass-card w-10 h-10 flex items-center justify-center rounded-2xl border-white/10 shadow-2xl">
+                <span class="text-xl filter <%= is_done ? 'drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'grayscale' %>">
+                   <%= item.icon %>
+                </span>
+                <% if is_done %>
+                  <div class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#0F0E17] flex items-center justify-center shadow-lg animate-badge-pop">
+                    <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Celebration Particles (Only at 100%) -->
+    <% if progress == 100 %>
+      <div class="absolute inset-0 z-20 pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 animate-ping text-xl">✨</div>
+        <div class="absolute top-1/3 right-1/4 animate-bounce text-lg">🎊</div>
+        <div class="absolute bottom-1/4 left-1/3 animate-pulse text-xl">⭐</div>
+        <div class="absolute bottom-1/3 right-1/3 animate-bounce text-lg" style="animation-delay: 1s;">🎉</div>
+      </div>
+    <% end %>
+    
+    <!-- Center Progress -->
+    <div class="text-center space-y-2 relative z-10">
+      <p class="text-[10px] font-black tracking-[0.3em] <%= progress == 100 ? 'text-amber-400' : 'text-indigo-400' %> uppercase transition-colors">오늘의 집중도</p>
+      <h2 id="prototype-focus-percentage" class="text-6xl font-black <%= progress == 100 ? 'text-amber-400' : 'text-white' %> tabular-nums transition-colors" style="text-shadow: 0 0 30px <%= progress == 100 ? 'rgba(251, 191, 36, 0.4)' : 'rgba(124, 77, 255, 0.4)' %>;">
+        <%= progress %><span class="text-xl ml-1 opacity-40">%</span>
+      </h2>
+      <p id="prototype-done-count" class="text-[12px] font-bold text-slate-500"><%= completed_count %> / <%= total_task_count %> 완료</p>
+    </div>
+
+    <!-- Avatar Cluster Badge (Bottom) -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center pointer-events-none">
+      <div class="bg-indigo-950/40 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-2xl flex items-center gap-2 shadow-2xl">
+        <div class="flex -space-x-1.5">
+          <% (1..3).each do |i| %>
+            <div class="w-4 h-4 rounded-full border border-indigo-900 overflow-hidden bg-slate-800">
+              <img src="https://i.pravatar.cc/30?u=<%= i+100 %>" class="w-full h-full object-cover">
+            </div>
+          <% end %>
+        </div>
+        <p class="text-[9px] font-black text-indigo-100/90 tracking-tight">
+          <span class="text-indigo-400"><%= total_particles %>명</span>의 동료가 공전 중
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

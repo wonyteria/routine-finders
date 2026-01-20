@@ -206,111 +206,13 @@
 
   <!-- 3. Visual Focus: The Orbit -->
   <section class="relative">
-    <div class="w-full aspect-square max-h-80 mx-auto rounded-[48px] overflow-hidden border <%= @progress == 100 ? 'border-amber-400/50 shadow-[0_0_50px_rgba(251,191,36,0.2)]' : 'border-white/5' %> bg-[#0F0E17] flex items-center justify-center relative transition-all duration-1000">
-      <!-- Orbits Background -->
-      <div class="absolute inset-0 flex items-center justify-center opacity-10">
-        <div class="w-[85%] h-[85%] border border-white rounded-full <%= @progress == 100 ? 'animate-spin-slow text-amber-500' : '' %>"></div>
-        <div class="absolute w-[65%] h-[65%] border border-dashed border-white rounded-full <%= @progress == 100 ? 'animate-reverse-spin-slow text-amber-300' : '' %>"></div>
-      </div>
-
-      <!-- Living Orbits (Other Users) -->
-      <div class="absolute inset-0 z-0 pointer-events-none">
-        <% 
-           # FOR DEMO: If users are less than 100, mock more to show Milky Way
-           display_users = @orbit_users.to_a
-           if display_users.size < 100
-             (100 - display_users.size).times { display_users << Struct.new(:profile_image).new("https://i.pravatar.cc/50?u=#{rand(1000)}") }
-           end
-        %>
-        <% if display_users.any? %>
-          <% if display_users.size > 15 %>
-            <!-- "Milky Way" Mode: Pure Dense Particles -->
-            <% display_users.each_with_index do |user, idx| %>
-              <% 
-                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
-                 duration = rand(40..100)
-                 delay = rand(-duration..0)
-                 top_percent = rand(12..38)
-                 opacity = rand(0.3..0.7)
-                 size = rand(2..4)
-              %>
-              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
-                <div class="absolute rounded-full bg-indigo-300 shadow-[0_0_6px_rgba(165,180,252,0.8)]" 
-                     style="top: <%= top_percent %>%; left: 50%; width: <%= size %>px; height: <%= size %>px; opacity: <%= opacity %>; transform: translateX(-50%);">
-                </div>
-              </div>
-            <% end %>
-
-            <!-- Center descriptive badge with Facepile -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <div class="mt-44 bg-indigo-950/40 backdrop-blur-xl border border-white/10 px-3.5 py-2 rounded-2xl flex items-center gap-3 shadow-2xl">
-                <div class="flex -space-x-2">
-                  <% display_users.take(3).each_with_index do |u, i| %>
-                    <div class="w-5 h-5 rounded-full border border-indigo-900 overflow-hidden shadow-inner">
-                      <img src="<%= u.profile_image %>" class="w-full h-full object-cover">
-                    </div>
-                  <% end %>
-                </div>
-                <p class="text-[10px] font-black text-indigo-100/90 tracking-tight">
-                  <span class="text-indigo-400"><%= display_users.size %>명</span>의 동료가 함께 빛나는 중
-                </p>
-              </div>
-            </div>
-          <% else %>
-            <!-- "Satellite" Mode: Individual Profiles for few users -->
-            <% display_users.each_with_index do |user, idx| %>
-              <% 
-                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
-                 is_reverse = (idx % 3 == 1)
-                 duration = is_reverse ? 65 : (idx % 3 == 2 ? 50 : 40)
-                 initial_angle = idx * (360.0 / display_users.size)
-                 delay = -(initial_angle / 360.0) * duration
-                 top_percent = [15, 20, 25, 30, 10, 35][idx % 6]
-              %>
-              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
-                <div class="absolute w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden shadow-lg shadow-black/20" 
-                     style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%)">
-                  <div class="w-full h-full" style="animation: <%= is_reverse ? 'orbit-spin 65s linear infinite' : (idx % 3 == 2 ? 'orbit-spin-reverse 50s' : 'orbit-spin-reverse 40s') %> linear infinite; animation-delay: <%= delay %>s">
-                    <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
-                  </div>
-                </div>
-              </div>
-            <% end %>
-            <!-- Label for few users -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <div class="mt-44 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
-                <p class="text-[9px] font-black text-slate-400 tracking-tight uppercase">
-                   실시간 성취 중인 동료들
-                </p>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-      
-      <!-- Celebration Particles (Only at 100%) -->
-      <% if @progress == 100 %>
-        <div class="absolute inset-0 z-0 pointer-events-none">
-          <div class="absolute top-1/4 left-1/4 animate-ping text-xl">✨</div>
-          <div class="absolute top-1/3 right-1/4 animate-bounce text-lg">🎊</div>
-          <div class="absolute bottom-1/4 left-1/3 animate-pulse text-xl">⭐</div>
-          <div class="absolute bottom-1/3 right-1/3 animate-bounce text-lg" style="animation-delay: 1s;">🎉</div>
-        </div>
-      <% end %>
-      
-      <!-- Center Progress -->
-      <div class="text-center space-y-2 relative z-10">
-        <p class="text-[10px] font-black tracking-[0.3em] <%= @progress == 100 ? 'text-amber-400' : 'text-indigo-400' %> uppercase transition-colors">오늘의 집중도</p>
-        <h2 id="prototype-focus-percentage" class="text-6xl font-black <%= @progress == 100 ? 'text-amber-400' : 'text-white' %> tabular-nums transition-colors" style="text-shadow: 0 0 30px <%= @progress == 100 ? 'rgba(251, 191, 36, 0.4)' : 'rgba(124, 77, 255, 0.4)' %>;">
-          <%= @progress %><span class="text-xl ml-1 opacity-40">%</span>
-        </h2>
-        <p id="prototype-done-count" class="text-[12px] font-bold text-slate-500"><%= @completed_count %> / <%= @total_task_count %> 완료</p>
-      </div>
-
-      <!-- Floating Animated Icons -->
-      <div class="absolute top-12 right-16 w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-sm border border-white/10 animate-bounce" style="animation-duration: 4s;">✨</div>
-      <div class="absolute bottom-16 left-12 w-10 h-10 rounded-full bg-slate-800/40 flex items-center justify-center text-lg border border-white/5">🧘</div>
-    </div>
+    <%= render partial: "prototype/orbit", locals: { 
+          progress: @progress, 
+          completed_count: @completed_count, 
+          total_task_count: @total_task_count,
+          orbit_users: @orbit_users,
+          todays_routines: @todays_routines
+        } %>
   </section>
 
   <!-- 4. Routine List -->
@@ -319,7 +221,7 @@
       <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">오늘의 루틴</h3>
     </div>
 
-    <div class="space-y-3">
+    <div id="prototype-routine-list" class="space-y-3">
       <% if @todays_routines.any? %>
         <% @todays_routines.each do |routine| %>
           <div id="routine_<%= routine.id %>_prototype">
@@ -456,7 +358,7 @@
           <div class="text-2xl">⚡️</div>
         </div>
         <div class="mt-4">
-          <%= link_to hosted_challenges_path, class: "flex items-center justify-center gap-2 py-3 bg-amber-500 text-black font-black text-[11px] rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all" do %>
+          <%= link_to hosted_challenges_path(source: 'prototype'), class: "flex items-center justify-center gap-2 py-3 bg-amber-500 text-black font-black text-[11px] rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all" do %>
             <span>호스트 센터 입장하기</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           <% end %>

@@ -108,17 +108,31 @@
   <%= render partial: "shared/achievement_matrix", formats: [:html] %>
 <% end %>
 
-<%# Update Prototype Progress %>
+<%# Update Prototype Orbit Section %>
 <% 
   todays_routines = current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) }
-  completed_count = todays_routines.select(&:completed_today?).count
-  progress = todays_routines.any? ? (completed_count.to_f / todays_routines.count * 100).to_i : 0
+  # Combined Active Participations (Challenges & Gatherings)
+  joined_participations = current_user ? current_user.participations.active.joins(:challenge) : []
+  
+  routine_total = todays_routines.count
+  participation_total = joined_participations.count
+  total_task_count = routine_total + participation_total
+
+  routine_done = todays_routines.select(&:completed_today?).count
+  # Assume verification_logs for today exists for completed items
+  participation_done = current_user ? VerificationLog.where(participant: joined_participations, created_at: Date.current.all_day).pluck(:participant_id).uniq.count : 0
+
+  completed_count = routine_done + participation_done
+  progress = total_task_count.positive? ? (completed_count.to_f / total_task_count * 100).to_i : 0
 %>
-<%= turbo_stream.update "prototype-focus-percentage" do %>
-  <%= progress %><span class="text-xl ml-1 opacity-40">%</span>
-<% end %>
-<%= turbo_stream.update "prototype-done-count" do %>
-  <%= completed_count %> / <%= todays_routines.count %> Done
+<%= turbo_stream.replace "prototype-orbit-section" do %>
+  <%= render partial: "prototype/orbit", locals: { 
+        progress: progress, 
+        completed_count: completed_count, 
+        total_task_count: total_task_count,
+        orbit_users: [],
+        todays_routines: todays_routines
+      } %>
 <% end %>
 
 <% if current_user.is_rufa_club_member? && @routine_club && @my_membership %>

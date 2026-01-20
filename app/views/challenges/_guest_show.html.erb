@@ -57,7 +57,7 @@
 
   <!-- 2. Smart Category Switcher (Sticky Control) -->
   <div class="sticky top-0 z-40 bg-[#0C0B12]/80 backdrop-blur-3xl border-b border-white/5 py-4">
-    <div class="flex gap-1 overflow-x-auto no-scrollbar px-6">
+    <div class="flex gap-2 overflow-x-auto no-scrollbar px-6">
       <% 
         main_tabs = [
           { id: "intro", label: "상세설명", icon: "✨" },
@@ -68,11 +68,13 @@
       %>
       <% main_tabs.each do |t| %>
         <%= link_to challenge_path(@challenge, tab: t[:id], source: 'prototype'), 
-                    class: "shrink-0 px-5 py-2.5 rounded-full font-black text-xs transition-all flex items-center gap-1.5 border #{@tab == t[:id] ? 'bg-white text-[#0C0B12] border-white shadow-xl shadow-white/10' : 'text-slate-500 border-white/10 bg-white/[0.02]'}" do %>
+                    class: "shrink-0 px-4 py-2.5 rounded-full font-black text-[11px] whitespace-nowrap transition-all flex items-center gap-1.5 border #{@tab == t[:id] ? 'bg-white text-[#0C0B12] border-white shadow-lg' : 'text-slate-500 border-white/10 bg-white/[0.02]'}" do %>
           <span class="text-xs"><%= t[:icon] %></span>
           <%= t[:label] %>
         <% end %>
       <% end %>
+      <!-- Spacing element to prevent the last item from hitting the edge -->
+      <div class="shrink-0 w-6"></div>
     </div>
   </div>
 
