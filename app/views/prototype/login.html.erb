@@ -1,11 +1,26 @@
-<div class="min-h-screen bg-[#0C0B12] flex flex-col justify-center px-6 py-12">
+<style>
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .marquee-content {
+    display: flex;
+    width: max-content;
+    animation: marquee 30s linear infinite;
+  }
+  .marquee-content:hover {
+    animation-play-state: paused;
+  }
+</style>
+
+<div class="min-h-screen bg-[#0C0B12] flex flex-col justify-center py-12">
   <!-- Top Background Decor -->
   <div class="fixed top-0 left-0 w-full h-1/2 bg-gradient-to-b from-indigo-600/20 to-transparent pointer-events-none"></div>
   <div class="fixed top-20 right-[-10%] w-80 h-80 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-  <div class="relative z-10 space-y-12 max-w-sm mx-auto w-full">
+  <div class="relative z-10 space-y-12 w-full">
     <!-- Brand Info -->
-    <div class="text-center space-y-6 animate-fade-in">
+    <div class="text-center space-y-6 animate-fade-in max-w-sm mx-auto px-6">
       <div class="w-20 h-20 bg-white rounded-[32px] flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(255,255,255,0.1)]">
         <img src="<%= asset_path('rf_symbol_v9.png') %>" class="w-12 h-12" alt="Routine Finders">
       </div>
@@ -18,8 +33,38 @@
       </div>
     </div>
 
+    <!-- Features Marquee (자동으로 흐르는 카드들) -->
+    <div class="relative overflow-hidden py-4 animate-fade-in" style="animation-delay: 0.3s">
+      <div class="marquee-content gap-4 px-4">
+        <% 
+          features = [
+            { icon: "📊", title: "데이터 축적", desc: "나만의 루틴 성장을 데이터로 기록하세요." },
+            { icon: "🏆", title: "배지 시스템", desc: "성취를 증명하는 배지를 모아보세요." },
+            { icon: "⚡", title: "시너지 피드", desc: "멤버들의 열정을 실시간으로 공유받으세요." },
+            { icon: "🔥", title: "스트릭 유지", desc: "끊기지 않는 기록으로 습관을 만듭니다." },
+            { icon: "👏", title: "실시간 응원", desc: "박수로 서로의 성취를 축하해줍니다." },
+            { icon: "🌿", title: "성실함 지수", desc: "나의 성실도를 등급으로 확인하세요." }
+          ]
+          # Duplicate for seamless infinite scroll
+          items = features + features
+        %>
+        <% items.each do |item| %>
+          <div class="shrink-0 w-[180px] p-5 bg-white/5 rounded-3xl border border-white/5 space-y-3 backdrop-blur-sm">
+            <div class="text-2xl"><%= item[:icon] %></div>
+            <div>
+              <p class="text-xs font-black text-white"><%= item[:title] %></p>
+              <p class="text-[10px] font-bold text-slate-500 mt-1 leading-relaxed"><%= item[:desc] %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <!-- Gradation Overlays -->
+      <div class="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#0C0B12] to-transparent z-10"></div>
+      <div class="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-[#0C0B12] to-transparent z-10"></div>
+    </div>
+
     <!-- Login Options -->
-    <div class="space-y-4 animate-slide-up" style="animation-delay: 0.2s">
+    <div class="space-y-4 animate-slide-up max-w-sm mx-auto w-full px-6" style="animation-delay: 0.2s">
       <!-- Kakao Login -->
       <%= button_to "/auth/kakao", data: { turbo: false }, class: "w-full py-4 bg-[#FEE500] hover:bg-[#FEE500]/90 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg" do %>
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -47,26 +92,8 @@
       <% end %>
     </div>
 
-    <!-- Features Benefit -->
-    <div class="grid grid-cols-2 gap-4 animate-slide-up" style="animation-delay: 0.4s">
-      <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
-        <div class="text-xl">📊</div>
-        <div>
-          <p class="text-[11px] font-black text-white">데이터 축적</p>
-          <p class="text-[9px] font-bold text-slate-500 mt-0.5">나만의 루틴 성장을<br/>데이터로 기록하세요.</p>
-        </div>
-      </div>
-      <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
-        <div class="text-xl">🏆</div>
-        <div>
-          <p class="text-[11px] font-black text-white">배지 시스템</p>
-          <p class="text-[9px] font-bold text-slate-500 mt-0.5">성취를 증명하는<br/>배지를 모아보세요.</p>
-        </div>
-      </div>
-    </div>
-
     <!-- Back to Explore -->
-    <div class="pt-8 text-center animate-fade-in" style="animation-delay: 0.6s">
+    <div class="pt-8 text-center animate-fade-in max-w-sm mx-auto w-full px-6" style="animation-delay: 0.6s">
       <%= link_to prototype_home_path, class: "text-xs font-bold text-slate-600 hover:text-indigo-400 transition-colors inline-flex items-center gap-1.5" do %>
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
         로그인 없이 둘러보기

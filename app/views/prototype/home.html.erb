@@ -57,13 +57,10 @@
         </div>
       <% end %>
     <% else %>
-      <button type="button" 
-              data-action="click->proto-ui#openModal" 
-              data-modal-id="login-modal" 
-              onclick="document.getElementById('login-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
-              class="absolute left-1/2 -translate-x-1/2 px-5 py-2.5 bg-indigo-600 rounded-full font-black text-white text-sm shadow-lg shadow-indigo-600/30 active:scale-95 transition-all w-fit flex items-center justify-center whitespace-nowrap cursor-pointer z-[110]">
+      <%= link_to prototype_login_path, 
+                  class: "absolute left-1/2 -translate-x-1/2 px-5 py-2.5 bg-indigo-600 rounded-full font-black text-white text-sm shadow-lg shadow-indigo-600/30 active:scale-95 transition-all w-fit flex items-center justify-center whitespace-nowrap cursor-pointer z-[110]" do %>
         로그인 / 회원가입
-      </button>
+      <% end %>
     <% end %>
     
     <!-- Right: Notification -->
