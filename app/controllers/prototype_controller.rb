@@ -95,7 +95,12 @@ class PrototypeController < ApplicationController
                                       .take(20) # Top 20 for full leaderboard
 
     @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
-    @recent_activities = RufaActivity.joins(:user).where(users: { deleted_at: nil }).order(created_at: :desc).limit(20)
+
+    # Show only today's activities for live stream
+    @recent_activities = RufaActivity.joins(:user)
+                                     .where(users: { deleted_at: nil })
+                                     .where(created_at: Date.current.all_day)
+                                     .order(created_at: :desc)
   end
 
   def my
