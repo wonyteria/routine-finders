@@ -54,7 +54,7 @@
     </style>
   </head>
 
-  <body class="min-h-screen" data-controller="proto-ui toast">
+  <body class="min-h-screen" data-controller="proto-ui toast" data-logged-in="<%= logged_in? %>">
     <main data-controller="modal" class="w-full max-w-md mx-auto min-h-screen relative pb-40 px-4 shadow-2xl bg-[#0C0B12]">
       <%= yield %>
     </main>
@@ -78,7 +78,9 @@
         <span class="text-2xl">✨</span>
       <% end %>
 
-      <%= link_to prototype_my_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_my_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+      <%= link_to prototype_my_path, 
+                  data: { action: "click->proto-ui#checkLogin" },
+                  class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_my_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
         <span class="text-2xl">👤</span>
       <% end %>
     </nav>
@@ -154,7 +156,9 @@
         
         <div class="space-y-4">
           <!-- 1. Create Routine -->
-          <a href="/prototype/routine_builder" class="block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all">
+          <a href="/prototype/routine_builder" 
+             data-action="click->proto-ui#checkLogin"
+             class="block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-[#0C0B12] flex items-center justify-center border border-white/10">
                 <span class="text-2xl">📝</span>
@@ -167,7 +171,9 @@
           </a>
 
           <!-- 2. Create Challenge -->
-          <a href="/prototype/challenge_builder" class="block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all">
+          <a href="/prototype/challenge_builder" 
+             data-action="click->proto-ui#checkLogin"
+             class="block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-[#0C0B12] flex items-center justify-center border border-white/10">
                 <span class="text-2xl">🚩</span>
@@ -180,7 +186,9 @@
           </a>
 
           <!-- 3. Create Gathering -->
-          <a href="/prototype/gathering_builder" class="block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all">
+          <a href="/prototype/gathering_builder" 
+             data-action="click->proto-ui#checkLogin"
+             class="block w-full p-5 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 text-left group active:scale-[0.98] transition-all">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-[#0C0B12] flex items-center justify-center border border-white/10">
                 <span class="text-2xl">💬</span>
@@ -194,6 +202,7 @@
 
           <!-- 4. 루파클럽 가입 (Highlight at Bottom) -->
           <a href="<%= prototype_club_join_path %>" 
+             data-action="click->proto-ui#checkLogin"
              class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">

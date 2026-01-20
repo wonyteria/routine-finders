@@ -28,4 +28,17 @@ export default class extends Controller {
             document.body.classList.remove('overflow-hidden')
         }
     }
+
+    checkLogin(event) {
+        // We use data-logged-in on body to check status
+        if (document.body.dataset.loggedIn === "false") {
+            event.preventDefault()
+            event.stopImmediatePropagation()
+            const modal = document.getElementById('login-modal')
+            if (modal) {
+                modal.classList.remove('hidden')
+                document.body.classList.add('overflow-hidden')
+            }
+        }
+    }
 }

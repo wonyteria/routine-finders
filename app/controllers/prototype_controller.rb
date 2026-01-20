@@ -28,7 +28,7 @@ class PrototypeController < ApplicationController
     @is_club_member = @membership.present?
 
     # 3. Live Feed Data (Active users only)
-    @recent_activities = RufaActivity.joins(:user).where(users: { active: true }).order(created_at: :desc).limit(10)
+    @recent_activities = RufaActivity.joins(:user).where(users: { deleted_at: nil }).order(created_at: :desc).limit(10)
     @recent_reflections = @recent_activities.where(activity_type: [ "routine_record", "reflection" ])
 
     # Orbiting Users (Recent successes to show on home visualization)
@@ -91,7 +91,7 @@ class PrototypeController < ApplicationController
                                       .take(20) # Top 20 for full leaderboard
 
     @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
-    @recent_activities = RufaActivity.joins(:user).where(users: { active: true }).order(created_at: :desc).limit(20)
+    @recent_activities = RufaActivity.joins(:user).where(users: { deleted_at: nil }).order(created_at: :desc).limit(20)
   end
 
   def my
@@ -189,7 +189,7 @@ class PrototypeController < ApplicationController
       msg = activity_type == "reflection" ? "오늘의 다짐을 선언했습니다! 멋진 하루 보내세요." : "오늘의 루틴 성취를 기록했습니다!"
       redirect_to prototype_home_path, notice: msg
     else
-      redirect_to prototype_home_path, alert: "내용을 입력해주세요."
+      redirect_to prototype_home_path(show_login: true), alert: "로그인이 필요합니다."
     end
   end
 
