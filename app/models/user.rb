@@ -316,7 +316,7 @@ class User < ApplicationRecord
     when score >= 90 then "루파 로드 마스터"
     when score >= 70 then "정진하는 가이드"
     when score >= 40 then "성장의 개척자"
-    else "시작하는 파인더"
+    else "시작하는 루파"
     end
   end
 
