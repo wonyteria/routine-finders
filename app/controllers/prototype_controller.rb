@@ -144,7 +144,7 @@ class PrototypeController < ApplicationController
         }
       end
 
-      # 3. Cheer Count (Mock or Real based on claps)
+      # 3. Cheer Count
       current_cheers = current_user.rufa_claps.count
       next_c_badge = Badge.where(badge_type: :cheer_count)
                           .where("requirement_value > ?", current_cheers)
@@ -156,6 +156,36 @@ class PrototypeController < ApplicationController
           current: current_cheers,
           target: next_c_badge.requirement_value.to_i,
           unit: "회"
+        }
+      end
+
+      # 4. Challenge Participation
+      current_challenges = current_user.participants.count
+      next_ch_badge = Badge.where(badge_type: :participation_count, target_type: :challenge)
+                           .where("requirement_value > ?", current_challenges)
+                           .order(requirement_value: :asc).first
+      if next_ch_badge
+        @milestones << {
+          name: next_ch_badge.name,
+          icon: "🏃",
+          current: current_challenges,
+          target: next_ch_badge.requirement_value.to_i,
+          unit: "개"
+        }
+      end
+
+      # 5. Hosting Count
+      current_hosted = current_user.challenges.count
+      next_h_badge = Badge.where(badge_type: :host_count)
+                          .where("requirement_value > ?", current_hosted)
+                          .order(requirement_value: :asc).first
+      if next_h_badge
+        @milestones << {
+          name: next_h_badge.name,
+          icon: "👑",
+          current: current_hosted,
+          target: next_h_badge.requirement_value.to_i,
+          unit: "개"
         }
       end
 

@@ -193,19 +193,18 @@
     <div class="app-glass-card p-6 overflow-hidden">
       <!-- 1. Earned Badges Header & Scroll -->
       <div class="space-y-4">
-        <div class="flex justify-between items-center px-1">
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">획득한 배지</p>
-          <% if @milestones&.any? %>
-            <button onclick="const m = document.getElementById('milestones-area'); 
-                             const t = this.querySelector('span');
-                             m.classList.toggle('hidden');
-                             t.innerText = m.classList.contains('hidden') ? '다음 배지 보기' : '접기'; 
-                             this.classList.toggle('text-indigo-400');"
-                    class="text-[10px] font-black text-slate-600 hover:text-indigo-400 transition-colors flex items-center gap-1 active:scale-95">
-              <span>다음 배지 보기</span>
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-          <% end %>
+        <div class="flex items-center gap-3 px-1">
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none shrink-0">획득한 배지</p>
+          <button onclick="const m = document.getElementById('milestones-area'); 
+                           const t = this.querySelector('span');
+                           if (!m) return;
+                           m.classList.toggle('hidden');
+                           t.innerText = m.classList.contains('hidden') ? '다음 배지 보기' : '접기'; 
+                           this.classList.toggle('text-indigo-400');"
+                  class="text-[10px] font-black text-slate-600 hover:text-indigo-400 transition-colors flex items-center gap-1 active:scale-95 bg-white/5 px-2 py-1 rounded-full border border-white/10">
+            <span>다음 배지 보기</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+          </button>
         </div>
         
         <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
@@ -232,8 +231,8 @@
       </div>
 
       <!-- 2. Hidden Next Milestones (Progress Visualization) -->
-      <% if @milestones&.any? %>
-        <div id="milestones-area" class="hidden mt-8 pt-8 border-t border-white/5 space-y-4 animate-slide-down">
+      <div id="milestones-area" class="hidden mt-8 pt-8 border-t border-white/5 space-y-4 animate-slide-down">
+        <% if @milestones&.any? %>
           <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none px-1">달성 예정 목표</p>
           <div class="space-y-3">
             <% @milestones.each do |m| %>
@@ -256,8 +255,13 @@
               </div>
             <% end %>
           </div>
-        </div>
-      <% end %>
+        <% else %>
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none px-1">달성 예정 목표</p>
+          <div class="py-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
+            <p class="text-xs font-bold text-slate-600">축하합니다! 모든 핵심 배지를 마스터하셨습니다.</p>
+          </div>
+        <% end %>
+      </div>
     </div>
   </section>
 
