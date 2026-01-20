@@ -158,6 +158,65 @@ class PrototypeController < ApplicationController
           unit: "회"
         }
       end
+
+      # 4. Growth Analytics (Real Data)
+      # Weekly: Last 7 days completion rate
+      @weekly_data = (0..6).map do |days_ago|
+        date = Date.current - days_ago.days
+        routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+        total = routines.count
+        completed = routines.select { |r| r.completions.exists?(created_at: date.all_day) }.count
+        total.positive? ? ((completed.to_f / total) * 100).round : 0
+      end.reverse
+
+      # Monthly: Last 4 weeks completion rate
+      @monthly_data = (0..3).map do |weeks_ago|
+        week_start = Date.current.beginning_of_week - weeks_ago.weeks
+        week_end = week_start + 6.days
+
+        total_days = 0
+        completed_days = 0
+
+        (week_start..week_end).each do |date|
+          routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+          next if routines.empty?
+
+          total_days += routines.count
+          completed_days += routines.select { |r| r.completions.exists?(created_at: date.all_day) }.count
+        end
+
+        total_days.positive? ? ((completed_days.to_f / total_days) * 100).round : 0
+      end.reverse
+
+      # Yearly: This year's monthly completion rates (up to current month)
+      current_month = Date.current.month
+      @yearly_data = (1..current_month).map do |month|
+        month_start = Date.new(Date.current.year, month, 1)
+        month_end = [ month_start.end_of_month, Date.current ].min
+
+        total_days = 0
+        completed_days = 0
+
+        (month_start..month_end).each do |date|
+          routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+          next if routines.empty?
+
+          total_days += routines.count
+          completed_days += routines.select { |r| r.completions.exists?(created_at: date.all_day) }.count
+        end
+
+        total_days.positive? ? ((completed_days.to_f / total_days) * 100).round : 0
+      end
+
+      # Calculate current period completion rate
+      @weekly_completion = @weekly_data.any? ? (@weekly_data.sum.to_f / @weekly_data.size).round : 0
+      @monthly_completion = @monthly_data.any? ? (@monthly_data.sum.to_f / @monthly_data.size).round : 0
+      @yearly_completion = @yearly_data.any? ? (@yearly_data.sum.to_f / @yearly_data.size).round : 0
+
+      # Calculate growth compared to previous period
+      @weekly_growth = @weekly_data.size >= 2 ? @weekly_data[-1] - @weekly_data[-2] : 0
+      @monthly_growth = @monthly_data.size >= 2 ? @monthly_data[-1] - @monthly_data[-2] : 0
+      @yearly_growth = @yearly_data.size >= 2 ? @yearly_data[-1] - @yearly_data[-2] : 0
     end
   end
 

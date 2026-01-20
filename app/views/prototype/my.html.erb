@@ -161,15 +161,24 @@
       <div class="flex justify-between items-start">
         <div class="space-y-1">
           <p class="growth-period-text text-[10px] font-bold text-slate-500">이번 주 달성률</p>
-          <h4 class="growth-main-value text-2xl font-black text-white">82% <span class="text-xs text-emerald-500 font-bold ml-1">↑ 12%</span></h4>
+          <h4 class="growth-main-value text-2xl font-black text-white">
+            <%= @weekly_completion %>% 
+            <% if @weekly_growth > 0 %>
+              <span class="text-xs text-emerald-500 font-bold ml-1">↑ <%= @weekly_growth %>%</span>
+            <% elsif @weekly_growth < 0 %>
+              <span class="text-xs text-red-500 font-bold ml-1">↓ <%= @weekly_growth.abs %>%</span>
+            <% else %>
+              <span class="text-xs text-slate-500 font-bold ml-1">-</span>
+            <% end %>
+          </h4>
         </div>
         <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">📈</div>
       </div>
       
-      <!-- Dummy Graph -->
+      <!-- Real Data Graph -->
       <div class="growth-graph-container flex items-end justify-between h-20 gap-2">
-         <% [30, 45, 80, 60, 95, 70, 85].each_with_index do |h, i| %>
-           <div class="flex-1 rounded-t-lg transition-all duration-700 <%= i == 6 ? 'bg-indigo-500 shadow-[0_0_15px_rgba(124,77,255,0.5)]' : 'bg-white/10' %>" style="height: <%= h %>%"></div>
+         <% @weekly_data.each_with_index do |h, i| %>
+           <div class="flex-1 rounded-t-lg transition-all duration-700 <%= i == 6 ? 'bg-indigo-500 shadow-[0_0_15px_rgba(124,77,255,0.5)]' : 'bg-white/10' %>" style="height: <%= [h, 5].max %>%"></div>
          <% end %>
       </div>
     </div>
