@@ -31,14 +31,18 @@ export default class extends Controller {
 
     checkLogin(event) {
         // We use data-logged-in on body to check status
-        if (document.body.dataset.loggedIn === "false") {
+        const isLoggedIn = document.body.getAttribute('data-logged-in')
+
+        if (isLoggedIn === "false") {
+            // Stop current action
             event.preventDefault()
             event.stopImmediatePropagation()
-            const modal = document.getElementById('login-modal')
-            if (modal) {
-                modal.classList.remove('hidden')
-                document.body.classList.add('overflow-hidden')
-            }
+
+            // Redirect to dedicated login page
+            // This ensures a "move" to the login state as requested
+            window.location.href = '/prototype/login'
+            return false
         }
+        return true
     }
 }

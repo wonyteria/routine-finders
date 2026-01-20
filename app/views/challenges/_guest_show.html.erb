@@ -156,9 +156,15 @@
            대시보드
          <% end %>
       <% else %>
-        <button data-action="click->proto-ui#checkLogin click->modal#open" class="px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all">
-           지금 참여
-        </button>
+        <% if logged_in? %>
+          <button data-action="click->modal#open" class="px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all cursor-pointer">
+            지금 참여
+          </button>
+        <% else %>
+          <%= link_to prototype_login_path, class: "px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all text-center cursor-pointer" do %>
+            지금 참여
+          <% end %>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -177,15 +183,32 @@
 
         <div class="pt-4 space-y-3">
           <% if @challenge.cost_type_free? %>
-            <%= button_to join_challenge_path(@challenge, source: 'prototype'), method: :post, class: "w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all" do %>
-              지금 시작하기
+            <% if logged_in? %>
+              <%= button_to join_challenge_path(@challenge, source: 'prototype'), 
+                            method: :post, 
+                            class: "w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all cursor-pointer" do %>
+                지금 시작하기
+              <% end %>
+            <% else %>
+              <%= link_to prototype_login_path, 
+                          class: "block w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all text-center cursor-pointer" do %>
+                지금 시작하기
+              <% end %>
             <% end %>
           <% else %>
-            <%= link_to new_challenge_application_path(@challenge, source: 'prototype'), class: "block w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all text-center" do %>
-              신청 정보 확인
+            <% if logged_in? %>
+              <%= link_to new_challenge_application_path(@challenge, source: 'prototype'), 
+                          class: "block w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all text-center cursor-pointer" do %>
+                신청 정보 확인
+              <% end %>
+            <% else %>
+              <%= link_to prototype_login_path, 
+                          class: "block w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all text-center cursor-pointer" do %>
+                신청 정보 확인
+              <% end %>
             <% end %>
           <% end %>
-          <button data-action="click->modal#close" class="w-full py-2 text-slate-600 font-bold text-[10px] tracking-widest">Close</button>
+          <button data-action="click->modal#close" class="w-full py-2 text-slate-600 font-bold text-[10px] tracking-widest cursor-pointer">Close</button>
         </div>
       </div>
     </div>

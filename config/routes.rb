@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "prototype/home"
+  get "prototype/login"
   get "prototype/explore"
   get "prototype/synergy"
   get "prototype/my"

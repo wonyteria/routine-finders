@@ -3,6 +3,10 @@ class PrototypeController < ApplicationController
   before_action :set_shared_data
   before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa ]
 
+  def login
+    @hide_nav = true
+  end
+
   def home
     # 1. Total Daily Tasks Calculation (Routines + Challenges + Gatherings)
     @todays_routines = current_user ? current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
@@ -189,7 +193,7 @@ class PrototypeController < ApplicationController
       msg = activity_type == "reflection" ? "오늘의 다짐을 선언했습니다! 멋진 하루 보내세요." : "오늘의 루틴 성취를 기록했습니다!"
       redirect_to prototype_home_path, notice: msg
     else
-      redirect_to prototype_home_path(show_login: true), alert: "로그인이 필요합니다."
+      redirect_to prototype_login_path, alert: "로그인이 필요합니다."
     end
   end
 
