@@ -4,11 +4,7 @@ export default class extends Controller {
     connect() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('show_login') === 'true') {
-            const modal = document.getElementById('login-modal')
-            if (modal) {
-                modal.classList.remove('hidden')
-                document.body.classList.add('overflow-hidden')
-            }
+            window.location.href = '/prototype/login'
         }
     }
 

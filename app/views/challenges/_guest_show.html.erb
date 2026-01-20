@@ -137,8 +137,8 @@
   </section>
 
   <!-- 4. Fixed Final Action Bar -->
-  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-sm z-[100]">
-    <div class="app-glass-card p-4 !rounded-[32px] border-white/10 bg-[#16151D]/90 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] flex items-center gap-4">
+  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-sm z-[500]">
+    <div class="app-glass-card p-4 !rounded-[32px] border-white/10 bg-[#16151D]/95 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] flex items-center gap-4">
       <div class="flex-1 pl-4">
         <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 leading-none">Total Fee</p>
         <div class="flex items-baseline gap-1">
@@ -161,7 +161,8 @@
             지금 참여
           </button>
         <% else %>
-          <%= link_to prototype_login_path, class: "px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all text-center cursor-pointer" do %>
+          <%= link_to prototype_login_path, 
+                      class: "px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all text-center cursor-pointer flex items-center justify-center" do %>
             지금 참여
           <% end %>
         <% end %>
@@ -172,7 +173,7 @@
   <!-- Redesigned Modal -->
   <div data-modal-target="container" 
        data-action="click->modal#closeOnBackground" 
-       class="fixed inset-0 z-[300] hidden bg-black/80 backdrop-blur-xl flex items-center justify-center p-6">
+       class="fixed inset-0 z-[600] hidden bg-black/80 backdrop-blur-xl flex items-center justify-center p-6">
     <div class="app-glass-card w-full max-w-md bg-[#1B1A24] border-white/10 overflow-hidden animate-slide-up">
       <div class="p-8 text-center space-y-6">
         <div class="w-20 h-20 rounded-[32px] bg-indigo-500/10 flex items-center justify-center text-4xl mx-auto border border-white/5">
