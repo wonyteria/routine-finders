@@ -47,10 +47,10 @@ class ApplicationController < ActionController::Base
   def require_login
     unless current_user
       store_location
-      if params[:source] == "prototype" || request.path.start_with?("/prototype")
-      redirect_to prototype_login_path, alert: "로그인이 필요합니다."
+      if params[:source] == "web"
+        redirect_to root_path, alert: "로그인이 필요합니다."
       else
-      redirect_to root_path, alert: "로그인이 필요합니다."
+        redirect_to prototype_login_path, alert: "로그인이 필요합니다."
       end
     end
   end
@@ -77,10 +77,10 @@ class ApplicationController < ActionController::Base
   end
 
   def set_layout
-    params[:source] == "prototype" ? "prototype" : "application"
+    params[:source] == "web" ? "application" : "prototype"
   end
 
   def default_url_options
-    params[:source] == "prototype" ? { source: "prototype" } : {}
+    params[:source] == "web" ? { source: "web" } : {}
   end
 end
