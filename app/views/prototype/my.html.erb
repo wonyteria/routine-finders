@@ -9,7 +9,7 @@
     </div>
     <div class="space-y-1">
       <h2 class="text-xl font-black text-white"><%= current_user&.nickname %></h2>
-      <p class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest">2024년부터 함께한 꾸준한 루파</p>
+      <p class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest"><%= current_user&.created_at&.year %>년부터 함께한 <%= current_user&.current_growth_identity %></p>
     </div>
 
     <!-- Quick Stats -->
