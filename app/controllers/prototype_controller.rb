@@ -374,9 +374,34 @@ class PrototypeController < ApplicationController
       update_params[:nickname] = params[:nickname] if params[:nickname].present?
       update_params[:bio] = params[:bio] if params[:bio].present?
 
-      # Handle profile image upload
+      # Handle profile image upload correctly via ActiveStorage
       if params[:profile_image].present?
-        update_params[:profile_image] = params[:profile_image]
+        update_params[:avatar] = params[:profile_image]
+        # Clear legacy string column to let the profile_image method prefer avatar
+        update_params[:profile_image] = nil
+      end
+
+      # Handle SNS links if provided
+      if params[:sns_links].present?
+        # Basic mapping logic for prototype (can be improved as needed)
+        links = {}
+        params[:sns_links].each do |link|
+          next if link.blank?
+          if link.include?("instagram.com")
+            links["instagram"] = link
+          elsif link.include?("threads.net")
+            links["threads"] = link
+          elsif link.include?("youtube.com")
+            links["youtube"] = link
+          elsif link.include?("twitter.com") || link.include?("x.com")
+            links["twitter"] = link
+          elsif link.include?("blog.naver.com") || link.include?("tistory.com")
+            links["blog"] = link
+          else
+            links["other_#{links.size}"] = link
+          end
+        end
+        update_params[:sns_links] = links
       end
 
       if current_user.update(update_params)
