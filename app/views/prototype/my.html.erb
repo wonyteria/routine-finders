@@ -46,6 +46,7 @@
         weekly_needs_update = current_user.weekly_goal_updated_at.nil? || current_user.weekly_goal_updated_at < Date.current.beginning_of_week
         monthly_needs_update = current_user.monthly_goal_updated_at.nil? || current_user.monthly_goal_updated_at < Date.current.beginning_of_month
         yearly_needs_update = current_user.yearly_goal_updated_at.nil? || current_user.yearly_goal_updated_at < Date.current.beginning_of_year
+        week_of_month = ((Date.current.day - 1) / 7) + 1
       %>
       
       <!-- Weekly Goal -->
@@ -55,7 +56,7 @@
             <span class="text-xl">🎯</span>
             <div>
               <p class="text-xs font-black text-white">주간 목표</p>
-              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.strftime('%Y년 %m월 %주차') %></p>
+              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.strftime('%Y년 %m월') %> <%= week_of_month %>주차</p>
             </div>
           </div>
           <% if weekly_needs_update %>

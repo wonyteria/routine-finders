@@ -218,6 +218,7 @@
   <!-- 3.5. Weekly Goal (Read-only, links to My page for editing) -->
   <% if current_user %>
     <% weekly_needs_update = current_user.weekly_goal_updated_at.nil? || current_user.weekly_goal_updated_at < Date.current.beginning_of_week %>
+    <% week_of_month = ((Date.current.day - 1) / 7) + 1 %>
     <%= link_to prototype_my_path, class: "block" do %>
       <div class="app-glass-card p-5 <%= weekly_needs_update ? 'border-amber-500/30 bg-amber-500/5' : 'border-indigo-500/20 bg-indigo-500/5' %> app-tap-active">
         <div class="flex items-start justify-between mb-3">
@@ -225,7 +226,7 @@
             <span class="text-xl">🎯</span>
             <div>
               <p class="text-xs font-black text-white">이번 주 목표</p>
-              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.strftime('%Y년 %m월 %주차') %></p>
+              <p class="text-[9px] font-bold text-slate-500"><%= Date.current.strftime('%Y년 %m월') %> <%= week_of_month %>주차</p>
             </div>
           </div>
           <div class="flex items-center gap-2">
