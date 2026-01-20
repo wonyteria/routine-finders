@@ -32,7 +32,7 @@ class PrototypeController < ApplicationController
     @is_club_member = @membership.present?
 
     # 3. Live Feed Data (Active users only)
-    @recent_activities = RufaActivity.joins(:user).where(users: { deleted_at: nil }).order(created_at: :desc).limit(10)
+    @recent_activities = RufaActivity.includes(:user).joins(:user).where("users.deleted_at IS NULL").order(created_at: :desc).limit(10)
     @recent_reflections = @recent_activities.where(activity_type: [ "routine_record", "reflection" ])
 
     # Orbiting Users (Recent successes to show on home visualization)
@@ -170,9 +170,8 @@ class PrototypeController < ApplicationController
       end
 
       # 4. Challenge Participation
-      current_challenges = current_user.participants.count
-      next_ch_badge = Badge.where(badge_type: :participation_count, target_type: :challenge)
-                           .where("requirement_value > ?", current_challenges)
+      current_challenges = current_user.participations.count
+      next_ch_badge = Badge.participation_count.where("requirement_value > ?", current_challenges)
                            .order(requirement_value: :asc).first
       if next_ch_badge
         @milestones << {

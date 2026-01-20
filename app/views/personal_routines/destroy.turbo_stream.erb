@@ -36,11 +36,15 @@
   completed_count = routine_done + participation_done
   progress = total_task_count.positive? ? (completed_count.to_f / total_task_count * 100).to_i : 0
 %>
+<% 
+  orbit_total_particles = [User.joins(:rufa_activities).where("rufa_activities.created_at >= ?", 30.minutes.ago).distinct.count, 1].max
+%>
 <%= turbo_stream.replace "prototype-orbit-section" do %>
   <%= render partial: "prototype/orbit", locals: { 
         progress: progress, 
         completed_count: completed_count, 
         total_task_count: total_task_count,
+        orbit_total_particles: orbit_total_particles,
         orbit_users: [],
         todays_routines: todays_routines
       } %>

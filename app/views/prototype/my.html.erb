@@ -151,10 +151,10 @@
           </button>
         <% end %>
       </div>
-      <button data-action="click->proto-ui#openModal" 
-              data-modal-id="growth-detail" 
-              onclick="document.getElementById('growth-detail').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
-              class="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer ml-auto">상세</button>
+      <%= link_to achievement_report_path, class: "text-[10px] font-black text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer ml-auto flex items-center gap-1" do %>
+        리포트 상세 보기
+        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+      <% end %>
     </div>
 
     <div class="app-glass-card p-6 aspect-video bg-gradient-to-br from-indigo-500/5 to-transparent flex flex-col justify-between">

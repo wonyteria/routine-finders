@@ -31,7 +31,7 @@ admin = User.create!(
   email: "admin@routinefinders.com",
   nickname: "관리자",
   password: "password123",
-  role: :admin,
+  role: :super_admin,
   profile_image: "https://picsum.photos/seed/admin/200/200",
   level: 10,
   total_exp: 5000,

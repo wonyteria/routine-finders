@@ -2,97 +2,105 @@ class ProfilesController < ApplicationController
   before_action :require_login
 
   def show
-    @user = current_user
-    @participations = @user.participations.includes(:challenge).order(created_at: :desc)
-    @hosted_challenges = @user.hosted_challenges.includes(:participants).order(created_at: :desc)
-    @challenge_applications = @user.challenge_applications.includes(:challenge).order(created_at: :desc)
+    begin
+      @user = current_user
+      @participations = @user.participations.includes(:challenge).order(created_at: :desc)
+      @hosted_challenges = @user.hosted_challenges.includes(:participants).order(created_at: :desc)
+      @challenge_applications = @user.challenge_applications.includes(:challenge).order(created_at: :desc)
 
-    # 루틴 클럽 및 리포트
-    @club_memberships = @user.routine_club_members.includes(:routine_club).order(created_at: :desc)
-    @recent_reports = @user.routine_club_reports.order(start_date: :desc).limit(5)
+      # 루틴 클럽 및 리포트
+      @club_memberships = @user.routine_club_members.includes(:routine_club).order(created_at: :desc)
+      @recent_reports = @user.routine_club_reports.order(start_date: :desc).limit(5)
 
-    # 비회원을 위한 실시간 성장 분석 데이터
-    if @recent_reports.empty?
-      @monthly_log_rate = @user.monthly_routine_log_rate
-      @monthly_ach_rate = @user.monthly_achievement_rate
-      @growth_identity = @user.current_growth_identity
+      # 비회원을 위한 실시간 성장 분석 데이터
+      if @recent_reports.empty?
+        @monthly_log_rate = @user.monthly_routine_log_rate
+        @monthly_ach_rate = @user.monthly_achievement_rate
+        @growth_identity = @user.current_growth_identity
+      end
+
+      # 개인 루틴
+      @personal_routines = @user.personal_routines.order(created_at: :desc)
+
+      # 뱃지
+      @user_badges = @user.user_badges.includes(:badge).order(granted_at: :desc)
+      @recent_badges = @user_badges.limit(4)
+
+      # 리뷰
+      @reviews = @user.reviews.includes(:challenge).order(created_at: :desc)
+
+      # 루파 활동
+      @rufa_activities = @user.rufa_activities.order(created_at: :desc).limit(10)
+
+      # 호스트 통계
+      pending_count = VerificationLog.joins(:challenge).where(challenges: { host_id: @user.id }, status: :pending).count
+      @host_stats = {
+        total_challenges: @hosted_challenges.count,
+        total_participants: @hosted_challenges.sum(:current_participants),
+        active_challenges: @hosted_challenges.where("start_date <= ? AND end_date >= ?", Date.current, Date.current).count,
+        pending_verifications: pending_count
+      }
+
+      # 개최 챌린지별 대기 중인 인증 건수 (N+1 방지)
+      @hosted_pending_counts = VerificationLog
+        .where(challenge_id: @hosted_challenges.pluck(:id), status: :pending)
+        .group(:challenge_id)
+        .count
+
+      # 대시보드 요약
+      @active_participations = @participations.select { |p| p.challenge&.status_active? }
+      @active_clubs = @club_memberships.select { |m| m.routine_club&.status_active? }
+
+      # 챌린지 vs 모임 (온/오프라인 모드 기준)
+      @challenge_participations = @participations.select { |p| p.challenge&.mode_online? }
+      @gathering_participations = @participations.select { |p| p.challenge&.mode_offline? }
+
+      # 내가 개최한 모임
+      @hosted_gatherings = @hosted_challenges.select { |c| c.mode_offline? }
+      @hosted_online_challenges = @hosted_challenges.select { |c| c.mode_online? }
+
+      # 성장 투자 통계 (실제 기능 대신 기록용)
+      @growth_stats = {
+        total_invested: @participations.sum { |p| p.challenge&.amount.to_i },
+        total_refunded: 0, # 추후 포인트 시스템 연동 시 구현
+        expected_refund: @active_participations.sum { |p| p.challenge&.amount.to_i }
+      }
+
+      # 성취 매트릭스용 통합 데이터 (최근 1년)
+      @activity_data = Hash.new(0)
+
+      # 챌린지 인증
+      VerificationLog.joins(participant: :user)
+                    .where(users: { id: @user.id })
+                    .where(created_at: 1.year.ago..Time.current)
+                    .group("DATE(verification_logs.created_at)")
+                    .count
+                    .each { |date, count| @activity_data[date.to_date] += count }
+
+      # 개인 루틴 완료
+      PersonalRoutineCompletion.joins(:personal_routine)
+                               .where(personal_routines: { user_id: @user.id })
+                               .where(completed_on: 1.year.ago..Date.current)
+                               .group(:completed_on)
+                               .count
+                               .each { |date, count| @activity_data[date] += count }
+
+      # 클럽 출석
+      RoutineClubAttendance.joins(:routine_club_member)
+                           .where(routine_club_members: { user_id: @user.id })
+                           .where(attendance_date: 1.year.ago..Date.current)
+                           .group(:attendance_date)
+                           .count
+                           .each { |date, count| @activity_data[date] += count }
+
+      @monthly_completions = @activity_data.select { |date, _| date >= Date.current.beginning_of_month && date <= Date.current.end_of_month }
+    rescue => e
+      Rails.logger.error "--------------------------------------------------"
+      Rails.logger.error "PROFILES#SHOW ERROR: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      Rails.logger.error "--------------------------------------------------"
+      raise e
     end
-
-    # 개인 루틴
-    @personal_routines = @user.personal_routines.order(created_at: :desc)
-
-    # 뱃지
-    @user_badges = @user.user_badges.includes(:badge).order(granted_at: :desc)
-    @recent_badges = @user_badges.limit(4)
-
-    # 리뷰
-    @reviews = @user.reviews.includes(:challenge).order(created_at: :desc)
-
-    # 루파 활동
-    @rufa_activities = @user.rufa_activities.order(created_at: :desc).limit(10)
-
-    # 호스트 통계
-    pending_count = VerificationLog.joins(:challenge).where(challenges: { host_id: @user.id }, status: :pending).count
-    @host_stats = {
-      total_challenges: @hosted_challenges.count,
-      total_participants: @hosted_challenges.sum(:current_participants),
-      active_challenges: @hosted_challenges.active.count,
-      pending_verifications: pending_count
-    }
-
-    # 개최 챌린지별 대기 중인 인증 건수 (N+1 방지)
-    @hosted_pending_counts = VerificationLog
-      .where(challenge_id: @hosted_challenges.pluck(:id), status: :pending)
-      .group(:challenge_id)
-      .count
-
-    # 대시보드 요약
-    @active_participations = @participations.select { |p| p.challenge.status_active? }
-    @active_clubs = @club_memberships.select { |m| m.routine_club.status_active? }
-
-    # 챌린지 vs 모임 (온/오프라인 모드 기준)
-    @challenge_participations = @participations.select { |p| p.challenge.mode_online? }
-    @gathering_participations = @participations.select { |p| p.challenge.mode_offline? }
-
-    # 내가 개최한 모임
-    @hosted_gatherings = @hosted_challenges.select { |c| c.mode_offline? }
-    @hosted_online_challenges = @hosted_challenges.select { |c| c.mode_online? }
-
-    # 성장 투자 통계 (실제 기능 대신 기록용)
-    @growth_stats = {
-      total_invested: @participations.sum { |p| p.challenge.total_payment_amount },
-      total_refunded: @user.total_refunded,
-      expected_refund: @active_participations.sum { |p| p.challenge.amount || 0 }
-    }
-
-    # 성취 매트릭스용 통합 데이터 (최근 1년)
-    @activity_data = Hash.new(0)
-
-    # 챌린지 인증
-    VerificationLog.joins(participant: :user)
-                  .where(users: { id: @user.id })
-                  .where(created_at: 1.year.ago..Time.current)
-                  .group("DATE(verification_logs.created_at)")
-                  .count
-                  .each { |date, count| @activity_data[date.to_date] += count }
-
-    # 개인 루틴 완료
-    PersonalRoutineCompletion.joins(:personal_routine)
-                             .where(personal_routines: { user_id: @user.id })
-                             .where(completed_on: 1.year.ago..Date.current)
-                             .group(:completed_on)
-                             .count
-                             .each { |date, count| @activity_data[date] += count }
-
-    # 클럽 출석
-    RoutineClubAttendance.joins(:routine_club_member)
-                         .where(routine_club_members: { user_id: @user.id })
-                         .where(attendance_date: 1.year.ago..Date.current)
-                         .group(:attendance_date)
-                         .count
-                         .each { |date, count| @activity_data[date] += count }
-
-    @monthly_completions = @activity_data.select { |date, _| date >= Date.current.beginning_of_month && date <= Date.current.end_of_month }
   end
 
   def edit

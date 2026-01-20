@@ -12,10 +12,10 @@
   # Calculate display stats
   # Use real orbiting users count if available, otherwise fallback to a small realistic base + activity progress
   real_active_count = orbit_users.respond_to?(:count) ? orbit_users.count : (orbit_users&.size || 0)
-  total_particles = real_active_count + (current_user ? 1 : 0)
+  orbit_total_particles = real_active_count + (current_user ? 1 : 0)
   
   # Ensure visual flair even with few users
-  display_particle_count = [total_particles, (progress * 0.3).to_i + 5].max
+  display_particle_count = [orbit_total_particles, (progress * 0.3).to_i + 5].max
 %>
 
 <div id="prototype-orbit-section" class="relative group">
@@ -119,7 +119,7 @@
           <% end %>
         </div>
         <p class="text-[9px] font-black text-indigo-100/90 tracking-tight">
-          <span class="text-indigo-400"><%= total_particles %>명</span>의 동료가 공전 중
+          <span class="text-indigo-400"><%= orbit_total_particles %>명</span>의 동료가 공전 중
         </p>
       </div>
     </div>
