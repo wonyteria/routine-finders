@@ -390,6 +390,7 @@ class RoutineClubsController < ApplicationController
       :start_date, :end_date, :monthly_fee, :min_duration_months, :max_members,
       :bank_name, :account_number, :account_holder,
       :weekly_reward_info, :monthly_reward_info, :season_reward_info,
+      :zoom_link, :special_lecture_link,
       rules_attributes: [ :id, :title, :description, :rule_type, :has_penalty, :penalty_description, :penalty_points, :auto_kick_enabled, :auto_kick_threshold, :position, :_destroy ]
     )
   end

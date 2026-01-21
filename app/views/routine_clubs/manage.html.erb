@@ -796,6 +796,32 @@
             <%= f.submit "리워드 설정 저장", class: "px-8 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100" %>
           <% end %>
         </div>
+
+        <!-- Connectivity Settings -->
+        <div class="bg-white rounded-[40px] p-8 border border-slate-200 shadow-sm">
+          <h2 class="text-2xl font-black text-slate-900 mb-6 font-outfit uppercase tracking-tighter italic">Live & Lecture Connectivity</h2>
+          <%= form_with model: @routine_club, url: routine_club_path(@routine_club), method: :patch, class: "space-y-6" do |f| %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <%= f.label :zoom_link, class: "flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest" do %>
+                  📹 줌 라이브 입장 링크
+                <% end %>
+                <%= f.url_field :zoom_link, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 focus:ring-indigo-500", placeholder: "https://zoom.us/j/..." %>
+                <p class="text-[10px] text-slate-400 font-bold">라이브 세션 진행 시 멤버들이 입장할 URL을 입력하세요.</p>
+              </div>
+              <div class="space-y-2">
+                <%= f.label :special_lecture_link, class: "flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest" do %>
+                  🎓 스페셜 강의실 링크
+                <% end %>
+                <%= f.url_field :special_lecture_link, class: "w-full px-5 py-3 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-2 focus:ring-indigo-500", placeholder: "https://..." %>
+                <p class="text-[10px] text-slate-400 font-bold">클럽 전용 스페셜 강의실 또는 교육 자료 URL을 입력하세요.</p>
+              </div>
+            </div>
+            <%= f.submit "관제 링크 저장", class: "px-8 py-3 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-colors shadow-lg" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
       </div>
     </div>
 

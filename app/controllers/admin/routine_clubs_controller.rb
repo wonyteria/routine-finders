@@ -57,7 +57,7 @@ module Admin
       params.require(:routine_club).permit(
         :title, :description, :category, :monthly_fee, :min_duration_months,
         :start_date, :end_date, :status, :is_official, :max_members, :thumbnail,
-        :host_id
+        :host_id, :zoom_link, :special_lecture_link
       )
     end
   end

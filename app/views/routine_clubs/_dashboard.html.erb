@@ -11,6 +11,37 @@
 <!-- START: Dashboard White Box Container (opened at line 11) -->
 <div class="bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-8 border border-slate-100 shadow-sm space-y-6 md:space-y-8">
   
+  <!-- Connectivity Quick Links (Visible if links are present) -->
+  <% if @routine_club.zoom_link.present? || @routine_club.special_lecture_link.present? %>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <% if @routine_club.zoom_link.present? %>
+        <a href="<%= @routine_club.zoom_link %>" target="_blank" class="flex-1 flex items-center justify-between p-4 md:p-6 bg-indigo-600 hover:bg-indigo-700 transition-all rounded-2xl md:rounded-[32px] shadow-lg shadow-indigo-100 group">
+          <div class="flex items-center gap-3 md:gap-4">
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl">📹</div>
+            <div>
+              <p class="text-[10px] md:text-xs font-black text-indigo-100 uppercase tracking-widest leading-none mb-1">Live Session</p>
+              <h4 class="text-sm md:text-lg font-black text-white leading-tight">줌 라이브 입장하기</h4>
+            </div>
+          </div>
+          <svg class="w-5 h-5 text-white/50 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      <% end %>
+
+      <% if @routine_club.special_lecture_link.present? %>
+        <a href="<%= @routine_club.special_lecture_link %>" target="_blank" class="flex-1 flex items-center justify-between p-4 md:p-6 bg-slate-900 hover:bg-slate-800 transition-all rounded-2xl md:rounded-[32px] shadow-lg shadow-slate-100 group">
+          <div class="flex items-center gap-3 md:gap-4">
+            <div class="w-10 h-10 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-2xl">🎓</div>
+            <div>
+              <p class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Special Education</p>
+              <h4 class="text-sm md:text-lg font-black text-white leading-tight">스페셜 강의실</h4>
+            </div>
+          </div>
+          <svg class="w-5 h-5 text-white/30 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      <% end %>
+    </div>
+  <% end %>
+
   <div id="rufa-club-stats-grid" class="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 md:-mx-8 md:pl-8 md:pr-8 no-scrollbar scroll-smooth items-stretch">
     <!-- 오늘의 달성률 -->
     <div class="bg-indigo-600 rounded-xl px-3 py-3 text-white shadow-md shadow-indigo-100 relative overflow-hidden group min-w-[105px] flex-1 shrink-0">

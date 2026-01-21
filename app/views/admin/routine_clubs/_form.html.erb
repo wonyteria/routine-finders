@@ -40,9 +40,8 @@
         </div>
       </div>
 
-      <!-- 운영 설정 -->
       <div class="space-y-6">
-        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">운영 및 비용</h3>
+        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">운연 및 비용</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="space-y-2">
             <%= f.label :monthly_fee, "월 참가비 (원)", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
@@ -57,6 +56,24 @@
           <div class="flex items-center gap-3 pt-8">
             <%= f.check_box :is_official, class: "w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
             <%= f.label :is_official, "공식 인증 클럽", class: "text-sm font-black text-slate-700 uppercase tracking-widest" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live 및 강의 링크 -->
+      <div class="space-y-6">
+        <h3 class="text-sm font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-2">연동 링크 설정</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <%= f.label :zoom_link, "줌 라이브 입장 링크", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.url_field :zoom_link, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500", placeholder: "https://zoom.us/j/..." %>
+            <p class="text-[10px] text-slate-400 font-bold">라이브 세션 진행 시 멤버들이 입장할 URL입니다.</p>
+          </div>
+
+          <div class="space-y-2">
+            <%= f.label :special_lecture_link, "스페셜 강의실 링크", class: "block text-sm font-black text-slate-700 uppercase tracking-widest" %>
+            <%= f.url_field :special_lecture_link, class: "w-full rounded-xl border-slate-200 text-sm font-bold focus:ring-indigo-500 focus:border-indigo-500", placeholder: "https://..." %>
+            <p class="text-[10px] text-slate-400 font-bold">클럽 전용 스페셜 강의실 또는 교육 자료 URL입니다.</p>
           </div>
         </div>
       </div>

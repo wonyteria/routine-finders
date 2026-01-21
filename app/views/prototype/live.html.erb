@@ -17,7 +17,7 @@
          <%= @is_club_member ? 'Live Now' : 'Sneak Peek' %>
        </span>
     </div>
-    <button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white"><span class="text-xl">⚙️</span></button>
+    <div class="w-10"></div> <!-- Placeholder for symmetry -->
   </header>
 
   <!-- Live Content -->
@@ -111,14 +111,28 @@
   <footer class="mt-8 space-y-6 pb-12">
     <div class="flex flex-col gap-3 px-6">
       <% if @is_club_member %>
-        <button class="w-full py-5 rounded-[28px] bg-white text-[#07060A] font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95 transition-all">
-          <span class="text-2xl">📹</span>
-          줌(Zoom) 라이브 입장하기
-        </button>
+        <% if @current_club&.zoom_link.present? %>
+          <a href="<%= @current_club.zoom_link %>" target="_blank" class="w-full py-5 rounded-[28px] bg-white text-[#07060A] font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95 transition-all">
+            <span class="text-2xl">📹</span>
+            줌(Zoom) 라이브 입장하기
+          </a>
+        <% else %>
+          <button class="w-full py-5 rounded-[28px] bg-white/20 text-white/40 font-black text-lg flex items-center justify-center gap-3 cursor-not-allowed">
+            <span class="text-2xl grayscale">📹</span>
+            라이브 준비 중입니다
+          </button>
+        <% end %>
         
-        <%= link_to prototype_lecture_intro_path(source: 'prototype'), class: "w-full py-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all" do %>
-          <span class="text-2xl">🎓</span>
-          루파클럽 스페셜 강의실 입장
+        <% if @current_club&.special_lecture_link.present? %>
+          <a href="<%= @current_club.special_lecture_link %>" target="_blank" class="w-full py-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
+            <span class="text-2xl">🎓</span>
+            루파클럽 스페셜 강의실 입장
+          </a>
+        <% else %>
+          <button class="w-full py-5 rounded-[28px] bg-white/5 border border-white/10 text-white/20 font-black text-lg flex items-center justify-center gap-3 cursor-not-allowed">
+            <span class="text-2xl grayscale">🎓</span>
+            강의실 준비 중
+          </button>
         <% end %>
       <% else %>
         <!-- Locked State for General Users -->

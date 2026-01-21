@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_20_044925) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_21_071051) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -420,6 +420,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_044925) do
     t.integer "monthly_fee", default: 0, null: false
     t.string "monthly_reward_info"
     t.string "season_reward_info"
+    t.string "special_lecture_link"
     t.date "start_date", null: false
     t.integer "status", default: 0, null: false
     t.string "thumbnail_image"
@@ -427,6 +428,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_20_044925) do
     t.integer "total_penalties", default: 0
     t.datetime "updated_at", null: false
     t.string "weekly_reward_info"
+    t.string "zoom_link"
     t.index ["category"], name: "index_routine_clubs_on_category"
     t.index ["host_id"], name: "index_routine_clubs_on_host_id"
     t.index ["status"], name: "index_routine_clubs_on_status"
