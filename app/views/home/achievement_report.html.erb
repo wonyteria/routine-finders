@@ -413,63 +413,63 @@
       
       <!-- SOCIAL PANEL -->
       <div data-tabs-target="panel" data-id="social" class="hidden space-y-6">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <!-- Stats -->
           <% [
-             { label: "받은 응원", value: number_with_delimiter(@social_stats[:received_cheers]), icon: "heart", gradient: "from-rose-500 to-pink-600", glow: "rose" },
-             { label: "보낸 응원", value: number_with_delimiter(@social_stats[:sent_cheers]), icon: "thumbs-up", gradient: "from-indigo-500 to-purple-600", glow: "indigo" },
-             { label: "베스트 루틴", value: @social_stats[:best_routine_count], icon: "star", gradient: "from-amber-500 to-orange-600", glow: "amber" },
-             { label: "모임 평점", value: @social_stats[:rating], icon: "message-circle", gradient: "from-emerald-500 to-teal-600", glow: "emerald" }
+             { label: "받은 응원", value: number_with_delimiter(@social_stats[:received_cheers]), icon: "heart" },
+             { label: "보낸 응원", value: number_with_delimiter(@social_stats[:sent_cheers]), icon: "thumbs-up" },
+             { label: "베스트 루틴", value: @social_stats[:best_routine_count], icon: "star" },
+             { label: "모임 평점", value: @social_stats[:rating], icon: "message-circle" }
           ].each do |stat| %>
-            <div class="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4 group hover:scale-105 transition-all">
-               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br <%= stat[:gradient] %> flex items-center justify-center shadow-lg shadow-<%= stat[:glow] %>-500/50">
-                 <i data-feather="<%= stat[:icon] %>" class="w-6 h-6 text-white"></i>
+            <div class="bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-lg flex items-center gap-3 group hover:border-indigo-500/30 transition-all">
+               <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                 <i data-feather="<%= stat[:icon] %>" class="w-5 h-5 text-indigo-400"></i>
                </div>
                <div>
-                 <p class="text-xs font-bold text-slate-400 uppercase"><%= stat[:label] %></p>
-                 <h4 class="text-2xl font-black text-white"><%= stat[:value] %></h4>
+                 <p class="text-[10px] font-bold text-slate-400 uppercase"><%= stat[:label] %></p>
+                 <h4 class="text-xl font-black text-white"><%= stat[:value] %></h4>
                </div>
             </div>
           <% end %>
         </div>
 
-         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
            <!-- Hall of Fame -->
-           <div class="md:col-span-2 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-7">
-              <h4 class="text-lg font-black text-white mb-5 flex items-center gap-2">
-                <i data-feather="award" class="w-5 h-5 text-indigo-400"></i> 명예의 전당
+           <div class="md:col-span-2 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg p-5">
+              <h4 class="text-sm font-black text-white mb-4 flex items-center gap-2">
+                <i data-feather="award" class="w-4 h-4 text-indigo-400"></i> 명예의 전당
               </h4>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <% if @top_achievers.any? %>
                   <% @top_achievers.each_with_index do |user, idx| %>
                      <% is_me = (user.id == current_user.id) %>
-                     <div class="relative p-5 rounded-2xl border <%= is_me ? 'border-indigo-500 bg-indigo-500/10 ring-2 ring-indigo-500 shadow-lg shadow-indigo-500/50' : 'border-white/10 bg-white/5' %> flex flex-col items-center text-center gap-3 group hover:scale-105 transition-all">
-                        <span class="absolute top-3 left-3 text-xs font-black text-slate-500">#<%= idx + 1 %></span>
-                        <div class="w-16 h-16 rounded-full border-4 border-white/20 shadow-xl overflow-hidden bg-slate-700">
+                     <div class="relative p-4 rounded-xl border <%= is_me ? 'border-indigo-500 bg-indigo-500/10 ring-1 ring-indigo-500' : 'border-white/10 bg-white/5' %> flex flex-col items-center text-center gap-2 group hover:scale-[1.02] transition-all">
+                        <span class="absolute top-2 left-2 text-[10px] font-black text-slate-500">#<%= idx + 1 %></span>
+                        <div class="w-12 h-12 rounded-full border-2 border-white/20 shadow-lg overflow-hidden bg-slate-700">
                           <img src="<%= user.profile_image.presence || "https://api.dicebear.com/7.x/lorelei/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover">
                         </div>
                         <div>
-                          <p class="text-sm font-black text-white truncate max-w-[90px]"><%= user.nickname %></p>
-                          <p class="text-xs font-bold text-slate-400"><%= user.badge_count %>개의 배지</p>
+                          <p class="text-xs font-black text-white truncate max-w-[80px]"><%= user.nickname %></p>
+                          <p class="text-[10px] font-bold text-slate-400"><%= user.badge_count %>개의 배지</p>
                         </div>
                      </div>
                   <% end %>
                 <% else %>
-                  <div class="col-span-3 py-12 text-center text-slate-400 text-sm">순위 데이터가 충분하지 않습니다.</div>
+                  <div class="col-span-3 py-10 text-center text-slate-400 text-xs">순위 데이터가 충분하지 않습니다.</div>
                 <% end %>
               </div>
            </div>
            
            <!-- Motivation Card -->
-           <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-7 text-white flex flex-col justify-center text-center relative overflow-hidden shadow-2xl shadow-indigo-500/50">
+           <div class="bg-indigo-600 rounded-2xl p-5 text-white flex flex-col justify-center text-center relative overflow-hidden shadow-lg shadow-indigo-500/30">
              <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-             <div class="relative z-10 space-y-4">
-               <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-lg">
-                 <i data-feather="zap" class="w-7 h-7 text-yellow-300"></i>
+             <div class="relative z-10 space-y-3">
+               <div class="w-11 h-11 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-1">
+                 <i data-feather="zap" class="w-6 h-6 text-yellow-300"></i>
                </div>
-               <h4 class="text-xl font-black leading-tight">동기부여의 아이콘!</h4>
-               <p class="text-sm text-indigo-100 font-medium leading-relaxed px-4">
-                 당신의 인증은 평균 <br/> <b class="text-white text-lg"><%= @inspiration_count %>명</b>에게 영감을 줍니다.
+               <h4 class="text-base font-black leading-tight">동기부여의 아이콘!</h4>
+               <p class="text-xs text-indigo-100 font-medium leading-relaxed px-3">
+                 당신의 인증은 평균 <br/> <b class="text-white text-base"><%= @inspiration_count %>명</b>에게 영감을 줍니다.
                </p>
              </div>
            </div>
