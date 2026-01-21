@@ -1,0 +1,124 @@
+<% content_for :page_title, "루틴 클럽 상세: #{@routine_club.title}" %>
+
+<div class="max-w-5xl mx-auto space-y-8">
+  <div class="flex items-center gap-4">
+    <a href="<%= admin_routine_clubs_path %>" class="p-3 bg-white/5 hover:bg-white/10 rounded-2xl text-slate-400 hover:text-white transition-all border border-white/5">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    </a>
+    <h1 class="text-3xl font-black tracking-tight">Club Intelligence</h1>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Club Profile Card -->
+    <div class="lg:col-span-1 space-y-6">
+      <div class="admin-glass rounded-[40px] overflow-hidden">
+        <div class="aspect-video relative">
+          <img src="<%= @routine_club.thumbnail_image %>" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60"></div>
+          <div class="absolute bottom-6 left-6">
+            <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-indigo-600 text-white shadow-lg">
+              <%= @routine_club.category %>
+            </span>
+          </div>
+        </div>
+        
+        <div class="p-8">
+          <h2 class="text-2xl font-black mb-2"><%= @routine_club.title %></h2>
+          <p class="text-slate-500 text-sm font-medium mb-8 leading-relaxed"><%= @routine_club.description %></p>
+          
+          <div class="space-y-4">
+            <div class="flex items-center justify-between py-3 border-b border-white/5">
+              <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</span>
+              <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest <%= @routine_club.status_active? ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20' %>">
+                <%= @routine_club.status.upcase %>
+              </span>
+            </div>
+            <div class="flex items-center justify-between py-3 border-b border-white/5">
+              <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Members</span>
+              <span class="text-sm font-black text-white"><%= @routine_club.current_members %> / <%= @routine_club.max_members %></span>
+            </div>
+            <div class="flex items-center justify-between py-3 border-b border-white/5">
+              <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Monthly Fee</span>
+              <span class="text-sm font-black text-emerald-400">₩<%= number_with_delimiter @routine_club.monthly_fee %></span>
+            </div>
+            <div class="flex items-center justify-between py-3">
+              <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Host</span>
+              <span class="text-sm font-black text-indigo-400"><%= @routine_club.host&.nickname %></span>
+            </div>
+          </div>
+
+          <div class="mt-8 flex gap-3">
+            <%= link_to "Edit Club", edit_admin_routine_club_path(@routine_club), class: "flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-xs font-black text-center transition-all border border-white/5" %>
+            <%= button_to admin_routine_club_path(@routine_club), method: :delete, data: { turbo_confirm: "삭제하시겠습니까?" }, class: "px-5 py-4 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white rounded-2xl transition-all border border-red-500/20" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics & Members -->
+    <div class="lg:col-span-2 space-y-8">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="admin-glass rounded-[32px] p-8">
+          <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Attendance Rate</p>
+          <p class="text-4xl font-black text-emerald-400"><%= @routine_club.average_attendance_rate %>%</p>
+          <div class="mt-4 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-400" style="width: <%= @routine_club.average_attendance_rate %>%"></div>
+          </div>
+        </div>
+        <div class="admin-glass rounded-[32px] p-8">
+          <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Pending Payments</p>
+          <p class="text-4xl font-black text-amber-400"><%= @routine_club.pending_payments_count %></p>
+          <p class="mt-4 text-[10px] font-bold text-slate-500 uppercase">Awaiting verification</p>
+        </div>
+      </div>
+
+      <div class="admin-glass rounded-[32px] overflow-hidden">
+        <div class="p-8 border-b border-white/5 flex justify-between items-center">
+          <h3 class="text-xl font-black">Club Members</h3>
+          <span class="text-xs font-bold text-slate-500">Active Members</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="text-[10px] uppercase font-black text-slate-500 tracking-widest border-b border-white/5">
+                <th class="px-8 py-4">User</th>
+                <th class="px-8 py-4">Joined At</th>
+                <th class="px-8 py-4">Payment</th>
+                <th class="px-8 py-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+              <% @routine_club.members.includes(:user).each do |member| %>
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                  <td class="px-8 py-5">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center font-black text-indigo-400 text-xs">
+                        <%= member.user.nickname.first %>
+                      </div>
+                      <span class="text-sm font-black"><%= member.user.nickname %></span>
+                    </div>
+                  </td>
+                  <td class="px-8 py-5 text-xs text-slate-400 font-medium">
+                    <%= member.joined_at&.strftime("%Y.%m.%d") %>
+                  </td>
+                  <td class="px-8 py-5">
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider <%= member.payment_status == 'confirmed' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400' %>">
+                      <%= member.payment_status %>
+                    </span>
+                  </td>
+                  <td class="px-8 py-5 text-right">
+                    <button class="text-slate-500 hover:text-white transition-colors">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                    </button>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

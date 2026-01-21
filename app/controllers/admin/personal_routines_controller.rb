@@ -5,7 +5,7 @@ module Admin
     def index
       @personal_routines = PersonalRoutine.includes(:user).order(created_at: :desc)
       if params[:q].present?
-        sanitized_q = "%#{sanitize_sql_like(params[:q])}%"
+        sanitized_q = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q])}%"
         @personal_routines = @personal_routines.where("title LIKE ?", sanitized_q)
       end
       @personal_routines = @personal_routines.page(params[:page]).per(20) if @personal_routines.respond_to?(:page)

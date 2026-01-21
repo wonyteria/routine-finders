@@ -3,7 +3,7 @@ module Admin
     before_action :set_banner, only: [:edit, :update, :destroy]
 
     def index
-      @banners = Banner.all.order(position: :asc)
+      @banners = Banner.all.order(priority: :desc)
     end
 
     def new
@@ -39,7 +39,7 @@ module Admin
     end
 
     def banner_params
-      params.require(:banner).permit(:title, :subtitle, :image_url, :link_url, :active, :position, :category)
+      params.require(:banner).permit(:title, :subtitle, :link_url, :active, :priority, :banner_type, :badge_text, :image)
     end
   end
 end

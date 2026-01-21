@@ -82,7 +82,7 @@
                     <%= activity.activity_type == 'routine_record' ? '✅' : '🔥' %>
                   </div>
                   <div>
-                    <p class="text-sm font-black text-white"><%= activity.activity_type.titleize %></p>
+                    <p class="text-sm font-black text-white"><%= activity.activity_type&.titleize %></p>
                     <p class="text-[11px] text-slate-500 font-medium"><%= time_ago_in_words(activity.created_at) %> ago</p>
                   </div>
                 </div>

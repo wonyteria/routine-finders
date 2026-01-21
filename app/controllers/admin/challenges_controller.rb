@@ -15,7 +15,7 @@ module Admin
     end
 
     def show
-      @participants = @challenge.participations.includes(:user)
+      @participants = @challenge.participants.includes(:user)
       @verification_logs = @challenge.verification_logs.order(created_at: :desc).limit(20)
     end
 
@@ -39,7 +39,11 @@ module Admin
     end
 
     def challenge_params
-      params.require(:challenge).permit(:title, :description, :status, :start_date, :end_date, :amount)
+      params.require(:challenge).permit(
+        :title, :description, :status, :start_date, :end_date, :amount,
+        :purpose, :max_participants, :mode, :entry_type, :cost_type, 
+        :verification_type, :is_official
+      )
     end
   end
 end
