@@ -1,6 +1,7 @@
 <div data-controller="tabs" 
      data-tabs-active-class="bg-white/10 text-white shadow-lg ring-1 ring-white/20 backdrop-blur-xl" 
      data-tabs-inactive-class="text-slate-400 hover:bg-white/5 hover:text-white"
+     data-tabs-hidden-class="hidden"
      class="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden">
   
   <!-- Animated Background -->
@@ -11,21 +12,13 @@
 
   <div class="relative z-10 max-w-7xl mx-auto pb-20 px-4 md:px-6">
     
-    <!-- Navigation: Back to Home -->
-    <div class="pt-6 mb-4">
-      <%= link_to root_path, class: "inline-flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/10 transition-all backdrop-blur-sm group text-xs" do %>
-        <i data-feather="chevron-left" class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform"></i>
-        <span class="font-bold uppercase tracking-wider">홈으로 가기</span>
-      <% end %>
-    </div>
-
     <!-- Header & Tabs -->
-    <div class="flex flex-col gap-4 mb-6">
+    <div class="flex flex-col gap-4 pt-8 mb-6">
       <div class="space-y-1">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-            <i data-feather="bar-chart-2" class="w-4 h-4 text-white"></i>
-          </div>
+        <div class="flex items-center gap-3">
+          <%= link_to "#", onclick: "history.back(); return false;", class: "w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center border border-white/10 hover:bg-white/20 transition-all active:scale-95 shrink-0" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <% end %>
           <div>
             <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Routine Insight</p>
             <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">성취 분석 리포트</h2>
@@ -36,9 +29,9 @@
       <!-- Tab Switcher - Full Width -->
       <div class="bg-white/5 p-1 rounded-xl grid grid-cols-3 gap-1 backdrop-blur-xl border border-white/10 shadow-lg">
         <button data-tabs-target="tab" data-id="overview" data-action="click->tabs#change"
-                class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight">OVERVIEW</button>
+                class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight bg-white/10 text-white shadow-lg ring-1 ring-white/20 backdrop-blur-xl">OVERVIEW</button>
         <button data-tabs-target="tab" data-id="finance" data-action="click->tabs#change"
-                class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight">FINANCE</button>
+                class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight text-slate-400 hover:bg-white/5 hover:text-white">FINANCE</button>
         <button data-tabs-target="tab" data-id="social" data-action="click->tabs#change"
                 class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight">SOCIAL</button>
       </div>
@@ -80,27 +73,25 @@
         <!-- Top Stats Bento Grid -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <% [
-            { icon: "activity", title: "누적 활동", value: "#{total_activities}회", sub: "All-time" },
-            { icon: "target", title: "평균 달성률", value: "#{avg_completion}%", sub: "Challenges" },
-            { icon: "zap", title: "최대 스트릭", value: "#{max_streak}일", sub: "Personal Best" },
-            { icon: "award", title: "보유 배지", value: "#{badge_count}개", sub: "Collection" }
+            { title: "누적 활동", value: "#{total_activities}회", sub: "All-time", svg: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>' },
+            { title: "평균 달성률", value: "#{avg_completion}%", sub: "Challenges", svg: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' },
+            { title: "최대 스트릭", value: "#{max_streak}일", sub: "Personal Best", svg: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>' },
+            { title: "보유 배지", value: "#{badge_count}개", sub: "Collection", svg: '<circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>' }
           ].each do |item| %>
-            <div class="group relative bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-lg transition-all hover:scale-[1.01] hover:border-indigo-500/30 overflow-hidden">
-              <div class="absolute -top-10 -right-10 w-24 h-24 bg-indigo-500/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="group relative bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/10 shadow-lg transition-all hover:border-indigo-500/30 overflow-hidden">
+              <div class="absolute -top-10 -right-10 w-20 h-20 bg-indigo-500/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
-              <div class="relative z-10 flex flex-col h-full justify-between gap-3">
-                <div class="flex items-center justify-between">
-                  <div class="w-9 h-9 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                    <i data-feather="<%= item[:icon] %>" class="w-4 h-4 text-indigo-400"></i>
+              <div class="relative z-10 flex flex-col gap-0.5">
+                <div class="flex items-center justify-between mb-0.5">
+                  <div class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><%= item[:svg].html_safe %></svg>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider"><%= item[:title] %></p>
                   </div>
-                  <div class="px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-[9px] font-bold text-white/80 backdrop-blur-sm">
+                  <div class="px-1 py-0.5 rounded bg-white/5 text-[7px] font-bold text-slate-500 whitespace-nowrap">
                     <%= item[:sub] %>
                   </div>
                 </div>
-                <div>
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-0.5"><%= item[:title] %></p>
-                  <h4 class="text-xl font-black text-white tracking-tight"><%= item[:value] %></h4>
-                </div>
+                <h4 class="text-lg font-black text-white tracking-tight"><%= item[:value] %></h4>
               </div>
             </div>
           <% end %>
@@ -108,19 +99,18 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Weekly Trend Chart -->
-          <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6 flex flex-col justify-between overflow-hidden relative group">
-            <!-- Gradient Overlay -->
-            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-indigo-500/30 to-transparent rounded-bl-full -mr-10 -mt-10 blur-2xl group-hover:scale-110 transition-transform"></div>
+          <div class="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg p-4 flex flex-col justify-between overflow-hidden relative group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-bl-full -mr-8 -mt-8 blur-2xl group-hover:scale-110 transition-transform"></div>
             
-            <div class="space-y-2 relative z-10">
+            <div class="space-y-1 relative z-10">
               <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
-                <h4 class="text-base font-black text-white">주간 트렌드</h4>
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
+                <h4 class="text-sm font-black text-white">주간 트렌드</h4>
               </div>
-              <p class="text-xs text-slate-400 font-medium">지난 7일간의 성취 흐름</p>
+              <p class="text-[10px] text-slate-400 font-medium">지난 7일간의 성취 흐름</p>
             </div>
             
-            <div class="flex items-end justify-between h-32 mt-6 gap-2 px-1">
+            <div class="flex items-end justify-between h-24 mt-4 gap-1.5 px-1">
               <% 
                 weekly_stats = (0..6).map do |i|
                   date = Date.current - i.days
@@ -131,17 +121,17 @@
               %>
               <% weekly_stats.each_with_index do |stat, i| %>
                 <div class="flex-1 flex flex-col justify-end group/bar h-full cursor-pointer relative">
-                  <div class="w-full rounded-t-xl relative overflow-hidden transition-all duration-500" style="height: <%= [stat[:count].to_f / max_daily * 100, 10].max.to_i %>%">
-                    <div class="absolute inset-0 bg-gradient-to-t <%= i == 6 ? 'from-indigo-600 to-indigo-400' : 'from-indigo-500/50 to-indigo-400/50' %> group-hover/bar:from-indigo-500 group-hover/bar:to-indigo-300 transition-all shadow-lg shadow-indigo-500/50"></div>
+                  <div class="w-full rounded-t-lg relative overflow-hidden transition-all duration-500" style="height: <%= [stat[:count].to_f / max_daily * 100, 10].max.to_i %>%">
+                    <div class="absolute inset-0 bg-indigo-500 <%= i == 6 ? 'opacity-100' : 'opacity-60' %> group-hover/bar:opacity-100 transition-all"></div>
                   </div>
                   <!-- Tooltip -->
-                  <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-black py-2 px-3 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-all whitespace-nowrap pointer-events-none z-20 shadow-2xl border border-white/20 transform translate-y-2 group-hover/bar:translate-y-0">
+                  <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold py-1.5 px-2 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all whitespace-nowrap pointer-events-none z-20 shadow-xl border border-white/20 transform translate-y-2 group-hover/bar:translate-y-0">
                      <%= stat[:count] %> activities
                   </div>
                 </div>
               <% end %>
             </div>
-            <div class="flex justify-between px-1 mt-3 text-xs font-black text-slate-400 uppercase tracking-widest text-center">
+            <div class="flex justify-between px-1 mt-2 text-[9px] font-bold text-slate-400 uppercase tracking-wider text-center">
               <% weekly_stats.each do |stat| %>
                 <span class="flex-1 <%= 'text-indigo-400 scale-110' if stat[:date] == Date.current %>"><%= stat[:day] %></span>
               <% end %>
@@ -149,13 +139,13 @@
           </div>
 
           <!-- Routine Timing Analysis -->
-          <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6 space-y-4">
+          <div class="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg p-4 space-y-3">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg shadow-purple-500/50">
-                  <i data-feather="clock" class="w-5 h-5 text-white"></i>
+              <div class="flex items-center gap-2">
+                <div class="p-1.5 bg-indigo-500/20 rounded-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-300"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
-                <h4 class="text-base font-black text-white">루틴 집중 시간</h4>
+                <h4 class="text-sm font-black text-white">루틴 집중 시간</h4>
               </div>
               <% 
                 peak_hour = @routine_time_stats&.max_by { |k, v| v }&.first
@@ -167,26 +157,26 @@
                 end if peak_hour
               %>
               <% if peak_time %>
-                <span class="text-xs font-black text-white bg-gradient-to-r from-purple-500 to-pink-600 px-3 py-1.5 rounded-full shadow-lg shadow-purple-500/50"><%= peak_time %></span>
+                <span class="text-[10px] font-black text-white bg-indigo-500 px-2 py-1 rounded-full shadow-md shadow-indigo-500/30"><%= peak_time %></span>
               <% end %>
             </div>
 
-            <div class="flex items-end h-28 gap-0.5 px-1">
+            <div class="flex items-end h-20 gap-0.5 px-1">
               <% 
                 max_count = [@routine_time_stats&.values&.max || 0, 1].max
               %>
               <% (0..23).each do |hour| %>
                 <% count = @routine_time_stats[hour] || 0 %>
                 <div class="flex-1 rounded-t-sm relative group/time" style="height: <%= [count.to_f / max_count * 100, 5].max.to_i %>%">
-                  <div class="absolute inset-0 bg-gradient-to-t from-purple-500/60 to-pink-500/60 group-hover/time:from-purple-500 group-hover/time:to-pink-500 transition-all shadow-lg shadow-purple-500/30"></div>
+                  <div class="absolute inset-0 bg-indigo-500/50 group-hover/time:bg-indigo-500 transition-all"></div>
                   <!-- Tooltip -->
-                  <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black py-1.5 px-2.5 rounded-lg opacity-0 group-hover/time:opacity-100 transition-all whitespace-nowrap pointer-events-none z-20 shadow-2xl border border-white/20 transform translate-y-2 group-hover/time:translate-y-0">
+                  <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold py-1 px-2 rounded-md opacity-0 group-hover/time:opacity-100 transition-all whitespace-nowrap pointer-events-none z-20 shadow-xl border border-white/20 transform translate-y-2 group-hover/time:translate-y-0">
                     <%= hour %>시: <%= count %>회
                   </div>
                 </div>
               <% end %>
             </div>
-            <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <div class="flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-wider">
               <span>00시</span>
               <span>06시</span>
               <span>12시</span>
@@ -197,20 +187,20 @@
         </div>
 
         <!-- Achievement Matrix -->
-        <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6 space-y-5">
+        <div class="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg p-4 space-y-4">
           <div class="flex items-center justify-between">
-             <div class="flex items-center gap-3">
-              <div class="p-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-500/50">
-                <i data-feather="grid" class="w-5 h-5 text-white"></i>
+             <div class="flex items-center gap-2">
+              <div class="p-1.5 bg-indigo-500/20 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-300"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
               </div>
-              <h4 class="text-base font-black text-white">성취 매트릭스</h4>
+              <h4 class="text-sm font-black text-white">성취 매트릭스</h4>
             </div>
-            <div class="flex gap-4">
-              <div class="flex items-center gap-2 text-xs font-bold text-slate-400">
-                <span class="w-2 h-2 rounded-sm bg-white/10"></span> 0
+            <div class="flex gap-3">
+              <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
+                <span class="w-1.5 h-1.5 rounded-sm bg-white/10"></span> 0
               </div>
-              <div class="flex items-center gap-2 text-xs font-bold text-slate-400">
-                <span class="w-2 h-2 rounded-sm bg-indigo-500 shadow-sm shadow-indigo-500/50"></span> High
+              <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
+                <span class="w-1.5 h-1.5 rounded-sm bg-indigo-500"></span> High
               </div>
             </div>
           </div>
@@ -225,209 +215,183 @@
               r_rate = matrix_dates.count { |d| r_logs.include?(d) } / 28.0 * 100
             %>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <!-- Challenges -->
-              <div class="space-y-3 bg-white/5 p-4 rounded-2xl border border-white/10">
+              <div class="space-y-2 bg-white/5 p-3 rounded-xl border border-white/10">
                 <div class="flex justify-between items-end">
-                  <span class="text-xs font-black text-indigo-400 uppercase tracking-wider">Challenges</span>
-                  <span class="text-sm font-black text-white"><%= c_rate.to_i %>%</span>
+                  <span class="text-[10px] font-black text-indigo-400 uppercase tracking-wider">Challenges</span>
+                  <span class="text-xs font-black text-white"><%= c_rate.to_i %>%</span>
                 </div>
-                <div class="grid grid-cols-7 gap-1.5">
+                <div class="grid grid-cols-7 gap-1">
                   <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
-                    <div class="text-[9px] font-black text-slate-500 text-center"><%= day %></div>
+                    <div class="text-[8px] font-bold text-slate-500 text-center"><%= day %></div>
                   <% end %>
                   <%# Padding for start of 28 day range %>
                   <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
                   <% matrix_dates.each do |date| %>
                     <% active = c_logs.include?(date) %>
-                    <div class="aspect-square rounded-md transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-indigo-500 shadow-md shadow-indigo-500/50' : 'bg-white/10' %>" 
+                    <div class="aspect-square rounded transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-indigo-500' : 'bg-white/10' %>" 
                          title="<%= date %>"></div>
                   <% end %>
                 </div>
               </div>
 
               <!-- Routines -->
-              <div class="space-y-3 bg-white/5 p-4 rounded-2xl border border-white/10">
+              <div class="space-y-2 bg-white/5 p-3 rounded-xl border border-white/10">
                 <div class="flex justify-between items-end">
-                  <span class="text-xs font-black text-purple-400 uppercase tracking-wider">Routines</span>
-                  <span class="text-sm font-black text-white"><%= r_rate.to_i %>%</span>
+                  <span class="text-[10px] font-black text-indigo-400 uppercase tracking-wider">Routines</span>
+                  <span class="text-xs font-black text-white"><%= r_rate.to_i %>%</span>
                 </div>
-                <div class="grid grid-cols-7 gap-1.5">
+                <div class="grid grid-cols-7 gap-1">
                   <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
-                    <div class="text-[9px] font-black text-slate-500 text-center"><%= day %></div>
+                    <div class="text-[8px] font-bold text-slate-500 text-center"><%= day %></div>
                   <% end %>
                   <%# Padding for start of 28 day range %>
                   <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
                   <% matrix_dates.each do |date| %>
                     <% active = r_logs.include?(date) %>
-                    <div class="aspect-square rounded-md transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-purple-500 shadow-md shadow-purple-500/50' : 'bg-white/10' %>"
+                    <div class="aspect-square rounded transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-indigo-500' : 'bg-white/10' %>"
                          title="<%= date %>"></div>
                   <% end %>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Bottom Section Split -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-           <!-- Growth Investment Summary -->
-          <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-7 text-white flex flex-col justify-between relative overflow-hidden shadow-2xl shadow-indigo-500/50 group">
-            <div class="absolute -right-16 -top-16 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors"></div>
-            
-            <div class="relative z-10 space-y-6">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">
-                    <i data-feather="trending-up" class="w-5 h-5 text-white"></i>
-                </div>
-                <h4 class="text-base font-black tracking-tight">성장 투자 요약</h4>
-              </div>
+            </div> <!-- End Matrix Grid -->
+          </div> <!-- End Achievement Matrix Card -->
 
-              <div class="space-y-2">
-                <p class="text-xs font-bold text-indigo-200 uppercase tracking-widest">Total Growth Investment</p>
-                <h4 class="text-4xl font-black tracking-tight"><%= number_with_delimiter(@growth_stats[:total_invested]) %><span class="text-lg font-bold text-white/70 ml-1">원</span></h4>
-              </div>
-
-              <div class="pt-5 border-t border-white/20 flex flex-col gap-3">
-                <div class="flex justify-between text-sm">
-                   <span class="text-indigo-100">환급 예정액</span>
-                   <span class="text-white font-black"><%= number_with_delimiter(@growth_stats[:expected_refund]) %>원</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                   <span class="text-white">누적 환급액</span>
-                   <span class="text-emerald-300 font-black"><%= number_with_delimiter(@growth_stats[:total_refunded]) %>원</span>
-                </div>
-              </div>
-            </div>
-            
-            <a href="#" data-action="click->tabs#change" data-id="finance" class="mt-6 w-full py-3.5 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white text-xs font-black rounded-2xl text-center transition-all border border-white/30 shadow-lg">
-              자세히 보기
-            </a>
-          </div>
-
-          <!-- Badge Collection -->
-          <div class="lg:col-span-2 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-7 space-y-6">
-            <div class="flex items-center justify-between">
-               <div class="flex items-center gap-3">
-                 <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
-                    <i data-feather="hexagon" class="w-5 h-5 text-white"></i>
-                 </div>
-                 <h4 class="text-lg font-black text-white">뱃지 로드맵</h4>
+        <!-- Badge Collection -->
+        <div class="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg p-5 space-y-4">
+          <div class="flex items-center justify-between">
+             <div class="flex items-center gap-3">
+               <div class="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><path d="M12 2l9 4.9V17.1L12 22l-9-4.9V6.9L12 2z"/></svg>
                </div>
-               <%= link_to badge_roadmap_path, class: "text-xs font-bold text-slate-400 hover:text-indigo-400 flex items-center gap-1 group transition-colors" do %>
-                 전체 보기 <i data-feather="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
-               <% end %>
-            </div>
-            
-            <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-              <% Badge.order(level: :asc).group_by(&:badge_type).each do |type, badges| %>
-                 <% 
-                   user_badge_ids = current_user.badges.where(badge_type: type).pluck(:id)
-                   latest_badge = Badge.where(badge_type: type, id: user_badge_ids).order(level: :desc).first
-                   next_badge = Badge.where(badge_type: type).where("level > ?", latest_badge&.level || 0).order(level: :asc).first
-                   display_badge = latest_badge || next_badge
-                   is_locked = latest_badge.nil?
-                 %>
-                 <div class="min-w-[110px] flex flex-col items-center gap-3 p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all group cursor-default">
-                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl relative shadow-xl <%= is_locked ? 'bg-white/10 opacity-40 grayscale' : 'bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm' %>">
-                      <%= display_badge&.icon_path || "🔒" %>
-                      <% if latest_badge %>
-                        <span class="absolute -top-2 -right-2 bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-[10px] font-black px-2 py-1 rounded-full ring-2 ring-slate-900 shadow-lg">L<%= latest_badge.level %></span>
-                      <% end %>
-                    </div>
-                    <div class="text-center space-y-1">
-                      <p class="text-xs font-black text-white truncate max-w-[90px]"><%= display_badge&.name || "미획득" %></p>
-                      <p class="text-[10px] font-bold text-slate-400 uppercase"><%= type.to_s.humanize %></p>
-                    </div>
-                 </div>
-              <% end %>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FINANCE PANEL -->
-      <div data-tabs-target="panel" data-id="finance" class="hidden space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Summary Card -->
-          <div class="md:col-span-1 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-3xl p-7 relative overflow-hidden shadow-2xl shadow-emerald-500/50">
-             <div class="absolute -right-16 -bottom-16 w-56 h-56 bg-white/10 rounded-full blur-3xl"></div>
-             <div class="relative z-10 space-y-8 h-full flex flex-col">
-               <div>
-                 <h4 class="text-lg font-black text-emerald-100 mb-3">My Assets</h4>
-                 <div class="flex items-baseline gap-2">
-                   <h2 class="text-5xl font-black"><%= number_with_delimiter(@growth_stats[:wallet_balance]) %></h2>
-                   <span class="text-base font-bold text-emerald-200">원</span>
-                 </div>
-               </div>
-               
-               <div class="space-y-5 flex-1">
-                 <div class="space-y-3">
-                   <div class="flex justify-between text-sm font-bold text-emerald-100">
-                     <span>자산 방어율</span>
-                     <span class="text-white">100%</span>
-                   </div>
-                   <div class="h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
-                     <div class="h-full bg-white shadow-lg shadow-white/50 w-[100%]"></div>
-                   </div>
-                   <p class="text-xs text-emerald-100">모든 투자가 안전하게 보호되고 있습니다.</p>
-                 </div>
-               </div>
-
-               <button class="w-full py-3.5 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-2xl text-sm font-black transition-all border border-white/30 shadow-lg">
-                 입출금 리포트 다운로드
-               </button>
+               <h4 class="text-sm font-black text-white">뱃지 로드맵</h4>
              </div>
+             <%= link_to badge_roadmap_path, class: "text-[10px] font-bold text-slate-400 hover:text-indigo-400 flex items-center gap-1 group transition-colors" do %>
+               전체 보기 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
+             <% end %>
+          </div>
+          
+          <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+            <% Badge.order(level: :asc).group_by(&:badge_type).each do |type, badges| %>
+               <% 
+                 user_badge_ids = current_user.badges.where(badge_type: type).pluck(:id)
+                 latest_badge = Badge.where(badge_type: type, id: user_badge_ids).order(level: :desc).first
+                 next_badge = Badge.where(badge_type: type).where("level > ?", latest_badge&.level || 0).order(level: :asc).first
+                 display_badge = latest_badge || next_badge
+                 is_locked = latest_badge.nil?
+               %>
+               <div class="min-w-[90px] flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:border-indigo-500/30 hover:bg-white/10 transition-all group cursor-default">
+                  <div class="w-11 h-11 rounded-lg flex items-center justify-center text-2xl relative <%= is_locked ? 'bg-white/5 opacity-40 grayscale' : 'bg-white/10' %>">
+                    <%= display_badge&.icon_path || "🔒" %>
+                    <% if latest_badge %>
+                      <span class="absolute -top-1.5 -right-1.5 bg-indigo-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full ring-2 ring-slate-900 shadow-md">L<%= latest_badge.level %></span>
+                    <% end %>
+                  </div>
+                  <div class="text-center space-y-0.5">
+                    <p class="text-[10px] font-black text-white truncate max-w-[75px]"><%= display_badge&.name || "미획득" %></p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase"><%= type.to_s.humanize %></p>
+                  </div>
+               </div>
+            <% end %>
+          </div>
+        </div>
+      </div> <!-- End OVERVIEW panel -->
+
+      <div data-tabs-target="panel" data-id="finance" class="hidden space-y-4">
+        <div class="grid grid-cols-1 gap-4">
+          <!-- Time Value Card -->
+          <div class="bg-indigo-600 rounded-2xl p-5 text-white relative overflow-hidden shadow-lg shadow-indigo-500/30">
+            <div class="absolute -right-12 -top-12 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="relative z-10 flex items-center justify-between">
+              <div class="space-y-1">
+                <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-wider">내가 확보한 시간의 가치</p>
+                <h4 class="text-2xl font-black tracking-tight">~<%= number_with_delimiter((total_activities * 0.5 * 10000).to_i) %>원</h4>
+                <p class="text-[9px] text-indigo-100 font-medium opacity-80">최저시급 기준, 루틴으로 확보한 시간 가치</p>
+              </div>
+              <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+            </div>
           </div>
 
-          <!-- History List -->
-          <div class="md:col-span-2 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-7 space-y-5">
-             <h4 class="text-lg font-black text-white mb-3">최근 입출금 내역</h4>
-              <div class="space-y-2">
-                 <% if @recent_transactions.any? %>
-                   <% @recent_transactions.each do |item| %>
-                   <div class="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-all cursor-default border border-transparent hover:border-white/10 group">
-                      <div class="flex items-center gap-4">
-                         <div class="w-10 h-10 rounded-xl bg-white/10 text-slate-300 flex items-center justify-center shadow-md group-hover:bg-white/20 transition-colors">
-                            <i data-feather="arrow-up-right" class="w-5 h-5"></i>
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Asset Defense -->
+            <div class="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-lg space-y-3">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400">의지의 원금 수호</span>
+              </div>
+              <div>
+                <h5 class="text-lg font-black text-white">100%</h5>
+                <p class="text-[9px] text-slate-500">중도 포기 없이 지켜낸 자산</p>
+              </div>
+            </div>
+
+            <!-- Reward ROI -->
+            <div class="bg-white/5 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-lg space-y-3">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400">참여 수익률</span>
+              </div>
+              <div>
+                <h5 class="text-lg font-black text-white">+<%= (@growth_stats[:total_refunded] > 0 ? ((@growth_stats[:total_refunded].to_f / @growth_stats[:total_invested]) * 100).to_i : 0) %>%</h5>
+                <p class="text-[9px] text-slate-500">도전 대비 누적 리워드 비중</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- History Summary -->
+          <div class="bg-white/5 backdrop-blur-md p-5 rounded-2xl border border-white/10 shadow-lg space-y-4">
+             <div class="flex items-center justify-between">
+                <h4 class="text-sm font-black text-white">최근 거래 리포트</h4>
+                <div class="text-[10px] font-bold text-slate-500">Balance: <%= number_with_delimiter(@growth_stats[:wallet_balance]) %>원</div>
+             </div>
+             <div class="space-y-1.5">
+               <% if @recent_transactions.any? %>
+                 <% @recent_transactions.each do |item| %>
+                   <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-all">
+                      <div class="flex items-center gap-3">
+                         <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
                          </div>
                          <div class="min-w-0">
-                           <p class="font-black text-white truncate text-sm"><%= item[:title] %></p>
-                           <p class="text-xs text-slate-400 font-medium"><%= item[:date] %></p>
+                           <p class="font-bold text-white truncate text-xs"><%= item[:title] %></p>
+                           <p class="text-[9px] text-slate-500"><%= item[:date] %></p>
                          </div>
                       </div>
-                      <span class="font-black shrink-0 text-sm text-white">
-                        -<%= number_with_delimiter(item[:amount]) %>원
-                      </span>
-                   </div>
-                   <% end %>
-                 <% else %>
-                   <div class="py-16 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
-                      <p class="text-sm font-bold text-slate-400">최근 입출금 내역이 없습니다.</p>
+                      <span class="font-black text-xs text-white">-<%= number_with_delimiter(item[:amount]) %>원</span>
                    </div>
                  <% end %>
-              </div>
+               <% else %>
+                 <div class="py-10 text-center text-slate-500 text-xs font-bold bg-white/5 rounded-xl border border-dashed border-white/10">내역이 존재하지 않습니다.</div>
+               <% end %>
+             </div>
           </div>
         </div>
-      </div>
-      
+      </div> <!-- End FINANCE panel -->
+
       <!-- SOCIAL PANEL -->
       <div data-tabs-target="panel" data-id="social" class="hidden space-y-6">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <!-- Stats -->
           <% [
-             { label: "받은 응원", value: number_with_delimiter(@social_stats[:received_cheers]), icon: "heart" },
-             { label: "보낸 응원", value: number_with_delimiter(@social_stats[:sent_cheers]), icon: "thumbs-up" },
-             { label: "베스트 루틴", value: @social_stats[:best_routine_count], icon: "star" },
-             { label: "모임 평점", value: @social_stats[:rating], icon: "message-circle" }
+             { label: "받은 응원", value: number_with_delimiter(@social_stats[:received_cheers]), svg: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: 'text-rose-400' },
+             { label: "보낸 응원", value: number_with_delimiter(@social_stats[:sent_cheers]), svg: '<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>', color: 'text-indigo-400' },
+             { label: "베스트 루틴", value: @social_stats[:best_routine_count], svg: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>', color: 'text-yellow-400' },
+             { label: "모임 평점", value: @social_stats[:rating], svg: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>', color: 'text-blue-400' }
           ].each do |stat| %>
-            <div class="bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-lg flex items-center gap-3 group hover:border-indigo-500/30 transition-all">
-               <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                 <i data-feather="<%= stat[:icon] %>" class="w-5 h-5 text-indigo-400"></i>
+            <div class="bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/10 shadow-lg flex items-center gap-2.5 group hover:border-indigo-500/30 transition-all">
+               <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center shrink-0">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="<%= stat[:color] %>"><%= stat[:svg].html_safe %></svg>
                </div>
-               <div>
-                 <p class="text-[10px] font-bold text-slate-400 uppercase"><%= stat[:label] %></p>
-                 <h4 class="text-xl font-black text-white"><%= stat[:value] %></h4>
+               <div class="min-w-0">
+                 <p class="text-[9px] font-bold text-slate-400 uppercase leading-none mb-1"><%= stat[:label] %></p>
+                 <h4 class="text-base font-black text-white leading-none"><%= stat[:value] %></h4>
                </div>
             </div>
           <% end %>
@@ -437,7 +401,7 @@
            <!-- Hall of Fame -->
            <div class="md:col-span-2 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg p-5">
               <h4 class="text-sm font-black text-white mb-4 flex items-center gap-2">
-                <i data-feather="award" class="w-4 h-4 text-indigo-400"></i> 명예의 전당
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-400"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> 명예의 전당
               </h4>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <% if @top_achievers.any? %>
@@ -465,7 +429,7 @@
              <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
              <div class="relative z-10 space-y-3">
                <div class="w-11 h-11 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-1">
-                 <i data-feather="zap" class="w-6 h-6 text-yellow-300"></i>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-300"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                </div>
                <h4 class="text-base font-black leading-tight">동기부여의 아이콘!</h4>
                <p class="text-xs text-indigo-100 font-medium leading-relaxed px-3">
@@ -480,9 +444,11 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  function initFeather() {
     if (window.feather) feather.replace();
-  });
+  }
+  document.addEventListener("turbo:load", initFeather);
+  initFeather();
 </script>
 
 <style>
