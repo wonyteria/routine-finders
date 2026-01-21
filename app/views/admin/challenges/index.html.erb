@@ -1,80 +1,98 @@
-<% content_for :page_title, "챌린지 관리" %>
-
-<div class="space-y-6">
-  <!-- Search & Filter -->
-  <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-    <%= form_with url: admin_challenges_path, method: :get, class: "flex gap-4" do %>
-      <div class="flex-1">
-        <%= text_field_tag :q, params[:q], placeholder: "챌린지 제목으로 검색...", class: "w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+<div class="max-w-7xl mx-auto">
+  <header class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <a href="/admin" class="p-2 bg-white/5 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        </a>
+        <h1 class="text-4xl font-black tracking-tight">Challenge Management</h1>
       </div>
-      <%= select_tag :mode, options_for_select([["전체 모드", ""], ["온라인", "online"], ["오프라인", "offline"]], params[:mode]), class: "px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" %>
-      <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-        검색
-      </button>
-    <% end %>
-  </div>
+      <p class="text-slate-400 font-medium">플랫폼 내의 모든 챌린지 성과를 모니터링합니다.</p>
+    </div>
 
-  <!-- Challenges Table -->
-  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-    <table class="min-w-full divide-y divide-slate-200">
-      <thead class="bg-slate-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">챌린지</th>
-          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">호스트</th>
-          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">모드</th>
-          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">기간</th>
-          <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">참가자</th>
-          <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">작업</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-slate-200">
-        <% @challenges.each do |challenge| %>
-          <tr class="hover:bg-slate-50">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-2">
-                <div class="font-medium text-slate-900"><%= challenge.title %></div>
-                <% if challenge.is_official %>
-                  <span class="px-2 py-0.5 text-xs font-semibold bg-amber-100 text-amber-700 rounded-full">공식</span>
-                <% end %>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-slate-600">
-              <%= challenge.host_name %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-2 py-1 text-xs font-semibold rounded-full <%= challenge.online? ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700' %>">
-                <%= challenge.online? ? '온라인' : '오프라인' %>
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-              <%= challenge.start_date.strftime('%Y-%m-%d') %> ~ <%= challenge.end_date.strftime('%Y-%m-%d') %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-slate-600">
-              <%= challenge.participants.count %><%= challenge.max_participants ? "/#{challenge.max_participants}" : "" %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right">
-              <div class="flex items-center justify-end gap-2">
-                <%= link_to admin_challenge_path(challenge), class: "p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" do %>
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                  </svg>
-                <% end %>
-                <%= link_to edit_admin_challenge_path(challenge), class: "p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" do %>
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                  </svg>
-                <% end %>
-                <%= button_to admin_challenge_path(challenge), method: :delete, data: { turbo_confirm: "정말 이 챌린지를 삭제하시겠습니까?" }, class: "p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" do %>
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                  </svg>
-                <% end %>
-              </div>
-            </td>
+    <div class="flex flex-wrap items-center gap-3">
+      <%= form_with url: admin_challenges_path, method: :get, class: "flex gap-2" do |f| %>
+        <div class="relative">
+          <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <%= f.text_field :query, value: params[:query], placeholder: "챌린지 제목 검색", 
+              class: "pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm focus:border-indigo-500 focus:ring-0 transition-all w-64 text-white" %>
+        </div>
+        <%= f.select :status, [["전체 상태", ""], ["활성", "active"], ["모집중", "recruiting"], ["종료", "completed"]], { selected: params[:status] }, 
+            class: "px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm focus:border-indigo-500 focus:ring-0 text-white" %>
+        <%= f.submit "Filter", class: "px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-2xl text-sm font-black transition-all shadow-lg shadow-indigo-600/20 cursor-pointer" %>
+      <% end %>
+    </div>
+  </header>
+
+  <div class="admin-glass rounded-[32px] overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="text-[10px] uppercase tracking-[0.2em] text-slate-500 border-b border-white/5">
+            <th class="px-8 py-6 font-black">Challenge</th>
+            <th class="px-8 py-6 font-black text-center">Stats</th>
+            <th class="px-8 py-6 font-black text-center">Amount</th>
+            <th class="px-8 py-6 font-black">Duration</th>
+            <th class="px-8 py-6 font-black">Status</th>
+            <th class="px-8 py-6 font-black text-right">Actions</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <% @challenges.each do |challenge| %>
+            <tr class="group hover:bg-white/[0.02] transition-colors">
+              <td class="px-8 py-6">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    <%= challenge.icon || '🚀' %>
+                  </div>
+                  <div>
+                    <p class="text-[15px] font-black group-hover:text-indigo-400 transition-colors"><%= challenge.title %></p>
+                    <p class="text-xs text-slate-500 font-medium">Host: <%= challenge.host&.nickname %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-8 py-6 text-center">
+                <div class="flex flex-col items-center">
+                  <span class="text-sm font-black text-white"><%= challenge.current_participants %> / <%= challenge.max_participants %></span>
+                  <div class="w-16 h-1 bg-white/10 rounded-full mt-1.5 overflow-hidden">
+                    <% progress = challenge.max_participants.to_i > 0 ? (challenge.current_participants.to_f / challenge.max_participants * 100).to_i : 0 %>
+                    <div class="h-full bg-indigo-500" style="width: <%= progress %>%"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-8 py-6 text-center">
+                <span class="text-sm font-bold text-slate-300">₩<%= number_with_delimiter challenge.amount %></span>
+              </td>
+              <td class="px-8 py-6">
+                <p class="text-[11px] font-bold text-slate-400"><%= challenge.start_date.strftime("%Y.%m.%d") %></p>
+                <p class="text-[10px] text-slate-600 font-medium">~ <%= challenge.end_date.strftime("%Y.%m.%d") %></p>
+              </td>
+              <td class="px-8 py-6">
+                 <% 
+                  status_class = case challenge.status
+                    when 'active' then 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    when 'recruiting' then 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+                    else 'bg-slate-500/10 text-slate-400 border-white/10'
+                  end
+                 %>
+                 <span class="px-3 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest <%= status_class %>">
+                   <%= challenge.status %>
+                 </span>
+              </td>
+              <td class="px-8 py-6 text-right">
+                <div class="flex justify-end gap-2 text-slate-500">
+                  <%= link_to admin_challenge_path(challenge), class: "p-2.5 bg-white/5 hover:bg-white/10 rounded-xl hover:text-white transition-all" do %>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  <% end %>
+                  <%= link_to edit_admin_challenge_path(challenge), class: "p-2.5 bg-white/5 hover:bg-white/10 rounded-xl hover:text-white transition-all" do %>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

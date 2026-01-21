@@ -1,135 +1,102 @@
-<% content_for :page_title, "사용자 상세" %>
-
-<div class="space-y-6">
-  <!-- Back Button -->
-  <div>
-    <%= link_to admin_users_path, class: "inline-flex items-center gap-2 text-slate-600 hover:text-slate-900" do %>
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-      </svg>
-      <span>목록으로</span>
-    <% end %>
+<div class="max-w-5xl mx-auto">
+  <div class="flex items-center gap-4 mb-10">
+    <a href="<%= admin_users_path %>" class="p-3 bg-white/5 hover:bg-white/10 rounded-2xl text-slate-400 hover:text-white transition-all">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    </a>
+    <h1 class="text-3xl font-black tracking-tight">User Portrait</h1>
   </div>
 
-  <!-- User Info Card -->
-  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-    <div class="flex items-start justify-between">
-      <div class="flex items-center gap-6">
-        <img src="<%= @user.profile_image %>" alt="" class="w-24 h-24 rounded-2xl object-cover">
-        <div>
-          <h2 class="text-2xl font-bold text-slate-900"><%= @user.nickname %></h2>
-          <p class="text-slate-500 mt-1"><%= @user.email %></p>
-          <div class="flex items-center gap-3 mt-3">
-            <% role_style = case @user.role
-                 when 'super_admin' then 'bg-purple-100 text-purple-700'
-                 when 'club_admin' then 'bg-indigo-100 text-indigo-700'
-                 else 'bg-slate-100 text-slate-700'
-               end %>
-            <% role_label = case @user.role
-                 when 'super_admin' then '총괄 관리'
-                 when 'club_admin' then '클럽 관리'
-                 else '사용자'
-               end %>
-            <span class="px-3 py-1 text-sm font-semibold rounded-full <%= role_style %>">
-              <%= role_label %>
-            </span>
-            <% if @user.email_verified %>
-              <span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-700">이메일 인증됨</span>
-            <% else %>
-              <span class="px-3 py-1 text-sm font-semibold rounded-full bg-amber-100 text-amber-700">이메일 미인증</span>
-            <% end %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Profile Card -->
+    <div class="lg:col-span-1 space-y-6">
+      <div class="admin-glass rounded-[40px] p-10 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-32 bg-indigo-600/20 blur-3xl -z-10"></div>
+        
+        <div class="w-24 h-24 rounded-[32px] bg-gradient-to-br from-indigo-500 to-purple-600 mx-auto mb-6 flex items-center justify-center text-3xl font-black text-white shadow-2xl shadow-indigo-500/40">
+          <%= @user.nickname.first %>
+        </div>
+        
+        <h2 class="text-2xl font-black mb-1"><%= @user.nickname %></h2>
+        <p class="text-slate-500 text-sm font-medium mb-6"><%= @user.email %></p>
+        
+        <span class="px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-widest bg-white/5 border border-white/10 text-indigo-400">
+          <%= @user.role %>
+        </span>
+
+        <div class="mt-10 pt-10 border-t border-white/5 grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Level</p>
+            <p class="text-xl font-black text-white"><%= @user.level %></p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Status</p>
+            <p class="text-sm font-black <%= @user.deleted_at.nil? ? 'text-emerald-400' : 'text-red-400' %>">
+              <%= @user.deleted_at.nil? ? 'Active' : 'Suspended' %>
+            </p>
           </div>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <%= link_to edit_admin_user_path(@user), class: "px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200 transition-colors" do %>
-          수정
-        <% end %>
-        <% unless @user == current_user %>
-          <%= button_to admin_user_path(@user), method: :delete, data: { turbo_confirm: "정말 이 사용자를 삭제하시겠습니까?" }, class: "px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors" do %>
-            삭제
-          <% end %>
-        <% end %>
+
+      <div class="admin-glass rounded-[32px] p-8">
+        <h3 class="text-lg font-black mb-6">Quick Actions</h3>
+        <div class="space-y-3">
+          <%= link_to "Edit Information", edit_admin_user_path(@user), class: "block w-full py-4 text-center bg-white/5 hover:bg-white/10 rounded-2xl text-sm font-black transition-all" %>
+          <%= button_to @user.deleted_at.nil? ? "Suspend Account" : "Activate Account", 
+              toggle_status_admin_user_path(@user), method: :patch,
+              class: "w-full py-4 bg-red-600/10 hover:bg-red-600 text-red-400 hover:text-white rounded-2xl text-sm font-black transition-all" %>
+        </div>
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-4 gap-6 mt-8 pt-6 border-t border-slate-200">
-      <div class="text-center">
-        <p class="text-3xl font-bold text-slate-900">Lv.<%= @user.level %></p>
-        <p class="text-sm text-slate-500 mt-1">레벨</p>
+    <!-- Stats & Activity -->
+    <div class="lg:col-span-2 space-y-8">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="admin-glass rounded-[32px] p-8">
+          <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Total Completions</p>
+          <p class="text-4xl font-black"><%= @stats[:completions] %></p>
+          <div class="mt-4 flex items-center gap-2">
+            <span class="text-xs font-bold text-emerald-400">Perfect Streak</span>
+            <div class="h-1 flex-1 bg-white/10 rounded-full">
+              <div class="h-full bg-emerald-400 w-2/3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="admin-glass rounded-[32px] p-8">
+          <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Joined Challenges</p>
+          <p class="text-4xl font-black text-indigo-400"><%= @stats[:challenges_joined] %></p>
+          <p class="mt-4 text-[10px] font-bold text-slate-500 uppercase">3 Active currently</p>
+        </div>
       </div>
-      <div class="text-center">
-        <p class="text-3xl font-bold text-slate-900"><%= number_with_delimiter(@user.total_exp) %></p>
-        <p class="text-sm text-slate-500 mt-1">총 경험치</p>
-      </div>
-      <div class="text-center">
-        <p class="text-3xl font-bold text-slate-900"><%= number_with_delimiter(@user.wallet_balance) %></p>
-        <p class="text-sm text-slate-500 mt-1">지갑 잔액</p>
-      </div>
-      <div class="text-center">
-        <p class="text-3xl font-bold text-slate-900"><%= @user.created_at.in_time_zone('Asia/Seoul').strftime('%Y-%m-%d') %></p>
-        <p class="text-sm text-slate-500 mt-1">가입일</p>
-      </div>
-    </div>
-  </div>
 
-  <!-- Tabs -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Hosted Challenges -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
-      <div class="px-6 py-4 border-b border-slate-200">
-        <h3 class="font-bold text-slate-900">주최한 챌린지 (<%= @user.hosted_challenges.count %>)</h3>
-      </div>
-      <div class="divide-y divide-slate-100">
-        <% if @hosted_challenges.any? %>
-          <% @hosted_challenges.each do |challenge| %>
-            <div class="px-6 py-3">
-              <p class="font-medium text-slate-900 truncate"><%= challenge.title %></p>
-              <p class="text-sm text-slate-500"><%= challenge.online? ? '온라인' : '오프라인' %></p>
+      <div class="admin-glass rounded-[32px] overflow-hidden">
+        <div class="p-8 border-b border-white/5 flex justify-between items-center">
+          <h3 class="text-xl font-black">Recent Activities</h3>
+          <span class="text-xs font-bold text-slate-500">Last 10 Actions</span>
+        </div>
+        <div class="divide-y divide-white/5">
+          <% if @recent_activities.any? %>
+            <% @recent_activities.each do |activity| %>
+              <div class="p-6 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-lg">
+                    <%= activity.activity_type == 'routine_record' ? '✅' : '🔥' %>
+                  </div>
+                  <div>
+                    <p class="text-sm font-black text-white"><%= activity.activity_type.titleize %></p>
+                    <p class="text-[11px] text-slate-500 font-medium"><%= time_ago_in_words(activity.created_at) %> ago</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs font-bold text-slate-400">+10 Points</p>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="p-20 text-center">
+              <p class="text-slate-500 font-bold italic">No recent activities found.</p>
             </div>
           <% end %>
-        <% else %>
-          <div class="px-6 py-4 text-slate-500 text-center">없음</div>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Participations -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
-      <div class="px-6 py-4 border-b border-slate-200">
-        <h3 class="font-bold text-slate-900">참여 중인 챌린지 (<%= @user.participations.count %>)</h3>
-      </div>
-      <div class="divide-y divide-slate-100">
-        <% if @participations.any? %>
-          <% @participations.each do |participation| %>
-            <div class="px-6 py-3">
-              <p class="font-medium text-slate-900 truncate"><%= participation.challenge.title %></p>
-              <p class="text-sm text-slate-500">달성률: <%= participation.completion_rate %>%</p>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="px-6 py-4 text-slate-500 text-center">없음</div>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Personal Routines -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
-      <div class="px-6 py-4 border-b border-slate-200">
-        <h3 class="font-bold text-slate-900">개인 루틴 (<%= @user.personal_routines.count %>)</h3>
-      </div>
-      <div class="divide-y divide-slate-100">
-        <% if @personal_routines.any? %>
-          <% @personal_routines.each do |routine| %>
-            <div class="px-6 py-3">
-              <p class="font-medium text-slate-900 truncate"><%= routine.title %></p>
-              <p class="text-sm text-slate-500">연속: <%= routine.current_streak %>일</p>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="px-6 py-4 text-slate-500 text-center">없음</div>
-        <% end %>
+        </div>
       </div>
     </div>
   </div>

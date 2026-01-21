@@ -47,9 +47,11 @@
             <% end %>
             
             <% if @user.super_admin? %>
-              <%= link_to admin_root_path, class: "px-4 py-2 bg-slate-900 text-white rounded-xl text-[9px] lg:text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-1.5 shadow-xl" do %>
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                전체 관리
+              <%= link_to admin_root_path, class: "group relative px-6 py-3 bg-slate-900 overflow-hidden rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-white hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center gap-3" do %>
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
+                <span class="relative z-10">System Dashboard</span>
+                <svg class="w-3.5 h-3.5 relative z-10 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
               <% end %>
             <% end %>
           </div>

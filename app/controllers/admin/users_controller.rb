@@ -1,57 +1,70 @@
-module Admin
-  class UsersController < BaseController
-    before_action :require_super_admin
-    before_action :set_user, only: [ :show, :edit, :update, :destroy ]
+class Admin::UsersController < Admin::BaseController
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_status]
 
-    def index
-      @users = User.order(created_at: :desc)
-      if params[:q].present?
-        sanitized_q = "%#{sanitize_sql_like(params[:q])}%"
-        @users = @users.where("nickname LIKE ? OR email LIKE ?", sanitized_q, sanitized_q)
-      end
-      @users = @users.page(params[:page]).per(20) if @users.respond_to?(:page)
+  def index
+    @users = User.all.order(created_at: :desc)
+    
+    # 검색 필터
+    if params[:query].present?
+      q = "%#{params[:query]}%"
+      @users = @users.where("nickname LIKE ? OR email LIKE ?", q, q)
     end
 
-    def show
-      @hosted_challenges = @user.hosted_challenges.order(created_at: :desc).limit(5)
-      @participations = @user.participations.includes(:challenge).order(created_at: :desc).limit(5)
-      @personal_routines = @user.personal_routines.order(created_at: :desc).limit(5)
+    # 역할 필터
+    if params[:role].present?
+      @users = @users.where(role: params[:role])
     end
 
-    def edit
+    @total_count = @users.count
+  end
+
+  def show
+    @stats = {
+      challenges_joined: @user.participations.count,
+      challenges_hosted: @user.hosted_challenges.count,
+      total_routines: @user.personal_routines.count,
+      completions: @user.total_routine_completions
+    }
+    @recent_activities = @user.rufa_activities.order(created_at: :desc).limit(10)
+  end
+
+  def update
+    if @user == current_user && user_params[:role].present? && user_params[:role] != "super_admin"
+      redirect_to admin_user_path(@user), alert: "자신의 관리자 권한은 해제할 수 없습니다."
+      return
     end
 
-    def update
-      # Prevent self-demotion from super_admin if attempting to change role
-      if user_params[:role].present? && @user == current_user
-        redirect_to admin_user_path(@user), alert: "자기 자신의 역할은 변경할 수 없습니다."
-        return
-      end
+    if @user.update(user_params)
+      redirect_to admin_user_path(@user), notice: "사용자 정보가 성공적으로 업데이트되었습니다."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
 
-      if @user.update(user_params)
-        redirect_to admin_user_path(@user), notice: "사용자 정보가 수정되었습니다."
-      else
-        render :edit, status: :unprocessable_entity
-      end
+  def toggle_status
+    if @user == current_user
+      redirect_to admin_users_path, alert: "자신의 상태는 변경할 수 없습니다."
+      return
     end
 
-    def destroy
-      if @user == current_user
-        redirect_to admin_users_path, alert: "자기 자신은 삭제할 수 없습니다."
-      else
-        @user.destroy
-        redirect_to admin_users_path, notice: "사용자가 삭제되었습니다."
-      end
+    if @user.deleted_at.nil?
+      @user.update(deleted_at: Time.current)
+      notice = "사용자 계정이 정지되었습니다."
+    else
+      @user.update(deleted_at: nil)
+      notice = "사용자 계정이 활성화되었습니다."
     end
 
-    private
+    redirect_to admin_users_path, notice: notice
+  end
 
-    def set_user
-      @user = User.find(params[:id])
-    end
+  private
 
-    def user_params
-      params.require(:user).permit(:nickname, :email, :level, :total_exp, :wallet_balance, :is_featured_host, :role)
-    end
+  def set_user
+    @user = User.find(params[:id])
+  end
+
+  def user_params
+    params.require(:user).permit(:nickname, :email, :role, :level, :wallet_balance)
   end
 end

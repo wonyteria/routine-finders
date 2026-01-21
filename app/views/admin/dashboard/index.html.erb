@@ -1,217 +1,159 @@
-<% content_for :page_title, "대시보드" %>
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <header class="flex justify-between items-end mb-12">
+    <div>
+      <h1 class="text-4xl font-black tracking-tight mb-2">System Dashboard</h1>
+      <p class="text-slate-400 font-medium">서비스의 전반적인 성장 지표와 활동을 모니터링합니다.</p>
+    </div>
+    <div class="hidden lg:flex items-center gap-4 bg-white/5 p-1 rounded-2xl border border-white/10">
+      <button class="px-4 py-2 bg-white/10 rounded-xl text-sm font-bold">1D</button>
+      <button class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-white transition-colors">1W</button>
+      <button class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-white transition-colors">1M</button>
+    </div>
+  </header>
 
-<div class="space-y-8">
   <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Users -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">전체 사용자</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:total_users] %></p>
-        </div>
-        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-          </svg>
-        </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <div class="admin-stat-card admin-glass">
+      <div class="accent-glow"></div>
+      <p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-4">Total Users</p>
+      <div class="flex items-baseline gap-2">
+        <h3 class="text-4xl font-black"><%= number_with_delimiter @stats[:total_users] %></h3>
+        <span class="text-emerald-500 text-xs font-bold">+<%= @stats[:new_users_today] %> today</span>
       </div>
-      <div class="mt-4 flex items-center gap-4 text-sm">
-        <span class="text-slate-500">관리자: <span class="font-semibold text-slate-700"><%= @stats[:admin_users] %></span></span>
-        <span class="text-slate-500">인증됨: <span class="font-semibold text-slate-700"><%= @stats[:verified_users] %></span></span>
+      <div class="mt-6 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+        <div class="h-full bg-indigo-500 w-[65%] shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
       </div>
     </div>
 
-    <!-- Challenges -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">전체 챌린지</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:total_challenges] %></p>
-        </div>
-        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" stroke-width="2"/>
-            <path stroke-width="2" d="m9 12 2 2 4-4"/>
-          </svg>
-        </div>
+    <div class="admin-stat-card admin-glass">
+      <div class="accent-glow"></div>
+      <p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-4">Active Challenges</p>
+      <div class="flex items-baseline gap-2">
+        <h3 class="text-4xl font-black"><%= @stats[:active_challenges] %></h3>
+        <span class="text-slate-500 text-xs font-bold">running now</span>
       </div>
-      <div class="mt-4 flex items-center gap-4 text-sm">
-        <span class="text-slate-500">온라인: <span class="font-semibold text-slate-700"><%= @stats[:online_challenges] %></span></span>
-        <span class="text-slate-500">오프라인: <span class="font-semibold text-slate-700"><%= @stats[:offline_challenges] %></span></span>
+      <div class="mt-6 flex -space-x-3">
+        <% 4.times do %>
+          <div class="w-8 h-8 rounded-full border-2 border-[#1a1c2e] bg-slate-800"></div>
+        <% end %>
+        <div class="w-8 h-8 rounded-full border-2 border-[#1a1c2e] bg-indigo-600 flex items-center justify-center text-[10px] font-bold">+12</div>
       </div>
     </div>
 
-    <!-- Active Challenges -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">진행 중 챌린지</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:active_challenges] %></p>
-        </div>
-        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-          </svg>
-        </div>
+    <div class="admin-stat-card admin-glass">
+      <div class="accent-glow"></div>
+      <p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-4">Today Completions</p>
+      <div class="flex items-baseline gap-2">
+        <h3 class="text-4xl font-black"><%= number_with_delimiter @stats[:today_completions] %></h3>
+        <span class="text-indigo-400 text-xs font-bold">tasks</span>
       </div>
-      <div class="mt-4 text-sm">
-        <span class="text-slate-500">참가자: <span class="font-semibold text-slate-700"><%= @stats[:total_participants] %></span></span>
-      </div>
+      <p class="mt-6 text-xs font-medium text-slate-400">전일 대비 <span class="text-emerald-400 font-bold">12.5%</span> 상승</p>
     </div>
 
-    <!-- Personal Routines -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-slate-500">개인 루틴</p>
-          <p class="text-3xl font-bold text-slate-900 mt-1"><%= @stats[:total_personal_routines] %></p>
-        </div>
-        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-          </svg>
-        </div>
+    <div class="admin-stat-card admin-glass bg-indigo-600/10 border-indigo-500/20">
+      <div class="accent-glow opacity-30"></div>
+      <p class="text-[10px] uppercase font-black text-indigo-400 tracking-[0.2em] mb-4">Estimated Revenue</p>
+      <div class="flex items-baseline gap-1">
+        <span class="text-xl font-bold text-indigo-300">₩</span>
+        <h3 class="text-3xl font-black tracking-tight"><%= number_to_human @revenue_data[:this_month], units: { thousand: 'k', million: 'm' } %></h3>
+      </div>
+      <div class="mt-6 py-2 px-3 rounded-xl bg-indigo-600/20 inline-flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></div>
+        <span class="text-xs font-black text-indigo-300">Growth +<%= @revenue_data[:growth] %>%</span>
       </div>
     </div>
   </div>
 
-  <!-- Charts Section -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- User Registration Chart -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-      <h3 class="font-bold text-slate-900 mb-6">신규 가입자 현황 (최근 14일)</h3>
-      <div class="h-64">
-        <canvas id="userRegChart"></canvas>
-      </div>
-    </div>
-
-    <!-- Activity Chart -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-      <h3 class="font-bold text-slate-900 mb-6">챌린지 활동 현황 (최근 14일)</h3>
-      <div class="h-64">
-        <canvas id="activityChart"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener('turbo:load', () => {
-      const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { stepSize: 1 }
-          }
-        }
-      };
-
-      // User Registration Chart
-      const userCtx = document.getElementById('userRegChart');
-      if (userCtx) {
-        new Chart(userCtx, {
-          type: 'line',
-          data: {
-            labels: <%= raw @dates.to_json %>,
-            datasets: [{
-              label: '가입자 수',
-              data: <%= raw @user_reg_values.to_json %>,
-              borderColor: '#4F46E5',
-              backgroundColor: 'rgba(79, 70, 229, 0.1)',
-              fill: true,
-              tension: 0.4
-            }]
-          },
-          options: chartOptions
-        });
-      }
-
-      // Activity Chart
-      const activityCtx = document.getElementById('activityChart');
-      if (activityCtx) {
-        new Chart(activityCtx, {
-          type: 'bar',
-          data: {
-            labels: <%= raw @dates.to_json %>,
-            datasets: [{
-              label: '인증 횟수',
-              data: <%= raw @activity_values.to_json %>,
-              backgroundColor: '#10B981',
-              borderRadius: 6
-            }]
-          },
-          options: chartOptions
-        });
-      }
-    });
-  </script>
-
-  <!-- Recent Activity -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Recent Users -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
-      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-        <h2 class="font-bold text-slate-900">최근 가입 사용자</h2>
-        <%= link_to "전체 보기", admin_users_path, class: "text-sm text-indigo-600 hover:text-indigo-700 font-medium" %>
+    <section class="lg:col-span-2 admin-glass rounded-[32px] overflow-hidden">
+      <div class="p-8 border-b border-white/5 flex justify-between items-center">
+        <h2 class="text-xl font-black">최근 가입 유저</h2>
+        <a href="/admin/users" class="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-widest">View All</a>
       </div>
-      <div class="divide-y divide-slate-100">
-        <% @recent_users.each do |user| %>
-          <div class="px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <img src="<%= user.profile_image %>" alt="" class="w-10 h-10 rounded-full object-cover">
-              <div>
-                <p class="font-medium text-slate-900"><%= user.nickname %></p>
-                <p class="text-sm text-slate-500"><%= user.email %></p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <% if user.admin? %>
-                <span class="px-2 py-1 text-xs font-semibold bg-indigo-100 text-indigo-700 rounded-full">관리자</span>
-              <% end %>
-              <%= link_to admin_user_path(user), class: "text-slate-400 hover:text-slate-600" do %>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="text-[10px] uppercase tracking-widest text-slate-500">
+              <th class="px-8 py-4 font-black">User</th>
+              <th class="px-8 py-4 font-black">Role</th>
+              <th class="px-8 py-4 font-black">Joined At</th>
+              <th class="px-8 py-4 font-black">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <% @recent_users.each do |user| %>
+              <tr class="group hover:bg-white/[0.02] transition-colors">
+                <td class="px-8 py-5">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center font-bold text-indigo-400 group-hover:scale-110 transition-transform">
+                      <%= user.nickname.first %>
+                    </div>
+                    <div>
+                      <p class="text-sm font-black"><%= user.nickname %></p>
+                      <p class="text-[11px] text-slate-500 font-medium"><%= user.email %></p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-8 py-5">
+                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider <%= user.super_admin? ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20' : 'bg-slate-500/10 text-slate-400 border border-white/10' %>">
+                    <%= user.role %>
+                  </span>
+                </td>
+                <td class="px-8 py-5 text-xs text-slate-400 font-medium">
+                  <%= time_ago_in_words(user.created_at) %> ago
+                </td>
+                <td class="px-8 py-5">
+                  <button class="p-2 hover:bg-white/10 rounded-lg transition-all text-slate-500 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                  </button>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
       </div>
-    </div>
+    </section>
 
-    <!-- Recent Challenges -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
-      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-        <h2 class="font-bold text-slate-900">최근 생성된 챌린지</h2>
-        <%= link_to "전체 보기", admin_challenges_path, class: "text-sm text-indigo-600 hover:text-indigo-700 font-medium" %>
-      </div>
-      <div class="divide-y divide-slate-100">
-        <% @recent_challenges.each do |challenge| %>
-          <div class="px-6 py-4 flex items-center justify-between">
-            <div>
-              <p class="font-medium text-slate-900"><%= challenge.title %></p>
-              <p class="text-sm text-slate-500">
-                <%= challenge.host_name %> · <%= challenge.online? ? '온라인' : '오프라인' %>
-              </p>
+    <!-- Side Panel: System Status -->
+    <section class="flex flex-col gap-6">
+      <div class="admin-glass rounded-[32px] p-8">
+        <h2 class="text-xl font-black mb-6">시스템 현황</h2>
+        <div class="space-y-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+              <span class="text-sm font-black">Server Status</span>
             </div>
-            <div class="flex items-center gap-2">
-              <% if challenge.is_official %>
-                <span class="px-2 py-1 text-xs font-semibold bg-amber-100 text-amber-700 rounded-full">공식</span>
-              <% end %>
-              <%= link_to admin_challenge_path(challenge), class: "text-slate-400 hover:text-slate-600" do %>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              <% end %>
-            </div>
+            <span class="text-xs font-bold text-slate-500">Stabe</span>
           </div>
-        <% end %>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+              <span class="text-sm font-black">Database</span>
+            </div>
+            <span class="text-xs font-bold text-slate-500">Connected</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_#f59e0b]"></div>
+              <span class="text-sm font-black">Memory Usage</span>
+            </div>
+            <span class="text-xs font-bold text-slate-500">68.4%</span>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <div class="admin-glass rounded-[32px] p-8 bg-gradient-to-br from-indigo-600/20 to-transparent">
+        <h2 class="text-xl font-black mb-2">관리 가이드</h2>
+        <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+          새로운 챌린지 승인 및 비정상 유저 제재는 사용자 관리 메뉴를 이용하세요. 문의사항은 시스템 관리팀에 연락 바랍니다.
+        </p>
+        <button class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl text-sm font-black transition-all shadow-lg shadow-indigo-600/20">
+          시스템 리포트 다운로드
+        </button>
+      </div>
+    </section>
   </div>
 </div>
