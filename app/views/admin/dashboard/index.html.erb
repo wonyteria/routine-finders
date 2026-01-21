@@ -1,158 +1,171 @@
-<div class="max-w-7xl mx-auto">
-  <!-- Header -->
-  <header class="flex justify-between items-end mb-12">
-    <div>
-      <h1 class="text-4xl font-black tracking-tight mb-2">System Dashboard</h1>
-      <p class="text-slate-400 font-medium">서비스의 전반적인 성장 지표와 활동을 모니터링합니다.</p>
+<div class="max-w-7xl mx-auto space-y-10">
+  <!-- 1. Strategic Header -->
+  <header class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 bg-white/5 p-8 rounded-[40px] border border-white/10 relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 blur-[100px] pointer-events-none"></div>
+    <div class="relative z-10">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="px-3 py-1 bg-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-indigo-500/30">System Live</span>
+        <span class="text-xs text-slate-500 font-bold"><%= Time.current.strftime("%Y.%m.%d %H:%M") %></span>
+      </div>
+      <h1 class="text-4xl font-black tracking-tight mb-2">Management Intelligence</h1>
+      <p class="text-slate-400 font-medium">루틴 파인더스 서비스의 실시간 성장 지표와 관리 업무를 총괄합니다.</p>
     </div>
-    <div class="hidden lg:flex items-center gap-4 bg-white/5 p-1 rounded-2xl border border-white/10">
-      <button class="px-4 py-2 bg-white/10 rounded-xl text-sm font-bold">1D</button>
-      <button class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-white transition-colors">1W</button>
-      <button class="px-4 py-2 text-sm font-bold text-slate-500 hover:text-white transition-colors">1M</button>
+    
+    <div class="flex items-center gap-6 relative z-10 w-full lg:w-auto">
+      <div class="text-right">
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Today Active Users</p>
+        <div class="flex items-center justify-end gap-2">
+          <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+          <h2 class="text-3xl font-black tabular-nums"><%= number_with_delimiter @active_users_today %></h2>
+        </div>
+      </div>
+      <div class="w-px h-12 bg-white/10"></div>
+      <div class="text-right">
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Completion Rate</p>
+        <% rate = @stats[:total_users] > 0 ? (@active_users_today.to_f / @stats[:total_users] * 100).round(1) : 0 %>
+        <h2 class="text-3xl font-black text-indigo-400 tabular-nums"><%= rate %>%</h2>
+      </div>
     </div>
   </header>
 
-  <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-    <div class="admin-stat-card admin-glass">
-      <div class="accent-glow"></div>
-      <p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-4">Total Users</p>
+  <!-- 2. Action Center (High Priority Management) -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-1 admin-glass p-8 rounded-[40px] border-amber-500/20 bg-gradient-to-br from-amber-500/5 to-transparent relative group">
+      <div class="flex items-center justify-between mb-8">
+        <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-amber-500/10">💰</div>
+        <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest bg-amber-500/10 px-2 py-1 rounded-full">Payment Needs</span>
+      </div>
+      <h3 class="text-sm font-bold text-slate-400 mb-1">입금 승인 대기</h3>
       <div class="flex items-baseline gap-2">
-        <h3 class="text-4xl font-black"><%= number_with_delimiter @stats[:total_users] %></h3>
-        <span class="text-emerald-500 text-xs font-bold">+<%= @stats[:new_users_today] %> today</span>
+        <h4 class="text-5xl font-black text-white"><%= @action_items[:pending_payments] %></h4>
+        <span class="text-xs font-bold text-slate-500 tracking-tight">건의 미처리 입금이 있음</span>
       </div>
-      <div class="mt-6 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-        <div class="h-full bg-indigo-500 w-[65%] shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
-      </div>
+      <%= link_to admin_routine_clubs_path, class: "mt-8 w-full py-4 bg-amber-500/20 hover:bg-amber-500 text-amber-100 font-black text-xs rounded-2xl transition-all flex items-center justify-center gap-2 group-hover:translate-y-[-2px] shadow-lg shadow-amber-900/20" do %>
+         승인 페이지로 이동 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7-7 7"/></svg>
+      <% end %>
     </div>
 
-    <div class="admin-stat-card admin-glass">
-      <div class="accent-glow"></div>
-      <p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-4">Active Challenges</p>
+    <div class="lg:col-span-1 admin-glass p-8 rounded-[40px] border-indigo-500/20 bg-gradient-to-br from-indigo-500/5 to-transparent relative group">
+      <div class="flex items-center justify-between mb-8">
+        <div class="w-12 h-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/10">📸</div>
+        <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-2 py-1 rounded-full">Verify Needs</span>
+      </div>
+      <h3 class="text-sm font-bold text-slate-400 mb-1">챌린지 인증 대기</h3>
       <div class="flex items-baseline gap-2">
-        <h3 class="text-4xl font-black"><%= @stats[:active_challenges] %></h3>
-        <span class="text-slate-500 text-xs font-bold">running now</span>
+        <h4 class="text-5xl font-black text-white"><%= @action_items[:pending_verifications] %></h4>
+        <span class="text-xs font-bold text-slate-500 tracking-tight">건의 인증이 대기 중</span>
       </div>
-      <div class="mt-6 flex -space-x-3">
-        <% 4.times do %>
-          <div class="w-8 h-8 rounded-full border-2 border-[#1a1c2e] bg-slate-800"></div>
-        <% end %>
-        <div class="w-8 h-8 rounded-full border-2 border-[#1a1c2e] bg-indigo-600 flex items-center justify-center text-[10px] font-bold">+12</div>
-      </div>
+      <button class="mt-8 w-full py-4 bg-indigo-500/20 hover:bg-indigo-500 text-indigo-100 font-black text-xs rounded-2xl transition-all flex items-center justify-center gap-2 group-hover:translate-y-[-2px] shadow-lg shadow-indigo-900/20">
+         인증 검토하기 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7-7 7"/></svg>
+      </button>
     </div>
 
-    <div class="admin-stat-card admin-glass">
-      <div class="accent-glow"></div>
-      <p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-4">Today Completions</p>
-      <div class="flex items-baseline gap-2">
-        <h3 class="text-4xl font-black"><%= number_with_delimiter @stats[:today_completions] %></h3>
-        <span class="text-indigo-400 text-xs font-bold">tasks</span>
+    <div class="lg:col-span-1 admin-glass p-8 rounded-[40px] border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent relative group">
+      <div class="flex items-center justify-between mb-8">
+        <div class="w-12 h-12 bg-emerald-500/20 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-emerald-500/10">💹</div>
+        <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded-full">Monthly Performance</span>
       </div>
-      <p class="mt-6 text-xs font-medium text-slate-400">전일 대비 <span class="text-emerald-400 font-bold">12.5%</span> 상승</p>
-    </div>
-
-    <div class="admin-stat-card admin-glass bg-indigo-600/10 border-indigo-500/20">
-      <div class="accent-glow opacity-30"></div>
-      <p class="text-[10px] uppercase font-black text-indigo-400 tracking-[0.2em] mb-4">Estimated Revenue</p>
+      <h3 class="text-sm font-bold text-slate-400 mb-1">이번 달 매출</h3>
       <div class="flex items-baseline gap-1">
-        <span class="text-xl font-bold text-indigo-300">₩</span>
-        <h3 class="text-3xl font-black tracking-tight"><%= number_to_human @revenue_data[:this_month], units: { thousand: 'k', million: 'm' } %></h3>
+        <span class="text-xl font-black text-emerald-500/60">₩</span>
+        <h4 class="text-4xl font-black text-white"><%= number_with_delimiter @revenue_data[:this_month] %></h4>
       </div>
-      <div class="mt-6 py-2 px-3 rounded-xl bg-indigo-600/20 inline-flex items-center gap-2">
-        <div class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></div>
-        <span class="text-xs font-black text-indigo-300">Growth +<%= @revenue_data[:growth] %>%</span>
+      <p class="mt-2 text-xs font-bold <%= @revenue_data[:growth] >= 0 ? 'text-emerald-500' : 'text-rose-500' %>">
+        전월 대비 <%= @revenue_data[:growth] %>% <%= @revenue_data[:growth] >= 0 ? '성장' : '하락' %>
+      </p>
+      <div class="mt-8 flex gap-2">
+        <div class="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full bg-emerald-500 w-[70%]"></div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
+  <!-- 3. Real-time Monitoring -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Recent Users -->
-    <section class="lg:col-span-2 admin-glass rounded-[32px] overflow-hidden">
+    <!-- Live Synergy Feed -->
+    <section class="lg:col-span-2 admin-glass rounded-[40px] overflow-hidden">
       <div class="p-8 border-b border-white/5 flex justify-between items-center">
-        <h2 class="text-xl font-black">최근 가입 유저</h2>
-        <a href="/admin/users" class="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-widest">View All</a>
+        <div class="flex items-center gap-3">
+          <h2 class="text-xl font-black">실시간 시너지 피드</h2>
+          <span class="px-2 py-0.5 bg-indigo-500 text-white text-[8px] font-black rounded-md animate-pulse">LIVE</span>
+        </div>
+        <button class="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors">Global Content Control</button>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="text-[10px] uppercase tracking-widest text-slate-500">
-              <th class="px-8 py-4 font-black">User</th>
-              <th class="px-8 py-4 font-black">Role</th>
-              <th class="px-8 py-4 font-black">Joined At</th>
-              <th class="px-8 py-4 font-black">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-white/5">
-            <% @recent_users.each do |user| %>
-              <tr class="group hover:bg-white/[0.02] transition-colors">
-                <td class="px-8 py-5">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center font-bold text-indigo-400 group-hover:scale-110 transition-transform">
-                      <%= user.nickname.first %>
-                    </div>
-                    <div>
-                      <p class="text-sm font-black"><%= user.nickname %></p>
-                      <p class="text-[11px] text-slate-500 font-medium"><%= user.email %></p>
-                    </div>
-                  </div>
-                </td>
-                <td class="px-8 py-5">
-                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider <%= user.super_admin? ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20' : 'bg-slate-500/10 text-slate-400 border border-white/10' %>">
-                    <%= user.role %>
-                  </span>
-                </td>
-                <td class="px-8 py-5 text-xs text-slate-400 font-medium">
-                  <%= time_ago_in_words(user.created_at) %> ago
-                </td>
-                <td class="px-8 py-5">
-                  <button class="p-2 hover:bg-white/10 rounded-lg transition-all text-slate-500 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
-                  </button>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+      <div class="max-h-[500px] overflow-y-auto custom-scrollbar">
+        <div class="divide-y divide-white/5">
+          <% @recent_activities.each do |activity| %>
+            <div class="p-6 flex items-start gap-4 hover:bg-white/[0.02] transition-colors group">
+              <div class="w-10 h-10 rounded-xl bg-slate-800 border border-white/5 overflow-hidden shrink-0">
+                <img src="<%= activity.user.profile_image %>" class="w-full h-full object-cover">
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm font-black text-white"><%= activity.user.nickname %></span>
+                  <span class="text-[10px] font-bold text-slate-500"><%= time_ago_in_words(activity.created_at) %>전</span>
+                </div>
+                <p class="text-sm text-slate-400 line-clamp-2"><%= activity.body %></p>
+              </div>
+              <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <button class="p-2 bg-rose-500/10 text-rose-500 rounded-lg hover:bg-rose-500 hover:text-white transition-all">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                </button>
+                <button class="p-2 bg-white/5 text-slate-500 rounded-lg hover:bg-white/10 hover:text-white transition-all">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </section>
 
-    <!-- Side Panel: System Status -->
+    <!-- Side Intelligence: User Trends -->
     <section class="flex flex-col gap-6">
-      <div class="admin-glass rounded-[32px] p-8">
-        <h2 class="text-xl font-black mb-6">시스템 현황</h2>
-        <div class="space-y-6">
-          <div class="flex items-center justify-between">
+      <div class="admin-glass rounded-[40px] p-8">
+        <h2 class="text-xl font-black mb-6">성장 퀵 링크</h2>
+        <div class="space-y-3">
+          <a href="/admin/users" class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5 group">
             <div class="flex items-center gap-3">
-              <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
-              <span class="text-sm font-black">Server Status</span>
+              <span class="text-lg group-hover:scale-125 transition-transform">👤</span>
+              <span class="text-sm font-bold text-slate-300">사용자 권한 관리</span>
             </div>
-            <span class="text-xs font-bold text-slate-500">Stabe</span>
-          </div>
-          <div class="flex items-center justify-between">
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          </a>
+          <a href="/admin/banners" class="flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5 group">
             <div class="flex items-center gap-3">
-              <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
-              <span class="text-sm font-black">Database</span>
+              <span class="text-lg group-hover:scale-125 transition-transform">🖼️</span>
+              <span class="text-sm font-bold text-slate-300">프로모션/배너 설정</span>
             </div>
-            <span class="text-xs font-bold text-slate-500">Connected</span>
-          </div>
-          <div class="flex items-center justify-between">
+            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          </a>
+          <button class="w-full flex items-center justify-between p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all border border-white/5 group opacity-50 cursor-not-allowed">
             <div class="flex items-center gap-3">
-              <div class="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_10px_#f59e0b]"></div>
-              <span class="text-sm font-black">Memory Usage</span>
+              <span class="text-lg group-hover:scale-125 transition-transform">🏆</span>
+              <span class="text-sm font-bold text-slate-300">배지/시스템 관리</span>
             </div>
-            <span class="text-xs font-bold text-slate-500">68.4%</span>
-          </div>
+            <span class="text-[8px] font-black bg-slate-800 text-slate-500 px-1 py-0.5 rounded">SOON</span>
+          </button>
         </div>
       </div>
 
-      <div class="admin-glass rounded-[32px] p-8 bg-gradient-to-br from-indigo-600/20 to-transparent">
-        <h2 class="text-xl font-black mb-2">관리 가이드</h2>
+      <div class="admin-glass rounded-[40px] p-8 bg-gradient-to-br from-indigo-600/20 to-transparent flex-1">
+        <h2 class="text-xl font-black mb-2">데이터 인텔리전스</h2>
         <p class="text-xs text-slate-400 mb-6 leading-relaxed">
-          새로운 챌린지 승인 및 비정상 유저 제재는 사용자 관리 메뉴를 이용하세요. 문의사항은 시스템 관리팀에 연락 바랍니다.
+          어드민 대시보드는 현재 서비스의 실시간 활동 데이터와 재무 성과를 취합하여 보여줍니다. 비정상적인 트래픽이나 활동이 감지되면 즉시 조치를 취해주세요.
         </p>
-        <button class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl text-sm font-black transition-all shadow-lg shadow-indigo-600/20">
-          시스템 리포트 다운로드
-        </button>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center px-2">
+            <span class="text-[10px] font-black text-slate-500 uppercase">System Integrity</span>
+            <span class="text-[10px] font-black text-emerald-500">OPTIMIZED</span>
+          </div>
+          <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 w-[95%]"></div>
+          </div>
+          <button class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl text-sm font-black transition-all shadow-lg shadow-indigo-600/20 mt-4">
+            월간 성과 리포트 생성
+          </button>
+        </div>
       </div>
     </section>
   </div>

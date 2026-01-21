@@ -267,17 +267,19 @@
 
   <!-- 4. Host Management (Integrated Link) -->
   <section class="space-y-4">
-    <%= link_to hosted_challenges_path(source: 'prototype'), class: "block w-full" do %>
-      <div class="app-glass-card p-6 flex items-center justify-between border-amber-500/10 bg-amber-500/5 group app-tap-active">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
-          <div class="text-left">
-            <h4 class="text-sm font-black text-white leading-none">호스트 센터</h4>
-            <p class="text-[11px] font-bold text-amber-500/60 mt-2">내가 개설한 챌린지 및 모임 관리</p>
+    <% if current_user.host? || current_user.super_admin? %>
+      <%= link_to hosted_challenges_path(source: 'prototype'), class: "block w-full" do %>
+        <div class="app-glass-card p-6 flex items-center justify-between border-amber-500/10 bg-amber-500/5 group app-tap-active">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
+            <div class="text-left">
+              <h4 class="text-sm font-black text-white leading-none">호스트 센터</h4>
+              <p class="text-[11px] font-bold text-amber-500/60 mt-2">내가 개설한 챌린지 및 모임 관리</p>
+            </div>
           </div>
+          <svg class="w-5 h-5 text-amber-500/60 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </div>
-        <svg class="w-5 h-5 text-amber-500/60 group-hover:text-amber-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-      </div>
+      <% end %>
     <% end %>
   </section>
 
@@ -294,6 +296,21 @@
       </div>
       <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
     </button>
+
+    <% if current_user.super_admin? %>
+      <%= link_to admin_root_path, class: "w-full flex items-center justify-between p-5 bg-indigo-500/10 hover:bg-indigo-500/20 active:bg-indigo-500/30 transition-colors cursor-pointer group" do %>
+        <div class="flex items-center gap-4">
+          <span class="text-indigo-400 group-hover:scale-110 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </span>
+          <span class="text-sm font-black text-indigo-400">시스템 관리자 대시보드</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[9px] font-black bg-indigo-500 text-white px-1.5 py-0.5 rounded tracking-tighter uppercase">SuperAdmin</span>
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      <% end %>
+    <% end %>
     
     <button type="button" 
             data-action="click->proto-ui#openModal" 
