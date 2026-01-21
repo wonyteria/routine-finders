@@ -115,6 +115,9 @@ class HomeController < ApplicationController
                          .order("badge_count DESC")
                          .limit(3)
 
+    # Routine Time Stats
+    set_routine_time_stats
+
     # Contextual Motivation (Dynamic but encouraging)
     @inspiration_count = [ User.active.count / 10, 5 ].max
   end
@@ -160,5 +163,18 @@ class HomeController < ApplicationController
                          .count.each { |date, count| @activity_data[date] += count }
 
     @monthly_completions = @activity_data.select { |date, _| date >= Date.current.beginning_of_month && date <= Date.current.end_of_month }
+  end
+
+  def set_routine_time_stats
+    return unless current_user
+
+    # Group completions by hour of creation (completion time)
+    @routine_time_stats = PersonalRoutineCompletion.joins(:personal_routine)
+                                                     .where(personal_routines: { user_id: current_user.id })
+                                                     .group("CAST(strftime('%H', personal_routine_completions.created_at) AS INT)")
+                                                     .count
+    
+    # Fill in missing hours
+    (0..23).each { |h| @routine_time_stats[h] ||= 0 }
   end
 end

@@ -15,6 +15,10 @@ class PersonalRoutine < ApplicationRecord
     completions.any? { |c| c.completed_on == date }
   end
 
+  def today_completion
+    completions.find_by(completed_on: Date.current)
+  end
+
   def toggle_completion!(date = Date.current)
     completion = completions.find_by(completed_on: date)
 

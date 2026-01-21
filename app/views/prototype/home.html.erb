@@ -248,7 +248,10 @@
   <!-- 4. Routine List -->
   <section class="space-y-4">
     <div class="flex justify-between items-end px-2">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">오늘의 루틴</h3>
+      <div class="flex items-center gap-2">
+        <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">오늘의 루틴</h3>
+        <span class="text-[10px] font-bold text-slate-600 bg-white/5 px-2 py-0.5 rounded-full"><%= Date.current.strftime("%m월 %d일") %></span>
+      </div>
     </div>
 
     <div id="prototype-routine-list" class="space-y-3">
@@ -264,6 +267,12 @@
                 <div class="text-left">
                   <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5"><%= routine.category %></p>
                   <p class="text-sm font-black text-white leading-none"><%= routine.title %></p>
+                  <% if (completion = routine.today_completion) %>
+                    <p class="text-[10px] font-bold text-indigo-400 mt-1 opacity-80 flex items-center gap-1">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0"/></svg>
+                      <%= completion.created_at.strftime("%H:%M") %> 완료
+                    </p>
+                  <% end %>
                 </div>
               </div>
               <div class="w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all <%= routine.completed_today? ? 'bg-indigo-500 border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-white/10' %>">
