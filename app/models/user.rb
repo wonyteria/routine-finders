@@ -17,6 +17,10 @@ class User < ApplicationRecord
     club_admin? || super_admin?
   end
 
+  def host?
+    club_admin? || hosted_challenges.exists? || hosted_routine_clubs.exists?
+  end
+
   # Associations
   has_many :hosted_challenges, class_name: "Challenge", foreign_key: :host_id, dependent: :destroy
   has_many :participations, class_name: "Participant", dependent: :destroy
@@ -150,13 +154,39 @@ class User < ApplicationRecord
     }
   end
 
+  def ongoing_count
+    participations.where(status: :ongoing).count
+  end
+
+  def completed_count
+    participations.where(status: :completed).count
+  end
+
+  def avg_completion_rate
+    return 0 if participations.empty?
+    participations.average(:completion_rate).to_f.round(1)
+  end
+
   def host_stats
-    return nil unless host_total_participants.present?
+    return nil unless hosted_challenges.exists?
     {
       total_participants: host_total_participants,
       avg_completion_rate: host_avg_completion_rate,
       completed_challenges: host_completed_challenges
     }
+  end
+
+  def host_total_participants
+    Participant.where(challenge_id: hosted_challenges.pluck(:id)).count
+  end
+
+  def host_avg_completion_rate
+    return 0 if hosted_challenges.empty?
+    Participant.where(challenge_id: hosted_challenges.pluck(:id)).average(:completion_rate).to_f.round(1)
+  end
+
+  def host_completed_challenges
+    hosted_challenges.where(status: :completed).count
   end
 
   def unread_notifications_count
