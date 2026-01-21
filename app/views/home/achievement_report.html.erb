@@ -1,476 +1,481 @@
 <div data-controller="tabs" 
-     data-tabs-active-class="bg-slate-900 text-white shadow-md ring-1 ring-slate-900" 
-     data-tabs-inactive-class="text-slate-500 hover:bg-slate-100/80 hover:text-slate-900"
-     class="max-w-7xl mx-auto pb-20 px-4 md:px-6">
+     data-tabs-active-class="bg-white/10 text-white shadow-lg ring-1 ring-white/20 backdrop-blur-xl" 
+     data-tabs-inactive-class="text-slate-400 hover:bg-white/5 hover:text-white"
+     class="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden">
   
-  <!-- Navigation: Back to Home -->
-  <div class="pt-8 mb-4">
-    <%= link_to root_path, class: "inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 transition-all shadow-sm group" do %>
-      <i data-feather="chevron-left" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></i>
-      <span class="text-[11px] font-black uppercase tracking-widest">홈으로 가기</span>
-    <% end %>
+  <!-- Animated Background -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
   </div>
 
-  <!-- Header & Tabs -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-    <div class="space-y-1">
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-        <p class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest">Routine Insight</p>
-      </div>
-      <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">성취 분석 리포트</h2>
+  <div class="relative z-10 max-w-7xl mx-auto pb-20 px-4 md:px-6">
+    
+    <!-- Navigation: Back to Home -->
+    <div class="pt-8 mb-6">
+      <%= link_to root_path, class: "inline-flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/10 transition-all shadow-lg backdrop-blur-sm group" do %>
+        <i data-feather="chevron-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+        <span class="text-xs font-black uppercase tracking-widest">홈으로 가기</span>
+      <% end %>
     </div>
-    
-    <!-- Tab Switcher -->
-    <div class="bg-slate-100/50 p-1 rounded-xl flex items-center gap-1">
-      <button data-tabs-target="tab" data-id="overview" data-action="click->tabs#change"
-              class="px-4 py-2 rounded-lg text-xs font-bold transition-all tracking-tight whitespace-nowrap">OVERVIEW</button>
-      <button data-tabs-target="tab" data-id="finance" data-action="click->tabs#change"
-              class="px-4 py-2 rounded-lg text-xs font-bold transition-all tracking-tight whitespace-nowrap">FINANCE</button>
-      <button data-tabs-target="tab" data-id="social" data-action="click->tabs#change"
-              class="px-4 py-2 rounded-lg text-xs font-bold transition-all tracking-tight whitespace-nowrap">SOCIAL</button>
-    </div>
-  </div>
 
-  <%
-    total_activities = (@activity_data || {}).values.sum
-    
-    # Calculate Completion Rate
-    avg_completion = @participations.any? ? (@participations.sum(&:completion_rate) / @participations.size * 100).to_i : 0
-    
-    # Calculate Unified Streak
-    all_activity_dates = (@activity_data || {}).keys.sort.reverse
-    
-    current_streak = 0
-    if all_activity_dates.any?
-      check_date = Date.current
-      if (@activity_data || {})[check_date].to_i > 0 || (@activity_data || {})[check_date - 1.day].to_i > 0
-        curr = (@activity_data || {})[check_date].to_i > 0 ? check_date : check_date - 1.day
-        while (@activity_data || {})[curr].to_i > 0
-          current_streak += 1
-          curr -= 1.day
-        end
-      end
-    end
-
-    max_streak = @participations.map(&:max_streak).max.to_i
-    badge_count = @current_user.badges.count
-    
-    # Logs for mini-matrices - split by type
-    # For simplicity in the report, we can use the aggregated @activity_data for both or split them if needed.
-    # The existing code split them: c_logs, r_logs.
-    # Let's keep a split version for the mini-matrices if possible.
-    c_logs = VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).where(created_at: 1.month.ago..Time.current).map { |l| l.created_at.to_date }.uniq
-    r_logs = (PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.month.ago..Date.current).map(&:completed_on) + 
-             RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.month.ago..Date.current).map(&:attendance_date)).uniq
-  %>
-
-  <div class="relative min-h-[500px]">
-    <!-- OVERVIEW PANEL -->
-    <div data-tabs-target="panel" data-id="overview" class="space-y-6">
-      <!-- Top Stats Bento Grid -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-        <% [
-          { icon: "bar-chart-2", title: "누적 활동", value: "#{total_activities}회", sub: "All-time", color: "indigo", tip: "챌린지, 루틴, 클럽 활동의 총합입니다." },
-          { icon: "target", title: "평균 달성률", value: "#{avg_completion}%", sub: "Challenges", color: "emerald", tip: "참여 중인 모든 챌린지의 평균 성취도입니다." },
-          { icon: "zap", title: "최대 스트릭", value: "#{max_streak}일", sub: "Personal Best", color: "orange", tip: "역대 가장 길었던 연속 달성 기록입니다." },
-          { icon: "award", title: "보유 배지", value: "#{badge_count}개", sub: "Collection", color: "purple", tip: "목표 달성으로 획득한 훈장들의 총합입니다." }
-        ].each do |item| %>
-          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md group relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-10 transition-opacity">
-              <div class="w-16 h-16 bg-<%= item[:color] %>-500 rounded-full blur-xl"></div>
-            </div>
-            <div class="flex flex-col h-full justify-between gap-3 relative z-10">
-              <div class="flex items-center justify-between">
-                <div class="w-8 h-8 rounded-lg bg-<%= item[:color] %>-50 text-<%= item[:color] %>-600 flex items-center justify-center">
-                  <i data-feather="<%= item[:icon] %>" class="w-4 h-4"></i>
-                </div>
-                <div class="px-2 py-0.5 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-bold text-slate-500">
-                  <%= item[:sub] %>
-                </div>
-              </div>
-              <div>
-                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5"><%= item[:title] %></p>
-                <h4 class="text-2xl font-black text-slate-900 tracking-tight"><%= item[:value] %></h4>
-              </div>
-            </div>
+    <!-- Header & Tabs -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+      <div class="space-y-2">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/50">
+            <i data-feather="bar-chart-2" class="w-5 h-5 text-white"></i>
           </div>
-        <% end %>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-        <!-- Weekly Trend Chart -->
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between overflow-hidden relative group h-full">
-          <!-- Background Deco -->
-          <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50/50 rounded-bl-full -mr-6 -mt-6 transition-transform group-hover:scale-110"></div>
-          
-          <div class="space-y-1 relative z-10">
-            <div class="flex items-center gap-2 mb-0.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-              <h4 class="text-sm font-bold text-slate-900">주간 트렌드</h4>
-            </div>
-            <p class="text-[10px] text-slate-400 font-medium tracking-tight">지난 7일간의 성취 흐름</p>
-          </div>
-          
-          <div class="flex items-end justify-between h-24 mt-4 gap-2 px-1">
-            <% 
-              weekly_stats = (0..6).map do |i|
-                date = Date.current - i.days
-                count = (@activity_data || {})[date] || 0
-                { count: count, day: date.strftime("%a")[0], date: date }
-              end.reverse
-              max_daily = [weekly_stats.map { |s| s[:count] }.max, 1].max
-            %>
-            <% weekly_stats.each_with_index do |stat, i| %>
-              <div class="flex-1 flex flex-col justify-end group/bar h-full cursor-pointer relative">
-                <div class="w-full bg-slate-100 rounded-t-sm relative overflow-hidden transition-all duration-500 group-hover/bar:bg-indigo-50" style="height: <%= (stat[:count].to_f / max_daily * 100).to_i %>%">
-                  <div class="absolute bottom-0 left-0 w-full h-full <%= i == 6 ? 'bg-indigo-600' : 'bg-indigo-400' %> opacity-90 group-hover/bar:bg-indigo-600 transition-colors"></div>
-                </div>
-                <!-- Tooltip -->
-                <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                   <%= stat[:count] %> activities
-                </div>
-              </div>
-            <% end %>
-          </div>
-          <div class="flex justify-between px-1 mt-2 text-[9px] font-bold text-slate-300 uppercase tracking-widest text-center">
-            <% weekly_stats.each do |stat| %>
-              <span class="flex-1 <%= 'text-indigo-500 font-black' if stat[:date] == Date.current %>"><%= stat[:day] %></span>
-            <% end %>
-          </div>
-        </div>
-
-        <!-- Routine Timing Analysis (New) -->
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="p-1 bg-indigo-50 text-indigo-500 rounded-md">
-                <i data-feather="clock" class="w-3.5 h-3.5"></i>
-              </div>
-              <h4 class="text-sm font-bold text-slate-900">루틴 집중 시간</h4>
-            </div>
-            <% 
-              peak_hour = @routine_time_stats&.max_by { |k, v| v }&.first
-              peak_time = case peak_hour
-                when 5..10 then "아침형"
-                when 11..16 then "오후형"
-                when 17..22 then "저녁형"
-                else "심야형"
-              end if peak_hour
-            %>
-            <% if peak_time %>
-              <span class="text-[10px] font-black text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-full"><%= peak_time %></span>
-            <% end %>
-          </div>
-
-          <div class="flex items-end h-24 gap-1 px-1">
-            <% 
-              max_count = [@routine_time_stats&.values&.max || 0, 1].max
-              # Group into 4-hour blocks for better visualization if needed, but let's try 24 bars first
-            %>
-            <% (0..23).each do |hour| %>
-              <% count = @routine_time_stats[hour] || 0 %>
-              <div class="flex-1 bg-slate-100 rounded-t-[1px] relative group/time" style="height: <%= (count.to_f / max_count * 100).to_i %>%">
-                <div class="absolute inset-0 bg-indigo-400/50 group-hover/time:bg-indigo-500 transition-colors"></div>
-                <!-- Tooltip -->
-                <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[8px] font-bold py-0.5 px-1.5 rounded opacity-0 group-hover/time:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                  <%= hour %>시: <%= count %>회
-                </div>
-              </div>
-            <% end %>
-          </div>
-          <div class="flex justify-between text-[8px] font-bold text-slate-300 uppercase tracking-widest">
-            <span>00시</span>
-            <span>06시</span>
-            <span>12시</span>
-            <span>18시</span>
-            <span>23시</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Achievement Matrix -->
-      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
-        <div class="flex items-center justify-between">
-           <div class="flex items-center gap-2">
-            <div class="p-1 bg-orange-50 text-orange-500 rounded-md">
-              <i data-feather="grid" class="w-3.5 h-3.5"></i>
-            </div>
-            <h4 class="text-sm font-bold text-slate-900">성취 매트릭스</h4>
-          </div>
-          <div class="flex gap-3">
-            <div class="flex items-center gap-1 text-[9px] font-bold text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-[1px] bg-slate-100"></span> 0
-            </div>
-            <div class="flex items-center gap-1 text-[9px] font-bold text-slate-400">
-              <span class="w-1.5 h-1.5 rounded-[1px] bg-indigo-500"></span> High
-            </div>
-          </div>
-        </div>
-
-          <%
-            # Matrix data (Last 28 days)
-            matrix_end = Date.current
-            matrix_start = matrix_end - 27.days
-            matrix_dates = (matrix_start..matrix_end).to_a
-            
-            c_rate = matrix_dates.count { |d| c_logs.include?(d) } / 28.0 * 100
-            r_rate = matrix_dates.count { |d| r_logs.include?(d) } / 28.0 * 100
-          %>
-
-          <div class="grid grid-cols-2 gap-4">
-            <!-- Challenges -->
-            <div class="space-y-2">
-              <div class="flex justify-between items-end">
-                <span class="text-[9px] font-bold text-indigo-500 uppercase tracking-wider">Challenges</span>
-                <span class="text-[10px] font-black text-slate-900"><%= c_rate.to_i %>%</span>
-              </div>
-              <div class="grid grid-cols-7 gap-1">
-                <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
-                  <div class="text-[7px] font-black text-slate-300 text-center"><%= day %></div>
-                <% end %>
-                <%# Padding for start of 28 day range %>
-                <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
-                <% matrix_dates.each do |date| %>
-                  <% active = c_logs.include?(date) %>
-                  <div class="aspect-square rounded-[2px] transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-indigo-500' : 'bg-slate-100' %>" 
-                       title="<%= date %>"></div>
-                <% end %>
-              </div>
-            </div>
-
-            <!-- Routines -->
-            <div class="space-y-2">
-              <div class="flex justify-between items-end">
-                <span class="text-[9px] font-bold text-purple-500 uppercase tracking-wider">Routines</span>
-                <span class="text-[10px] font-black text-slate-900"><%= r_rate.to_i %>%</span>
-              </div>
-              <div class="grid grid-cols-7 gap-1">
-                <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
-                  <div class="text-[7px] font-black text-slate-300 text-center"><%= day %></div>
-                <% end %>
-                <%# Padding for start of 28 day range %>
-                <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
-                <% matrix_dates.each do |date| %>
-                  <% active = r_logs.include?(date) %>
-                  <div class="aspect-square rounded-[2px] transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-purple-500' : 'bg-slate-100' %>"
-                       title="<%= date %>"></div>
-                <% end %>
-              </div>
-            </div>
+          <div>
+            <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Routine Insight</p>
+            <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">성취 분석 리포트</h2>
           </div>
         </div>
       </div>
       
-      <!-- Bottom Section Split -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-         <!-- Growth Investment Summary -->
-        <div class="bg-slate-900 rounded-3xl p-6 text-white flex flex-col justify-between relative overflow-hidden shadow-lg group">
-          <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/30 rounded-full blur-3xl group-hover:bg-indigo-500/40 transition-colors"></div>
-          
-          <div class="relative z-10 space-y-6">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center border border-white/10">
-                  <i data-feather="trending-up" class="w-4 h-4 text-indigo-300"></i>
-              </div>
-              <h4 class="text-sm font-bold tracking-tight">성장 투자 요약</h4>
-            </div>
-
-            <div class="space-y-1">
-              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Growth Investment</p>
-              <h4 class="text-3xl font-black tracking-tight"><%= number_with_delimiter(@growth_stats[:total_invested]) %><span class="text-base font-bold text-slate-500 ml-1">원</span></h4>
-            </div>
-
-            <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
-              <div class="flex justify-between text-xs">
-                 <span class="text-slate-400">환급 예정액</span>
-                 <span class="text-indigo-300 font-bold"><%= number_with_delimiter(@growth_stats[:expected_refund]) %>원</span>
-              </div>
-              <div class="flex justify-between text-xs">
-                 <span class="text-slate-200">누적 환급액</span>
-                 <span class="text-emerald-400 font-bold"><%= number_with_delimiter(@growth_stats[:total_refunded]) %>원</span>
-              </div>
-            </div>
-          </div>
-          
-          <a href="#" data-action="click->tabs#change" data-id="finance" class="mt-6 w-full py-3 bg-white text-slate-900 text-xs font-black rounded-xl text-center hover:bg-indigo-50 transition-colors">
-            자세히 보기
-          </a>
-        </div>
-
-        <!-- Badge Collection -->
-        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-sm p-6 space-y-6">
-          <div class="flex items-center justify-between">
-             <div class="flex items-center gap-2">
-               <div class="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center">
-                  <i data-feather="hexagon" class="w-4 h-4"></i>
-               </div>
-               <h4 class="text-base font-bold text-slate-900">뱃지 로드맵</h4>
-             </div>
-             <%= link_to badge_roadmap_path, class: "text-xs font-bold text-slate-400 hover:text-indigo-500 flex items-center gap-1 group" do %>
-               전체 보기 <i data-feather="chevron-right" class="w-3 h-3 group-hover:translate-x-0.5 transition-transform"></i>
-             <% end %>
-          </div>
-          
-          <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-            <% Badge.order(level: :asc).group_by(&:badge_type).each do |type, badges| %>
-               <% 
-                 user_badge_ids = current_user.badges.where(badge_type: type).pluck(:id)
-                 latest_badge = Badge.where(badge_type: type, id: user_badge_ids).order(level: :desc).first
-                 next_badge = Badge.where(badge_type: type).where("level > ?", latest_badge&.level || 0).order(level: :asc).first
-                 display_badge = latest_badge || next_badge
-                 is_locked = latest_badge.nil?
-               %>
-               <div class="min-w-[100px] flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-transparent hover:border-slate-200 hover:bg-white transition-all group cursor-default">
-                  <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl relative shadow-sm <%= is_locked ? 'bg-slate-200 opacity-50 grayscale' : 'bg-white' %>">
-                    <%= display_badge&.icon_path || "🔒" %>
-                    <% if latest_badge %>
-                      <span class="absolute -top-1.5 -right-1.5 bg-indigo-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-white">L<%= latest_badge.level %></span>
-                    <% end %>
-                  </div>
-                  <div class="text-center space-y-0.5">
-                    <p class="text-[10px] font-bold text-slate-800 truncate max-w-[80px]"><%= display_badge&.name || "미획득" %></p>
-                    <p class="text-[9px] font-semibold text-slate-400 uppercase"><%= type.to_s.humanize %></p>
-                  </div>
-               </div>
-            <% end %>
-          </div>
-        </div>
+      <!-- Tab Switcher -->
+      <div class="bg-white/5 p-1.5 rounded-2xl flex items-center gap-1 backdrop-blur-xl border border-white/10 shadow-xl">
+        <button data-tabs-target="tab" data-id="overview" data-action="click->tabs#change"
+                class="px-5 py-2.5 rounded-xl text-xs font-black transition-all tracking-tight whitespace-nowrap">OVERVIEW</button>
+        <button data-tabs-target="tab" data-id="finance" data-action="click->tabs#change"
+                class="px-5 py-2.5 rounded-xl text-xs font-black transition-all tracking-tight whitespace-nowrap">FINANCE</button>
+        <button data-tabs-target="tab" data-id="social" data-action="click->tabs#change"
+                class="px-5 py-2.5 rounded-xl text-xs font-black transition-all tracking-tight whitespace-nowrap">SOCIAL</button>
       </div>
     </div>
 
-    <!-- FINANCE PANEL (Compact Version) -->
-    <div data-tabs-target="panel" data-id="finance" class="hidden space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Summary Card -->
-        <div class="md:col-span-1 bg-slate-900 text-white rounded-3xl p-6 relative overflow-hidden shadow-xl">
-           <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl"></div>
-           <div class="relative z-10 space-y-8 h-full flex flex-col">
-             <div>
-               <h4 class="text-lg font-bold text-emerald-400 mb-2">My Assets</h4>
-               <div class="flex items-baseline gap-2">
-                 <h2 class="text-4xl font-black"><%= number_with_delimiter(@growth_stats[:wallet_balance]) %></h2>
-                 <span class="text-sm font-bold text-slate-400">Total</span>
-               </div>
-             </div>
-             
-             <div class="space-y-4 flex-1">
-               <div class="space-y-2">
-                 <div class="flex justify-between text-xs font-bold text-slate-400">
-                   <span>자산 방어율</span>
-                   <span class="text-white">준비 중</span>
-                 </div>
-                 <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                   <div class="h-full bg-emerald-500 w-[100%]"></div>
-                 </div>
-                 <p class="text-[10px] text-slate-500">벌금 트래킹 시 방어율이 계산됩니다.</p>
-               </div>
-             </div>
+    <%
+      total_activities = (@activity_data || {}).values.sum
+      
+      # Calculate Completion Rate
+      avg_completion = @participations.any? ? (@participations.sum(&:completion_rate) / @participations.size).to_i : 0
+      
+      # Calculate Unified Streak
+      all_activity_dates = (@activity_data || {}).keys.sort.reverse
+      
+      current_streak = 0
+      if all_activity_dates.any?
+        check_date = Date.current
+        if (@activity_data || {})[check_date].to_i > 0 || (@activity_data || {})[check_date - 1.day].to_i > 0
+          curr = (@activity_data || {})[check_date].to_i > 0 ? check_date : check_date - 1.day
+          while (@activity_data || {})[curr].to_i > 0
+            current_streak += 1
+            curr -= 1.day
+          end
+        end
+      end
 
-             <button class="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-bold transition-colors">
-               입출금 리포트 다운로드
-             </button>
-           </div>
-        </div>
+      max_streak = @participations.map(&:max_streak).max.to_i
+      badge_count = @current_user.badges.count
+      
+      # Logs for mini-matrices
+      c_logs = VerificationLog.joins(participant: :user).where(users: { id: @current_user.id }).where(created_at: 1.month.ago..Time.current).map { |l| l.created_at.to_date }.uniq
+      r_logs = (PersonalRoutineCompletion.joins(:personal_routine).where(personal_routines: { user_id: @current_user.id }).where(completed_on: 1.month.ago..Date.current).map(&:completed_on) + 
+               RoutineClubAttendance.joins(:routine_club_member).where(routine_club_members: { user_id: @current_user.id }).where(attendance_date: 1.month.ago..Date.current).map(&:attendance_date)).uniq
+    %>
 
-        <!-- History List -->
-        <div class="md:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-sm p-6 space-y-4 text-sm">
-           <h4 class="text-base font-bold text-slate-900 mb-2">최근 입출금 내역</h4>
-            <div class="space-y-2">
-               <% if @recent_transactions.any? %>
-                 <% @recent_transactions.each do |item| %>
-                 <div class="flex items-center justify-between p-3 hover:bg-slate-50 rounded-xl transition-colors cursor-default border border-transparent hover:border-slate-100">
-                    <div class="flex items-center gap-3">
-                       <div class="w-8 h-8 rounded-lg bg-<%= item[:color] %>-50 text-<%= item[:color] %>-600 flex items-center justify-center shadow-sm">
-                          <% if item[:type] == 'in' %>
-                            <i data-feather="arrow-down-left" class="w-4 h-4"></i>
-                          <% else %>
-                            <i data-feather="arrow-up-right" class="w-4 h-4"></i>
-                          <% end %>
-                       </div>
-                       <div class="min-w-0">
-                         <p class="font-bold text-slate-900 truncate text-[13px]"><%= item[:title] %></p>
-                         <p class="text-[10px] text-slate-400 font-medium"><%= item[:date] %></p>
-                       </div>
-                    </div>
-                    <span class="font-black shrink-0 text-[13px] <%= item[:type] == 'in' ? 'text-emerald-600' : 'text-slate-900' %>">
-                      <%= item[:amount] > 0 ? (item[:type] == 'in' ? '+' : '-') : '' %><%= number_with_delimiter(item[:amount]) %>원
-                    </span>
-                 </div>
-                 <% end %>
-               <% else %>
-                 <div class="py-12 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-                    <p class="text-xs font-bold text-slate-400">최근 입출금 내역이 없습니다.</p>
-                 </div>
-               <% end %>
+    <div class="relative min-h-[500px]">
+      <!-- OVERVIEW PANEL -->
+      <div data-tabs-target="panel" data-id="overview" class="space-y-6">
+        <!-- Top Stats Bento Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <% [
+            { icon: "activity", title: "누적 활동", value: "#{total_activities}회", sub: "All-time", gradient: "from-indigo-500 to-purple-600", glow: "indigo" },
+            { icon: "target", title: "평균 달성률", value: "#{avg_completion}%", sub: "Challenges", gradient: "from-emerald-500 to-teal-600", glow: "emerald" },
+            { icon: "zap", title: "최대 스트릭", value: "#{max_streak}일", sub: "Personal Best", gradient: "from-orange-500 to-red-600", glow: "orange" },
+            { icon: "award", title: "보유 배지", value: "#{badge_count}개", sub: "Collection", gradient: "from-purple-500 to-pink-600", glow: "purple" }
+          ].each do |item| %>
+            <div class="group relative bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-2xl transition-all hover:scale-105 hover:shadow-indigo-500/20 overflow-hidden">
+              <!-- Glow Effect -->
+              <div class="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br <%= item[:gradient] %> rounded-full blur-3xl opacity-0 group-hover:opacity-30 transition-opacity"></div>
+              
+              <div class="relative z-10 flex flex-col h-full justify-between gap-4">
+                <div class="flex items-center justify-between">
+                  <div class="w-12 h-12 rounded-2xl bg-gradient-to-br <%= item[:gradient] %> flex items-center justify-center shadow-lg shadow-<%= item[:glow] %>-500/50">
+                    <i data-feather="<%= item[:icon] %>" class="w-6 h-6 text-white"></i>
+                  </div>
+                  <div class="px-2.5 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-black text-white/80 backdrop-blur-sm">
+                    <%= item[:sub] %>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1"><%= item[:title] %></p>
+                  <h4 class="text-3xl font-black text-white tracking-tight"><%= item[:value] %></h4>
+                </div>
+              </div>
             </div>
+          <% end %>
         </div>
-      </div>
-    </div>
-    
-    <!-- SOCIAL PANEL (Compact Version) -->
-    <div data-tabs-target="panel" data-id="social" class="hidden space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Stats -->
-        <% [
-           { label: "받은 응원", value: number_with_delimiter(@social_stats[:received_cheers]), icon: "heart", color: "rose" },
-           { label: "보낸 응원", value: number_with_delimiter(@social_stats[:sent_cheers]), icon: "thumbs-up", color: "indigo" },
-           { label: "베스트 루틴", value: @social_stats[:best_routine_count], icon: "star", color: "amber" },
-           { label: "모임 평점", value: @social_stats[:rating], icon: "message-circle", color: "emerald" }
-        ].each do |stat| %>
-          <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-             <div class="w-10 h-10 rounded-xl bg-<%= stat[:color] %>-50 text-<%= stat[:color] %>-500 flex items-center justify-center">
-               <i data-feather="<%= stat[:icon] %>" class="w-5 h-5"></i>
-             </div>
-             <div>
-               <p class="text-[10px] font-bold text-slate-400 uppercase"><%= stat[:label] %></p>
-               <h4 class="text-xl font-black text-slate-900"><%= stat[:value] %></h4>
-             </div>
-          </div>
-        <% end %>
-      </div>
 
-       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-         <!-- Hall of Fame -->
-         <div class="md:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
-            <h4 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <i data-feather="award" class="w-4 h-4 text-indigo-500"></i> 명예의 전당
-            </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <% if @top_achievers.any? %>
-                <% @top_achievers.each_with_index do |user, idx| %>
-                   <% is_me = (user.id == current_user.id) %>
-                   <div class="relative p-4 rounded-2xl border <%= is_me ? 'border-indigo-500 bg-indigo-50/10 ring-1 ring-indigo-500' : 'border-slate-100 bg-slate-50/50' %> flex flex-col items-center text-center gap-2">
-                      <span class="absolute top-2 left-3 text-[10px] font-black text-slate-300">#<%= idx + 1 %></span>
-                      <div class="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-slate-200">
-                        <img src="<%= user.profile_image.presence || "https://api.dicebear.com/7.x/lorelei/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover">
-                      </div>
-                      <div>
-                        <p class="text-sm font-black text-slate-900 truncate max-w-[80px]"><%= user.nickname %></p>
-                        <p class="text-[10px] font-bold text-slate-500"><%= user.badge_count %>개의 배지</p>
-                      </div>
-                   </div>
-                <% end %>
-              <% else %>
-                <div class="col-span-3 py-8 text-center text-slate-400 text-xs">순위 데이터가 충분하지 않습니다.</div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Weekly Trend Chart -->
+          <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6 flex flex-col justify-between overflow-hidden relative group">
+            <!-- Gradient Overlay -->
+            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-indigo-500/30 to-transparent rounded-bl-full -mr-10 -mt-10 blur-2xl group-hover:scale-110 transition-transform"></div>
+            
+            <div class="space-y-2 relative z-10">
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                <h4 class="text-base font-black text-white">주간 트렌드</h4>
+              </div>
+              <p class="text-xs text-slate-400 font-medium">지난 7일간의 성취 흐름</p>
+            </div>
+            
+            <div class="flex items-end justify-between h-32 mt-6 gap-2 px-1">
+              <% 
+                weekly_stats = (0..6).map do |i|
+                  date = Date.current - i.days
+                  count = (@activity_data || {})[date] || 0
+                  { count: count, day: date.strftime("%a")[0], date: date }
+                end.reverse
+                max_daily = [weekly_stats.map { |s| s[:count] }.max, 1].max
+              %>
+              <% weekly_stats.each_with_index do |stat, i| %>
+                <div class="flex-1 flex flex-col justify-end group/bar h-full cursor-pointer relative">
+                  <div class="w-full rounded-t-xl relative overflow-hidden transition-all duration-500" style="height: <%= [stat[:count].to_f / max_daily * 100, 10].max.to_i %>%">
+                    <div class="absolute inset-0 bg-gradient-to-t <%= i == 6 ? 'from-indigo-600 to-indigo-400' : 'from-indigo-500/50 to-indigo-400/50' %> group-hover/bar:from-indigo-500 group-hover/bar:to-indigo-300 transition-all shadow-lg shadow-indigo-500/50"></div>
+                  </div>
+                  <!-- Tooltip -->
+                  <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-black py-2 px-3 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-all whitespace-nowrap pointer-events-none z-20 shadow-2xl border border-white/20 transform translate-y-2 group-hover/bar:translate-y-0">
+                     <%= stat[:count] %> activities
+                  </div>
+                </div>
               <% end %>
             </div>
-         </div>
-         
-         <!-- Motivation Card -->
-         <div class="bg-indigo-600 rounded-3xl p-6 text-white flex flex-col justify-center text-center relative overflow-hidden shadow-lg">
-           <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-           <div class="relative z-10 space-y-3">
-             <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center mx-auto mb-2">
-               <i data-feather="zap" class="w-6 h-6 text-yellow-300"></i>
+            <div class="flex justify-between px-1 mt-3 text-xs font-black text-slate-400 uppercase tracking-widest text-center">
+              <% weekly_stats.each do |stat| %>
+                <span class="flex-1 <%= 'text-indigo-400 scale-110' if stat[:date] == Date.current %>"><%= stat[:day] %></span>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Routine Timing Analysis -->
+          <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg shadow-purple-500/50">
+                  <i data-feather="clock" class="w-5 h-5 text-white"></i>
+                </div>
+                <h4 class="text-base font-black text-white">루틴 집중 시간</h4>
+              </div>
+              <% 
+                peak_hour = @routine_time_stats&.max_by { |k, v| v }&.first
+                peak_time = case peak_hour
+                  when 5..10 then "아침형"
+                  when 11..16 then "오후형"
+                  when 17..22 then "저녁형"
+                  else "심야형"
+                end if peak_hour
+              %>
+              <% if peak_time %>
+                <span class="text-xs font-black text-white bg-gradient-to-r from-purple-500 to-pink-600 px-3 py-1.5 rounded-full shadow-lg shadow-purple-500/50"><%= peak_time %></span>
+              <% end %>
+            </div>
+
+            <div class="flex items-end h-28 gap-0.5 px-1">
+              <% 
+                max_count = [@routine_time_stats&.values&.max || 0, 1].max
+              %>
+              <% (0..23).each do |hour| %>
+                <% count = @routine_time_stats[hour] || 0 %>
+                <div class="flex-1 rounded-t-sm relative group/time" style="height: <%= [count.to_f / max_count * 100, 5].max.to_i %>%">
+                  <div class="absolute inset-0 bg-gradient-to-t from-purple-500/60 to-pink-500/60 group-hover/time:from-purple-500 group-hover/time:to-pink-500 transition-all shadow-lg shadow-purple-500/30"></div>
+                  <!-- Tooltip -->
+                  <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black py-1.5 px-2.5 rounded-lg opacity-0 group-hover/time:opacity-100 transition-all whitespace-nowrap pointer-events-none z-20 shadow-2xl border border-white/20 transform translate-y-2 group-hover/time:translate-y-0">
+                    <%= hour %>시: <%= count %>회
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              <span>00시</span>
+              <span>06시</span>
+              <span>12시</span>
+              <span>18시</span>
+              <span>23시</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Achievement Matrix -->
+        <div class="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-6 space-y-5">
+          <div class="flex items-center justify-between">
+             <div class="flex items-center gap-3">
+              <div class="p-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-500/50">
+                <i data-feather="grid" class="w-5 h-5 text-white"></i>
+              </div>
+              <h4 class="text-base font-black text-white">성취 매트릭스</h4>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex items-center gap-2 text-xs font-bold text-slate-400">
+                <span class="w-2 h-2 rounded-sm bg-white/10"></span> 0
+              </div>
+              <div class="flex items-center gap-2 text-xs font-bold text-slate-400">
+                <span class="w-2 h-2 rounded-sm bg-indigo-500 shadow-sm shadow-indigo-500/50"></span> High
+              </div>
+            </div>
+          </div>
+
+            <%
+              # Matrix data (Last 28 days)
+              matrix_end = Date.current
+              matrix_start = matrix_end - 27.days
+              matrix_dates = (matrix_start..matrix_end).to_a
+              
+              c_rate = matrix_dates.count { |d| c_logs.include?(d) } / 28.0 * 100
+              r_rate = matrix_dates.count { |d| r_logs.include?(d) } / 28.0 * 100
+            %>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Challenges -->
+              <div class="space-y-3 bg-white/5 p-4 rounded-2xl border border-white/10">
+                <div class="flex justify-between items-end">
+                  <span class="text-xs font-black text-indigo-400 uppercase tracking-wider">Challenges</span>
+                  <span class="text-sm font-black text-white"><%= c_rate.to_i %>%</span>
+                </div>
+                <div class="grid grid-cols-7 gap-1.5">
+                  <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
+                    <div class="text-[9px] font-black text-slate-500 text-center"><%= day %></div>
+                  <% end %>
+                  <%# Padding for start of 28 day range %>
+                  <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
+                  <% matrix_dates.each do |date| %>
+                    <% active = c_logs.include?(date) %>
+                    <div class="aspect-square rounded-md transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-indigo-500 shadow-md shadow-indigo-500/50' : 'bg-white/10' %>" 
+                         title="<%= date %>"></div>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Routines -->
+              <div class="space-y-3 bg-white/5 p-4 rounded-2xl border border-white/10">
+                <div class="flex justify-between items-end">
+                  <span class="text-xs font-black text-purple-400 uppercase tracking-wider">Routines</span>
+                  <span class="text-sm font-black text-white"><%= r_rate.to_i %>%</span>
+                </div>
+                <div class="grid grid-cols-7 gap-1.5">
+                  <% ["S", "M", "T", "W", "T", "F", "S"].each do |day| %>
+                    <div class="text-[9px] font-black text-slate-500 text-center"><%= day %></div>
+                  <% end %>
+                  <%# Padding for start of 28 day range %>
+                  <% matrix_start.wday.times do %> <div class="aspect-square"></div> <% end %>
+                  <% matrix_dates.each do |date| %>
+                    <% active = r_logs.include?(date) %>
+                    <div class="aspect-square rounded-md transition-all hover:scale-110 cursor-pointer <%= active ? 'bg-purple-500 shadow-md shadow-purple-500/50' : 'bg-white/10' %>"
+                         title="<%= date %>"></div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bottom Section Split -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+           <!-- Growth Investment Summary -->
+          <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-7 text-white flex flex-col justify-between relative overflow-hidden shadow-2xl shadow-indigo-500/50 group">
+            <div class="absolute -right-16 -top-16 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors"></div>
+            
+            <div class="relative z-10 space-y-6">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">
+                    <i data-feather="trending-up" class="w-5 h-5 text-white"></i>
+                </div>
+                <h4 class="text-base font-black tracking-tight">성장 투자 요약</h4>
+              </div>
+
+              <div class="space-y-2">
+                <p class="text-xs font-bold text-indigo-200 uppercase tracking-widest">Total Growth Investment</p>
+                <h4 class="text-4xl font-black tracking-tight"><%= number_with_delimiter(@growth_stats[:total_invested]) %><span class="text-lg font-bold text-white/70 ml-1">원</span></h4>
+              </div>
+
+              <div class="pt-5 border-t border-white/20 flex flex-col gap-3">
+                <div class="flex justify-between text-sm">
+                   <span class="text-indigo-100">환급 예정액</span>
+                   <span class="text-white font-black"><%= number_with_delimiter(@growth_stats[:expected_refund]) %>원</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                   <span class="text-white">누적 환급액</span>
+                   <span class="text-emerald-300 font-black"><%= number_with_delimiter(@growth_stats[:total_refunded]) %>원</span>
+                </div>
+              </div>
+            </div>
+            
+            <a href="#" data-action="click->tabs#change" data-id="finance" class="mt-6 w-full py-3.5 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white text-xs font-black rounded-2xl text-center transition-all border border-white/30 shadow-lg">
+              자세히 보기
+            </a>
+          </div>
+
+          <!-- Badge Collection -->
+          <div class="lg:col-span-2 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-7 space-y-6">
+            <div class="flex items-center justify-between">
+               <div class="flex items-center gap-3">
+                 <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/50">
+                    <i data-feather="hexagon" class="w-5 h-5 text-white"></i>
+                 </div>
+                 <h4 class="text-lg font-black text-white">뱃지 로드맵</h4>
+               </div>
+               <%= link_to badge_roadmap_path, class: "text-xs font-bold text-slate-400 hover:text-indigo-400 flex items-center gap-1 group transition-colors" do %>
+                 전체 보기 <i data-feather="chevron-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+               <% end %>
+            </div>
+            
+            <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+              <% Badge.order(level: :asc).group_by(&:badge_type).each do |type, badges| %>
+                 <% 
+                   user_badge_ids = current_user.badges.where(badge_type: type).pluck(:id)
+                   latest_badge = Badge.where(badge_type: type, id: user_badge_ids).order(level: :desc).first
+                   next_badge = Badge.where(badge_type: type).where("level > ?", latest_badge&.level || 0).order(level: :asc).first
+                   display_badge = latest_badge || next_badge
+                   is_locked = latest_badge.nil?
+                 %>
+                 <div class="min-w-[110px] flex flex-col items-center gap-3 p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all group cursor-default">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl relative shadow-xl <%= is_locked ? 'bg-white/10 opacity-40 grayscale' : 'bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm' %>">
+                      <%= display_badge&.icon_path || "🔒" %>
+                      <% if latest_badge %>
+                        <span class="absolute -top-2 -right-2 bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-[10px] font-black px-2 py-1 rounded-full ring-2 ring-slate-900 shadow-lg">L<%= latest_badge.level %></span>
+                      <% end %>
+                    </div>
+                    <div class="text-center space-y-1">
+                      <p class="text-xs font-black text-white truncate max-w-[90px]"><%= display_badge&.name || "미획득" %></p>
+                      <p class="text-[10px] font-bold text-slate-400 uppercase"><%= type.to_s.humanize %></p>
+                    </div>
+                 </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANCE PANEL -->
+      <div data-tabs-target="panel" data-id="finance" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Summary Card -->
+          <div class="md:col-span-1 bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-3xl p-7 relative overflow-hidden shadow-2xl shadow-emerald-500/50">
+             <div class="absolute -right-16 -bottom-16 w-56 h-56 bg-white/10 rounded-full blur-3xl"></div>
+             <div class="relative z-10 space-y-8 h-full flex flex-col">
+               <div>
+                 <h4 class="text-lg font-black text-emerald-100 mb-3">My Assets</h4>
+                 <div class="flex items-baseline gap-2">
+                   <h2 class="text-5xl font-black"><%= number_with_delimiter(@growth_stats[:wallet_balance]) %></h2>
+                   <span class="text-base font-bold text-emerald-200">원</span>
+                 </div>
+               </div>
+               
+               <div class="space-y-5 flex-1">
+                 <div class="space-y-3">
+                   <div class="flex justify-between text-sm font-bold text-emerald-100">
+                     <span>자산 방어율</span>
+                     <span class="text-white">100%</span>
+                   </div>
+                   <div class="h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+                     <div class="h-full bg-white shadow-lg shadow-white/50 w-[100%]"></div>
+                   </div>
+                   <p class="text-xs text-emerald-100">모든 투자가 안전하게 보호되고 있습니다.</p>
+                 </div>
+               </div>
+
+               <button class="w-full py-3.5 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-2xl text-sm font-black transition-all border border-white/30 shadow-lg">
+                 입출금 리포트 다운로드
+               </button>
              </div>
-             <h4 class="text-lg font-black leading-tight">동기부여의 아이콘!</h4>
-             <p class="text-xs text-indigo-100 font-medium leading-relaxed px-4">
-               당신의 인증은 평균 <br/> <b class="text-white"><%= @inspiration_count %>명</b>에게 영감을 줍니다.
-             </p>
+          </div>
+
+          <!-- History List -->
+          <div class="md:col-span-2 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-7 space-y-5">
+             <h4 class="text-lg font-black text-white mb-3">최근 입출금 내역</h4>
+              <div class="space-y-2">
+                 <% if @recent_transactions.any? %>
+                   <% @recent_transactions.each do |item| %>
+                   <div class="flex items-center justify-between p-4 hover:bg-white/5 rounded-2xl transition-all cursor-default border border-transparent hover:border-white/10 group">
+                      <div class="flex items-center gap-4">
+                         <div class="w-10 h-10 rounded-xl bg-white/10 text-slate-300 flex items-center justify-center shadow-md group-hover:bg-white/20 transition-colors">
+                            <i data-feather="arrow-up-right" class="w-5 h-5"></i>
+                         </div>
+                         <div class="min-w-0">
+                           <p class="font-black text-white truncate text-sm"><%= item[:title] %></p>
+                           <p class="text-xs text-slate-400 font-medium"><%= item[:date] %></p>
+                         </div>
+                      </div>
+                      <span class="font-black shrink-0 text-sm text-white">
+                        -<%= number_with_delimiter(item[:amount]) %>원
+                      </span>
+                   </div>
+                   <% end %>
+                 <% else %>
+                   <div class="py-16 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
+                      <p class="text-sm font-bold text-slate-400">최근 입출금 내역이 없습니다.</p>
+                   </div>
+                 <% end %>
+              </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- SOCIAL PANEL -->
+      <div data-tabs-target="panel" data-id="social" class="hidden space-y-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Stats -->
+          <% [
+             { label: "받은 응원", value: number_with_delimiter(@social_stats[:received_cheers]), icon: "heart", gradient: "from-rose-500 to-pink-600", glow: "rose" },
+             { label: "보낸 응원", value: number_with_delimiter(@social_stats[:sent_cheers]), icon: "thumbs-up", gradient: "from-indigo-500 to-purple-600", glow: "indigo" },
+             { label: "베스트 루틴", value: @social_stats[:best_routine_count], icon: "star", gradient: "from-amber-500 to-orange-600", glow: "amber" },
+             { label: "모임 평점", value: @social_stats[:rating], icon: "message-circle", gradient: "from-emerald-500 to-teal-600", glow: "emerald" }
+          ].each do |stat| %>
+            <div class="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 shadow-2xl flex items-center gap-4 group hover:scale-105 transition-all">
+               <div class="w-12 h-12 rounded-2xl bg-gradient-to-br <%= stat[:gradient] %> flex items-center justify-center shadow-lg shadow-<%= stat[:glow] %>-500/50">
+                 <i data-feather="<%= stat[:icon] %>" class="w-6 h-6 text-white"></i>
+               </div>
+               <div>
+                 <p class="text-xs font-bold text-slate-400 uppercase"><%= stat[:label] %></p>
+                 <h4 class="text-2xl font-black text-white"><%= stat[:value] %></h4>
+               </div>
+            </div>
+          <% end %>
+        </div>
+
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <!-- Hall of Fame -->
+           <div class="md:col-span-2 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-7">
+              <h4 class="text-lg font-black text-white mb-5 flex items-center gap-2">
+                <i data-feather="award" class="w-5 h-5 text-indigo-400"></i> 명예의 전당
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <% if @top_achievers.any? %>
+                  <% @top_achievers.each_with_index do |user, idx| %>
+                     <% is_me = (user.id == current_user.id) %>
+                     <div class="relative p-5 rounded-2xl border <%= is_me ? 'border-indigo-500 bg-indigo-500/10 ring-2 ring-indigo-500 shadow-lg shadow-indigo-500/50' : 'border-white/10 bg-white/5' %> flex flex-col items-center text-center gap-3 group hover:scale-105 transition-all">
+                        <span class="absolute top-3 left-3 text-xs font-black text-slate-500">#<%= idx + 1 %></span>
+                        <div class="w-16 h-16 rounded-full border-4 border-white/20 shadow-xl overflow-hidden bg-slate-700">
+                          <img src="<%= user.profile_image.presence || "https://api.dicebear.com/7.x/lorelei/svg?seed=#{user.nickname}" %>" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                          <p class="text-sm font-black text-white truncate max-w-[90px]"><%= user.nickname %></p>
+                          <p class="text-xs font-bold text-slate-400"><%= user.badge_count %>개의 배지</p>
+                        </div>
+                     </div>
+                  <% end %>
+                <% else %>
+                  <div class="col-span-3 py-12 text-center text-slate-400 text-sm">순위 데이터가 충분하지 않습니다.</div>
+                <% end %>
+              </div>
+           </div>
+           
+           <!-- Motivation Card -->
+           <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-7 text-white flex flex-col justify-center text-center relative overflow-hidden shadow-2xl shadow-indigo-500/50">
+             <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+             <div class="relative z-10 space-y-4">
+               <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-lg">
+                 <i data-feather="zap" class="w-7 h-7 text-yellow-300"></i>
+               </div>
+               <h4 class="text-xl font-black leading-tight">동기부여의 아이콘!</h4>
+               <p class="text-sm text-indigo-100 font-medium leading-relaxed px-4">
+                 당신의 인증은 평균 <br/> <b class="text-white text-lg"><%= @inspiration_count %>명</b>에게 영감을 줍니다.
+               </p>
+             </div>
            </div>
          </div>
-       </div>
+      </div>
     </div>
   </div>
 </div>
@@ -484,4 +489,9 @@
 <style>
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.5; }
+  }
 </style>
