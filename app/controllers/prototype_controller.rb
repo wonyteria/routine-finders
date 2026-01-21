@@ -199,64 +199,73 @@ class PrototypeController < ApplicationController
       end
 
       # 4. Growth Analytics (Real Data)
-      # Weekly: Last 7 days completion rate
-      @weekly_data = (0..6).map do |days_ago|
-        date = Date.current - days_ago.days
-        routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
-        total = routines.count
-        completed = routines.select { |r| r.completions.exists?(created_at: date.all_day) }.count
-        total.positive? ? ((completed.to_f / total) * 100).round : 0
-      end.reverse
+    # Weekly: Last 7 days completion rate
+    @weekly_labels = []
+    @weekly_data = (0..6).map do |days_ago|
+      date = Date.current - days_ago.days
+      @weekly_labels << date.strftime("%m/%d")
+      routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      total = routines.count
+      completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
+      total.positive? ? ((completed.to_f / total) * 100).round : 0
+    end.reverse
+    @weekly_labels.reverse!
 
-      # Monthly: Last 4 weeks completion rate
-      @monthly_data = (0..3).map do |weeks_ago|
-        week_start = Date.current.beginning_of_week - weeks_ago.weeks
-        week_end = week_start + 6.days
+    # Monthly: Last 4 weeks completion rate (average of daily rates)
+  @monthly_labels = []
+  @monthly_data = (0..3).map do |weeks_ago|
+    week_start = Date.current.beginning_of_week - weeks_ago.weeks
+    week_of_month = ((week_start.day - 1) / 7) + 1
+    @monthly_labels << "#{week_start.month}월 #{week_of_month}주"
+    
+    week_end = week_start + 6.days
+    daily_rates = []
 
-        total_days = 0
-        completed_days = 0
+    (week_start..week_end).each do |date|
+      routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      next if routines.empty?
 
-        (week_start..week_end).each do |date|
-          routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
-          next if routines.empty?
-
-          total_days += routines.count
-          completed_days += routines.select { |r| r.completions.exists?(created_at: date.all_day) }.count
-        end
-
-        total_days.positive? ? ((completed_days.to_f / total_days) * 100).round : 0
-      end.reverse
-
-      # Yearly: This year's monthly completion rates (up to current month)
-      current_month = Date.current.month
-      @yearly_data = (1..current_month).map do |month|
-        month_start = Date.new(Date.current.year, month, 1)
-        month_end = [ month_start.end_of_month, Date.current ].min
-
-        total_days = 0
-        completed_days = 0
-
-        (month_start..month_end).each do |date|
-          routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
-          next if routines.empty?
-
-          total_days += routines.count
-          completed_days += routines.select { |r| r.completions.exists?(created_at: date.all_day) }.count
-        end
-
-        total_days.positive? ? ((completed_days.to_f / total_days) * 100).round : 0
-      end
-
-      # Calculate current period completion rate
-      @weekly_completion = @weekly_data.any? ? (@weekly_data.sum.to_f / @weekly_data.size).round : 0
-      @monthly_completion = @monthly_data.any? ? (@monthly_data.sum.to_f / @monthly_data.size).round : 0
-      @yearly_completion = @yearly_data.any? ? (@yearly_data.sum.to_f / @yearly_data.size).round : 0
-
-      # Calculate growth compared to previous period
-      @weekly_growth = @weekly_data.size >= 2 ? @weekly_data[-1] - @weekly_data[-2] : 0
-      @monthly_growth = @monthly_data.size >= 2 ? @monthly_data[-1] - @monthly_data[-2] : 0
-      @yearly_growth = @yearly_data.size >= 2 ? @yearly_data[-1] - @yearly_data[-2] : 0
+      total = routines.count
+      completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
+      daily_rates << ((completed.to_f / total) * 100).round
     end
+
+    daily_rates.any? ? (daily_rates.sum.to_f / daily_rates.size).round : 0
+  end.reverse
+  @monthly_labels.reverse!
+
+  # Yearly: This year's monthly completion rates (average of daily rates)
+  current_month = Date.current.month
+  @yearly_labels = []
+  @yearly_data = (1..current_month).map do |month|
+    @yearly_labels << "#{month}월"
+    month_start = Date.new(Date.current.year, month, 1)
+    month_end = [ month_start.end_of_month, Date.current ].min
+
+    daily_rates = []
+
+    (month_start..month_end).each do |date|
+      routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      next if routines.empty?
+
+      total = routines.count
+      completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
+      daily_rates << ((completed.to_f / total) * 100).round
+    end
+
+    daily_rates.any? ? (daily_rates.sum.to_f / daily_rates.size).round : 0
+  end
+
+    # Summaries
+    @weekly_completion = @weekly_data.last || 0
+    @weekly_growth = @weekly_data.size >= 2 ? (@weekly_data[-1] - @weekly_data[-2]) : 0
+
+    @monthly_completion = @monthly_data.last || 0
+    @monthly_growth = @monthly_data.size >= 2 ? (@monthly_data[-1] - @monthly_data[-2]) : 0
+
+    @yearly_completion = @yearly_data.last || 0
+    @yearly_growth = @yearly_data.size >= 2 ? (@yearly_data[-1] - @yearly_data[-2]) : 0
+  end
   end
 
   def notifications
