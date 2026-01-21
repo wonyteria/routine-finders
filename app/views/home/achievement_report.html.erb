@@ -12,35 +12,35 @@
   <div class="relative z-10 max-w-7xl mx-auto pb-20 px-4 md:px-6">
     
     <!-- Navigation: Back to Home -->
-    <div class="pt-8 mb-6">
-      <%= link_to root_path, class: "inline-flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/10 transition-all shadow-lg backdrop-blur-sm group" do %>
-        <i data-feather="chevron-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
-        <span class="text-xs font-black uppercase tracking-widest">홈으로 가기</span>
+    <div class="pt-6 mb-4">
+      <%= link_to root_path, class="inline-flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/10 transition-all backdrop-blur-sm group text-xs" do %>
+        <i data-feather="chevron-left" class="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform"></i>
+        <span class="font-bold uppercase tracking-wider">홈으로 가기</span>
       <% end %>
     </div>
 
     <!-- Header & Tabs -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-      <div class="space-y-2">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/50">
-            <i data-feather="bar-chart-2" class="w-5 h-5 text-white"></i>
+    <div class="flex flex-col gap-4 mb-6">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <i data-feather="bar-chart-2" class="w-4 h-4 text-white"></i>
           </div>
           <div>
-            <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Routine Insight</p>
-            <h2 class="text-3xl md:text-4xl font-black text-white tracking-tight">성취 분석 리포트</h2>
+            <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Routine Insight</p>
+            <h2 class="text-xl md:text-2xl font-black text-white tracking-tight">성취 분석 리포트</h2>
           </div>
         </div>
       </div>
       
-      <!-- Tab Switcher -->
-      <div class="bg-white/5 p-1.5 rounded-2xl flex items-center gap-1 backdrop-blur-xl border border-white/10 shadow-xl">
+      <!-- Tab Switcher - Full Width -->
+      <div class="bg-white/5 p-1 rounded-xl grid grid-cols-3 gap-1 backdrop-blur-xl border border-white/10 shadow-lg">
         <button data-tabs-target="tab" data-id="overview" data-action="click->tabs#change"
-                class="px-5 py-2.5 rounded-xl text-xs font-black transition-all tracking-tight whitespace-nowrap">OVERVIEW</button>
+                class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight">OVERVIEW</button>
         <button data-tabs-target="tab" data-id="finance" data-action="click->tabs#change"
-                class="px-5 py-2.5 rounded-xl text-xs font-black transition-all tracking-tight whitespace-nowrap">FINANCE</button>
+                class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight">FINANCE</button>
         <button data-tabs-target="tab" data-id="social" data-action="click->tabs#change"
-                class="px-5 py-2.5 rounded-xl text-xs font-black transition-all tracking-tight whitespace-nowrap">SOCIAL</button>
+                class="px-4 py-2 rounded-lg text-xs font-black transition-all tracking-tight">SOCIAL</button>
       </div>
     </div>
 
