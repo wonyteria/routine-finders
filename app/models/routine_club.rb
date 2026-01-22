@@ -60,9 +60,17 @@ class RoutineClub < ApplicationRecord
   end
 
   # 모집 기간 여부 확인 (분기 시작 14일 전 ~ 시작일 당일)
+  # 2026년 2월 1일까지 특별 연장
   def self.recruitment_open?(date = Date.current)
     # 현재 분기 시작일 계산 (시작 14일 전 ~ 시작일 당일)
     current_quarter_start = date.beginning_of_quarter
+
+    # 2026년 1분기(1월~3월)에 한해 2월 1일까지 모집 기간 연장
+    if current_quarter_start == Date.new(2026, 1, 1)
+      deadline = Date.new(2026, 2, 1)
+      return date >= (current_quarter_start - 14.days) && date <= deadline
+    end
+
     date >= (current_quarter_start - 14.days) && date <= current_quarter_start
   end
 
