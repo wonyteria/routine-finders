@@ -204,6 +204,14 @@ class ChallengesController < ApplicationController
       return redirect_to @challenge, alert: "모집 기간이 이미 종료된 챌린지입니다."
     end
 
+    # Priority Access Check
+    if @challenge.priority_access_for_members?
+      is_premium = current_user.admin? || current_user.routine_club_members.active.any?
+      unless is_premium
+        return redirect_to @challenge, alert: "현재는 루파 클럽 멤버 전용 우선 신청 기간입니다. (오픈까지 약 1시간 미만 남음)"
+      end
+    end
+
     if @challenge.id >= 10000
       path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
       return redirect_to path, notice: "챌린지에 참여했습니다! (데모 모드)"

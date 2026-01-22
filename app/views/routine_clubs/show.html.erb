@@ -206,7 +206,9 @@
                       <%= f.label :contact_info, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
                         연락처 <span class="text-indigo-300">*</span>
                       <% end %>
-                      <%= text_field_tag :contact_info, nil, placeholder: "010-0000-0000", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/50 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
+                      <%= text_field_tag :contact_info, nil, placeholder: "010-0000-0000", required: true, 
+                          class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/50 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all",
+                          data: { controller: "phone-format", action: "input->phone-format#format", phone_format_target: "input" } %>
                     </div>
                   </div>
                   <div class="flex flex-col md:flex-row items-center gap-6 pt-4">
@@ -576,7 +578,9 @@
                 <%= f.label :contact_info, class: "text-[10px] font-black text-white/60 uppercase tracking-widest ml-1 mb-1 block" do %>
                   연락처 <span class="text-indigo-300">*</span>
                 <% end %>
-                <%= text_field_tag :contact_info, nil, placeholder: "연락처 (번호/오픈채팅)", required: true, class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all" %>
+                <%= text_field_tag :contact_info, nil, placeholder: "010-0000-0000", required: true, 
+                    class: "w-full px-6 py-4 bg-white/10 border-white/10 rounded-2xl text-white placeholder-white/30 font-bold focus:ring-2 ring-indigo-500/50 border-none transition-all",
+                    data: { controller: "phone-format", action: "input->phone-format#format", phone_format_target: "input" } %>
               </div>
 
               <div>

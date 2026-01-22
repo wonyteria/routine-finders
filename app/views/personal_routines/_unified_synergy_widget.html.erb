@@ -1,0 +1,50 @@
+<% 
+  is_premium = @permission.is_premium_member?
+  is_proto_style = local_assigns[:is_proto_style] || is_premium
+%>
+
+<div class="<%= is_proto_style ? "bg-[#1B1A24] border border-white/5" : "bg-white border border-slate-100" %> rounded-[40px] p-8 space-y-6 relative overflow-hidden">
+  <div class="flex items-center justify-between relative z-10">
+    <div class="space-y-1">
+      <h3 class="text-xs font-black <%= is_proto_style ? "text-indigo-400" : "text-indigo-600" %> uppercase tracking-[0.2em]">Real-time Synergy</h3>
+      <p class="text-xl font-black">실시간 시너지 피드</p>
+    </div>
+    <div class="flex items-center gap-1">
+      <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]"></span>
+      <span class="text-[10px] font-black uppercase tracking-widest opacity-40">Live</span>
+    </div>
+  </div>
+
+  <div class="space-y-4 relative z-10">
+    <% @rufa_activities.each do |activity| %>
+      <div class="flex items-start gap-4 p-4 <%= is_proto_style ? "bg-white/5" : "bg-slate-50" %> rounded-3xl border border-white/5">
+        <%= rufa_avatar_tag(activity.user, size: :md, class_name: "#{!is_premium ? 'blur-[2px] opacity-40 select-none' : ''}") %>
+        <div class="space-y-1.5 flex-1 min-w-0 <%= !is_premium ? "blur-[2px] opacity-40 select-none" : "" %>">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black truncate"><%= activity.user.nickname %></span>
+            <span class="text-[9px] font-bold opacity-30"><%= time_ago_in_words(activity.created_at) %>전</span>
+          </div>
+          <p class="text-[11px] font-medium leading-relaxed opacity-70 break-words"><%= activity.body %></p>
+          <% if is_premium %>
+            <div class="flex items-center gap-3 pt-1">
+               <button class="flex items-center gap-1 text-[10px] font-black group">
+                 <span class="group-hover:scale-125 transition-transform">👏</span>
+                 <span class="opacity-40 group-hover:opacity-100"><%= activity.claps_count %></span>
+               </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% unless is_premium %>
+      <!-- Overlay for Non-Premium -->
+      <div class="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center bg-white/10 backdrop-blur-sm rounded-3xl">
+        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xl mb-4 shadow-xl">🤝</div>
+        <h4 class="text-sm font-black text-slate-900 mb-2">프리미엄 시너지에 합류하세요</h4>
+        <p class="text-[10px] font-bold text-slate-500 leading-relaxed mb-6">검증된 멤버들의 실시간 기록을 확인하고 서로를 응원하며 폭발적으로 성장하세요.</p>
+        <%= link_to "시너지 피드 해제하기", routine_clubs_path, class: "px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-[10px] hover:bg-indigo-700 transition-all shadow-lg" %>
+      </div>
+    <% end %>
+  </div>
+</div>

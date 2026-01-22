@@ -8,54 +8,60 @@ class PrototypeController < ApplicationController
   end
 
   def home
-    # 1. Total Daily Tasks Calculation (Routines + Challenges + Gatherings)
-    @todays_routines = current_user ? current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
-    # Combined Active Participations (Challenges & Gatherings)
-    @joined_participations = current_user ? current_user.participations.active.joins(:challenge) : Participant.none
-    @todays_gatherings = @joined_participations.where(challenges: { start_date: Date.current })
+    # 1. Permission & Membership
+    @permission = PermissionService.new(current_user)
+    @official_club = RoutineClub.official.first
+    @my_membership = current_user&.routine_club_members&.find_by(routine_club: @official_club)
+    @is_club_member = @permission.is_premium_member?
 
-    # Counts
+    # 2. Routine & Task Progress (Real data)
+    @todays_routines = current_user ? current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
+    @joined_participations = current_user ? current_user.participations.active.joins(:challenge) : Participant.none
+
+    # Progress Calculation
     routine_total = @todays_routines.count
     participation_total = @joined_participations.count
     @total_task_count = routine_total + participation_total
 
-    # Completed Counts
     routine_done = @todays_routines.select(&:completed_today?).count
-    # Simplified: assume verification_logs for today exists for completed items
     participation_done = current_user ? VerificationLog.where(participant: @joined_participations, created_at: Date.current.all_day).pluck(:participant_id).uniq.count : 0
-
     @completed_count = routine_done + participation_done
+
+    # For Orbit Visualization: Using real achievement rate if member
     @progress = @total_task_count.positive? ? (@completed_count.to_f / @total_task_count * 100).to_i : 0
 
-    # 2. Check for active club membership
-    @membership = current_user&.routine_club_members&.active&.first
-    @is_club_member = @membership.present?
+    # 3. Synergy & Feed
+    @rufa_activities = RufaActivity.includes(:user).recent.limit(10)
+    @recent_reflections = @rufa_activities.where(activity_type: [ "routine_record", "reflection" ])
 
-    # 3. Live Feed Data (Active users only)
-    @recent_activities = RufaActivity.includes(:user).joins(:user).where("users.deleted_at IS NULL").order(created_at: :desc).limit(10)
-    @recent_reflections = @recent_activities.where(activity_type: [ "routine_record", "reflection" ])
-
-    # Orbiting Users (Recent successes to show on home visualization)
+    # 4. Global Stats
     @orbit_users = User.joins(:rufa_activities)
-                       .where(rufa_activities: { activity_type: "routine_record", created_at: Date.current.all_day })
+                       .where(rufa_activities: { created_at: Date.current.all_day })
                        .where.not(id: current_user&.id)
                        .distinct
                        .limit(100)
 
-    # Global Live Count (Users active in the last 30 minutes or today)
     @total_active_metes = User.joins(:rufa_activities)
                               .where("rufa_activities.created_at >= ?", 30.minutes.ago)
                               .distinct.count
-    # Fallback to at least some activity if no one in 30m
     @total_active_metes = [ @total_active_metes, @orbit_users.count ].max
-    # Add a base realistic small number if platform is empty during prototyping,
-    # but the goal is to move towards real data.
-    @total_active_metes = [ @total_active_metes, 1 ].max if current_user
 
-    # 4. Content for Dashboard
+    # 5. Specialized Content (Ranking & Goals)
+    @rufa_rankings = User.joins(:routine_club_members)
+                         .where(routine_club_members: { status: :active })
+                         .distinct
+                         .map { |u| { user: u, score: u.rufa_club_score } }
+                         .sort_by { |r| -r[:score] }
+                         .take(10)
+    @top_rankings = @rufa_rankings.take(3)
+
     if current_user
       @hosted_challenges = Challenge.where(host: current_user).order(created_at: :desc)
       @joined_challenges = current_user.challenges.active.where.not(id: @hosted_challenges.pluck(:id))
+      @user_goals = current_user.user_goals.index_by(&:goal_type)
+      @short_term_goal = @user_goals["short_term"]&.body
+      @mid_term_goal = @user_goals["mid_term"]&.body
+      @long_term_goal = @user_goals["long_term"]&.body
     else
       @hosted_challenges = []
       @joined_challenges = []
@@ -198,7 +204,7 @@ class PrototypeController < ApplicationController
         }
       end
 
-      # 4. Growth Analytics (Real Data)
+    # 4. Growth Analytics (Real Data)
     # Weekly: Last 7 days completion rate
     @weekly_labels = []
     @weekly_data = (0..6).map do |days_ago|
@@ -211,13 +217,13 @@ class PrototypeController < ApplicationController
     end.reverse
     @weekly_labels.reverse!
 
-    # Monthly: Last 4 weeks completion rate (average of daily rates)
+  # Monthly: Last 4 weeks completion rate (average of daily rates)
   @monthly_labels = []
   @monthly_data = (0..3).map do |weeks_ago|
     week_start = Date.current.beginning_of_week - weeks_ago.weeks
     week_of_month = ((week_start.day - 1) / 7) + 1
     @monthly_labels << "#{week_start.month}월 #{week_of_month}주"
-    
+
     week_end = week_start + 6.days
     daily_rates = []
 
@@ -265,7 +271,7 @@ class PrototypeController < ApplicationController
 
     @yearly_completion = @yearly_data.last || 0
     @yearly_growth = @yearly_data.size >= 2 ? (@yearly_data[-1] - @yearly_data[-2]) : 0
-  end
+    end
   end
 
   def notifications

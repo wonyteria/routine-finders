@@ -130,6 +130,14 @@ class PersonalRoutinesController < ApplicationController
     @daily_achievement_rate = current_user.daily_achievement_rate(@selected_date)
     @total_completions = current_user.total_routine_completions
     @member_days = current_user.rufa_member_days
+    @todays_routines = current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) }
+
+    # Permission Service for Unified View
+    @permission = PermissionService.new(current_user)
+
+    # 루파 클럽 멤버 랭킹 (상위 3명 - 포디움용)
+    @top_rankings = @rufa_rankings.take(3)
+    @other_rankings = @rufa_rankings[3..] || []
 
     # 전문가 템플릿 (Mock or Real)
     @routine_templates = RoutineTemplate.limit(4)

@@ -1,0 +1,77 @@
+<% 
+  is_premium = @permission.is_premium_member?
+  is_proto_style = local_assigns[:is_proto_style] || is_premium
+  completed = routine.completed_today?
+  card_bg = is_proto_style ? (completed ? "bg-indigo-600/20 border-indigo-500/50" : "bg-[#1B1A24] border-white/5") : (completed ? "bg-indigo-600 border-indigo-600 shadow-lg text-white" : "bg-white border-slate-100 shadow-sm")
+  text_color = is_proto_style ? "text-white" : (completed ? "text-white" : "text-slate-900")
+%>
+
+<div class="relative group">
+  <div class="relative flex items-center justify-between p-5 md:p-6 <%= card_bg %> backdrop-blur-xl border-2 rounded-[32px] transition-all duration-300 <%= completed && is_premium ? "shadow-[0_0_30px_rgba(255,255,255,0.15)] scale-102" : "" %>">
+    
+    <div class="flex items-center gap-5">
+      <!-- Icon Slot -->
+      <div class="w-14 h-14 <%= completed ? "bg-white text-indigo-600 scale-90" : "bg-white/10 text-white" %> rounded-2xl flex items-center justify-center text-3xl transition-all duration-500 shadow-xl">
+        <%= routine.icon %>
+      </div>
+
+      <!-- Title & Meta -->
+      <div class="space-y-1">
+        <h4 class="font-black text-lg tracking-tight <%= completed ? "line-through opacity-50" : "" %>"><%= routine.title %></h4>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 bg-white/10 rounded-md text-[9px] font-black uppercase tracking-widest"><%= routine.category %></span>
+          <span class="text-[10px] font-bold opacity-40"><%= routine.current_streak %>일 달성 중</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <% if is_premium %>
+        <!-- Relax Pass Trigger (Inlay) -->
+        <% unless completed %>
+          <button onclick="toggleDropdown('pass-<%= routine.id %>')" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lg hover:bg-white/10 transition-colors" title="이 루틴에 휴식권 사용">
+            🎟️
+          </button>
+        <% end %>
+      <% end %>
+
+      <!-- Check Button -->
+      <%= button_to toggle_personal_routine_path(routine, date: Date.current, tab: params[:tab], source: params[:source]), 
+          method: :post,
+          class: "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 active:scale-90 #{completed ? 'bg-emerald-400 text-white' : 'bg-white text-indigo-600 shadow-xl hover:shadow-2xl'}",
+          data: { turbo: true } do %>
+        <% if completed %>
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
+        <% else %>
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 4v16m8-8H4"/></svg>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Relax Pass Dropdown (Premium Only) -->
+    <% if is_premium && !completed %>
+      <div id="dropdown-pass-<%= routine.id %>" class="hidden absolute top-full right-0 mt-2 z-[50] w-64 bg-slate-900 border border-white/10 rounded-3xl p-5 shadow-3xl animate-in fade-in zoom-in-95">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h5 class="text-sm font-black italic">RELAX PASS</h5>
+            <span class="text-xs font-bold text-indigo-400">남은 🎟️ <%= @my_membership.remaining_passes %>개</span>
+          </div>
+          <p class="text-[11px] font-medium text-white/50 leading-relaxed">오늘 이 루틴을 수행하기 힘들다면 휴식권을 사용하세요. 연속 기록(Streak)이 보호됩니다.</p>
+          <%= button_to use_pass_routine_club_path(@routine_club, date: Date.current, routine_id: routine.id), class: "w-full py-2.5 bg-indigo-600 rounded-xl text-xs font-black shadow-lg" do %>
+            아이템 사용하기
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Non-Premium locked pass indicator -->
+    <% if !is_premium && !completed %>
+       <div class="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+         <div class="px-2 py-1 bg-white border border-slate-100 rounded-lg text-indigo-600 text-[8px] font-black shadow-lg flex items-center gap-1">
+           <span>🎟️</span> 루파 전용
+         </div>
+       </div>
+    <% end %>
+  </div>
+</div>

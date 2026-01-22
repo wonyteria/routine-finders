@@ -1,0 +1,30 @@
+<%# 루파 클럽 전용 루틴 카드 %>
+<%= button_to toggle_personal_routine_path(routine), 
+            method: :post, 
+            class: "w-full bg-slate-900 border border-white/5 rounded-3xl p-5 flex items-center justify-between group active:scale-[0.98] transition-all hover:border-indigo-500/30",
+            data: { turbo_stream: true } do %>
+  
+  <div class="flex items-center gap-4">
+    <div class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+      <%= routine.icon %>
+    </div>
+    <div class="text-left">
+      <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1"><%= routine.category %></p>
+      <h4 class="text-base font-black text-white <%= 'line-through opacity-30 font-medium' if routine.completed_today? %>">
+        <%= routine.title %>
+      </h4>
+      <% if routine.completed_today? %>
+        <p class="text-[10px] font-bold text-emerald-400 mt-1 flex items-center gap-1">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+          체크인 완료 (<%= routine.today_completion.created_at.strftime("%H:%M") %>)
+        </p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="w-10 h-10 rounded-2xl border-2 flex items-center justify-center transition-all <%= routine.completed_today? ? 'bg-indigo-500 border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-white/10 group-hover:border-indigo-500/50' %>">
+     <% if routine.completed_today? %>
+       <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+     <% end %>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_21_071051) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_053038) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -324,6 +324,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_21_071051) do
     t.boolean "is_moderator", default: false
     t.datetime "joined_at", null: false
     t.text "kick_reason"
+    t.datetime "last_pass_refill_at"
     t.date "membership_end_date", null: false
     t.date "membership_start_date", null: false
     t.integer "paid_amount", default: 0, null: false

@@ -150,7 +150,20 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def remaining_passes
+    ensure_monthly_refill!
     3 - (used_passes_count || 0)
+  end
+
+  def ensure_monthly_refill!
+    return unless payment_status_confirmed? && status_active?
+
+    # If never refilled or last refill was in a previous month
+    if last_pass_refill_at.nil? || last_pass_refill_at.beginning_of_month < Time.current.beginning_of_month
+      update!(
+        used_passes_count: 0,
+        last_pass_refill_at: Time.current
+      )
+    end
   end
 
   def can_participate?

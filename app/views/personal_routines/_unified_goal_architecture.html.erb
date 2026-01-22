@@ -1,0 +1,58 @@
+<% 
+  is_premium = @permission.is_premium_member?
+  is_proto_style = local_assigns[:is_proto_style] || is_premium
+%>
+
+<div class="<%= is_proto_style ? "bg-[#1B1A24] border border-white/5" : "bg-white border border-slate-100" %> rounded-[40px] p-8 md:p-12 relative overflow-hidden group">
+  <% if is_proto_style %>
+    <div class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
+    <div class="relative z-10 space-y-8">
+      <div class="flex items-center justify-between">
+        <div class="space-y-1">
+          <h3 class="text-xs font-black text-indigo-400 uppercase tracking-[0.3em]">Identity Architecture</h3>
+          <p class="text-2xl font-black tracking-tight">당신의 루틴은 다음 정체성으로 이어집니다</p>
+        </div>
+        <div class="text-3xl">📐</div>
+      </div>
+
+      <div class="space-y-4">
+        <% if @long_term_goal.present? %>
+          <div class="flex items-center gap-6 p-6 bg-indigo-500/10 rounded-3xl border border-indigo-500/30">
+            <div class="w-12 h-12 bg-indigo-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-glow shadow-indigo-500/40 shrink-0">🚩</div>
+            <div class="space-y-1">
+              <p class="text-[10px] font-black text-indigo-300 uppercase tracking-widest">Main Purpose</p>
+              <p class="text-lg font-black"><%= @long_term_goal %></p>
+            </div>
+          </div>
+        <% else %>
+          <div class="p-8 text-center border-2 border-dashed border-white/10 rounded-3xl">
+             <%= link_to "목표 정체성 설계하기", personal_routines_path(anchor: "architecture"), class: "text-white/40 font-bold hover:text-white transition-colors" %>
+          </div>
+        <% end %>
+
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1 p-5 bg-white/5 rounded-3xl border border-white/5">
+            <p class="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-1">Weekly Target</p>
+            <p class="font-bold text-sm"><%= @mid_term_goal.presence || "주간 목표를 설정하세요" %></p>
+          </div>
+          <div class="flex-1 p-5 bg-white/5 rounded-3xl border border-white/5">
+            <p class="text-[9px] font-bold text-white/30 uppercase tracking-widest mb-1">Daily Commitment</p>
+            <p class="font-bold text-sm"><%= @short_term_goal.presence || "단기 실행 목표를 설정하세요" %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <!-- Non-Premium Version: Promotional diagnostic -->
+    <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+      <div class="w-20 h-20 bg-indigo-50 rounded-[28px] flex items-center justify-center text-3xl shadow-inner border border-indigo-100 italic">?</div>
+      <div class="space-y-2 flex-1">
+        <h3 class="text-xl font-black text-slate-900 tracking-tight">당신은 어떤 성장을 원하시나요?</h3>
+        <p class="text-sm font-bold text-slate-400">루파 클럽의 정체성 설계(Architecture) 기능으로 루틴의 방향성을 잡으세요.</p>
+      </div>
+      <%= link_to routine_clubs_path, class: "px-6 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100" do %>
+        정체성 설계 보러가기
+      <% end %>
+    </div>
+  <% end %>
+</div>

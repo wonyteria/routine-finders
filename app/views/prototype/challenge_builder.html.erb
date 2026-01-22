@@ -385,6 +385,18 @@
              <%= f.range_field :max_participants, min: 2, max: 100, step: 1, value: 30, id: "max_slider", class: "w-full h-1.5 bg-white/10 rounded-full appearance-none accent-indigo-500" %>
           </div>
 
+          <!-- Priority Access Info (New) -->
+          <div class="p-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/20 space-y-3 relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 w-16 h-16 bg-indigo-500/10 blur-xl"></div>
+            <div class="flex items-center gap-2 text-indigo-400">
+              <span class="text-sm">🔱</span>
+              <p class="text-[10px] font-black uppercase tracking-widest">Premium Priority Access</p>
+            </div>
+            <p class="text-[10px] font-bold text-slate-400 leading-relaxed">
+              공개 챌린지 개설 시, <span class="text-white">루파 클럽 멤버들에게 1시간 우선 참여권</span>이 자동으로 부여됩니다. 이는 활동량이 검증된 우수 멤버들을 우선적으로 확보하기 위한 시스템입니다.
+            </p>
+          </div>
+
           <!-- Membership Restriction (New) -->
           <div class="pt-4 border-t border-white/5 space-y-4 p-1 overflow-visible">
             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Participation Restriction</label>

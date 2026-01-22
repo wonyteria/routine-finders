@@ -301,10 +301,22 @@
              <% end %>
            </div>
 
-           <div class="grid grid-cols-2 gap-4 p-1 overflow-visible">
-             <button type="button" data-val="first_come" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all unselected-opt">선착순 입장</button>
-             <button type="button" data-val="approval" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all premium-selection">호스트 승인제</button>
-           </div>
+            <div class="grid grid-cols-2 gap-4 p-1 overflow-visible">
+              <button type="button" data-val="first_come" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all unselected-opt">선착순 입장</button>
+              <button type="button" data-val="approval" class="admission-opt p-4 rounded-xl border font-black text-sm transition-all premium-selection">호스트 승인제</button>
+            </div>
+
+            <!-- Priority Access Info (New) -->
+            <div class="p-5 rounded-[28px] bg-emerald-500/10 border border-emerald-500/20 space-y-3 relative overflow-hidden group">
+              <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 blur-xl"></div>
+              <div class="flex items-center gap-2 text-emerald-400">
+                <span class="text-sm">🔱</span>
+                <p class="text-[10px] font-black uppercase tracking-widest">Premium Priority Access</p>
+              </div>
+              <p class="text-[10px] font-bold text-slate-400 leading-relaxed">
+                모든 모임은 <span class="text-white">루파 클럽 멤버들에게 1시간 우선 참여권</span>이 부여됩니다. 인기 있는 모임의 경우, 검증된 프리미엄 멤버들을 먼저 확보하는 데 유리합니다.
+              </p>
+            </div>
 
            <div class="space-y-4">
               <div class="grid grid-cols-2 gap-2 p-1 overflow-visible">

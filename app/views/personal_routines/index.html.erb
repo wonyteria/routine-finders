@@ -1,83 +1,151 @@
-<div class="space-y-10 pb-12">
+<% 
+  is_premium = @permission.is_premium_member?
+  is_proto = params[:source] == 'prototype'
+  
+  # PROTOTYPE STYLE: Force dark theme if coming from prototype OR if premium
+  is_proto_style = is_premium || is_proto
+  
+  app_bg = is_proto_style ? "bg-[#0C0B12]" : "bg-slate-50"
+  text_color = is_proto_style ? "text-white" : "text-slate-900"
+%>
+
+<div class="<%= app_bg %> <%= text_color %> <%= is_proto ? "" : "-mx-4 -mt-10 px-4 pt-10" %> min-h-screen transition-all duration-700">
+  
+  <div class="<%= is_proto ? "max-w-md mx-auto" : "max-w-7xl mx-auto" %> space-y-12 pb-24">
     
-    <!-- Main Banner (Standardized) -->
-    <section class="mb-8 lg:mb-12 relative overflow-hidden rounded-[32px] lg:rounded-[40px] bg-gradient-to-br from-indigo-700 via-indigo-600 to-slate-900 text-white shadow-2xl shadow-indigo-200">
-      <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" loading="eager"></div>
-      
-      <!-- Abstract Gradients -->
-      <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-      <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+    <!-- 1. Unified Achievement Dashboard (Top Section) -->
+    <%= render 'unified_dashboard_header', is_proto_style: is_proto_style %>
 
-      <div class="relative z-10 p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div class="space-y-6 md:space-y-8 max-w-2xl text-center md:text-left">
-          <div class="space-y-4">
-            <span class="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[9px] md:text-[11px] font-black uppercase tracking-widest border border-white/20">규칙적인 일상</span>
-            <h1 class="text-3xl md:text-6xl font-black leading-tight tracking-tight">
-              매일의 성취,<br/>
-              <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-white">당신의 루틴.</span>
-            </h1>
-            <p class="text-sm md:text-xl font-medium text-indigo-100/80 leading-relaxed">기록된 오늘이 내일의 당신을 만듭니다.</p>
-          </div>
-          
-          <div class="flex flex-wrap gap-3 justify-center md:justify-start">
-             <%= link_to routine_clubs_path, class: "inline-flex items-center gap-2 px-6 py-3.5 md:px-8 md:py-4 bg-white text-indigo-600 rounded-xl md:rounded-2xl font-black text-xs md:text-sm hover:bg-indigo-50 hover:scale-105 active:scale-95 transition-all shadow-xl" do %>
-               <span>루파 클럽 둘러보기</span>
-               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
-             <% end %>
-
-             <%= link_to achievement_report_path, class: "inline-flex items-center gap-2 px-6 py-3.5 md:px-8 md:py-4 bg-white/10 text-white backdrop-blur-md border border-white/20 rounded-xl md:rounded-2xl font-black text-xs md:text-sm hover:bg-white/20 hover:scale-105 active:scale-95 transition-all shadow-xl" do %>
-               <span class="text-base">📊</span> 
-               <span>성과 리포트</span>
-             <% end %>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 w-full md:w-auto shrink-0">
-          <div class="bg-white/5 backdrop-blur-xl border border-white/10 p-4 md:p-8 rounded-2xl md:rounded-[32px] text-center shadow-inner">
-            <p class="text-[7px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 md:mb-3">오늘의 루틴 현황</p>
-            <% current_wday = Date.current.wday.to_s %>
-            <% total_routines_today = (@personal_routines || []).select { |r| (r.days || []).include?(current_wday) }.count %>
-            <% completed_routines_today = (@personal_routines || []).select { |r| r.completed_today? && (r.days || []).include?(current_wday) }.count %>
-            <div class="flex items-baseline justify-center gap-1">
-              <p class="text-xl md:text-4xl font-black text-white"><%= completed_routines_today %></p>
-              <p class="text-[10px] md:text-lg font-black text-slate-500">/ <%= total_routines_today %></p>
-            </div>
-            <div class="mt-2 md:mt-4 w-full bg-white/10 h-1 rounded-full overflow-hidden">
-              <% percentage = total_routines_today > 0 ? (completed_routines_today.to_f / total_routines_today * 100) : 0 %>
-              <div class="bg-white h-full transition-all duration-1000" style="width: <%= percentage %>%"></div>
-            </div>
-          </div>
-          
-          <div class="bg-white/10 backdrop-blur-xl border border-white/20 p-4 md:p-8 rounded-2xl md:rounded-[32px] text-center shadow-xl">
-            <p class="text-[7px] md:text-[10px] font-black text-white/70 uppercase tracking-widest mb-2 md:mb-3">최고 기록</p>
-            <p class="text-xl md:text-4xl font-black text-white">
-              <%= (@personal_routines || []).map(&:current_streak).max || 0 %><span class="text-xs md:text-xl ml-0.5">🔥</span>
-            </p>
-            <p class="text-[7px] md:text-[10px] font-bold text-white/50 mt-1 md:mt-2">연속 달성 중</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Tabs Only: Compact for mobile -->
-    <div class="flex justify-center md:justify-start mb-6 md:mb-8">
-      <div class="bg-indigo-50/50 p-1 rounded-2xl md:rounded-[24px] flex w-full md:w-auto md:inline-flex gap-1 border border-indigo-100/50">
-        <%= link_to "나의 루틴", personal_routines_path(tab: 'free'), 
-            class: "flex-1 md:flex-none flex items-center justify-center px-6 py-3 md:px-8 md:py-4 rounded-[14px] md:rounded-[20px] font-black text-xs md:text-sm transition-all duration-300 #{ (params[:tab].blank? || params[:tab] == 'free') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600 font-bold' }" %>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      <!-- Left Column: Goals & Routines -->
+      <div class="lg:col-span-8 space-y-10">
         
-        <%= link_to "루파 클럽", personal_routines_path(tab: 'club'), 
-            class: "flex-1 md:flex-none flex items-center justify-center px-6 py-3 md:px-8 md:py-4 rounded-[14px] md:rounded-[20px] font-black text-xs md:text-sm transition-all duration-300 #{ params[:tab] == 'club' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 scale-105 z-10' : 'text-slate-400 hover:text-slate-600 font-bold' }" %>
+        <!-- 2. Goal Architecture (Melted into top of list) -->
+        <%= render 'unified_goal_architecture', is_proto_style: is_proto_style %>
+
+        <!-- 3. Routine List Section -->
+        <div class="space-y-6">
+          <div class="flex items-center justify-between px-2">
+            <div class="space-y-1">
+              <h2 class="text-xl md:text-2xl font-black tracking-tight">나의 성취 루틴</h2>
+              <p class="<%= is_proto_style ? "text-indigo-400" : "text-indigo-600" %> text-xs font-bold uppercase tracking-widest">Daily Success Path</p>
+            </div>
+            
+            <!-- Item Slot (Game Element) -->
+            <% if is_premium %>
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl group cursor-help" title="휴식권: 실패를 1회 면제해주는 아이템">
+                  <span class="text-lg">🎟️</span>
+                  <span class="text-sm font-black tabular-nums"><%= @my_membership.remaining_passes %></span>
+                </div>
+                <div class="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl group cursor-help" title="성장 포인트: 챌린지 개설 등에 사용">
+                  <span class="text-lg text-amber-400">⚡</span>
+                  <span class="text-sm font-black tabular-nums"><%= @my_membership.growth_points %>P</span>
+                </div>
+              </div>
+            <% else %>
+              <div class="<%= is_proto_style ? "opacity-40 grayscale" : "opacity-40 grayscale" %> flex items-center gap-3">
+                <div class="flex items-center gap-2 px-4 py-2 <%= is_proto_style ? "bg-white/5 border border-white/10" : "bg-slate-200 border border-slate-300" %> rounded-2xl">
+                  <span class="text-lg">🔒</span>
+                  <span class="text-[10px] font-bold">휴식권</span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Unified Routine Grid -->
+          <div class="<%= is_proto ? "" : (is_proto_style ? "bg-indigo-600/90" : "bg-indigo-600") %> <%= is_proto ? "" : "rounded-[40px] p-6 md:p-10 shadow-2xl" %> relative overflow-hidden">
+            <% if !is_proto %>
+              <div class="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -mr-40 -mt-40 blur-3xl"></div>
+              <% if is_proto_style %>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/10 rounded-full -ml-32 -mb-32 blur-3xl animate-pulse"></div>
+              <% end %>
+            <% end %>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 relative z-10">
+              <% if @todays_routines.any? %>
+                <% @todays_routines.each do |routine| %>
+                  <%= render 'unified_routine_card', routine: routine, is_proto_style: is_proto_style %>
+                <% end %>
+              <% else %>
+                <div class="col-span-full py-20 text-center space-y-4">
+                  <div class="text-5xl opacity-20">✨</div>
+                  <p class="<%= is_proto_style ? "text-white/40" : "text-slate-400" %> font-bold">오늘 예정된 루틴이 없습니다. 새로운 습관을 추가해보세요!</p>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Quick Actions (Melted) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <!-- New Routine Form (Enhanced) -->
+           <div class="<%= is_proto_style ? "bg-[#1B1A24] border border-white/5" : "bg-white border border-slate-100" %> rounded-[40px] p-8 space-y-6">
+             <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                  <h3 class="text-lg font-black italic">NEW ROUTINE</h3>
+                  <p class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Add Engineering</p>
+                </div>
+                <div class="w-12 h-12 <%= is_proto_style ? "bg-indigo-500/20 text-indigo-400" : "bg-indigo-50 text-indigo-600" %> rounded-2xl flex items-center justify-center text-2xl">📐</div>
+             </div>
+             <%= render 'form', routine: PersonalRoutine.new %>
+           </div>
+
+           <!-- Total Overview (Compact) -->
+           <div class="<%= is_proto_style ? "bg-[#1B1A24] border border-white/5" : "bg-white border border-slate-100" %> rounded-[40px] p-8 space-y-6 flex flex-col">
+              <div class="flex items-center justify-between">
+                <div class="space-y-1">
+                  <h3 class="text-lg font-black italic">ALL ARCHIVES</h3>
+                  <p class="text-[10px] font-bold opacity-50 uppercase tracking-widest">Total Manage</p>
+                </div>
+                <div class="w-12 h-12 <%= is_proto_style ? "bg-slate-500/20 text-slate-400" : "bg-slate-50 text-slate-500" %> rounded-2xl flex items-center justify-center text-2xl">📋</div>
+              </div>
+              <div class="flex-1 space-y-2 max-h-[280px] overflow-y-auto custom-scrollbar pr-2">
+                <% current_user.personal_routines.where(deleted_at: nil).order(created_at: :desc).each do |routine| %>
+                  <%= render 'total_routine_item', routine: routine %>
+                <% end %>
+              </div>
+           </div>
+        </div>
       </div>
+
+      <!-- Right Column: Sidebar (Synergy & Ranking) -->
+      <aside class="lg:col-span-4 space-y-8 sticky top-12">
+        
+        <!-- 5. Real-time Synergy Feed (Inlay) -->
+        <%= render 'unified_synergy_widget', is_proto_style: is_proto_style %>
+  
+        <!-- 6. Ranking & Hall of Fame (Aspirational) -->
+        <%= render 'unified_ranking_widget', is_proto_style: is_proto_style %>
+  
+        <!-- 7. Premium Pass Button (Only for Membership) -->
+        <% if is_premium %>
+           <%= render 'unified_premium_actions', is_proto_style: is_proto_style %>
+        <% end %>
+
+      </aside>
     </div>
-
-    <% if params[:tab].blank? || params[:tab] == 'free' %>
-      <div id="panel-free">
-        <%= render 'free_routines' %>
-      </div>
-    <% end %>
-
-    <% if params[:tab] == 'club' %>
-      <div id="panel-club">
-        <%= render 'club_routines' %>
-      </div>
-    <% end %>
+  </div>
 </div>
+
+<!-- Premium Check-in Effects Holder (JS will inject here) -->
+<div id="premium-effects-container" class="fixed inset-0 pointer-events-none z-[200]"></div>
+
+<script>
+  // Shared logic for unified dashboard
+  function toggleDropdown(id) {
+    document.querySelectorAll('[id^="dropdown-"]').forEach(dropdown => {
+      if (dropdown.id !== `dropdown-${id}`) dropdown.classList.add('hidden');
+    });
+    const dropdown = document.getElementById(`dropdown-${id}`);
+    if (dropdown) dropdown.classList.toggle('hidden');
+  }
+
+  // Animation for check-in
+  document.addEventListener('turbo:load', () => {
+    // Premium specific animations
+    if (<%= is_premium %>) {
+      console.log("RUFA Premium Active");
+    }
+  });
+</script>

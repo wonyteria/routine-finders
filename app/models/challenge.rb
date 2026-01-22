@@ -159,6 +159,16 @@ class Challenge < ApplicationRecord
     (recruitment_end_date - Date.current).to_i
   end
 
+  def priority_access_for_members?
+    return false if recruitment_start_date.blank?
+
+    # Priority window: First 1 hour of recruitment_start_date
+    priority_start = recruitment_start_date.to_time.beginning_of_day
+    priority_end = priority_start + 1.hour
+
+    Time.current >= priority_start && Time.current < priority_end
+  end
+
   # Status Label for View with safety checks
   def status_label
     today = Date.current
