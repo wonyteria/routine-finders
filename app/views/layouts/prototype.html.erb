@@ -241,8 +241,8 @@
             </div>
           </a>
 
-          <!-- 4. 루파클럽 가입 or 입장 (Highlight at Bottom) -->
-          <a href="<%= is_club_member ? personal_routines_path(tab: 'club', source: 'prototype') : prototype_club_join_path %>" 
+          <!-- 4. 루파클럽 상태 및 혜택 (Bottom Highlight) -->
+          <a href="<%= is_club_member ? prototype_my_path : prototype_club_join_path %>" 
              data-action="click->proto-ui#checkLogin"
              class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
             <div class="flex items-center gap-4">
@@ -250,8 +250,18 @@
                 <span class="text-2xl">🔱</span>
               </div>
               <div class="flex-1">
-                <p class="text-white font-black text-lg"><%= is_club_member ? "루파클럽 입장하기" : "루파클럽 멤버십 가입" %></p>
-                <p class="text-indigo-200 text-xs font-bold mt-0.5"><%= is_club_member ? "멤버 전용 대시보드로 이동합니다" : "레벨 제한 없이 즉시 리더가 되세요" %></p>
+                <p class="text-white font-black text-lg">
+                  <%= is_club_member ? "나의 멤버십 혜택" : "루파클럽 멤버십 가입" %>
+                </p>
+                <p class="text-indigo-100 text-xs font-bold mt-0.5">
+                  <% if is_club_member %>
+                    🎟️ <%= membership.remaining_relax_passes %> · 
+                    🛡️ <%= membership.remaining_save_passes %> · 
+                    ⚡ <%= number_with_delimiter(membership.growth_points || 0) %>P
+                  <% else %>
+                    레벨 제한 없이 즉시 리더가 되세요
+                  <% end %>
+                </p>
               </div>
               <svg class="w-6 h-6 text-white opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
             </div>

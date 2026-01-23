@@ -102,14 +102,42 @@ class PrototypeController < ApplicationController
   end
 
   def synergy
-    # Hall of Fame: Monthly rankings for active Rufa Club members
-    active_members = User.joins(:routine_club_members)
-                        .where(routine_club_members: { status: :active })
-                        .distinct
+    # Hall of Fame: Rank active users, but prioritize RUFA Club members
+    # We include users who have recent activities or are club members
+    active_activity_user_ids = RufaActivity.where("created_at >= ?", 7.days.ago).pluck(:user_id)
+    # Include both active club members AND admins in the club badge logic
+    club_member_user_ids = User.joins(:routine_club_members).where(routine_club_members: { status: :active }).pluck(:id)
+    admin_user_ids = User.admin.pluck(:id)
+    all_club_ids = (club_member_user_ids + admin_user_ids).uniq
 
-    @monthly_rankings = active_members.map { |u| { user: u, score: u.rufa_club_score } }
-                                      .sort_by { |r| -r[:score] }
-                                      .take(20) # Top 20 for full leaderboard
+    relevant_users = User.where(id: (active_activity_user_ids + all_club_ids).uniq)
+
+    @monthly_rankings = relevant_users.map { |u|
+      {
+        user: u,
+        score: u.rufa_club_score,
+        is_club: all_club_ids.include?(u.id)
+      }
+    }.sort_by { |r| -r[:score] }
+
+    if params[:rank_type] == "club"
+      @monthly_rankings = @monthly_rankings.select { |r| r[:is_club] }
+    end
+
+    @monthly_rankings = @monthly_rankings.take(500)
+
+    # Find my ranking
+    @my_ranking = nil
+    if current_user
+      my_rank_index = @monthly_rankings.index { |r| r[:user].id == current_user.id }
+      if my_rank_index
+        @my_ranking = {
+          rank: my_rank_index + 1,
+          score: @monthly_rankings[my_rank_index][:score],
+          is_club: @monthly_rankings[my_rank_index][:is_club]
+        }
+      end
+    end
 
     @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
 

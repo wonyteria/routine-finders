@@ -354,13 +354,19 @@
     </div>
   </section>
   
-  <!-- 5. Live Routine Lounge (Replaced Synergy Feed) -->
+
+  <!-- 5. RUFA Club Lounge (Unified Member Space) -->
   <section class="space-y-4 pb-4">
     <div class="flex items-center justify-between px-2">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">실시간 라이브 라운지</h3>
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">루파 클럽 라운지</h3>
       <div class="flex items-center gap-1">
-        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
-        <span class="text-[9px] font-black text-red-500 uppercase tracking-widest leading-none">Live Now</span>
+        <% if @official_club&.zoom_link.present? %>
+          <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>
+          <span class="text-[9px] font-black text-rose-500 uppercase tracking-widest leading-none">Live Now</span>
+        <% else %>
+          <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span>
+          <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">Club Hub</span>
+        <% end %>
       </div>
     </div>
 
@@ -370,8 +376,8 @@
         
         <div class="relative z-10 flex items-center justify-between gap-6">
           <div class="space-y-2 flex-1">
-            <h4 class="text-lg font-black text-white">함께 몰입하는 사람들</h4>
-            <p class="text-[11px] font-bold text-slate-400 leading-tight">지금 <%= @orbit_users.count %>명의 메이트가 루틴을 실행 중입니다.</p>
+            <h4 class="text-lg font-black text-white">우리들의 몰입 아지트</h4>
+            <p class="text-[11px] font-bold text-slate-400 leading-tight">라이브 세션과 스페셜 강의가 진행됩니다.<br/>멤버 전용 라운지에서 성장 에너지를 충전하세요.</p>
             
             <!-- Facepile -->
             <div class="flex items-center gap-3 pt-2">
@@ -387,12 +393,12 @@
                   </div>
                 <% end %>
               </div>
-              <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">라이브 입장하기 →</span>
+              <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">라운지 입장하기 →</span>
             </div>
           </div>
           
           <div class="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-indigo-600 transition-all duration-500 shadow-lg shadow-indigo-600/20">
-            📹
+            🔱
           </div>
         </div>
       </div>

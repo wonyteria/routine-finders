@@ -102,56 +102,63 @@
     </div>
 
     <div class="space-y-4 px-8">
-      <h3 class="text-2xl font-black text-white leading-tight">함께 몰입하는<br/><span class="text-indigo-400">루파클럽 <%= @current_club&.generation_number %>기</span></h3>
-      <p class="text-xs font-bold text-slate-500 leading-relaxed">혼자라면 포기했을 새벽 6시,<br/>지금 <%= @active_members.count %>명의 메이트가 당신과 함께하고 있습니다.</p>
+      <h3 class="text-2xl font-black text-white leading-tight">성장의 즐거움이 모이는 곳<br/><span class="text-indigo-400">루파 클럽 <%= @current_club&.generation_number %>기 라운지</span></h3>
+      <p class="text-xs font-bold text-slate-500 leading-relaxed">라운지에서는 함께 몰입하고 배우며 성장합니다.<br/>오늘도 <%= @active_members.count %>명의 멤버들이 라운지에 머물고 있어요.</p>
     </div>
   </main>
 
-  <!-- Actions -->
-  <footer class="mt-8 space-y-6 pb-12">
-    <div class="flex flex-col gap-3 px-6">
-      <% if @is_club_member %>
+  <!-- Lounge Integrated Rooms -->
+  <footer class="mt-8 space-y-4 pb-12 px-6">
+    <div class="space-y-4">
+      <div class="app-glass-card p-5 bg-white/5 border-white/10 rounded-[32px] group">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">📹</div>
+            <div>
+              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Live Room</p>
+              <h4 class="text-sm font-black text-white">온라인 공동 몰입 세션</h4>
+            </div>
+          </div>
+          <% if @current_club&.zoom_link.present? %>
+            <div class="px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black rounded animate-pulse">ON AIR</div>
+          <% end %>
+        </div>
+        
         <% if @current_club&.zoom_link.present? %>
-          <a href="<%= @current_club.zoom_link %>" target="_blank" class="w-full py-5 rounded-[28px] bg-white text-[#07060A] font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(255,255,255,0.1)] active:scale-95 transition-all">
-            <span class="text-2xl">📹</span>
-            줌(Zoom) 라이브 입장하기
+          <a href="<%= @current_club.zoom_link %>" target="_blank" class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+            라이브 입장하기
           </a>
         <% else %>
-          <button class="w-full py-5 rounded-[28px] bg-white/20 text-white/40 font-black text-lg flex items-center justify-center gap-3 cursor-not-allowed">
-            <span class="text-2xl grayscale">📹</span>
-            라이브 준비 중입니다
-          </button>
+          <div class="w-full py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm text-center border border-white/5">
+            오전 06:00부터 시작됩니다
+          </div>
         <% end %>
+      </div>
+
+      <div class="app-glass-card p-5 bg-white/5 border-white/10 rounded-[32px] group">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">🎓</div>
+            <div>
+              <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Lecture Room</p>
+              <h4 class="text-sm font-black text-white">스페셜 인사이트 강의실</h4>
+            </div>
+          </div>
+        </div>
         
         <% if @current_club&.special_lecture_link.present? %>
-          <a href="<%= @current_club.special_lecture_link %>" target="_blank" class="w-full py-5 rounded-[28px] bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all">
-            <span class="text-2xl">🎓</span>
-            루파클럽 스페셜 강의실 입장
+          <a href="<%= @current_club.special_lecture_link %>" target="_blank" class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+            강의실 입장하기
           </a>
         <% else %>
-          <button class="w-full py-5 rounded-[28px] bg-white/5 border border-white/10 text-white/20 font-black text-lg flex items-center justify-center gap-3 cursor-not-allowed">
-            <span class="text-2xl grayscale">🎓</span>
-            강의실 준비 중
-          </button>
+          <%= link_to prototype_lecture_intro_path(source: 'prototype'), class: "w-full py-4 rounded-2xl bg-indigo-600/20 text-indigo-400 font-black text-sm flex items-center justify-center gap-2 border border-indigo-500/20 hover:bg-indigo-600/30 transition-all" do %>
+            강의 커리큘럼 보기
+          <% end %>
         <% end %>
-      <% else %>
-        <!-- Locked State for General Users -->
-        <%= link_to prototype_club_join_path, class: "w-full py-5 rounded-[28px] bg-indigo-500 text-white font-black text-lg flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(99,102,241,0.2)] active:scale-95 transition-all" do %>
-          <span>🔒</span>
-          루파클럽 합류하고 입장하기
-        <% end %>
-        
-        <%= link_to prototype_lecture_intro_path(source: 'prototype'), class: "w-full py-5 rounded-[28px] bg-white/5 border border-white/10 text-slate-500 font-black text-lg flex items-center justify-center gap-3 active:scale-95 transition-all" do %>
-          <span class="text-xl">🎓</span>
-          스페셜 강의 (멤버 전용)
-        <% end %>
-        <p class="text-[10px] font-bold text-indigo-400/60 text-center animate-pulse">지금 합류하면 1,200원 할인가로 시작할 수 있어요!</p>
-      <% end %>
+      </div>
     </div>
     
-    <div class="text-center pt-2">
-      <p class="text-[10px] font-bold text-slate-700 uppercase tracking-[0.2em]">Live Session Ends in <span class="text-white">42:15</span></p>
-    </div>
+    <p class="text-[9px] font-bold text-slate-700 text-center pt-4">루파 클럽 멤버들에게만 허용된 프리미엄 공간입니다.</p>
   </footer>
 </div>
 
