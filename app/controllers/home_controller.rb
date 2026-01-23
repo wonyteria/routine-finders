@@ -118,8 +118,27 @@ class HomeController < ApplicationController
     # Routine Time Stats
     set_routine_time_stats
 
+    # Calculate real Routine Efficiency Score
+    # Based on average completion rate of last 7 days + consistency factor
+    last_7_days = (0..6).map { |i| Date.current - i.days }
+    @efficiency_data = last_7_days.map { |date| @current_user.daily_achievement_rate(date) }.reverse
+    avg_completion = @efficiency_data.sum / 7.0
+
+    # Consistency factor: points for each day with > 0% completion
+    consistency_days = @efficiency_data.count { |v| v > 0 }
+    @efficiency_score = (avg_completion * 0.8 + (consistency_days / 7.0 * 100) * 0.2).round(1)
+
+    # Dynamic Peak Time Comment
+    peak_hour = @routine_time_stats&.max_by { |k, v| v }&.first
+    @efficiency_comment = case peak_hour
+    when 5..10 then "아침 시간대 집중력이 아주 높으시네요! 몰입 효율이 대단합니다."
+    when 11..16 then "오후 시간에 루틴을 가장 활발하게 처리하고 계시는군요."
+    when 17..22 then "저녁 시간을 활용해 하루를 멋지게 마무리하는 타입이시네요."
+    else "심야 시간에 집중력이 폭발하는 스타일이시군요!"
+    end
+
     # Contextual Motivation (Dynamic but encouraging)
-    @inspiration_count = [ User.active.count / 10, 5 ].max
+    @inspiration_count = [ User.active.count / (rand(5..15)), 5 ].max
   end
 
   def badge_roadmap
@@ -173,7 +192,7 @@ class HomeController < ApplicationController
                                                      .where(personal_routines: { user_id: current_user.id })
                                                      .group("CAST(strftime('%H', personal_routine_completions.created_at) AS INT)")
                                                      .count
-    
+
     # Fill in missing hours
     (0..23).each { |h| @routine_time_stats[h] ||= 0 }
   end

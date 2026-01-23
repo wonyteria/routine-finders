@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_22_053038) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_22_060057) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -335,6 +335,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_053038) do
     t.string "threads_nickname"
     t.datetime "updated_at", null: false
     t.integer "used_passes_count", default: 0
+    t.integer "used_relax_passes_count", default: 0
+    t.integer "used_save_passes_count", default: 0
     t.integer "user_id", null: false
     t.boolean "welcomed", default: false
     t.index ["payment_status"], name: "index_routine_club_members_on_payment_status"

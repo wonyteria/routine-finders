@@ -76,10 +76,15 @@
           </div>
           
           <!-- Remaining Passes -->
-          <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
-            <p class="text-xs font-bold text-white/60 uppercase tracking-widest mb-2">남은 휴식권</p>
-            <p class="text-3xl md:text-4xl font-black text-blue-300"><%= membership.remaining_passes %></p>
-            <p class="text-[10px] text-white/40 font-medium mt-1">Passes</p>
+          <div class="col-span-2 md:col-span-1 grid grid-cols-2 gap-4 md:flex md:flex-col md:gap-4 md:col-span-1">
+            <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
+              <p class="text-[9px] font-bold text-white/60 uppercase tracking-widest mb-1">휴식권</p>
+              <p class="text-2xl md:text-3xl font-black text-indigo-300">🎟️ <%= membership.remaining_relax_passes %></p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 border border-white/20">
+              <p class="text-[9px] font-bold text-white/60 uppercase tracking-widest mb-1">세이브권</p>
+              <p class="text-2xl md:text-3xl font-black text-emerald-300">🛡️ <%= membership.remaining_save_passes %></p>
+            </div>
           </div>
           
           <!-- Warnings -->

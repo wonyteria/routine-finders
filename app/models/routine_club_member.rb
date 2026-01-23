@@ -82,22 +82,30 @@ class RoutineClubMember < ApplicationRecord
     status_active? && attendance_rate >= 70.0
   end
 
-  def use_relaxation_pass!(date = Date.current)
-    # Check if user has passes remaining
-    return false if used_passes_count.to_i >= 3
+  def use_relax_pass!(date = Date.current)
+    return false if remaining_relax_passes <= 0
 
-    # Find or create attendance record for today
     attendance = attendances.find_or_initialize_by(attendance_date: date, routine_club: routine_club)
-
-    # Can only use pass if:
-    # 1. New record (no attendance yet), OR
-    # 2. Already marked as absent
-    # Cannot use if already present or excused
     return false if attendance.persisted? && (attendance.status_present? || attendance.status_excused?)
 
     transaction do
       attendance.update!(status: :excused)
-      increment!(:used_passes_count)
+      increment!(:used_relax_passes_count)
+      update_attendance_stats!
+    end
+    true
+  end
+
+  def use_save_pass!(date = Date.current)
+    return false if remaining_save_passes <= 0
+
+    attendance = attendances.find_or_initialize_by(attendance_date: date, routine_club: routine_club)
+    # Save pass can be used on missed days (absent or not present)
+    return false if attendance.persisted? && (attendance.status_present? || attendance.status_excused?)
+
+    transaction do
+      attendance.update!(status: :excused)
+      increment!(:used_save_passes_count)
       update_attendance_stats!
     end
     true
@@ -149,9 +157,18 @@ class RoutineClubMember < ApplicationRecord
     update!(achievement_rate: avg_rate.to_f.round(1))
   end
 
-  def remaining_passes
+  def remaining_relax_passes
     ensure_monthly_refill!
-    3 - (used_passes_count || 0)
+    3 - (used_relax_passes_count || 0)
+  end
+
+  def remaining_save_passes
+    ensure_monthly_refill!
+    3 - (used_save_passes_count || 0)
+  end
+
+  def remaining_passes
+    remaining_relax_passes + remaining_save_passes
   end
 
   def ensure_monthly_refill!
@@ -160,7 +177,9 @@ class RoutineClubMember < ApplicationRecord
     # If never refilled or last refill was in a previous month
     if last_pass_refill_at.nil? || last_pass_refill_at.beginning_of_month < Time.current.beginning_of_month
       update!(
-        used_passes_count: 0,
+        used_relax_passes_count: 0,
+        used_save_passes_count: 0,
+        used_passes_count: 0, # Keep for legacy
         last_pass_refill_at: Time.current
       )
     end

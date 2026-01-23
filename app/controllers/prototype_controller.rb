@@ -62,6 +62,7 @@ class PrototypeController < ApplicationController
       @short_term_goal = @user_goals["short_term"]&.body
       @mid_term_goal = @user_goals["mid_term"]&.body
       @long_term_goal = @user_goals["long_term"]&.body
+      @weekly_goal = current_user.weekly_goal
     else
       @hosted_challenges = []
       @joined_challenges = []

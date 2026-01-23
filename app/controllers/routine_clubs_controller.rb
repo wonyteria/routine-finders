@@ -239,24 +239,38 @@ class RoutineClubsController < ApplicationController
 
     # Determine target date
     target_date = params[:date] ? Date.parse(params[:date]) : Date.current
+    pass_type = params[:pass_type] || "relax"
 
-    # Check remaining passes
-    if @my_membership.used_passes_count.to_i >= 3
-      return redirect_to personal_routines_path(tab: "club"), alert: "휴식권을 모두 소진했습니다. (3/3 사용)"
+    # Check remaining passes based on type
+    if pass_type == "save"
+      if @my_membership.remaining_save_passes <= 0
+        return redirect_to (params[:source] == "prototype" ? prototype_home_path : personal_routines_path(tab: "club")), alert: "세이브권을 모두 소진했습니다. (3/3 사용)"
+      end
+    else
+      if @my_membership.remaining_relax_passes <= 0
+        return redirect_to (params[:source] == "prototype" ? prototype_home_path : personal_routines_path(tab: "club")), alert: "휴식권을 모두 소진했습니다. (3/3 사용)"
+      end
     end
 
     # Check attendance for the target date
     target_attendance = @my_membership.attendances.find_by(attendance_date: target_date)
     if target_attendance&.status_present?
-      return redirect_to personal_routines_path(tab: "club"), alert: "해당 날짜(#{target_date})는 이미 출석 처리되었습니다."
+      return redirect_to (params[:source] == "prototype" ? prototype_home_path : personal_routines_path(tab: "club")), alert: "해당 날짜(#{target_date})는 이미 출석 처리되었습니다."
     elsif target_attendance&.status_excused?
-      return redirect_to personal_routines_path(tab: "club"), alert: "해당 날짜(#{target_date})에 이미 휴식권을 사용했습니다."
+      return redirect_to (params[:source] == "prototype" ? prototype_home_path : personal_routines_path(tab: "club")), alert: "해당 날짜(#{target_date})에 이미 처리되었습니다."
     end
 
-    if @my_membership.use_relaxation_pass!(target_date)
-      redirect_to personal_routines_path(tab: "club"), notice: "#{target_date} 휴식권이 성공적으로 사용되었습니다."
+    success = if pass_type == "save"
+                @my_membership.use_save_pass!(target_date)
     else
-      redirect_to personal_routines_path(tab: "club"), alert: "휴식권 사용에 실패했습니다."
+                @my_membership.use_relax_pass!(target_date)
+    end
+
+    if success
+      msg = pass_type == "save" ? "세이브권이 성공적으로 사용되었습니다." : "휴식권이 성공적으로 사용되었습니다."
+      redirect_to (params[:source] == "prototype" ? prototype_home_path : personal_routines_path(tab: "club")), notice: msg
+    else
+      redirect_to (params[:source] == "prototype" ? prototype_home_path : personal_routines_path(tab: "club")), alert: "아이템 사용에 실패했습니다."
     end
   end
 

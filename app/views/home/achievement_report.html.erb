@@ -310,63 +310,29 @@
             </div> <!-- End Matrix Grid -->
           </div> <!-- End Achievement Matrix Card -->
 
-          <!-- Premium Deep Dive Inlay -->
-          <% 
-            is_club_member = (current_user&.admin? || current_user&.routine_club_members&.active&.any?)
-          %>
-          <div class="relative group mt-8">
-            <div class="flex items-center gap-2 mb-4 px-1">
+        <!-- Routine Efficiency Card (Connected to Real Data) -->
+        <div class="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mt-8">
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
               <div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
-              <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">RUFA Premium Insight</h4>
+              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Routine Efficiency</p>
             </div>
-
-            <div class="<%= is_club_member ? "" : "blur-lg opacity-40 select-none grayscale pointer-events-none" %> space-y-4">
-              <div class="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div class="space-y-2">
-                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Routine Efficiency</p>
-                    <div class="flex items-baseline gap-2">
-                      <span class="text-3xl font-black text-white">88.4</span>
-                      <span class="text-[10px] font-bold text-slate-500">SCORE</span>
-                    </div>
-                    <p class="text-[10px] font-bold text-slate-400 leading-tight">상위 5%의 몰입 효율을 보여주고 있습니다. 아침 시간대 집중력이 아주 높으시네요!</p>
-                  </div>
-                  <div class="space-y-2">
-                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Consistency Radar</p>
-                    <div class="h-20 flex items-end gap-1 px-1">
-                       <% [60, 45, 90, 80, 50, 75].each do |h| %>
-                        <div class="flex-1 bg-indigo-500/30 rounded-t-sm" style="height: <%= h %>%"></div>
-                       <% end %>
-                    </div>
-                    <div class="flex justify-between text-[8px] font-black text-slate-600 uppercase">
-                      <span>MON</span><span>WED</span><span>FRI</span><span>SUN</span>
-                    </div>
-                  </div>
-                  <div class="space-y-2">
-                    <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Growth Trajectory</p>
-                    <div class="flex items-center gap-3">
-                       <div class="w-10 h-10 rounded-full border-2 border-indigo-500/50 flex items-center justify-center text-xs font-black text-white">Lv.22</div>
-                       <div class="flex-1">
-                          <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                             <div class="h-full bg-indigo-500" style="width: 70%"></div>
-                          </div>
-                          <p class="text-[9px] font-bold text-slate-500 mt-1">예상 성장 곡선: 3개월 후 레벨 22 도달</p>
-                       </div>
-                    </div>
-                  </div>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div class="space-y-2 flex-1">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-4xl font-black text-white"><%= @efficiency_score %></span>
+                  <span class="text-[10px] font-bold text-slate-500">EFFICIENCY SCORE <% if @efficiency_score >= 80 %>(SUPERIOR)<% elsif @efficiency_score >= 50 %>(GOOD)<% end %></span>
                 </div>
+                <p class="text-xs font-bold text-slate-400 leading-relaxed"><%= @efficiency_comment %></p>
+              </div>
+              <div class="grid grid-cols-7 gap-1 h-12 w-48 items-end shrink-0">
+                <% @efficiency_data.each do |h| %>
+                  <div class="bg-indigo-500/30 rounded-t-sm transition-all duration-1000" style="height: <%= [h, 5].max %>%"></div>
+                <% end %>
               </div>
             </div>
-
-            <% unless is_club_member %>
-              <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-indigo-600/5 backdrop-blur-[2px] rounded-2xl border border-indigo-500/20">
-                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl mb-4 border border-white/10 shadow-inner">🔱</div>
-                <h4 class="text-base font-black text-white mb-2">프리미엄 심화 분석 리포트 해제</h4>
-                <p class="text-xs font-bold text-slate-500 mb-6 max-w-[240px]">자신의 성장을 숫자로 증명하고 싶으신가요?<br/>루파 클럽에서 AI 기반의 정밀 리포트를 제공합니다.</p>
-                <%= link_to "루파 클럽 혜택보기", prototype_club_join_path, class: "px-8 py-3 bg-white text-indigo-600 rounded-xl text-xs font-black shadow-xl active:scale-95 transition-all" %>
-              </div>
-            <% end %>
           </div>
+        </div>
 
       </div> <!-- End OVERVIEW panel -->
 
