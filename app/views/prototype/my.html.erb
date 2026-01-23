@@ -31,6 +31,31 @@
     </div>
   </section>
 
+  <!-- 1.5. Pending Membership Notice -->
+  <% if current_user&.routine_club_members&.where(payment_status: :pending)&.exists? %>
+    <% pending_member = current_user.routine_club_members.where(payment_status: :pending).first %>
+    <section class="px-2 animate-badge-pop">
+      <div class="app-glass-card p-5 bg-amber-500/10 border-amber-500/30 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-amber-500/10">⌛</div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="text-sm font-black text-amber-500">클럽 가입 확인 중</h4>
+              <span class="px-1.5 py-0.5 bg-amber-500/20 rounded text-[8px] font-black text-amber-500">PENDING</span>
+            </div>
+            <p class="text-[10px] font-bold text-slate-400 mt-1 leading-tight">
+              호스트가 입금을 확인하고 있습니다.<br/>
+              승인이 완료되면 루파 전용 혜택을 이용할 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "shrink-0 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
   <!-- 2. Goals Section (Weekly/Monthly/Yearly) -->
   <section class="space-y-4">
     <div class="flex justify-between items-center px-2">
