@@ -177,7 +177,7 @@
   </section>
 
   <!-- 5. Hall of Fame (Club Members List) -->
-  <section class="mt-12 px-6 pb-20 space-y-6">
+  <section class="mt-12 px-6 space-y-6">
     <div class="flex items-center justify-between px-1">
       <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Member Hall of Fame</h4>
       <p class="text-[9px] font-bold text-indigo-400"><%= @club_total_members_count %>명의 루파들이 함께하는 중</p>
@@ -202,6 +202,27 @@
         </div>
       <% end %>
     </div>
+  </section>
+
+  <!-- 6. Support & Communication -->
+  <section class="mt-12 px-6 pb-24 space-y-4">
+    <div class="flex items-center justify-between px-1 mb-2">
+      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Support & Link</h4>
+      <span class="w-12 h-px bg-white/5"></span>
+    </div>
+
+    <!-- KakaoTalk Group Chat -->
+    <a href="https://open.kakao.com/o/gt1WHswh" target="_blank" class="app-glass-card p-5 bg-[#FEE500]/5 border-[#FEE500]/20 rounded-[32px] flex items-center justify-between group active:scale-[0.98] transition-all">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-[#FEE500] flex items-center justify-center text-2xl shadow-lg shadow-yellow-900/20">💬</div>
+        <div>
+          <p class="text-[10px] font-black text-[#FEE500] uppercase tracking-widest leading-none mb-1">Official Chat</p>
+          <h4 class="text-sm font-black text-white">클럽 실시간 단톡방</h4>
+          <p class="text-[9px] font-bold text-slate-500 mt-0.5">멤버들과의 실시간 소통 및 공지</p>
+        </div>
+      </div>
+      <svg class="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    </a>
   </section>
 </div>
 
