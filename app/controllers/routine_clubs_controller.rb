@@ -1,5 +1,5 @@
 class RoutineClubsController < ApplicationController
-  before_action :require_login, except: [ :index, :show ]
+  before_action :require_login, except: [ :index, :show, :guide ]
   before_action :require_admin, only: [ :new, :create ]
   before_action :set_routine_club, only: [ :show, :edit, :update, :join, :manage, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member, :mark_welcomed ]
   before_action :set_my_membership, only: [ :show, :use_pass ]
@@ -21,6 +21,10 @@ class RoutineClubsController < ApplicationController
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
     @is_host = current_user && @routine_club.host == current_user
     @my_membership = current_user&.routine_club_members&.find_by(routine_club: @routine_club, status: :active)
+
+    if params[:source] == "prototype"
+      render "prototype/club_guide", layout: "prototype"
+    end
   end
 
   def show
@@ -132,6 +136,10 @@ class RoutineClubsController < ApplicationController
     # Community Data
     @announcements = @routine_club.announcements.order(created_at: :desc)
     @gatherings = @routine_club.gatherings.order(gathering_at: :asc)
+
+    if params[:source] == "prototype"
+      render "prototype/club_manage", layout: "prototype"
+    end
   end
 
   def new

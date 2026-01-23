@@ -1,7 +1,8 @@
 class PrototypeController < ApplicationController
   layout "prototype"
   before_action :set_shared_data
-  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa ]
+  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard ]
+  before_action :require_admin, only: [ :admin_dashboard ]
 
   def login
     @hide_nav = true
@@ -460,6 +461,24 @@ class PrototypeController < ApplicationController
     else
       redirect_to prototype_login_path, alert: "로그인이 필요합니다."
     end
+  end
+
+  def admin_dashboard
+    # System Wide Stats
+    @total_users = User.count
+    @premium_users = User.joins(:routine_club_members).where(routine_club_members: { status: :active }).distinct.count
+    @daily_active_users = User.joins(:rufa_activities).where(rufa_activities: { created_at: Date.current.all_day }).distinct.count
+
+    # Content Stats
+    @total_challenges = Challenge.count
+    @total_routines = PersonalRoutine.count
+
+    # Recent System Activities
+    @recent_joins = Participant.includes(:user, :challenge).order(created_at: :desc).limit(10)
+    @recent_members = RoutineClubMember.includes(:user, :routine_club).order(created_at: :desc).limit(10)
+
+    # Financial/Activity Pulse (Mock/Calculated)
+    @system_pulse = (@daily_active_users.to_f / @total_users * 100).round(1) rescue 0
   end
 
   def update_profile

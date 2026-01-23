@@ -1,0 +1,234 @@
+<div class="space-y-12 py-10 pb-32">
+  <!-- 1. Header & Navigation -->
+  <header class="px-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <%= link_to prototype_home_path, class: "w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95 transition-all" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+      <% end %>
+      <div class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+        <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">Club Guide</span>
+      </div>
+      <div class="w-10"></div>
+    </div>
+
+    <div class="space-y-1 text-center">
+      <h1 class="text-3xl font-black text-white tracking-tight">루파 클럽 안내</h1>
+      <p class="text-xs font-bold text-slate-500">성장에 진심인 루파들을 위한 운영 원칙</p>
+    </div>
+  </header>
+
+  <!-- 2. 기수제 운영 시스템 -->
+  <section class="px-6 space-y-6">
+    <div class="app-glass-card p-8 border-indigo-500/10 bg-gradient-to-br from-indigo-500/5 to-transparent relative overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full"></div>
+      
+      <div class="relative z-10 space-y-6">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-2xl">🗓️</div>
+          <div>
+            <h3 class="text-lg font-black text-white italic">기수제 운영 시스템</h3>
+            <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">3개월 단위 성장 주기</p>
+          </div>
+        </div>
+        
+        <div class="space-y-4 pt-2">
+          <p class="text-sm font-medium text-slate-300 leading-relaxed">
+            루파 클럽은 3개월(분기) 단위의 기수제로 운영됩니다. 현재 운영 중인 7기는 2026년 1월 1일 시작했습니다.
+          </p>
+          
+          <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-500">정기 모집 기간</span>
+               <span class="text-white">분기 시작 2주 전부터 시작일 당일까지</span>
+             </div>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-500 text-[9px] mt-0.5">※ 7기 한정: 2월 1일까지 특별 연장</span>
+               <span class="text-amber-500">모집 연장 중</span>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 참여 요금 원칙 -->
+  <section class="px-6 space-y-4">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">참여 비용 원칙</h2>
+      <span class="text-[10px] font-black text-indigo-400">성장의 가치</span>
+    </div>
+
+    <div class="app-glass-card p-6 flex flex-col items-center text-center space-y-4 border-emerald-500/10 bg-emerald-500/5">
+      <div class="text-4xl">💰</div>
+      <div class="space-y-1">
+        <h4 class="text-xl font-black text-white">하루 딱 100원</h4>
+        <p class="text-xs font-bold text-emerald-500">기수 전체 일수 × 100원으로 산정</p>
+      </div>
+      <p class="text-[11px] text-slate-500 font-medium leading-relaxed">
+        부담 없는 가격이지만 매일 쌓이는 루틴의 가치는<br/>
+        그 어떤 가격으로도 환산할 수 없는 당신의 자산이 됩니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- 4. 특별 전용 혜택 -->
+  <section class="px-6 space-y-6">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">멤버십 전용 공간 및 혜택</h2>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4">
+      <div class="app-glass-card p-6 flex items-start gap-5 border-indigo-500/20">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl shrink-0">🏛️</div>
+        <div class="space-y-1">
+          <h4 class="text-sm font-black text-white">루파 전용 프라이빗 라운지</h4>
+          <p class="text-xs font-bold text-slate-500 leading-relaxed">기수 멤버들만 입장 가능한 프라이빗 라운지에서 실시간 소통과 정보 교류를 즐길 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="app-glass-card p-6 flex items-start gap-5 border-emerald-500/20">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl shrink-0">⚡</div>
+        <div class="space-y-1">
+          <h4 class="text-sm font-black text-white">공동 몰입 딥워크 세션</h4>
+          <p class="text-xs font-bold text-slate-500 leading-relaxed">정해진 시간에 모여 서로의 존재를 느끼며 함께 몰입하는 줌(Zoom) 딥워크 세션에 참여할 수 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="app-glass-card p-6 flex items-start gap-5 border-amber-500/20">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-2xl shrink-0">💎</div>
+        <div class="space-y-1">
+          <h4 class="text-sm font-black text-white">스페셜 인사이트 강의</h4>
+          <p class="text-xs font-bold text-slate-500 leading-relaxed">성장, 도구, 커리어 등 각 분야 전문가인 호스트들의 특별한 인사이트 강의를 무상으로 제공받습니다.</p>
+        </div>
+      </div>
+
+      <div class="app-glass-card p-6 flex items-start gap-5 border-indigo-500/20">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl shrink-0">✨</div>
+        <div class="space-y-1">
+          <h4 class="text-sm font-black text-white">커스텀 정체성 및 골든 오라</h4>
+          <p class="text-xs font-bold text-slate-500 leading-relaxed">당신의 성장을 증명하는 특별한 호칭과 프로필을 빛내주는 프리미엄 골든 오라 배지가 부여됩니다.</p>
+        </div>
+      </div>
+
+      <div class="app-glass-card p-6 flex items-start gap-5 border-purple-500/20">
+        <div class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-2xl shrink-0">📈</div>
+        <div class="space-y-1">
+          <h4 class="text-sm font-black text-white">개인별 월간 성장 리포트</h4>
+          <p class="text-xs font-bold text-slate-500 leading-relaxed">단순 기록을 넘어 한 달간의 성취를 데이터로 분석한 개인별 맞춤 성장 리포트를 발송해드립니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 아이템 리필 시스템 -->
+  <section class="px-6 space-y-6">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">아이템 리필 시스템</h2>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="app-glass-card p-5 space-y-4 border-sky-500/10 bg-sky-500/5">
+        <div class="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center text-xl">⛱️</div>
+        <div class="space-y-1">
+          <p class="text-xs font-black text-white">휴식권</p>
+          <p class="text-[9px] font-bold text-sky-400">매월 1일 3개 충전</p>
+        </div>
+        <p class="text-[10px] text-slate-500 leading-relaxed font-medium">루틴을 쉬고 싶을 때<br/>공식 휴가로 인정</p>
+      </div>
+
+      <div class="app-glass-card p-5 space-y-4 border-amber-500/10 bg-amber-500/5">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-xl">🛡️</div>
+        <div class="space-y-1">
+          <p class="text-xs font-black text-white">세이브권</p>
+          <p class="text-[9px] font-bold text-amber-500">매월 1일 3개 충전</p>
+        </div>
+        <p class="text-[10px] text-slate-500 leading-relaxed font-medium">놓친 루틴을 사후에<br/>출석으로 방어</p>
+      </div>
+    </div>
+    
+    <div class="px-1 p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+      <p class="text-[10px] font-bold text-slate-500 leading-relaxed">아이템은 기수가 아닌 한 달 주기로 최신화됩니다.<br/>월말이 지나면 이월되지 않으니 적극적으로 사용하세요!</p>
+    </div>
+  </section>
+
+  <!-- 6. 성취 및 포인트 -->
+  <section class="px-6 space-y-6">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">성취 및 포인트</h2>
+    </div>
+
+    <div class="space-y-3">
+      <!-- Logic 1 -->
+      <div class="app-glass-card p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-lg">🏁</div>
+          <div>
+            <p class="text-xs font-black text-white">기수 완주 기준</p>
+            <p class="text-[9px] font-bold text-slate-500">최소 출석률 70% 이상</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-xs font-black text-emerald-500">달성 시 완주</span>
+        </div>
+      </div>
+
+      <!-- Logic 2 -->
+      <div class="app-glass-card p-4 flex items-center justify-between group border-amber-500/10">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/5 flex items-center justify-center text-lg">🔥</div>
+          <div>
+            <p class="text-xs font-black text-white">골든 파이어 보너스</p>
+            <p class="text-[9px] font-bold text-slate-500">7일 연속 완벽 달성 시</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-xs font-black text-amber-500">+20P</span>
+        </div>
+      </div>
+
+      <!-- Logic 3 -->
+      <div class="app-glass-card p-4 flex items-center justify-between group">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/5 flex items-center justify-center text-lg">👏</div>
+          <div>
+            <p class="text-xs font-black text-white">시너지 박수 리워드</p>
+            <p class="text-[9px] font-bold text-slate-500">동료의 응원을 받을 때마다</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-xs font-black text-indigo-400">+5P</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. 호스트 관리 원칙 -->
+  <section class="px-6 space-y-4">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">호스트 관리 원칙</h2>
+    </div>
+
+    <div class="p-6 rounded-[32px] bg-rose-500/10 border border-rose-500/20 space-y-3">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-sm">👑</div>
+        <h4 class="text-sm font-black text-white italic">호스트 권한</h4>
+      </div>
+      <p class="text-[11px] text-rose-300 font-bold leading-relaxed">
+        클럽 전체의 물을 흐리거나 룰을 상습적으로 위반하는 멤버는 호스트의 권한으로 경고 부여 및 강제 제명 처리가 가능합니다. 성숙한 루파분들의 커뮤니티를 위해 서로를 존중해주세요.
+      </p>
+    </div>
+  </section>
+
+  <!-- Bottom Action -->
+  <section class="px-6">
+    <% if @is_member %>
+      <%= link_to prototype_home_path, class: "block w-full py-6 bg-white text-black rounded-[28px] font-black text-lg text-center shadow-xl active:scale-95 transition-all" do %>
+        나의 클럽 대시보드 가기
+      <% end %>
+    <% else %>
+      <%= link_to prototype_club_join_path, class: "block w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-700 text-white rounded-[28px] font-black text-lg text-center shadow-2xl shadow-indigo-600/30 active:scale-95 transition-all" do %>
+        멤버십 신청하러 가기
+      <% end %>
+    <% end %>
+  </section>
+</div>

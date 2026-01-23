@@ -303,21 +303,39 @@
       <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
     </button>
 
-    <% if current_user.super_admin? %>
-      <%= link_to admin_root_path, class: "w-full flex items-center justify-between p-5 bg-indigo-500/10 hover:bg-indigo-500/20 active:bg-indigo-500/30 transition-colors cursor-pointer group" do %>
+    <% if current_user.admin? %>
+      <!-- Super Admin Access -->
+      <%= link_to prototype_admin_path, class: "w-full flex items-center justify-between p-5 bg-rose-500/10 hover:bg-rose-500/20 active:bg-rose-500/30 transition-colors cursor-pointer group" do %>
         <div class="flex items-center gap-4">
-          <span class="text-indigo-400 group-hover:scale-110 transition-transform">
+          <span class="text-rose-400 group-hover:scale-110 transition-transform">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </span>
-          <span class="text-sm font-black text-indigo-400">시스템 관리자 대시보드</span>
+          <span class="text-sm font-black text-rose-400">시스템 총괄 관리자</span>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-[9px] font-black bg-indigo-500 text-white px-1.5 py-0.5 rounded tracking-tighter uppercase">SuperAdmin</span>
-          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          <span class="text-[9px] font-black bg-rose-500 text-white px-1.5 py-0.5 rounded tracking-tighter uppercase">ROOT</span>
+          <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
         </div>
       <% end %>
+
+      <!-- Official Club Management -->
+      <% @official_club = RoutineClub.official.first %>
+      <% if @official_club %>
+        <%= link_to manage_routine_club_path(@official_club, source: 'prototype'), class: "w-full flex items-center justify-between p-5 bg-indigo-500/10 hover:bg-indigo-500/20 active:bg-indigo-500/30 transition-colors cursor-pointer group" do %>
+          <div class="flex items-center gap-4">
+            <span class="text-indigo-400 group-hover:scale-110 transition-transform">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </span>
+            <span class="text-sm font-black text-indigo-400">루파 클럽 운영 센터</span>
+          </div>
+          <div class="flex items-center gap-2">
+             <span class="text-[9px] font-black bg-indigo-500 text-white px-1.5 py-0.5 rounded tracking-tighter uppercase">HOST</span>
+            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        <% end %>
+      <% end %>
     <% end %>
-    
+
     <button type="button" 
             data-action="click->proto-ui#openModal" 
             data-modal-id="notification-settings"

@@ -6,17 +6,19 @@ class PermissionService
   end
 
   def can_create_challenge?
+    return false unless @user
     return true if @user.admin? || @user.is_rufa_club_member?
     @user.level >= 10
   end
 
   def can_create_gathering?
+    return false unless @user
     return true if @user.admin? || @user.is_rufa_club_member?
     @user.level >= 5
   end
 
   def can_use_relax_pass?(date = Date.current)
-    return false unless @user.is_rufa_club_member?
+    return false unless @user&.is_rufa_club_member?
 
     membership = @user.routine_club_members.confirmed.active.first
     return false unless membership
@@ -25,11 +27,11 @@ class PermissionService
   end
 
   def is_premium_member?
-    @user.is_rufa_club_member?
+    @user&.is_rufa_club_member? || false
   end
 
   def identity_title
-    return "파인더" unless is_premium_member?
+    return "파인더" unless is_premium_member? && @user
 
     membership = @user.routine_club_members.confirmed.active.first
     membership&.identity_title.presence || "루파 멤버"

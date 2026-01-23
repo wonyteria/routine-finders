@@ -359,20 +359,17 @@
   <section class="space-y-4 pb-4">
     <div class="flex items-center justify-between px-2">
       <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">루파 클럽 라운지</h3>
-      <div class="flex items-center gap-1">
-        <% if @official_club&.zoom_link.present? %>
-          <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>
-          <span class="text-[9px] font-black text-rose-500 uppercase tracking-widest leading-none">Live Now</span>
-        <% else %>
-          <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span>
-          <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">Club Hub</span>
-        <% end %>
-      </div>
+      
+      <%# 고대비 클럽 안내 버튼 - 헤더 우측에 배치 %>
+      <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "px-3 py-1.5 rounded-xl bg-indigo-500 text-white text-[10px] font-black shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex items-center gap-1.5 ring-4 ring-indigo-500/10" do %>
+        <span>📖</span> 루파 클럽 안내
+      <% end %>
     </div>
 
     <%= link_to prototype_live_path, class: "block group relative" do %>
       <div class="app-glass-card p-6 bg-indigo-500/10 border border-indigo-500/20 rounded-[32px] overflow-hidden active:scale-[0.98] transition-all">
-        <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-600/20 blur-3xl rounded-full group-hover:bg-indigo-600/30 transition-all"></div>
+        <%# 장식용 블러 요소가 클릭을 방해하지 않도록 pointer-events-none 추가 %>
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-600/20 blur-3xl rounded-full group-hover:bg-indigo-600/30 transition-all pointer-events-none"></div>
         
         <div class="relative z-10 flex items-center justify-between gap-6">
           <div class="space-y-2 flex-1">
@@ -393,7 +390,7 @@
                   </div>
                 <% end %>
               </div>
-              <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">라운지 입장하기 →</span>
+              <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest group-hover:translate-x-1 transition-transform">라운지 입장하기 →</span>
             </div>
           </div>
           
@@ -412,7 +409,7 @@
         <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">호스트 관리 센터</h3>
       </div>
       <div class="app-glass-card p-5 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 relative overflow-hidden group">
-        <div class="absolute -right-8 -top-8 w-24 h-24 bg-amber-500/10 blur-2xl rounded-full"></div>
+        <div class="absolute -right-8 -top-8 w-24 h-24 bg-amber-500/10 blur-2xl rounded-full pointer-events-none"></div>
         <div class="flex items-center justify-between relative z-10">
           <div class="space-y-1">
             <h4 class="text-base font-black text-white">운영 중 도전 <%= @hosted_challenges.count %>개</h4>
@@ -437,7 +434,7 @@
       <div class="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-2">
         <% @joined_challenges.each do |challenge| %>
           <%= link_to challenge_path(challenge, source: 'prototype'), class: "shrink-0 w-64 app-glass-card p-5 border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden group active:scale-95 transition-all block" do %>
-            <div class="absolute -right-4 -top-4 w-16 h-16 bg-indigo-500/10 blur-xl rounded-full"></div>
+            <div class="absolute -right-4 -top-4 w-16 h-16 bg-indigo-500/10 blur-xl rounded-full pointer-events-none"></div>
             <div class="flex items-start justify-between relative z-10 mb-3">
               <span class="px-2 py-0.5 bg-indigo-500/20 rounded-lg text-[8px] font-black text-indigo-400 uppercase">참여 중</span>
               <span class="text-sm">🔥</span>
@@ -455,29 +452,6 @@
       </div>
     </section>
   <% end %>
-
-  <!-- 8. Support & Link -->
-  <section class="space-y-4 pb-24">
-    <div class="flex items-center justify-between px-2 mb-2">
-      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Support & Link</h4>
-      <span class="w-12 h-px bg-white/5"></span>
-    </div>
-
-    <div class="grid grid-cols-1 gap-3">
-      <!-- KakaoTalk Group Chat -->
-      <a href="https://open.kakao.com/o/gt1WHswh" target="_blank" class="app-glass-card p-5 bg-[#FEE500]/5 border-[#FEE500]/20 rounded-[32px] flex items-center justify-between group active:scale-[0.98] transition-all">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-[#FEE500] flex items-center justify-center text-2xl shadow-lg shadow-yellow-900/20">💬</div>
-          <div>
-            <p class="text-[10px] font-black text-[#FEE500] uppercase tracking-widest leading-none mb-1">Official Chat</p>
-            <h4 class="text-sm font-black text-white">클럽 실시간 단톡방</h4>
-            <p class="text-[9px] font-bold text-slate-500 mt-0.5">멤버들과의 실시간 소통 및 공지</p>
-          </div>
-        </div>
-        <svg class="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-      </a>
-    </div>
-  </section>
 
   <% if current_user %>
     <!-- Welcome & PWA Nudge Modal -->
