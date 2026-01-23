@@ -358,8 +358,19 @@ class PrototypeController < ApplicationController
   end
 
   def live
-    @active_members = User.order("RANDOM()").limit(22)
     @current_club = RoutineClub.official.first
+    @active_members = User.order("RANDOM()").limit(22) # Active in the orbit
+
+    # Collective Data for RUFA Club
+    @confirmed_members = @current_club&.members&.where(payment_status: :confirmed) || []
+    @club_total_members_count = @confirmed_members.count || 42  # Dummy if empty
+
+    # Weekly completion stats (summing members' record counts)
+    @club_weekly_completions = (@confirmed_members.sum { |m| m.user.total_routine_completions % 100 } + 4200) # Base + random offset for proto
+    @club_temperature = 98.6 # High energy
+
+    @club_announcements = @current_club&.announcements&.order(created_at: :desc)&.limit(2) || []
+
     @is_club_member = current_user&.routine_club_members&.active&.exists?
   end
 

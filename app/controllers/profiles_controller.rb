@@ -8,9 +8,10 @@ class ProfilesController < ApplicationController
       @hosted_challenges = @user.hosted_challenges.includes(:participants).order(created_at: :desc)
       @challenge_applications = @user.challenge_applications.includes(:challenge).order(created_at: :desc)
 
-      # 루틴 클럽 및 리포트
-      @club_memberships = @user.routine_club_members.includes(:routine_club).order(created_at: :desc)
-      @recent_reports = @user.routine_club_reports.order(start_date: :desc).limit(5)
+      # 루파 클럽 (유일한 공식 클럽)
+      @official_club = RoutineClub.official.first
+      @my_membership = @user.routine_club_members.find_by(routine_club: @official_club)
+      @recent_reports = @my_membership ? @user.routine_club_reports.where(routine_club: @official_club).order(start_date: :desc).limit(5) : []
 
       # 비회원을 위한 실시간 성장 분석 데이터
       if @recent_reports.empty?
@@ -49,7 +50,6 @@ class ProfilesController < ApplicationController
 
       # 대시보드 요약
       @active_participations = @participations.select { |p| p.challenge&.status_active? }
-      @active_clubs = @club_memberships.select { |m| m.routine_club&.status_active? }
 
       # 챌린지 vs 모임 (온/오프라인 모드 기준)
       @challenge_participations = @participations.select { |p| p.challenge&.mode_online? }

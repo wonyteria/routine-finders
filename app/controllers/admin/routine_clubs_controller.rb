@@ -1,10 +1,15 @@
 module Admin
   class RoutineClubsController < BaseController
-    before_action :require_super_admin
+    before_action :require_admin
     before_action :set_routine_club, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @routine_clubs = RoutineClub.all.order(created_at: :desc)
+      @official_club = RoutineClub.official.first
+      if @official_club
+        redirect_to admin_routine_club_path(@official_club)
+      else
+        @routine_clubs = RoutineClub.all.order(created_at: :desc)
+      end
     end
 
     def show

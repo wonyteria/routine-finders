@@ -67,6 +67,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_rufa_club_member
+    unless current_user&.is_rufa_club_member?
+      redirect_to guide_routine_clubs_path, alert: "루파 클럽 리포트는 멤버 전용 혜택입니다. 루파 클럽에 합류하고 리포트를 받아보세요!"
+    end
+  end
+
   def store_location
     session[:forwarding_url] = request.original_url if request.get? || request.head?
   end

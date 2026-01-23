@@ -1,6 +1,7 @@
 module Admin
   class ChallengesController < BaseController
-    before_action :set_challenge, only: [:show, :edit, :update, :destroy]
+    before_action :require_super_admin
+    before_action :set_challenge, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @challenges = Challenge.all.order(created_at: :desc)
@@ -41,7 +42,7 @@ module Admin
     def challenge_params
       params.require(:challenge).permit(
         :title, :description, :status, :start_date, :end_date, :amount,
-        :purpose, :max_participants, :mode, :entry_type, :cost_type, 
+        :purpose, :max_participants, :mode, :entry_type, :cost_type,
         :verification_type, :is_official
       )
     end

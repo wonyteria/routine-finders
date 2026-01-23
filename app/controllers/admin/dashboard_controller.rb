@@ -1,5 +1,14 @@
 module Admin
   class DashboardController < BaseController
+    before_action :redirect_if_club_admin
+
+    private
+
+    def redirect_if_club_admin
+      if current_user.club_admin? && !current_user.super_admin?
+        redirect_to admin_routine_clubs_path
+      end
+    end
     def index
       begin
         # Core Statistics
@@ -26,14 +35,14 @@ module Admin
 
         @recent_users = User.order(created_at: :desc).limit(8)
         @recent_activities = RufaActivity.includes(:user).order(created_at: :desc).limit(10)
-        
+
         # Financial Overview
         @revenue_data = {
           this_month: RoutineClubMember.payment_status_confirmed.where(deposit_confirmed_at: Time.current.all_month).sum(:paid_amount),
           last_month: RoutineClubMember.payment_status_confirmed.where(deposit_confirmed_at: 1.month.ago.all_month).sum(:paid_amount),
           total_revenue: RoutineClubMember.payment_status_confirmed.sum(:paid_amount)
         }
-        
+
         @revenue_data[:growth] = if @revenue_data[:last_month] > 0
           ((@revenue_data[:this_month].to_f - @revenue_data[:last_month]) / @revenue_data[:last_month] * 100).round(1)
         else

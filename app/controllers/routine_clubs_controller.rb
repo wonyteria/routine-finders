@@ -5,15 +5,12 @@ class RoutineClubsController < ApplicationController
   before_action :set_my_membership, only: [ :show, :use_pass ]
 
   def index
-    @routine_clubs = RoutineClub.recruiting_clubs
-                                  .includes(:host, :members)
-                                  .order(created_at: :desc)
-
-    if params[:category].present?
-      @routine_clubs = @routine_clubs.by_category(params[:category])
+    @official_club = RoutineClub.official.first
+    if @official_club
+      redirect_to guide_routine_clubs_path
+    else
+      redirect_to root_path, alert: "루파 클럽이 존재하지 않습니다."
     end
-
-    @my_clubs = current_user&.routine_club_members&.includes(:routine_club) || []
   end
 
   def guide

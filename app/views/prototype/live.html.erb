@@ -20,146 +20,189 @@
     <div class="w-10"></div> <!-- Placeholder for symmetry -->
   </header>
 
-  <!-- Live Content -->
-  <main class="flex-1 flex flex-col items-center justify-center text-center space-y-12">
-    <!-- Active Member Orbits (Social Proof) -->
-    <div class="relative w-80 h-80 flex items-center justify-center">
-      <!-- Orbit Glow Background -->
-      <div class="absolute inset-0 bg-indigo-500/5 blur-[60px] rounded-full animate-pulse"></div>
+  <!-- 2. Collective Status Dashboard -->
+  <section class="px-6 space-y-4 mb-10">
+    <div class="grid grid-cols-2 gap-3">
+      <!-- Activity Temperature -->
+      <div class="app-glass-card p-5 bg-gradient-to-br from-rose-500/10 to-transparent border-rose-500/20 rounded-[32px] flex flex-col justify-between">
+        <div>
+          <p class="text-[9px] font-black text-rose-400 uppercase tracking-widest leading-none mb-1">Club Temp</p>
+          <h4 class="text-xs font-bold text-slate-300">클럽 열정 온도</h4>
+        </div>
+        <div class="flex items-baseline gap-1.5 mt-4">
+          <span class="text-3xl font-black text-white tabular-nums"><%= @club_temperature %>°</span>
+          <span class="text-[9px] font-black text-rose-500 animate-pulse">HOT</span>
+        </div>
+      </div>
       
-      <!-- Orbit Rings -->
+      <!-- Weekly Completions -->
+      <div class="app-glass-card p-5 bg-gradient-to-br from-indigo-500/10 to-transparent border-indigo-500/20 rounded-[32px] flex flex-col justify-between">
+        <div>
+          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Team Power</p>
+          <h4 class="text-xs font-bold text-slate-300">이번 주 성취</h4>
+        </div>
+        <div class="flex items-baseline gap-1 mt-4">
+          <span class="text-3xl font-black text-white tabular-nums"><%= number_with_delimiter(@club_weekly_completions) %></span>
+          <span class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Hits</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official Notice -->
+    <% if @club_announcements.any? %>
+      <% announcement = @club_announcements.first %>
+      <button type="button" 
+              onclick="document.getElementById('announcement-modal').classList.remove('hidden')"
+              class="w-full text-left app-glass-card p-4 bg-indigo-500/10 border-indigo-500/20 rounded-[24px] flex items-center gap-4 active:scale-[0.98] transition-all">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600/20 flex items-center justify-center text-lg shadow-inner shrink-0">📢</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">Announcement</p>
+          <p class="text-xs font-bold text-white truncate"><%= announcement.title %></p>
+        </div>
+        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+      </button>
+
+      <!-- Announcement Detail Modal -->
+      <div id="announcement-modal" class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+        <div class="relative w-full max-w-lg bg-[#0C0B12] rounded-t-[40px] sm:rounded-[40px] border-t sm:border border-white/10 flex flex-col overflow-hidden animate-slide-up">
+          <div class="p-8 space-y-6">
+            <div class="flex justify-between items-start">
+              <div class="space-y-1">
+                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Official Notice</p>
+                <h4 class="text-xl font-black text-white leading-tight"><%= announcement.title %></h4>
+                <p class="text-[10px] font-bold text-slate-500"><%= announcement.created_at.strftime('%Y.%m.%d %H:%M') %></p>
+              </div>
+              <button onclick="this.closest('#announcement-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400">✕</button>
+            </div>
+            <div class="h-px w-full bg-white/5"></div>
+            <div class="text-sm font-medium text-slate-300 leading-relaxed min-h-[200px] whitespace-pre-wrap">
+              <%= announcement.content.presence || "상세 공지 내용이 등록되지 않았습니다." %>
+            </div>
+            <button onclick="this.closest('#announcement-modal').classList.add('hidden')" class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-sm active:scale-95 transition-all">확인했습니다</button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <!-- 3. Current Focus Orbit -->
+  <main class="flex-1 flex flex-col items-center justify-center text-center space-y-10 px-4">
+    <div class="relative w-80 h-80 flex items-center justify-center">
+      <div class="absolute inset-0 bg-indigo-500/5 blur-[60px] rounded-full animate-pulse"></div>
       <div class="absolute inset-0 border border-white/5 rounded-full"></div>
       <div class="absolute inset-10 border border-white/5 rounded-full"></div>
       
-      <!-- Center Count Display -->
       <div class="relative z-20 bg-[#07060A]/60 backdrop-blur-md w-32 h-32 rounded-full border border-white/10 flex flex-col items-center justify-center space-y-0.5 shadow-2xl">
         <h2 class="text-4xl font-black text-white tabular-nums"><%= @active_members.count %></h2>
-        <p class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em] leading-none">Active Now</p>
+        <p class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em] leading-none">Focusing Now</p>
       </div>
 
-      <!-- Living Orbits (Active Members) -->
       <div class="absolute inset-0 z-0 pointer-events-none">
-        <% 
-           display_users = @active_members.to_a
-        %>
-        <% if display_users.any? %>
-          <% if display_users.size > 30 %>
-            <!-- "Milky Way" Mode: Dense Particles -->
-            <% display_users.each_with_index do |user, idx| %>
-              <% 
-                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
-                 duration = rand(40..100)
-                 delay = rand(-duration..0)
-                 top_percent = rand(8..42)
-                 opacity = rand(0.2..0.6)
-                 size = rand(2..4)
-              %>
-              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
-                <div class="absolute rounded-full bg-indigo-300 shadow-[0_0_6px_rgba(165,180,252,0.6)]" 
-                     style="top: <%= top_percent %>%; left: 50%; width: <%= size %>px; height: <%= size %>px; opacity: <%= opacity %>; transform: translateX(-50%);">
-                </div>
+        <% @active_members.each_with_index do |user, idx| %>
+          <% 
+             orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
+             is_reverse = (idx % 3 == 1)
+             duration = is_reverse ? 70 : (idx % 3 == 2 ? 60 : 45)
+             initial_angle = idx * (360.0 / @active_members.size)
+             delay = -(initial_angle / 360.0) * duration
+             top_percent = [8, 15, 22, 29, 36, 43][idx % 6]
+          %>
+          <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
+            <div class="absolute w-9 h-9 rounded-full border-2 border-white/10 overflow-hidden shadow-xl" style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%)">
+              <div class="w-full h-full" style="animation: <%= is_reverse ? 'orbit-spin 70s' : 'orbit-spin-reverse 50s' %> linear infinite; animation-delay: <%= delay %>s">
+                <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
               </div>
-            <% end %>
-          <% else %>
-            <!-- "Satellite" Mode: Individual Profiles -->
-            <% display_users.each_with_index do |user, idx| %>
-              <% 
-                 orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
-                 is_reverse = (idx % 3 == 1)
-                 duration = is_reverse ? 70 : (idx % 3 == 2 ? 60 : 45)
-                 initial_angle = idx * (360.0 / display_users.size)
-                 delay = -(initial_angle / 360.0) * duration
-                 top_percent = [8, 15, 22, 29, 36, 43][idx % 6]
-              %>
-              <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
-                <div class="absolute w-9 h-9 rounded-full border-2 border-white/10 overflow-hidden shadow-xl" 
-                     style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%)">
-                  <div class="w-full h-full" style="animation: <%= is_reverse ? 'orbit-spin 70s linear infinite' : (idx % 3 == 2 ? 'orbit-spin-reverse 60s' : 'orbit-spin-reverse 45s') %> linear infinite; animation-delay: <%= delay %>s">
-                    <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
-                  </div>
-                </div>
-              </div>
-            <% end %>
-          <% end %>
-        <% end %>
-      </div>
-
-      <!-- Facepile Badge below the orbit -->
-      <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30">
-        <div class="bg-indigo-950/40 backdrop-blur-xl border border-white/10 px-3 py-1.5 rounded-2xl flex items-center gap-2 shadow-2xl whitespace-nowrap">
-          <div class="flex -space-x-1.5">
-            <% display_users.take(3).each do |u| %>
-              <div class="w-4 h-4 rounded-full border border-indigo-900 overflow-hidden shadow-inner">
-                <img src="<%= u.profile_image %>" class="w-full h-full object-cover">
-              </div>
-            <% end %>
+            </div>
           </div>
-          <p class="text-[9px] font-black text-indigo-100/90 tracking-tight">
-            지금 몰입하고 있는 메이트들
-          </p>
-        </div>
+        <% end %>
       </div>
     </div>
 
-    <div class="space-y-4 px-8">
+    <div class="space-y-4 px-6">
       <h3 class="text-2xl font-black text-white leading-tight">성장의 즐거움이 모이는 곳<br/><span class="text-indigo-400">루파 클럽 <%= @current_club&.generation_number %>기 라운지</span></h3>
-      <p class="text-xs font-bold text-slate-500 leading-relaxed">라운지에서는 함께 몰입하고 배우며 성장합니다.<br/>오늘도 <%= @active_members.count %>명의 멤버들이 라운지에 머물고 있어요.</p>
+      <p class="text-[11px] font-bold text-slate-500 leading-relaxed max-w-[280px] mx-auto">라운지에서는 함께 몰입하고 배우며 성장합니다.<br/>오늘도 <%= @active_members.count %>명의 멤버들이 라운지에 머물고 있어요.</p>
     </div>
   </main>
 
-  <!-- Lounge Integrated Rooms -->
-  <footer class="mt-8 space-y-4 pb-12 px-6">
-    <div class="space-y-4">
-      <div class="app-glass-card p-5 bg-white/5 border-white/10 rounded-[32px] group">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">📹</div>
-            <div>
-              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Live Room</p>
-              <h4 class="text-sm font-black text-white">온라인 공동 몰입 세션</h4>
-            </div>
-          </div>
-          <% if @current_club&.zoom_link.present? %>
-            <div class="px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black rounded animate-pulse">ON AIR</div>
-          <% end %>
-        </div>
-        
-        <% if @current_club&.zoom_link.present? %>
-          <a href="<%= @current_club.zoom_link %>" target="_blank" class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
-            라이브 입장하기
-          </a>
-        <% else %>
-          <div class="w-full py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm text-center border border-white/5">
-            오전 06:00부터 시작됩니다
-          </div>
-        <% end %>
-      </div>
-
-      <div class="app-glass-card p-5 bg-white/5 border-white/10 rounded-[32px] group">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">🎓</div>
-            <div>
-              <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Lecture Room</p>
-              <h4 class="text-sm font-black text-white">스페셜 인사이트 강의실</h4>
-            </div>
-          </div>
-        </div>
-        
-        <% if @current_club&.special_lecture_link.present? %>
-          <a href="<%= @current_club.special_lecture_link %>" target="_blank" class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
-            강의실 입장하기
-          </a>
-        <% else %>
-          <%= link_to prototype_lecture_intro_path(source: 'prototype'), class: "w-full py-4 rounded-2xl bg-indigo-600/20 text-indigo-400 font-black text-sm flex items-center justify-center gap-2 border border-indigo-500/20 hover:bg-indigo-600/30 transition-all" do %>
-            강의 커리큘럼 보기
-          <% end %>
-        <% end %>
-      </div>
+  <!-- 4. Integrated Experience Rooms -->
+  <section class="mt-12 px-6 space-y-4">
+    <div class="flex items-center justify-between px-1 mb-2">
+      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Premium Rooms</h4>
+      <span class="w-12 h-px bg-white/5"></span>
     </div>
-    
-    <p class="text-[9px] font-bold text-slate-700 text-center pt-4">루파 클럽 멤버들에게만 허용된 프리미엄 공간입니다.</p>
-  </footer>
+
+    <!-- Live Room Card -->
+    <div class="app-glass-card p-5 bg-white/5 border-white/10 rounded-[32px] group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">📹</div>
+          <div>
+            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Live Room</p>
+            <h4 class="text-sm font-black text-white">온라인 공동 몰입 세션</h4>
+          </div>
+        </div>
+        <% if @current_club&.zoom_link.present? %>
+          <div class="px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black rounded animate-pulse">ON AIR</div>
+        <% end %>
+      </div>
+      
+      <% if @current_club&.zoom_link.present? %>
+        <a href="<%= @current_club.zoom_link %>" target="_blank" class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">라이브 입장하기</a>
+      <% else %>
+        <div class="w-full py-4 rounded-2xl bg-white/5 text-slate-500 font-black text-sm text-center border border-white/5">오전 06:00부터 시작됩니다</div>
+      <% end %>
+    </div>
+
+    <!-- Lecture Room Card -->
+    <div class="app-glass-card p-5 bg-white/5 border-white/10 rounded-[32px] group">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">🎓</div>
+          <div>
+            <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Lecture Room</p>
+            <h4 class="text-sm font-black text-white">스페셜 인사이트 강의실</h4>
+          </div>
+        </div>
+      </div>
+      
+      <% if @current_club&.special_lecture_link.present? %>
+        <a href="<%= @current_club.special_lecture_link %>" target="_blank" class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">강의실 입장하기</a>
+      <% else %>
+        <%= link_to prototype_lecture_intro_path(source: 'prototype'), class: "w-full py-4 rounded-2xl bg-indigo-600/20 text-indigo-400 font-black text-sm flex items-center justify-center gap-2 border border-indigo-500/20 hover:bg-indigo-600/30 transition-all" do %>
+          강의 커리큘럼 보기
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- 5. Hall of Fame (Club Members List) -->
+  <section class="mt-12 px-6 pb-20 space-y-6">
+    <div class="flex items-center justify-between px-1">
+      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Member Hall of Fame</h4>
+      <p class="text-[9px] font-bold text-indigo-400"><%= @club_total_members_count %>명의 루파들이 함께하는 중</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <% @confirmed_members.take(10).each do |member| %>
+        <div class="app-glass-card p-3 bg-white/[0.02] border-white/5 rounded-2xl flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white/10">
+            <img src="<%= member.user.profile_image %>" class="w-full h-full object-cover">
+          </div>
+          <div class="min-w-0">
+            <p class="text-[11px] font-black text-white truncate"><%= member.user.nickname %></p>
+            <p class="text-[9px] font-bold text-slate-500">Lv.<%= member.user.level %></p>
+          </div>
+        </div>
+      <% end %>
+      
+      <% if @confirmed_members.count > 10 %>
+        <div class="app-glass-card p-3 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex items-center justify-center">
+          <p class="text-[9px] font-black text-indigo-400">+ <%= @confirmed_members.count - 10 %> MORE</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
 </div>
 
 <style>

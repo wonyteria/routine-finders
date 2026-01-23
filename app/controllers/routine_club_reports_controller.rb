@@ -1,5 +1,6 @@
 class RoutineClubReportsController < ApplicationController
   before_action :require_login
+  before_action :require_rufa_club_member
   before_action :set_report, only: [ :show ]
 
   def index

@@ -40,7 +40,8 @@
         <h4 class="text-5xl font-black text-white"><%= @action_items[:pending_payments] %></h4>
         <span class="text-xs font-bold text-slate-500 tracking-tight">건의 미처리 입금이 있음</span>
       </div>
-      <%= link_to admin_routine_clubs_path, class: "mt-8 w-full py-4 bg-amber-500/20 hover:bg-amber-500 text-amber-100 font-black text-xs rounded-2xl transition-all flex items-center justify-center gap-2 group-hover:translate-y-[-2px] shadow-lg shadow-amber-900/20" do %>
+      <% official_club = RoutineClub.official.first %>
+      <%= link_to (official_club ? manage_routine_club_path(official_club) : admin_routine_clubs_path), class: "mt-8 w-full py-4 bg-amber-500/20 hover:bg-amber-500 text-amber-100 font-black text-xs rounded-2xl transition-all flex items-center justify-center gap-2 group-hover:translate-y-[-2px] shadow-lg shadow-amber-900/20" do %>
          승인 페이지로 이동 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7-7 7"/></svg>
       <% end %>
     </div>

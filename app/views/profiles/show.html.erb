@@ -165,8 +165,8 @@
         { id: 'rupin', label: '루틴' },
         { id: 'challenges', label: '챌린지' },
         { id: 'gatherings', label: '모임' },
+        { id: 'rupin', label: '루파 클럽' },
         { id: 'achievements', label: '업적 & 배지' },
-        { id: 'history', label: '활동 내역' }
       ].each_with_index do |tab, index| %>
         <% is_active = index == 0 %>
         <button type="button" data-tabs-target="tab" data-action="click->tabs#change" data-id="<%= tab[:id] %>"
@@ -250,32 +250,36 @@
         <% end %>
 
         <!-- Routine Clubs Summary -->
-        <% if @club_memberships.any? %>
-          <section>
-            <div class="flex items-center justify-between mb-6 px-4">
-              <h3 class="text-xl font-black text-slate-900">참여 중인 루파클럽</h3>
-              <%= link_to "전체보기", "#", class: "text-xs font-bold text-indigo-600", data: { action: "click->tabs#change", id: "clubs" } %>
-            </div>
-            <div class="space-y-4">
-              <% @club_memberships.first(2).each do |membership| %>
-                <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl">
-                      🚀
-                    </div>
-                    <div>
-                      <h4 class="font-black text-slate-900 text-sm"><%= membership.routine_club.title %></h4>
-                      <p class="text-[10px] text-slate-400 font-bold uppercase"><%= membership.status %></p>
-                    </div>
+        <!-- Routine Club Status (Single Official Club) -->
+        <section>
+          <div class="flex items-center justify-between mb-6 px-4">
+            <h3 class="text-xl font-black text-slate-900">루파 클럽 멤버십</h3>
+          </div>
+          <div class="space-y-4">
+            <% if @my_membership %>
+              <div class="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center justify-between group hover:border-indigo-200 transition-all">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    🔱
                   </div>
-                  <div class="text-right">
-                    <p class="text-[10px] text-slate-400 font-black uppercase">참여도</p>
-                    <p class="text-sm font-black text-indigo-600"><%= membership.attendance_rate.to_i %>%</p>
+                  <div>
+                    <h4 class="font-black text-slate-900 text-sm"><%= @official_club.title %></h4>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase"><%= @my_membership.status %></p>
                   </div>
                 </div>
-              <% end %>
-            </div>
-          </section>
+                <div class="text-right">
+                  <p class="text-[10px] text-slate-400 font-black uppercase">성장 포인트</p>
+                  <p class="text-sm font-black text-indigo-600">⚡ <%= number_with_delimiter(@my_membership.growth_points || 0) %>P</p>
+                </div>
+              </div>
+            <% else %>
+              <div class="p-8 bg-slate-50 rounded-[32px] border-2 border-dashed border-slate-200 text-center">
+                <p class="text-slate-400 font-black text-sm mb-4">현재 루파 클럽 멤버가 아닙니다.</p>
+                <%= link_to "멤버십 혜택 알아보기 →", guide_routine_clubs_path, class: "text-indigo-600 font-black text-xs" %>
+              </div>
+            <% end %>
+          </div>
+        </section>
         <% end %>
 
         <!-- Activity Feed -->
@@ -327,8 +331,8 @@
         <!-- Personal Routines Summary relocated from left -->
         <section class="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between mb-6 px-2">
-            <h3 class="text-sm font-black text-slate-900 text-slate-900 italic tracking-tight uppercase">Routines</h3>
-            <%= link_to "관리", personal_routines_path, class: "text-[10px] font-bold text-indigo-600" %>
+            <h3 class="text-sm font-black text-slate-900 text-slate-900 italic tracking-tight uppercase">Daily Routines</h3>
+            <%= link_to "나의 루틴 관리", personal_routines_path, class: "text-[10px] font-bold text-indigo-600" %>
           </div>
           <div class="grid grid-cols-2 gap-3">
             <% @personal_routines.first(4).each do |routine| %>
@@ -509,63 +513,52 @@
       </section>
     </div>
 
-    <!-- Rupin Tab (루파 클럽 + Routines) -->
     <div data-tabs-target="panel" data-id="rupin" class="hidden space-y-16">
-      <!-- 1. 루파클럽 Section -->
+      <!-- 1. 루파 클럽 멤버십 현황 -->
       <section class="space-y-6">
-        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">루파클럽</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          <% @club_memberships.each do |membership| %>
+        <h3 class="text-2xl font-black text-slate-900 ml-4 italic">THE RUFA CLUB</h3>
+        <div class="grid grid-cols-1 gap-8">
+          <% if @my_membership %>
             <div class="bg-white rounded-[48px] border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
               <div class="md:w-1/2 aspect-video md:aspect-auto bg-slate-100 relative">
-                <img src="<%= membership.routine_club.thumbnail_image %>" class="w-full h-full object-cover">
+                <img src="<%= @official_club.thumbnail_image %>" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div class="absolute bottom-6 left-6 text-white">
-                  <p class="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1"><%= membership.routine_club.category %></p>
-                  <h4 class="text-xl font-black"><%= membership.routine_club.title %></h4>
+                <div class="absolute bottom-6 left-6 text-white text-left">
+                  <p class="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1"><%= @official_club.category %></p>
+                  <h4 class="text-xl font-black"><%= @official_club.title %></h4>
                 </div>
               </div>
               <div class="md:w-1/2 p-8 flex flex-col justify-between">
                 <div>
                   <div class="flex items-center gap-3 mb-6">
-                    <span class="px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest">
-                      <%= membership.status.upcase %>
+                    <span class="px-3 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest">
+                      <%= @my_membership.status.upcase %>
                     </span>
                     <span class="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest">
-                      <%= membership.payment_status.upcase %>
+                      입금완료
                     </span>
                   </div>
                   <div class="grid grid-cols-2 gap-6">
                     <div>
-                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">참여도</p>
-                      <p class="text-xl font-black text-slate-900"><%= membership.attendance_rate.to_i %>%</p>
+                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">성취도</p>
+                      <p class="text-xl font-black text-slate-900 text-left"><%= @my_membership.attendance_rate.to_i %>%</p>
                     </div>
                     <div>
-                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 text-right">남은 기간</p>
-                      <p class="text-xl font-black text-slate-900 text-right">
-                        <% days_left = (membership.membership_end_date - Date.current).to_i %>
-                        <% if days_left <= 0 %>
-                          <span class="text-red-500">기간 만료</span>
-                        <% else %>
-                          <%= days_left %>일
-                        <% end %>
-                      </p>
+                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 text-right">성장 포인트</p>
+                      <p class="text-xl font-black text-indigo-600 text-right">⚡ <%= number_with_delimiter(@my_membership.growth_points) %></p>
                     </div>
                   </div>
                 </div>
                 <div class="mt-8">
-                   <%= link_to "클럽 대시보드", routine_club_path(membership.routine_club, tab: "dashboard"), class: "block w-full py-4 bg-indigo-600 text-white text-center rounded-2xl font-black text-sm shadow-xl shadow-indigo-100" %>
+                   <%= link_to "루파 클럽 라운지 입장", routine_club_path(@official_club, tab: "dashboard"), class: "block w-full py-4 bg-indigo-600 text-white text-center rounded-2xl font-black text-sm shadow-xl shadow-indigo-100" %>
                 </div>
               </div>
             </div>
-          <% end %>
-          <% if @club_memberships.empty? %>
-             <div class="col-span-1 sm:col-span-2">
-                <div class="p-12 md:p-16 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center space-y-4">
-                  <p class="text-slate-400 font-black">참여 중인 루파클럽이 없습니다.</p>
-                  <%= link_to "루파클럽 둘러보기 →", routine_clubs_path, class: "text-indigo-600 font-black text-sm" %>
-                </div>
-             </div>
+          <% else %>
+            <div class="p-16 bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 text-center space-y-4">
+              <p class="text-slate-400 font-black">루파 클럽의 특별한 일원이 되어보세요.</p>
+              <%= link_to "루파 클럽 상세 정보 확인 →", guide_routine_clubs_path, class: "text-indigo-600 font-black text-sm" %>
+            </div>
           <% end %>
         </div>
       </section>

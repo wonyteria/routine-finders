@@ -1,10 +1,11 @@
 module Admin
   class UsersController < BaseController
-    before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_status]
+    before_action :require_super_admin
+    before_action :set_user, only: [ :show, :edit, :update, :destroy, :toggle_status ]
 
     def index
       @users = User.all.order(created_at: :desc)
-      
+
       # 검색 필터
       if params[:query].present?
         q = "%#{params[:query]}%"

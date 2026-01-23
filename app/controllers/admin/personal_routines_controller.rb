@@ -1,5 +1,6 @@
 module Admin
   class PersonalRoutinesController < BaseController
+    before_action :require_super_admin
     before_action :set_personal_routine, only: [ :show, :destroy ]
 
     def index
