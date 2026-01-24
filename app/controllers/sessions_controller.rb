@@ -39,7 +39,7 @@ class SessionsController < ApplicationController
 
     if user.persisted?
       # Check if this is a new user (onboarding not completed)
-      is_new_user = !user.onboarding_completed?
+      is_new_user = user.respond_to?(:onboarding_completed?) && !user.onboarding_completed?
 
       session[:user_id] = user.id
 
@@ -118,7 +118,7 @@ class SessionsController < ApplicationController
   end
 
   def complete_onboarding
-    if current_user
+    if current_user && current_user.respond_to?(:onboarding_completed=)
       current_user.update(onboarding_completed: true)
       head :ok
     else
