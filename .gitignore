@@ -42,3 +42,6 @@
 /.kamal/secrets
 /.kamal/secrets-*
 !/.kamal/secrets-example
+
+# Ignore deployment secrets script
+/set-secrets.ps1
