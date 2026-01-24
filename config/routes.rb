@@ -59,6 +59,9 @@ Rails.application.routes.draw do
   get "verify_email", to: "email_verifications#show"
   post "resend_email_verification", to: "email_verifications#resend"
 
+  # Onboarding
+  post "/complete_onboarding", to: "sessions#complete_onboarding"
+
   # Legacy routes for compatibility
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"

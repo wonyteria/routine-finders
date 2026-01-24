@@ -38,7 +38,15 @@ class SessionsController < ApplicationController
     end
 
     if user.persisted?
+      # Check if this is a new user (onboarding not completed)
+      is_new_user = !user.onboarding_completed?
+
       session[:user_id] = user.id
+
+      if is_new_user
+        flash[:show_onboarding] = true
+      end
+
       redirect_back_or root_path
     else
       error_msg = user.errors.full_messages.to_sentence
@@ -107,5 +115,14 @@ class SessionsController < ApplicationController
   def destroy
     reset_session
     redirect_to root_path, notice: "로그아웃되었습니다.", status: :see_other
+  end
+
+  def complete_onboarding
+    if current_user
+      current_user.update(onboarding_completed: true)
+      head :ok
+    else
+      head :unauthorized
+    end
   end
 end
