@@ -95,7 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_060057) do
   end
 
   create_table "challenges", force: :cascade do |t|
-    t.integer "active_rate_threshold", default: 80
+    t.decimal "active_rate_threshold", precision: 5, scale: 2, default: "0.8"
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
     t.text "application_question"
@@ -156,7 +156,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_22_060057) do
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
     t.json "reward_policy"
-    t.integer "sluggish_rate_threshold", default: 50
+    t.decimal "sluggish_rate_threshold", precision: 5, scale: 2, default: "0.5"
     t.date "start_date", null: false
     t.integer "status", default: 0, null: false
     t.text "summary"
