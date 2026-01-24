@@ -45,6 +45,8 @@ class SessionsController < ApplicationController
 
       if is_new_user
         flash[:show_onboarding] = true
+      else
+        flash[:show_daily_greeting] = true
       end
 
       redirect_back_or root_path

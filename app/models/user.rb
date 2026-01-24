@@ -350,6 +350,35 @@ class User < ApplicationRecord
     end
   end
 
+  def daily_greeting_info
+    todays_routines = personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) }
+    completed_today = personal_routines.joins(:completions).where(personal_routine_completions: { completed_on: Date.current }).count
+
+    rate = todays_routines.any? ? (completed_today.to_f / todays_routines.size * 100).round : 0
+
+    message = case
+    when todays_routines.empty?
+                "오늘은 아직 설정된 루틴이 없네요! 나만의 목표를 세워볼까요? ✨"
+    when completed_today == 0
+                "기분 좋은 시작을 위해 첫 번째 루틴을 체크해 보세요! 🔥"
+    when rate >= 100
+                "와우! 오늘의 모든 루틴을 완수하셨군요! 정말 멋져요 🚀"
+    when rate >= 50
+                "절반이나 왔어요! 남은 루틴도 차근차근 해내실 거라 믿어요 💪"
+    else
+                "하나씩 해내다 보면 어느새 목표에 닿을 거예요. 화이팅! 🌱"
+    end
+
+    {
+      total: todays_routines.size,
+      completed: completed_today,
+      rate: rate,
+      message: message,
+      identity: current_growth_identity,
+      level: calculate_level
+    }
+  end
+
   def category_stats(start_date = Date.current.beginning_of_month, end_date = Date.current.end_of_month)
     stats = personal_routines.joins(:completions)
                              .where(personal_routine_completions: { completed_on: start_date..end_date })

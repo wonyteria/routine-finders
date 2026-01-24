@@ -1,0 +1,55 @@
+<% info = current_user.daily_greeting_info %>
+<div id="daily_greeting_modal" 
+     class="fixed inset-0 z-[2000] flex items-center justify-center p-6"
+     onclick="this.remove(); document.body.classList.remove('overflow-hidden')">
+  
+  <!-- 배경 블러 -->
+  <div class="absolute inset-0 bg-[#0C0B12]/90 backdrop-blur-2xl animate-in fade-in duration-500"></div>
+  
+  <!-- 모달 컨테이너 (Glassmorph Card) -->
+  <div class="relative w-full max-w-sm bg-white/5 border border-white/10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-md animate-in zoom-in-95 duration-500 p-8 text-center"
+       onclick="event.stopPropagation()">
+    
+    <!-- 아이콘 & 레벨 배지 -->
+    <div class="mb-6 relative">
+      <div class="w-20 h-20 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[28px] flex items-center justify-center text-3xl shadow-2xl shadow-indigo-500/30">
+        <%= current_user.profile_image.present? ? image_tag(current_user.profile_image, class: "w-full h-full object-cover rounded-[28px]") : "👤" %>
+      </div>
+      <div class="absolute -bottom-2 right-1/2 translate-x-12 px-3 py-1 bg-white text-[#0C0B12] rounded-full text-[10px] font-black shadow-lg">
+        LV.<%= info[:level] %>
+      </div>
+    </div>
+
+    <h2 class="text-xl font-black text-white mb-1">다시 오신 걸 환영해요!</h2>
+    <p class="text-[12px] font-bold text-indigo-400 mb-6"><%= info[:identity] %></p>
+
+    <!-- 활동 요약 카드 -->
+    <div class="grid grid-cols-2 gap-3 mb-8">
+      <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter mb-1">오늘의 루틴</p>
+        <p class="text-xl font-black text-white"><%= info[:completed] %><span class="text-xs text-slate-500 ml-1">/ <%= info[:total] %></span></p>
+      </div>
+      <div class="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter mb-1">달성률</p>
+        <p class="text-xl font-black text-emerald-400"><%= info[:rate] %><span class="text-xs ml-0.5">%</span></p>
+      </div>
+    </div>
+
+    <!-- 응원 메시지 -->
+    <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-5 mb-8">
+      <p class="text-[13px] font-bold text-slate-300 leading-relaxed italic">
+        "<%= info[:message] %>"
+      </p>
+    </div>
+
+    <!-- 닫기 버튼 -->
+    <button onclick="this.closest('#daily_greeting_modal').remove(); document.body.classList.remove('overflow-hidden')"
+            class="w-full bg-white text-[#0C0B12] py-4 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-white/5">
+      오늘 하루도 시작하기!
+    </button>
+  </div>
+</div>
+
+<script>
+  document.body.classList.add('overflow-hidden');
+</script>
