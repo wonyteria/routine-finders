@@ -19,6 +19,9 @@ jobs:
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
       RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
       DEPLOY_HOST: ${{ secrets.DROPLET_IP }}
+      KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      THREADS_CLIENT_SECRET: ${{ secrets.THREADS_CLIENT_SECRET }}
 
     steps:
       - name: Checkout code
