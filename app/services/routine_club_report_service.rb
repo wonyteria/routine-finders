@@ -1,99 +1,129 @@
 # frozen_string_literal: true
 
+# 루파 클럽 리포트 생성 서비스
+# 복잡한 리포트 생성 로직을 컨트롤러에서 분리하여 재사용성과 테스트 가능성 향상
 class RoutineClubReportService
-  def self.generate_weekly_reports
-    # 지난주 월요일 ~ 일요일
-    start_date = 1.week.ago.beginning_of_week.to_date
-    end_date = 1.week.ago.end_of_week.to_date
+  attr_reader :user, :report_type, :start_date, :end_date
 
-    RoutineClub.active_clubs.find_each do |club|
-      club.members.where(payment_status: :confirmed).find_each do |membership|
-        create_report(membership, :weekly, start_date, end_date)
-      end
-    end
+  def initialize(user:, report_type:, start_date: nil, end_date: nil)
+    @user = user
+    @report_type = report_type
+    @start_date = start_date || calculate_start_date
+    @end_date = end_date || Date.current
   end
 
-  def self.generate_monthly_reports
-    # 지난달 1일 ~ 말일 (현재 테스트를 위해 이번달 리포트를 생성할 수 있게 유연하게 처리)
-    start_date = 1.month.ago.beginning_of_month.to_date
-    end_date = 1.month.ago.end_of_month.to_date
+  # 리포트 생성 또는 조회
+  def generate_or_find
+    existing_report = find_existing_report
+    return existing_report if existing_report
 
-    RoutineClub.active_clubs.find_each do |club|
-      club.members.confirmed.find_each do |membership|
-        create_report(membership, :monthly, start_date, end_date)
-      end
-    end
+    create_new_report
+  end
+
+  # 강제로 새 리포트 생성
+  def create_new_report
+    report_data = calculate_report_data
+
+    RoutineClubReport.create!(
+      user: user,
+      report_type: report_type,
+      start_date: start_date,
+      end_date: end_date,
+      log_rate: report_data[:log_rate],
+      achievement_rate: report_data[:achievement_rate],
+      identity_title: report_data[:identity_title],
+      summary: report_data[:summary],
+      cheering_message: report_data[:cheering_message]
+    )
   end
 
   private
 
-  def self.create_report(membership, type, start_date, end_date)
-    user = membership.user
-
-    # 이미 생성된 리포트가 있는지 확인
-    return if RoutineClubReport.exists?(
-      routine_club: membership.routine_club,
+  def find_existing_report
+    RoutineClubReport.find_by(
       user: user,
-      report_type: type,
+      report_type: report_type,
       start_date: start_date
     )
+  end
 
-    # 루파 전용 지표 계산
-    log_rate = user.monthly_routine_log_rate(start_date)
-    achievement_rate = user.monthly_achievement_rate(start_date)
+  def calculate_start_date
+    case report_type
+    when "weekly"
+      Date.current.beginning_of_week
+    when "monthly"
+      Date.current.beginning_of_month
+    else
+      Date.current
+    end
+  end
 
-    # 정체성(Identity) 타이틀 부여
-    identity_title = determine_identity(log_rate, achievement_rate)
-    membership.update(identity_title: identity_title)
+  def calculate_report_data
+    routines = user.personal_routines
+    total_days = (start_date..end_date).count
 
-    # 메시지 생성
-    summary = generate_rufa_summary(user, log_rate, achievement_rate, identity_title)
-    cheering_message = generate_rufa_cheering(achievement_rate)
+    # 기록률 계산
+    logged_days = routines.flat_map do |routine|
+      routine.routine_logs.where(logged_at: start_date..end_date).pluck(:logged_at)
+    end.uniq.count
 
-    RoutineClubReport.create!(
-      routine_club: membership.routine_club,
-      user: user,
-      report_type: type,
-      start_date: start_date,
-      end_date: end_date,
+    log_rate = total_days > 0 ? (logged_days.to_f / total_days * 100).round(1) : 0
+
+    # 달성률 계산 (실제 완료한 루틴 비율)
+    total_expected = routines.sum do |routine|
+      (start_date..end_date).count { |date| (routine.days || []).include?(date.wday.to_s) }
+    end
+
+    total_completed = routines.sum do |routine|
+      routine.routine_logs.where(logged_at: start_date..end_date, completed: true).count
+    end
+
+    achievement_rate = total_expected > 0 ? (total_completed.to_f / total_expected * 100).round(1) : 0
+
+    # 타이틀 결정
+    identity_title = determine_identity_title(achievement_rate)
+
+    # 요약 메시지
+    summary = generate_summary(log_rate, achievement_rate, total_completed)
+
+    # 응원 메시지
+    cheering_message = generate_cheering_message(achievement_rate)
+
+    {
       log_rate: log_rate,
       achievement_rate: achievement_rate,
       identity_title: identity_title,
       summary: summary,
-      cheering_message: cheering_message,
-      attendance_rate: achievement_rate # 호환성을 위해 유지
-    )
+      cheering_message: cheering_message
+    }
   end
 
-  def self.determine_identity(log_rate, achievement_rate)
-    score = (log_rate + achievement_rate) / 2
-    case
-    when score >= 90 then "루파 로드 마스터"
-    when score >= 70 then "정진하는 가이드"
-    when score >= 40 then "성장의 개척자"
-    else "시작하는 파인더"
+  def determine_identity_title(achievement_rate)
+    case achievement_rate
+    when 90..100 then "완벽주의자 🏆"
+    when 80...90 then "성실한 루퍼 ⭐"
+    when 70...80 then "꾸준한 도전자 💪"
+    when 50...70 then "성장하는 루퍼 🌱"
+    else "시작하는 루퍼 🌟"
     end
   end
 
-  def self.generate_rufa_summary(user, log_rate, achievement_rate, identity)
-    goals = user.user_goals.index_by(&:goal_type)
-    long_term = goals["long_term"]&.body || "원대한 꿈"
-
-    status_msg = if achievement_rate >= 70
-      "놀랍습니다! 루파 클럽의 엄격한 기준(70%)을 훌륭히 통과하셨습니다."
-    else
-      "아쉽게도 이번 달은 루파 클럽 유지 기준(70%)에 조금 미치지 못했습니다."
-    end
-
-    "#{user.nickname}님은 현재 '#{identity}'로서 '#{long_term}'을(를) 향해 나아가고 있습니다. " \
-    "기록률 #{log_rate}%, 달성률 #{achievement_rate}%를 기록하셨네요. #{status_msg}"
+  def generate_summary(log_rate, achievement_rate, completed_count)
+    "#{report_type == 'weekly' ? '이번 주' : '이번 달'} 기록률 #{log_rate}%, 달성률 #{achievement_rate}%로 총 #{completed_count}개의 루틴을 완료했습니다."
   end
 
-  def self.generate_rufa_cheering(rate)
-    if rate >= 70
-      "✨ 꾸준함이 무기가 되는 순간을 목격하고 있습니다. 다음 달도 당신의 성장을 응원합니다!"
+  def generate_cheering_message(achievement_rate)
+    case achievement_rate
+    when 90..100
+      "놀라운 성과입니다! 이 페이스를 유지하세요! 🎉"
+    when 80...90
+      "훌륭합니다! 조금만 더 힘내면 완벽해요! 💪"
+    when 70...80
+      "잘하고 있어요! 꾸준함이 힘입니다! 🌟"
+    when 50...70
+      "좋은 시작입니다! 계속 도전하세요! 🚀"
     else
-      "💪 흔들릴 수 있습니다. 하지만 루파 클럽이 성장의 기준점이 되어 드릴게요. 다시 시작해봐요!"
+      "괜찮아요! 다시 시작하면 됩니다! 화이팅! 💪"
     end
   end
 end

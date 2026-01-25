@@ -1,5 +1,32 @@
 # frozen_string_literal: true
 
+# == User Model
+#
+# 루틴 파인더스의 핵심 사용자 모델
+# OAuth 인증을 통해 생성되며, 루틴 관리, 챌린지 참여, 루파 클럽 멤버십 등의 기능을 제공합니다.
+#
+# === Attributes
+# * +email+ - 사용자 이메일 (unique, required)
+# * +nickname+ - 사용자 닉네임 (required)
+# * +provider+ - OAuth 제공자 (kakao, google, threads)
+# * +uid+ - OAuth 제공자의 사용자 고유 ID
+# * +role+ - 사용자 권한 (user, club_admin, super_admin)
+# * +total_routine_completions+ - 총 루틴 완료 횟수 (레벨 계산에 사용)
+# * +profile_image+ - 프로필 이미지 URL (레거시, avatar로 대체 중)
+# * +bio+ - 사용자 소개
+#
+# === Associations
+# * has_many :hosted_challenges - 개설한 챌린지
+# * has_many :participations - 참여 중인 챌린지
+# * has_many :personal_routines - 개인 루틴
+# * has_many :routine_club_members - 루파 클럽 멤버십
+# * has_many :user_badges - 획득한 배지
+# * has_many :notifications - 알림
+#
+# === Level System
+# 레벨은 total_routine_completions / 10으로 계산됩니다.
+# 예: 50회 완료 = 레벨 5
+#
 class User < ApplicationRecord
   has_secure_password
   has_one_attached :avatar
@@ -17,6 +44,7 @@ class User < ApplicationRecord
     club_admin? || super_admin?
   end
 
+  # 호스트 여부 확인 (챌린지 또는 루파 클럽을 개설한 사용자)
   def host?
     club_admin? || hosted_challenges.exists? || hosted_routine_clubs.exists?
   end
