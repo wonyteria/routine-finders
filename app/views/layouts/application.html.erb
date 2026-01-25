@@ -42,6 +42,16 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
+    <!-- Kakao SDK -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener('turbo:load', function() {
+        if (typeof Kakao !== 'undefined' && !Kakao.isInitialized()) {
+          Kakao.init('f959f8ada6c21d791ef5be7f4257e19e');
+        }
+      });
+    </script>
 
     <style>
       /* Mobile App-like Experience Globals */

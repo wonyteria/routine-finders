@@ -29,6 +29,14 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 
+    <!-- Kakao SDK -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" crossorigin="anonymous"></script>
+    <script>
+      if (!Kakao.isInitialized()) {
+        Kakao.init('f959f8ada6c21d791ef5be7f4257e19e');
+      }
+    </script>
+
     <style>
       :root {
         --app-bg: #0C0B12;
@@ -368,16 +376,12 @@
               </p>
             </div>
 
-            <div class="pt-4 relative z-10 space-y-3">
-              <button onclick="if(navigator.share) { 
-                                navigator.share({ 
-                                  title: '루틴 파인더스 새 배지 획득!', 
-                                  text: '<%= ub.badge.name %> 배지를 획득했습니다! 루틴 파인더스에서 함께 성장해요.', 
-                                  url: window.location.origin + '/prototype/home' 
-                                }).catch(console.error);
-                              } else {
-                                alert('공유용 이미지가 생성되었습니다! 인스타그램 스토리에 자랑해보세요.');
-                              }"
+            <div class="pt-4 relative z-10 space-y-3" 
+                 data-controller="share"
+                 data-share-title-value="루바 성취 배지 획득! 🏆"
+                 data-share-text-value="'<%= ub.badge.name %>' 배지를 획득했습니다! 루틴 파인더스에서 함께 성장해요."
+                 data-share-url-value="<%= prototype_home_url %>">
+              <button data-action="click->share#share"
                       class="w-full py-4 bg-indigo-500 text-white font-black text-sm rounded-2xl shadow-xl active:scale-95 transition-all">
                 지금 바로 공유하기
               </button>
