@@ -191,7 +191,7 @@
               </button>
             </div>
 
-            <form action="<%= use_pass_routine_club_path(@routine_club) %>" method="post" data-turbo="false">
+            <form action="<%= use_pass_routine_club_path(@routine_club) %>" method="post" data-turbo="false" onsubmit="return confirm('휴식권을 사용하시겠습니까?');">
                <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
                
                <div class="space-y-4 mb-5">

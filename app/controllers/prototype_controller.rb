@@ -467,25 +467,27 @@ class PrototypeController < ApplicationController
     # System Wide Stats
     @total_users = User.count
     @premium_users = User.joins(:routine_club_members).where(routine_club_members: { status: :active }).distinct.count
-    @daily_active_users = User.joins("LEFT JOIN personal_routine_completions ON personal_routine_completions.user_id = users.id")
-                             .joins("LEFT JOIN rufa_activities ON rufa_activities.user_id = users.id")
-                             .where("personal_routine_completions.completed_on = ? OR DATE(rufa_activities.created_at) = ?", Date.current, Date.current)
-                             .distinct.count
+    today = Date.current
+    @daily_active_users = User.joins("LEFT JOIN personal_routines ON personal_routines.user_id = users.id")
+                           .joins("LEFT JOIN personal_routine_completions ON personal_routine_completions.personal_routine_id = personal_routines.id")
+                           .joins("LEFT JOIN rufa_activities ON rufa_activities.user_id = users.id")
+                           .where("personal_routine_completions.completed_on = ? OR rufa_activities.created_at >= ?", today, today.beginning_of_day)
+                           .distinct.count
 
     # Content Pulse
     @total_challenges = Challenge.count
     @total_routines = PersonalRoutine.count
 
     # Organized Event Streams (Granular)
-    @stream_memberships = RoutineClubMember.includes(:user, :routine_club).order(created_at: :desc).limit(10)
-    @stream_joins = Participant.includes(:user, :challenge).order(created_at: :desc).limit(10)
-    @stream_completions = PersonalRoutineCompletion.includes(personal_routine: :user).order(created_at: :desc).limit(10)
-    @stream_activities = RufaActivity.includes(:user).order(created_at: :desc).limit(10)
+    @stream_memberships = RoutineClubMember.joins(:user).includes(:user, :routine_club).order(created_at: :desc).limit(10)
+    @stream_joins = Participant.joins(:user, :challenge).includes(:user, :challenge).order(created_at: :desc).limit(10)
+    @stream_completions = PersonalRoutineCompletion.joins(personal_routine: :user).includes(personal_routine: :user).order(created_at: :desc).limit(10)
+    @stream_activities = RufaActivity.joins(:user).includes(:user).order(created_at: :desc).limit(10)
 
     # Active Content Management (Routine vs Social/Meeting)
-    all_active = Challenge.active.order(created_at: :desc)
-    @active_challenges = all_active.reject(&:gathering?).first(10)
-    @active_gatherings = all_active.select(&:gathering?).first(10)
+    all_active = Challenge.active.includes(:host, :participants, :meeting_info).order(created_at: :desc)
+    @active_challenges = all_active.reject { |c| c.gathering? }.first(10)
+    @active_gatherings = all_active.select { |c| c.gathering? }.first(10)
 
     # Financial/Activity Pulse
     @system_pulse = (@daily_active_users.to_f / @total_users * 100).round(1) rescue 0

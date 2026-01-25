@@ -389,6 +389,7 @@
                           <%= f.hidden_field :date, value: Date.current, class: "pass-date-#{routine.id}" %>
                           <button type="submit" 
                                   disabled: (@my_membership&.remaining_relax_passes.to_i <= 0),
+                                  data: { turbo_confirm: "휴식권 1장을 사용하여 루틴을 챌린지 성취도에 반영하시겠습니까? (출석 유지)" },
                                   class: "w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
                             <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                             <div class="flex-1 min-w-0">
@@ -409,6 +410,7 @@
                           <%= f.hidden_field :date, value: Date.current, class: "pass-date-#{routine.id}" %>
                           <button type="submit" 
                                   disabled: (@my_membership&.remaining_save_passes.to_i <= 0),
+                                  data: { turbo_confirm: "세이브권 1장을 사용하여 루틴을 복구하시겠습니까? (출석 유지)" },
                                   class: "w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
                             <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                             <div class="flex-1 min-w-0">
@@ -617,6 +619,7 @@
               <%= f.hidden_field :date, value: Date.current, class: "global-pass-date" %>
               <button type="submit" 
                       <% if @my_membership&.remaining_relax_passes.to_i <= 0 %>disabled<% end %>
+                      data-turbo-confirm="선택하신 날짜에 휴식권 1장을 사용하시겠습니까?"
                       class="w-full p-5 rounded-[28px] bg-white/[0.03] border border-white/5 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                 <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                 <div>
@@ -634,6 +637,7 @@
               <%= f.hidden_field :date, value: Date.current, class: "global-pass-date" %>
               <button type="submit" 
                       <% if @my_membership&.remaining_save_passes.to_i <= 0 %>disabled<% end %>
+                      data-turbo-confirm="선택하신 날짜에 세이브권 1장을 사용하시겠습니까?"
                       class="w-full p-5 rounded-[28px] bg-white/[0.03] border border-white/5 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                 <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                 <div>

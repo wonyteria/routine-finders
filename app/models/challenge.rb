@@ -92,9 +92,11 @@ class Challenge < ApplicationRecord
     mode_offline?
   end
 
+  include Rails.application.routes.url_helpers
+
   def thumbnail
     if thumbnail_image.attached?
-      Rails.application.routes.url_helpers.rails_blob_url(thumbnail_image, only_path: true)
+      rails_blob_path(thumbnail_image, only_path: true)
     elsif self[:thumbnail].present?
       self[:thumbnail]
     else

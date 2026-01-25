@@ -28,9 +28,11 @@ module Admin
         }
 
         # Activity Monitoring
-        @active_users_today = User.joins("LEFT JOIN personal_routine_completions ON personal_routine_completions.user_id = users.id")
+        today = Date.current
+        @active_users_today = User.joins("LEFT JOIN personal_routines ON personal_routines.user_id = users.id")
+                                 .joins("LEFT JOIN personal_routine_completions ON personal_routine_completions.personal_routine_id = personal_routines.id")
                                  .joins("LEFT JOIN rufa_activities ON rufa_activities.user_id = users.id")
-                                 .where("personal_routine_completions.completed_on = ? OR DATE(rufa_activities.created_at) = ?", Date.current, Date.current)
+                                 .where("personal_routine_completions.completed_on = ? OR rufa_activities.created_at >= ?", today, today.beginning_of_day)
                                  .distinct.count
 
         @recent_users = User.order(created_at: :desc).limit(8)

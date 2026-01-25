@@ -83,10 +83,10 @@
         <% @stream_memberships.each do |membership| %>
           <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-indigo-500/5">
             <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs font-black">
-              <%= membership.user.nickname[0].upcase %>
+              <%= membership.user&.nickname&.[](0)&.upcase %>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-black text-white truncate"><%= membership.user.nickname %></p>
+              <p class="text-sm font-black text-white truncate"><%= membership.user&.nickname %></p>
               <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= membership.routine_club&.title %></p>
             </div>
             <div class="text-right">
@@ -108,11 +108,11 @@
         <% @stream_joins.each do |participation| %>
           <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-emerald-500/5">
             <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-black">
-              <%= participation.user.nickname[0].upcase %>
+              <%= participation.user&.nickname&.[](0)&.upcase %>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-black text-white truncate"><%= participation.user.nickname %></p>
-              <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= participation.challenge.title %></p>
+              <p class="text-sm font-black text-white truncate"><%= participation.user&.nickname %></p>
+              <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= participation.challenge&.title %></p>
             </div>
             <div class="text-right">
                <span class="text-sm">🏃</span>
@@ -133,11 +133,11 @@
         <% @stream_completions.each do |completion| %>
           <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-white/2">
             <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/40 text-xs font-black">
-              <%= completion.personal_routine.user.nickname[0].upcase %>
+              <%= completion.personal_routine&.user&.nickname&.[](0)&.upcase %>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-black text-white truncate"><%= completion.personal_routine.user.nickname %></p>
-              <p class="text-[9px] font-bold text-indigo-400 mt-0.5"><%= completion.personal_routine.title %></p>
+              <p class="text-sm font-black text-white truncate"><%= completion.personal_routine&.user&.nickname %></p>
+              <p class="text-[9px] font-bold text-indigo-400 mt-0.5"><%= completion.personal_routine&.title %></p>
             </div>
             <div class="text-right">
                <span class="text-emerald-500 text-xs font-black">DONE</span>
