@@ -527,6 +527,22 @@ class PrototypeController < ApplicationController
     @official_club = RoutineClub.official.first
   end
 
+  def batch_reports
+    @official_club = RoutineClub.official.first
+    @report_type = params[:type] || "weekly"
+
+    # Get the most recent start_date for the given type
+    latest_date = RoutineClubReport.where(report_type: @report_type).maximum(:start_date)
+
+    if latest_date
+      @reports = RoutineClubReport.where(report_type: @report_type, start_date: latest_date)
+                                  .includes(:user)
+                                  .order("achievement_rate DESC")
+    else
+      @reports = []
+    end
+  end
+
   def broadcast
     title = params[:title]
     content = params[:content]
