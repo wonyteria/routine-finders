@@ -176,9 +176,22 @@
           </button>
         <% end %>
       </div>
-      <%= link_to achievement_report_path, class: "text-[10px] font-black text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer ml-auto flex items-center gap-1" do %>
-        리포트 상세 보기
-        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+      <% if current_user&.is_rufa_club_member? %>
+        <%= link_to achievement_report_path, class: "text-[10px] font-black text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer ml-auto flex items-center gap-1" do %>
+          리포트 상세 보기
+          <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+        <% end %>
+      <% else %>
+        <div class="group relative ml-auto">
+          <div class="text-[10px] font-black text-slate-600 flex items-center gap-1 cursor-not-allowed opacity-50">
+            리포트 상세 보기
+            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <!-- Tooltip -->
+          <div class="absolute bottom-full right-0 mb-2 w-32 px-2 py-1 bg-slate-800 text-white text-[9px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-center shadow-xl border border-white/10">
+            루파 클럽 전용 기능입니다
+          </div>
+        </div>
       <% end %>
     </div>
 

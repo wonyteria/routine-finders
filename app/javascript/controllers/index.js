@@ -46,6 +46,9 @@ application.register("modal", ModalController)
 import NotificationToggleController from "controllers/notification_toggle_controller"
 application.register("notification-toggle", NotificationToggleController)
 
+import OnboardingController from "controllers/onboarding_controller"
+application.register("onboarding", OnboardingController)
+
 import ProtoUiController from "controllers/proto_ui_controller"
 application.register("proto-ui", ProtoUiController)
 
