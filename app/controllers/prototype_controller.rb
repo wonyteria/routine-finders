@@ -1,8 +1,10 @@
 class PrototypeController < ApplicationController
+  include PrototypeErrorHandler
+
   layout "prototype"
   before_action :set_shared_data
-  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard ]
-  before_action :require_admin, only: [ :admin_dashboard ]
+  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports ]
+  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :broadcast ]
 
   def login
     @hide_nav = true
@@ -572,6 +574,12 @@ class PrototypeController < ApplicationController
       # Handle profile image upload correctly via ActiveStorage
       img = params[:profile_image] || p[:profile_image] || params[:avatar] || p[:avatar]
       if img.present?
+        # 파일 검증
+        validation_result = FileUploadValidator.validate_image(img)
+        unless validation_result[:valid]
+          redirect_to prototype_my_path, alert: validation_result[:error] and return
+        end
+
         current_user.avatar.attach(img)
         # Clear legacy string column to let the profile_image method prefer avatar
         update_params[:profile_image] = nil

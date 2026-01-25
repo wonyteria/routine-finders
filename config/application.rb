@@ -23,5 +23,8 @@ module RoutineFinders
     #
     config.time_zone = "Asia/Seoul"
     config.i18n.default_locale = :ko
+
+    # Security: Enable Rack::Attack for rate limiting
+    config.middleware.use Rack::Attack
   end
 end
