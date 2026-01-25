@@ -467,18 +467,73 @@ class PrototypeController < ApplicationController
     # System Wide Stats
     @total_users = User.count
     @premium_users = User.joins(:routine_club_members).where(routine_club_members: { status: :active }).distinct.count
-    @daily_active_users = User.joins(:rufa_activities).where(rufa_activities: { created_at: Date.current.all_day }).distinct.count
+    @daily_active_users = User.joins("LEFT JOIN personal_routine_completions ON personal_routine_completions.user_id = users.id")
+                             .joins("LEFT JOIN rufa_activities ON rufa_activities.user_id = users.id")
+                             .where("personal_routine_completions.completed_on = ? OR DATE(rufa_activities.created_at) = ?", Date.current, Date.current)
+                             .distinct.count
 
-    # Content Stats
+    # Content Pulse
     @total_challenges = Challenge.count
     @total_routines = PersonalRoutine.count
 
-    # Recent System Activities
-    @recent_joins = Participant.includes(:user, :challenge).order(created_at: :desc).limit(10)
-    @recent_members = RoutineClubMember.includes(:user, :routine_club).order(created_at: :desc).limit(10)
+    # Organized Event Streams (Granular)
+    @stream_memberships = RoutineClubMember.includes(:user, :routine_club).order(created_at: :desc).limit(10)
+    @stream_joins = Participant.includes(:user, :challenge).order(created_at: :desc).limit(10)
+    @stream_completions = PersonalRoutineCompletion.includes(personal_routine: :user).order(created_at: :desc).limit(10)
+    @stream_activities = RufaActivity.includes(:user).order(created_at: :desc).limit(10)
 
-    # Financial/Activity Pulse (Mock/Calculated)
+    # Active Content Management (Routine vs Social/Meeting)
+    all_active = Challenge.active.order(created_at: :desc)
+    @active_challenges = all_active.reject(&:gathering?).first(10)
+    @active_gatherings = all_active.select(&:gathering?).first(10)
+
+    # Financial/Activity Pulse
     @system_pulse = (@daily_active_users.to_f / @total_users * 100).round(1) rescue 0
+  end
+
+  def club_management
+    @official_club = RoutineClub.official.first || RoutineClub.first
+
+    if @official_club
+      # Real members of the official club
+      @club_members = @official_club.members.confirmed.includes(:user).order(attendance_rate: :desc)
+      @pending_memberships = @official_club.members.payment_status_pending.includes(:user)
+
+      # Member Stats Calculation (Mocked for speed in prototype but conceptually accurate)
+      @member_stats = @club_members.map do |member|
+        # Weekly/Monthly logic would normally involve complex SQL,
+        # but for prototype we use stored rates or calculate simple averages
+        {
+          member: member,
+          weekly_rate: (member.attendance_rate * (0.8 + rand * 0.4)).clamp(0, 100).round(1), # Mock variation
+          monthly_rate: member.attendance_rate,
+          growth_trend: [ "up", "down", "stable" ].sample
+        }
+      end
+    else
+      @club_members = []
+      @pending_memberships = []
+      @member_stats = []
+    end
+
+    @club_admins = User.where(role: :club_admin).order(created_at: :desc)
+  end
+
+  def broadcast
+    title = params[:title]
+    content = params[:content]
+
+    # Mock broadcast: Create notifications for all active users
+    # In a real system, this would be a background job.
+    User.active.find_each do |user|
+      user.notifications.create!(
+        title: "📢 #{title}",
+        content: content,
+        notification_type: :system
+      )
+    end
+
+    render json: { status: "success", message: "Broadcasting initiated for #{User.active.count} users." }
   end
 
   def update_profile

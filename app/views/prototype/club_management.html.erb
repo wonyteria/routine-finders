@@ -1,0 +1,213 @@
+<div class="space-y-12 py-10 pb-32">
+  <!-- 1. Header -->
+  <header class="px-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <%= link_to prototype_admin_path, class: "w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95 transition-all" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+      <% end %>
+      <div class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+        <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">Rupha Club Only</span>
+      </div>
+      <div class="w-10"></div>
+    </div>
+
+    <div class="space-y-1">
+      <h1 class="text-3xl font-black text-white tracking-tight">루파 클럽 통합 관리</h1>
+      <p class="text-xs font-bold text-slate-500">플랫폼 유일의 공식 멤버십 '루파 클럽'을 관리합니다.</p>
+    </div>
+  </header>
+
+  <% if @official_club %>
+    <!-- 2. Club Overview Pulse -->
+    <section class="px-6">
+      <div class="app-glass-card p-6 border-white/5 bg-gradient-to-br from-indigo-600/10 to-purple-600/10 relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full"></div>
+        
+        <div class="flex items-center justify-between relative z-10">
+          <div class="space-y-1">
+            <h2 class="text-xl font-black text-white"><%= @official_club.title %></h2>
+            <div class="flex items-center gap-2">
+               <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+               <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Active Season</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">Total Members</p>
+            <p class="text-2xl font-black text-white mt-1"><%= @official_club.current_members %><span class="text-xs text-slate-500 ml-1">Limit <%= @official_club.max_members %></span></p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6 mt-8 pt-6 border-t border-white/5">
+           <div class="text-center">
+             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1 text-center">Avg. Dash</p>
+             <p class="text-lg font-black text-indigo-400"><%= @official_club.average_attendance_rate %>%</p>
+           </div>
+           <div class="text-center border-x border-white/5">
+             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Growth Points</p>
+             <p class="text-lg font-black text-white"><%= number_with_delimiter(@club_members.sum(:growth_points)) %>P</p>
+           </div>
+           <div class="text-center">
+             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Fee Accum.</p>
+             <p class="text-lg font-black text-emerald-400">₩<%= number_with_delimiter(@club_members.sum(:paid_amount)) %></p>
+           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Pending Approvals -->
+    <% if @pending_memberships.any? %>
+      <section class="px-6 space-y-4">
+        <div class="flex items-center justify-between pl-1">
+          <div class="flex items-center gap-2 text-amber-500">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <span class="text-[10px] font-black uppercase tracking-widest">결제 대기 멤버 (<%= @pending_memberships.size %>)</span>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <% @pending_memberships.each do |member| %>
+            <div class="app-glass-card p-4 border-amber-500/20 bg-amber-500/5 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white font-black text-xs">
+                  <%= member.user.nickname[0].upcase %>
+                </div>
+                <div>
+                  <p class="text-sm font-black text-white leading-tight"><%= member.user.nickname %></p>
+                  <p class="text-[9px] font-bold text-slate-500 mt-0.5">입금명: <%= member.depositor_name %> · ₩<%= number_with_delimiter(member.paid_amount) %></p>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </button>
+                <button class="w-8 h-8 rounded-lg bg-white/5 text-slate-500 flex items-center justify-center">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <!-- 4. Member Deep Management (Weekly/Monthly Achievement) -->
+    <section class="px-6 space-y-6">
+      <div class="flex items-center justify-between px-1">
+        <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">회원별 성과 분석</h2>
+        <div class="flex bg-white/5 rounded-lg p-1">
+           <button class="px-2 py-1 text-[8px] font-black bg-white/10 text-white rounded">ALL MEMBERS</button>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <% if @member_stats.any? %>
+          <% @member_stats.each do |stat| %>
+            <div class="app-glass-card p-5 border-white/5 space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="relative">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs">
+                      <%= stat[:member].user.nickname[0].upcase %>
+                    </div>
+                    <% if stat[:growth_trend] == "up" %>
+                      <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-[#1B1A24]">
+                        <svg class="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 15l7-7 7 7"/></svg>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-black text-white leading-tight"><%= stat[:member].user.nickname %></h4>
+                    <p class="text-[9px] font-bold text-slate-500 mt-1">LV.<%= stat[:member].user.level %> · <%= stat[:member].growth_points %>P</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                   <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest">Global Status</p>
+                   <span class="text-[10px] font-black <%= stat[:member].status_active? ? 'text-emerald-400' : 'text-amber-500' %> uppercase"><%= stat[:member].status %></span>
+                </div>
+              </div>
+
+              <!-- Achievement Grid -->
+              <div class="grid grid-cols-2 gap-3">
+                 <div class="p-3 bg-white/2 rounded-2xl border border-white/5">
+                   <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1.5 leading-none">Weekly Success</p>
+                   <div class="flex items-baseline gap-2">
+                     <span class="text-lg font-black text-white"><%= stat[:weekly_rate] %>%</span>
+                     <div class="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
+                       <div class="h-full bg-indigo-500" style="width: <%= stat[:weekly_rate] %>%"></div>
+                     </div>
+                   </div>
+                 </div>
+                 <div class="p-3 bg-white/2 rounded-2xl border border-white/5">
+                   <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1.5 leading-none">Monthly Success</p>
+                   <div class="flex items-baseline gap-2">
+                     <span class="text-lg font-black text-white"><%= stat[:monthly_rate] %>%</span>
+                     <div class="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
+                       <div class="h-full bg-purple-500" style="width: <%= stat[:monthly_rate] %>%"></div>
+                     </div>
+                   </div>
+                 </div>
+              </div>
+
+              <!-- Footer Actions -->
+              <div class="flex items-center justify-between pt-1">
+                 <div class="flex items-center gap-4">
+                   <div class="flex items-center gap-1.5">
+                     <span class="text-[10px]">🎟️</span>
+                     <span class="text-[10px] font-bold text-slate-400"><%= stat[:member].remaining_relax_passes %></span>
+                   </div>
+                   <div class="flex items-center gap-1.5">
+                     <span class="text-[10px]">🛡️</span>
+                     <span class="text-[10px] font-bold text-slate-400"><%= stat[:member].remaining_save_passes %></span>
+                   </div>
+                 </div>
+                 <div class="flex gap-2">
+                   <button class="px-3 py-1.5 border border-white/10 rounded-lg text-[9px] font-black text-slate-400 hover:text-white transition-colors">리포트</button>
+                   <button class="px-3 py-1.5 border border-white/10 rounded-lg text-[9px] font-black text-slate-400 hover:text-rose-500 transition-colors">경고/제한</button>
+                 </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="py-16 text-center bg-white/2 rounded-[32px] border border-dashed border-white/5">
+            <p class="text-xs font-bold text-slate-600">아직 가입된 정회원이 없습니다.</p>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- 5. Club Admins (Staff) -->
+    <section class="px-6 space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">클럽 관리 스태프</h2>
+        <button class="text-[10px] font-black text-indigo-400">+ 역할 부여</button>
+      </div>
+      <div class="space-y-3">
+        <% if @club_admins.any? %>
+          <% @club_admins.each do |admin| %>
+            <div class="app-glass-card p-4 flex items-center justify-between border-white/5">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white font-black text-xs">
+                  <%= admin.nickname[0].upcase %>
+                </div>
+                <div>
+                  <p class="text-sm font-black text-white"><%= admin.nickname %></p>
+                  <p class="text-[9px] font-bold text-indigo-400/60 uppercase tracking-widest">Moderator</p>
+                </div>
+              </div>
+              <button class="text-slate-600 hover:text-rose-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  <% else %>
+     <div class="px-6">
+        <div class="py-20 text-center app-glass-card border-white/10">
+           <span class="text-4xl">🔱</span>
+           <h2 class="text-xl font-black text-white mt-6">공식 클럽 정보 없음</h2>
+           <p class="text-xs font-bold text-slate-500 mt-2 leading-relaxed">루틴 파인더스의 유일한 공식 클럽인<br/>'루파 클럽'을 먼저 개설해주세요.</p>
+           <button class="mt-8 px-8 py-4 bg-indigo-600 rounded-2xl text-white font-black text-sm">루파 클럽 개설하기</button>
+        </div>
+     </div>
+  <% end %>
+</div>

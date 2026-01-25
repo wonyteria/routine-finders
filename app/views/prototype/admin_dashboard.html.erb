@@ -1,4 +1,4 @@
-<div class="space-y-12 py-10 pb-32">
+<div class="space-y-12 py-10 pb-32" data-controller="admin-tools">
   <!-- 1. Header -->
   <header class="px-6 space-y-4">
     <div class="flex items-center justify-between">
@@ -63,67 +63,202 @@
     </div>
   </section>
 
-  <!-- 3. Real-time Event Stream -->
-  <section class="px-6 space-y-6">
+  <!-- 3. Organized Event Stream -->
+  <section class="px-6 space-y-6" 
+           data-controller="tabs"
+           data-tabs-active-class="bg-indigo-500 text-white"
+           data-tabs-inactive-class="text-slate-500">
     <div class="flex items-center justify-between px-1">
       <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">시스템 이벤트 스트림</h2>
-      <span class="flex h-2 w-2">
-        <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-rose-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-      </span>
+      <div class="flex bg-white/5 p-1 rounded-xl">
+        <button data-action="tabs#change" data-tabs-target="tab" data-id="membership" class="px-2 py-1 rounded-lg text-[8px] font-black transition-all">MEMBERS</button>
+        <button data-action="tabs#change" data-tabs-target="tab" data-id="action" class="px-2 py-1 rounded-lg text-[8px] font-black transition-all">ACTIONS</button>
+        <button data-action="tabs#change" data-tabs-target="tab" data-id="routine" class="px-2 py-1 rounded-lg text-[8px] font-black transition-all">ROUTINE</button>
+      </div>
     </div>
 
-    <div class="space-y-4">
-      <% @recent_members.each do |membership| %>
-        <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop">
-          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 text-xs font-black">
-            <%= membership.user.nickname[0].upcase %>
+    <!-- Membership Stream -->
+    <div data-tabs-target="panel" data-id="membership" class="space-y-3">
+      <% if @stream_memberships.any? %>
+        <% @stream_memberships.each do |membership| %>
+          <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-indigo-500/5">
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs font-black">
+              <%= membership.user.nickname[0].upcase %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-black text-white truncate"><%= membership.user.nickname %></p>
+              <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= membership.routine_club&.title %></p>
+            </div>
+            <div class="text-right">
+              <span class="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase">Pending</span>
+              <p class="text-[8px] font-bold text-slate-600 mt-1"><%= time_ago_in_words(membership.created_at) %> 전</p>
+            </div>
           </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-black text-white truncate"><%= membership.user.nickname %></p>
-            <p class="text-[9px] font-bold text-slate-500">신규 클럽 가입 신청 (<%= time_ago_in_words(membership.created_at) %> 전)</p>
-          </div>
-          <span class="text-[10px] font-black text-amber-500">PENDING</span>
+        <% end %>
+      <% else %>
+        <div class="py-12 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
+          <p class="text-xs font-bold text-slate-600">최근 멤버십 신청이 없습니다.</p>
         </div>
       <% end %>
+    </div>
 
-      <% @recent_joins.each do |participation| %>
-        <div class="app-glass-card p-4 flex items-center gap-4">
-          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xs font-black">
-            <%= participation.user.nickname[0].upcase %>
+    <!-- Action Stream (Challenge Joins) -->
+    <div data-tabs-target="panel" data-id="action" class="hidden space-y-3">
+      <% if @stream_joins.any? %>
+        <% @stream_joins.each do |participation| %>
+          <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-emerald-500/5">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-black">
+              <%= participation.user.nickname[0].upcase %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-black text-white truncate"><%= participation.user.nickname %></p>
+              <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= participation.challenge.title %></p>
+            </div>
+            <div class="text-right">
+               <span class="text-sm">🏃</span>
+               <p class="text-[8px] font-bold text-slate-600 mt-1"><%= time_ago_in_words(participation.created_at) %> 전</p>
+            </div>
           </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-black text-white truncate"><%= participation.user.nickname %></p>
-            <p class="text-[9px] font-bold text-slate-500">'<%= participation.challenge.title.truncate(15) %>' 참여 시작</p>
+        <% end %>
+      <% else %>
+        <div class="py-12 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
+          <p class="text-xs font-bold text-slate-600">최근 활동 참여가 없습니다.</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Routine Stream -->
+    <div data-tabs-target="panel" data-id="routine" class="hidden space-y-3">
+      <% if @stream_completions.any? %>
+        <% @stream_completions.each do |completion| %>
+          <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-white/2">
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/40 text-xs font-black">
+              <%= completion.personal_routine.user.nickname[0].upcase %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-black text-white truncate"><%= completion.personal_routine.user.nickname %></p>
+              <p class="text-[9px] font-bold text-indigo-400 mt-0.5"><%= completion.personal_routine.title %></p>
+            </div>
+            <div class="text-right">
+               <span class="text-emerald-500 text-xs font-black">DONE</span>
+               <p class="text-[8px] font-bold text-slate-600 mt-1"><%= time_ago_in_words(completion.created_at) %> 전</p>
+            </div>
           </div>
-          <span class="text-sm">🏃</span>
+        <% end %>
+      <% else %>
+        <div class="py-12 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
+          <p class="text-xs font-bold text-slate-600">오늘 완료된 루틴이 없습니다.</p>
         </div>
       <% end %>
     </div>
   </section>
 
-  <!-- 4. System Controls -->
+  <!-- 4. Content Management -->
   <section class="px-6 space-y-6">
     <div class="flex items-center justify-between px-1">
-      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">시스템 컨트롤</h2>
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">액티브 콘텐츠 관리</h2>
+      <button class="text-[10px] font-black text-indigo-400" data-action="admin-tools#comingSoon">모두 보기</button>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Active Challenges -->
+      <div class="space-y-3">
+        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-2">Daily Challenges</p>
+        <% if @active_challenges.any? %>
+          <% @active_challenges.each do |challenge| %>
+            <div class="app-glass-card p-4 flex items-center justify-between border-white/5 hover:bg-white/[0.03] transition-colors">
+              <div class="flex items-center gap-4">
+                <div class="relative">
+                  <img src="<%= challenge.thumbnail %>" class="w-12 h-12 rounded-xl object-cover border border-white/10">
+                  <span class="absolute -top-1 -right-1 w-4 h-4 bg-indigo-600 rounded-full flex items-center justify-center text-[8px] font-black text-white border-2 border-[#1B1A24]">
+                    <%= challenge.online? ? "ON" : "OFF" %>
+                  </span>
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-white leading-tight"><%= challenge.title %></h4>
+                  <p class="text-[10px] font-bold text-slate-500 mt-1">Host: <%= challenge.host_name %> · <%= challenge.participants.count %>명 참여</p>
+                </div>
+              </div>
+              <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors" data-action="admin-tools#comingSoon">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+              </button>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="p-8 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
+            <p class="text-[11px] font-bold text-slate-600">현재 활성화된 챌린지가 없습니다.</p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Active Gatherings -->
+      <div class="space-y-3 pt-2">
+        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-2">Social Gatherings (Online/Offline)</p>
+        <% if @active_gatherings.any? %>
+          <% @active_gatherings.each do |gathering| %>
+            <div class="app-glass-card p-4 flex items-center justify-between border-white/5 bg-amber-500/5">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-xl relative">
+                  <%= gathering.online? ? "💻" : "📍" %>
+                  <span class="absolute -top-1 -right-1 w-4 h-4 <%= gathering.online? ? 'bg-indigo-600' : 'bg-emerald-600' %> rounded-full flex items-center justify-center text-[7px] font-black text-white border-2 border-[#1B1A24]">
+                    <%= gathering.online? ? "ON" : "OFF" %>
+                  </span>
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-white leading-tight"><%= gathering.title %></h4>
+                  <p class="text-[10px] font-bold text-amber-500/60 mt-1">
+                    <%= gathering.online? ? "온라인" : gathering.meeting_info&.place_name %> · <%= gathering.start_date&.strftime("%m.%d") %>
+                  </p>
+                </div>
+              </div>
+              <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors" data-action="admin-tools#comingSoon">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+              </button>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="p-8 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
+            <p class="text-[11px] font-bold text-slate-600">현재 활성화된 모임이 없습니다.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. System Controls -->
+  <section class="px-6 space-y-6">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">고급 시스템 제어</h2>
     </div>
 
     <div class="grid grid-cols-2 gap-3">
-      <button class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10">
-        <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-2xl">🚨</div>
-        <p class="text-[11px] font-black text-white">서버 긴급 공지</p>
+      <button data-action="admin-tools#broadcast" class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group">
+        <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🚨</div>
+        <div>
+          <p class="text-[11px] font-black text-white">서버 긴급 공지</p>
+          <p class="text-[8px] font-bold text-rose-500/60 mt-1 uppercase">Broadcast</p>
+        </div>
       </button>
-      <button class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10">
-        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl">📊</div>
-        <p class="text-[11px] font-black text-white">상세 리포트</p>
+      <%= link_to "/prototype/admin/clubs", class: "app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group" do %>
+        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🔱</div>
+        <div>
+          <p class="text-[11px] font-black text-white">루파 클럽 관리</p>
+          <p class="text-[8px] font-bold text-indigo-500/60 mt-1 uppercase">Clubs & Admins</p>
+        </div>
+      <% end %>
+      <button data-action="admin-tools#comingSoon" class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group">
+        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
+        <div>
+          <p class="text-[11px] font-black text-white">콘텐츠 모더레이션</p>
+          <p class="text-[8px] font-bold text-slate-600 mt-1 uppercase">Moderation</p>
+        </div>
       </button>
-      <button class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10">
-        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl">🖼️</div>
-        <p class="text-[11px] font-black text-white">배너/팝업 관리</p>
-      </button>
-       <button class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10">
-        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl">🛠️</div>
-        <p class="text-[11px] font-black text-white">더미데이터 생성</p>
+       <button data-action="admin-tools#comingSoon" class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group">
+        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">⚙️</div>
+        <div>
+          <p class="text-[11px] font-black text-white">시스템 환경 설정</p>
+          <p class="text-[8px] font-bold text-slate-600 mt-1 uppercase">Settings</p>
+        </div>
       </button>
     </div>
   </section>

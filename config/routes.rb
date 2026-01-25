@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   patch "prototype/update_profile", to: "prototype#update_profile", as: :prototype_update_profile
   get "prototype/lecture_intro", to: "prototype#lecture_intro"
   get "prototype/admin", to: "prototype#admin_dashboard"
+  get "prototype/admin/clubs", to: "prototype#club_management"
+  post "prototype/admin/broadcast", to: "prototype#broadcast"
   # Main Web Application Routes
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

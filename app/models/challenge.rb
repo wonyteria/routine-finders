@@ -77,7 +77,11 @@ class Challenge < ApplicationRecord
   end
 
   def gathering?
-    offline?
+    # Logic for distinguishing a Gathering from a regular Challenge.
+    # In this system, Gatherings are often identified by Category or a specific meeting type,
+    # but the user explicitly noted they can be both online and offline.
+    # For now, we'll keep it flexible or check if it has meeting_info.
+    meeting_info.present? || offline?
   end
 
   def online?
