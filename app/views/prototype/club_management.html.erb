@@ -161,7 +161,7 @@
                    </div>
                  </div>
                  <div class="flex gap-2">
-                   <button class="px-3 py-1.5 border border-white/10 rounded-lg text-[9px] font-black text-slate-400 hover:text-white transition-colors">리포트</button>
+                   <%= link_to prototype_member_reports_path(user_id: stat[:member].user_id), class: "px-3 py-1.5 border border-white/10 rounded-lg text-[9px] font-black text-slate-400 hover:text-white transition-colors" do %>리포트<% end %>
                    <button class="px-3 py-1.5 border border-white/10 rounded-lg text-[9px] font-black text-slate-400 hover:text-rose-500 transition-colors">경고/제한</button>
                  </div>
               </div>

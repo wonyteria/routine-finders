@@ -13,3 +13,13 @@ production:
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
+
+  generate_weekly_reports:
+    class: GenerateRoutineClubReportsJob
+    args: [ "weekly" ]
+    schedule: "at 6am every Monday"
+
+  generate_monthly_reports:
+    class: GenerateRoutineClubReportsJob
+    args: [ "monthly" ]
+    schedule: "at 7am on the 1st of every month"

@@ -521,6 +521,12 @@ class PrototypeController < ApplicationController
     @club_admins = User.where(role: :club_admin).order(created_at: :desc)
   end
 
+  def member_reports
+    @target_user = User.find(params[:user_id])
+    @reports = @target_user.routine_club_reports.order(start_date: :desc)
+    @official_club = RoutineClub.official.first
+  end
+
   def broadcast
     title = params[:title]
     content = params[:content]

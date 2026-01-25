@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get "prototype/lecture_intro", to: "prototype#lecture_intro"
   get "prototype/admin", to: "prototype#admin_dashboard"
   get "prototype/admin/clubs", to: "prototype#club_management"
+  get "prototype/admin/member_reports/:user_id", to: "prototype#member_reports", as: :prototype_member_reports
   post "prototype/admin/broadcast", to: "prototype#broadcast"
   # Main Web Application Routes
 

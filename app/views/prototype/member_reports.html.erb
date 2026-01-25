@@ -1,0 +1,90 @@
+<div class="space-y-12 py-10 pb-32">
+  <!-- 1. Header -->
+  <header class="px-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <%= link_to prototype_admin_clubs_path, class: "w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95 transition-all" do %>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+      <% end %>
+      <div class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+        <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none">Member Report Vault</span>
+      </div>
+      <div class="w-10"></div>
+    </div>
+
+    <div class="space-y-1">
+      <h1 class="text-3xl font-black text-white tracking-tight"><%= @target_user.nickname %>님의 리포트</h1>
+      <p class="text-xs font-bold text-slate-500">생성된 모든 주간/월간 루파 리포트를 확인합니다.</p>
+    </div>
+  </header>
+
+  <!-- 2. User Info Card -->
+  <section class="px-6">
+    <div class="app-glass-card p-6 border-white/5 bg-white/[0.02] flex items-center gap-5">
+      <div class="w-16 h-16 rounded-[24px] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-black shadow-xl">
+        <%= @target_user.nickname[0].upcase %>
+      </div>
+      <div>
+        <h2 class="text-xl font-black text-white"><%= @target_user.nickname %></h2>
+        <p class="text-[10px] font-bold text-slate-500 mt-1 uppercase tracking-widest">Premium Member · LV.<%= @target_user.level %></p>
+        <div class="flex items-center gap-3 mt-2">
+          <div class="flex items-center gap-1">
+            <span class="text-[10px]">📊</span>
+            <span class="text-[10px] font-bold text-slate-400">총 <%= @reports.count %>개의 리포트</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Report List -->
+  <section class="px-6 space-y-6">
+    <div class="flex items-center justify-between px-1">
+      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">리포트 히스토리</h2>
+    </div>
+
+    <div class="space-y-4">
+      <% if @reports.any? %>
+        <% @reports.each do |report| %>
+          <%= link_to routine_club_report_path(report), class: "block group" do %>
+            <div class="app-glass-card p-5 border-white/5 hover:border-indigo-500/30 hover:bg-white/[0.05] transition-all relative overflow-hidden">
+              <% if report.report_type_monthly? %>
+                <div class="absolute -right-4 -top-4 w-12 h-12 bg-purple-500/10 rounded-full blur-xl"></div>
+              <% end %>
+              
+              <div class="flex items-center justify-between relative z-10">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 rounded-2xl <%= report.report_type_monthly? ? 'bg-purple-500/10 text-purple-400' : 'bg-indigo-500/10 text-indigo-400' %> flex flex-col items-center justify-center">
+                    <span class="text-[10px] font-black uppercase"><%= report.report_type_monthly? ? 'MON' : 'WK' %></span>
+                    <span class="text-lg font-black leading-none mt-0.5">
+                      <%= report.start_date.strftime("%m") %>
+                    </span>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-black text-white">
+                      <%= report.report_type_monthly? ? "#{report.start_date.year}년 #{report.start_date.month}월 월간 리포트" : "#{report.start_date.strftime('%m.%d')} 주간 리포트" %>
+                    </h4>
+                    <p class="text-[10px] font-bold text-slate-500 mt-1">
+                       <%= report.start_date.strftime("%Y.%m.%d") %> ~ <%= report.end_date.strftime("%Y.%m.%d") %>
+                    </p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="flex items-center gap-1 justify-end">
+                    <span class="text-[10px] font-black <%= report.achievement_rate >= 70 ? 'text-emerald-400' : 'text-amber-500' %>"><%= report.achievement_rate %>%</span>
+                  </div>
+                  <p class="text-[9px] font-bold text-slate-600 mt-1"><%= report.identity_title %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="py-20 text-center app-glass-card border-white/10 border-dashed">
+          <span class="text-3xl opacity-20">📂</span>
+          <p class="text-xs font-bold text-slate-600 mt-4">아직 생성된 리포트가 없습니다.</p>
+          <p class="text-[10px] font-medium text-slate-700 mt-1">자동 생성 스케줄(월요일/1일)을 기다려주세요.</p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>
