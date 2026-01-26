@@ -49,14 +49,15 @@ class PrototypeController < ApplicationController
                               .distinct.count
     @total_active_metes = [ @total_active_metes, @orbit_users.count ].max
 
-    # 5. Specialized Content (Ranking & Goals)
-    @rufa_rankings = User.joins(:routine_club_members)
-                         .where(routine_club_members: { status: :active })
-                         .distinct
-                         .map { |u| { user: u, score: u.rufa_club_score } }
-                         .sort_by { |r| -r[:score] }
-                         .take(10)
-    @top_rankings = @rufa_rankings.take(3)
+    # 5. Specialized Content (Ranking & Goals) - Use minimal calculation
+    @rufa_rankings = Rails.cache.fetch("home_rankings_stable", expires_in: 1.hour) do
+      User.joins(:routine_club_members)
+          .where(routine_club_members: { status: :active })
+          .limit(10)
+          .map { |u| { user: u, score: u.rufa_club_score } }
+          .sort_by { |r| -r[:score] } rescue []
+    end
+    @top_rankings = (@rufa_rankings || []).take(3)
 
     if current_user
       @hosted_challenges = Challenge.where(host: current_user).order(created_at: :desc)
