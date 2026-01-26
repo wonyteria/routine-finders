@@ -2,7 +2,7 @@
 service: routine_finders
 
 # Name of the container image (use your-user/app-name on external registries).
-image: wonyteria/routine-finders
+image: ghcr.io/wonyteria/routine-finders
 
 # How long to wait for a container to become ready (default 30)
 deploy_timeout: 300
@@ -11,7 +11,7 @@ deploy_timeout: 300
 servers:
   web:
     hosts:
-      - <%= ENV["DEPLOY_HOST"] %>
+      - <%= ENV["DEPLOY_HOST"] || "152.42.204.0" %>
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -29,8 +29,8 @@ proxy:
   host: www.routinefinders.life
   healthcheck:
     path: /up
-    interval: 10
-    timeout: 10
+    interval: 30
+    timeout: 30
 
 # Where you keep your container images.
 registry:
