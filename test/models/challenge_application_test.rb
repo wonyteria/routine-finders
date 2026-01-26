@@ -13,7 +13,8 @@ class ChallengeApplicationTest < ActiveSupport::TestCase
       challenge: @paid_challenge,
       user: @participant,
       message: "I want to join!",
-      depositor_name: "Test User"
+      depositor_name: "Test User",
+      contact_info: "010-1234-5678"
     )
     assert application.valid?, application.errors.full_messages.join(", ")
   end
@@ -22,7 +23,8 @@ class ChallengeApplicationTest < ActiveSupport::TestCase
     application = ChallengeApplication.create!(
       challenge: @paid_challenge,
       user: @host,
-      depositor_name: "Host User"
+      depositor_name: "Host User",
+      contact_info: "010-1234-5678"
     )
     assert application.pending?
   end
@@ -31,10 +33,11 @@ class ChallengeApplicationTest < ActiveSupport::TestCase
     application = ChallengeApplication.new(
       challenge: @paid_challenge,
       user: @participant,
-      message: "I want to join!"
+      message: "I want to join!",
+      contact_info: "010-1234-5678"
     )
     assert_not application.valid?
-    assert_includes application.errors[:depositor_name], "can't be blank"
+    assert_includes application.errors[:depositor_name], "은(는) 필수 입력 항목입니다"
   end
 
   test "does not require depositor_name for free challenges" do
@@ -49,13 +52,15 @@ class ChallengeApplicationTest < ActiveSupport::TestCase
     ChallengeApplication.create!(
       challenge: @paid_challenge,
       user: @participant,
-      depositor_name: "Participant User"
+      depositor_name: "Participant User",
+      contact_info: "010-1234-5678"
     )
 
     duplicate = ChallengeApplication.new(
       challenge: @paid_challenge,
       user: @participant,
-      depositor_name: "Participant User"
+      depositor_name: "Participant User",
+      contact_info: "010-1234-5678"
     )
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:user_id], "has already applied to this challenge"
@@ -65,7 +70,8 @@ class ChallengeApplicationTest < ActiveSupport::TestCase
     application = ChallengeApplication.create!(
       challenge: @paid_challenge,
       user: @host,
-      depositor_name: "Host User"
+      depositor_name: "Host User",
+      contact_info: "010-1234-5678"
     )
     application.approve!
     assert application.approved?
@@ -75,7 +81,8 @@ class ChallengeApplicationTest < ActiveSupport::TestCase
     application = ChallengeApplication.create!(
       challenge: @paid_challenge,
       user: @host,
-      depositor_name: "Host User"
+      depositor_name: "Host User",
+      contact_info: "010-1234-5678"
     )
     application.reject!("Sorry, not a good fit")
     assert application.rejected?
@@ -86,7 +93,8 @@ class ChallengeApplicationTest < ActiveSupport::TestCase
     application = ChallengeApplication.create!(
       challenge: @paid_challenge,
       user: @host,
-      depositor_name: "Host User"
+      depositor_name: "Host User",
+      contact_info: "010-1234-5678"
     )
     assert_not_nil application.applied_at
   end
