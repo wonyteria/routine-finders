@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_26_033159) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.string "name", null: false
     t.bigint "record_id", null: false
     t.string "record_type", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+    t.index [ "blob_id" ], name: "index_active_storage_attachments_on_blob_id"
+    t.index [ "record_type", "record_id", "name", "blob_id" ], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -30,13 +30,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.string "key", null: false
     t.text "metadata"
     t.string "service_name", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+    t.index [ "key" ], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
-    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+    t.index [ "blob_id", "variation_digest" ], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "announcements", force: :cascade do |t|
@@ -46,8 +46,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "routine_club_id"
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["challenge_id"], name: "index_announcements_on_challenge_id"
-    t.index ["routine_club_id"], name: "index_announcements_on_routine_club_id"
+    t.index [ "challenge_id" ], name: "index_announcements_on_challenge_id"
+    t.index [ "routine_club_id" ], name: "index_announcements_on_routine_club_id"
   end
 
   create_table "badges", force: :cascade do |t|
@@ -89,9 +89,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.string "threads_nickname"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["challenge_id", "user_id"], name: "index_challenge_applications_on_challenge_id_and_user_id", unique: true
-    t.index ["challenge_id"], name: "index_challenge_applications_on_challenge_id"
-    t.index ["user_id"], name: "index_challenge_applications_on_user_id"
+    t.index [ "challenge_id", "user_id" ], name: "index_challenge_applications_on_challenge_id_and_user_id", unique: true
+    t.index [ "challenge_id" ], name: "index_challenge_applications_on_challenge_id"
+    t.index [ "user_id" ], name: "index_challenge_applications_on_user_id"
   end
 
   create_table "challenges", force: :cascade do |t|
@@ -170,13 +170,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.time "verification_end_time"
     t.time "verification_start_time"
     t.integer "verification_type", default: 0, null: false
-    t.index ["category"], name: "index_challenges_on_category"
-    t.index ["host_id"], name: "index_challenges_on_host_id"
-    t.index ["invitation_code"], name: "index_challenges_on_invitation_code", unique: true
-    t.index ["is_official"], name: "index_challenges_on_is_official"
-    t.index ["mode"], name: "index_challenges_on_mode"
-    t.index ["original_challenge_id"], name: "index_challenges_on_original_challenge_id"
-    t.index ["status"], name: "index_challenges_on_status"
+    t.index [ "category" ], name: "index_challenges_on_category"
+    t.index [ "host_id" ], name: "index_challenges_on_host_id"
+    t.index [ "invitation_code" ], name: "index_challenges_on_invitation_code", unique: true
+    t.index [ "is_official" ], name: "index_challenges_on_is_official"
+    t.index [ "mode" ], name: "index_challenges_on_mode"
+    t.index [ "original_challenge_id" ], name: "index_challenges_on_original_challenge_id"
+    t.index [ "status" ], name: "index_challenges_on_status"
   end
 
   create_table "meeting_infos", force: :cascade do |t|
@@ -188,7 +188,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.string "meeting_time"
     t.string "place_name", null: false
     t.datetime "updated_at", null: false
-    t.index ["challenge_id"], name: "index_meeting_infos_on_challenge_id", unique: true
+    t.index [ "challenge_id" ], name: "index_meeting_infos_on_challenge_id", unique: true
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -200,9 +200,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id", "created_at"], name: "index_notifications_on_user_id_and_created_at"
-    t.index ["user_id", "is_read"], name: "index_notifications_on_user_id_and_is_read"
-    t.index ["user_id"], name: "index_notifications_on_user_id"
+    t.index [ "user_id", "created_at" ], name: "index_notifications_on_user_id_and_created_at"
+    t.index [ "user_id", "is_read" ], name: "index_notifications_on_user_id_and_is_read"
+    t.index [ "user_id" ], name: "index_notifications_on_user_id"
   end
 
   create_table "participants", force: :cascade do |t|
@@ -230,10 +230,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "total_failures", default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["challenge_id"], name: "index_participants_on_challenge_id"
-    t.index ["status"], name: "index_participants_on_status"
-    t.index ["user_id", "challenge_id"], name: "index_participants_on_user_id_and_challenge_id", unique: true
-    t.index ["user_id"], name: "index_participants_on_user_id"
+    t.index [ "challenge_id" ], name: "index_participants_on_challenge_id"
+    t.index [ "status" ], name: "index_participants_on_status"
+    t.index [ "user_id", "challenge_id" ], name: "index_participants_on_user_id_and_challenge_id", unique: true
+    t.index [ "user_id" ], name: "index_participants_on_user_id"
   end
 
   create_table "personal_routine_completions", force: :cascade do |t|
@@ -241,8 +241,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.datetime "created_at", null: false
     t.integer "personal_routine_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["completed_on"], name: "index_personal_routine_completions_on_completed_on"
-    t.index ["personal_routine_id"], name: "index_personal_routine_completions_on_personal_routine_id"
+    t.index [ "completed_on" ], name: "index_personal_routine_completions_on_completed_on"
+    t.index [ "personal_routine_id" ], name: "index_personal_routine_completions_on_personal_routine_id"
   end
 
   create_table "personal_routines", force: :cascade do |t|
@@ -258,8 +258,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "total_completions", default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id", "title"], name: "index_personal_routines_on_user_id_and_title"
-    t.index ["user_id"], name: "index_personal_routines_on_user_id"
+    t.index [ "user_id", "title" ], name: "index_personal_routines_on_user_id_and_title"
+    t.index [ "user_id" ], name: "index_personal_routines_on_user_id"
   end
 
   create_table "reviews", force: :cascade do |t|
@@ -271,9 +271,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "rating", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["challenge_id", "user_id"], name: "index_reviews_on_challenge_id_and_user_id", unique: true
-    t.index ["challenge_id"], name: "index_reviews_on_challenge_id"
-    t.index ["user_id"], name: "index_reviews_on_user_id"
+    t.index [ "challenge_id", "user_id" ], name: "index_reviews_on_challenge_id_and_user_id", unique: true
+    t.index [ "challenge_id" ], name: "index_reviews_on_challenge_id"
+    t.index [ "user_id" ], name: "index_reviews_on_user_id"
   end
 
   create_table "routine_club_attendances", force: :cascade do |t|
@@ -289,10 +289,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "status", default: 0, null: false
     t.datetime "submitted_at"
     t.datetime "updated_at", null: false
-    t.index ["attendance_date"], name: "index_routine_club_attendances_on_attendance_date"
-    t.index ["routine_club_id"], name: "index_routine_club_attendances_on_routine_club_id"
-    t.index ["routine_club_member_id", "attendance_date"], name: "index_club_attendances_on_member_and_date", unique: true
-    t.index ["routine_club_member_id"], name: "index_routine_club_attendances_on_routine_club_member_id"
+    t.index [ "attendance_date" ], name: "index_routine_club_attendances_on_attendance_date"
+    t.index [ "routine_club_id" ], name: "index_routine_club_attendances_on_routine_club_id"
+    t.index [ "routine_club_member_id", "attendance_date" ], name: "index_club_attendances_on_member_and_date", unique: true
+    t.index [ "routine_club_member_id" ], name: "index_routine_club_attendances_on_routine_club_member_id"
   end
 
   create_table "routine_club_gatherings", force: :cascade do |t|
@@ -305,7 +305,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "routine_club_id", null: false
     t.string "title"
     t.datetime "updated_at", null: false
-    t.index ["routine_club_id"], name: "index_routine_club_gatherings_on_routine_club_id"
+    t.index [ "routine_club_id" ], name: "index_routine_club_gatherings_on_routine_club_id"
   end
 
   create_table "routine_club_members", force: :cascade do |t|
@@ -339,11 +339,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "used_save_passes_count", default: 0
     t.integer "user_id", null: false
     t.boolean "welcomed", default: false
-    t.index ["payment_status"], name: "index_routine_club_members_on_payment_status"
-    t.index ["routine_club_id", "user_id"], name: "index_routine_club_members_on_routine_club_id_and_user_id", unique: true
-    t.index ["routine_club_id"], name: "index_routine_club_members_on_routine_club_id"
-    t.index ["status"], name: "index_routine_club_members_on_status"
-    t.index ["user_id"], name: "index_routine_club_members_on_user_id"
+    t.index [ "payment_status" ], name: "index_routine_club_members_on_payment_status"
+    t.index [ "routine_club_id", "user_id" ], name: "index_routine_club_members_on_routine_club_id_and_user_id", unique: true
+    t.index [ "routine_club_id" ], name: "index_routine_club_members_on_routine_club_id"
+    t.index [ "status" ], name: "index_routine_club_members_on_status"
+    t.index [ "user_id" ], name: "index_routine_club_members_on_user_id"
   end
 
   create_table "routine_club_penalties", force: :cascade do |t|
@@ -360,11 +360,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "status", default: 0, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["issued_by_id"], name: "index_routine_club_penalties_on_issued_by_id"
-    t.index ["routine_club_id"], name: "index_routine_club_penalties_on_routine_club_id"
-    t.index ["routine_club_member_id"], name: "index_routine_club_penalties_on_routine_club_member_id"
-    t.index ["routine_club_rule_id"], name: "index_routine_club_penalties_on_routine_club_rule_id"
-    t.index ["status"], name: "index_routine_club_penalties_on_status"
+    t.index [ "issued_by_id" ], name: "index_routine_club_penalties_on_issued_by_id"
+    t.index [ "routine_club_id" ], name: "index_routine_club_penalties_on_routine_club_id"
+    t.index [ "routine_club_member_id" ], name: "index_routine_club_penalties_on_routine_club_member_id"
+    t.index [ "routine_club_rule_id" ], name: "index_routine_club_penalties_on_routine_club_rule_id"
+    t.index [ "status" ], name: "index_routine_club_penalties_on_status"
   end
 
   create_table "routine_club_reports", force: :cascade do |t|
@@ -384,9 +384,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.text "summary"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["routine_club_id"], name: "index_routine_club_reports_on_routine_club_id"
-    t.index ["user_id", "routine_club_id", "report_type", "start_date"], name: "index_reports_on_user_club_type_date", unique: true
-    t.index ["user_id"], name: "index_routine_club_reports_on_user_id"
+    t.index [ "routine_club_id" ], name: "index_routine_club_reports_on_routine_club_id"
+    t.index [ "user_id", "routine_club_id", "report_type", "start_date" ], name: "index_reports_on_user_club_type_date", unique: true
+    t.index [ "user_id" ], name: "index_routine_club_reports_on_user_id"
   end
 
   create_table "routine_club_rules", force: :cascade do |t|
@@ -402,8 +402,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "rule_type", default: 0, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.index ["routine_club_id", "position"], name: "index_routine_club_rules_on_routine_club_id_and_position"
-    t.index ["routine_club_id"], name: "index_routine_club_rules_on_routine_club_id"
+    t.index [ "routine_club_id", "position" ], name: "index_routine_club_rules_on_routine_club_id_and_position"
+    t.index [ "routine_club_id" ], name: "index_routine_club_rules_on_routine_club_id"
   end
 
   create_table "routine_clubs", force: :cascade do |t|
@@ -432,9 +432,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.datetime "updated_at", null: false
     t.string "weekly_reward_info"
     t.string "zoom_link"
-    t.index ["category"], name: "index_routine_clubs_on_category"
-    t.index ["host_id"], name: "index_routine_clubs_on_host_id"
-    t.index ["status"], name: "index_routine_clubs_on_status"
+    t.index [ "category" ], name: "index_routine_clubs_on_category"
+    t.index [ "host_id" ], name: "index_routine_clubs_on_host_id"
+    t.index [ "status" ], name: "index_routine_clubs_on_status"
   end
 
   create_table "routine_templates", force: :cascade do |t|
@@ -457,7 +457,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.string "target_type"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_rufa_activities_on_user_id"
+    t.index [ "user_id" ], name: "index_rufa_activities_on_user_id"
   end
 
   create_table "rufa_claps", force: :cascade do |t|
@@ -465,8 +465,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "rufa_activity_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["rufa_activity_id"], name: "index_rufa_claps_on_rufa_activity_id"
-    t.index ["user_id"], name: "index_rufa_claps_on_user_id"
+    t.index [ "rufa_activity_id" ], name: "index_rufa_claps_on_rufa_activity_id"
+    t.index [ "user_id" ], name: "index_rufa_claps_on_user_id"
   end
 
   create_table "staffs", force: :cascade do |t|
@@ -476,8 +476,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "staff_role"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["challenge_id"], name: "index_staffs_on_challenge_id"
-    t.index ["user_id"], name: "index_staffs_on_user_id"
+    t.index [ "challenge_id" ], name: "index_staffs_on_challenge_id"
+    t.index [ "user_id" ], name: "index_staffs_on_user_id"
   end
 
   create_table "user_badges", force: :cascade do |t|
@@ -487,8 +487,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.boolean "is_viewed", default: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["badge_id"], name: "index_user_badges_on_badge_id"
-    t.index ["user_id"], name: "index_user_badges_on_user_id"
+    t.index [ "badge_id" ], name: "index_user_badges_on_badge_id"
+    t.index [ "user_id" ], name: "index_user_badges_on_user_id"
   end
 
   create_table "user_goals", force: :cascade do |t|
@@ -497,7 +497,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.integer "goal_type"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_user_goals_on_user_id"
+    t.index [ "user_id" ], name: "index_user_goals_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -507,9 +507,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "email", null: false
-    t.datetime "email_verification_sent_at"
-    t.string "email_verification_token"
-    t.boolean "email_verified", default: false, null: false
     t.decimal "host_avg_completion_rate", precision: 5, scale: 2, default: "0.0"
     t.integer "host_completed_challenges", default: 0
     t.integer "host_total_participants", default: 0
@@ -541,9 +538,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.datetime "weekly_goal_updated_at"
     t.text "yearly_goal"
     t.datetime "yearly_goal_updated_at"
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["email_verification_token"], name: "index_users_on_email_verification_token", unique: true
-    t.index ["nickname"], name: "index_users_on_nickname"
+    t.index [ "email" ], name: "index_users_on_email", unique: true
+    t.index [ "nickname" ], name: "index_users_on_nickname"
   end
 
   create_table "verification_logs", force: :cascade do |t|
@@ -558,10 +554,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_24_131745) do
     t.datetime "updated_at", null: false
     t.string "value"
     t.integer "verification_type", default: 0, null: false
-    t.index ["challenge_id", "created_at"], name: "index_verification_logs_on_challenge_id_and_created_at"
-    t.index ["challenge_id"], name: "index_verification_logs_on_challenge_id"
-    t.index ["participant_id"], name: "index_verification_logs_on_participant_id"
-    t.index ["status"], name: "index_verification_logs_on_status"
+    t.index [ "challenge_id", "created_at" ], name: "index_verification_logs_on_challenge_id_and_created_at"
+    t.index [ "challenge_id" ], name: "index_verification_logs_on_challenge_id"
+    t.index [ "participant_id" ], name: "index_verification_logs_on_participant_id"
+    t.index [ "status" ], name: "index_verification_logs_on_status"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

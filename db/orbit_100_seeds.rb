@@ -7,7 +7,6 @@ puts "Seeding 100 users for Orbit experiment..."
     u.nickname = "루키#{i}"
     u.password = "password123"
     u.profile_image = "https://i.pravatar.cc/150?u=#{i}"
-    u.email_verified = true
   end
 
   RufaActivity.find_or_create_by!(user: user, activity_type: 'routine_record', created_at: Date.current.beginning_of_day..Date.current.end_of_day) do |a|

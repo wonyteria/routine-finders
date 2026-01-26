@@ -3,7 +3,6 @@
 host_user = User.find_or_create_by!(email: "host@example.com") do |u|
   u.nickname = "테스트호스트"
   u.password = "password"
-  u.email_verified = true
 end
 
 # 2. Find the likely current user (assuming User.first is the main one used in dev)
