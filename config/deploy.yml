@@ -2,7 +2,7 @@
 service: routine_finders
 
 # Name of the container image (use your-user/app-name on external registries).
-image: ghcr.io/wonyteria/routine-finders
+image: wonyteria/routine-finders
 
 # How long to wait for a container to become ready (default 30)
 deploy_timeout: 300
