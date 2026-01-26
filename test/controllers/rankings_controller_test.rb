@@ -6,13 +6,13 @@ class RankingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should display weekly rankings section" do
+  test "should display honor hall title" do
     get rankings_path
-    assert_select "h2", text: /This Week/i
+    assert_select "h2", text: /Honor hall/i
   end
 
-  test "should display hall of fame section" do
+  test "should display tabs navigation" do
     get rankings_path
-    assert_select "[data-panel='halloffame']"
+    assert_select "[data-tabs-target='tab']"
   end
 end

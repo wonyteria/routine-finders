@@ -1,8 +1,8 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  routine_club_id: 1
-  routine_club_member_id: 1
+  routine_club: one
+  routine_club_member: one
   title: 결석 패널티
   reason: 출석하지 않음
   penalty_type: 0
@@ -10,8 +10,8 @@ one:
   status: 0
 
 two:
-  routine_club_id: 2
-  routine_club_member_id: 2
+  routine_club: two
+  routine_club_member: two
   title: 지각 패널티
   reason: 늦게 출석함
   penalty_type: 1

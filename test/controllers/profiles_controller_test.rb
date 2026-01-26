@@ -11,7 +11,7 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
 
   test "should redirect show to login when not authenticated" do
     get profile_path
-    assert_redirected_to root_path
+    assert_redirected_to prototype_login_path
   end
 
   test "should get show when authenticated" do
@@ -22,7 +22,7 @@ class ProfilesControllerTest < ActionDispatch::IntegrationTest
 
   test "should redirect edit to login when not authenticated" do
     get edit_profile_path
-    assert_redirected_to root_path
+    assert_redirected_to prototype_login_path
   end
 
   test "should get edit when authenticated" do

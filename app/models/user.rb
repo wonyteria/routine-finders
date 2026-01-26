@@ -125,7 +125,6 @@ class User < ApplicationRecord
         u.nickname = auth.info.name.presence || auth.info.nickname.presence || "#{auth.provider.to_s.titleize} User #{auth.uid.to_s.last(4)}"
         u.profile_image = auth.info.image
         u.password = SecureRandom.hex(16)
-        u.email_verified = true # OAuth users are pre-verified
       end
     end
 
@@ -146,27 +145,6 @@ class User < ApplicationRecord
     end
 
     user
-  end
-
-  # Email verification methods
-  def generate_email_verification_token!
-    update!(
-      email_verification_token: SecureRandom.urlsafe_base64(32),
-      email_verification_sent_at: Time.current
-    )
-  end
-
-  def verify_email!
-    update!(
-      email_verified: true,
-      email_verification_token: nil,
-      email_verification_sent_at: nil
-    )
-  end
-
-  def email_verification_token_valid?
-    return false if email_verification_token.blank? || email_verification_sent_at.blank?
-    email_verification_sent_at > 24.hours.ago
   end
 
   # Wallet methods

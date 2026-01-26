@@ -59,10 +59,6 @@ Rails.application.routes.draw do
   get "/restore_account", to: "sessions#restore_account"
   post "/restore_account/confirm", to: "sessions#confirm_restore", as: :confirm_restore_account
 
-  # Email verification
-  get "verify_email", to: "email_verifications#show"
-  post "resend_email_verification", to: "email_verifications#resend"
-
   # Onboarding
   post "/complete_onboarding", to: "sessions#complete_onboarding"
 

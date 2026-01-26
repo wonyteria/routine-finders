@@ -10,7 +10,6 @@ users = []
     u.nickname = "루키#{i+1}"
     u.password = "password123!"
     u.profile_image = "https://i.pravatar.cc/100?u=#{i}"
-    u.email_verified = true
     u.save!
   end
   users << u

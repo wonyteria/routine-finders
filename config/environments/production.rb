@@ -67,8 +67,8 @@ Rails.application.configure do
   app_host = ENV.fetch("APP_HOST") { Rails.application.credentials.dig(:app_host) || "www.routinefinders.life" }
   config.action_mailer.default_url_options = { host: app_host, protocol: "https" }
 
-  # Use Resend for email delivery in production
-  config.action_mailer.delivery_method = :resend
+  # Email delivery disabled (OAuth-only authentication)
+  config.action_mailer.delivery_method = :test
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

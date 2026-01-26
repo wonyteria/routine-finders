@@ -24,7 +24,7 @@ class ReviewTest < ActiveSupport::TestCase
       content: "Great challenge!"
     )
     assert_not review.valid?
-    assert_includes review.errors[:rating], "can't be blank"
+    assert_includes review.errors[:rating], "은(는) 필수 입력 항목입니다"
   end
 
   test "rating must be between 1 and 5" do
@@ -34,11 +34,11 @@ class ReviewTest < ActiveSupport::TestCase
       rating: 0
     )
     assert_not review.valid?
-    assert_includes review.errors[:rating], "is not included in the list"
+    assert_includes review.errors[:rating], "은(는) 목록에 포함되어 있지 않습니다"
 
     review.rating = 6
     assert_not review.valid?
-    assert_includes review.errors[:rating], "is not included in the list"
+    assert_includes review.errors[:rating], "은(는) 목록에 포함되어 있지 않습니다"
 
     review.rating = 3
     assert review.valid?

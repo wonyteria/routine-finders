@@ -7,11 +7,10 @@ class RegistrationsController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      @user.generate_email_verification_token!
-      UserMailer.email_verification(@user).deliver_later
+      session[:user_id] = @user.id
 
       respond_to do |format|
-        format.html { redirect_to root_path, notice: "가입이 완료되었습니다. 이메일을 확인하여 인증을 완료해주세요." }
+        format.html { redirect_to root_path, notice: "가입이 완료되었습니다." }
         format.turbo_stream { render turbo_stream: turbo_stream.replace("auth_modal", partial: "shared/registration_success") }
       end
     else

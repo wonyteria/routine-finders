@@ -35,8 +35,7 @@ admin = User.create!(
   profile_image: "https://picsum.photos/seed/admin/200/200",
   level: 10,
   total_exp: 5000,
-  wallet_balance: 500_000,
-  email_verified: true
+  wallet_balance: 500_000
 )
 
 # High Badge User
@@ -48,7 +47,6 @@ badge_master = User.create!(
   level: 8,
   total_exp: 3500,
   wallet_balance: 300_000,
-  email_verified: true,
   bio: "모든 배지를 수집하는 그날까지!"
 )
 
@@ -67,7 +65,6 @@ user1 = User.create!(
   host_total_participants: 1250,
   host_avg_completion_rate: 88.0,
   host_completed_challenges: 5,
-  email_verified: true,
   bio: "매일매일 성장하는 루틴 챌린저입니다."
 )
 
@@ -79,7 +76,6 @@ user2 = User.create!(
   level: 7,
   total_exp: 2100,
   wallet_balance: 280_000,
-  email_verified: true,
   bio: "건강이 최고! 함께 운동해요."
 )
 
@@ -91,8 +87,7 @@ user2 = User.create!(
     password: "password123",
     profile_image: "https://picsum.photos/seed/user#{i}/200/200",
     level: rand(1..5),
-    total_exp: rand(100..1000),
-    email_verified: true
+    total_exp: rand(100..1000)
   )
 end
 
