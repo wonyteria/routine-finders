@@ -22,4 +22,4 @@ production:
   generate_monthly_reports:
     class: GenerateRoutineClubReportsJob
     args: [ "monthly" ]
-    schedule: "at 7am on the 1st of every month"
+    schedule: "0 7 1 * *"  # 매월 1일 오전 7시 (UTC)
