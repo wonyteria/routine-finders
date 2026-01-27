@@ -24,6 +24,12 @@ class SessionsController < ApplicationController
 
   def omniauth
     auth = request.env["omniauth.auth"]
+    unless auth
+      Rails.logger.error "OmniAuth: Request environment 'omniauth.auth' is nil"
+      redirect_to root_path, alert: "인증 정보를 가져오지 못했습니다. 다시 시도해 주세요."
+      return
+    end
+
     Rails.logger.info "Starting OmniAuth for provider: #{auth.provider}, uid: #{auth.uid}"
 
     user = User.from_omniauth(auth)
@@ -37,7 +43,7 @@ class SessionsController < ApplicationController
       return
     end
 
-    if user.persisted?
+    if user&.persisted?
       # Check if this is a new user (onboarding not completed)
       is_new_user = user.respond_to?(:onboarding_completed?) && !user.onboarding_completed?
 
@@ -51,13 +57,13 @@ class SessionsController < ApplicationController
 
       redirect_back_or root_path
     else
-      error_msg = user.errors.full_messages.to_sentence
+      error_msg = user ? user.errors.full_messages.to_sentence : "사용자를 생성하거나 찾을 수 없습니다."
       Rails.logger.error "OmniAuth login failed for #{auth.provider}: #{error_msg}"
       redirect_to root_path, alert: "로그인에 실패했습니다: #{error_msg}"
     end
   rescue => e
-    Rails.logger.error "OmniAuth Critical Error: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
-    redirect_to root_path, alert: "로그인 과정에서 시스템 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+    Rails.logger.error "OmniAuth Critical Error: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+    redirect_to root_path, alert: "로그인 과정에서 시스템 오류가 발생했습니다: #{e.message}. 잠시 후 다시 시도해 주세요."
   end
 
   def create

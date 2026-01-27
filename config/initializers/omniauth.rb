@@ -4,7 +4,10 @@ OmniAuth.config.silence_get_warning = true
 # Handle OmniAuth failure by redirecting to root with an alert and message for debugging
 OmniAuth.config.on_failure = Proc.new do |env|
   message_key = env["omniauth.error.type"]
-  [ 302, { "Location" => "/?auth_error=#{message_key}", "Content-Type" => "text/html" }, [] ]
+  strategy = env["omniauth.strategy"]&.name
+  Rails.logger.error "OmniAuth Failure: strategy=#{strategy}, error_type=#{message_key}"
+
+  [ 302, { "Location" => "/?auth_error=#{message_key}&strategy=#{strategy}", "Content-Type" => "text/html" }, [] ]
 end
 
 # Ensure full_host is set to HTTPS in production
@@ -23,6 +26,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            ENV.fetch("GOOGLE_CLIENT_SECRET", "dummy_google_secret"),
            scope: "email, profile"
   provider :kakao,
-           ENV.fetch("KAKAO_CLIENT_ID", "dummy_kakao_id"),
-           ENV.fetch("KAKAO_CLIENT_SECRET", "dummy_kakao_secret")
+           ENV.fetch("KAKAO_CLIENT_ID", "f959f8ada6c21d791ef5be7f4257e19e"),
+           ENV.fetch("KAKAO_CLIENT_SECRET", "xINFPROGnkZ9OoUX5UNUrkZcAFNzP7me"),
+           callback_path: "/auth/kakao/callback"
 end

@@ -93,8 +93,18 @@ class User < ApplicationRecord
   end
 
   def self.from_omniauth(auth)
+    return nil if auth.nil?
+
     Rails.logger.info "OmniAuth: Processing #{auth.provider} login for uid: #{auth.uid}"
-    Rails.logger.info "OmniAuth: Received data - email: #{auth.info.email}, name: #{auth.info.name}, nickname: #{auth.info.nickname}"
+
+    # Safely extract info
+    info = auth.info || {}
+    email = info.email
+    name = info.name
+    nickname = info.nickname
+    image = info.image
+
+    Rails.logger.info "OmniAuth: Received data - email: #{email}, name: #{name}, nickname: #{nickname}"
 
     # 1. First, try to find existing user by provider and uid (including deleted accounts)
     user = unscoped.where(provider: auth.provider, uid: auth.uid).first
@@ -107,8 +117,8 @@ class User < ApplicationRecord
     end
 
     # 3. If not found, try to find by email to link accounts (if email is provided)
-    if user.nil? && auth.info.email.present?
-      user = active.find_by(email: auth.info.email)
+    if user.nil? && email.present?
+      user = active.find_by(email: email)
       if user
         Rails.logger.info "OmniAuth: Linking existing user (#{user.id}) with #{auth.provider}"
         user.update(provider: auth.provider, uid: auth.uid)
@@ -121,26 +131,28 @@ class User < ApplicationRecord
       user = new do |u|
         u.provider = auth.provider
         u.uid = auth.uid
-        u.email = auth.info.email.presence || "#{auth.provider}-#{auth.uid}@routinefinders.temp"
-        u.nickname = auth.info.name.presence || auth.info.nickname.presence || "#{auth.provider.to_s.titleize} User #{auth.uid.to_s.last(4)}"
-        u.profile_image = auth.info.image
+        u.email = email.presence || "#{auth.provider}-#{auth.uid}@routinefinders.temp"
+        u.nickname = name.presence || nickname.presence || "#{auth.provider.to_s.titleize} User #{auth.uid.to_s.last(4)}"
+        u.profile_image = image
         u.password = SecureRandom.hex(16)
       end
     end
 
-    # 4. Update tokens (threads specific for now as we have specific columns)
-    if user && auth.provider == "threads"
+    # 5. Update tokens (threads specific for now as we have specific columns)
+    if user && auth.provider == "threads" && auth.credentials
       user.threads_token = auth.credentials.token
       user.threads_refresh_token = auth.credentials.refresh_token
       user.threads_expires_at = Time.at(auth.credentials.expires_at) if auth.credentials&.expires_at
     end
 
     if user
-      unless user.save
-        Rails.logger.error "OmniAuth: Failed to save user for #{auth.provider}"
-        Rails.logger.error "OmniAuth: Validation errors: #{user.errors.full_messages.join(', ')}"
-      else
-        Rails.logger.info "OmniAuth: Successfully saved user #{user.id} for #{auth.provider}"
+      if user.new_record? || user.changed?
+        unless user.save
+          Rails.logger.error "OmniAuth: Failed to save user for #{auth.provider}"
+          Rails.logger.error "OmniAuth: Validation errors: #{user.errors.full_messages.join(', ')}"
+        else
+          Rails.logger.info "OmniAuth: Successfully saved user #{user.id} for #{auth.provider}"
+        end
       end
     end
 

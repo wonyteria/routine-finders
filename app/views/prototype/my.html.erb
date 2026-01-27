@@ -409,6 +409,14 @@
       </div>
     <% end %>
   </section>
+
+  <!-- 6. Account Withdrawal (Subtle Link) -->
+  <section class="flex flex-col items-center gap-6 pt-4 pb-12">
+    <div class="h-px w-12 bg-white/5"></div>
+    <%= link_to profile_path, data: { turbo_method: :delete, turbo_confirm: "정말로 탈퇴하시겠습니까? 모든 활동 기록과 배지가 영구적으로 삭제됩니다." }, class: "text-[10px] font-bold text-slate-700 hover:text-red-900/40 transition-colors uppercase tracking-[0.2em]" do %>
+      회원 탈퇴하기
+    <% end %>
+  </section>
 </div>
 
 <!-- Growth Detail Modal -->

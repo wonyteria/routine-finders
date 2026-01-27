@@ -6,6 +6,27 @@ export default class extends Controller {
     connect() {
         window.showToast = (message, type = "info") => this.show(message, type)
         this.checkFlash()
+        this.checkAuthError()
+    }
+
+    checkAuthError() {
+        const urlParams = new URLSearchParams(window.location.search)
+        const authError = urlParams.get('auth_error')
+        const strategy = urlParams.get('strategy')
+
+        if (authError) {
+            let message = `인증 오류가 발생했습니다 (${authError})`
+            if (strategy === 'kakao') {
+                message = "카카오 로그인 중 오류가 발생했습니다. 카카오 개발자 설정 또는 계정 상태를 확인해 주세요."
+            }
+            this.show(message, "error")
+
+            // Remove auth_error from URL without reloading
+            const url = new URL(window.location.href)
+            url.searchParams.delete('auth_error')
+            url.searchParams.delete('strategy')
+            window.history.replaceState({}, document.title, url.toString())
+        }
     }
 
     checkFlash() {
