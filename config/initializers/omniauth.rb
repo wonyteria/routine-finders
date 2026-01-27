@@ -11,9 +11,11 @@ OmniAuth.config.on_failure = Proc.new do |env|
 end
 
 # Ensure full_host is set to HTTPS in production
-if Rails.env.production?
+if Rails.env.production? || ENV['RAILS_ENV'] == 'production'
   OmniAuth.config.full_host = "https://www.routinefinders.life"
 end
+
+Rails.logger.info "OmniAuth full_host configured as: #{OmniAuth.config.full_host || 'Automatic'}"
 
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :developer if Rails.env.development?
@@ -25,8 +27,9 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            ENV.fetch("GOOGLE_CLIENT_ID", "dummy_google_id"),
            ENV.fetch("GOOGLE_CLIENT_SECRET", "dummy_google_secret"),
            scope: "email, profile"
-  provider :kakao,
-           ENV.fetch("KAKAO_CLIENT_ID", "f959f8ada6c21d791ef5be7f4257e19e"),
-           ENV.fetch("KAKAO_CLIENT_SECRET", "xINFPROGnkZ9OoUX5UNUrkZcAFNzP7me"),
-           callback_path: "/auth/kakao/callback"
+  # 카카오 로그인 설정 (환경 변수가 우선하며, 없을 경우 제공된 기본값을 사용합니다)
+  kakao_id = ENV.fetch("KAKAO_CLIENT_ID", "f959f8ada6c21d791ef5be7f4257e19e")
+  kakao_secret = ENV.fetch("KAKAO_CLIENT_SECRET", "W9EtJ9jd2zFJU0PKCJhnbUhRUDNHTq5s")
+
+  provider :kakao, kakao_id, kakao_secret, callback_path: "/auth/kakao/callback"
 end
