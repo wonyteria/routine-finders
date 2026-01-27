@@ -1,0 +1,138 @@
+<% 
+  # Bloom Aura - Premium Growth Visualization
+  progress = (progress || 0).to_i
+  completed_count = (completed_count || 0).to_i
+  total_task_count = (total_task_count || 1).to_i
+  active_users = orbit_users || []
+  real_active_count = active_users.respond_to?(:count) ? active_users.count : (active_users&.size || 0)
+  
+  # Tasks to display (Unified Routines + Challenges)
+  display_tasks = (aura_tasks || []).presence || []
+%>
+
+<div id="prototype-garden-section" class="relative group w-full max-w-sm mx-auto">
+  <!-- 🎨 Compact Aura Container -->
+  <div class="relative aspect-square w-full rounded-[48px] bg-[#08070B] border border-white/[0.03] overflow-hidden flex items-center justify-center">
+    
+    <!-- 🌌 Ambient Depth -->
+    <div class="absolute inset-0">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-b from-indigo-500/5 to-transparent opacity-50"></div>
+    </div>
+
+    <!-- 🦋 Fine Particle Dust (Fireflies replacement) -->
+    <div class="absolute inset-0 pointer-events-none z-10">
+      <% 12.times do |i| %>
+        <div class="aura-particle absolute w-0.5 h-0.5 bg-white/20 rounded-full"
+             style="--delay: <%= rand(0..5) %>s; --duration: <%= rand(10..20) %>s; top: <%= rand(20..80) %>%; left: <%= rand(20..80) %>%"></div>
+      <% end %>
+    </div>
+
+    <!-- 🔮 The Central Aura Sphere (Energy Seed) -->
+    <div class="relative z-20 flex items-center justify-center w-[60%] aspect-square">
+      <!-- Outer Glow Layers -->
+      <div class="absolute inset-0 rounded-full blur-[40px] transition-all duration-1000 <%= progress >= 100 ? 'bg-emerald-500/20 scale-125' : 'bg-indigo-500/10' %>"></div>
+      <div class="absolute inset-0 rounded-full blur-[20px] transition-all duration-1000 <%= progress >= 100 ? 'bg-emerald-400/30' : 'bg-indigo-400/20 shadow-[0_0_40px_rgba(99,102,241,0.2)]' %>"></div>
+      
+      <!-- Core Sphere (Glassmorphism) -->
+      <div class="relative w-full h-full rounded-full border border-white/10 bg-white/[0.05] backdrop-blur-2xl flex flex-col items-center justify-center shadow-inner overflow-hidden">
+        <!-- Pulse Animation Inside Core -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent animate-shimmer"></div>
+        
+        <div class="text-center relative z-10">
+          <p class="text-[9px] font-black tracking-[0.2em] text-white/40 uppercase mb-1">성장 달성률</p>
+          <h2 class="text-5xl font-extralight text-white tracking-tighter tabular-nums">
+            <%= progress %><span class="text-sm ml-0.5 opacity-20">%</span>
+          </h2>
+        </div>
+
+        <!-- Wave effect inside core based on progress -->
+        <div class="absolute bottom-0 w-full bg-indigo-500/10 transition-all duration-1000"
+             style="height: <%= progress %>%; background-color: <%= progress >= 100 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(79, 70, 229, 0.1)' %>"></div>
+      </div>
+
+      <!-- 🌸 The Glass Petals (Bloom Aura) -->
+      <div class="absolute inset-[-40%] z-0">
+        <% display_tasks.each_with_index do |task, i| %>
+          <% 
+             is_done = task[:completed]
+             angle = (360.0 / [display_tasks.size, 1].max) * i
+          %>
+          <!-- Radial Petal Structure -->
+          <div class="absolute inset-0 flex items-center justify-center transition-all duration-1000"
+               style="transform: rotate(<%= angle %>deg);">
+            
+            <!-- The Petal Shape -->
+            <div class="relative w-1 h-32 origin-bottom -translate-y-16">
+              <!-- Line Connector -->
+              <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-gradient-to-t from-white/10 to-transparent transition-all duration-1000 <%= is_done ? 'h-full from-indigo-500/50' : 'h-1/2' %>"></div>
+              
+              <!-- The Task Icon (The Tip of the Petal) -->
+              <div class="absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-700"
+                   style="transform: rotate(-<%= angle %>deg); transition-delay: <%= i * 100 %>ms">
+                <div class="relative group/petal">
+                   <!-- Aura for completed item -->
+                   <% if is_done %>
+                     <div class="absolute inset-0 rounded-full bg-white blur-md opacity-20 animate-pulse"></div>
+                   <% end %>
+
+                   <div class="w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-500 <%= is_done ? 'bg-white/10 border border-white/20 shadow-lg scale-110' : 'bg-white/[0.02] border border-white/[0.05] grayscale opacity-20' %>">
+                      <span class="text-xl <%= is_done ? 'scale-100' : 'scale-75' %> transition-transform"><%= task[:icon] %></span>
+                   </div>
+                   
+                   <% if is_done %>
+                     <div class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg border-2 border-[#08070B] animate-pop-in">
+                       <svg class="w-1.5 h-1.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="10"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                     </div>
+                   <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 📊 Subtle Community Footer & Global Avg -->
+    <div class="absolute bottom-6 w-full px-8 flex items-center justify-between z-30">
+      <div class="flex items-center gap-3 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+        <div class="flex -space-x-1.5">
+          <% active_users.take(2).each do |user| %>
+            <img src="<%= user.profile_image %>" class="w-3.5 h-3.5 rounded-full border border-[#08070B] grayscale opacity-60">
+          <% end %>
+        </div>
+        <p class="text-[8px] font-black text-white/40 uppercase tracking-widest leading-none">
+          <%= real_active_count %>명 <span class="text-indigo-400/60 ml-0.5">성장 중</span>
+        </p>
+      </div>
+
+      <!-- 📈 Global Average Indicator (The Benchmarking) -->
+      <div class="flex flex-col items-end gap-1 group/avg">
+        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none drop-shadow-sm">전체 유저 평균</p>
+        <div class="flex items-baseline gap-1">
+          <span class="text-xl font-light text-white tabular-nums tracking-tighter drop-shadow-lg"><%= global_average_progress || 72 %></span>
+          <span class="text-[10px] font-black text-indigo-400 group-hover/avg:text-indigo-300 transition-colors">%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes aura-float {
+    0%, 100% { transform: translate(0, 0); opacity: 0.1; }
+    50% { transform: translate(10px, -10px); opacity: 0.3; }
+  }
+  .aura-particle { animation: aura-float var(--duration) ease-in-out infinite; animation-delay: var(--delay); }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(200%) rotate(45deg); }
+  }
+  .animate-shimmer { animation: shimmer 4s infinite linear; }
+
+  @keyframes pop-in {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+  .animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+</style>

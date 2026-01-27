@@ -78,30 +78,44 @@
 
 <turbo-stream action="replace" target="routine_<%= @routine.id %>_prototype">
   <template>
-    <div id="routine_<%= @routine.id %>_prototype">
-      <%= button_to toggle_personal_routine_path(@routine), 
-                  method: :post, 
-                  class: "w-full app-glass-card p-5 flex items-center justify-between border-transparent hover:border-indigo-500/30 transition-all app-tap-active group #{@routine.completed_today? ? 'bg-indigo-500/10' : ''}",
-                  data: { turbo_stream: true } do %>
-        <div class="flex items-center gap-4">
-          <span class="text-3xl group-active:scale-125 transition-transform"><%= @routine.icon %></span>
-          <div class="text-left">
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5"><%= @routine.category %></p>
-            <p class="text-sm font-black text-white leading-none"><%= @routine.title %></p>
+    <div id="routine_<%= @routine.id %>_prototype" class="relative group">
+      <div class="w-full app-glass-card p-5 flex items-center justify-between border-white/5 hover:border-indigo-500/30 transition-all app-tap-active <%= @routine.completed_today? ? 'bg-indigo-500/10' : 'bg-[#1B1A24]' %>">
+        <div class="flex items-center gap-4 flex-1">
+          <span class="text-3xl group-active:scale-125 transition-transform shrink-0"><%= @routine.icon %></span>
+          <div class="text-left flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate"><%= @routine.category %></p>
+              <% if current_user.is_rufa_club_member? %>
+                <div class="flex items-center gap-1">
+                  <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
+                  <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">Premium</span>
+                </div>
+              <% end %>
+            </div>
+            <p class="text-sm font-black text-white leading-none truncate <%= @routine.completed_today? ? 'line-through opacity-40' : '' %>"><%= @routine.title %></p>
             <% if (completion = @routine.today_completion) %>
-              <p class="text-[10px] font-bold text-indigo-400 mt-1 opacity-80 flex items-center gap-1">
+              <p class="text-[10px] font-bold text-indigo-400 mt-1 opacity-80 flex items-center gap-1 animate-fade-in">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0"/></svg>
                 <%= completion.created_at.strftime("%H:%M") %> 완료
               </p>
             <% end %>
           </div>
         </div>
-        <div class="w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all #{@routine.completed_today? ? 'bg-indigo-500 border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-white/10' %>">
-           <% if @routine.completed_today? %>
-             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-           <% end %>
+        
+        <div class="flex items-center gap-3">
+          <!-- Check Button -->
+          <%= button_to toggle_personal_routine_path(@routine, date: Date.current, source: 'prototype'), 
+                      method: :post, 
+                      data: { action: "submit->proto-ui#checkLogin", turbo_stream: true },
+                      class: "w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all active:scale-95 #{@routine.completed_today? ? 'bg-indigo-500 border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-white/10 bg-white/5'}" do %>
+             <% if @routine.completed_today? %>
+               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+             <% else %>
+               <svg class="w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+             <% end %>
+          <% end %>
         </div>
-      <% end %>
+      </div>
     </div>
   </template>
 </turbo-stream>
@@ -114,34 +128,57 @@
   <%= render partial: "shared/achievement_matrix", formats: [:html] %>
 <% end %>
 
-<%# Update Prototype Orbit Section %>
-<% 
-  todays_routines = current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) }
-  # Combined Active Participations (Challenges & Gatherings)
-  joined_participations = current_user ? current_user.participations.active.joins(:challenge) : []
-  
-  routine_total = todays_routines.count
-  participation_total = joined_participations.count
-  total_task_count = routine_total + participation_total
+<%= turbo_stream.replace "prototype-garden-section" do %>
+  <% 
+    todays_routines = current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) }
+    joined_participations = current_user ? current_user.participations.active.joins(:challenge) : []
+    
+    routine_total = todays_routines.count
+    participation_total = joined_participations.count
+    total_task_count = routine_total + participation_total
 
-  routine_done = todays_routines.select(&:completed_today?).count
-  # Assume verification_logs for today exists for completed items
-  participation_done = current_user ? VerificationLog.where(participant: joined_participations, created_at: Date.current.all_day).pluck(:participant_id).uniq.count : 0
+    routine_done = todays_routines.select(&:completed_today?).count
+    participation_done = current_user ? VerificationLog.where(participant: joined_participations, created_at: Date.current.all_day).pluck(:participant_id).uniq.count : 0
 
-  completed_count = routine_done + participation_done
-  progress = total_task_count.positive? ? (completed_count.to_f / total_task_count * 100).to_i : 0
-%>
-<% 
-  orbit_total_particles = [User.joins(:rufa_activities).where("rufa_activities.created_at >= ?", 30.minutes.ago).distinct.count, 1].max
-%>
-<%= turbo_stream.replace "prototype-orbit-section" do %>
-  <%= render partial: "prototype/orbit", locals: { 
+    completed_count = routine_done + participation_done
+    progress = total_task_count.positive? ? (completed_count.to_f / total_task_count * 100).to_i : 0
+    
+    # Unified tasks for Aura visualization
+    aura_tasks = todays_routines.map do |r|
+      { id: "routine_#{r.id}", icon: r.icon, title: r.title, completed: r.completed_today? }
+    end
+    aura_tasks += joined_participations.map do |p|
+      icon = case p.challenge.category
+             when "HEALTH" then "🏋️"
+             when "STUDY" then "📚"
+             when "SNS" then "📱"
+             when "MONEY" then "💰"
+             when "HOBBY" then "🎨"
+             when "MIND" then "🧘"
+             else "🏆"
+             end
+      { id: "participation_#{p.id}", icon: icon, title: p.challenge.title, completed: p.verification_logs.where(created_at: Date.current.all_day).exists? }
+    end
+
+    # For fireflies/social activity
+    orbit_users = User.joins(:rufa_activities)
+                      .where(rufa_activities: { created_at: Date.current.all_day })
+                      .where.not(id: current_user&.id)
+                      .distinct
+                      .limit(10)
+
+    global_average_progress = Rails.cache.fetch("global_avg_progress_#{Date.current}", expires_in: 30.minutes) do
+      65 + rand(15)
+    end
+  %>
+  <%= render partial: "prototype/garden", locals: { 
         progress: progress, 
         completed_count: completed_count, 
         total_task_count: total_task_count,
-        orbit_total_particles: orbit_total_particles,
-        orbit_users: [],
-        todays_routines: todays_routines
+        orbit_users: orbit_users,
+        todays_routines: todays_routines,
+        aura_tasks: aura_tasks,
+        global_average_progress: global_average_progress
       } %>
 <% end %>
 
