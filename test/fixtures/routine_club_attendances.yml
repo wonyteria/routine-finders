@@ -1,15 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  routine_club_id: 1
-  routine_club_member_id: 1
+  routine_club: one
+  routine_club_member: one
   attendance_date: 2026-01-02
   status: 0
   cheers_count: 0
 
 two:
-  routine_club_id: 2
-  routine_club_member_id: 2
+  routine_club: two
+  routine_club_member: two
   attendance_date: 2026-01-02
   status: 0
   cheers_count: 0

@@ -1,8 +1,8 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  routine_club_id: 1
-  user_id: 1
+  routine_club: one
+  user: host
   report_type: 0
   start_date: 2025-12-26
   end_date: 2026-01-02
@@ -14,8 +14,8 @@ one:
   received_cheers_count: 3
 
 two:
-  routine_club_id: 2
-  user_id: 2
+  routine_club: two
+  user: participant
   report_type: 1
   start_date: 2025-12-03
   end_date: 2026-01-02

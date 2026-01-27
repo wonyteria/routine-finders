@@ -16,8 +16,8 @@ class PrototypeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get my" do
+  test "should redirect my to login when not authenticated" do
     get prototype_my_url
-    assert_response :success
+    assert_redirected_to prototype_login_path
   end
 end

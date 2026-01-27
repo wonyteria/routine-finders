@@ -74,19 +74,18 @@ class PrototypeController < ApplicationController
   end
 
   def explore
-    @featured_club = RoutineClub.active_clubs.order(created_at: :desc).first
+    @featured_club = RoutineClub.active_clubs.includes(:host).order(created_at: :desc).first
     @tab_type = params[:type] || "all"
     @sort_type = params[:sort] || "recent"
 
-    # 1. Closing Soon (Recruitment ends within 3 days)
-    @closing_soon = Challenge.where("recruitment_end_date >= ? AND recruitment_end_date <= ?", Date.current, Date.current + 3.days)
+    # 1. Closing Soon (Recruitment ends within 3 days) - with eager loading
+    @closing_soon = Challenge.includes(:host, :participants)
+                            .where("recruitment_end_date >= ? AND recruitment_end_date <= ?", Date.current, Date.current + 3.days)
                             .order(:recruitment_end_date).limit(5)
 
-    # 2. Base Queries
-    # 2. Base Queries (In a real app, we'd use a categorization flag)
-    # For now, let's keep the mode separation but acknowledge they can overlap in UI
-    challenges_query = Challenge.where("end_date >= ?", Date.current)
-    gatherings_query = Challenge.where("end_date >= ?", Date.current).where.not(meeting_type: nil) # Heuristic for gatherings
+    # 2. Base Queries with eager loading
+    challenges_query = Challenge.includes(:host, :participants).where("end_date >= ?", Date.current)
+    gatherings_query = Challenge.includes(:host, :participants).where("end_date >= ?", Date.current).where.not(meeting_type: nil)
 
     # 3. Apply Sorting
     order_clause = case @sort_type
