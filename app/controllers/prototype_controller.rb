@@ -17,6 +17,12 @@ class PrototypeController < ApplicationController
     @my_membership = current_user&.routine_club_members&.find_by(routine_club: @official_club)
     @is_club_member = @permission.is_premium_member?
 
+    # Check for newly approved members who haven't seen the welcome popup
+    if @my_membership && @my_membership.payment_status_confirmed? && !@my_membership.welcomed?
+      @show_club_welcome_modal = true
+      @routine_club = @official_club
+    end
+
     # 2. Routine & Task Progress (Real data)
     @todays_routines = current_user ? current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
     @joined_participations = current_user ? current_user.participations.active.joins(:challenge) : Participant.none

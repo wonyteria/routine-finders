@@ -38,6 +38,10 @@ class RoutineClub < ApplicationRecord
     ((end_date.year * 12 + end_date.month) - (start_date.year * 12 + start_date.month))
   end
 
+  def duration_in_days
+    (end_date - start_date).to_i + 1
+  end
+
   def thumbnail_image
     if thumbnail.attached?
       Rails.application.routes.url_helpers.rails_blob_url(thumbnail, only_path: true)

@@ -18,9 +18,10 @@ class RoutineClubsController < ApplicationController
     return redirect_to root_path, alert: "현재 운영 중인 루파 클럽이 없습니다." unless @routine_club
 
     # Determine current member (viewer)
-    @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
+    @my_membership = current_user&.routine_club_members&.find_by(routine_club: @routine_club)
+    @is_member = @my_membership&.payment_status_confirmed?
+    @is_pending = @my_membership&.payment_status_pending?
     @is_host = current_user && @routine_club.host == current_user
-    @my_membership = current_user&.routine_club_members&.find_by(routine_club: @routine_club, status: :active)
 
     if params[:source] == "prototype"
       render "prototype/club_guide", layout: "prototype"

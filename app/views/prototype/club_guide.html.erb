@@ -242,11 +242,22 @@
   </section>
 
   <!-- Bottom Action -->
-  <section class="px-6">
+  <section class="px-6 space-y-4">
     <% if @is_member %>
-      <%= link_to prototype_home_path, class: "block w-full py-6 bg-white text-black rounded-[28px] font-black text-lg text-center shadow-xl active:scale-95 transition-all" do %>
+      <%= link_to prototype_home_path(tab: 'club'), class: "block w-full py-6 bg-white text-black rounded-[28px] font-black text-lg text-center shadow-xl active:scale-95 transition-all" do %>
         나의 클럽 대시보드 가기
       <% end %>
+    <% elsif @is_pending %>
+      <div class="block w-full py-6 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 rounded-[28px] font-black text-lg text-center flex flex-col items-center gap-1 group">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+          클럽 가입 확인 중
+        </div>
+        <p class="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">Awaiting Host Verification</p>
+      </div>
+      <p class="text-[11px] font-bold text-slate-500 text-center leading-relaxed px-4">
+        호스트가 입금을 확인한 후 1~2일 내에 승인됩니다.<br/>승인이 완료되면 전용 라운지와 혜택이 활성화됩니다.
+      </p>
     <% else %>
       <%= link_to prototype_club_join_path, class: "block w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-700 text-white rounded-[28px] font-black text-lg text-center shadow-2xl shadow-indigo-600/30 active:scale-95 transition-all" do %>
         멤버십 신청하러 가기
