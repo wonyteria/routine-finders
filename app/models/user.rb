@@ -256,8 +256,12 @@ class User < ApplicationRecord
 
   # Rufa Club Standards
   def is_rufa_club_member?
+    # Admins are treated as honorary members
     return true if admin?
-    routine_club_members.where(status: [ :active, :warned ], payment_status: :confirmed)
+
+    # Everyone else must have a confirmed payment and active status
+    routine_club_members.where(status: [ :active, :warned ])
+                       .where(payment_status: :confirmed)
                        .where("membership_start_date <= ? AND membership_end_date >= ?", Date.current, Date.current)
                        .exists?
   end
@@ -279,6 +283,10 @@ class User < ApplicationRecord
                        .where("membership_start_date > ?", Date.current)
                        .order(membership_start_date: :asc)
                        .first
+  end
+
+  def is_rufa_pending?
+    routine_club_members.where(payment_status: :pending).exists?
   end
 
   # ① 루틴 작성률 (해당 월 동안 루틴을 기록한 날이 전체의 70% 이상)
@@ -333,7 +341,7 @@ class User < ApplicationRecord
   # 누적 통계 (All-time)
   def total_routine_completions
     # 루파 클럽 가입 이후 총 루틴 완료 횟수
-    membership = routine_club_members.active.first
+    membership = routine_club_members.confirmed.active.first
     return 0 unless membership
 
     join_date = membership.joined_at.to_date
@@ -344,7 +352,7 @@ class User < ApplicationRecord
 
   def rufa_member_days
     # 루파 클럽 멤버로 활동한 일수
-    membership = routine_club_members.active.first
+    membership = routine_club_members.confirmed.active.first
     return 0 unless membership && membership.joined_at
 
     (Date.current - membership.joined_at.to_date).to_i + 1
@@ -455,7 +463,7 @@ class User < ApplicationRecord
 
     # 5. 루파 클럽 활동
     if is_rufa_club_member?
-      score += routine_club_members.where(status: :active).count * ACTIVITY_POINTS[:club_membership]
+      score += routine_club_members.where(status: :active, payment_status: :confirmed).count * ACTIVITY_POINTS[:club_membership]
     end
 
     score

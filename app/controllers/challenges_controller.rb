@@ -1,6 +1,7 @@
 class ChallengesController < ApplicationController
   before_action :set_challenge, only: [ :show, :join, :leave ]
   before_action :require_login, only: [ :new, :create, :join, :leave ]
+  before_action :require_can_create_challenge, only: [ :new, :create ]
   skip_before_action :require_login, only: [ :index, :show ]
 
   def index

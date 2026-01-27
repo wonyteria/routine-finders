@@ -69,7 +69,34 @@ class ApplicationController < ActionController::Base
 
   def require_rufa_club_member
     unless current_user&.is_rufa_club_member?
+      flash[:is_rufa_pending] = true if current_user&.is_rufa_pending?
       redirect_to guide_routine_clubs_path, alert: "루파 클럽 리포트는 멤버 전용 혜택입니다. 루파 클럽에 합류하고 리포트를 받아보세요!"
+    end
+  end
+
+  def require_can_create_challenge
+    permission = PermissionService.new(current_user)
+    unless permission.can_create_challenge?
+      if current_user&.is_rufa_pending?
+        flash[:is_rufa_pending] = true
+        msg = "클럽 멤버십 승인 대기 중입니다. 승인 완료 후 개설이 가능합니다."
+      else
+        msg = "챌린지 개설 권한이 없습니다. (루파 클럽 멤버 또는 레벨 10 이상 가능)"
+      end
+      redirect_to (params[:source] == "prototype" ? prototype_explore_path : challenges_path), alert: msg
+    end
+  end
+
+  def require_can_create_gathering
+    permission = PermissionService.new(current_user)
+    unless permission.can_create_gathering?
+      if current_user&.is_rufa_pending?
+        flash[:is_rufa_pending] = true
+        msg = "클럽 멤버십 승인 대기 중입니다. 승인 완료 후 개설이 가능합니다."
+      else
+        msg = "모임 개설 권한이 없습니다. (루파 클럽 멤버 또는 레벨 5 이상 가능)"
+      end
+      redirect_to (params[:source] == "prototype" ? prototype_explore_path : challenges_path), alert: msg
     end
   end
 

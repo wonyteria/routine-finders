@@ -29,7 +29,7 @@ class RoutineClubsController < ApplicationController
   end
 
   def show
-    @is_member = current_user && (@routine_club.members.exists?(user: current_user) || current_user.admin?)
+    @is_member = current_user && (@routine_club.members.confirmed.exists?(user: current_user) || current_user.admin?)
     @is_host = current_user && (@routine_club.host_id == current_user.id || current_user.super_admin?)
 
     # Redirect members to their club dashboard (Only for Official Club)
@@ -241,7 +241,7 @@ class RoutineClubsController < ApplicationController
     end
   end
   def use_pass
-    return redirect_to @routine_club, alert: "멤버만 사용할 수 있습니다." unless @my_membership
+    return redirect_to @routine_club, alert: "멤버십 승인 후 사용할 수 있습니다." unless @my_membership&.payment_status_confirmed?
 
     # Determine target date
     target_date = params[:date] ? Date.parse(params[:date]) : Date.current

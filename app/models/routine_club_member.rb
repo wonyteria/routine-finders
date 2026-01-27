@@ -158,11 +158,13 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def remaining_relax_passes
+    return 0 unless payment_status_confirmed?
     ensure_monthly_refill!
     3 - (used_relax_passes_count || 0)
   end
 
   def remaining_save_passes
+    return 0 unless payment_status_confirmed?
     ensure_monthly_refill!
     3 - (used_save_passes_count || 0)
   end

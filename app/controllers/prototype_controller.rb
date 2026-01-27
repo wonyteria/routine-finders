@@ -5,6 +5,8 @@ class PrototypeController < ApplicationController
   before_action :set_shared_data
   before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports ]
   before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :broadcast ]
+  before_action :require_can_create_challenge, only: [ :challenge_builder ]
+  before_action :require_can_create_gathering, only: [ :gathering_builder ]
 
   def login
     @hide_nav = true
@@ -14,7 +16,7 @@ class PrototypeController < ApplicationController
     # 1. Permission & Membership
     @permission = PermissionService.new(current_user)
     @official_club = RoutineClub.official.first
-    @my_membership = current_user&.routine_club_members&.find_by(routine_club: @official_club)
+    @my_membership = current_user&.routine_club_members&.confirmed&.find_by(routine_club: @official_club)
     @is_club_member = @permission.is_premium_member?
 
     # Check for newly approved members who haven't seen the welcome popup
@@ -81,7 +83,7 @@ class PrototypeController < ApplicationController
     # 5. Specialized Content (Ranking & Goals) - Use minimal calculation
     @rufa_rankings = Rails.cache.fetch("home_rankings_stable", expires_in: 1.hour) do
       User.joins(:routine_club_members)
-          .where(routine_club_members: { status: :active })
+          .where(routine_club_members: { status: :active, payment_status: :confirmed })
           .limit(10)
           .map { |u| { user: u, score: u.rufa_club_score } }
           .sort_by { |r| -r[:score] } rescue []
@@ -138,7 +140,7 @@ class PrototypeController < ApplicationController
     # We include users who have recent activities or are club members
     active_activity_user_ids = RufaActivity.where("created_at >= ?", 7.days.ago).pluck(:user_id)
     # Include both active club members AND admins in the club badge logic
-    club_member_user_ids = User.joins(:routine_club_members).where(routine_club_members: { status: :active }).pluck(:id)
+    club_member_user_ids = User.joins(:routine_club_members).where(routine_club_members: { status: :active, payment_status: :confirmed }).pluck(:id)
     admin_user_ids = User.admin.pluck(:id)
     all_club_ids = (club_member_user_ids + admin_user_ids).uniq
 
@@ -402,13 +404,20 @@ class PrototypeController < ApplicationController
     @club_temperature = 98.6 # High energy
 
     @club_announcements = @current_club&.announcements&.order(created_at: :desc)&.limit(2) || []
-
-    @is_club_member = current_user&.routine_club_members&.active&.exists?
+    @is_club_member = current_user&.is_rufa_club_member?
+    unless @is_club_member
+      flash[:is_rufa_pending] = true if current_user&.is_rufa_pending?
+      redirect_to guide_routine_clubs_path(source: "prototype"), alert: "라운지 입장은 루파 클럽 멤버 전용 혜택입니다." and return
+    end
   end
 
   def lecture_intro
     @hide_nav = true
-    @is_club_member = current_user&.routine_club_members&.active&.exists?
+    @is_club_member = current_user&.is_rufa_club_member?
+    unless @is_club_member
+      flash[:is_rufa_pending] = true if current_user&.is_rufa_pending?
+      redirect_to guide_routine_clubs_path(source: "prototype"), alert: "강의 시청은 루파 클럽 멤버 전용 혜택입니다." and return
+    end
     @lecture = {
       title: "성공하는 리더들의 '회복 탄력성' 강화 전략",
       instructor: "이수진 (MINDSET Lab 대표)",
