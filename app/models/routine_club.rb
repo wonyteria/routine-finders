@@ -78,13 +78,13 @@ class RoutineClub < ApplicationRecord
     self.class.recruitment_open?(date)
   end
 
-  # 고정 분기 요금 계산 (하루 100원 기준, 해당 분기 전체 일수 계산)
+  # 고정 분기 요금 계산 (하루 300원 기준, 해당 분기 전체 일수 계산)
   def self.calculate_quarterly_fee(date = Date.current)
     start_of_q = date.beginning_of_quarter
     end_of_q = date.end_of_quarter
     days_in_q = (end_of_q - start_of_q).to_i + 1
 
-    days_in_q * 100
+    days_in_q * 300
   end
 
   def calculate_quarterly_fee(date = Date.current)
