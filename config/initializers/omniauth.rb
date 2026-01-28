@@ -10,13 +10,16 @@ OmniAuth.config.on_failure = Proc.new do |env|
   error_details = exception ? "#{exception.class}: #{exception.message}" : "No exception details"
   Rails.logger.error "OmniAuth Failure! strategy=#{strategy}, error_type=#{message_key}, details=#{error_details}"
 
-  # InvalidAuthenticityToken인 경우 세션 관련 문제일 가능성이 높으므로 경고 메시지에 추가 정보를 포함합니다.
-  redirect_msg = message_key
-  if message_key.to_s == "ActionController::InvalidAuthenticityToken"
+  # 에러 메시지가 nil이거나 누락된 경우를 대비한 안전 장치
+  redirect_msg = message_key.presence || "unknown_error"
+  if message_key.to_s.include?("InvalidAuthenticityToken")
     redirect_msg = "session_expired_or_csrf_error"
   end
 
-  [ 302, { "Location" => "/?auth_error=#{redirect_msg}&strategy=#{strategy}", "Content-Type" => "text/html" }, [] ]
+  new_path = "/?auth_error=#{redirect_msg}&strategy=#{strategy}"
+
+  # Rack 응답 형식을 더 엄격히 준수(body 최소 1개 요소 포함)하여 'bytesize' nil 에러를 방지합니다.
+  [ 302, { "Location" => new_path, "Content-Type" => "text/html" }, [ "Redirecting..." ] ]
 end
 
 # Ensure full_host is set correctly in production
