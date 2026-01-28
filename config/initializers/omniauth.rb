@@ -23,7 +23,7 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            ENV.fetch("GOOGLE_CLIENT_SECRET", "dummy_google_secret"),
            scope: "email, profile"
 
-  kakao_id = ENV.fetch("KAKAO_CLIENT_ID", "f959f8ada6c21d791ef5be7f4257e19e")
-  kakao_secret = ENV.fetch("KAKAO_CLIENT_SECRET", "W9EtJ9jd2zFJU0PKCJhnbUhRUDNHTq5s")
+  kakao_id = ENV["KAKAO_CLIENT_ID"]
+  kakao_secret = ENV["KAKAO_CLIENT_SECRET"]
   provider :kakao, kakao_id, kakao_secret
 end
