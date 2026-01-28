@@ -5,13 +5,23 @@ OmniAuth.config.silence_get_warning = true
 OmniAuth.config.on_failure = Proc.new do |env|
   message_key = env["omniauth.error.type"]
   strategy = env["omniauth.strategy"]&.name
-  Rails.logger.error "OmniAuth Failure: strategy=#{strategy}, error_type=#{message_key}"
+  exception = env["omniauth.error"]
 
-  [ 302, { "Location" => "/?auth_error=#{message_key}&strategy=#{strategy}", "Content-Type" => "text/html" }, [] ]
+  error_details = exception ? "#{exception.class}: #{exception.message}" : "No exception details"
+  Rails.logger.error "OmniAuth Failure! strategy=#{strategy}, error_type=#{message_key}, details=#{error_details}"
+
+  # InvalidAuthenticityToken인 경우 세션 관련 문제일 가능성이 높으므로 경고 메시지에 추가 정보를 포함합니다.
+  redirect_msg = message_key
+  if message_key.to_s == "ActionController::InvalidAuthenticityToken"
+    redirect_msg = "session_expired_or_csrf_error"
+  end
+
+  [ 302, { "Location" => "/?auth_error=#{redirect_msg}&strategy=#{strategy}", "Content-Type" => "text/html" }, [] ]
 end
 
-# Ensure full_host is set to HTTPS in production
-if Rails.env.production? || ENV['RAILS_ENV'] == 'production'
+# Ensure full_host is set correctly in production
+if Rails.env.production? || ENV["RAILS_ENV"] == "production"
+  # SSL 인증서가 www 도메인에만 적용되므로 www를 포함한 절대 경로를 사용합니다.
   OmniAuth.config.full_host = "https://www.routinefinders.life"
 end
 

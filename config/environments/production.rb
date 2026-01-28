@@ -30,13 +30,17 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # 프록시 서버(Kamal/Thruster) 뒤에서 Origin 헤더 불일치로 인한 CSRF 에러를 방지합니다.
+  config.action_controller.forgery_protection_origin_check = false
+
   # Skip http-to-https redirect for health check endpoints.
   # SSL 인증서가 www 도메인에만 적용되므로 www로 강제 리다이렉트합니다.
   config.ssl_options = {
     redirect: {
       host: "www.routinefinders.life",
       exclude: ->(request) { [ "/up" ].include?(request.path) }
-    }
+    },
+    hsts: { subdomains: true }
   }
 
   # Log to STDOUT with the current request id as a default log tag.
