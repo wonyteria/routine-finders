@@ -14,25 +14,23 @@
   <!-- Winner Rewards -->
   <% if reward_policy_data.any? %>
     <div class="space-y-6">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"/></svg>
-        </div>
-        <div>
-          <h2 class="text-2xl font-black text-slate-900">🏆 우승 혜택</h2>
-        </div>
+      <div class="flex items-center gap-3">
+        <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+          <span class="w-1 h-3 bg-amber-400 rounded-full"></span>
+          우승 혜택
+        </h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <% reward_policy_data.each do |reward| %>
-          <div class="p-6 bg-amber-50 rounded-3xl border border-amber-100 flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl shadow-sm">
+          <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-sm">
               <% rank = reward["rank"].to_s %>
               <%= rank.include?("1") ? "🥇" : (rank.include?("2") ? "🥈" : (rank.include?("3") ? "🥉" : "🎁")) %>
             </div>
             <div>
-              <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest"><%= rank %></p>
-              <p class="text-base font-black text-slate-900"><%= reward['benefit'] || reward['reward'] || reward['prize'] || reward['description'] %></p>
+              <p class="text-[9px] font-bold text-amber-600 uppercase tracking-widest"><%= rank %></p>
+              <p class="text-sm font-bold text-white"><%= reward['benefit'] || reward['reward'] || reward['prize'] || reward['description'] %></p>
             </div>
           </div>
         <% end %>
@@ -43,30 +41,28 @@
   <!-- Refund & Benefit Criteria -->
   <% unless challenge.cost_type_free? %>
     <div class="space-y-6">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div>
-          <h2 class="text-2xl font-black text-slate-900"><%= challenge.cost_type_deposit? ? '환급 및 성취 기준' : '참여 혜택 안내' %></h2>
-        </div>
+      <div class="flex items-center gap-3">
+        <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+          <span class="w-1 h-3 bg-emerald-400 rounded-full"></span>
+          <%= challenge.cost_type_deposit? ? '환급 및 성취 기준' : '참여 혜택 안내' %>
+        </h2>
       </div>
 
       <% if challenge.cost_type_deposit? && challenge.full_refund_threshold.present? %>
-        <div class="p-8 bg-emerald-50 rounded-[40px] border border-emerald-100 flex items-center justify-between shadow-sm">
+        <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center justify-between">
           <div class="space-y-1">
-            <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">전액 환급 기준</p>
-            <p class="text-2xl font-black text-slate-900 tracking-tight">달성률 <%= (challenge.full_refund_threshold * 100).to_i %>% 이상</p>
-            <p class="text-xs font-bold text-slate-500 mt-2">최대 <%= challenge.failure_tolerance %>회 실패까지는 100% 환급해드려요!</p>
+            <p class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">전액 환급 기준</p>
+            <p class="text-lg font-bold text-white tracking-tight">달성률 <%= (challenge.full_refund_threshold * 100).to_i %>% 이상</p>
+            <p class="text-[11px] font-medium text-slate-400 mt-2">최대 <%= challenge.failure_tolerance %>회 실패까지는 100% 환급!</p>
           </div>
-          <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-sm text-3xl">💰</div>
+          <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5 shadow-sm text-2xl">💰</div>
         </div>
       <% else %>
-        <div class="p-8 bg-indigo-50 rounded-[40px] border border-indigo-100 flex items-center gap-4 shadow-sm">
-          <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm text-2xl">✨</div>
+        <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center gap-4">
+          <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5 shadow-sm text-2xl">✨</div>
           <div>
-            <p class="text-base font-black text-slate-900">참가비형 <%= challenge.offline? ? "모임" : "챌린지" %></p>
-            <p class="text-xs font-bold text-slate-500">지정된 우승 보상을 목표로 끝까지 함께 달려보세요!</p>
+            <p class="text-base font-bold text-white">참가비형 <%= challenge.offline? ? "모임" : "챌린지" %></p>
+            <p class="text-xs font-bold text-slate-400">지정된 우승 보상을 목표로 끝까지 함께 달려보세요!</p>
           </div>
         </div>
       <% end %>

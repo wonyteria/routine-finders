@@ -19,7 +19,7 @@
 
 <div class="relative -mx-4 min-h-screen bg-[#0C0B12]">
   <!-- 1. Immersive Hero (Fixed Aspect) -->
-  <section class="relative h-[380px] w-full overflow-hidden">
+  <section class="relative h-[260px] w-full overflow-hidden">
     <% if @challenge.thumbnail_image.attached? %>
       <%= image_tag @challenge.thumbnail_image, class: "w-full h-full object-cover" %>
     <% else %>
@@ -51,30 +51,27 @@
           <%= @challenge.offline? ? 'Gathering' : 'Challenge' %>
         </span>
       </div>
-      <h1 class="text-3xl font-black text-white leading-tight drop-shadow-xl"><%= @challenge.title %></h1>
+      <h1 class="text-xl font-bold text-white leading-tight drop-shadow-md"><%= @challenge.title %></h1>
     </div>
   </section>
 
   <!-- 2. Smart Category Switcher (Sticky Control) -->
   <div class="sticky top-0 z-40 bg-[#0C0B12]/80 backdrop-blur-3xl border-b border-white/5 py-4">
-    <div class="flex gap-2 overflow-x-auto no-scrollbar px-6">
+    <div class="flex justify-between items-center px-4 gap-1">
       <% 
         main_tabs = [
-          { id: "intro", label: "상세설명", icon: "✨" },
-          { id: "rules", label: "진행방법", icon: "⚖️" },
-          { id: "rewards", label: "리워드", icon: "🎁" },
-          { id: "community", label: "커뮤니티", icon: "💬" }
+          { id: "intro", label: "상세설명" },
+          { id: "rules", label: "진행방법" },
+          { id: "rewards", label: "리워드" },
+          { id: "community", label: "커뮤니티" }
         ]
       %>
       <% main_tabs.each do |t| %>
         <%= link_to challenge_path(@challenge, tab: t[:id], source: 'prototype'), 
-                    class: "shrink-0 px-4 py-2.5 rounded-full font-black text-[11px] whitespace-nowrap transition-all flex items-center gap-1.5 border #{@tab == t[:id] ? 'bg-white text-[#0C0B12] border-white shadow-lg' : 'text-slate-500 border-white/10 bg-white/[0.02]'}" do %>
-          <span class="text-xs"><%= t[:icon] %></span>
+                    class: "flex-1 px-1 py-3 rounded-2xl font-bold text-sm whitespace-nowrap transition-all flex items-center justify-center border #{@tab == t[:id] ? 'bg-white text-[#0C0B12] border-white shadow-lg' : 'text-slate-400 border-white/5 bg-white/[0.01]'}" do %>
           <%= t[:label] %>
         <% end %>
       <% end %>
-      <!-- Spacing element to prevent the last item from hitting the edge -->
-      <div class="shrink-0 w-6"></div>
     </div>
   </div>
 
@@ -82,9 +79,9 @@
   <section class="px-6 py-8 pb-44 detail-content-env">
     <% case @tab %>
     <% when "intro" %>
-      <div class="space-y-10 animate-fade-in">
+      <div class="space-y-6 animate-fade-in">
         <!-- Host Preview Card -->
-        <div class="app-glass-card p-6 border-white/10 bg-white/[0.02] flex items-center gap-4">
+        <div class="app-glass-card p-5 border-white/5 bg-white/[0.01] flex items-center gap-4">
           <div class="relative">
             <img src="<%= @challenge.host&.profile_image || asset_path('rf_symbol_v9.png') %>" class="w-14 h-14 rounded-2xl border-2 border-indigo-500/30 object-cover bg-white/5">
             <div class="absolute -right-1 -bottom-1 w-5 h-5 bg-indigo-500 rounded-full border-2 border-[#0C0B12] flex items-center justify-center">
@@ -109,9 +106,9 @@
         </div>
         <%= render "challenges/tabs/rules", challenge: @challenge %>
         <% if @challenge.offline? && @challenge.meeting_info %>
-          <div class="space-y-4">
-             <h3 class="text-xl font-black text-white px-2">장소 정보</h3>
-             <div class="w-full h-48 bg-slate-800 rounded-3xl flex items-center justify-center text-slate-500 font-bold border border-white/5">
+        <div class="space-y-4">
+             <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">장소 정보</h3>
+             <div class="w-full h-40 bg-slate-800 rounded-3xl flex items-center justify-center text-slate-500 font-medium border border-white/5">
                 지도 데이터를 로딩 중...
              </div>
              <p class="text-xs font-bold text-white px-2"><%= @challenge.meeting_info.address %></p>
@@ -124,14 +121,14 @@
         <%= render "challenges/tabs/rewards", challenge: @challenge %>
       </div>
 
-    <% when "community" %>
-      <div class="space-y-12 animate-fade-in">
+     <% when "community" %>
+      <div class="space-y-10 animate-fade-in">
          <div class="space-y-4">
-            <h3 class="text-xl font-black text-white px-2">참여 멤버</h3>
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">참여 멤버</h3>
             <%= render "challenges/tabs/participants", challenge: @challenge, participants: @participants %>
          </div>
          <div class="space-y-4">
-            <h3 class="text-xl font-black text-white px-2">참여 후기 <span class="text-sm font-bold text-indigo-400 ml-1"><%= @reviews.count %></span></h3>
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">참여 후기 <span class="text-xs text-indigo-400 ml-1"><%= @reviews.count %></span></h3>
             <%= render "challenges/tabs/reviews", challenge: @challenge, reviews: @reviews, can_write_review: @can_write_review %>
          </div>
       </div>
@@ -139,32 +136,32 @@
   </section>
 
   <!-- 4. Fixed Final Action Bar -->
-  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-sm z-[500]">
-    <div class="app-glass-card p-4 !rounded-[32px] border-white/10 bg-[#16151D]/95 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] flex items-center gap-4">
+  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[500]">
+    <div class="app-glass-card p-3 !rounded-[28px] border-white/5 bg-[#16151D]/98 backdrop-blur-3xl shadow-2xl flex items-center gap-4">
       <div class="flex-1 pl-4">
-        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 leading-none">Total Fee</p>
+        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 leading-none">Total Fee</p>
         <div class="flex items-baseline gap-1">
-          <span class="text-xl font-black text-white"><%= @challenge.cost_type_free? ? '0' : number_with_delimiter(@challenge.total_payment_amount) %></span>
-          <span class="text-[10px] font-bold text-slate-500">원</span>
+          <span class="text-base font-bold text-white"><%= @challenge.cost_type_free? ? '0' : number_with_delimiter(@challenge.total_payment_amount) %></span>
+          <span class="text-[9px] font-bold text-slate-500">원</span>
         </div>
       </div>
       
       <% if @is_host %>
-         <%= link_to hosted_challenge_path(@challenge, source: params[:source]), class: "px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all" do %>
+         <%= link_to hosted_challenge_path(@challenge, source: params[:source]), class: "px-8 py-3.5 app-fab-gradient rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all" do %>
            관리하기
          <% end %>
       <% elsif @is_joined %>
-         <%= link_to challenge_path(@challenge, tab: 'records', source: 'prototype'), class: "px-10 py-4 bg-emerald-600 rounded-full text-sm font-black text-white active:scale-95 transition-all" do %>
+         <%= link_to challenge_path(@challenge, tab: 'records', source: 'prototype'), class: "px-8 py-3.5 bg-emerald-600 rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all" do %>
            대시보드
          <% end %>
       <% else %>
         <% if logged_in? %>
-          <button data-action="click->modal#open" class="px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all cursor-pointer">
+          <button data-action="click->modal#open" class="px-8 py-3.5 app-fab-gradient rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all cursor-pointer">
             지금 참여
           </button>
         <% else %>
           <%= link_to prototype_login_path, 
-                      class: "px-10 py-4 app-fab-gradient rounded-full text-sm font-black text-white active:scale-95 transition-all text-center cursor-pointer flex items-center justify-center" do %>
+                      class: "px-8 py-3.5 app-fab-gradient rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all text-center cursor-pointer flex items-center justify-center" do %>
             지금 참여
           <% end %>
         <% end %>

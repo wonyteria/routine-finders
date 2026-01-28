@@ -1,31 +1,29 @@
   <% if challenge.offline? && challenge.meeting_info %>
     <!-- Offline Meeting Info (Prominent) -->
-    <div class="bg-orange-50 rounded-[40px] border border-orange-100 p-8 lg:p-10 space-y-8">
+    <div class="bg-white/[0.03] rounded-[32px] border border-white/5 p-6 lg:p-8 space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-black text-orange-900 flex items-center gap-3">
-          <div class="w-10 h-10 bg-orange-200 rounded-2xl flex items-center justify-center text-orange-600">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
-          </div>
+        <h2 class="text-xs font-bold text-orange-600/80 uppercase tracking-[0.2em] flex items-center gap-2">
+          <span class="w-1 h-3 bg-orange-400 rounded-full"></span>
           오프라인 모임 정보
         </h2>
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="space-y-2">
-          <p class="text-[11px] font-black text-orange-600/60 uppercase tracking-widest">장소 및 주소</p>
-          <p class="text-xl font-black text-orange-900"><%= challenge.meeting_info.place_name %></p>
-          <p class="text-sm font-medium text-orange-800/70"><%= challenge.meeting_info.address %></p>
+        <div class="space-y-1">
+          <p class="text-[9px] font-bold text-orange-600/40 uppercase tracking-widest">장소 및 주소</p>
+          <p class="text-base font-bold text-orange-900"><%= challenge.meeting_info.place_name %></p>
+          <p class="text-xs font-medium text-orange-800/60"><%= challenge.meeting_info.address %></p>
         </div>
-        <div class="space-y-2 border-l border-orange-200/50 pl-8">
-          <p class="text-[11px] font-black text-orange-600/60 uppercase tracking-widest">정기 모임 시간</p>
-          <p class="text-xl font-black text-orange-900"><%= challenge.meeting_info.meeting_time %></p>
-          <p class="text-sm font-medium text-orange-800/70">최대 참여 인원: <%= challenge.max_participants || challenge.meeting_info.max_attendees %>명</p>
+        <div class="space-y-1 border-l border-orange-200/50 pl-6">
+          <p class="text-[9px] font-bold text-orange-600/40 uppercase tracking-widest">정기 모임 시간</p>
+          <p class="text-base font-bold text-orange-900"><%= challenge.meeting_info.meeting_time %></p>
+          <p class="text-xs font-medium text-orange-800/60">최대 정원: <%= challenge.max_participants || challenge.meeting_info.max_attendees %>명</p>
         </div>
       </div>
 
       <% if challenge.meeting_info.description.present? %>
-        <div class="p-6 bg-white/50 rounded-3xl border border-white/50">
-          <p class="text-sm font-medium text-orange-800 leading-relaxed italic">
+        <div class="p-5 bg-white/[0.05] rounded-2xl border border-white/5">
+          <p class="text-sm font-medium text-slate-400 leading-relaxed italic">
             "<%= challenge.meeting_info.description %>"
           </p>
         </div>
@@ -35,18 +33,16 @@
 
   <!-- Summary (One-line intro) -->
   <% if challenge.summary.present? %>
-    <div class="p-6 bg-indigo-50 rounded-3xl border border-indigo-100">
-      <p class="text-lg font-bold text-indigo-900 leading-relaxed"><%= challenge.summary %></p>
+    <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5">
+      <p class="text-sm font-bold text-slate-300 leading-relaxed italic">"<%= challenge.summary %>"</p>
     </div>
   <% end %>
 
   <!-- Main Description -->
   <% if challenge.description.present? %>
     <div class="space-y-4">
-      <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
-        <div class="w-10 h-10 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+        <span class="w-1 h-3 bg-indigo-400 rounded-full"></span>
         <%= challenge.offline? ? "모임 상세 소개" : "챌린지 상세 소개" %>
       </h2>
       
@@ -59,15 +55,13 @@
   <!-- Preparation Items / Notice -->
   <% if challenge.preparation_items.present? %>
     <div class="space-y-4">
-      <h2 class="text-2xl font-black text-slate-900 flex items-center gap-3">
-        <div class="w-10 h-10 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-        </div>
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+        <span class="w-1 h-3 bg-amber-400 rounded-full"></span>
         준비물 및 공지사항
       </h2>
       
-      <div class="p-6 bg-amber-50 rounded-3xl border border-amber-100">
-        <p class="text-sm font-medium text-amber-900 leading-relaxed whitespace-pre-wrap"><%= challenge.preparation_items %></p>
+      <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5">
+        <p class="text-base font-bold text-slate-300 leading-relaxed whitespace-pre-wrap"><%= challenge.preparation_items %></p>
       </div>
     </div>
   <% end %>
