@@ -1,26 +1,11 @@
 OmniAuth.config.allowed_request_methods = [ :post ]
 OmniAuth.config.silence_get_warning = true
 
-# Handle OmniAuth failure by redirecting to root with an alert and message for debugging
-OmniAuth.config.on_failure = Proc.new do |env|
-  message_key = env["omniauth.error.type"]
-  strategy = env["omniauth.strategy"]&.name
-  exception = env["omniauth.error"]
-
-  error_details = exception ? "#{exception.class}: #{exception.message}" : "No exception details"
-  Rails.logger.error "OmniAuth Failure! strategy=#{strategy}, error_type=#{message_key}, details=#{error_details}"
-
-  # 에러 메시지가 nil이거나 누락된 경우를 대비한 안전 장치
-  redirect_msg = message_key.presence || "unknown_error"
-  if message_key.to_s.include?("InvalidAuthenticityToken")
-    redirect_msg = "session_expired_or_csrf_error"
-  end
-
-  new_path = "/?auth_error=#{redirect_msg}&strategy=#{strategy}"
-
-  # Rack 응답 형식을 더 엄격히 준수(body 최소 1개 요소 포함)하여 'bytesize' nil 에러를 방지합니다.
-  [ 302, { "Location" => new_path, "Content-Type" => "text/html" }, [ "Redirecting..." ] ]
-end
+# Handle OmniAuth failure using the default failure endpoint (redirects to /auth/failure)
+# This is safer than building a manual Rack response.
+OmniAuth.config.on_failure = Proc.new { |env|
+  OmniAuth::FailureEndpoint.new(env).redirect_to_failure
+}
 
 # Ensure full_host is set correctly in production
 if Rails.env.production? || ENV["RAILS_ENV"] == "production"
@@ -44,5 +29,5 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   kakao_id = ENV.fetch("KAKAO_CLIENT_ID", "f959f8ada6c21d791ef5be7f4257e19e")
   kakao_secret = ENV.fetch("KAKAO_CLIENT_SECRET", "W9EtJ9jd2zFJU0PKCJhnbUhRUDNHTq5s")
 
-  provider :kakao, kakao_id, kakao_secret, callback_path: "/auth/kakao/callback"
+  provider :kakao, kakao_id, kakao_secret
 end

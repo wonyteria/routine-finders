@@ -50,7 +50,7 @@ Rails.application.routes.draw do
 
   # OmniAuth Callbacks
   match "/auth/:provider/callback", to: "sessions#omniauth", via: [ :get, :post ]
-  get "/auth/failure", to: redirect("/")
+  get "/auth/failure", to: "sessions#omniauth_failure"
 
   # Developer login (development only)
   post "/dev_login", to: "sessions#dev_login" if Rails.env.development?

@@ -40,7 +40,8 @@ Rails.application.configure do
       host: "www.routinefinders.life",
       exclude: ->(request) { [ "/up" ].include?(request.path) }
     },
-    hsts: { subdomains: true }
+    hsts: { subdomains: true },
+    secure_cookies: true # HTTPS 환경에서만 쿠키를 전송하도록 강제
   }
 
   # Log to STDOUT with the current request id as a default log tag.

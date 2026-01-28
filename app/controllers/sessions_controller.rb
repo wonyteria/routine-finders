@@ -66,6 +66,21 @@ class SessionsController < ApplicationController
     redirect_to root_path, alert: "로그인 과정에서 시스템 오류가 발생했습니다: #{e.message}. 잠시 후 다시 시도해 주세요."
   end
 
+  def omniauth_failure
+    message = params[:message]
+    strategy = params[:strategy]
+
+    error_type = if message.to_s.include?("InvalidAuthenticityToken") || message.to_s.include?("csrf_detected")
+      "session_expired_or_csrf_error"
+    else
+      message
+    end
+
+    Rails.logger.error "OmniAuth Failure Action: strategy=#{strategy}, message=#{message}"
+
+    redirect_to "/?auth_error=#{error_type}&strategy=#{strategy}"
+  end
+
   def create
     user = User.find_by(email: params[:email])
 
