@@ -5,7 +5,7 @@ service: routine_finders
 image: wonyteria/routine-finders
 
 # How long to wait for a container to become ready (default 30)
-deploy_timeout: 300
+deploy_timeout: 600
 
 # Deploy to these servers.
 servers:
