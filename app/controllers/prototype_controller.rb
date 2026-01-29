@@ -1,10 +1,11 @@
 class PrototypeController < ApplicationController
+  require "ostruct"
   include PrototypeErrorHandler
 
   layout "prototype"
   before_action :set_shared_data
   before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports ]
-  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :broadcast ]
+  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :broadcast, :update_user_role, :toggle_user_status, :approve_challenge, :purge_cache ]
   before_action :require_can_create_challenge, only: [ :challenge_builder ]
   before_action :require_can_create_gathering, only: [ :gathering_builder ]
 
@@ -504,7 +505,7 @@ class PrototypeController < ApplicationController
   end
 
   def admin_dashboard
-    # System Wide Stats
+    # 1. System-Wide Dashboard Stats (Overview)
     @total_users = User.count
     @premium_users = User.joins(:routine_club_members).where(routine_club_members: { status: :active }).distinct.count
     today = Date.current
@@ -513,24 +514,30 @@ class PrototypeController < ApplicationController
                            .joins("LEFT JOIN rufa_activities ON rufa_activities.user_id = users.id")
                            .where("personal_routine_completions.completed_on = ? OR rufa_activities.created_at >= ?", today, today.beginning_of_day)
                            .distinct.count
-
-    # Content Pulse
-    @total_challenges = Challenge.count
-    @total_routines = PersonalRoutine.count
-
-    # Organized Event Streams (Granular)
-    @stream_memberships = RoutineClubMember.joins(:user).includes(:user, :routine_club).order(created_at: :desc).limit(10)
-    @stream_joins = Participant.joins(:user, :challenge).includes(:user, :challenge).order(created_at: :desc).limit(10)
-    @stream_completions = PersonalRoutineCompletion.joins(personal_routine: :user).includes(personal_routine: :user).order(created_at: :desc).limit(10)
-    @stream_activities = RufaActivity.joins(:user).includes(:user).order(created_at: :desc).limit(10)
-
-    # Active Content Management (Routine vs Social/Meeting)
-    all_active = Challenge.active.includes(:host, :participants, :meeting_info).order(created_at: :desc)
-    @active_challenges = all_active.reject { |c| c.gathering? }.first(10)
-    @active_gatherings = all_active.select { |c| c.gathering? }.first(10)
-
-    # Financial/Activity Pulse
     @system_pulse = (@daily_active_users.to_f / @total_users * 100).round(1) rescue 0
+
+    # 2. User Management Data
+    @users_query = User.order(created_at: :desc)
+    if params[:user_search].present?
+      @users_query = @users_query.where("nickname LIKE ? OR email LIKE ?", "%#{params[:user_search]}%", "%#{params[:user_search]}%")
+    end
+    @users = @users_query.limit(50) # Limit for prototype performance
+
+    # 3. Content Management Data
+    @all_challenges = Challenge.includes(:host, :participants).order(created_at: :desc)
+    @pending_challenges = @all_challenges.where(status: :upcoming).limit(10)
+    @active_challenges = @all_challenges.active.reject(&:gathering?).first(10)
+    @active_gatherings = @all_challenges.active.select(&:gathering?).first(10)
+
+    # 4. Stream Data (for Logs tab)
+    @stream_memberships = RoutineClubMember.joins(:user).includes(:user, :routine_club).order(created_at: :desc).limit(15)
+    @stream_joins = Participant.joins(:user, :challenge).includes(:user, :challenge).order(created_at: :desc).limit(15)
+    @stream_completions = PersonalRoutineCompletion.joins(personal_routine: :user).includes(personal_routine: :user).order(created_at: :desc).limit(15)
+    @stream_activities = RufaActivity.joins(:user).includes(:user).order(created_at: :desc).limit(15)
+
+    # 5. Financial Overview (Concept)
+    @total_deposits = Challenge.where(cost_type: :deposit).sum(:amount)
+    @total_fees = Challenge.where(cost_type: :fee).sum(:amount)
   end
 
   def club_management
@@ -568,18 +575,47 @@ class PrototypeController < ApplicationController
   end
 
   def batch_reports
-    @official_club = RoutineClub.official.first
+    @official_club = RoutineClub.official.first || RoutineClub.first
     @report_type = params[:type] || "weekly"
 
-    # Get the most recent start_date for the given type
-    latest_date = RoutineClubReport.where(report_type: @report_type).maximum(:start_date)
-
-    if latest_date
-      @reports = RoutineClubReport.where(report_type: @report_type, start_date: latest_date)
-                                  .includes(:user)
-                                  .order("achievement_rate DESC")
+    # Calculate the target period (Previous Week: Mon-Sun, Previous Month: 1st-End)
+    if @report_type == "weekly"
+      # Monday of last week to Sunday of last week
+      @target_start = (Date.current - 1.week).beginning_of_week
+      @target_end = @target_start.end_of_week
     else
-      @reports = []
+      # 1st of last month to Last day of last month
+      @target_start = (Date.current - 1.month).beginning_of_month
+      @target_end = @target_start.end_of_month
+    end
+
+    # Try to find real reports in the calculated range
+    @reports = RoutineClubReport.where(
+      report_type: @report_type,
+      start_date: @target_start
+    ).includes(:user).order("achievement_rate DESC")
+
+    # Fallback: Populate with members' current data if no formal reports are archived
+    if @reports.empty?
+      @reports = @official_club.members.confirmed.includes(:user).limit(20).map do |m|
+        # Mocking individual routine rates for the prototype
+        routines = [
+          { name: "아침 기상", rate: rand(70..100) },
+          { name: "독서 30분", rate: rand(40..100) },
+          { name: "운동/산책", rate: rand(30..90) }
+        ].first(rand(2..3))
+
+        OpenStruct.new(
+          user: m.user,
+          achievement_rate: m.attendance_rate || rand(60..100),
+          log_rate: (m.attendance_rate || rand(50..95)) - rand(0..5),
+          identity_title: m.identity_title || "정진하는 멤버",
+          start_date: @target_start,
+          end_date: @target_end,
+          summary: "전체적으로 안정적인 루틴을 유지하고 있습니다.",
+          routines: routines
+        )
+      end.sort_by { |r| -r.achievement_rate }
     end
   end
 
@@ -598,6 +634,42 @@ class PrototypeController < ApplicationController
     end
 
     render json: { status: "success", message: "Broadcasting initiated for #{User.active.count} users." }
+  end
+
+  def update_user_role
+    user = User.find(params[:user_id])
+    new_role = params[:role]
+
+    if user.update(role: new_role)
+      render json: { status: "success", message: "#{user.nickname}님의 권한이 #{new_role}(으)로 변경되었습니다." }
+    else
+      render json: { status: "error", message: "권한 변경에 실패했습니다." }
+    end
+  end
+
+  def toggle_user_status
+    user = User.find(params[:user_id])
+    if user.deleted?
+      user.update(deleted_at: nil)
+      render json: { status: "success", message: "#{user.nickname}님의 계정이 활성화되었습니다.", active: true }
+    else
+      user.update(deleted_at: Time.current)
+      render json: { status: "success", message: "#{user.nickname}님의 계정이 비활성화되었습니다.", active: false }
+    end
+  end
+
+  def approve_challenge
+    challenge = Challenge.find(params[:challenge_id])
+    if challenge.update(status: :active)
+      render json: { status: "success", message: "'#{challenge.title}' 챌린지가 승인되었습니다." }
+    else
+      render json: { status: "error", message: "승인 처리에 실패했습니다." }
+    end
+  end
+
+  def purge_cache
+    Rails.cache.clear
+    render json: { status: "success", message: "시스템 캐시가 모두 초기화되었습니다." }
   end
 
   def update_profile

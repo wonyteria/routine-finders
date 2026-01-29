@@ -21,64 +21,65 @@
   </header>
 
   <!-- 2. Filters & Actions -->
-  <section class="px-6 flex flex-col gap-4">
+  <section class="px-6 flex flex-col gap-3">
     <div class="flex bg-white/5 p-1 rounded-2xl border border-white/10">
-      <%= link_to "주간 리포트", prototype_batch_reports_path(type: "weekly"), class: "flex-1 py-3 text-center text-xs font-black rounded-xl transition-all #{@report_type == 'weekly' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500'}" %>
-      <%= link_to "월간 리포트", prototype_batch_reports_path(type: "monthly"), class: "flex-1 py-3 text-center text-xs font-black rounded-xl transition-all #{@report_type == 'monthly' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-500'}" %>
+      <%= link_to "주간 보드", prototype_batch_reports_path(type: "weekly"), class: "flex-1 py-3 text-center text-xs font-black rounded-xl transition-all #{@report_type == 'weekly' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500'}" %>
+      <%= link_to "월간 보드", prototype_batch_reports_path(type: "monthly"), class: "flex-1 py-3 text-center text-xs font-black rounded-xl transition-all #{@report_type == 'monthly' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-500'}" %>
     </div>
     
-    <button data-action="batch-copy#copyAll" class="w-full py-4 bg-emerald-500 text-white rounded-[24px] font-black text-sm shadow-xl shadow-emerald-500/20 active:scale-95 transition-all flex items-center justify-center gap-3">
-      <span class="text-xl">📋</span>
-      <span>메신저 공유용 텍스트 전체 복사</span>
-    </button>
+    <div class="grid grid-cols-1 gap-2">
+      <button data-action="batch-copy#copySummary" class="w-full py-4 bg-indigo-600 text-white rounded-[24px] font-black text-sm shadow-xl shadow-indigo-600/20 active:scale-95 transition-all flex items-center justify-center gap-3">
+        <span class="text-xl">📊</span>
+        <span>단톡방용 요약 문구 복사</span>
+      </button>
+      <button data-action="batch-copy#copyAll" class="w-full py-3.5 bg-white/5 border border-white/10 text-slate-400 rounded-[20px] font-black text-[11px] uppercase tracking-widest active:scale-95 transition-all">
+        상세형 리포트 전체 복사
+      </button>
+    </div>
   </section>
 
   <!-- 3. Report Feed -->
   <section class="px-6 space-y-4">
     <div class="flex items-center justify-between px-1">
       <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">
-        <%= @report_type == 'weekly' ? '주간' : '월간' %> 성과 보드
+        <%= @report_type == 'weekly' ? 'WEEKLY' : 'MONTHLY' %> RANKING
       </h2>
       <% if @reports.any? %>
-        <span class="text-[10px] font-bold text-indigo-400"><%= @reports.first.start_date.strftime("%Y.%m.%d") %> 기준</span>
+        <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest"><%= @reports.first.start_date.strftime("%Y.%m.%d") %> 기준</span>
       <% end %>
     </div>
 
     <div class="space-y-3" id="reports-container">
       <% if @reports.any? %>
         <% @reports.each_with_index do |report, index| %>
-          <div class="app-glass-card p-5 border-white/5 bg-white/[0.02]">
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center gap-3">
-                <span class="text-xs font-black text-slate-600">#<%= index + 1 %></span>
-                <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-white font-black text-[10px]">
-                  <%= report.user.nickname[0].upcase %>
-                </div>
-                <h4 class="text-sm font-black text-white"><%= report.user.nickname %></h4>
-              </div>
-              <div class="text-right">
-                <span class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 text-[9px] font-black uppercase"><%= report.identity_title %></span>
-              </div>
+          <div class="app-glass-card p-5 border-white/5 bg-white/[0.02] flex items-center justify-between">
+            <div class="flex items-center gap-4">
+               <span class="text-xs font-black <%= index < 3 ? 'text-amber-500' : 'text-slate-600' %> w-4">#<%= index + 1 %></span>
+               <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-white font-black text-xs border border-white/5">
+                 <%= report.user.nickname[0].upcase %>
+               </div>
+               <div>
+                 <h4 class="text-sm font-black text-white"><%= report.user.nickname %></h4>
+                 <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= report.identity_title %></p>
+               </div>
             </div>
             
-            <div class="grid grid-cols-2 gap-4 text-center">
-              <div class="space-y-1">
-                <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Record</p>
-                <p class="text-lg font-black text-white"><%= report.log_rate.to_i %>%</p>
-              </div>
-              <div class="space-y-1">
-                <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Achievement</p>
-                <p class="text-lg font-black text-emerald-400"><%= report.achievement_rate.to_i %>%</p>
+            <div class="text-right">
+              <p class="text-lg font-black <%= report.achievement_rate >= 80 ? 'text-emerald-400' : (report.achievement_rate < 70 ? 'text-rose-500' : 'text-white') %> tabular-nums">
+                <%= report.achievement_rate.to_i %>%
+              </p>
+              <div class="w-12 h-1 bg-white/5 rounded-full mt-1 ml-auto overflow-hidden">
+                <div class="h-full <%= report.achievement_rate >= 80 ? 'bg-emerald-500' : (report.achievement_rate < 70 ? 'bg-rose-500' : 'bg-indigo-500') %>" style="width: <%= report.achievement_rate %>%"></div>
               </div>
             </div>
 
-            <!-- Hidden raw text for copy -->
+            <!-- Hidden raw text for copy (Routines kept here for copy functionality) -->
             <div class="hidden share-text" data-nickname="<%= report.user.nickname %>" 
                  data-identity="<%= report.identity_title %>"
                  data-log="<%= report.log_rate.to_i %>"
                  data-achieve="<%= report.achievement_rate.to_i %>"
                  data-summary="<%= report.summary %>"
-                 data-cheer="<%= report.cheering_message %>">
+                 data-routines='<%= report.respond_to?(:routines) ? report.routines.to_json : "[]" %>'>
             </div>
           </div>
         <% end %>
@@ -92,44 +93,70 @@
   
   <!-- Hidden data for header text -->
   <div id="share-header" class="hidden" 
-       data-title="[루파 클럽 <%= @report_type == 'weekly' ? '주간' : '월간' %> 성취 리포트]"
-       data-period="<%= @reports.any? ? "#{@reports.first.start_date.strftime('%Y.%m.%d')} ~ #{@reports.first.end_date.strftime('%Y.%m.%d')}" : '' %>">
+       data-title="[루파 클럽 <%= @report_type == 'weekly' ? '주간' : "#{@target_start.month}월" %> 성취 리포트]"
+       data-period="<%= @target_start.strftime('%Y.%m.%d') %> ~ <%= @target_end.strftime('%Y.%m.%d') %>">
   </div>
 </div>
 
 <script>
-  // Simple Stimulus-like helper since we might not have a dedicated compiler for new controllers in this view alone
   document.addEventListener('turbo:load', function() {
-    const copyBtn = document.querySelector('[data-action="batch-copy#copyAll"]');
-    if (!copyBtn) return;
+    const container = document.querySelector('[data-controller="batch-copy"]');
+    if (!container) return;
 
-    copyBtn.addEventListener('click', function() {
-      const header = document.getElementById('share-header');
+    const copyBtn = document.querySelector('[data-action="batch-copy#copyAll"]');
+    const summaryBtn = document.querySelector('[data-action="batch-copy#copySummary"]');
+    const header = document.getElementById('share-header');
+    
+    const showSuccess = (btn, originalContent) => {
+      btn.innerHTML = '<span>✅</span><span>복사 완료!</span>';
+      setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
+    };
+
+    // 요약형 복사 (User Requested Format)
+    summaryBtn.addEventListener('click', function() {
       const reports = document.querySelectorAll('.share-text');
+      const originalContent = summaryBtn.innerHTML;
+      
+      let text = "🔱 " + header.dataset.title + "\n";
+      text += "📅 " + header.dataset.period + "\n\n";
+      
+      reports.forEach((report, index) => {
+        const rate = parseInt(report.dataset.achieve);
+        const emoji = rate >= 90 ? "🔥" : (rate < 70 ? "⚠️" : "✨");
+        text += (index + 1) + ". " + report.dataset.nickname + ": " + rate + "% " + emoji + "\n";
+      });
+      
+      text += "\n------------------\n";
+      text += "💡 70% 미만 멤버는 분발해주세요!\n";
+      text += "정진하는 루파 클럽이 됩시다. 💪";
+
+      navigator.clipboard.writeText(text).then(() => showSuccess(summaryBtn, originalContent));
+    });
+
+    // 상세형 복사 (Updated to include individual routines)
+    copyBtn.addEventListener('click', function() {
+      const reports = document.querySelectorAll('.share-text');
+      const originalContent = copyBtn.innerHTML;
       
       let text = header.dataset.title + "\n";
       text += "(" + header.dataset.period + ")\n\n";
       
       reports.forEach((report, index) => {
-        text += (index + 1) + ". " + report.dataset.nickname + "님\n";
-        text += "- 타이틀: " + report.dataset.identity + "\n";
-        text += "- 기록률: " + report.dataset.log + "% / 달성률: " + report.dataset.achieve + "%\n";
+        text += (index + 1) + ". " + report.dataset.nickname + "님 [" + report.dataset.identity + "]\n";
+        text += "- 전체 달성률: " + report.dataset.achieve + "%\n";
+        
+        const routines = JSON.parse(report.dataset.routines || "[]");
+        if (routines.length > 0) {
+          text += "- 상세 항목: ";
+          text += routines.map(r => r.name + "(" + r.rate + "%)").join(", ") + "\n";
+        }
+        
         text += "  ( " + report.dataset.summary + " )\n\n";
       });
       
-      text += "✨ 이번 주도 정진하신 루파 멤버 여러분 고생 많으셨습니다!\n";
-      text += "루틴 파인더스는 여러분의 성장을 끝까지 응원합니다. 💪";
+      text += "루틴 파인더스는 여러분의 성장을 응원합니다. 💪";
 
-      navigator.clipboard.writeText(text).then(() => {
-        const originalText = copyBtn.innerHTML;
-        copyBtn.classList.replace('bg-emerald-500', 'bg-indigo-600');
-        copyBtn.innerHTML = '<span>✅</span><span>전체 복사 완료!</span>';
-        
-        setTimeout(() => {
-          copyBtn.classList.replace('bg-indigo-600', 'bg-emerald-500');
-          copyBtn.innerHTML = originalText;
-        }, 2000);
-      });
+      navigator.clipboard.writeText(text).then(() => showSuccess(copyBtn, originalContent));
     });
   });
 </script>

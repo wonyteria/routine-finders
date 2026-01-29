@@ -1,265 +1,214 @@
-<div class="space-y-12 py-10 pb-32" data-controller="admin-tools">
-  <!-- 1. Header -->
-  <header class="px-6 space-y-4">
-    <div class="flex items-center justify-between">
-      <%= link_to prototype_home_path, class: "w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-95 transition-all" do %>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-      <% end %>
-      <div class="px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20">
-        <span class="text-[9px] font-black text-rose-400 uppercase tracking-widest leading-none">System Terminal</span>
+<div class="min-h-screen bg-[#0F0F13] text-slate-200" 
+     data-controller="system-admin tabs"
+     data-tabs-active-class="bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+     data-tabs-inactive-class="text-slate-500 hover:text-slate-300">
+
+  <!-- 1. Top GNB -->
+  <header class="sticky top-0 z-50 bg-[#0F0F13]/80 backdrop-blur-xl border-b border-white/5 px-6 py-4">
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <%= link_to prototype_home_path, class: "w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 active:scale-95 transition-all" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+        <% end %>
+        <div>
+          <h1 class="text-lg font-black text-white leading-none">시스템 명령 센터</h1>
+          <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">System Administration v2.1</p>
+        </div>
       </div>
-      <div class="w-10"></div>
+
+      <div class="flex items-center gap-2">
+        <div class="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">운영 중</span>
+        </div>
+      </div>
     </div>
 
-    <div class="space-y-1">
-      <h1 class="text-3xl font-black text-white tracking-tight">서비스 관리 센터</h1>
-      <p class="text-xs font-bold text-slate-500">루틴 파인더스의 성장을 통합 관리합니다.</p>
-    </div>
+    <!-- Main Navigation Tabs -->
+    <nav class="flex gap-1 mt-6 p-1 bg-black/40 rounded-2xl border border-white/5">
+      <button data-action="tabs#change" data-tabs-target="tab" data-id="overview" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">개요</button>
+      <button data-action="tabs#change" data-tabs-target="tab" data-id="users" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">유저 관리</button>
+      <button data-action="tabs#change" data-tabs-target="tab" data-id="content" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">콘텐츠 관리</button>
+      <button data-action="tabs#change" data-tabs-target="tab" data-id="system" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">시스템 로그</button>
+    </nav>
   </header>
 
-  <!-- 2. System Pulse: Key Metrics -->
-  <section class="px-6">
-    <div class="grid grid-cols-2 gap-4">
-      <div class="app-glass-card p-6 border-white/5 space-y-3">
-        <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-        </div>
-        <div>
-          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Total Users</p>
-          <div class="flex items-baseline gap-1">
-            <span class="text-2xl font-black text-white"><%= number_with_delimiter(@total_users) %></span>
-            <span class="text-[9px] font-bold text-emerald-500">+<%= @daily_active_users %> Live</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="app-glass-card p-6 border-white/5 space-y-3">
-        <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-        </div>
-        <div>
-          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Premium Power</p>
-          <div class="flex items-baseline gap-1">
-            <span class="text-2xl font-black text-white"><%= @premium_users %></span>
-            <span class="text-[9px] font-bold text-indigo-400">Club members</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-span-2 app-glass-card p-6 border-white/5 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-2xl font-black">
-            ⚡
+  <main class="py-8 pb-32">
+    
+    <!-- SECTION 1: OVERVIEW -->
+    <div data-tabs-target="panel" data-id="overview" class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <section class="px-6 grid grid-cols-2 gap-4">
+        <div class="app-glass-card p-6 border-white/5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <span class="text-[10px] font-black text-emerald-500">+<%= rand(5..15) %>%</span>
           </div>
           <div>
-            <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Activity Pulse</p>
-            <h4 class="text-lg font-black text-white"><%= @system_pulse %>% Active Rate</h4>
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">전체 사용자</p>
+            <h3 class="text-3xl font-black text-white"><%= number_with_delimiter(@total_users) %></h3>
           </div>
         </div>
-        <div class="w-24 h-2 bg-white/5 rounded-full overflow-hidden">
-          <div class="h-full bg-emerald-500" style="width: <%= @system_pulse %>%"></div>
+
+        <div class="app-glass-card p-6 border-white/5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400">
+               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+          </div>
+          <div>
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">시스템 활성율</p>
+            <h3 class="text-3xl font-black text-white"><%= @system_pulse %>%</h3>
+          </div>
         </div>
+      </section>
+
+      <section class="px-6 space-y-4">
+        <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest pl-1">빠른 실행</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <button data-action="system-admin#broadcast" class="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex flex-col items-center gap-2 group active:scale-95 transition-all">
+            <span class="text-2xl group-hover:scale-110 transition-transform">🚨</span>
+            <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest text-center">전체 공지 발송</span>
+          </button>
+          <%= link_to "/prototype/admin/clubs", class: "p-5 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex flex-col items-center gap-2 group active:scale-95 transition-all text-center" do %>
+            <span class="text-2xl group-hover:scale-110 transition-transform">🔱</span>
+            <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">루파 클럽 관리</span>
+          <% end %>
+        </div>
+      </section>
+    </div>
+
+    <!-- SECTION 2: USERS -->
+    <div data-tabs-target="panel" data-id="users" class="hidden px-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div class="app-glass-card p-4 border-white/5">
+        <%= form_with url: prototype_admin_dashboard_path, method: :get, class: "flex gap-2", data: { turbo_frame: "users_table" } do |f| %>
+          <%= hidden_field_tag :tab, "users" %>
+          <div class="flex-1 relative">
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <%= f.text_field :user_search, 
+                             placeholder: "검색...", 
+                             class: "w-full pl-11 pr-4 py-3.5 bg-black/40 border border-white/5 rounded-2xl text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+          </div>
+          <button type="submit" class="px-6 rounded-2xl bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all">검색</button>
+        <% end %>
       </div>
-    </div>
-  </section>
 
-  <!-- 3. Organized Event Stream -->
-  <section class="px-6 space-y-6" 
-           data-controller="tabs"
-           data-tabs-active-class="bg-indigo-500 text-white"
-           data-tabs-inactive-class="text-slate-500">
-    <div class="flex items-center justify-between px-1">
-      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">시스템 이벤트 스트림</h2>
-      <div class="flex bg-white/5 p-1 rounded-xl">
-        <button data-action="tabs#change" data-tabs-target="tab" data-id="membership" class="px-2 py-1 rounded-lg text-[8px] font-black transition-all">MEMBERS</button>
-        <button data-action="tabs#change" data-tabs-target="tab" data-id="action" class="px-2 py-1 rounded-lg text-[8px] font-black transition-all">ACTIONS</button>
-        <button data-action="tabs#change" data-tabs-target="tab" data-id="routine" class="px-2 py-1 rounded-lg text-[8px] font-black transition-all">ROUTINE</button>
-      </div>
-    </div>
-
-    <!-- Membership Stream -->
-    <div data-tabs-target="panel" data-id="membership" class="space-y-3">
-      <% if @stream_memberships.any? %>
-        <% @stream_memberships.each do |membership| %>
-          <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-indigo-500/5">
-            <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-xs font-black">
-              <%= membership.user&.nickname&.[](0)&.upcase %>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-black text-white truncate"><%= membership.user&.nickname %></p>
-              <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= membership.routine_club&.title %></p>
-            </div>
-            <div class="text-right">
-              <span class="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase">Pending</span>
-              <p class="text-[8px] font-bold text-slate-600 mt-1"><%= time_ago_in_words(membership.created_at) %> 전</p>
-            </div>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="py-12 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
-          <p class="text-xs font-bold text-slate-600">최근 멤버십 신청이 없습니다.</p>
+      <turbo-frame id="users_table">
+        <div class="app-glass-card border-white/5 overflow-hidden">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="bg-white/[0.02] border-b border-white/5">
+                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">사용자</th>
+                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">권한</th>
+                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest text-right">관리</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+              <% @users.each do |user| %>
+                <tr class="hover:bg-white/[0.02] transition-colors group">
+                  <td class="px-4 py-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-white/10 overflow-hidden shrink-0">
+                        <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+                      </div>
+                      <div class="min-w-0">
+                        <p class="text-xs font-black text-white truncate"><%= user.nickname %></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-4">
+                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase text-indigo-400 bg-indigo-400/10"><%= user.role %></span>
+                  </td>
+                  <td class="px-4 py-4 text-right">
+                    <div class="flex justify-end gap-1">
+                      <button data-action="system-admin#promoteUser" 
+                              data-user-id="<%= user.id %>"
+                              data-nickname="<%= user.nickname %>"
+                              data-role="<%= user.role %>"
+                              class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l7-7 7 7M5 19l7-7 7 7"/></svg>
+                      </button>
+                      <button data-action="system-admin#deactivateUser" 
+                              data-user-id="<%= user.id %>"
+                              data-nickname="<%= user.nickname %>"
+                              class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center <%= user.deleted? ? 'text-emerald-500' : 'text-rose-500' %> hover:bg-white/10 transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
         </div>
-      <% end %>
+      </turbo-frame>
     </div>
 
-    <!-- Action Stream (Challenge Joins) -->
-    <div data-tabs-target="panel" data-id="action" class="hidden space-y-3">
-      <% if @stream_joins.any? %>
-        <% @stream_joins.each do |participation| %>
-          <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-emerald-500/5">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-black">
-              <%= participation.user&.nickname&.[](0)&.upcase %>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-black text-white truncate"><%= participation.user&.nickname %></p>
-              <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= participation.challenge&.title %></p>
-            </div>
-            <div class="text-right">
-               <span class="text-sm">🏃</span>
-               <p class="text-[8px] font-bold text-slate-600 mt-1"><%= time_ago_in_words(participation.created_at) %> 전</p>
-            </div>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="py-12 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
-          <p class="text-xs font-bold text-slate-600">최근 활동 참여가 없습니다.</p>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- Routine Stream -->
-    <div data-tabs-target="panel" data-id="routine" class="hidden space-y-3">
-      <% if @stream_completions.any? %>
-        <% @stream_completions.each do |completion| %>
-          <div class="app-glass-card p-4 flex items-center gap-4 animate-badge-pop bg-white/2">
-            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/40 text-xs font-black">
-              <%= completion.personal_routine&.user&.nickname&.[](0)&.upcase %>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-black text-white truncate"><%= completion.personal_routine&.user&.nickname %></p>
-              <p class="text-[9px] font-bold text-indigo-400 mt-0.5"><%= completion.personal_routine&.title %></p>
-            </div>
-            <div class="text-right">
-               <span class="text-emerald-500 text-xs font-black">DONE</span>
-               <p class="text-[8px] font-bold text-slate-600 mt-1"><%= time_ago_in_words(completion.created_at) %> 전</p>
-            </div>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="py-12 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
-          <p class="text-xs font-bold text-slate-600">오늘 완료된 루틴이 없습니다.</p>
-        </div>
-      <% end %>
-    </div>
-  </section>
-
-  <!-- 4. Content Management -->
-  <section class="px-6 space-y-6">
-    <div class="flex items-center justify-between px-1">
-      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">액티브 콘텐츠 관리</h2>
-      <button class="text-[10px] font-black text-indigo-400" data-action="admin-tools#comingSoon">모두 보기</button>
-    </div>
-
-    <div class="space-y-4">
-      <!-- Active Challenges -->
-      <div class="space-y-3">
-        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-2">Daily Challenges</p>
-        <% if @active_challenges.any? %>
-          <% @active_challenges.each do |challenge| %>
-            <div class="app-glass-card p-4 flex items-center justify-between border-white/5 hover:bg-white/[0.03] transition-colors">
-              <div class="flex items-center gap-4">
-                <div class="relative">
-                  <img src="<%= challenge.thumbnail %>" class="w-12 h-12 rounded-xl object-cover border border-white/10">
-                  <span class="absolute -top-1 -right-1 w-4 h-4 bg-indigo-600 rounded-full flex items-center justify-center text-[8px] font-black text-white border-2 border-[#1B1A24]">
-                    <%= challenge.online? ? "ON" : "OFF" %>
-                  </span>
-                </div>
+    <!-- SECTION 3: CONTENT -->
+    <div data-tabs-target="panel" data-id="content" class="hidden px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <section class="space-y-4">
+        <label class="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-1">승인 대기</label>
+        <div class="grid grid-cols-1 gap-3">
+          <% if @pending_challenges.any? %>
+            <% @pending_challenges.each do |c| %>
+              <div class="app-glass-card p-4 border-rose-500/10 bg-rose-500/[0.02] flex items-center justify-between">
                 <div>
-                  <h4 class="text-sm font-black text-white leading-tight"><%= challenge.title %></h4>
-                  <p class="text-[10px] font-bold text-slate-500 mt-1">Host: <%= challenge.host_name %> · <%= challenge.participants.count %>명 참여</p>
+                    <h4 class="text-sm font-black text-white"><%= c.title %></h4>
+                    <p class="text-[10px] font-bold text-slate-500 mt-0.5"><%= c.host_name %> · <%= time_ago_in_words(c.created_at) %> 전</p>
                 </div>
+                <button class="px-3 py-2 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase" 
+                        data-action="system-admin#approveChallenge"
+                        data-challenge-id="<%= c.id %>"
+                        data-title="<%= c.title %>">승인</button>
               </div>
-              <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors" data-action="admin-tools#comingSoon">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
-              </button>
+            <% end %>
+          <% else %>
+            <div class="p-10 text-center bg-white/[0.02] rounded-3xl border border-dashed border-white/5">
+              <p class="text-[11px] font-black text-slate-700 uppercase tracking-widest italic">대기 중인 콘텐츠가 없습니다.</p>
             </div>
           <% end %>
-        <% else %>
-          <div class="p-8 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
-            <p class="text-[11px] font-bold text-slate-600">현재 활성화된 챌린지가 없습니다.</p>
-          </div>
-        <% end %>
-      </div>
+        </div>
+      </section>
+    </div>
 
-      <!-- Active Gatherings -->
-      <div class="space-y-3 pt-2">
-        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-2">Social Gatherings (Online/Offline)</p>
-        <% if @active_gatherings.any? %>
-          <% @active_gatherings.each do |gathering| %>
-            <div class="app-glass-card p-4 flex items-center justify-between border-white/5 bg-amber-500/5">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center text-xl relative">
-                  <%= gathering.online? ? "💻" : "📍" %>
-                  <span class="absolute -top-1 -right-1 w-4 h-4 <%= gathering.online? ? 'bg-indigo-600' : 'bg-emerald-600' %> rounded-full flex items-center justify-center text-[7px] font-black text-white border-2 border-[#1B1A24]">
-                    <%= gathering.online? ? "ON" : "OFF" %>
-                  </span>
-                </div>
-                <div>
-                  <h4 class="text-sm font-black text-white leading-tight"><%= gathering.title %></h4>
-                  <p class="text-[10px] font-bold text-amber-500/60 mt-1">
-                    <%= gathering.online? ? "온라인" : gathering.meeting_info&.place_name %> · <%= gathering.start_date&.strftime("%m.%d") %>
-                  </p>
-                </div>
+    <!-- SECTION 4: SYSTEM -->
+    <div data-tabs-target="panel" data-id="system" class="hidden px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <section class="space-y-4">
+        <label class="text-[10px] font-black text-rose-500 uppercase tracking-widest pl-1">실시간 스트림</label>
+        <div class="app-glass-card border-rose-500/10 bg-black/40 p-3 space-y-2 font-mono max-h-96 overflow-y-auto custom-scrollbar">
+            <% combined_logs = (@stream_memberships + @stream_joins + @stream_completions + @stream_activities).sort_by(&:created_at).reverse %>
+            <% combined_logs.first(50).each do |log| %>
+              <div class="text-[9px] leading-relaxed">
+                <span class="text-slate-600">[<%= log.created_at.strftime("%H:%M:%S") %>]</span>
+                <span class="text-indigo-400 font-bold"><%= log.class.name %>:</span> 
+                <span class="text-slate-300"><%= log.respond_to?(:user) ? log.user.nickname : 'System' %></span>
               </div>
-              <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors" data-action="admin-tools#comingSoon">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
-              </button>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="p-8 text-center bg-white/2 rounded-3xl border border-dashed border-white/5">
-            <p class="text-[11px] font-bold text-slate-600">현재 활성화된 모임이 없습니다.</p>
+            <% end %>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <button data-action="system-admin#purgeCache" class="w-full p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all">
+          <div>
+            <p class="text-xs font-black text-rose-500">시스템 캐시 초기화</p>
+            <p class="text-[9px] font-bold text-slate-600 italic">서버의 모든 캐시 데이터를 삭제합니다.</p>
           </div>
-        <% end %>
-      </div>
+          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </section>
     </div>
-  </section>
+  </main>
 
-  <!-- 5. System Controls -->
-  <section class="px-6 space-y-6">
-    <div class="flex items-center justify-between px-1">
-      <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">고급 시스템 제어</h2>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3">
-      <button data-action="admin-tools#broadcast" class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group">
-        <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🚨</div>
-        <div>
-          <p class="text-[11px] font-black text-white">서버 긴급 공지</p>
-          <p class="text-[8px] font-bold text-rose-500/60 mt-1 uppercase">Broadcast</p>
-        </div>
-      </button>
-      <%= link_to "/prototype/admin/clubs", class: "app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group" do %>
-        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🔱</div>
-        <div>
-          <p class="text-[11px] font-black text-white">루파 클럽 관리</p>
-          <p class="text-[8px] font-bold text-indigo-500/60 mt-1 uppercase">Clubs & Admins</p>
-        </div>
-      <% end %>
-      <button data-action="admin-tools#comingSoon" class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group">
-        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
-        <div>
-          <p class="text-[11px] font-black text-white">콘텐츠 모더레이션</p>
-          <p class="text-[8px] font-bold text-slate-600 mt-1 uppercase">Moderation</p>
-        </div>
-      </button>
-       <button data-action="admin-tools#comingSoon" class="app-glass-card p-6 flex flex-col items-center gap-3 active:scale-95 transition-all text-center border-white/10 group">
-        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">⚙️</div>
-        <div>
-          <p class="text-[11px] font-black text-white">시스템 환경 설정</p>
-          <p class="text-[8px] font-bold text-slate-600 mt-1 uppercase">Settings</p>
-        </div>
-      </button>
-    </div>
-  </section>
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+    
+    @keyframes badge-pop {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-badge-pop { animation: badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+  </style>
 </div>
