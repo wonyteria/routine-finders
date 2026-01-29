@@ -178,6 +178,7 @@ class PrototypeController < ApplicationController
 
     # Show only today's activities for live stream
     @recent_activities = RufaActivity.joins(:user)
+                                     .includes(:claps)
                                      .where(users: { deleted_at: nil })
                                      .where(created_at: Date.current.all_day)
                                      .order(created_at: :desc)
@@ -776,7 +777,7 @@ class PrototypeController < ApplicationController
 
   def set_shared_data
     @official_club = RoutineClub.official.first
-    @new_badges = current_user ? current_user.user_badges.where(is_viewed: false).includes(:badge) : []
+    # @new_badges removed - should only be set in specific actions where badges are earned
   end
 
   def lounge_params
