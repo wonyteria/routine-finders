@@ -44,6 +44,33 @@ export default class extends Controller {
         }
     }
 
+    deleteUser(event) {
+        const userId = event.currentTarget.dataset.userId
+        const nickname = event.currentTarget.dataset.nickname
+
+        if (window.confirm(`${nickname}님과 모든 관련 데이터를 영구 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+            this.performDelete(`/prototype/admin/users/${userId}`, {}, true)
+        }
+    }
+
+    deleteChallenge(event) {
+        const challengeId = event.currentTarget.dataset.challengeId
+        const title = event.currentTarget.dataset.title
+
+        if (window.confirm(`'${title}' 챌린지를 영구 삭제하시겠습니까?`)) {
+            this.performDelete(`/prototype/admin/challenges/${challengeId}`, {}, true)
+        }
+    }
+
+    deleteClub(event) {
+        const clubId = event.currentTarget.dataset.clubId
+        const title = event.currentTarget.dataset.title
+
+        if (window.confirm(`'${title}' 클럽을 영구 삭제하시겠습니까?`)) {
+            this.performDelete(`/prototype/admin/clubs/${clubId}`, {}, true)
+        }
+    }
+
     purgeCache() {
         if (window.confirm("시스템 캐시를 전체 초기화하시겠습니까?")) {
             this.performPost('/prototype/admin/purge_cache', {})
@@ -51,10 +78,18 @@ export default class extends Controller {
     }
 
     async performPost(url, body, reload = false) {
+        this.performRequest(url, 'POST', body, reload)
+    }
+
+    async performDelete(url, body, reload = false) {
+        this.performRequest(url, 'DELETE', body, reload)
+    }
+
+    async performRequest(url, method, body, reload = false) {
         try {
             const token = document.querySelector('meta[name="csrf-token"]')?.content
             const response = await fetch(url, {
-                method: 'POST',
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-Token': token

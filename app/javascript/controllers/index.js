@@ -10,6 +10,9 @@ application.register("system-admin", SystemAdminController)
 import LoungeSettingsController from "controllers/lounge_settings_controller"
 application.register("lounge-settings", LoungeSettingsController)
 
+import ClubStaffController from "controllers/club_staff_controller"
+application.register("club-staff", ClubStaffController)
+
 import ApplicationFormController from "controllers/application_form_controller"
 application.register("application-form", ApplicationFormController)
 

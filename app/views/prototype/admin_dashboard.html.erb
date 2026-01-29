@@ -135,6 +135,12 @@
                               class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center <%= user.deleted? ? 'text-emerald-500' : 'text-rose-500' %> hover:bg-white/10 transition-all">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
                       </button>
+                      <button data-action="system-admin#deleteUser" 
+                              data-user-id="<%= user.id %>"
+                              data-nickname="<%= user.nickname %>"
+                              class="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -148,24 +154,86 @@
     <!-- SECTION 3: CONTENT -->
     <div data-tabs-target="panel" data-id="content" class="hidden px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <section class="space-y-4">
-        <label class="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-1">승인 대기</label>
+        <label class="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-1">승인 대기 콘텐츠</label>
         <div class="grid grid-cols-1 gap-3">
           <% if @pending_challenges.any? %>
             <% @pending_challenges.each do |c| %>
               <div class="app-glass-card p-4 border-rose-500/10 bg-rose-500/[0.02] flex items-center justify-between">
-                <div>
-                    <h4 class="text-sm font-black text-white"><%= c.title %></h4>
+                <div class="min-w-0 pr-4">
+                    <h4 class="text-sm font-black text-white truncate"><%= c.title %></h4>
                     <p class="text-[10px] font-bold text-slate-500 mt-0.5"><%= c.host_name %> · <%= time_ago_in_words(c.created_at) %> 전</p>
                 </div>
-                <button class="px-3 py-2 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase" 
-                        data-action="system-admin#approveChallenge"
-                        data-challenge-id="<%= c.id %>"
-                        data-title="<%= c.title %>">승인</button>
+                <div class="flex gap-2 shrink-0">
+                  <button class="px-3 py-2 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase" 
+                          data-action="system-admin#approveChallenge"
+                          data-challenge-id="<%= c.id %>"
+                          data-title="<%= c.title %>">승인</button>
+                  <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all" 
+                          data-action="system-admin#deleteChallenge"
+                          data-challenge-id="<%= c.id %>"
+                          data-title="<%= c.title %>">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </div>
               </div>
             <% end %>
           <% else %>
-            <div class="p-10 text-center bg-white/[0.02] rounded-3xl border border-dashed border-white/5">
-              <p class="text-[11px] font-black text-slate-700 uppercase tracking-widest italic">대기 중인 콘텐츠가 없습니다.</p>
+            <div class="p-8 text-center bg-white/[0.02] rounded-3xl border border-dashed border-white/5">
+              <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">대기 중인 콘텐츠가 없습니다.</p>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <label class="text-[10px] font-black text-indigo-400 uppercase tracking-widest pl-1">진행/종료 콘텐츠</label>
+        <div class="grid grid-cols-1 gap-3">
+          <% (@active_challenges + @all_other_challenges).first(20).each do |c| %>
+            <div class="app-glass-card p-4 border-white/5 flex items-center justify-between">
+              <div class="min-w-0 pr-4">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <h4 class="text-sm font-black text-white truncate"><%= c.title %></h4>
+                    <span class="px-1.5 py-0.5 rounded bg-white/5 text-[8px] font-black text-slate-500 uppercase"><%= c.status %></span>
+                  </div>
+                  <p class="text-[10px] font-bold text-slate-500"><%= c.host_name %> · <%= c.start_date&.strftime("%y.%m.%d") %> ~ <%= c.end_date&.strftime("%m.%d") %></p>
+              </div>
+              <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shrink-0" 
+                      data-action="system-admin#deleteChallenge"
+                      data-challenge-id="<%= c.id %>"
+                      data-title="<%= c.title %>">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <label class="text-[10px] font-black text-amber-500 uppercase tracking-widest pl-1">루틴 클럽 관리</label>
+        <div class="grid grid-cols-1 gap-3">
+          <% if @all_clubs.any? %>
+            <% @all_clubs.each do |club| %>
+              <div class="app-glass-card p-4 border-amber-500/10 bg-amber-500/[0.02] flex items-center justify-between">
+                <div class="min-w-0 pr-4">
+                    <div class="flex items-center gap-2 mb-0.5">
+                      <h4 class="text-sm font-black text-white truncate"><%= club.title %></h4>
+                      <% if club.is_official? %>
+                        <span class="px-1.5 py-0.5 rounded bg-amber-500 text-[8px] font-black text-white uppercase">OFFICIAL</span>
+                      <% end %>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-500"><%= club.host&.nickname %> · <%= club.members.count %>명 참여 중</p>
+                </div>
+                <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shrink-0" 
+                        data-action="system-admin#deleteClub"
+                        data-club-id="<%= club.id %>"
+                        data-title="<%= club.title %>">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="p-8 text-center bg-white/[0.02] rounded-3xl border border-dashed border-white/5">
+              <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">생성된 클럽이 없습니다.</p>
             </div>
           <% end %>
         </div>

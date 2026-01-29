@@ -28,6 +28,11 @@ Rails.application.routes.draw do
   post "prototype/admin/approve_challenge", to: "prototype#approve_challenge"
   post "prototype/admin/purge_cache", to: "prototype#purge_cache"
   patch "prototype/admin/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
+
+  # Deletion routes for prototype admin
+  delete "prototype/admin/users/:user_id", to: "prototype#destroy_user", as: :prototype_admin_destroy_user
+  delete "prototype/admin/challenges/:challenge_id", to: "prototype#destroy_challenge", as: :prototype_admin_destroy_challenge
+  delete "prototype/admin/clubs/:club_id", to: "prototype#destroy_club", as: :prototype_admin_destroy_club
   # Main Web Application Routes
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

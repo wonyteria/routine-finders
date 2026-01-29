@@ -525,9 +525,12 @@ class PrototypeController < ApplicationController
 
     # 3. Content Management Data
     @all_challenges = Challenge.includes(:host, :participants).order(created_at: :desc)
-    @pending_challenges = @all_challenges.where(status: :upcoming).limit(10)
-    @active_challenges = @all_challenges.active.reject(&:gathering?).first(10)
-    @active_gatherings = @all_challenges.active.select(&:gathering?).first(10)
+    @pending_challenges = Challenge.where(status: :upcoming).limit(20)
+    @active_challenges = Challenge.active.reject(&:gathering?).first(20)
+    @all_other_challenges = Challenge.where.not(status: :upcoming).where.not(id: @active_challenges.map(&:id)).limit(20)
+
+    # 5. Club Management Data (New)
+    @all_clubs = RoutineClub.all.order(created_at: :desc).limit(20)
 
     # 4. Stream Data (for Logs tab)
     @stream_memberships = RoutineClubMember.joins(:user).includes(:user, :routine_club).order(created_at: :desc).limit(15)
@@ -566,6 +569,7 @@ class PrototypeController < ApplicationController
     end
 
     @club_admins = User.where(role: :club_admin).order(created_at: :desc)
+    @potential_admins = User.where(role: :user).order(created_at: :desc).limit(20)
   end
 
   def member_reports
@@ -738,6 +742,33 @@ class PrototypeController < ApplicationController
       end
     else
       redirect_to prototype_admin_clubs_path, alert: "공식 클럽을 찾을 수 없습니다."
+    end
+  end
+
+  def destroy_user
+    user = User.find(params[:user_id])
+    if user.destroy
+      render json: { status: "success", message: "#{user.nickname}님이 영구 삭제되었습니다." }
+    else
+      render json: { status: "error", message: "삭제에 실패했습니다." }
+    end
+  end
+
+  def destroy_challenge
+    challenge = Challenge.find(params[:challenge_id])
+    if challenge.destroy
+      render json: { status: "success", message: "'#{challenge.title}' 챌린지가 삭제되었습니다." }
+    else
+      render json: { status: "error", message: "삭제에 실패했습니다." }
+    end
+  end
+
+  def destroy_club
+    club = RoutineClub.find(params[:club_id])
+    if club.destroy
+      render json: { status: "success", message: "'#{club.title}' 클럽이 삭제되었습니다." }
+    else
+      render json: { status: "error", message: "삭제에 실패했습니다." }
     end
   end
 
