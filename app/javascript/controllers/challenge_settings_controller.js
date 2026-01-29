@@ -1,10 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["form", "modal", "summaryContent", "announcementSection", "announcementCheckbox", "announcementTitle", "announcementContent"]
+    static targets = ["form", "modal", "summaryContent", "announcementSection", "announcementCheckbox", "announcementTitle", "announcementContent", "costType", "costInput", "participationFeeInput", "amountLabel", "participationFeeContainer"]
 
     connect() {
         this.initialValues = this.captureCurrentValues()
+        this.toggleCostInputs()
+
+        // Validate initial values for fields with step increments
+        this.formTarget.querySelectorAll('input[type="number"][step]').forEach(input => {
+            this.validateStep({ target: input })
+        })
+
         // Define field names for summary display
         this.fieldNames = {
             "challenge[title]": "챌린지 제목",
@@ -21,7 +28,8 @@ export default class extends Controller {
             "challenge[re_verification_allowed]": "재인증 허용 여부",
             "challenge[mission_requires_host_approval]": "호스트 승인제 여부",
             "challenge[cost_type]": "참가 방식",
-            "challenge[amount]": "참가 금액",
+            "challenge[amount]": "금액",
+            "challenge[participation_fee]": "추가 참가비",
             "challenge[failure_tolerance]": "최대 실패 허용",
             "challenge[penalty_per_failure]": "실패 차감액",
             "challenge[max_participants]": "최대 참여 인원",
@@ -113,6 +121,12 @@ export default class extends Controller {
                 newText = newText === "1" ? "허용" : "미허용"
             }
 
+            if (key === "challenge[cost_type]") {
+                const costs = { "free": "무료", "fee": "참가비", "deposit": "보증금" }
+                oldText = costs[oldText] || oldText
+                newText = costs[newText] || newText
+            }
+
             html += `
                 <li class="flex flex-col gap-1 p-3 bg-white rounded-xl border border-slate-100">
                     <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${label}</span>
@@ -139,6 +153,11 @@ export default class extends Controller {
             if (key === "challenge[re_verification_allowed]" || key === "challenge[mission_requires_host_approval]") {
                 oldText = oldText === "1" ? "허용" : "미허용"
                 newText = newText === "1" ? "허용" : "미허용"
+            }
+            if (key === "challenge[cost_type]") {
+                const costs = { "free": "무료", "fee": "참가비", "deposit": "보증금" }
+                oldText = costs[oldText] || oldText
+                newText = costs[newText] || newText
             }
             content += `- ${label}: ${oldText} -> ${newText}\n`
         })
@@ -182,5 +201,76 @@ export default class extends Controller {
             this.formTarget.appendChild(flagInput)
         }
         this.formTarget.submit()
+    }
+
+    toggleCostInputs() {
+        if (!this.hasCostTypeTarget) return
+
+        const costType = this.costTypeTarget.value
+        const isFree = costType === "free"
+        const isDeposit = costType === "deposit"
+        const isFee = costType === "fee"
+
+        // Update Amount Label
+        if (this.hasAmountLabelTarget) {
+            this.amountLabelTarget.innerText = isDeposit ? "보증금 (원)" : (isFee ? "참가비 (원)" : "보증금/참가비 (원)")
+        }
+
+        // Handle Base Cost Input
+        if (this.hasCostInputTarget) {
+            this.costInputTarget.disabled = isFree
+            if (isFree) {
+                this.costInputTarget.value = 0
+                this.costInputTarget.classList.add("opacity-20", "cursor-not-allowed")
+            } else {
+                this.costInputTarget.classList.remove("opacity-20", "cursor-not-allowed")
+            }
+        }
+
+        // Handle Additional Participation Fee (Only for Deposit)
+        if (this.hasParticipationFeeContainerTarget && this.hasParticipationFeeInputTarget) {
+            if (isDeposit) {
+                this.participationFeeContainerTarget.classList.remove("hidden")
+                this.participationFeeInputTarget.disabled = false
+                this.participationFeeInputTarget.classList.remove("opacity-20", "cursor-not-allowed")
+            } else {
+                // Not a deposit: disable and optionally hide
+                this.participationFeeInputTarget.disabled = true
+                this.participationFeeInputTarget.value = 0
+                this.participationFeeInputTarget.classList.add("opacity-20", "cursor-not-allowed")
+                // Keep it visible but greyed out? Or hide? 
+                // Suggestion: Hide it to avoid confusion as requested
+                this.participationFeeContainerTarget.classList.add("hidden")
+            }
+        }
+    }
+
+    validateStep(event) {
+        const input = event.target
+        const step = parseInt(input.getAttribute("step"))
+        if (!step || isNaN(step)) return
+
+        let value = parseInt(input.value)
+        if (isNaN(value)) {
+            input.value = step
+            return
+        }
+
+        const remainder = value % step
+        if (remainder !== 0) {
+            // Round to nearest multiple
+            if (remainder >= step / 2) {
+                value = value + (step - remainder)
+            } else {
+                value = value - remainder
+            }
+            // Ensure at least 1 step if min is higher
+            if (value < step && input.getAttribute("min")) {
+                value = parseInt(input.getAttribute("min"))
+                // Re-round if min is not multiple
+                if (value % step !== 0) value = Math.ceil(value / step) * step
+            }
+            input.value = value
+        }
     }
 }

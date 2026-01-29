@@ -83,13 +83,12 @@ class HostedChallengesController < ApplicationController
 
     params_hash = challenge_params
 
-    # Convert percentage thresholds (0-100) to decimal (0-1) for full_refund_threshold only
-    if params_hash[:full_refund_threshold].present?
-      params_hash[:full_refund_threshold] = params_hash[:full_refund_threshold].to_f / 100.0
+    # Convert percentage thresholds (0-100) to decimal (0-1) for DB storage
+    [ :full_refund_threshold, :bonus_threshold ].each do |attr|
+      if params_hash[attr].present?
+        params_hash[attr] = params_hash[attr].to_f / 100.0
+      end
     end
-
-    # active_rate_threshold and sluggish_rate_threshold are stored as integers (0-100)
-    # No conversion needed
 
     success = false
     error_message = nil
@@ -97,6 +96,46 @@ class HostedChallengesController < ApplicationController
     begin
       ActiveRecord::Base.transaction do
         if @challenge.update(params_hash)
+        # Capture changes for the confirmation modal
+        saved_changes = @challenge.saved_changes.except(:updated_at)
+        if saved_changes.any?
+          labels = {
+            "title" => "제목", "summary" => "한 줄 요약", "description" => "상세 설명",
+            "category" => "카테고리", "full_refund_threshold" => "전액 환급 기준",
+            "bonus_threshold" => "보너스 지급 기준", "certification_goal" => "인증 목표",
+            "start_date" => "시작일", "end_date" => "종료일",
+            "recruitment_start_date" => "모집 시작일", "recruitment_end_date" => "모집 마감일",
+            "verification_start_time" => "인증 시작", "verification_end_time" => "인증 마감",
+            "cost_type" => "비용 방식", "amount" => "금액(보증금/참가비)", "participation_fee" => "추가 참가비",
+            "host_bank" => "은행", "host_account" => "계좌번호", "host_account_holder" => "예금주",
+            "max_participants" => "최대 인원", "is_private" => "공개 여부", "admission_type" => "승인 방식",
+            "re_verification_allowed" => "재인증 허용", "mission_requires_host_approval" => "인증 승인제",
+            "chat_link" => "채팅방 링크"
+          }
+          # Compact data to prevent CookieOverflow (4KB limit)
+          change_logs = saved_changes.first(12).map do |attr, vals|
+            new_val = vals[1]
+
+            # Value Transformation
+            display_val = case attr
+            when "cost_type"
+              { "free" => "무료", "fee" => "참가비", "deposit" => "보증금" }[new_val] || new_val
+            when "admission_type"
+              { "first_come" => "선착순", "approval" => "승인제" }[new_val] || new_val
+            when "is_private"
+              new_val ? "비공개" : "공개"
+            when "re_verification_allowed", "mission_requires_host_approval"
+              new_val ? "허용" : "미허용"
+            when "full_refund_threshold", "bonus_threshold"
+              "#{(new_val.to_f * 100).to_i}%"
+            else
+              new_val.to_s.truncate(30)
+            end
+
+            { a: attr, l: labels[attr] || attr.humanize, v: display_val }
+          end
+          flash[:updated_changes] = change_logs.to_json
+        end
           if params[:create_announcement] == "true" && params[:announcement_title].present? && params[:announcement_content].present?
             announcement = @challenge.announcements.create!(
               title: params[:announcement_title],
@@ -288,7 +327,7 @@ class HostedChallengesController < ApplicationController
       :title, :summary, :description, :custom_host_bio,
       :start_date, :end_date,
       :cost_type, :amount, :max_participants, :failure_tolerance, :penalty_per_failure,
-      :full_refund_threshold, :refund_date,
+      :full_refund_threshold, :refund_date, :bonus_threshold,
       :verification_start_time, :verification_end_time, :re_verification_allowed,
       :mission_requires_host_approval,
       :host_bank, :host_account, :host_account_holder,
@@ -299,6 +338,7 @@ class HostedChallengesController < ApplicationController
       :thumbnail_image,
       :chat_link,
       :recruitment_start_date, :recruitment_end_date,
+      :participation_fee,
       days: []
     )
   end

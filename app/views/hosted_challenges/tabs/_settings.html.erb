@@ -173,7 +173,8 @@
 
           <div class="space-y-2">
             <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">최대 인원</label>
-            <%= f.number_field :max_participants, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-cyan-500 outline-none transition-all" %>
+            <%= f.number_field :max_participants, min: 5, step: 5, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-cyan-500 outline-none transition-all",
+                               data: { action: "change->challenge-settings#validateStep" } %>
           </div>
         </section>
 
@@ -189,19 +190,22 @@
             <%= f.select :cost_type,
                          [['무료', 'free'], ['참가비', 'fee'], ['보증금', 'deposit']],
                          {},
-                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-rose-500 outline-none transition-all appearance-none cursor-pointer" %>
+                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-rose-500 outline-none transition-all appearance-none cursor-pointer",
+                          data: { challenge_settings_target: "costType", action: "change->challenge-settings#toggleCostInputs" } %>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보증금/참가비 (원)</label>
-              <%= f.number_field :cost, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
-            </div>
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">추가 참가비 (원)</label>
-              <%= f.number_field :participation_fee, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
-            </div>
-          </div>
+ 
+           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+             <div class="space-y-2">
+                <label data-challenge-settings-target="amountLabel" class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보증금/참가비 (원)</label>
+                <%= f.number_field :amount, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
+                                   data: { challenge_settings_target: "costInput", action: "change->challenge-settings#validateStep" } %>
+              </div>
+              <div data-challenge-settings-target="participationFeeContainer" class="space-y-2">
+                <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">추가 참가비 (원)</label>
+                <%= f.number_field :participation_fee, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
+                                   data: { challenge_settings_target: "participationFeeInput", action: "change->challenge-settings#validateStep" } %>
+              </div>
+           </div>
 
           <div class="space-y-2">
             <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">은행명</label>
@@ -230,25 +234,24 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div class="space-y-2">
               <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">전액 환급 기준 (%)</label>
-              <%= f.number_field :full_refund_threshold, min: 0, max: 100, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+              <%= f.number_field :full_refund_threshold, value: (f.object.full_refund_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
             </div>
             <div class="space-y-2">
               <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보너스 지급 기준 (%)</label>
-              <%= f.number_field :bonus_threshold, min: 0, max: 100, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+              <%= f.number_field :bonus_threshold, value: (f.object.bonus_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
             </div>
           </div>
         </section>
 
         <!-- Danger Zone -->
-        <section class="mt-6 md:mt-8 p-4 md:p-6 bg-rose-500/5 rounded-xl md:rounded-2xl border border-rose-500/10 space-y-3">
+        <section class="mt-6 md:mt-8 p-4 md:p-5 bg-rose-500/5 rounded-xl md:rounded-2xl border border-rose-500/10 flex items-center justify-between">
           <div>
-            <h3 class="text-sm md:text-base font-black text-rose-500 italic uppercase">위험 구역</h3>
-            <p class="text-[8px] md:text-[9px] font-bold text-rose-500/60 uppercase tracking-widest mt-0.5">챌린지 영구 삭제</p>
+            <h3 class="text-xs md:text-sm font-black text-rose-500 italic uppercase">위험 구역</h3>
           </div>
           <%= link_to hosted_challenge_path(challenge, source: "prototype"), 
                       data: { turbo_method: :delete, turbo_confirm: "정말로 이 챌린지를 삭제하시겠습니까?" }, 
-                      class: "inline-flex items-center gap-2 px-4 md:px-5 py-2.5 md:py-3 bg-rose-600/10 text-rose-500 border border-rose-500/20 rounded-xl font-black text-[9px] md:text-[10px] uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all" do %>
-            <svg class="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                      class: "inline-flex items-center gap-1.5 px-3 md:px-4 py-2 bg-rose-600/10 text-rose-500 border border-rose-500/20 rounded-lg font-black text-[8px] md:text-[9px] uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all" do %>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             챌린지 영구 삭제
           <% end %>
         </section>

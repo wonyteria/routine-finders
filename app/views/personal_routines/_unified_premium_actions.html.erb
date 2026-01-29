@@ -17,7 +17,7 @@
         <% end %>
 
         <% if @routine_club %>
-          <%= link_to new_routine_club_gathering_path(@routine_club), class: "flex items-center justify-between p-4 bg-white/20 hover:bg-white/30 rounded-2xl border border-white/20 transition-all active:scale-95" do %>
+          <%= link_to manage_routine_club_path(@routine_club, tab: "community", mode: "gatherings"), class: "flex items-center justify-between p-4 bg-white/20 hover:bg-white/30 rounded-2xl border border-white/20 transition-all active:scale-95" do %>
             <div class="flex items-center gap-3">
               <span class="text-xl">🤝</span>
               <span class="text-xs font-black">오프라인 모임 개설</span>

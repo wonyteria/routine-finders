@@ -947,8 +947,12 @@
   document.addEventListener("turbo:load", function() {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
+    const mode = urlParams.get('mode');
     if (tab) {
       switchManageTab(tab);
+      if (tab === 'community' && mode) {
+        switchCommunityMode(mode);
+      }
     }
   });
 

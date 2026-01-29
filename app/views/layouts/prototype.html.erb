@@ -78,7 +78,7 @@
   <body class="min-h-screen overflow-x-hidden" data-controller="proto-ui toast loading" data-logged-in="<%= logged_in? %>">
     <!-- App Bottom Navigation Bar (Standalone Fixed Layer) -->
     <% unless content_for?(:hide_nav) %>
-      <div class="fixed bottom-10 inset-x-0 z-[10000] flex justify-center pointer-events-none">
+      <div class="fixed bottom-10 inset-x-0 z-[30000] flex justify-center pointer-events-none">
         <div class="w-full max-w-md mx-auto px-4 flex justify-center">
           <nav class="pointer-events-auto w-[92%] max-w-[360px] h-20 bg-[#16151D]/98 backdrop-blur-3xl rounded-[32px] border border-white/10 flex items-center justify-between px-2 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
             <!-- Left Side Icons -->
@@ -121,9 +121,9 @@
     </main>
 
     <!-- 1. Routine Record Bottom Sheet -->
-    <div id="record-sheet" class="hidden fixed inset-0 z-[210]">
+    <div id="record-sheet" class="hidden fixed inset-0 z-[11000]">
       <div onclick="document.getElementById('record-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)] z-10">
+      <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
         <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
@@ -151,9 +151,9 @@
     </div>
 
     <!-- 1-2. Today's Commitment Bottom Sheet -->
-    <div id="commitment-sheet" class="hidden fixed inset-0 z-[210]">
+    <div id="commitment-sheet" class="hidden fixed inset-0 z-[11000]">
       <div onclick="document.getElementById('commitment-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)] z-10">
+      <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 다짐</h3>
         <p class="text-xs font-bold text-rose-400 mb-8 text-center uppercase tracking-widest leading-none">Declare your commitment</p>
@@ -181,9 +181,9 @@
     </div>
 
     <!-- 2. FAB Menu Sheet (Simple List Style) -->
-    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[215]">
+    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[11000]">
       <div onclick="document.getElementById('fab-menu-sheet').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
-      <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10 shadow-[0_-20px_60px_rgba(124,77,255,0.2)]">
+      <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">새로운 시작하기</h3>
         <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Create & Join</p>

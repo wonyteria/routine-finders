@@ -90,10 +90,10 @@
             <span class="text-sm">🎒</span>
             <span class="text-[10px] font-black text-white italic">준비물</span>
           </button>
-          <%= link_to new_challenge_announcement_path(@challenge, source: 'prototype'), class: "flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all" do %>
+          <button type="button" onclick="openAnnouncementModal()" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all">
             <span class="text-sm">📢</span>
             <span class="text-[10px] font-black text-white italic">단체 공지</span>
-          <% end %>
+          </button>
         </div>
       <% else %>
         <!-- Progress Journey (For Challenges) -->
@@ -128,10 +128,10 @@
             <span class="text-sm">⚠️</span>
             <span class="text-[10px] font-black text-white italic">부진 경고</span>
           </button>
-          <%= link_to new_challenge_announcement_path(@challenge, source: 'prototype'), class: "flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all" do %>
+          <button type="button" onclick="openAnnouncementModal()" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all">
             <span class="text-sm">📢</span>
             <span class="text-[10px] font-black text-white italic">단체 공지</span>
-          <% end %>
+          </button>
         </div>
       <% end %>
     </header>
@@ -182,8 +182,8 @@
           %>
           <% nav_tabs.each do |id, label, icon| %>
             <%= link_to hosted_challenge_path(@challenge, tab: id, source: params[:source]), 
-                        data: { turbo_frame: "hosted_challenge_tabs", tab_id: id },
-                        class: "shrink-0 flex items-center gap-2 py-3 px-5 transition-all rounded-[1.25rem] #{ @tab == id ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 shadow-lg' : 'text-slate-500' }" do %>
+                        data: { turbo_frame: "hosted_challenge_tabs", tab_id: id, active: (@tab == id) },
+                        class: "tab-item shrink-0 flex items-center gap-2 py-3 px-5 transition-all rounded-[1.25rem] #{ @tab == id ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 shadow-lg' : 'text-slate-500' }" do %>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= icon %>"/></svg>
               <span class="text-[10px] font-black tracking-tight whitespace-nowrap"><%= label %></span>
             <% end %>
@@ -193,6 +193,42 @@
 
       <turbo-frame id="hosted_challenge_tabs" class="block min-h-[40vh]" data-turbo-action="advance">
         <div class="animate-slide-up pb-20">
+          <!-- Change Confirmation Modal (Moved Inside Frame) -->
+          <% if flash[:updated_changes].present? %>
+            <% changes = JSON.parse(flash[:updated_changes]) %>
+            <div id="success-confirmation-modal" class="fixed inset-0 z-[30000] flex items-center justify-center p-6">
+              <div onclick="this.parentElement.remove(); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-3xl animate-fade-in"></div>
+              
+              <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
+                <div class="w-16 h-16 rounded-3xl bg-emerald-500/20 flex items-center justify-center text-3xl mx-auto shadow-glow shadow-emerald-500/20">
+                  ✅
+                </div>
+                
+                <div class="space-y-2">
+                  <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em]">저장 완료</p>
+                  <h3 class="text-2xl font-black text-white italic">설정이 변경되었습니다</h3>
+                </div>
+
+                <div class="space-y-3 py-2">
+                  <% changes.each do |change| %>
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+                      <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest"><%= change['l'] %></span>
+                      <div class="text-right">
+                         <p class="text-[11px] font-bold text-white"><%= change['v'] %></p>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+
+                <button onclick="this.closest('#success-confirmation-modal').remove(); document.body.classList.remove('overflow-hidden')" 
+                        class="w-full py-4 bg-indigo-600 text-white font-black text-sm rounded-2xl shadow-xl active:scale-95 transition-all">
+                  확인했습니다
+                </button>
+              </div>
+            </div>
+            <script>document.body.classList.add('overflow-hidden');</script>
+          <% end %>
+
           <% case @tab %>
           <% when "dashboard" %>
             <%= render "hosted_challenges/tabs/dashboard", challenge: @challenge, participants: @participants, pending_verifications: @pending_verifications, recent_verifications: @recent_verifications %>
@@ -214,18 +250,34 @@
     </div>
 
     <script>
-      // Auto-scroll active tab to center
-      document.addEventListener('DOMContentLoaded', () => {
-        scrollActiveTabToCenter();
-      });
-      
+      // 1. Initial Scroll and Click Listener
       document.addEventListener('turbo:load', () => {
         scrollActiveTabToCenter();
+      });
+
+      // 2. Handle Tab Clicks (since Nav is outside Turbo Frame)
+      document.addEventListener('click', (e) => {
+        const tabLink = e.target.closest('[data-tab-id]');
+        if (tabLink && tabLink.closest('#tab-nav-container')) {
+          // Update Classes
+          document.querySelectorAll('#tab-nav-container [data-tab-id]').forEach(el => {
+            el.classList.remove('bg-indigo-500/20', 'text-indigo-400', 'border', 'border-indigo-500/20', 'shadow-lg');
+            el.classList.add('text-slate-500');
+            el.setAttribute('data-active', 'false');
+          });
+          
+          tabLink.classList.add('bg-indigo-500/20', 'text-indigo-400', 'border', 'border-indigo-500/20', 'shadow-lg');
+          tabLink.classList.remove('text-slate-500');
+          tabLink.setAttribute('data-active', 'true');
+          
+          // Scroll to center
+          setTimeout(() => scrollActiveTabToCenter(), 50);
+        }
       });
       
       function scrollActiveTabToCenter() {
         const container = document.querySelector('#tab-nav-container .overflow-x-auto');
-        const activeTab = container?.querySelector('.bg-indigo-500\\/20');
+        const activeTab = container?.querySelector('[data-active="true"]');
         
         if (container && activeTab) {
           const containerWidth = container.offsetWidth;
@@ -242,22 +294,46 @@
     </script>
   </div>
 
+  <%# Change Confirmation Modal was moved inside turbo-frame %>
+
   <!-- Nudge Confirmation Modal (Simplified for Prototype) -->
-  <div id="nudge-modal" class="hidden fixed inset-0 z-[300]">
+  <div id="nudge-modal" class="hidden fixed inset-0 z-[20000]">
     <div onclick="closeNudgeModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-    <div class="absolute bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1B1A24] rounded-t-[40px] p-8 pb-12 animate-slide-up border-t border-white/10">
-      <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
-      <h3 id="nudge-title" class="text-xl font-black text-white text-center mb-2 italic">독려 메시지 발송</h3>
-      <p id="nudge-desc" class="text-xs font-bold text-indigo-400 text-center uppercase tracking-widest leading-none mb-8">루퍼들에게 활기찬 에너지를 전달하세요</p>
+    <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-6 pb-8 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+      <div class="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
+      <h3 id="nudge-title" class="text-lg font-black text-white text-center mb-1 italic">독려 메시지 발송</h3>
+      <p id="nudge-desc" class="text-[10px] font-bold text-indigo-400 text-center uppercase tracking-widest leading-none mb-6">루퍼들에게 활기찬 에너지를 전달하세요</p>
       
-      <%= form_with url: nudge_participants_hosted_challenge_path(@challenge), method: :post, class: "space-y-6" do |f| %>
+      <%= form_with url: nudge_participants_hosted_challenge_path(@challenge), method: :post, class: "space-y-4" do |f| %>
         <%= hidden_field_tag :source, 'prototype' %>
         <%= hidden_field_tag :group, '', id: 'nudge-group-input' %>
-        <div class="space-y-4">
-          <%= text_area_tag :content, nil, id: 'nudge-content-input', required: true, class: "w-full min-h-[120px] bg-white/5 border border-white/10 rounded-3xl p-6 text-white text-sm font-bold focus:border-indigo-500 outline-none resize-none" %>
-          <div class="flex gap-3">
-             <button type="button" onclick="closeNudgeModal()" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-bold text-sm h-14">취소</button>
-             <%= f.submit "발송하기", class: "flex-1 rounded-2xl bg-indigo-600 text-white font-black text-sm h-14" %>
+        <div class="space-y-3">
+          <%= text_area_tag :content, nil, id: 'nudge-content-input', required: true, class: "w-full min-h-[100px] bg-white/5 border border-white/10 rounded-3xl p-5 text-white text-sm font-bold focus:border-indigo-500 outline-none resize-none" %>
+          <div class="flex gap-2">
+             <button type="button" onclick="closeNudgeModal()" class="px-5 py-3 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs h-12">취소</button>
+             <%= f.submit "발송하기", class: "flex-1 rounded-2xl bg-indigo-600 text-white font-black text-xs h-12" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Announcement Modal (New) -->
+  <div id="announcement-modal" class="hidden fixed inset-0 z-[20000]">
+    <div onclick="closeAnnouncementModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+    <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-6 pb-8 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+      <div class="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
+      <h3 class="text-lg font-black text-white text-center mb-1 italic">단체 공지사항 등록</h3>
+      <p class="text-[10px] font-bold text-emerald-400 text-center uppercase tracking-widest leading-none mb-6">모든 참가자에게 중요 소식을 알립니다</p>
+      
+      <%= form_with model: [@challenge, Announcement.new], class: "space-y-4" do |f| %>
+        <%= hidden_field_tag :source, 'prototype' %>
+        <div class="space-y-3">
+          <%= f.text_field :title, placeholder: "공지 제목을 입력하세요", required: true, class: "w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-black focus:border-emerald-500 outline-none" %>
+          <%= f.text_area :content, placeholder: "공지 상세 내용을 입력하세요...", required: true, class: "w-full min-h-[120px] bg-white/5 border border-white/10 rounded-3xl p-5 text-white text-sm font-bold focus:border-emerald-500 outline-none resize-none" %>
+          <div class="flex gap-2">
+             <button type="button" onclick="closeAnnouncementModal()" class="px-5 py-3 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs h-12">취소</button>
+             <%= f.submit "공지 발송", class: "flex-1 rounded-2xl bg-emerald-600 text-white font-black text-xs h-12" %>
           </div>
         </div>
       <% end %>
@@ -292,6 +368,14 @@
 
     function closeNudgeModal() {
       document.getElementById('nudge-modal').classList.add('hidden');
+    }
+
+    function openAnnouncementModal() {
+      document.getElementById('announcement-modal').classList.remove('hidden');
+    }
+
+    function closeAnnouncementModal() {
+      document.getElementById('announcement-modal').classList.add('hidden');
     }
   </script>
 
