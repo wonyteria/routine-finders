@@ -28,16 +28,19 @@ export default class extends Controller {
             "challenge[re_verification_allowed]": "재인증 허용 여부",
             "challenge[mission_requires_host_approval]": "호스트 승인제 여부",
             "challenge[cost_type]": "참가 방식",
-            "challenge[amount]": "금액",
+            "challenge[category]": "카테고리",
+            "challenge[chat_link]": "채팅방 링크",
+            "challenge[is_private]": "공개 여부",
+            "challenge[admission_type]": "승인 방식",
+            "challenge[amount]": "보증금/참가비",
             "challenge[participation_fee]": "추가 참가비",
-            "challenge[failure_tolerance]": "최대 실패 허용",
-            "challenge[penalty_per_failure]": "실패 차감액",
             "challenge[max_participants]": "최대 참여 인원",
             "challenge[full_refund_threshold]": "전액 환급 기준",
-            "challenge[refund_date]": "환급 예정일",
-            "challenge[active_rate_threshold]": "달성 중 기준",
-            "challenge[sluggish_rate_threshold]": "부진 기준",
-            "challenge[non_participating_failures_threshold]": "미참여 탈락 기준"
+            "challenge[bonus_threshold]": "보너스 상금 기준",
+            "challenge[certification_goal]": "인증 목표",
+            "challenge[host_bank]": "은행",
+            "challenge[host_account]": "계좌번호",
+            "challenge[host_account_holder]": "예금주"
         }
     }
 
@@ -60,21 +63,24 @@ export default class extends Controller {
     }
 
     showSummary(event) {
+        if (this.isSubmitting) return;
         if (event) event.preventDefault()
 
         const currentValues = this.captureCurrentValues()
         const changes = this.getChanges(this.initialValues, currentValues)
 
-        if (Object.keys(changes).length === 0) {
-            if (this.hasFormTarget) this.formTarget.submit()
+        // If no changes or modal missing, submit immediately via Turbo
+        if (Object.keys(changes).length === 0 || !this.hasModalTarget) {
+            if (this.hasFormTarget) {
+                this.isSubmitting = true
+                this.formTarget.requestSubmit()
+            }
             return
         }
 
         this.renderSummary(changes)
-        if (this.hasModalTarget) {
-            this.modalTarget.classList.remove("hidden")
-            this.modalTarget.style.display = 'flex'
-        }
+        this.modalTarget.classList.remove("hidden")
+        this.modalTarget.style.display = 'flex'
 
         this.updateAnnouncementPreview(changes)
     }
@@ -84,7 +90,8 @@ export default class extends Controller {
         const allKeys = new Set([...Object.keys(oldValues), ...Object.keys(newValues)])
 
         allKeys.forEach(key => {
-            if (key === "authenticity_token" || key === "_method" || key === "utf8" || key.includes("thumbnail")) return
+            if (key === "authenticity_token" || key === "_method" || key === "utf8" || key.includes("thumbnail") || key === "tab" || key === "source" ||
+                key === "announcement_title" || key === "announcement_content" || key === "create_announcement") return
 
             const oldVal = oldValues[key]
             const newVal = newValues[key]
@@ -112,13 +119,24 @@ export default class extends Controller {
 
         let html = '<ul class="space-y-3">'
         Object.entries(changes).forEach(([key, value]) => {
-            const label = this.fieldNames[key] || key
+            const label = this.fieldNames[key] || key.replace('challenge[', '').replace(']', '')
             let oldText = value.old || "없음"
             let newText = value.new || "없음"
 
             if (key === "challenge[re_verification_allowed]" || key === "challenge[mission_requires_host_approval]") {
-                oldText = oldText === "1" ? "허용" : "미허용"
-                newText = newText === "1" ? "허용" : "미허용"
+                oldText = (oldText === "1" || oldText === "true") ? "허용" : "미허용"
+                newText = (newText === "1" || newText === "true") ? "허용" : "미허용"
+            }
+
+            if (key === "challenge[is_private]") {
+                oldText = (oldText === "true" || oldText === true) ? "비공개" : "공개"
+                newText = (newText === "true" || newText === true) ? "비공개" : "공개"
+            }
+
+            if (key === "challenge[admission_type]") {
+                const types = { "first_come": "선착순", "approval": "승인제" }
+                oldText = types[oldText] || oldText
+                newText = types[newText] || newText
             }
 
             if (key === "challenge[cost_type]") {
@@ -128,12 +146,12 @@ export default class extends Controller {
             }
 
             html += `
-                <li class="flex flex-col gap-1 p-3 bg-white rounded-xl border border-slate-100">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${label}</span>
-                    <div class="flex items-center gap-2 text-sm">
-                        <span class="text-slate-400 line-through truncate max-w-[150px]">${oldText}</span>
+                <li class="flex flex-col gap-1 p-3 bg-white/5 rounded-xl border border-white/5">
+                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">${label}</span>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="text-slate-500 line-through truncate max-w-[120px]">${oldText}</span>
                         <svg class="w-3 h-3 text-indigo-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                        <span class="font-bold text-indigo-600 truncate max-w-[150px]">${newText}</span>
+                        <span class="font-bold text-white truncate max-w-[120px]">${newText}</span>
                     </div>
                 </li>
             `
@@ -147,18 +165,29 @@ export default class extends Controller {
 
         let content = "챌린지 운영 정책이 다음과 같이 변경되었습니다.\n\n"
         Object.entries(changes).forEach(([key, value]) => {
-            const label = this.fieldNames[key] || key
+            const label = this.fieldNames[key] || key.replace('challenge[', '').replace(']', '')
             let oldText = value.old || "없음"
             let newText = value.new || "없음"
+
             if (key === "challenge[re_verification_allowed]" || key === "challenge[mission_requires_host_approval]") {
-                oldText = oldText === "1" ? "허용" : "미허용"
-                newText = newText === "1" ? "허용" : "미허용"
+                oldText = (oldText === "1" || oldText === "true") ? "허용" : "미허용"
+                newText = (newText === "1" || newText === "true") ? "허용" : "미허용"
+            }
+            if (key === "challenge[is_private]") {
+                oldText = (oldText === "true" || oldText === true) ? "비공개" : "공개"
+                newText = (newText === "true" || newText === true) ? "비공개" : "공개"
+            }
+            if (key === "challenge[admission_type]") {
+                const types = { "first_come": "선착순", "approval": "승인제" }
+                oldText = types[oldText] || oldText
+                newText = types[newText] || newText
             }
             if (key === "challenge[cost_type]") {
                 const costs = { "free": "무료", "fee": "참가비", "deposit": "보증금" }
                 oldText = costs[oldText] || oldText
                 newText = costs[newText] || newText
             }
+
             content += `- ${label}: ${oldText} -> ${newText}\n`
         })
         this.announcementContentTarget.value = content
@@ -182,6 +211,9 @@ export default class extends Controller {
         if (!this.hasFormTarget) return
 
         if (this.hasAnnouncementCheckboxTarget && this.announcementCheckboxTarget.checked) {
+            // Remove any existing hidden inputs of the same name to prevent duplicates
+            this.formTarget.querySelectorAll('input[name="announcement_title"], input[name="announcement_content"], input[name="create_announcement"]').forEach(el => el.remove())
+
             const titleInput = document.createElement("input")
             titleInput.type = "hidden"
             titleInput.name = "announcement_title"
@@ -200,7 +232,9 @@ export default class extends Controller {
             flagInput.value = "true"
             this.formTarget.appendChild(flagInput)
         }
-        this.formTarget.submit()
+
+        this.isSubmitting = true
+        this.formTarget.requestSubmit()
     }
 
     toggleCostInputs() {

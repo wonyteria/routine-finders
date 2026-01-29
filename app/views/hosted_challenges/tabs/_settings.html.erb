@@ -11,7 +11,8 @@
         </div>
       </div>
 
-      <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings", source: "prototype"), method: :patch, class: "space-y-6 md:space-y-8", data: { challenge_settings_target: "form" } do |f| %>
+      <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings", source: "prototype"), method: :patch, class: "space-y-6 md:space-y-8", 
+                       data: { challenge_settings_target: "form", action: "submit->challenge-settings#showSummary" } do |f| %>
         
         <!-- 01. 기본 정보 -->
         <section class="space-y-3 md:space-y-4">
@@ -25,7 +26,7 @@
               <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">카테고리</label>
               <%= f.select :category, 
                            ['건강·운동', '학습·자기계발', 'SNS·브랜딩', '재테크·부업', '취미·라이프', '멘탈·성찰', '기타'],
-                           { include_blank: "선택" },
+                           {},
                            class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer" %>
             </div>
 
@@ -278,8 +279,78 @@
         </div>
       <% end %>
     </div>
+
+    <!-- Change Summary & Announcement Modal (Now Inside Controller Scope) -->
+    <div data-challenge-settings-target="modal" class="hidden fixed inset-0 z-[35000] flex items-center justify-center p-4">
+      <div data-action="click->challenge-settings#hideModal" class="absolute inset-0 bg-black/90 backdrop-blur-3xl"></div>
+      
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-6 md:p-8 space-y-6 animate-badge-pop bg-[#16151D] flex flex-col max-h-[90vh]">
+        <div class="flex items-center justify-between">
+          <div class="space-y-1">
+            <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none italic">변경 사항 요약</p>
+            <h3 class="text-xl font-black text-white italic">저장하시겠습니까?</h3>
+          </div>
+          <button type="button" data-action="click->challenge-settings#hideModal" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Scrollable Content Section -->
+        <div class="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar">
+          <!-- Changes List -->
+          <div data-challenge-settings-target="summaryContent" class="space-y-3">
+            <!-- Dynamically populated by Stimulus -->
+          </div>
+
+          <!-- Announcement Option -->
+          <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                </div>
+                <div>
+                  <p class="text-[10px] font-black text-white">참가자에게 공지</p>
+                  <p class="text-[8px] font-bold text-slate-500">설정 변경 소식을 알림으로 전송</p>
+                </div>
+              </div>
+              <label class="relative inline-block w-10 h-6 cursor-pointer">
+                <input type="checkbox" data-challenge-settings-target="announcementCheckbox" data-action="change->challenge-settings#toggleAnnouncementSection" class="peer sr-only">
+                <div class="w-full h-full bg-slate-700 rounded-full peer-checked:bg-emerald-500 transition-colors"></div>
+                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+              </label>
+            </div>
+
+            <div data-challenge-settings-target="announcementSection" class="hidden space-y-3 animate-slide-down">
+              <div class="space-y-2">
+                <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest pl-1">공지 제목</label>
+                <input type="text" data-challenge-settings-target="announcementTitle" class="w-full p-3 bg-black/40 border border-white/5 rounded-xl text-xs font-bold text-white focus:border-emerald-500 outline-none transition-all">
+              </div>
+              <div class="space-y-2">
+                <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest pl-1">공지 내용</label>
+                <textarea data-challenge-settings-target="announcementContent" rows="4" class="w-full p-3 bg-black/40 border border-white/5 rounded-xl text-xs font-medium text-slate-300 focus:border-emerald-500 outline-none transition-all resize-none"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-2 pt-2">
+          <button type="button" data-action="click->challenge-settings#hideModal" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs">취소</button>
+          <button type="button" data-action="click->challenge-settings#submitWithAnnouncement" class="flex-1 py-4 rounded-2xl app-fab-gradient text-white font-black text-sm shadow-xl active:scale-95 transition-all">
+            최종 저장하기
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+  </style>
 <% else %>
   <!-- EXISTING WEB UI (Preserved) -->
   <div class="space-y-8" data-controller="challenge-settings">

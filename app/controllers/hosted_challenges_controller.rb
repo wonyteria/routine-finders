@@ -110,7 +110,7 @@ class HostedChallengesController < ApplicationController
             "host_bank" => "은행", "host_account" => "계좌번호", "host_account_holder" => "예금주",
             "max_participants" => "최대 인원", "is_private" => "공개 여부", "admission_type" => "승인 방식",
             "re_verification_allowed" => "재인증 허용", "mission_requires_host_approval" => "인증 승인제",
-            "chat_link" => "채팅방 링크"
+            "chat_link" => "채팅방 링크", "custom_host_bio" => "호스트 소개", "status" => "상태"
           }
           # Compact data to prevent CookieOverflow (4KB limit)
           change_logs = saved_changes.first(12).map do |attr, vals|
@@ -122,6 +122,8 @@ class HostedChallengesController < ApplicationController
               { "free" => "무료", "fee" => "참가비", "deposit" => "보증금" }[new_val] || new_val
             when "admission_type"
               { "first_come" => "선착순", "approval" => "승인제" }[new_val] || new_val
+            when "status"
+              { "upcoming" => "준비중", "active" => "진행중", "ended" => "종료", "archived" => "보관" }[new_val] || new_val
             when "is_private"
               new_val ? "비공개" : "공개"
             when "re_verification_allowed", "mission_requires_host_approval"
@@ -325,18 +327,18 @@ class HostedChallengesController < ApplicationController
   def challenge_params
     params.require(:challenge).permit(
       :title, :summary, :description, :custom_host_bio,
-      :start_date, :end_date,
+      :start_date, :end_date, :category,
       :cost_type, :amount, :max_participants, :failure_tolerance, :penalty_per_failure,
       :full_refund_threshold, :refund_date, :bonus_threshold,
       :verification_start_time, :verification_end_time, :re_verification_allowed,
-      :mission_requires_host_approval,
+      :mission_requires_host_approval, :verification_type,
       :host_bank, :host_account, :host_account_holder,
       :certification_goal, :daily_goals, :reward_policy,
       :active_rate_threshold,
       :sluggish_rate_threshold,
       :non_participating_failures_threshold,
       :thumbnail_image,
-      :chat_link,
+      :chat_link, :is_private, :admission_type,
       :recruitment_start_date, :recruitment_end_date,
       :participation_fee,
       days: []
