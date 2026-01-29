@@ -77,17 +77,18 @@
 
   <body class="min-h-screen overflow-x-hidden" data-controller="proto-ui toast loading" data-logged-in="<%= logged_in? %>">
     <!-- App Bottom Navigation Bar (Standalone Fixed Layer) -->
-    <% unless content_for?(:hide_nav) %>
+    <!-- LAYOUT NAV DEBUG: @hide_nav=<%= @hide_nav.inspect %>, hide_nav_content=<%= content_for?(:hide_nav) %> -->
+    <% unless @hide_nav || content_for?(:hide_nav) %>
       <div class="fixed bottom-10 inset-x-0 z-[30000] flex justify-center pointer-events-none">
         <div class="w-full max-w-md mx-auto px-4 flex justify-center">
           <nav class="pointer-events-auto w-[92%] max-w-[360px] h-20 bg-[#16151D]/98 backdrop-blur-3xl rounded-[32px] border border-white/10 flex items-center justify-between px-2 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
             <!-- Left Side Icons -->
             <div class="flex flex-1 justify-around items-center">
-              <%= link_to prototype_home_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_home_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+              <%= link_to prototype_home_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_home_path) ? 'text-indigo-400' : 'text-white/20 hover:text-white/40'}" do %>
                 <span class="text-2xl">🏠</span>
               <% end %>
 
-              <%= link_to prototype_explore_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_explore_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+              <%= link_to prototype_explore_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_explore_path) ? 'text-indigo-400' : 'text-white/20 hover:text-white/40'}" do %>
                 <span class="text-2xl">🧭</span>
               <% end %>
             </div>
@@ -101,13 +102,13 @@
 
             <!-- Right Side Icons -->
             <div class="flex flex-1 justify-around items-center">
-              <%= link_to prototype_synergy_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_synergy_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+              <%= link_to prototype_synergy_path, class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_synergy_path) ? 'text-indigo-400' : 'text-white/20 hover:text-white/40'}" do %>
                 <span class="text-2xl">✨</span>
               <% end %>
 
               <%= link_to prototype_my_path, 
                           data: { action: "click->proto-ui#checkLogin" },
-                          class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_my_path) ? 'text-indigo-400' : 'text-slate-600'}" do %>
+                          class: "flex items-center justify-center w-12 h-12 app-tap-active #{current_page?(prototype_my_path) ? 'text-indigo-400' : 'text-white/20 hover:text-white/40'}" do %>
                 <span class="text-2xl">👤</span>
               <% end %>
             </div>

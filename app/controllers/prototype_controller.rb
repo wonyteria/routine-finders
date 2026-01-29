@@ -598,24 +598,12 @@ class PrototypeController < ApplicationController
     # Fallback: Populate with members' current data if no formal reports are archived
     if @reports.empty?
       @reports = @official_club.members.confirmed.includes(:user).limit(20).map do |m|
-        # Mocking individual routine rates for the prototype
-        routines = [
-          { name: "아침 기상", rate: rand(70..100) },
-          { name: "독서 30분", rate: rand(40..100) },
-          { name: "운동/산책", rate: rand(30..90) }
-        ].first(rand(2..3))
-
         OpenStruct.new(
           user: m.user,
-          achievement_rate: m.attendance_rate || rand(60..100),
-          log_rate: (m.attendance_rate || rand(50..95)) - rand(0..5),
-          identity_title: m.identity_title || "정진하는 멤버",
-          start_date: @target_start,
-          end_date: @target_end,
-          summary: "전체적으로 안정적인 루틴을 유지하고 있습니다.",
-          routines: routines
+          achievement_rate: m.attendance_rate,
+          id: "mock_#{m.id}"
         )
-      end.sort_by { |r| -r.achievement_rate }
+      end
     end
   end
 
@@ -633,7 +621,7 @@ class PrototypeController < ApplicationController
       )
     end
 
-    render json: { status: "success", message: "Broadcasting initiated for #{User.active.count} users." }
+    render json: { status: "success", message: "전체 사용자에게 공지가 발송되었습니다." }
   end
 
   def update_user_role
@@ -668,8 +656,22 @@ class PrototypeController < ApplicationController
   end
 
   def purge_cache
-    Rails.cache.clear
-    render json: { status: "success", message: "시스템 캐시가 모두 초기화되었습니다." }
+    case params[:target]
+    when "activities"
+      RufaActivity.delete_all
+      msg = "활동 피드 데이터가 초기화되었습니다."
+    when "notifications"
+      Notification.delete_all
+      msg = "모든 알림 데이터가 삭제되었습니다."
+    when "system"
+      Rails.cache.clear
+      msg = "시스템 캐시가 초기화되었습니다."
+    else
+      Rails.cache.clear
+      msg = "시스템 캐시가 초기화되었습니다."
+    end
+
+    render json: { status: "success", message: msg }
   end
 
   def update_profile
@@ -745,6 +747,7 @@ class PrototypeController < ApplicationController
 
   def set_shared_data
     @official_club = RoutineClub.official.first
+    @hide_nav = false
     @new_badges = current_user ? current_user.user_badges.where(is_viewed: false).includes(:badge) : []
   end
 
