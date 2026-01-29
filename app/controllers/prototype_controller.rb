@@ -728,10 +728,30 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def update_club_lounge
+    @official_club = RoutineClub.official.first || RoutineClub.first
+    if @official_club
+      if @official_club.update(lounge_params)
+        redirect_to prototype_admin_clubs_path, notice: "라운지 설정이 저장되었습니다."
+      else
+        redirect_to prototype_admin_clubs_path, alert: "저장에 실패했습니다."
+      end
+    else
+      redirect_to prototype_admin_clubs_path, alert: "공식 클럽을 찾을 수 없습니다."
+    end
+  end
+
   private
 
   def set_shared_data
     @official_club = RoutineClub.official.first
     @new_badges = current_user ? current_user.user_badges.where(is_viewed: false).includes(:badge) : []
+  end
+
+  def lounge_params
+    params.require(:routine_club).permit(
+      :zoom_link, :live_room_title, :live_room_button_text, :live_room_active,
+      :special_lecture_link, :lecture_room_title, :lecture_room_description, :lecture_room_active
+    )
   end
 end

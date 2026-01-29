@@ -7,6 +7,9 @@ import { application } from "controllers/application"
 import SystemAdminController from "controllers/system_admin_controller"
 application.register("system-admin", SystemAdminController)
 
+import LoungeSettingsController from "controllers/lounge_settings_controller"
+application.register("lounge-settings", LoungeSettingsController)
+
 import ApplicationFormController from "controllers/application_form_controller"
 application.register("application-form", ApplicationFormController)
 

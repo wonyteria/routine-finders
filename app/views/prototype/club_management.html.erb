@@ -1,3 +1,17 @@
+<% if notice %>
+  <div id="success-popup" class="fixed inset-0 z-[5000] flex items-center justify-center p-6">
+    <div onclick="this.parentElement.remove()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="relative app-glass-card p-8 bg-[#1B1A24] border-white/10 text-center space-y-4 max-w-xs animate-badge-pop">
+      <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl mx-auto">✨</div>
+      <div class="space-y-1">
+        <h3 class="text-lg font-black text-white">업데이트 완료</h3>
+        <p class="text-xs font-bold text-slate-400"><%= notice %></p>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" class="w-full py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-sm rounded-xl transition-all">확인</button>
+    </div>
+  </div>
+<% end %>
+
 <div class="space-y-12 py-10 pb-32">
   <!-- 1. Header -->
   <header class="px-6 space-y-4">
@@ -180,7 +194,121 @@
       </div>
     </section>
 
-    <!-- 5. Club Admins (Staff) -->
+    <!-- 5. Lounge & Content Management -->
+    <section class="px-6 space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">라운지 콘텐츠 관리</h2>
+        <div class="px-2 py-0.5 bg-indigo-500/10 rounded-full">
+           <span class="text-[8px] font-black text-indigo-400 uppercase">Live & Lecture</span>
+        </div>
+      </div>
+
+      <div class="app-glass-card p-5 border-white/5 space-y-6" data-controller="lounge-settings">
+        <%= form_with model: @official_club, url: prototype_update_club_lounge_path, method: :patch, local: true, class: "space-y-6" do |f| %>
+          
+          <!-- LIVE ROOM Management -->
+          <div class="space-y-4" data-lounge-settings-target="liveContainer">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-indigo-500/20 flex items-center justify-center text-xs">📹</div>
+                <h3 class="text-xs font-black text-white whitespace-nowrap">LIVE ROOM 설정</h3>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <%= f.check_box :live_room_active, 
+                                class: "sr-only peer", 
+                                data: { 
+                                  lounge_settings_target: "liveToggle",
+                                  action: "change->lounge-settings#toggleLive" 
+                                } %>
+                <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500 shadow-inner"></div>
+                <span class="ml-2 text-[10px] font-black text-slate-500 peer-checked:text-indigo-400 uppercase tracking-widest">Active</span>
+              </label>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-3">
+              <div class="space-y-1.5">
+                <%= f.label :live_room_title, "라이브 룸 타이틀", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                <%= f.text_field :live_room_title, 
+                                 placeholder: "예: 온라인 공동 몰입 세션", 
+                                 class: "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all disabled:pointer-events-none",
+                                 data: { lounge_settings_target: "liveInput" } %>
+              </div>
+
+              <!-- Separated Interaction Settings -->
+              <div class="grid grid-cols-1 gap-3 pt-1">
+                <div class="space-y-1.5">
+                  <%= f.label :live_room_button_text, "버튼 노출 문구", class: "text-[9px] font-black text-indigo-400/70 uppercase tracking-widest pl-1" %>
+                  <%= f.text_field :live_room_button_text, 
+                                   placeholder: "입장하기", 
+                                   class: "w-full bg-indigo-500/5 border border-indigo-500/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all disabled:pointer-events-none",
+                                   data: { lounge_settings_target: "liveInput" } %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :zoom_link, "실제 연결 링크 (URL)", class: "text-[9px] font-black text-rose-400/70 uppercase tracking-widest pl-1" %>
+                  <%= f.text_field :zoom_link, 
+                                   placeholder: "https://zoom.us/j/...", 
+                                   class: "w-full bg-rose-500/5 border border-rose-500/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:border-rose-500 outline-none transition-all disabled:pointer-events-none",
+                                   data: { lounge_settings_target: "liveInput" } %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="h-px w-full bg-white/5"></div>
+
+          <!-- LECTURE ROOM Management -->
+          <div class="space-y-4" data-lounge-settings-target="lectureContainer">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2 shrink-0">
+                <div class="w-7 h-7 rounded-lg bg-purple-500/20 flex items-center justify-center text-xs">🎓</div>
+                <h3 class="text-xs font-black text-white whitespace-nowrap">LECTURE ROOM 설정</h3>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <%= f.check_box :lecture_room_active, 
+                                class: "sr-only peer",
+                                data: { 
+                                  lounge_settings_target: "lectureToggle",
+                                  action: "change->lounge-settings#toggleLecture" 
+                                } %>
+                <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-500 shadow-inner"></div>
+                <span class="ml-2 text-[10px] font-black text-slate-500 peer-checked:text-purple-400 uppercase tracking-widest">Active</span>
+              </label>
+            </div>
+            
+            <div class="grid grid-cols-1 gap-3">
+              <div class="space-y-1.5">
+                <%= f.label :lecture_room_title, "강의실 타이틀", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                <%= f.text_field :lecture_room_title, 
+                                 placeholder: "예: 스페셜 인사이트 강의실", 
+                                 class: "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all disabled:pointer-events-none",
+                                 data: { lounge_settings_target: "lectureInput" } %>
+              </div>
+              <div class="space-y-1.5">
+                <%= f.label :lecture_room_description, "강의 상세 내용", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                <%= f.text_area :lecture_room_description, 
+                                placeholder: "강의에 대한 설명을 입력하세요.", 
+                                rows: 2, 
+                                class: "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-medium text-slate-300 focus:border-indigo-500 outline-none transition-all disabled:pointer-events-none",
+                                data: { lounge_settings_target: "lectureInput" } %>
+              </div>
+              <div class="space-y-1.5">
+                <%= f.label :special_lecture_link, "강의실 연결 링크", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                <%= f.text_field :special_lecture_link, 
+                                 placeholder: "https://...", 
+                                 class: "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all disabled:pointer-events-none",
+                                 data: { lounge_settings_target: "lectureInput" } %>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-3.5 bg-indigo-600 rounded-xl text-white font-black text-xs shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">
+            라운지 설정 업데이트
+          </button>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- 6. Club Admins (Staff) -->
     <section class="px-6 space-y-4">
       <div class="flex items-center justify-between px-1">
         <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">클럽 관리 스태프</h2>
