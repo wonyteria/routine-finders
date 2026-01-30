@@ -376,17 +376,7 @@
                   <p class="text-sm font-black text-white leading-none truncate <%= routine.completed_today? ? 'line-through opacity-40' : '' %>"><%= routine.title %></p>
                 </div>
               </div>
-              
               <div class="flex items-center gap-3">
-                <!-- Relax Pass Inlay Button -->
-                <% if @is_club_member && !routine.completed_today? %>
-                  <button onclick="document.getElementById('pass-confirm-<%= routine.id %>').classList.remove('hidden')" 
-                          class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lg hover:bg-white/10 active:scale-90 transition-all" 
-                          title="휴식권 사용하기">
-                    🎟️
-                  </button>
-                <% end %>
-
                 <!-- Check Button -->
                 <%= button_to toggle_personal_routine_path(routine, date: Date.current, source: 'prototype'), 
                             method: :post, 
