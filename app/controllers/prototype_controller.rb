@@ -810,8 +810,11 @@ class PrototypeController < ApplicationController
 
   def lounge_params
     params.require(:routine_club).permit(
-      :zoom_link, :live_room_title, :live_room_button_text, :live_room_active,
-      :special_lecture_link, :lecture_room_title, :lecture_room_description, :lecture_room_active
-    )
+    :title, :description, :bank_name, :account_number, :account_holder,
+    :weekly_reward_info, :monthly_reward_info, :season_reward_info,
+    :relax_pass_limit, :save_pass_limit, :golden_fire_bonus, :auto_kick_threshold, :completion_attendance_rate,
+    :zoom_link, :live_room_title, :live_room_button_text, :live_room_active,
+    :special_lecture_link, :lecture_room_title, :lecture_room_description, :lecture_room_active
+  )
   end
 end

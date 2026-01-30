@@ -248,7 +248,7 @@
             <!-- System 1: Relaxation Pass -->
             <div class="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-[32px] p-6 border border-blue-100/50 hover:shadow-xl hover:-translate-y-1 transition-all group">
               <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm group-hover:scale-110 transition-transform">🎫</div>
-              <h3 class="font-black text-slate-900 mb-2">3회의 휴식권</h3>
+              <h3 class="font-black text-slate-900 mb-2"><%= @routine_club.relax_pass_limit %>회의 휴식권</h3>
               <p class="text-[11px] text-slate-500 font-medium leading-relaxed">
                 급한 용무가 있을 때 사용하는 치트키. <span class="text-indigo-600 font-black">스트릭을 유지</span>하며 결석 경고를 원천 차단합니다.
               </p>
@@ -259,16 +259,16 @@
               <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm group-hover:scale-110 transition-transform">🔥</div>
               <h3 class="font-black text-slate-900 mb-2">황금 불꽃 리워드</h3>
               <p class="text-[11px] text-slate-500 font-medium leading-relaxed">
-                주 7일 완벽한 몰입을 보여준 멤버에게 부여되는 <span class="text-orange-600 font-black">압도적인 에너지 보너스(50P)</span>와 시각 효과.
+                주 7일 완벽한 몰입을 보여준 멤버에게 부여되는 <span class="text-orange-600 font-black">압도적인 에너지 보너스(<%= @routine_club.golden_fire_bonus %>P)</span>와 시각 효과.
               </p>
             </div>
 
             <!-- System 3: Strict Penalty -->
             <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[32px] p-6 border border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all group">
               <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-sm group-hover:scale-110 transition-transform text-orange-400">🚫</div>
-              <h3 class="font-black text-white mb-2">10-Penalty 킥</h3>
+              <h3 class="font-black text-white mb-2">Penalty 킥</h3>
               <p class="text-[11px] text-slate-300 font-medium leading-relaxed">
-                수질 관리를 위한 최후의 잣대. <span class="text-orange-400 font-black">누적 경고 10회 즉시 제명</span> 및 환불 불가 원칙이 적용됩니다.
+                수질 관리를 위한 최후의 잣대. <span class="text-orange-400 font-black">누적 경고 <%= @routine_club.auto_kick_threshold %>회 즉시 제명</span> 및 환불 불가 원칙이 적용됩니다.
               </p>
             </div>
           </div>
@@ -383,7 +383,7 @@
                   </li>
                   <li class="text-sm text-slate-300 font-medium flex gap-2">
                     <span class="text-red-500 font-black">•</span>
-                    <span><span class="text-white font-black">누적 경고 10회</span> 달성 시 즉시 시스템 제명</span>
+                    <span><span class="text-white font-black">누적 경고 <%= @routine_club.auto_kick_threshold %>회</span> 달성 시 즉시 시스템 제명</span>
                   </li>
                   <li class="text-sm text-slate-300 font-medium flex gap-2">
                     <span class="text-red-500 font-black">•</span>
@@ -448,8 +448,8 @@
             </h3>
             <div class="space-y-4 text-sm text-slate-300 font-medium leading-relaxed">
               <p>• <span class="text-white font-black">정기 모집 운영</span>: 루파 클럽은 매 분기(3개월/약 91일) 단위 기수제로 운영되며, 모집 기간 외 중도 가입은 불가능합니다.</p>
-              <p>• <span class="text-white font-black">완주 및 혜택</span>: 기수 기간 내 <span class="text-indigo-400 font-black">출석률 70% 이상 달성</span> 시 명예 완주 배지가 수여됩니다. (출석: 루틴이 설정된 요일에 1개 이상 실천 시)</p>
-              <p>• <span class="text-white font-black">자동 제명 시스템</span>: 몰입도를 저해하는 무단 불참 누적(경고 10회) 시, 시스템에 의해 자동 제명 처리됩니다.</p>
+              <p>• <span class="text-white font-black">완주 및 혜택</span>: 기수 기간 내 <span class="text-indigo-400 font-black">출석률 <%= @routine_club.completion_attendance_rate.to_i %>% 이상 달성</span> 시 명예 완주 배지가 수여됩니다. (출석: 루틴이 설정된 요일에 1개 이상 실천 시)</p>
+              <p>• <span class="text-white font-black">자동 제명 시스템</span>: 몰입도를 저해하는 무단 불참 누적(경고 <%= @routine_club.auto_kick_threshold %>회) 시, 시스템에 의해 자동 제명 처리됩니다.</p>
               <p>• <span class="text-white font-black">환불 및 기간</span>: 정액제 참여 특성상 시스템 승인 후 중도 퇴출이나 본인 변심에 의한 환불이 절대 불가합니다.</p>
             </div>
           </section>

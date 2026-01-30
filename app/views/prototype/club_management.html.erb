@@ -83,6 +83,11 @@
                 data-id="announcements" 
                 data-action="click->tabs#change"
                 class="flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all text-slate-500 border-transparent">공지</button>
+        <button type="button" 
+                data-tabs-target="tab" 
+                data-id="settings" 
+                data-action="click->tabs#change"
+                class="flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all text-slate-500 border-transparent">클럽 설정</button>
       </div>
     </nav>
 
@@ -292,7 +297,118 @@
               </div>
             </div>
 
-            <button type="submit" class="w-full py-4 bg-indigo-600 rounded-2xl text-white font-black text-xs shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">설정 업데이트 완료</button>
+            <button type="submit" class="w-full py-4 bg-indigo-600 rounded-2xl text-white font-black text-xs shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">라운지 설정 업데이트</button>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Club Settings Panel -->
+      <div class="px-6 hidden space-y-8" data-tabs-target="panel" data-id="settings">
+        <div class="app-glass-card p-6 border-white/5 space-y-8">
+          <div class="flex items-center justify-between border-b border-white/5 pb-4">
+            <h3 class="text-lg font-black text-indigo-400 uppercase tracking-widest">클럽 기본 및 운영 설정</h3>
+          </div>
+
+          <%= form_with model: @official_club, url: prototype_update_club_lounge_path, method: :patch, local: true, class: "space-y-8" do |f| %>
+            <!-- Basic Info -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-orange-500/20 flex items-center justify-center text-sm">📝</div>
+                <span class="text-xs font-black text-white uppercase tracking-widest">기본 정보 및 철학</span>
+              </div>
+              <div class="space-y-3">
+                <div class="space-y-1.5">
+                  <%= f.label :title, "클럽 타이틀", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_field :title, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :description, "클럽 철학 및 상세 소개 (Landing)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_area :description, rows: 6, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-medium text-slate-300 focus:border-indigo-500 outline-none transition-all leading-relaxed", placeholder: "여기에 작성된 내용이 가입 페이지 메인에 노출됩니다." %>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-px w-full bg-white/5"></div>
+
+            <!-- Bank Info -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-sm">💳</div>
+                <span class="text-xs font-black text-white uppercase tracking-widest">결제 및 계좌 정보</span>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <%= f.label :bank_name, "은행명", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_field :bank_name, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :account_holder, "예금주", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_field :account_holder, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="col-span-2 space-y-1.5">
+                  <%= f.label :account_number, "계좌번호", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_field :account_number, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-px w-full bg-white/5"></div>
+
+            <!-- Operating Rules & Thresholds -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-purple-500/20 flex items-center justify-center text-sm">⚖️</div>
+                <span class="text-xs font-black text-white uppercase tracking-widest">운영 규칙 및 임계치 설정</span>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="space-y-1.5">
+                  <%= f.label :relax_pass_limit, "휴식권 (시즌당)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.number_field :relax_pass_limit, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :save_pass_limit, "세이브권 (시즌당)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.number_field :save_pass_limit, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :golden_fire_bonus, "황금불꽃 보너스(P)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.number_field :golden_fire_bonus, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :auto_kick_threshold, "제명 기준 (경고 횟수)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.number_field :auto_kick_threshold, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :completion_attendance_rate, "완주 기준 (출석률 %)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.number_field :completion_attendance_rate, step: 0.1, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+              </div>
+            </div>
+
+            <div class="h-px w-full bg-white/5"></div>
+
+            <!-- Reward Systems -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center text-sm">🎁</div>
+                <span class="text-xs font-black text-white uppercase tracking-widest">리워드 및 시스템 안내</span>
+              </div>
+              <div class="space-y-4">
+                <div class="space-y-1.5">
+                  <%= f.label :weekly_reward_info, "주간 리워드 (Weekly Milestone)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_field :weekly_reward_info, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :monthly_reward_info, "월간 리워드 (Monthly Milestone)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_area :monthly_reward_info, rows: 2, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-medium text-slate-300 focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+                <div class="space-y-1.5">
+                  <%= f.label :season_reward_info, "시즌 리워드 (MVP/Legend)", class: "text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1" %>
+                  <%= f.text_area :season_reward_info, rows: 2, class: "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-3 text-xs font-medium text-slate-300 focus:border-indigo-500 outline-none transition-all" %>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-4 bg-indigo-600 rounded-2xl text-white font-black text-xs shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">기본 설정 업데이트 완료</button>
           <% end %>
         </div>
       </div>

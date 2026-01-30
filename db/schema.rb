@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_30_173619) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_30_180708) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -424,13 +424,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_173619) do
   create_table "routine_clubs", force: :cascade do |t|
     t.string "account_holder", default: "루틴파인더스"
     t.string "account_number", default: "110-123-456789"
+    t.integer "auto_kick_threshold", default: 10
     t.decimal "average_attendance_rate", precision: 5, scale: 2, default: "0.0"
     t.string "bank_name", default: "신한은행"
     t.string "category"
+    t.float "completion_attendance_rate", default: 70.0
     t.datetime "created_at", null: false
     t.integer "current_members", default: 0
     t.text "description"
     t.date "end_date", null: false
+    t.integer "golden_fire_bonus", default: 20
     t.integer "host_id", null: false
     t.boolean "is_official"
     t.boolean "lecture_room_active"
@@ -443,6 +446,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_173619) do
     t.integer "min_duration_months", default: 3, null: false
     t.integer "monthly_fee", default: 0, null: false
     t.string "monthly_reward_info"
+    t.integer "relax_pass_limit", default: 3
+    t.integer "save_pass_limit", default: 3
     t.string "season_reward_info"
     t.string "special_lecture_link"
     t.date "start_date", null: false

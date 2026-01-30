@@ -79,7 +79,7 @@ class RoutineClubMember < ApplicationRecord
 
   # 기수 완주 조건 확인 (출석률 70% 이상 + 제명되지 않음)
   def met_completion_criteria?
-    status_active? && attendance_rate >= 70.0
+    status_active? && attendance_rate >= (routine_club.completion_attendance_rate || 70.0)
   end
 
   def use_relax_pass!(date = Date.current)
@@ -139,7 +139,7 @@ class RoutineClubMember < ApplicationRecord
     end
 
     # 4. Golden Fire (7-day streaks)
-    points += (attendances_data.count / 7) * 20
+    points += (attendances_data.count / 7) * (routine_club.golden_fire_bonus || 20)
 
     update!(growth_points: points)
   end
@@ -160,13 +160,13 @@ class RoutineClubMember < ApplicationRecord
   def remaining_relax_passes
     return 0 unless payment_status_confirmed?
     ensure_monthly_refill!
-    3 - (used_relax_passes_count || 0)
+    (routine_club.relax_pass_limit || 3) - (used_relax_passes_count || 0)
   end
 
   def remaining_save_passes
     return 0 unless payment_status_confirmed?
     ensure_monthly_refill!
-    3 - (used_save_passes_count || 0)
+    (routine_club.save_pass_limit || 3) - (used_save_passes_count || 0)
   end
 
   def remaining_passes
