@@ -570,10 +570,13 @@ class PrototypeController < ApplicationController
           growth_trend: [ "up", "down", "stable" ].sample
         }
       end
+      # Announcements
+      @announcements = @official_club.announcements.order(created_at: :desc)
     else
       @club_members = []
       @pending_memberships = []
       @member_stats = []
+      @announcements = []
     end
 
     @club_admins = User.where(role: :club_admin).order(created_at: :desc)
