@@ -311,11 +311,11 @@
             const icon = modal.querySelector('.nudge-icon');
 
             if (type === 'relax') {
-              title.innerText = "휴식권 (Relax Pass)";
+              title.innerText = "휴식권";
               desc.innerHTML = "루틴을 쉬고 싶을 때 사용하면 공식 휴가로 인정되어 출석률을 지켜주는 특별한 기능입니다. 루파 클럽 멤버가 되어 여유 있는 성장을 경험하세요.";
               icon.innerText = "🎟️";
             } else {
-              title.innerText = "세이브권 (Save Pass)";
+              title.innerText = "세이브권";
               desc.innerHTML = "깜빡하고 놓친 인증이나 지나간 결석을 출석으로 복구해주는 스트릭 방어 기능입니다. 루파 클럽 멤버가 되어 당신의 성실한 기록을 끝까지 지킬 수 있습니다.";
               icon.innerText = "🛡️";
             }
@@ -329,7 +329,7 @@
                 onclick="<%= @is_club_member ? "document.getElementById('global-pass-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')" : "showPremiumNudge('relax')" %>"
                 class="flex items-center px-2.5 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg hover:bg-indigo-500/20 active:scale-95 transition-all group relative">
           <div class="flex items-baseline gap-1 leading-none">
-            <span class="text-[9px] font-black text-indigo-400 uppercase tracking-tighter">Relax</span>
+            <span class="text-[9px] font-black text-indigo-400 uppercase tracking-tighter">휴식권</span>
             <span class="text-[10px] font-black text-white tabular-nums">
               <%= @is_club_member ? (@my_membership&.remaining_relax_passes || 0) : "-" %>
             </span>
@@ -344,7 +344,7 @@
                 onclick="<%= @is_club_member ? "document.getElementById('global-pass-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')" : "showPremiumNudge('save')" %>"
                 class="flex items-center px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 active:scale-95 transition-all group relative">
           <div class="flex items-baseline gap-1 leading-none">
-            <span class="text-[9px] font-black text-emerald-400 uppercase tracking-tighter">Save</span>
+            <span class="text-[9px] font-black text-emerald-400 uppercase tracking-tighter">세이브권</span>
             <span class="text-[10px] font-black text-white tabular-nums">
               <%= @is_club_member ? (@my_membership&.remaining_save_passes || 0) : "-" %>
             </span>
@@ -436,7 +436,7 @@
                             <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                             <div class="flex-1 min-w-0">
                               <div class="flex justify-between items-center mb-0.5">
-                                <span class="text-sm font-black text-white">휴식권 (Relax)</span>
+                                <span class="text-sm font-black text-white">휴식권</span>
                                 <span class="text-[10px] font-black text-indigo-400"><%= @my_membership&.remaining_relax_passes || 0 %>개 남음</span>
                               </div>
                               <p class="text-[10px] font-bold text-slate-500 leading-tight">오늘 푹 쉬고 싶을 때 사용해요. 출석률에 영향을 주지 않는 공식 휴가입니다.</p>
@@ -457,7 +457,7 @@
                             <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                             <div class="flex-1 min-w-0">
                               <div class="flex justify-between items-center mb-0.5">
-                                <span class="text-sm font-black text-white">세이브권 (Save)</span>
+                                <span class="text-sm font-black text-white">세이브권</span>
                                 <span class="text-[10px] font-black text-emerald-400"><%= @my_membership&.remaining_save_passes || 0 %>개 남음</span>
                               </div>
                               <p class="text-[10px] font-bold text-slate-500 leading-tight">깜빡한 어제의 기록을 살리거나 결석을 방어해요. 스트릭을 이어가기 위한 방어권입니다.</p>
@@ -666,7 +666,7 @@
                 <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                 <div>
                   <div class="flex items-center gap-2 mb-0.5">
-                    <span class="text-sm font-black text-white">휴식권 (Relax)</span>
+                    <span class="text-sm font-black text-white">휴식권</span>
                     <span class="px-1.5 py-0.5 bg-indigo-500/20 rounded text-[8px] font-black text-indigo-400"><%= @my_membership&.remaining_relax_passes || 0 %>개</span>
                   </div>
                   <p class="text-[10px] font-bold text-slate-500 leading-tight">선택한 날짜를 공식 휴일로 인정합니다.</p>
@@ -684,7 +684,7 @@
                 <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                 <div>
                   <div class="flex items-center gap-2 mb-0.5">
-                    <span class="text-sm font-black text-white">세이브권 (Save)</span>
+                    <span class="text-sm font-black text-white">세이브권</span>
                     <span class="px-1.5 py-0.5 bg-emerald-500/20 rounded text-[8px] font-black text-emerald-400"><%= @my_membership&.remaining_save_passes || 0 %>개</span>
                   </div>
                   <p class="text-[10px] font-bold text-slate-500 leading-tight">결석한 날을 출석으로 소급 방어합니다.</p>
