@@ -94,7 +94,9 @@
 
             <!-- Master FAB Button -->
             <div class="flex-none px-1 relative">
-              <button type="button" onclick="document.getElementById('fab-menu-sheet').classList.remove('hidden')" class="w-16 h-16 app-fab-gradient rounded-full flex items-center justify-center -translate-y-7 shadow-[0_15px_35px_rgba(124,77,255,0.6)] border-4 border-[#0C0B12] active:scale-90 transition-transform cursor-pointer">
+              <button type="button" 
+                      data-action="click->proto-ui#toggleFabMenu" 
+                      class="w-16 h-16 app-fab-gradient rounded-full flex items-center justify-center -translate-y-7 shadow-[0_15px_35px_rgba(124,77,255,0.6)] border-4 border-[#0C0B12] active:scale-90 transition-transform cursor-pointer relative z-[31000]">
                 <span class="text-2xl text-white font-black leading-none">+</span>
               </button>
             </div>
@@ -121,9 +123,9 @@
     </main>
 
     <!-- 1. Routine Record Bottom Sheet -->
-    <div id="record-sheet" class="hidden fixed inset-0 z-[11000]">
+    <div id="record-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('record-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-      <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10">
+      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
         <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
@@ -151,9 +153,9 @@
     </div>
 
     <!-- 1-2. Today's Commitment Bottom Sheet -->
-    <div id="commitment-sheet" class="hidden fixed inset-0 z-[11000]">
+    <div id="commitment-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('commitment-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-      <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10">
+      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 다짐</h3>
         <p class="text-xs font-bold text-rose-400 mb-8 text-center uppercase tracking-widest leading-none">Declare your commitment</p>
@@ -181,12 +183,10 @@
     </div>
 
     <!-- 2. FAB Menu Sheet (Simple List Style) -->
-    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[11000]">
-      <div onclick="document.getElementById('fab-menu-sheet').classList.add('hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
-      <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
-        <h3 class="text-xl font-black text-white mb-2 text-center">새로운 시작하기</h3>
-        <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Create & Join</p>
+    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
+      <div data-action="click->proto-ui#toggleFabMenu" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
+      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar">
+
         
         <div class="space-y-4">
           <% 
@@ -263,35 +263,46 @@
           </a>
 
           <!-- 4. 루파클럽 상태 및 혜택 (Bottom Highlight) -->
-          <a href="<%= is_club_member ? prototype_my_path : prototype_club_join_path %>" 
-             data-action="click->proto-ui#checkLogin"
-             class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                <span class="text-2xl">🔱</span>
-              </div>
-              <div class="flex-1">
-                <p class="text-white font-black text-lg">
-                  <%= is_club_member ? "나의 멤버십 혜택" : "루파클럽 멤버십 가입" %>
-                </p>
-                <p class="text-indigo-100 text-xs font-bold mt-0.5">
-                  <% if is_club_member %>
+          <% if is_club_member %>
+            <button type="button" 
+                    data-action="click->proto-ui#openModal"
+                    data-modal-id="membership-master-modal"
+                    onclick="document.getElementById('membership-master-modal').classList.remove('hidden'); document.getElementById('fab-menu-sheet').classList.add('hidden'); document.body.classList.add('overflow-hidden')"
+                    class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20 cursor-pointer">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                  <span class="text-2xl">🔱</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-white font-black text-lg">나의 멤버십 혜택</p>
+                  <p class="text-indigo-100 text-xs font-bold mt-0.5">
                     🎟️ <%= membership.remaining_relax_passes %> · 
                     🛡️ <%= membership.remaining_save_passes %> · 
                     ⚡ <%= number_with_delimiter(membership.growth_points || 0) %>P
-                  <% else %>
-                    레벨 제한 없이 즉시 리더가 되세요
-                  <% end %>
-                </p>
+                  </p>
+                </div>
+                <svg class="w-6 h-6 text-white opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
               </div>
-              <svg class="w-6 h-6 text-white opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-            </div>
-          </a>
+            </button>
+          <% else %>
+            <a href="/prototype/club_join" 
+               data-action="click->proto-ui#checkLogin"
+               class="block w-full p-5 rounded-3xl bg-gradient-to-r from-indigo-600 to-purple-600 text-left group active:scale-[0.98] transition-all shadow-lg shadow-indigo-600/20">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                  <span class="text-2xl">🔱</span>
+                </div>
+                <div class="flex-1">
+                  <p class="text-white font-black text-lg">루파클럽 멤버십 가입</p>
+                  <p class="text-indigo-100 text-xs font-bold mt-0.5">레벨 제한 없이 즉시 리더가 되세요</p>
+                </div>
+                <svg class="w-6 h-6 text-white opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+              </div>
+            </a>
+          <% end %>
         </div>
 
-        <div class="mt-8 text-center">
-            <button type="button" onclick="document.getElementById('fab-menu-sheet').classList.add('hidden')" class="px-8 py-3 rounded-full bg-white/5 text-slate-500 font-bold text-sm hover:bg-white/10 transition-colors">닫기</button>
-        </div>
+
       </div>
     </div>
     
@@ -480,6 +491,132 @@
         </div>
       </div>
       <script>document.body.classList.add('overflow-hidden');</script>
+    <% end %>
+
+    <!-- 3. Membership Master Center Modal (Comprehensive) -->
+    <% if current_user && is_club_member %>
+      <% 
+        official_club = RoutineClub.official.first
+        membership = current_user.routine_club_members.active.first
+      %>
+      <div id="membership-master-modal" class="hidden fixed inset-0 z-[32000] flex items-center justify-center p-6">
+        <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/95 backdrop-blur-2xl"></div>
+        
+        <div class="relative w-full max-w-md bg-gradient-to-b from-[#1E1C28] to-[#0C0B12] rounded-[48px] border border-white/10 shadow-[0_0_100px_rgba(79,70,229,0.3)] overflow-y-auto max-h-[90vh] hide-scrollbar animate-badge-pop">
+          <!-- Glow Decor -->
+          <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600/20 blur-[100px] rounded-full"></div>
+          
+          <div class="relative z-10 p-8 space-y-10">
+            <!-- Header: Member Identity -->
+            <div class="text-center space-y-4">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Premium Membership</span>
+              </div>
+              <div class="space-y-1">
+                <h3 class="text-2xl font-black text-white">루파 <%= official_club&.generation_number %>기 정식 멤버</h3>
+                <p class="text-xs font-bold text-slate-400">당신의 성장은 이제 특별한 시스템으로 관리됩니다.</p>
+              </div>
+            </div>
+
+            <!-- Benefits Grid -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-4 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
+                <span class="text-2xl">🎟️</span>
+                <p class="text-xs font-black text-white">20% 자동 할인</p>
+                <p class="text-[9px] font-bold text-slate-500">모든 유료 활동 즉시 할인</p>
+              </div>
+              <div class="p-4 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
+                <span class="text-2xl">⚖️</span>
+                <p class="text-xs font-black text-white">아이템 마스터</p>
+                <p class="text-[9px] font-bold text-slate-500">매월 휴식/세이브권 충전</p>
+              </div>
+              <div class="p-4 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
+                <span class="text-2xl">🏛️</span>
+                <p class="text-xs font-black text-white">라운지 입장권</p>
+                <p class="text-[9px] font-bold text-slate-500">전용 강의 및 세션 참여</p>
+              </div>
+              <div class="p-4 rounded-3xl bg-white/[0.03] border border-white/5 space-y-2">
+                <span class="text-2xl">✨</span>
+                <p class="text-xs font-black text-white">골든 아우라</p>
+                <p class="text-[9px] font-bold text-slate-500">프로필 전용 효과 적용</p>
+              </div>
+            </div>
+
+            <!-- Item Management Section -->
+            <div class="space-y-5 pt-4 border-t border-white/5">
+              <div class="flex items-center justify-between px-1">
+                <h4 class="text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em]">아이템 인벤토리</h4>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  <span class="text-[9px] font-black text-slate-500 uppercase">System Ready</span>
+                </div>
+              </div>
+
+              <!-- Date Selection -->
+              <div class="relative group">
+                <input type="date" 
+                       id="master-center-date-picker"
+                       value="<%= Date.current.to_s %>"
+                       max="<%= Date.current.to_s %>"
+                       class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500 outline-none transition-all appearance-none"
+                       onchange="document.querySelectorAll('.master-center-date').forEach(input => input.value = this.value)">
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+              </div>
+
+              <!-- Pass Buttons -->
+              <div class="grid grid-cols-1 gap-3">
+                <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'relax', source: 'prototype'), method: :post, class: "contents" do |f| %>
+                  <%= f.hidden_field :date, value: Date.current, class: "master-center-date" %>
+                  <button type="submit" 
+                          <% if membership&.remaining_relax_passes.to_i <= 0 %>disabled<% end %>
+                          data-turbo-confirm="선택하신 날짜에 휴식권 1장을 사용하시겠습니까?"
+                          class="w-full p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
+                    <div>
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-sm font-black text-white">휴식권</span>
+                        <span class="px-1.5 py-0.5 bg-indigo-500/20 rounded text-[8px] font-black text-indigo-400"><%= membership&.remaining_relax_passes || 0 %>개 남음</span>
+                      </div>
+                      <p class="text-[10px] font-bold text-slate-500 leading-tight">공식 휴가로 처리되어 출석이 유지됩니다.</p>
+                    </div>
+                  </button>
+                <% end %>
+
+                <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'save', source: 'prototype'), method: :post, class: "contents" do |f| %>
+                  <%= f.hidden_field :date, value: Date.current, class: "master-center-date" %>
+                  <button type="submit" 
+                          <% if membership&.remaining_save_passes.to_i <= 0 %>disabled<% end %>
+                          data-turbo-confirm="선택하신 날짜에 세이브권 1장을 사용하시겠습니까?"
+                          class="w-full p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
+                    <div>
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-sm font-black text-white">세이브권</span>
+                        <span class="px-1.5 py-0.5 bg-emerald-500/20 rounded text-[8px] font-black text-emerald-400"><%= membership&.remaining_save_passes || 0 %>개 남음</span>
+                      </div>
+                      <p class="text-[10px] font-bold text-slate-500 leading-tight">지나간 결석을 출석으로 긴급 복구합니다.</p>
+                    </div>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Footer: Navigation -->
+            <div class="pt-4 flex flex-col items-center gap-4">
+               <%= link_to prototype_my_path, class: "text-xs font-black text-indigo-400 hover:text-white transition-colors" do %>
+                 상세 성장 분석 보러가기 →
+               <% end %>
+               <button onclick="this.closest('#membership-master-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+                       class="w-full py-4.5 bg-white/5 text-slate-500 font-bold text-sm rounded-2xl hover:text-white transition-colors">
+                 닫기
+               </button>
+            </div>
+          </div>
+        </div>
+      </div>
     <% end %>
   </body>
 </html>
