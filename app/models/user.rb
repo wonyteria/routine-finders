@@ -80,8 +80,22 @@ class User < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
   scope :deleted, -> { where.not(deleted_at: nil) }
 
+  def suspended?
+    suspended_at.present? && deleted_at.blank?
+  end
+
   def deleted?
     deleted_at.present?
+  end
+
+  def active_status
+    if deleted?
+      "withdrawn"
+    elsif suspended?
+      "suspended"
+    else
+      "active"
+    end
   end
 
   def soft_delete

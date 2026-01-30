@@ -81,61 +81,100 @@
 
     <!-- SECTION 2: USERS -->
     <div data-tabs-target="panel" data-id="users" class="hidden px-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div class="app-glass-card p-4 border-white/5">
-        <%= form_with url: prototype_admin_dashboard_path, method: :get, class: "flex gap-2", data: { turbo_frame: "users_table" } do |f| %>
-          <%= hidden_field_tag :tab, "users" %>
-          <div class="flex-1 relative">
-            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <%= f.text_field :user_search, 
-                             placeholder: "검색...", 
-                             class: "w-full pl-11 pr-4 py-3.5 bg-black/40 border border-white/5 rounded-2xl text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
-          </div>
-          <button type="submit" class="px-6 rounded-2xl bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all">검색</button>
-        <% end %>
+      <div class="space-y-4">
+        <!-- Search Bar -->
+        <div class="app-glass-card p-4 border-white/5">
+          <%= form_with url: prototype_admin_dashboard_path, method: :get, class: "flex gap-2", data: { turbo_frame: "users_table" } do |f| %>
+            <%= hidden_field_tag :tab, "users" %>
+            <%= hidden_field_tag :member_filter, @member_filter %>
+            <div class="flex-1 relative">
+              <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <%= f.text_field :user_search, 
+                               placeholder: "유저 닉네임 또는 이메일 검색...", 
+                               class: "w-full pl-11 pr-4 py-3.5 bg-black/40 border border-white/5 rounded-2xl text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+            </div>
+            <button type="submit" class="px-6 rounded-2xl bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all">검색</button>
+          <% end %>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+          <% [["all", "전체 사용자"], ["club", "루파 클럽 멤버"], ["general", "일반 사용자"]].each do |val, label| %>
+            <%= link_to prototype_admin_dashboard_path(tab: "users", member_filter: val, user_search: params[:user_search]), 
+                        data: { turbo_frame: "users_table" },
+                        class: "px-4 py-2 rounded-full text-[10px] font-black whitespace-nowrap transition-all border #{ @member_filter == val ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20' : 'bg-white/5 border-white/5 text-slate-500 hover:text-slate-300' }" do %>
+              <%= label %>
+            <% end %>
+          <% end %>
+        </div>
       </div>
 
       <turbo-frame id="users_table">
-        <div class="app-glass-card border-white/5 overflow-hidden">
-          <table class="w-full text-left">
+        <div class="app-glass-card border-white/5 overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left min-w-[600px]">
             <thead>
               <tr class="bg-white/[0.02] border-b border-white/5">
-                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">사용자</th>
-                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">권한</th>
-                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest text-right">관리</th>
+                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest">사용자 정보</th>
+                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest text-center">권한 설정</th>
+                <th class="px-4 py-4 text-[9px] font-black text-slate-500 uppercase tracking-widest text-right">상태 관리</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
-              <% @users.each do |user| %>
-                <tr class="hover:bg-white/[0.02] transition-colors group">
-                  <td class="px-4 py-4">
-                    <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-lg bg-white/10 overflow-hidden shrink-0">
-                        <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+              <% if @users.any? %>
+                <% @users.each do |user| %>
+                  <tr class="hover:bg-white/[0.02] transition-colors group">
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-3">
+                        <div class="relative shrink-0">
+                          <div class="w-10 h-10 rounded-xl bg-white/10 overflow-hidden">
+                            <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+                          </div>
+                          <div class="absolute -bottom-1 -right-1 px-1 bg-indigo-500 rounded text-[7px] font-black text-white border border-[#0F0F13]">Lv.<%= user.level %></div>
+                        </div>
+                        <div class="min-w-0">
+                          <div class="flex items-center gap-2">
+                          <p class="text-xs font-black text-white truncate"><%= user.nickname %></p>
+                          <% if user.is_rufa_club_member? %>
+                             <span class="px-1 py-0.5 bg-indigo-500/10 text-indigo-400 text-[7px] font-black rounded border border-indigo-500/20">루파 클럽 멤버</span>
+                          <% else %>
+                             <span class="px-1 py-0.5 bg-white/5 text-slate-500 text-[7px] font-black rounded border border-white/5">일반 사용자</span>
+                          <% end %>
+                        </div>
+                          <p class="text-[9px] font-bold text-slate-500 truncate mt-0.5"><%= user.email %></p>
+                          <p class="text-[8px] font-medium text-slate-600 mt-1">가입: <%= user.created_at.strftime('%Y.%m.%d') %></p>
+                        </div>
                       </div>
-                      <div class="min-w-0">
-                        <p class="text-xs font-black text-white truncate"><%= user.nickname %></p>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-4 py-4">
-                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase text-indigo-400 bg-indigo-400/10"><%= user.role %></span>
-                  </td>
-                  <td class="px-4 py-4 text-right">
-                    <div class="flex justify-end gap-1">
-                      <button data-action="system-admin#promoteUser" 
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                      <select data-action="change->system-admin#updateUserRoleSelect"
                               data-user-id="<%= user.id %>"
                               data-nickname="<%= user.nickname %>"
-                              data-role="<%= user.role %>"
-                              class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11l7-7 7 7M5 19l7-7 7 7"/></svg>
-                      </button>
-                      <button data-action="system-admin#deactivateUser" 
-                              data-user-id="<%= user.id %>"
-                              data-nickname="<%= user.nickname %>"
-                              class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center <%= user.deleted? ? 'text-emerald-500' : 'text-rose-500' %> hover:bg-white/10 transition-all">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-                      </button>
-                    </div>
+                              data-initial-value="<%= user.role %>"
+                              class="w-24 bg-black/40 border border-white/10 rounded-xl px-2 py-2 text-[10px] font-black text-white focus:border-indigo-500 outline-none cursor-pointer appearance-none text-center">
+                        <% [["user", "일반 사용자"], ["club_admin", "운영 관리자"], ["super_admin", "마스터 권한"]].each do |role, label| %>
+                          <option value="<%= role %>" <%= 'selected' if user.role == role %> class="bg-[#1A1921]"><%= label %></option>
+                        <% end %>
+                      </select>
+                    </td>
+                    <td class="px-4 py-4 text-right">
+                      <div class="flex flex-col items-end gap-1">
+                        <select data-action="change->system-admin#updateUserStatusSelect"
+                                data-user-id="<%= user.id %>"
+                                data-nickname="<%= user.nickname %>"
+                                data-initial-value="<%= user.active_status %>"
+                                class="w-24 bg-black/40 border border-white/10 rounded-xl px-2 py-2 text-[10px] font-black text-white focus:border-indigo-500 outline-none cursor-pointer appearance-none text-center">
+                          <% [["active", "이용 중"], ["suspended", "정지"], ["withdrawn", "탈퇴"]].each do |status, label| %>
+                            <option value="<%= status %>" <%= 'selected' if user.active_status == status %> class="bg-[#1A1921]"><%= label %></option>
+                          <% end %>
+                        </select>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan="3" class="px-4 py-20 text-center">
+                    <p class="text-[11px] font-black text-slate-700 uppercase tracking-widest italic">조건에 맞는 사용자가 없습니다.</p>
                   </td>
                 </tr>
               <% end %>

@@ -15,23 +15,34 @@ export default class extends Controller {
         this.performPost('/prototype/admin/broadcast', { title, content })
     }
 
-    promoteUser(event) {
-        const userId = event.currentTarget.dataset.userId
-        const nickname = event.currentTarget.dataset.nickname
-        const currentRole = event.currentTarget.dataset.role
-        const newRole = currentRole === 'user' ? 'club_admin' : 'super_admin'
+    updateUserRoleSelect(event) {
+        const select = event.currentTarget
+        const userId = select.dataset.userId
+        const nickname = select.dataset.nickname
+        const initialRole = select.dataset.initialValue
+        const newRole = select.value
+        const label = select.options[select.selectedIndex].text
 
-        if (window.confirm(`${nickname}님을 ${newRole}(으)로 승격하시겠습니까?`)) {
+        if (window.confirm(`${nickname}님의 권한을 '${label}'(으)로 변경하시겠습니까?`)) {
             this.performPost('/prototype/admin/update_user_role', { user_id: userId, role: newRole }, true)
+        } else {
+            // 취소 시 이전 값으로 복구
+            select.value = initialRole
         }
     }
 
-    deactivateUser(event) {
-        const userId = event.currentTarget.dataset.userId
-        const nickname = event.currentTarget.dataset.nickname
+    updateUserStatusSelect(event) {
+        const select = event.currentTarget
+        const userId = select.dataset.userId
+        const nickname = select.dataset.nickname
+        const initialStatus = select.dataset.initialValue
+        const newStatus = select.value
+        const label = select.options[select.selectedIndex].text
 
-        if (window.confirm(`${nickname}님의 활성 상태를 변경하시겠습니까?`)) {
-            this.performPost('/prototype/admin/toggle_user_status', { user_id: userId }, true)
+        if (window.confirm(`${nickname}님의 상태를 '${label}'(으)로 변경하시겠습니까?`)) {
+            this.performPost('/prototype/admin/update_user_status', { user_id: userId, status: newStatus }, true)
+        } else {
+            select.value = initialStatus
         }
     }
 

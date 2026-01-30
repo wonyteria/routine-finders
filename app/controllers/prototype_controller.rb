@@ -5,7 +5,7 @@ class PrototypeController < ApplicationController
   layout "prototype"
   before_action :set_shared_data
   before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports ]
-  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :broadcast, :update_user_role, :toggle_user_status, :approve_challenge, :purge_cache ]
+  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :broadcast, :update_user_role, :update_user_status, :approve_challenge, :purge_cache ]
   before_action :require_can_create_challenge, only: [ :challenge_builder ]
   before_action :require_can_create_gathering, only: [ :gathering_builder ]
 
@@ -518,9 +518,20 @@ class PrototypeController < ApplicationController
 
     # 2. User Management Data
     @users_query = User.order(created_at: :desc)
+
     if params[:user_search].present?
       @users_query = @users_query.where("nickname LIKE ? OR email LIKE ?", "%#{params[:user_search]}%", "%#{params[:user_search]}%")
     end
+
+    @member_filter = params[:member_filter] || "all"
+    case @member_filter
+    when "club"
+      @users_query = @users_query.joins(:routine_club_members).where(routine_club_members: { status: :active }).distinct
+    when "general"
+      club_user_ids = RoutineClubMember.where(status: :active).pluck(:user_id).uniq
+      @users_query = @users_query.where.not(id: club_user_ids)
+    end
+
     @users = @users_query.limit(50) # Limit for prototype performance
 
     # 3. Content Management Data
@@ -647,15 +658,25 @@ class PrototypeController < ApplicationController
     end
   end
 
-  def toggle_user_status
+  def update_user_status
     user = User.find(params[:user_id])
-    if user.deleted?
-      user.update(deleted_at: nil)
-      render json: { status: "success", message: "#{user.nickname}님의 계정이 활성화되었습니다.", active: true }
+    new_status = params[:status]
+
+    case new_status
+    when "active"
+      user.update(deleted_at: nil, suspended_at: nil)
+      message = "#{user.nickname}님의 계정이 활성화되었습니다."
+    when "suspended"
+      user.update(deleted_at: nil, suspended_at: Time.current)
+      message = "#{user.nickname}님의 계정이 정지되었습니다."
+    when "withdrawn"
+      user.update(deleted_at: Time.current, suspended_at: nil)
+      message = "#{user.nickname}님이 탈퇴 처리되었습니다."
     else
-      user.update(deleted_at: Time.current)
-      render json: { status: "success", message: "#{user.nickname}님의 계정이 비활성화되었습니다.", active: false }
+      return render json: { status: "error", message: "잘못된 상태 값입니다." }
     end
+
+    render json: { status: "success", message: message, current_status: new_status }
   end
 
   def approve_challenge

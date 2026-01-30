@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   get "prototype/admin/member_reports/:user_id", to: "prototype#member_reports", as: :prototype_member_reports
   post "prototype/admin/broadcast", to: "prototype#broadcast"
   post "prototype/admin/update_user_role", to: "prototype#update_user_role"
-  post "prototype/admin/toggle_user_status", to: "prototype#toggle_user_status"
+  post "prototype/admin/update_user_status", to: "prototype#update_user_status"
   post "prototype/admin/approve_challenge", to: "prototype#approve_challenge"
   post "prototype/admin/purge_cache", to: "prototype#purge_cache"
   patch "prototype/admin/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
