@@ -44,8 +44,10 @@ env:
   secret:
     - RAILS_MASTER_KEY
     - KAKAO_CLIENT_SECRET
+    - THREADS_CLIENT_SECRET
     - GOOGLE_CLIENT_SECRET
   clear:
+    THREADS_CLIENT_ID: "7827913111506619"
     KAKAO_CLIENT_ID: "f959f8ada6c21d791ef5be7f4257e19e"
     GOOGLE_CLIENT_ID: "508614623402-girivusonh6slvrdn3kpmhdmi66fs5ok.apps.googleusercontent.com"
     

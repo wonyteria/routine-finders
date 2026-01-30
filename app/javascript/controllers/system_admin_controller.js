@@ -44,14 +44,9 @@ export default class extends Controller {
         }
     }
 
-    purgeCache(event) {
-        const target = event.currentTarget.dataset.target || "system"
-        let msg = "시스템 캐시를 전체 초기화하시겠습니까?"
-        if (target === 'activities') msg = "활동 피드 더미 데이터를 모두 삭제하시겠습니까?"
-        if (target === 'notifications') msg = "모든 알림 데이터를 삭제하시겠습니까?"
-
-        if (window.confirm(msg)) {
-            this.performPost('/prototype/admin/purge_cache', { target })
+    purgeCache() {
+        if (window.confirm("시스템 캐시를 전체 초기화하시겠습니까?")) {
+            this.performPost('/prototype/admin/purge_cache', {})
         }
     }
 

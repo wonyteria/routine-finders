@@ -2,10 +2,6 @@
 
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  # Ensure storage directories exist and are owned by rails
-  mkdir -p /rails/storage /rails/log /rails/tmp
-  chown -R rails:rails /rails/storage /rails/log /rails/tmp
-
   ./bin/rails db:prepare
 fi
 
