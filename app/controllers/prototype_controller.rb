@@ -801,6 +801,46 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def reset_users
+    keep_email = "jorden00@naver.com"
+    keep_user = User.find_by(email: keep_email)
+
+    if keep_user.nil?
+      redirect_to prototype_admin_clubs_path, alert: "보존할 유저(#{keep_email})를 찾을 수 없습니다."
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      # 1. Delete all users except keep_user
+      User.where.not(id: keep_user.id).destroy_all
+
+      # 2. Cleanup remaining user's data
+      RoutineClubMember.where(user_id: keep_user.id).destroy_all
+      PersonalRoutine.where(user_id: keep_user.id).destroy_all
+      PersonalRoutineCompletion.where(user_id: keep_user.id).delete_all
+    end
+
+    redirect_to prototype_admin_clubs_path, notice: "유저 정보가 초기화되었습니다. (#{keep_email} 제외)"
+  rescue => e
+    redirect_to prototype_admin_clubs_path, alert: "오류 발생: #{e.message}"
+  end
+
+  def reset_dummy_data
+    ActiveRecord::Base.transaction do
+      # Delete all content but keep users
+      Challenge.destroy_all
+      Gathering.destroy_all if defined?(Gathering)
+      RoutineClubGathering.destroy_all if defined?(RoutineClubGathering)
+      RufaActivity.delete_all if defined?(RufaActivity)
+      Notification.delete_all if defined?(Notification)
+      RoutineClubAnnouncement.destroy_all if defined?(RoutineClubAnnouncement)
+    end
+
+    redirect_to prototype_admin_clubs_path, notice: "더미데이터가 삭제되었습니다."
+  rescue => e
+    redirect_to prototype_admin_clubs_path, alert: "오류 발생: #{e.message}"
+  end
+
   private
 
   def set_shared_data
