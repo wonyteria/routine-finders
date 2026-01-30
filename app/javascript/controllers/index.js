@@ -79,6 +79,9 @@ application.register("slider", SliderController)
 import SnsLinksController from "controllers/sns_links_controller"
 application.register("sns-links", SnsLinksController)
 
+import SubTabsController from "controllers/sub_tabs_controller"
+application.register("sub-tabs", SubTabsController)
+
 import TabsController from "controllers/tabs_controller"
 application.register("tabs", TabsController)
 

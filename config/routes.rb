@@ -25,7 +25,10 @@ Rails.application.routes.draw do
   post "prototype/admin/broadcast", to: "prototype#broadcast"
   post "prototype/admin/update_user_role", to: "prototype#update_user_role"
   post "prototype/admin/update_user_status", to: "prototype#update_user_status"
+  post "prototype/admin/update_content_basic", to: "prototype#update_content_basic"
   post "prototype/admin/approve_challenge", to: "prototype#approve_challenge"
+  delete "prototype/admin/delete_content/:id", to: "prototype#delete_content", as: :prototype_delete_content
+  post "prototype/admin/notify_host/:id", to: "prototype#notify_host", as: :prototype_notify_host
   post "prototype/admin/purge_cache", to: "prototype#purge_cache"
   patch "prototype/admin/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
   # Main Web Application Routes

@@ -536,9 +536,9 @@ class PrototypeController < ApplicationController
 
     # 3. Content Management Data
     @all_challenges = Challenge.includes(:host, :participants).order(created_at: :desc)
-    @pending_challenges = @all_challenges.where(status: :upcoming).limit(10)
-    @active_challenges = @all_challenges.active.reject(&:gathering?).first(10)
-    @active_gatherings = @all_challenges.active.select(&:gathering?).first(10)
+    @active_challenges = @all_challenges.online_challenges.limit(20)
+    @active_gatherings = @all_challenges.offline_gatherings.limit(20)
+    @pending_challenges = @all_challenges.where(status: :upcoming).limit(20) # Keeping for info, but no longer 'mandatory' approval flow
 
     # 4. Stream Data (for Logs tab)
     @stream_memberships = RoutineClubMember.joins(:user).includes(:user, :routine_club).order(created_at: :desc).limit(15)
@@ -685,6 +685,42 @@ class PrototypeController < ApplicationController
       render json: { status: "success", message: "'#{challenge.title}' 챌린지가 승인되었습니다." }
     else
       render json: { status: "error", message: "승인 처리에 실패했습니다." }
+    end
+  end
+
+  def delete_content
+    challenge = Challenge.find(params[:id])
+    if challenge.destroy
+      render json: { status: "success", message: "'#{challenge.title}'이(가) 삭제되었습니다." }
+    else
+      render json: { status: "error", message: "삭제에 실패했습니다." }
+    end
+  end
+
+  def notify_host
+    challenge = Challenge.find(params[:id])
+    host = challenge.host
+    content = params[:content]
+
+    # Prototype notification logic
+    if host.notifications.create(
+      title: "관리자 메시지: '#{challenge.title}' 관련",
+      content: content,
+      notification_type: :notice,
+      related_resource: challenge
+    )
+      render json: { status: "success", message: "#{host.nickname}님께 공지를 전송했습니다." }
+    else
+      render json: { status: "error", message: "공지 전송에 실패했습니다." }
+    end
+  end
+
+  def update_content_basic
+    challenge = Challenge.find(params[:id])
+    if challenge.update(params.permit(:title, :category))
+      render json: { status: "success", message: "콘텐츠 정보가 수정되었습니다." }
+    else
+      render json: { status: "error", message: "수정에 실패했습니다." }
     end
   end
 

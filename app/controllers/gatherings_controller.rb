@@ -75,7 +75,7 @@ class GatheringsController < ApplicationController
       :cost_type, :participation_fee, :amount,
       :host_bank, :host_account, :host_account_holder,
       :meeting_type, :meeting_frequency, :duration_minutes,
-      :preparation_items, :online_meeting_link, :chat_link, :refund_policy,
+      :preparation_items, :online_meeting_link, :chat_link, :host_phone, :refund_policy,
       meeting_info_attributes: [ :place_name, :address, :description ]
     )
   end

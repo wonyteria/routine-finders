@@ -175,6 +175,7 @@ class ProfilesController < ApplicationController
       :saved_bank_name,
       :saved_account_number,
       :saved_account_holder,
+      :phone_number,
       sns_links: [ :instagram, :threads, :blog, :youtube, :twitter ]
     )
   end

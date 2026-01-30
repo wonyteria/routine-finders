@@ -166,9 +166,18 @@
                       <%= f.text_field :title, placeholder: "예: 강남역 비전보드 스터디", required: true, class: "w-full text-lg font-black p-6 bg-slate-50 border-2 border-transparent rounded-[28px] outline-none focus:bg-white focus:border-orange-500/20 transition-all shadow-inner" %>
                     </div>
 
-                    <div class="space-y-3">
-                      <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">한 줄 요약</label>
-                      <%= f.text_field :summary, placeholder: "참여자들의 눈길을 사로잡는 한 마디", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] text-sm font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all shadow-inner" %>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">커뮤니티 채팅방 링크 (선택)</label>
+                        <%= f.text_field :chat_link, placeholder: "예: 카카오톡 오픈채팅방 링크", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] text-sm font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all shadow-inner" %>
+                        <p class="text-[9px] font-bold text-slate-400 pl-2">💬 참여자들과 소통할 채팅방 링크를 입력해주세요.</p>
+                      </div>
+
+                      <div class="space-y-3">
+                        <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">호스트 연락처 (선택)</label>
+                        <%= f.text_field :host_phone, placeholder: "예: 010-1234-5678", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] text-sm font-bold text-slate-900 outline-none focus:bg-white focus:border-orange-500/20 transition-all shadow-inner" %>
+                        <p class="text-[9px] font-bold text-orange-600/70 pl-2">📞 관리자용 비상 연락처이며, 참여자에게는 노출되지 않습니다.</p>
+                      </div>
                     </div>
 
                     <div class="space-y-3">

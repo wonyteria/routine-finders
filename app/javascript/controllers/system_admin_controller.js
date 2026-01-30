@@ -55,6 +55,55 @@ export default class extends Controller {
         }
     }
 
+    deleteContent(event) {
+        const id = event.currentTarget.dataset.id
+        const title = event.currentTarget.dataset.title
+
+        if (window.confirm(`'${title}'을(를) 영구 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
+            fetch(`/prototype/admin/delete_content/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message)
+                        window.location.reload()
+                    } else {
+                        alert(data.message || '삭제에 실패했습니다.')
+                    }
+                })
+        }
+    }
+
+    notifyHost(event) {
+        const id = event.currentTarget.dataset.id
+        const nickname = event.currentTarget.dataset.nickname
+        const title = event.currentTarget.dataset.title
+
+        const message = window.prompt(`${nickname}님께 보낼 공지 내용을 입력해주세요.`, `'${title}' 관련 관리자 안내입니다.`)
+
+        if (message) {
+            this.performPost(`/prototype/admin/notify_host/${id}`, { content: message }, true)
+        }
+    }
+
+    editContentPrompt(event) {
+        // Prototype simplification: only title edit for now
+        const id = event.currentTarget.dataset.id
+        const title = event.currentTarget.dataset.title
+
+        const newTitle = window.prompt(`수정할 제목을 입력해주세요. (데모용 단순 제목 수정)`, title)
+
+        if (newTitle && newTitle !== title) {
+            // Reusing a general update logic if exists, or adding it to PrototypeController
+            this.performPost('/prototype/admin/update_content_basic', { id: id, title: newTitle }, true)
+        }
+    }
+
     purgeCache() {
         if (window.confirm("시스템 캐시를 전체 초기화하시겠습니까?")) {
             this.performPost('/prototype/admin/purge_cache', {})

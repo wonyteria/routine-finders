@@ -185,30 +185,126 @@
     </div>
 
     <!-- SECTION 3: CONTENT -->
-    <div data-tabs-target="panel" data-id="content" class="hidden px-6 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <section class="space-y-4">
-        <label class="text-[10px] font-black text-rose-400 uppercase tracking-widest pl-1">승인 대기</label>
-        <div class="grid grid-cols-1 gap-3">
-          <% if @pending_challenges.any? %>
-            <% @pending_challenges.each do |c| %>
-              <div class="app-glass-card p-4 border-rose-500/10 bg-rose-500/[0.02] flex items-center justify-between">
-                <div>
-                    <h4 class="text-sm font-black text-white"><%= c.title %></h4>
-                    <p class="text-[10px] font-bold text-slate-500 mt-0.5"><%= c.host_name %> · <%= time_ago_in_words(c.created_at) %> 전</p>
+    <div data-tabs-target="panel" data-id="content" class="hidden px-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500" 
+         data-controller="sub-tabs"
+         data-sub-tabs-active-class="border-indigo-500 text-white"
+         data-sub-tabs-inactive-class="border-transparent text-slate-500 hover:text-slate-300">
+      <!-- Content Sub-tabs -->
+      <div class="flex gap-4 border-b border-white/5 pb-px overflow-x-auto hide-scrollbar">
+        <button data-sub-tabs-target="tab" data-id="active_challenges" data-action="click->sub-tabs#change" class="pb-4 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 border-indigo-500 text-white">진행 중 챌린지</button>
+        <button data-sub-tabs-target="tab" data-id="active_gatherings" data-action="click->sub-tabs#change" class="pb-4 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 border-transparent text-slate-500 hover:text-slate-300">진행 중 모임</button>
+        <button data-sub-tabs-target="tab" data-id="pending_review" data-action="click->sub-tabs#change" class="pb-4 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 border-transparent text-slate-500 hover:text-slate-300">신규 검토</button>
+      </div>
+
+      <!-- Active Challenges Panel -->
+      <div data-sub-tabs-target="panel" data-id="active_challenges" class="space-y-4">
+        <% if @active_challenges.any? %>
+          <% @active_challenges.each do |c| %>
+            <div class="app-glass-card p-5 border-white/5 flex items-center justify-between group">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/5 overflow-hidden">
+                  <img src="<%= c.thumbnail %>" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
                 </div>
-                <button class="px-3 py-2 rounded-xl bg-emerald-500 text-white text-[10px] font-black uppercase" 
-                        data-action="system-admin#approveChallenge"
-                        data-challenge-id="<%= c.id %>"
-                        data-title="<%= c.title %>">승인</button>
+                <div>
+                  <h4 class="text-sm font-black text-white"><%= c.title %></h4>
+                  <div class="flex flex-col mt-0.5 space-y-1">
+                    <p class="text-[10px] font-bold text-slate-400">호스트: <%= c.host_name %> (<%= c.host.email %>)</p>
+                    <div class="flex items-center gap-2">
+                       <span class="text-[9px] font-medium text-slate-500">연락처: <%= c.host_phone.presence || '미등록' %></span>
+                       <% if c.chat_link.present? %>
+                        <a href="<%= c.chat_link %>" target="_blank" class="text-[8px] font-black text-indigo-400 bg-indigo-400/10 px-1.5 py-0.5 rounded border border-indigo-400/20 hover:bg-indigo-400/20 transition-all">오픈채팅방 ↗</a>
+                      <% end %>
+                    </div>
+                    <p class="text-[9px] font-medium text-indigo-500/50">참여 <%= c.current_participants %>명</p>
+                  </div>
+                </div>
               </div>
-            <% end %>
-          <% else %>
-            <div class="p-10 text-center bg-white/[0.02] rounded-3xl border border-dashed border-white/5">
-              <p class="text-[11px] font-black text-slate-700 uppercase tracking-widest italic">대기 중인 콘텐츠가 없습니다.</p>
+              <div class="flex gap-2">
+                <button data-action="system-admin#notifyHost" data-id="<%= c.id %>" data-nickname="<%= c.host_name %>" data-title="<%= c.title %>" class="w-9 h-9 rounded-xl border border-white/5 flex items-center justify-center text-slate-500 hover:text-indigo-400 hover:bg-indigo-400/10 transition-all" title="호스트공지">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                </button>
+                <button data-action="system-admin#deleteContent" data-id="<%= c.id %>" data-title="<%= c.title %>" class="w-9 h-9 rounded-xl border border-white/5 flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-400/10 transition-all" title="삭제">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
             </div>
           <% end %>
-        </div>
-      </section>
+        <% else %>
+          <div class="py-20 text-center opacity-30 italic text-[11px] font-black uppercase tracking-widest">진행 중인 챌린지가 없습니다.</div>
+        <% end %>
+      </div>
+
+      <!-- Active Gatherings Panel -->
+      <div data-sub-tabs-target="panel" data-id="active_gatherings" class="hidden space-y-4 text-white">
+        <% if @active_gatherings.any? %>
+          <% @active_gatherings.each do |c| %>
+            <div class="app-glass-card p-5 border-white/5 flex items-center justify-between group">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/5 overflow-hidden">
+                  <img src="<%= c.thumbnail %>" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-white"><%= c.title %></h4>
+                  <div class="flex flex-col mt-0.5 space-y-1">
+                    <p class="text-[10px] font-bold text-slate-400">호스트: <%= c.host_name %> (<%= c.host.email %>)</p>
+                    <div class="flex items-center gap-2">
+                       <span class="text-[9px] font-medium text-slate-500">연락처: <%= c.host_phone.presence || '미등록' %></span>
+                       <% if c.chat_link.present? %>
+                        <a href="<%= c.chat_link %>" target="_blank" class="text-[8px] font-black text-indigo-400 bg-indigo-400/10 px-1.5 py-0.5 rounded border border-indigo-400/20 hover:bg-indigo-400/20 transition-all">오픈채팅방 ↗</a>
+                      <% end %>
+                    </div>
+                    <p class="text-[9px] font-medium text-slate-600">장소: <%= c.offline? ? c.meeting_info&.place_name : '온라인' %></p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button data-action="system-admin#notifyHost" data-id="<%= c.id %>" data-nickname="<%= c.host_name %>" data-title="<%= c.title %>" class="w-9 h-9 rounded-xl border border-white/5 flex items-center justify-center text-slate-500 hover:text-indigo-400 hover:bg-indigo-400/10 transition-all">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                </button>
+                <button data-action="system-admin#deleteContent" data-id="<%= c.id %>" data-title="<%= c.title %>" class="w-9 h-9 rounded-xl border border-white/5 flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-400/10 transition-all">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="py-20 text-center opacity-30 italic text-[11px] font-black uppercase tracking-widest">진행 중인 모임이 없습니다.</div>
+        <% end %>
+      </div>
+
+      <!-- Pending Review Panel -->
+      <div data-sub-tabs-target="panel" data-id="pending_review" class="hidden space-y-4">
+        <p class="text-[9px] font-bold text-slate-500 px-1 italic">* 이 탭의 콘텐츠는 승인 절차 없이도 사용자에게 노출됩니다. 관리 점검용으로 활용하세요.</p>
+        <% if @pending_challenges.any? %>
+          <% @pending_challenges.each do |c| %>
+            <div class="app-glass-card p-5 border-rose-500/10 bg-rose-500/[0.02] flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-white/5 overflow-hidden ring-1 ring-rose-500/20">
+                  <img src="<%= c.thumbnail %>" class="w-full h-full object-cover">
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-white"><%= c.title %></h4>
+                  <div class="flex flex-col space-y-1">
+                    <p class="text-[10px] font-bold text-rose-300 mt-0.5">호스트: <%= c.host_name %> (<%= c.host.email %>)</p>
+                    <div class="flex items-center gap-2">
+                       <span class="text-[9px] font-medium text-slate-500">연락처: <%= c.host_phone.presence || '미등록' %></span>
+                       <% if c.chat_link.present? %>
+                        <a href="<%= c.chat_link %>" target="_blank" class="text-[8px] font-black text-indigo-400 bg-indigo-400/10 px-1.5 py-0.5 rounded border border-indigo-400/20 hover:bg-indigo-400/20 transition-all">오픈채팅방 ↗</a>
+                      <% end %>
+                    </div>
+                    <p class="text-[9px] font-bold text-slate-600"><%= time_ago_in_words(c.created_at) %> 전 생성</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button data-action="system-admin#deleteContent" data-id="<%= c.id %>" data-title="<%= c.title %>" class="px-3 py-2 rounded-xl bg-rose-500 text-white text-[10px] font-black uppercase active:scale-95 transition-all">삭제</button>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="py-20 text-center opacity-30 italic text-[11px] font-black uppercase tracking-widest">새롭게 검토할 콘텐츠가 없습니다.</div>
+        <% end %>
+      </div>
     </div>
 
     <!-- SECTION 4: SYSTEM -->

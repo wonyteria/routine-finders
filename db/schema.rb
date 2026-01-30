@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_30_171748) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_30_173619) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -122,6 +122,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_171748) do
     t.string "host_bank"
     t.integer "host_id", null: false
     t.string "host_name"
+    t.string "host_phone"
     t.string "invitation_code"
     t.boolean "is_featured"
     t.boolean "is_official", default: false, null: false
@@ -541,6 +542,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_171748) do
     t.boolean "onboarding_completed", default: false, null: false
     t.integer "ongoing_count", default: 0, null: false
     t.string "password_digest"
+    t.string "phone_number"
     t.string "profile_image"
     t.string "provider"
     t.integer "role", default: 0, null: false
