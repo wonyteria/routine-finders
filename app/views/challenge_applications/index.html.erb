@@ -1,244 +1,125 @@
-<% if params[:source] == 'prototype' %>
-  <div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none relative">
-    <style>
-      .app-stat-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 2rem;
-      }
-      .app-user-card {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 2.5rem;
-        transition: all 0.3s ease;
-      }
-      .app-user-card:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(99, 102, 241, 0.2);
-      }
-      .hide-scrollbar::-webkit-scrollbar { display: none; }
-    </style>
+<div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none relative">
+  <style>
+    .app-stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 2rem;
+    }
+    .app-user-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 2.5rem;
+      transition: all 0.3s ease;
+    }
+    .app-user-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(99, 102, 241, 0.2);
+    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
 
-    <!-- Header -->
-    <header class="flex items-center justify-between mb-6 px-8 shrink-0 z-20">
-      <%= link_to challenge_path(@challenge, source: 'prototype'), class: "w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all font-black" do %>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-6 px-8 shrink-0 z-20">
+    <%= link_to challenge_path(@challenge, source: 'prototype'), class: "w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all font-black" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <div class="text-center">
+      <h1 class="text-base font-black text-white">신청 내역 관리</h1>
+      <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= @challenge.title %></p>
+    </div>
+    <div class="w-10"></div>
+  </header>
+
+  <div class="flex-1 overflow-y-auto hide-scrollbar px-8 pb-32 space-y-8 z-10">
+    <!-- Stats Summary -->
+    <div class="grid grid-cols-3 gap-3">
+      <div class="app-stat-card p-5 text-center">
+        <p class="text-2xl font-black text-amber-500 tabular-nums"><%= @pending_applications.count %></p>
+        <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1">Pending</p>
+      </div>
+      <div class="app-stat-card p-5 text-center border-emerald-500/10 bg-emerald-500/[0.02]">
+        <p class="text-2xl font-black text-emerald-500 tabular-nums"><%= @applications.approved.count %></p>
+        <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1">Approved</p>
+      </div>
+      <div class="app-stat-card p-5 text-center">
+        <p class="text-2xl font-black text-slate-400 tabular-nums"><%= @applications.rejected.count %></p>
+        <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1">Rejected</p>
+      </div>
+    </div>
+
+    <!-- Pending List -->
+    <div class="space-y-4">
+      <div class="flex items-center gap-2 px-1">
+        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+        <h2 class="text-xs font-black text-white uppercase tracking-widest">승인 대기 중</h2>
+      </div>
+
+      <% if @pending_applications.any? %>
+        <div class="space-y-4">
+          <% @pending_applications.each do |app| %>
+            <div class="app-user-card p-6 space-y-5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <img src="<%= app.user.profile_image %>" class="w-12 h-12 rounded-[1.25rem] object-cover bg-white/5 border border-white/5">
+                  <div>
+                    <p class="text-sm font-black text-white"><%= app.user.nickname %></p>
+                    <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= time_ago_in_words(app.applied_at) %>전 신청</p>
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <%= button_to approve_challenge_application_path(@challenge, app, source: 'prototype'), method: :post, class: "w-10 h-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center active:scale-90 transition-all shadow-lg shadow-indigo-500/20" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                  <% end %>
+                  <%= button_to reject_challenge_application_path(@challenge, app, source: 'prototype'), method: :post, class: "w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-slate-500 flex items-center justify-center active:scale-90 transition-all" do %>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                  <% end %>
+                </div>
+              </div>
+
+              <% if app.message.present? %>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Message</p>
+                  <p class="text-[11px] font-bold text-slate-300 leading-relaxed italic">"<%= app.message %>"</p>
+                </div>
+              <% end %>
+
+              <div class="flex gap-2">
+                 <% if app.depositor_name.present? %>
+                   <span class="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-400 text-[9px] font-black border border-indigo-500/10">💰 <%= app.depositor_name %></span>
+                 <% end %>
+                 <% if app.contact_info.present? %>
+                   <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-[9px] font-black border border-emerald-500/10">📞 CONTACT</span>
+                 <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="py-12 text-center app-user-card border-dashed">
+           <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">새로운 신청이 없습니다</p>
+        </div>
       <% end %>
-      <div class="text-center">
-        <h1 class="text-base font-black text-white">신청 내역 관리</h1>
-        <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= @challenge.title %></p>
-      </div>
-      <div class="w-10"></div>
-    </header>
+    </div>
 
-    <div class="flex-1 overflow-y-auto hide-scrollbar px-8 pb-32 space-y-8 z-10">
-      <!-- Stats Summary -->
-      <div class="grid grid-cols-3 gap-3">
-        <div class="app-stat-card p-5 text-center">
-          <p class="text-2xl font-black text-amber-500 tabular-nums"><%= @pending_applications.count %></p>
-          <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1">Pending</p>
-        </div>
-        <div class="app-stat-card p-5 text-center border-emerald-500/10 bg-emerald-500/[0.02]">
-          <p class="text-2xl font-black text-emerald-500 tabular-nums"><%= @applications.approved.count %></p>
-          <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1">Approved</p>
-        </div>
-        <div class="app-stat-card p-5 text-center">
-          <p class="text-2xl font-black text-slate-400 tabular-nums"><%= @applications.rejected.count %></p>
-          <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mt-1">Rejected</p>
-        </div>
-      </div>
-
-      <!-- Pending List -->
+    <!-- Processed List -->
+    <% if @processed_applications.any? %>
       <div class="space-y-4">
         <div class="flex items-center gap-2 px-1">
-          <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
-          <h2 class="text-xs font-black text-white uppercase tracking-widest">승인 대기 중</h2>
+          <div class="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+          <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">처리 완료</h2>
         </div>
-
-        <% if @pending_applications.any? %>
-          <div class="space-y-4">
-            <% @pending_applications.each do |app| %>
-              <div class="app-user-card p-6 space-y-5">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <img src="<%= app.user.profile_image %>" class="w-12 h-12 rounded-[1.25rem] object-cover bg-white/5 border border-white/5">
-                    <div>
-                      <p class="text-sm font-black text-white"><%= app.user.nickname %></p>
-                      <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= time_ago_in_words(app.applied_at) %>전 신청</p>
-                    </div>
-                  </div>
-                  <div class="flex gap-2">
-                    <%= button_to approve_challenge_application_path(@challenge, app, source: 'prototype'), method: :post, class: "w-10 h-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center active:scale-90 transition-all shadow-lg shadow-indigo-500/20" do %>
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                    <% end %>
-                    <%= button_to reject_challenge_application_path(@challenge, app, source: 'prototype'), method: :post, class: "w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-slate-500 flex items-center justify-center active:scale-90 transition-all" do %>
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-                    <% end %>
-                  </div>
-                </div>
-
-                <% if app.message.present? %>
-                  <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
-                    <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-2">Message</p>
-                    <p class="text-[11px] font-bold text-slate-300 leading-relaxed italic">"<%= app.message %>"</p>
-                  </div>
-                <% end %>
-
-                <div class="flex gap-2">
-                   <% if app.depositor_name.present? %>
-                     <span class="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-400 text-[9px] font-black border border-indigo-500/10">💰 <%= app.depositor_name %></span>
-                   <% end %>
-                   <% if app.contact_info.present? %>
-                     <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-[9px] font-black border border-emerald-500/10">📞 CONTACT</span>
-                   <% end %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <div class="py-12 text-center app-user-card border-dashed">
-             <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">새로운 신청이 없습니다</p>
-          </div>
-        <% end %>
-      </div>
-
-      <!-- Processed List -->
-      <% if @processed_applications.any? %>
-        <div class="space-y-4">
-          <div class="flex items-center gap-2 px-1">
-            <div class="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
-            <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest">처리 완료</h2>
-          </div>
-          <div class="space-y-3">
-            <% @processed_applications.each do |app| %>
-              <div class="app-user-card p-4 flex items-center justify-between opacity-60 grayscale-[0.5]">
-                <div class="flex items-center gap-3">
-                  <img src="<%= app.user.profile_image %>" class="w-8 h-8 rounded-lg object-cover grayscale">
-                  <p class="text-xs font-black text-white"><%= app.user.nickname %></p>
-                </div>
-                <div>
-                  <% if app.approved? %>
-                    <span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-tighter">Approved</span>
-                  <% else %>
-                    <span class="px-2 py-1 rounded bg-white/5 text-slate-500 text-[8px] font-black uppercase tracking-tighter">Rejected</span>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <!-- Decoration -->
-    <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
-  </div>
-
-<% else %>
-  <div class="max-w-4xl mx-auto py-12 pb-32">
-    <div class="flex items-center gap-4 mb-10">
-      <%= link_to challenge_path(@challenge), class: "p-2 rounded-xl hover:bg-slate-100 transition-colors" do %>
-        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-      <% end %>
-      <div>
-        <h1 class="text-3xl font-black text-slate-900">신청 관리</h1>
-        <p class="text-sm font-medium text-slate-500 mt-1"><%= @challenge.title %></p>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="grid grid-cols-3 gap-4 mb-8">
-      <div class="bg-amber-50 rounded-3xl p-6 text-center">
-        <p class="text-3xl font-black text-amber-600"><%= @pending_applications.count %></p>
-        <p class="text-xs font-black text-amber-400 uppercase tracking-widest mt-1">대기중</p>
-      </div>
-      <div class="bg-green-50 rounded-3xl p-6 text-center">
-        <p class="text-3xl font-black text-green-600"><%= @applications.approved.count %></p>
-        <p class="text-xs font-black text-green-400 uppercase tracking-widest mt-1">승인됨</p>
-      </div>
-      <div class="bg-slate-50 rounded-3xl p-6 text-center">
-        <p class="text-3xl font-black text-slate-600"><%= @applications.rejected.count %></p>
-        <p class="text-xs font-black text-slate-400 uppercase tracking-widest mt-1">거절됨</p>
-      </div>
-    </div>
-
-    <!-- Pending Applications -->
-    <% if @pending_applications.any? %>
-      <div class="mb-12">
-        <h2 class="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
-          <span class="w-3 h-3 bg-amber-500 rounded-full animate-pulse"></span>
-          <%= @challenge.offline? ? "대기 중인 참가 신청" : "대기 중인 신청" %>
-        </h2>
-        
-        <div class="space-y-4">
-          <% @pending_applications.each do |application| %>
-            <div class="bg-white rounded-[32px] border border-slate-200 p-6 shadow-sm">
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex items-center gap-4">
-                  <img src="<%= application.user.profile_image %>" class="w-14 h-14 rounded-2xl object-cover" alt="<%= application.user.nickname %>">
-                  <div>
-                    <p class="text-lg font-black text-slate-900"><%= application.user.nickname %></p>
-                    <p class="text-xs font-medium text-slate-400"><%= time_ago_in_words(application.applied_at) %> 전 신청</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-2">
-                  <%= button_to approve_challenge_application_path(@challenge, application), method: :post, class: "px-6 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all" do %>
-                    승인
-                  <% end %>
-                  <%= button_to reject_challenge_application_path(@challenge, application), method: :post, form: { data: { turbo_confirm: "정말 거절하시겠습니까?" } }, class: "px-6 py-3 bg-slate-100 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-200 transition-all" do %>
-                    거절
-                  <% end %>
-                </div>
-              </div>
-              
-              <% if application.message.present? %>
-                <div class="mt-4 p-4 bg-slate-50 rounded-2xl">
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">신청 메시지</p>
-                  <p class="text-sm font-medium text-slate-700 whitespace-pre-wrap"><%= application.message %></p>
-                </div>
-              <% end %>
-              
-              <% if application.depositor_name.present? %>
-                <div class="mt-4 flex items-center gap-2">
-                  <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold">
-                    입금자명: <%= application.depositor_name %>
-                  </span>
-                </div>
-              <% end %>
-
-              <% if application.contact_info.present? %>
-                <div class="mt-2 flex items-center gap-2">
-                  <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">
-                    연락처: <%= application.contact_info %>
-                  </span>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
-
-    <!-- Processed Applications -->
-    <% if @processed_applications.any? %>
-      <div>
-        <h2 class="text-xl font-black text-slate-900 mb-6">처리된 신청</h2>
-        
         <div class="space-y-3">
-          <% @processed_applications.each do |application| %>
-            <div class="bg-white rounded-2xl border border-slate-100 p-4 flex items-center justify-between">
+          <% @processed_applications.each do |app| %>
+            <div class="app-user-card p-4 flex items-center justify-between opacity-60 grayscale-[0.5]">
               <div class="flex items-center gap-3">
-                <img src="<%= application.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover" alt="<%= application.user.nickname %>">
-                <div>
-                  <p class="font-bold text-slate-900"><%= application.user.nickname %></p>
-                  <p class="text-xs font-medium text-slate-400"><%= application.applied_at.strftime("%Y.%m.%d") %></p>
-                </div>
+                <img src="<%= app.user.profile_image %>" class="w-8 h-8 rounded-lg object-cover grayscale">
+                <p class="text-xs font-black text-white"><%= app.user.nickname %></p>
               </div>
               <div>
-                <% if application.approved? %>
-                  <span class="px-4 py-2 bg-green-100 text-green-700 rounded-full text-xs font-black">승인됨</span>
-                <% elsif application.rejected? %>
-                  <span class="px-4 py-2 bg-slate-100 text-slate-500 rounded-full text-xs font-black">거절됨</span>
+                <% if app.approved? %>
+                  <span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-tighter">Approved</span>
+                <% else %>
+                  <span class="px-2 py-1 rounded bg-white/5 text-slate-500 text-[8px] font-black uppercase tracking-tighter">Rejected</span>
                 <% end %>
               </div>
             </div>
@@ -246,15 +127,8 @@
         </div>
       </div>
     <% end %>
-
-    <!-- Empty State -->
-    <% if @applications.empty? %>
-      <div class="text-center py-20">
-        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        </div>
-        <p class="text-xl font-black text-slate-300">아직 신청이 없습니다</p>
-      </div>
-    <% end %>
   </div>
-<% end %>
+
+  <!-- Decoration -->
+  <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
+</div>

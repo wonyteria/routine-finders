@@ -1,6 +1,6 @@
 <% 
   is_premium = @permission.is_premium_member?
-  is_proto_style = local_assigns[:is_proto_style] || is_premium
+  is_proto_style = true # Alway use prototype style
   completed = routine.completed_today?
   card_bg = is_proto_style ? (completed ? "bg-indigo-600/20 border-indigo-500/50" : "bg-[#1B1A24] border-white/5") : (completed ? "bg-indigo-600 border-indigo-600 shadow-lg text-white" : "bg-white border-slate-100 shadow-sm")
   text_color = is_proto_style ? "text-white" : (completed ? "text-white" : "text-slate-900")
@@ -17,10 +17,10 @@
 
       <!-- Title & Meta -->
       <div class="space-y-1">
-        <h4 class="font-black text-lg tracking-tight <%= completed ? "line-through opacity-50" : "" %>"><%= routine.title %></h4>
+        <h4 class="font-black text-lg tracking-tight <%= completed ? "line-through opacity-50" : "" %> <%= text_color %>"><%= routine.title %></h4>
         <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 bg-white/10 rounded-md text-[9px] font-black uppercase tracking-widest"><%= routine.category %></span>
-          <span class="text-[10px] font-bold opacity-40"><%= routine.current_streak %>일 달성 중</span>
+          <span class="px-2 py-0.5 bg-white/10 rounded-md text-[9px] font-black uppercase tracking-widest text-white/70"><%= routine.category %></span>
+          <span class="text-[10px] font-bold text-white/40"><%= routine.current_streak %>일 달성 중</span>
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
       <% end %>
 
       <!-- Check Button -->
-      <%= button_to toggle_personal_routine_path(routine, date: Date.current, tab: params[:tab], source: params[:source]), 
+      <%= button_to toggle_personal_routine_path(routine, date: Date.current, tab: params[:tab], source: 'prototype'), 
           method: :post,
           class: "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 active:scale-90 #{completed ? 'bg-emerald-400 text-white' : 'bg-white text-indigo-600 shadow-xl hover:shadow-2xl'}",
           data: { turbo: true } do %>
@@ -54,25 +54,25 @@
       <div id="dropdown-pass-<%= routine.id %>" class="hidden absolute top-full right-0 mt-2 z-[50] w-72 bg-slate-900 border border-white/10 rounded-3xl p-5 shadow-3xl animate-in fade-in zoom-in-95">
         <div class="space-y-4">
           <div class="flex items-center justify-between">
-            <h5 class="text-sm font-black italic">PREMIUM ITEM</h5>
+            <h5 class="text-sm font-black italic text-white">PREMIUM ITEM</h5>
             <div class="flex gap-2">
-              <span class="text-[9px] font-bold text-indigo-400">🎟️ <%= @my_membership.remaining_relax_passes %></span>
-              <span class="text-[9px] font-bold text-emerald-400">🛡️ <%= @my_membership.remaining_save_passes %></span>
+              <span class="text-[9px] font-bold text-indigo-400">🎟️ <%= @my_membership.remaining_relax_passes rescue 0 %></span>
+              <span class="text-[9px] font-bold text-emerald-400">🛡️ <%= @my_membership.remaining_save_passes rescue 0 %></span>
             </div>
           </div>
           <p class="text-[11px] font-medium text-white/50 leading-relaxed">오늘 루틴을 넘기려면 휴식권을, 이미 놓친 기록을 복구하려면 세이브권을 사용하세요.</p>
           
           <div class="grid grid-cols-2 gap-2">
             <%= button_to use_pass_routine_club_path(@routine_club, date: Date.current, routine_id: routine.id, pass_type: 'relax'), 
-                          disabled: (@my_membership.remaining_relax_passes <= 0),
+                          disabled: ((@my_membership.remaining_relax_passes rescue 0) <= 0),
                           data: { turbo_confirm: "휴식권 1장을 사용하여 오늘 루틴을 완료 처리하시겠습니까?" },
-                          class: "py-2.5 bg-indigo-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1" do %>
+                          class: "py-2.5 bg-indigo-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1 text-white border-none" do %>
               <span>🎟️</span> 휴식
             <% end %>
             <%= button_to use_pass_routine_club_path(@routine_club, date: Date.current, routine_id: routine.id, pass_type: 'save'), 
-                          disabled: (@my_membership.remaining_save_passes <= 0),
+                          disabled: ((@my_membership.remaining_save_passes rescue 0) <= 0),
                           data: { turbo_confirm: "세이브권 1장을 사용하여 루틴을 복구하시겠습니까?" },
-                          class: "py-2.5 bg-emerald-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1" do %>
+                          class: "py-2.5 bg-emerald-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1 text-white border-none" do %>
               <span>🛡️</span> 세이브
             <% end %>
           </div>
@@ -82,7 +82,7 @@
 
     <!-- Non-Premium locked pass indicator -->
     <% if !is_premium && !completed %>
-       <div class="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+       <div class="absolute -top-1 -right-1 opacity-100 transition-opacity">
          <div class="px-2 py-1 bg-white border border-slate-100 rounded-lg text-indigo-600 text-[8px] font-black shadow-lg flex items-center gap-1">
            <span>🎟️</span> 루파 전용
          </div>

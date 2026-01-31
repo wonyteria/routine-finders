@@ -1,5 +1,5 @@
 <% parent = challenge || routine_club %>
-<% is_prototype = params[:source] == "prototype" %>
+<% is_prototype = true %>
 
 <%= form_with model: [parent, announcement], local: true, 
               class: "#{is_prototype ? 'app-glass-card p-5 md:p-8 space-y-6 md:space-y-7 border-none' : 'bg-white rounded-[40px] border border-slate-200 p-10 shadow-sm space-y-8'}",

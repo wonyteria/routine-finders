@@ -22,7 +22,14 @@ class RoutineClubReportsController < ApplicationController
       # 기존 리포트 삭제 후 재생성 (테스트 목적)
       current_user.routine_club_reports.where(start_date: start_date).destroy_all
 
-      RoutineClubReportService.send(:create_report, membership, :monthly, start_date, end_date)
+      service = RoutineClubReportService.new(
+        user: current_user,
+        routine_club: membership.routine_club,
+        report_type: :monthly,
+        start_date: start_date,
+        end_date: end_date
+      )
+      service.create_new_report
       redirect_to routine_club_report_path(current_user.routine_club_reports.last), notice: "이번 달 루파 리포트가 생성되었습니다!"
     else
       redirect_to personal_routines_path, alert: "루파 클럽 멤버만 리포트를 생성할 수 있습니다."
@@ -32,6 +39,10 @@ class RoutineClubReportsController < ApplicationController
   private
 
   def set_report
-    @report = current_user.routine_club_reports.find(params[:id])
+    if current_user.admin?
+      @report = RoutineClubReport.find(params[:id])
+    else
+      @report = current_user.routine_club_reports.find(params[:id])
+    end
   end
 end

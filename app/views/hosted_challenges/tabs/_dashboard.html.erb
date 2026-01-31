@@ -1,359 +1,341 @@
-<% if params[:source] == 'prototype' %>
-  <div class="space-y-6" data-controller="modal">
-    <!-- Cards Section (Stacked Vertically) -->
-    <div class="space-y-6">
-    <!-- Card 1: Trend Chart -->
-    <div class="app-glass-card p-6 flex flex-col w-full">
-        <div class="flex items-center justify-between mb-6">
-            <div class="min-w-0 flex-1">
-              <h3 class="text-xs font-black text-white italic truncate"><%= challenge.offline? ? "모임 모집" : "참여율 트렌드" %></h3>
-              <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate"><%= challenge.offline? ? "모집 비율" : "7일 인증 동향" %></p>
-            </div>
-            <div class="w-2 h-2 rounded-full <%= challenge.offline? ? 'bg-indigo-500' : 'bg-emerald-500' %> pulse-glow flex-shrink-0 ml-2"></div>
+<div class="space-y-6" data-controller="modal">
+  <!-- Cards Section (Stacked Vertically) -->
+  <div class="space-y-6">
+  <!-- Card 1: Trend Chart -->
+  <div class="app-glass-card p-6 flex flex-col w-full">
+      <div class="flex items-center justify-between mb-6">
+          <div class="min-w-0 flex-1">
+            <h3 class="text-xs font-black text-white italic truncate"><%= challenge.offline? ? "모임 모집" : "참여율 트렌드" %></h3>
+            <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate"><%= challenge.offline? ? "모집 비율" : "7일 인증 동향" %></p>
           </div>
-          
-          <div class="flex-1 flex items-center justify-center">
-            <% if challenge.offline? %>
-              <div class="flex flex-col items-center justify-center space-y-4">
-                <div class="relative w-32 h-32 flex items-center justify-center">
-                  <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
-                    <% occupancy = (challenge.current_participants.to_f / (challenge.meeting_info&.max_attendees || 1) * 100).to_i %>
-                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#818cf8" stroke-width="8" 
-                            stroke-dasharray="251.2" stroke-dashoffset="<%= 251.2 * (1 - occupancy / 100.0) %>" 
-                            stroke-linecap="round" class="transition-all duration-1000"></circle>
-                  </svg>
-                  <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <span class="text-xl font-black text-white italic leading-none"><%= occupancy %>%</span>
-                    <span class="text-[8px] font-black text-slate-600 uppercase mt-1"><%= challenge.current_participants %> / <%= challenge.meeting_info&.max_attendees %></span>
-                  </div>
-                </div>
-              </div>
-            <% else %>
-              <div class="w-full h-32 flex items-end justify-between gap-1 px-2">
-                <% @trends.each do |trend| %>
-                  <div class="flex-1 flex flex-col items-center gap-2 group/bar">
-                    <div class="relative w-full flex items-end justify-center h-24">
-                      <div class="w-2 md:w-3 bg-indigo-500/20 rounded-full h-full absolute"></div>
-                      <div class="w-2 md:w-3 bg-indigo-500 rounded-full transition-all duration-1000 group-hover/bar:bg-indigo-400 group-hover/bar:shadow-[0_0_15px_rgba(99,102,241,0.6)]" style="height: <%= trend[:rate] %>%;"></div>
-                      <!-- Tooltip -->
-                      <div class="absolute -top-6 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
-                        <%= trend[:rate] %>%
-                      </div>
-                    </div>
-                    <span class="text-[8px] font-black text-slate-600 uppercase"><%= trend[:date] %></span>
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
+          <div class="w-2 h-2 rounded-full <%= challenge.offline? ? 'bg-indigo-500' : 'bg-emerald-500' %> pulse-glow flex-shrink-0 ml-2"></div>
         </div>
-
-    <!-- Card 2: Settlement / Memo -->
-    <% if challenge.offline? %>
-          <div class="app-glass-card p-6 border-white/10 bg-white/[0.02] flex flex-col w-full">
-            <div class="flex items-center justify-between mb-6">
-              <div class="min-w-0 flex-1">
-                <h3 class="text-xs font-black text-white italic truncate">운영자 메모</h3>
-                <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">중요 사항</p>
-              </div>
-              <span class="p-2 bg-white/5 rounded-xl flex-shrink-0 ml-2">📝</span>
-            </div>
-            <div class="flex-1 flex flex-col justify-between space-y-4">
-              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                <p class="text-[11px] font-medium text-slate-400 leading-relaxed">준비물: <%= challenge.preparation_items.presence || "없음" %></p>
-              </div>
-              <%= link_to hosted_challenge_path(challenge, tab: "announcements", source: 'prototype'), class: "block w-full py-3 rounded-xl bg-indigo-600/20 text-indigo-400 text-[10px] font-black text-center uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all" do %>공지사항 작성하기<% end %>
-            </div>
-          </div>
-        <% elsif challenge.cost_type_deposit? %>
-          <div class="app-glass-card p-6 overflow-hidden relative flex flex-col w-full">
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            <div class="flex items-center justify-between mb-6">
-              <div class="min-w-0 flex-1">
-                <h3 class="text-xs font-black text-white italic truncate">실시간 정산</h3>
-                <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">예상 배분액</p>
-              </div>
-              <span class="p-2 bg-emerald-500/10 rounded-xl flex-shrink-0 ml-2">💰</span>
-            </div>
-
-            <div class="flex-1 flex flex-col justify-center space-y-5 relative z-10">
-              <div class="flex items-end justify-between border-b border-white/5 pb-3">
-                <p class="text-[10px] font-black text-slate-400 uppercase">예상 상금 풀</p>
-                <p class="text-lg font-black text-white italic"><%= number_with_delimiter(@potential_prize_pool) %>원</p>
-              </div>
-              <div class="flex items-end justify-between">
-                <p class="text-[10px] font-black text-slate-400 uppercase">인당 추가 보너스</p>
-                <div class="text-right">
-                  <p class="text-xl font-black text-emerald-400 italic">+ <%= number_with_delimiter(@estimated_bonus) %>원</p>
-                  <p class="text-[8px] font-black text-slate-600 mt-0.5">최종 성공 루퍼 1인 기준</p>
+        
+        <div class="flex-1 flex items-center justify-center">
+          <% if challenge.offline? %>
+            <div class="flex flex-col items-center justify-center space-y-4">
+              <div class="relative w-32 h-32 flex items-center justify-center">
+                <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
+                  <% occupancy = (challenge.current_participants.to_f / (challenge.meeting_info&.max_attendees || 1) * 100).to_i %>
+                  <circle cx="50" cy="50" r="40" fill="transparent" stroke="#818cf8" stroke-width="8" 
+                          stroke-dasharray="251.2" stroke-dashoffset="<%= 251.2 * (1 - occupancy / 100.0) %>" 
+                          stroke-linecap="round" class="transition-all duration-1000"></circle>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-xl font-black text-white italic leading-none"><%= occupancy %>%</span>
+                  <span class="text-[8px] font-black text-slate-600 uppercase mt-1"><%= challenge.current_participants %> / <%= challenge.meeting_info&.max_attendees %></span>
                 </div>
               </div>
             </div>
-          </div>
-        <% else %>
-          <div class="app-glass-card p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-50 w-full">
-            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl">🛡️</div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">보증금이 없는 챌린지는<br>정산 데이터가 생성되지 않습니다</p>
-          </div>
-      <% end %>
-
-    <!-- Card 3: Activity Log -->
-      <!-- Recent Activity Log -->
-      <div class="app-glass-card p-5 md:p-6">
-        <h3 class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-6 md:mb-8 italic">최근 활동 로그</h3>
-        <% if recent_verifications.any? %>
-          <div class="space-y-6">
-            <% recent_verifications.each do |log| %>
-              <div class="flex items-start gap-4 group">
-                <div class="relative">
-                  <img src="<%= log.participant.user.profile_image %>" class="w-8 h-8 rounded-xl object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
-                  <div class="absolute -right-1 -bottom-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0C0B12]"></div>
-                </div>
-                <div class="flex-1 border-b border-white/5 pb-4 group-last:border-0">
-                  <p class="text-[11px] font-black text-slate-300 group-hover:text-white transition-colors">
-                    <span class="text-white"><%= log.participant.user.nickname %></span>님이 인증을 업데이트했습니다
-                  </p>
-                  <p class="text-[9px] font-black text-slate-600 uppercase mt-1"><%= time_ago_in_words(log.created_at) %> 전</p>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% else %>
-          <div class="py-10 text-center">
-            <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">검출된 활동이 없습니다</p>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Verification Section (Full Width) -->
-    <!-- Verification Pending with Batch Actions -->
-    <% if pending_verifications.any? %>
-      <div class="app-glass-card p-4 md:p-6 border-amber-500/10 bg-amber-500/[0.02]" data-controller="batch-action">
-          <%= form_with url: batch_approve_verifications_hosted_challenge_path(challenge), method: :post, id: "batch-verification-form" do |f| %>
-            <%= hidden_field_tag :source, 'prototype' %>
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
-              <div>
-                <h2 class="text-base md:text-lg font-black text-white italic uppercase tracking-tight">승인 대기 인증 (<span id="selected-count">0</span> / <%= pending_verifications.count %>)</h2>
-                <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">이미지를 클릭하여 일괄 처리 대상을 선택하세요</p>
-              </div>
-              
-              <div class="hidden flex items-center gap-2 w-full sm:w-auto" id="batch-actions">
-                <button type="submit" class="flex-1 sm:flex-none glass-btn px-5 py-2.5 text-[10px] font-black text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10 uppercase tracking-widest">일괄 승인</button>
-                <button type="button" 
-                        onclick="document.getElementById('batch-reject-modal').classList.remove('hidden')"
-                        class="flex-1 sm:flex-none glass-btn px-5 py-2.5 text-[10px] font-black text-rose-500 border-rose-500/20 hover:bg-rose-500/10 uppercase tracking-widest">일괄 거절</button>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-              <% pending_verifications.each do |log| %>
-                <div class="relative bg-white/[0.03] rounded-2xl md:rounded-[32px] p-3 border border-white/10 group/log overflow-hidden hover:bg-white/[0.05] transition-all cursor-pointer"
-                     onclick="const cb = this.querySelector('input[type=checkbox]'); cb.checked = !cb.checked; this.classList.toggle('ring-2'); this.classList.toggle('ring-indigo-500'); this.classList.toggle('bg-indigo-500/5'); updateBatchActions();">
-                  <input type="checkbox" name="log_ids[]" value="<%= log.id %>" class="hidden verification-checkbox">
-                  
-                  <div class="flex items-center gap-3 mb-3">
-                    <img src="<%= log.participant.user.profile_image %>" class="w-7 h-7 rounded-lg object-cover grayscale group-hover/log:grayscale-0 transition-all">
-                    <div class="min-w-0">
-                      <p class="font-black text-white text-[10px] italic truncate"><%= log.participant.user.nickname %></p>
-                      <p class="text-[7px] font-black text-slate-600 uppercase mt-0.5"><%= log.created_at.strftime('%H:%M') %></p>
+          <% else %>
+            <div class="w-full h-32 flex items-end justify-between gap-1 px-2">
+              <% @trends.each do |trend| %>
+                <div class="flex-1 flex flex-col items-center gap-2 group/bar">
+                  <div class="relative w-full flex items-end justify-center h-24">
+                    <div class="w-2 md:w-3 bg-indigo-500/20 rounded-full h-full absolute"></div>
+                    <div class="w-2 md:w-3 bg-indigo-500 rounded-full transition-all duration-1000 group-hover/bar:bg-indigo-400 group-hover/bar:shadow-[0_0_15px_rgba(99,102,241,0.6)]" style="height: <%= trend[:rate] %>%;"></div>
+                    <!-- Tooltip -->
+                    <div class="absolute -top-6 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap z-10">
+                      <%= trend[:rate] %>%
                     </div>
                   </div>
-
-                  <% if log.image_url.present? %>
-                    <div class="aspect-square rounded-xl overflow-hidden mb-3 border border-white/5 relative">
-                      <img src="<%= log.image_url %>" class="w-full h-full object-cover grayscale-[0.3] group-hover/log:grayscale-0 transition-all duration-700">
-                      <div class="absolute inset-0 bg-indigo-600/0 group-hover/log:bg-indigo-600/10 transition-colors"></div>
-                    </div>
-                  <% end %>
-                  
-                  <div class="flex items-center gap-1.5 pt-1">
-                    <%= button_to approve_challenge_verification_log_path(challenge, log, source: 'prototype'), method: :post, onclick: "event.stopPropagation();", class: "flex-1 py-2 bg-indigo-600/20 text-indigo-400 rounded-lg font-black text-[9px] uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all" do %>승인<% end %>
-                    <button type="button" onclick="event.stopPropagation(); document.getElementById('log-id-reject').value = '<%= log.id %>'; document.getElementById('single-reject-modal').classList.remove('hidden');" class="p-2 bg-white/5 text-slate-600 rounded-lg hover:bg-rose-500/10 hover:text-rose-500 transition-all">
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                  </div>
+                  <span class="text-[8px] font-black text-slate-600 uppercase"><%= trend[:date] %></span>
                 </div>
               <% end %>
             </div>
           <% end %>
         </div>
+      </div>
+
+  <!-- Card 2: Settlement / Memo -->
+  <% if challenge.offline? %>
+        <div class="app-glass-card p-6 border-white/10 bg-white/[0.02] flex flex-col w-full">
+          <div class="flex items-center justify-between mb-6">
+            <div class="min-w-0 flex-1">
+              <h3 class="text-xs font-black text-white italic truncate">운영자 메모</h3>
+              <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">중요 사항</p>
+            </div>
+            <span class="p-2 bg-white/5 rounded-xl flex-shrink-0 ml-2">📝</span>
+          </div>
+          <div class="flex-1 flex flex-col justify-between space-y-4">
+            <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+              <p class="text-[11px] font-medium text-slate-400 leading-relaxed">준비물: <%= challenge.preparation_items.presence || "없음" %></p>
+            </div>
+            <%= link_to hosted_challenge_path(challenge, tab: "announcements", source: 'prototype'), class: "block w-full py-3 rounded-xl bg-indigo-600/20 text-indigo-400 text-[10px] font-black text-center uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all" do %>공지사항 작성하기<% end %>
+          </div>
+        </div>
+      <% elsif challenge.cost_type_deposit? %>
+        <div class="app-glass-card p-6 overflow-hidden relative flex flex-col w-full">
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
+          <div class="flex items-center justify-between mb-6">
+            <div class="min-w-0 flex-1">
+              <h3 class="text-xs font-black text-white italic truncate">실시간 정산</h3>
+              <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">예상 배분액</p>
+            </div>
+            <span class="p-2 bg-emerald-500/10 rounded-xl flex-shrink-0 ml-2">💰</span>
+          </div>
+
+          <div class="flex-1 flex flex-col justify-center space-y-5 relative z-10">
+            <div class="flex items-end justify-between border-b border-white/5 pb-3">
+              <p class="text-[10px] font-black text-slate-400 uppercase">예상 상금 풀</p>
+              <p class="text-lg font-black text-white italic"><%= number_with_delimiter(@potential_prize_pool) %>원</p>
+            </div>
+            <div class="flex items-end justify-between">
+              <p class="text-[10px] font-black text-slate-400 uppercase">인당 추가 보너스</p>
+              <div class="text-right">
+                <p class="text-xl font-black text-emerald-400 italic">+ <%= number_with_delimiter(@estimated_bonus) %>원</p>
+                <p class="text-[8px] font-black text-slate-600 mt-0.5">최종 성공 루퍼 1인 기준</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class="app-glass-card p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-50 w-full">
+          <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl">🛡️</div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">보증금이 없는 챌린지는<br>정산 데이터가 생성되지 않습니다</p>
+        </div>
+    <% end %>
+
+  <!-- Card 3: Activity Log -->
+    <!-- Recent Activity Log -->
+    <div class="app-glass-card p-5 md:p-6">
+      <h3 class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-6 md:mb-8 italic">최근 활동 로그</h3>
+      <% if recent_verifications.any? %>
+        <div class="space-y-6">
+          <% recent_verifications.each do |log| %>
+            <div class="flex items-start gap-4 group">
+              <div class="relative">
+                <img src="<%= log.participant.user.profile_image %>" class="w-8 h-8 rounded-xl object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
+                <div class="absolute -right-1 -bottom-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0C0B12]"></div>
+              </div>
+              <div class="flex-1 border-b border-white/5 pb-4 group-last:border-0">
+                <p class="text-[11px] font-black text-slate-300 group-hover:text-white transition-colors">
+                  <span class="text-white"><%= log.participant.user.nickname %></span>님이 인증을 업데이트했습니다
+                </p>
+                <p class="text-[9px] font-black text-slate-600 uppercase mt-1"><%= time_ago_in_words(log.created_at) %> 전</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="py-10 text-center">
+          <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">검출된 활동이 없습니다</p>
+        </div>
       <% end %>
     </div>
+  </div>
 
-    <!-- Batch Reject Modal -->
-    <div id="batch-reject-modal" class="fixed inset-0 z-[200] hidden bg-black/80 backdrop-blur-xl flex items-center justify-center p-6">
-      <div class="app-glass-card p-8 max-w-sm w-full space-y-6 animate-slide-up border-rose-500/20">
-        <div class="text-center">
-          <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-500/20">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-          </div>
-          <h3 class="text-lg font-black text-white italic">인증 일괄 거절</h3>
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">선택된 건을 모두 거절 처리합니다</p>
-        </div>
-        
-        <%= form_with url: batch_reject_verifications_hosted_challenge_path(challenge), method: :post do |f| %>
+  <!-- Verification Section (Full Width) -->
+  <!-- Verification Pending with Batch Actions -->
+  <% if pending_verifications.any? %>
+    <div class="app-glass-card p-4 md:p-6 border-amber-500/10 bg-amber-500/[0.02]" data-controller="batch-action">
+        <%= form_with url: batch_approve_verifications_hosted_challenge_path(challenge), method: :post, id: "batch-verification-form" do |f| %>
           <%= hidden_field_tag :source, 'prototype' %>
-          <div id="batch-ids-container"></div>
-          <div class="space-y-4">
-            <%= text_area_tag :reject_reason, nil, placeholder: "공통 거절 사유를 입력해주세요 (선택)", class: "w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-rose-500 outline-none h-24 resize-none" %>
-            <div class="flex gap-3">
-              <button type="button" onclick="document.getElementById('batch-reject-modal').classList.add('hidden')" class="flex-1 py-4 bg-white/5 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest">취소</button>
-              <%= f.submit "일괄 거절 확정", onclick: "populateBatchIds()", class: "flex-[2] py-4 bg-rose-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-rose-600/20" %>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
+            <div>
+              <h2 class="text-base md:text-lg font-black text-white italic uppercase tracking-tight">승인 대기 인증 (<span id="selected-count">0</span> / <%= pending_verifications.count %>)</h2>
+              <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">이미지를 클릭하여 일괄 처리 대상을 선택하세요</p>
             </div>
+            
+            <div class="hidden flex items-center gap-2 w-full sm:w-auto" id="batch-actions">
+              <button type="submit" class="flex-1 sm:flex-none glass-btn px-5 py-2.5 text-[10px] font-black text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10 uppercase tracking-widest">일괄 승인</button>
+              <button type="button" 
+                      onclick="document.getElementById('batch-reject-modal').classList.remove('hidden')"
+                      class="flex-1 sm:flex-none glass-btn px-5 py-2.5 text-[10px] font-black text-rose-500 border-rose-500/20 hover:bg-rose-500/10 uppercase tracking-widest">일괄 거절</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+            <% pending_verifications.each do |log| %>
+              <div class="relative bg-white/[0.03] rounded-2xl md:rounded-[32px] p-3 border border-white/10 group/log overflow-hidden hover:bg-white/[0.05] transition-all cursor-pointer"
+                   onclick="const cb = this.querySelector('input[type=checkbox]'); cb.checked = !cb.checked; this.classList.toggle('ring-2'); this.classList.toggle('ring-indigo-500'); this.classList.toggle('bg-indigo-500/5'); updateBatchActions();">
+                <input type="checkbox" name="log_ids[]" value="<%= log.id %>" class="hidden verification-checkbox">
+                
+                <div class="flex items-center gap-3 mb-3">
+                  <img src="<%= log.participant.user.profile_image %>" class="w-7 h-7 rounded-lg object-cover grayscale group-hover/log:grayscale-0 transition-all">
+                  <div class="min-w-0">
+                    <p class="font-black text-white text-[10px] italic truncate"><%= log.participant.user.nickname %></p>
+                    <p class="text-[7px] font-black text-slate-600 uppercase mt-0.5"><%= log.created_at.strftime('%H:%M') %></p>
+                  </div>
+                </div>
+
+                <% if log.image_url.present? %>
+                  <div class="aspect-square rounded-xl overflow-hidden mb-3 border border-white/5 relative">
+                    <img src="<%= log.image_url %>" class="w-full h-full object-cover grayscale-[0.3] group-hover/log:grayscale-0 transition-all duration-700">
+                    <div class="absolute inset-0 bg-indigo-600/0 group-hover/log:bg-indigo-600/10 transition-colors"></div>
+                  </div>
+                <% end %>
+                
+                <div class="flex items-center gap-1.5 pt-1">
+                  <%= button_to approve_challenge_verification_log_path(challenge, log, source: 'prototype'), method: :post, onclick: "event.stopPropagation();", class: "flex-1 py-2 bg-indigo-600/20 text-indigo-400 rounded-lg font-black text-[9px] uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all" do %>승인<% end %>
+                  <button type="button" onclick="event.stopPropagation(); document.getElementById('log-id-reject').value = '<%= log.id %>'; document.getElementById('single-reject-modal').classList.remove('hidden');" class="p-2 bg-white/5 text-slate-600 rounded-lg hover:bg-rose-500/10 hover:text-rose-500 transition-all">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+              </div>
+            <% end %>
           </div>
         <% end %>
       </div>
-    </div>
+    <% end %>
 
-    <!-- Single Reject Modal -->
-    <div id="single-reject-modal" class="fixed inset-0 z-[201] hidden bg-black/80 backdrop-blur-xl flex items-center justify-center p-6">
-      <div class="app-glass-card p-8 max-w-sm w-full space-y-6 animate-slide-up">
-        <div class="text-center">
-          <h3 class="text-lg font-black text-white italic">인증 거절 사유</h3>
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">참가자에게 안내할 상세 내용을 입력하세요</p>
+  <!-- Batch Reject Modal -->
+  <div id="batch-reject-modal" class="fixed inset-0 z-[200] hidden bg-black/80 backdrop-blur-xl flex items-center justify-center p-6">
+    <div class="app-glass-card p-8 max-w-sm w-full space-y-6 animate-slide-up border-rose-500/20">
+      <div class="text-center">
+        <div class="w-16 h-16 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-rose-500/20">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
         </div>
-        <%= form_with url: "#", method: :post, id: "single-reject-form" do |f| %>
-          <input type="hidden" name="_method" value="post">
-          <input type="hidden" id="log-id-reject">
-          <div class="space-y-4">
-            <%= text_area_tag :reject_reason, nil, placeholder: "예: 인증 가이드(손가락 V)를 준수하지 않았습니다.", class: "w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-rose-500 outline-none h-24 resize-none" %>
-            <div class="flex gap-3">
-              <button type="button" onclick="document.getElementById('single-reject-modal').classList.add('hidden')" class="flex-1 py-4 bg-white/5 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest">취소</button>
-              <button type="submit" onclick="this.form.action = '/challenges/<%= challenge.id %>/verification_logs/' + document.getElementById('log-id-reject').value + '/reject?source=prototype'" class="flex-[2] py-4 bg-rose-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-rose-600/20">거절 확정</button>
-            </div>
-          </div>
-        <% end %>
+        <h3 class="text-lg font-black text-white italic">인증 일괄 거절</h3>
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">선택된 건을 모두 거절 처리합니다</p>
       </div>
+      
+      <%= form_with url: batch_reject_verifications_hosted_challenge_path(challenge), method: :post do |f| %>
+        <%= hidden_field_tag :source, 'prototype' %>
+        <div id="batch-ids-container"></div>
+        <div class="space-y-4">
+          <%= text_area_tag :reject_reason, nil, placeholder: "공통 거절 사유를 입력해주세요 (선택)", class: "w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-rose-500 outline-none h-24 resize-none" %>
+          <div class="flex gap-3">
+            <button type="button" onclick="document.getElementById('batch-reject-modal').classList.add('hidden')" class="flex-1 py-4 bg-white/5 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest">취소</button>
+            <%= f.submit "일괄 거절 확정", onclick: "populateBatchIds()", class: "flex-[2] py-4 bg-rose-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-rose-600/20" %>
+          </div>
+        </div>
+      <% end %>
     </div>
+  </div>
 
-    <script>
-      function updateBatchActions() {
-        const checkedCount = document.querySelectorAll('.verification-checkbox:checked').length;
-        const actionsDiv = document.getElementById('batch-actions');
-        const countSpan = document.getElementById('selected-count');
-        
-        if (checkedCount > 0) {
-          actionsDiv.classList.remove('hidden');
-          actionsDiv.classList.add('flex');
-        } else {
-          actionsDiv.classList.add('hidden');
-          actionsDiv.classList.remove('flex');
-        }
-        countSpan.textContent = checkedCount;
+  <!-- Single Reject Modal -->
+  <div id="single-reject-modal" class="fixed inset-0 z-[201] hidden bg-black/80 backdrop-blur-xl flex items-center justify-center p-6">
+    <div class="app-glass-card p-8 max-w-sm w-full space-y-6 animate-slide-up">
+      <div class="text-center">
+        <h3 class="text-lg font-black text-white italic">인증 거절 사유</h3>
+        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">참가자에게 안내할 상세 내용을 입력하세요</p>
+      </div>
+      <%= form_with url: "#", method: :post, id: "single-reject-form" do |f| %>
+        <input type="hidden" name="_method" value="post">
+        <input type="hidden" id="log-id-reject">
+        <div class="space-y-4">
+          <%= text_area_tag :reject_reason, nil, placeholder: "예: 인증 가이드(손가락 V)를 준수하지 않았습니다.", class: "w-full p-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-rose-500 outline-none h-24 resize-none" %>
+          <div class="flex gap-3">
+            <button type="button" onclick="document.getElementById('single-reject-modal').classList.add('hidden')" class="flex-1 py-4 bg-white/5 text-slate-500 rounded-2xl font-black text-[10px] uppercase tracking-widest">취소</button>
+            <button type="submit" onclick="this.form.action = '/challenges/<%= challenge.id %>/verification_logs/' + document.getElementById('log-id-reject').value + '/reject?source=prototype'" class="flex-[2] py-4 bg-rose-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-rose-600/20">거절 확정</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <script>
+    function updateBatchActions() {
+      const checkedCount = document.querySelectorAll('.verification-checkbox:checked').length;
+      const actionsDiv = document.getElementById('batch-actions');
+      const countSpan = document.getElementById('selected-count');
+      
+      if (checkedCount > 0) {
+        actionsDiv.classList.remove('hidden');
+        actionsDiv.classList.add('flex');
+      } else {
+        actionsDiv.classList.add('hidden');
+        actionsDiv.classList.remove('flex');
       }
+      countSpan.textContent = checkedCount;
+    }
 
-      function populateBatchIds() {
-        const container = document.getElementById('batch-ids-container');
-        container.innerHTML = '';
-        document.querySelectorAll('.verification-checkbox:checked').forEach(cb => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = 'log_ids[]';
-          input.value = cb.value;
-          container.appendChild(input);
+    function populateBatchIds() {
+      const container = document.getElementById('batch-ids-container');
+      container.innerHTML = '';
+      document.querySelectorAll('.verification-checkbox:checked').forEach(cb => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'log_ids[]';
+        input.value = cb.value;
+        container.appendChild(input);
+      });
+    }
+  </script>
+
+  <!-- Logic Modal (Prototype) -->
+  <div id="threshold-modal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-xl flex items-center justify-center p-6">
+    <%= form_with model: challenge, url: hosted_challenge_path(challenge), method: :patch, class: "app-glass-card p-12 max-w-lg w-full shadow-2xl space-y-10 border-white/10" do |f| %>
+      <%= hidden_field_tag :source, 'prototype' %>
+      <%= hidden_field_tag :tab, 'dashboard' %>
+
+      <div class="text-center">
+        <h3 class="text-2xl font-black text-white italic uppercase tracking-tighter">분류 기준 설정</h3>
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2">상태 자동 분류를 위한 수치를 조정합니다</p>
+      </div>
+      
+      <div class="space-y-8">
+        <!-- Active Threshold -->
+        <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
+          <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-4">정상 달성 기준 (Active)</p>
+          <div class="flex items-center gap-4">
+            <%= f.range_field :active_rate_threshold, 
+                              value: challenge.active_rate_threshold.to_i,
+                              min: 0, max: 100, step: 1,
+                              class: "flex-1 accent-indigo-500",
+                              id: "active-threshold-slider",
+                              oninput: "document.getElementById('active-threshold-value').textContent = this.value + '%'" %>
+            <span id="active-threshold-value" class="text-xl font-black text-white italic min-w-[3rem] text-right">
+              <%= challenge.active_rate_threshold.to_i %>%
+            </span>
+          </div>
+        </div>
+
+        <!-- Sluggish Threshold -->
+        <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
+          <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] mb-4">주의 관리 기준 (Sluggish)</p>
+          <div class="flex items-center gap-4">
+            <%= f.range_field :sluggish_rate_threshold, 
+                              value: challenge.sluggish_rate_threshold.to_i,
+                              min: 0, max: 100, step: 1,
+                              class: "flex-1 accent-indigo-500",
+                              id: "sluggish-threshold-slider",
+                              oninput: "document.getElementById('sluggish-threshold-value').textContent = this.value + '%'" %>
+            <span id="sluggish-threshold-value" class="text-xl font-black text-white italic min-w-[3rem] text-right">
+              <%= challenge.sluggish_rate_threshold.to_i %>%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <button type="button" onclick="document.getElementById('threshold-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="flex-1 py-4 bg-white/5 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/10">닫기</button>
+        <%= f.submit "변경사항 적용", class: "flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <script>
+    // Simple modal toggle without Stimulus
+    document.addEventListener('DOMContentLoaded', function() {
+      const openButton = document.querySelector('[data-action="click->modal#open"]');
+      const modal = document.getElementById('threshold-modal');
+      
+      if (openButton && modal) {
+        openButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          modal.classList.remove('hidden');
+          document.body.classList.add('overflow-hidden');
+        });
+
+        // Close on background click
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+          }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+          }
         });
       }
-    </script>
-  </div>
-
-    <!-- Logic Modal (Prototype) -->
-    <div id="threshold-modal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-xl flex items-center justify-center p-6">
-      <%= form_with model: challenge, url: hosted_challenge_path(challenge), method: :patch, class: "app-glass-card p-12 max-w-lg w-full shadow-2xl space-y-10 border-white/10" do |f| %>
-        <%= hidden_field_tag :source, 'prototype' %>
-        <%= hidden_field_tag :tab, 'dashboard' %>
-
-        <div class="text-center">
-          <h3 class="text-2xl font-black text-white italic uppercase tracking-tighter">분류 기준 설정</h3>
-          <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2">상태 자동 분류를 위한 수치를 조정합니다</p>
-        </div>
-        
-        <div class="space-y-8">
-          <!-- Active Threshold -->
-          <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
-            <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-4">정상 달성 기준 (Active)</p>
-            <div class="flex items-center gap-4">
-              <%= f.range_field :active_rate_threshold, 
-                                value: challenge.active_rate_threshold.to_i,
-                                min: 0, max: 100, step: 1,
-                                class: "flex-1 accent-indigo-500",
-                                id: "active-threshold-slider",
-                                oninput: "document.getElementById('active-threshold-value').textContent = this.value + '%'" %>
-              <span id="active-threshold-value" class="text-xl font-black text-white italic min-w-[3rem] text-right">
-                <%= challenge.active_rate_threshold.to_i %>%
-              </span>
-            </div>
-          </div>
-
-          <!-- Sluggish Threshold -->
-          <div class="p-6 bg-white/5 rounded-3xl border border-white/10">
-            <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] mb-4">주의 관리 기준 (Sluggish)</p>
-            <div class="flex items-center gap-4">
-              <%= f.range_field :sluggish_rate_threshold, 
-                                value: challenge.sluggish_rate_threshold.to_i,
-                                min: 0, max: 100, step: 1,
-                                class: "flex-1 accent-indigo-500",
-                                id: "sluggish-threshold-slider",
-                                oninput: "document.getElementById('sluggish-threshold-value').textContent = this.value + '%'" %>
-              <span id="sluggish-threshold-value" class="text-xl font-black text-white italic min-w-[3rem] text-right">
-                <%= challenge.sluggish_rate_threshold.to_i %>%
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex gap-4">
-          <button type="button" onclick="document.getElementById('threshold-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="flex-1 py-4 bg-white/5 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/10">닫기</button>
-          <%= f.submit "변경사항 적용", class: "flex-[2] py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-600/20 cursor-pointer" %>
-        </div>
-      <% end %>
-    </div>
-
-    <script>
-      // Simple modal toggle without Stimulus
-      document.addEventListener('DOMContentLoaded', function() {
-        const openButton = document.querySelector('[data-action="click->modal#open"]');
-        const modal = document.getElementById('threshold-modal');
-        
-        if (openButton && modal) {
-          openButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-          });
-
-          // Close on background click
-          modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-              modal.classList.add('hidden');
-              document.body.classList.remove('overflow-hidden');
-            }
-          });
-
-          // Close on ESC key
-          document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-              modal.classList.add('hidden');
-              document.body.classList.remove('overflow-hidden');
-            }
-          });
-        }
-      });
-    </script>
-  </div>
-
-<% else %>
-  <!-- ORIGINAL WEB UI: Safe & Untouched -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-controller="modal">
-    <div class="lg:col-span-2 space-y-8">
-      <div class="bg-indigo-900 rounded-[40px] p-10 text-white relative overflow-hidden group">
-        <h2 class="text-xl font-black">참가자 상태 분류 기준</h2>
-        <!-- (Web UI logic preserved) -->
-      </div>
-    </div>
-    <div class="space-y-8">
-      <!-- (Web UI Activity Log etc) -->
-    </div>
-  </div>
-<% end %>
+    });
+  </script>
+</div>

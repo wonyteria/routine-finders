@@ -1,227 +1,134 @@
-<% if params[:source] == 'prototype' %>
-  <div class="space-y-6 md:space-y-10">
-    <!-- Search & Filter Area -->
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="flex-1 relative">
-        <input type="text" id="participant-search" placeholder="참가자 닉네임 검색..." 
-               class="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all"
-               oninput="filterParticipants(this.value)">
-        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+<div class="space-y-6 md:space-y-10">
+  <!-- Search & Filter Area -->
+  <div class="flex flex-col md:flex-row gap-4">
+    <div class="flex-1 relative">
+      <input type="text" id="participant-search" placeholder="참가자 닉네임 검색..." 
+             class="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all"
+             oninput="filterParticipants(this.value)">
+      <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    </div>
+  </div>
+
+  <!-- Filter & Sort Controls (Prototype) - Ultra Compact for Mobile -->
+  <div class="app-glass-card p-4 md:p-5">
+    <div class="grid grid-cols-2 gap-3">
+      <!-- Status Filter Dropdown -->
+      <div class="relative">
+        <select onchange="window.location.href = this.value" 
+                class="w-full bg-white/5 border border-white/10 rounded-xl text-[9px] md:text-[10px] font-black py-3 px-4 pr-9 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:status].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-400' %>">
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status].blank? %>>전체</option>
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'achieving', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'achieving' %>>달성 중</option>
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'lagging', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'lagging' %>>관리 대상</option>
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'inactive', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'inactive' %>>미참여</option>
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'failed', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'failed' %>>최종 탈락</option>
+        </select>
+        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </div>
+
+      <!-- Sort Dropdown -->
+      <div class="relative">
+        <select onchange="window.location.href = this.value" 
+                class="w-full bg-white/5 border border-white/10 rounded-xl text-[9px] md:text-[10px] font-black py-3 px-4 pr-9 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:sort].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-400' %>">
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], source: 'prototype') %>" <%= 'selected' if params[:sort].blank? %>>최신 가입순</option>
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'achievement_low', source: 'prototype') %>" <%= 'selected' if params[:sort] == 'achievement_low' %>>달성률 낮은 순</option>
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'missed_recent', source: 'prototype') %>" <%= 'selected' if params[:sort] == 'missed_recent' %>>최근 미인증 순</option>
+        </select>
+        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+        </svg>
       </div>
     </div>
+  </div>
 
-    <!-- Filter & Sort Controls (Prototype) - Ultra Compact for Mobile -->
-    <div class="app-glass-card p-4 md:p-5">
-      <div class="grid grid-cols-2 gap-3">
-        <!-- Status Filter Dropdown -->
-        <div class="relative">
-          <select onchange="window.location.href = this.value" 
-                  class="w-full bg-white/5 border border-white/10 rounded-xl text-[9px] md:text-[10px] font-black py-3 px-4 pr-9 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:status].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-400' %>">
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status].blank? %>>전체</option>
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'achieving', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'achieving' %>>달성 중</option>
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'lagging', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'lagging' %>>관리 대상</option>
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'inactive', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'inactive' %>>미참여</option>
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'failed', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'failed' %>>최종 탈락</option>
-          </select>
-          <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
-          </svg>
-        </div>
-
-        <!-- Sort Dropdown -->
-        <div class="relative">
-          <select onchange="window.location.href = this.value" 
-                  class="w-full bg-white/5 border border-white/10 rounded-xl text-[9px] md:text-[10px] font-black py-3 px-4 pr-9 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:sort].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-400' %>">
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], source: 'prototype') %>" <%= 'selected' if params[:sort].blank? %>>최신 가입순</option>
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'achievement_low', source: 'prototype') %>" <%= 'selected' if params[:sort] == 'achievement_low' %>>달성률 낮은 순</option>
-            <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'missed_recent', source: 'prototype') %>" <%= 'selected' if params[:sort] == 'missed_recent' %>>최근 미인증 순</option>
-          </select>
-          <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
-          </svg>
-        </div>
+  <!-- Participants Table (Prototype) -->
+  <div class="app-glass-card overflow-hidden">
+    <div class="p-4 md:p-6 border-b border-white/5 flex items-center justify-between">
+      <div>
+        <h2 class="text-base md:text-lg font-black text-white italic">참가자 목록</h2>
+        <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">총 <%= participants.count %>명의 루퍼가 활동 중입니다</p>
       </div>
+      <%= link_to new_challenge_announcement_path(@challenge, source: "prototype"), 
+                  data: { turbo_frame: "_top" },
+                  class: "glass-btn px-4 py-2 text-[9px] font-black text-indigo-400 hover:text-white uppercase tracking-widest flex items-center gap-2" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        단체 공지 발송
+      <% end %>
     </div>
 
-    <!-- Participants Table (Prototype) -->
-    <div class="app-glass-card overflow-hidden">
-      <div class="p-4 md:p-6 border-b border-white/5 flex items-center justify-between">
-        <div>
-          <h2 class="text-base md:text-lg font-black text-white italic">참가자 목록</h2>
-          <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">총 <%= participants.count %>명의 루퍼가 활동 중입니다</p>
-        </div>
-        <%= link_to new_challenge_announcement_path(@challenge, source: "prototype"), 
-                    data: { turbo_frame: "_top" },
-                    class: "glass-btn px-4 py-2 text-[9px] font-black text-indigo-400 hover:text-white uppercase tracking-widest flex items-center gap-2" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-          단체 공지 발송
-        <% end %>
-      </div>
-
-      <% if participants.any? %>
-        <!-- Participants Responsive List -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-5" id="participants-grid">
-          <% participants.each do |participant| %>
-            <div class="participant-card app-glass-card p-5 group/p overflow-hidden" data-nickname="<%= participant.user.nickname.downcase %>">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                  <img src="<%= participant.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover">
-                  <div>
-                    <p class="font-black text-white text-sm"><%= participant.user.nickname %></p>
-                    <p class="text-[9px] font-black text-slate-600 uppercase">가입일: <%= participant.joined_at&.strftime("%Y.%m.%d") %></p>
-                  </div>
-                </div>
-                <% badge = participant.status_badge_info %>
-                <span class="px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest border <%= badge[:class].gsub('bg-', 'bg-').gsub('text-', 'text-') %>">
-                  <%= badge[:label] %>
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4 mt-5">
-                <div class="bg-white/5 rounded-2xl p-4 flex flex-col items-center justify-center gap-2">
-                  <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">오늘 인증</p>
-                  <% if participant.today_verified %>
-                    <div class="w-8 h-8 bg-emerald-500/20 text-emerald-500 rounded-xl flex items-center justify-center border border-emerald-500/20">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                    </div>
-                  <% else %>
-                    <div class="w-8 h-8 bg-white/5 text-slate-700 rounded-xl flex items-center justify-center">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    </div>
-                  <% end %>
-                </div>
-                <div class="bg-white/5 rounded-2xl p-4 flex flex-col items-center justify-center gap-2">
-                  <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">달성률</p>
-                  <div class="flex items-baseline gap-1">
-                    <span class="text-lg font-black text-white italic"><%= participant.completion_rate.to_i %>%</span>
-                    <span class="text-[9px] font-black text-orange-400">🔥 <%= participant.current_streak %>일</span>
-                  </div>
+    <% if participants.any? %>
+      <!-- Participants Responsive List -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-5" id="participants-grid">
+        <% participants.each do |participant| %>
+          <div class="participant-card app-glass-card p-5 group/p overflow-hidden" data-nickname="<%= participant.user.nickname.downcase %>">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <img src="<%= participant.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover">
+                <div>
+                  <p class="font-black text-white text-sm"><%= participant.user.nickname %></p>
+                  <p class="text-[9px] font-black text-slate-600 uppercase">가입일: <%= participant.joined_at&.strftime("%Y.%m.%d") %></p>
                 </div>
               </div>
+              <% badge = participant.status_badge_info %>
+              <span class="px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest border <%= badge[:class].gsub('bg-', 'bg-').gsub('text-', 'text-') %>">
+                <%= badge[:label] %>
+              </span>
+            </div>
 
-              <div class="flex gap-2 mt-5">
-                <button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                  알림
-                </button>
-                <button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                  채팅
-                </button>
+            <div class="grid grid-cols-2 gap-4 mt-5">
+              <div class="bg-white/5 rounded-2xl p-4 flex flex-col items-center justify-center gap-2">
+                <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">오늘 인증</p>
+                <% if participant.today_verified %>
+                  <div class="w-8 h-8 bg-emerald-500/20 text-emerald-500 rounded-xl flex items-center justify-center border border-emerald-500/20">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                <% else %>
+                  <div class="w-8 h-8 bg-white/5 text-slate-700 rounded-xl flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </div>
+                <% end %>
+              </div>
+              <div class="bg-white/5 rounded-2xl p-4 flex flex-col items-center justify-center gap-2">
+                <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">달성률</p>
+                <div class="flex items-baseline gap-1">
+                  <span class="text-lg font-black text-white italic"><%= participant.completion_rate.to_i %>%</span>
+                  <span class="text-[9px] font-black text-orange-400">🔥 <%= participant.current_streak %>일</span>
+                </div>
               </div>
             </div>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="text-center py-32">
-          <p class="text-[11px] font-black text-slate-700 uppercase tracking-[0.3em]">필터와 일치하는 참가자가 없습니다</p>
-        </div>
-      <% end %>
-    </div>
-  </div>
 
-  <script>
-    function filterParticipants(query) {
-      const q = query.toLowerCase();
-      document.querySelectorAll('.participant-card').forEach(card => {
-        const nickname = card.getAttribute('data-nickname');
-        if (nickname.includes(q)) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-    }
-  </script>
-<% else %>
-  <!-- ORIGINAL WEB UI -->
-  <div class="space-y-6">
-    <!-- Filter & Sort Controls -->
-    <div class="flex items-center justify-between bg-white rounded-[32px] border border-slate-200 p-5 shadow-sm">
-      <div class="flex flex-wrap gap-2">
-        <%= link_to "전체", hosted_challenge_path(@challenge, tab: "participants"), class: "px-5 py-2.5 rounded-2xl text-[11px] font-black transition-all #{params[:status].blank? ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}" %>
-        <% [[:achieving, "🔥 달성 중"], [:lagging, "⚠️ 부진"], [:inactive, "❌ 미참여"], [:failed, "☠️ 탈락"]].each do |status, label| %>
-          <%= link_to label, hosted_challenge_path(@challenge, tab: "participants", status: status, sort: params[:sort]), class: "px-5 py-2.5 rounded-2xl text-[11px] font-black transition-all #{params[:status] == status.to_s ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}" %>
+            <div class="flex gap-2 mt-5">
+              <button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                알림
+              </button>
+              <button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                채팅
+              </button>
+            </div>
+          </div>
         <% end %>
       </div>
-      <div class="flex items-center gap-3">
-        <select onchange="window.location.href = this.value" class="bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black text-slate-500 py-2.5 pl-4 pr-10 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all outline-none cursor-pointer">
-          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status]) %>" <%= 'selected' if params[:sort].blank? %>>최신 가입순</option>
-          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'achievement_low') %>" <%= 'selected' if params[:sort] == 'achievement_low' %>>달성률 낮은 순</option>
-          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'missed_recent') %>" <%= 'selected' if params[:sort] == 'missed_recent' %>>최근 미인증 순</option>
-        </select>
+    <% else %>
+      <div class="text-center py-32">
+        <p class="text-[11px] font-black text-slate-700 uppercase tracking-[0.3em]">필터와 일치하는 참가자가 없습니다</p>
       </div>
-    </div>
-
-    <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-        <div>
-          <h2 class="text-xl font-black text-slate-900">참가자 목록</h2>
-          <p class="text-xs font-bold text-slate-400 mt-1">총 <%= participants.count %>명의 참가자가 함께하고 있습니다.</p>
-        </div>
-      </div>
-
-      <% if participants.any? %>
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="bg-slate-50/50">
-                <th class="text-left py-5 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">참가자 정보</th>
-                <th class="text-center py-5 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">본일 인증</th>
-                <th class="text-center py-5 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">달성률 / 스트릭</th>
-                <th class="text-center py-5 px-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">상태</th>
-                <th class="text-right py-5 px-8 text-[10px] font-black text-slate-400 uppercase tracking-widest">액션</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <% participants.each do |participant| %>
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                  <td class="py-6 px-8">
-                    <div class="flex items-center gap-4">
-                      <img src="<%= participant.user.profile_image %>" alt="" class="w-12 h-12 rounded-2xl object-cover shadow-sm">
-                      <div>
-                        <p class="font-black text-slate-900 leading-tight"><%= participant.user.nickname %></p>
-                        <p class="text-[11px] font-bold text-slate-400 mt-1">가입: <%= participant.joined_at&.strftime("%Y.%m.%d") %></p>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="py-6 px-4 text-center">
-                    <% if participant.today_verified %>
-                      <div class="w-10 h-10 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                      </div>
-                    <% else %>
-                      <div class="w-10 h-10 bg-slate-100 text-slate-300 rounded-2xl flex items-center justify-center mx-auto">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </div>
-                    <% end %>
-                  </td>
-                  <td class="py-6 px-4">
-                    <div class="space-y-2">
-                      <div class="flex items-center justify-center gap-2">
-                        <span class="text-sm font-black text-slate-900"><%= participant.completion_rate.to_i %>%</span>
-                        <span class="text-[10px] font-bold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-md">🔥 <%= participant.current_streak %>일</span>
-                      </div>
-                      <div class="w-24 h-1.5 bg-slate-100 rounded-full mx-auto overflow-hidden">
-                        <div class="h-full bg-indigo-500 rounded-full" style="width: <%= participant.completion_rate.to_i %>%"></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="py-6 px-4 text-center">
-                    <% badge = participant.status_badge_info %>
-                    <span class="px-3 py-1.5 rounded-xl border text-[10px] font-black <%= badge[:class] %>">
-                      <%= badge[:label] %>
-                    </span>
-                  </td>
-                  <td class="py-6 px-8 text-right">
-                    <!-- Actions (Preserved) -->
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% end %>
-    </div>
+    <% end %>
   </div>
-<% end %>
+</div>
+
+<script>
+  function filterParticipants(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('.participant-card').forEach(card => {
+      const nickname = card.getAttribute('data-nickname');
+      if (nickname.includes(q)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+</script>

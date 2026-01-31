@@ -110,10 +110,10 @@ class ApplicationController < ActionController::Base
   end
 
   def set_layout
-    params[:source] == "web" ? "application" : "prototype"
+    "prototype"
   end
 
   def default_url_options
-    params[:source] == "web" ? { source: "web" } : {}
+    {}
   end
 end

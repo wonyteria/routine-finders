@@ -1,574 +1,397 @@
-<% if params[:source] == 'prototype' %>
-  <div class="space-y-8 pt-8">
-    
-    <!-- Header removed flash from here -->
-    <header class="space-y-6 px-1">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <%= link_to hosted_challenges_path(source: params[:source]), class: "w-11 h-11 app-glass-card flex items-center justify-center text-slate-400 app-tap-active group" do %>
-            <svg class="w-5 h-5 group-active:scale-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-          <% end %>
-            <div>
-              <div class="flex items-center gap-2 mb-0.5">
-                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest italic leading-none">관리 본부</p>
-              </div>
-              <h1 class="text-xl font-black text-white italic tracking-tighter truncate max-w-[200px]"><%= @challenge.title %></h1>
-            </div>
-        </div>
-        
-        <%= link_to challenge_path(@challenge, source: params[:source]), target: "_blank", class: "w-11 h-11 app-glass-card flex items-center justify-center text-white app-tap-active" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+<div class="space-y-8 pt-8">
+  
+  <!-- Header removed flash from here -->
+  <header class="space-y-6 px-1">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <%= link_to hosted_challenges_path, class: "w-11 h-11 app-glass-card flex items-center justify-center text-slate-400 app-tap-active group" do %>
+          <svg class="w-5 h-5 group-active:scale-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
         <% end %>
+          <div>
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest italic leading-none">관리 본부</p>
+            </div>
+            <h1 class="text-xl font-black text-white italic tracking-tighter truncate max-w-[200px]"><%= @challenge.title %></h1>
+          </div>
       </div>
+      
+      <%= link_to challenge_path(@challenge), target: "_blank", class: "w-11 h-11 app-glass-card flex items-center justify-center text-white app-tap-active" do %>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+      <% end %>
+    </div>
 
+    <% if @challenge.offline? %>
+      <!-- Meeting Info Card (For Gatherings) -->
+      <div class="app-glass-card p-6 bg-emerald-500/[0.03] border-emerald-500/10 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full"></div>
+        <div class="flex items-center justify-between mb-4 relative z-10">
+          <div class="space-y-1">
+            <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none italic">모임 일정</p>
+            <h2 class="text-2xl font-black text-white italic leading-none"><%= @challenge.start_date.strftime('%m.%d') %> <span class="text-slate-500 font-normal text-lg ml-1"><%= @challenge.meeting_info&.meeting_time.presence || "시간 미정" %></span></h2>
+          </div>
+          <div class="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30">
+             <span class="text-xs font-black text-emerald-400 italic">D-<%= ( @challenge.start_date - Date.current).to_i %></span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 pt-3 border-t border-white/5 relative z-10">
+          <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-base">📍</div>
+          <div class="flex-1 min-w-0">
+             <p class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">모임 장소</p>
+             <p class="text-xs font-bold text-white truncate"><%= @challenge.meeting_info&.place_name || "장소 정보 없음" %></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Actions for Gatherings -->
+      <div class="flex items-center gap-2 px-1 mt-3">
+        <button onclick="openNudgeModal('gathering_remind')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-indigo-500/20 active:scale-95 transition-all">
+          <span class="text-sm">📍</span>
+          <span class="text-[10px] font-black text-white italic">리마인드</span>
+        </button>
+        <button onclick="openNudgeModal('gathering_prep')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-amber-500/20 active:scale-95 transition-all">
+          <span class="text-sm">🎒</span>
+          <span class="text-[10px] font-black text-white italic">준비물</span>
+        </button>
+        <button type="button" onclick="openAnnouncementModal()" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all">
+          <span class="text-sm">📢</span>
+          <span class="text-[10px] font-black text-white italic">단체 공지</span>
+        </button>
+      </div>
+    <% else %>
+      <!-- Progress Journey (For Challenges) -->
+      <div class="app-glass-card p-6 bg-indigo-500/[0.03] border-indigo-500/10 relative overflow-hidden">
+        <div class="flex items-end justify-between mb-4">
+          <div class="space-y-1">
+            <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none italic">챌린지 진행도</p>
+            <h2 class="text-2xl font-black text-white italic leading-none"><%= @current_day %>일차 <span class="text-slate-800 font-normal text-lg">/ <%= @total_days %></span></h2>
+          </div>
+          <div class="text-right">
+            <p class="text-lg font-black text-white italic"><%= @progress_percent %>%</p>
+          </div>
+        </div>
+        <div class="h-2.5 bg-black/40 rounded-full overflow-hidden p-0.5 border border-white/5">
+          <div class="h-full bg-gradient-to-r from-indigo-600 to-purple-500 rounded-full transition-all duration-1000 flex items-center justify-end px-0.5" style="width: <%= @progress_percent %>%">
+            <div class="w-1 h-1 rounded-full bg-white/80"></div>
+          </div>
+        </div>
+        <div class="flex justify-between mt-2.5">
+          <span class="text-[8px] font-bold text-slate-600 uppercase"><%= @challenge.start_date.strftime('%m/%d') %></span>
+          <span class="text-[8px] font-bold text-slate-600 uppercase"><%= @challenge.end_date.strftime('%m/%d') %></span>
+        </div>
+      </div>
+      
+      <!-- Quick Actions for Challenges -->
+      <div class="flex items-center gap-2 px-1 mt-3">
+        <button onclick="openNudgeModal('unverified_today')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-indigo-500/20 active:scale-95 transition-all">
+          <span class="text-sm">🔔</span>
+          <span class="text-[10px] font-black text-white italic">미인증 독려</span>
+        </button>
+        <button onclick="openNudgeModal('sluggish')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-amber-500/20 active:scale-95 transition-all">
+          <span class="text-sm">⚠️</span>
+          <span class="text-[10px] font-black text-white italic">부진 경고</span>
+        </button>
+        <button type="button" onclick="openAnnouncementModal()" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all">
+          <span class="text-sm">📢</span>
+          <span class="text-[10px] font-black text-white italic">단체 공지</span>
+        </button>
+      </div>
+    <% end %>
+  </header>
+
+  <!-- 2. Performance HUD (Grid) -->
+  <section class="grid grid-cols-2 gap-3 px-1">
+    <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
+      <span class="text-2xl font-black italic text-white mb-1"><%= @stats[:total_participants] %></span>
+      <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "최종 참여 루퍼" : "누적 루퍼" %></span>
+    </div>
+    <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
       <% if @challenge.offline? %>
-        <!-- Meeting Info Card (For Gatherings) -->
-        <div class="app-glass-card p-6 bg-emerald-500/[0.03] border-emerald-500/10 relative overflow-hidden">
-          <div class="absolute -right-12 -top-12 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full"></div>
-          <div class="flex items-center justify-between mb-4 relative z-10">
-            <div class="space-y-1">
-              <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none italic">모임 일정</p>
-              <h2 class="text-2xl font-black text-white italic leading-none"><%= @challenge.start_date.strftime('%m.%d') %> <span class="text-slate-500 font-normal text-lg ml-1"><%= @challenge.meeting_info&.meeting_time.presence || "시간 미정" %></span></h2>
-            </div>
-            <div class="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30">
-               <span class="text-xs font-black text-emerald-400 italic">D-<%= ( @challenge.start_date - Date.current).to_i %></span>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 pt-3 border-t border-white/5 relative z-10">
-            <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-base">📍</div>
-            <div class="flex-1 min-w-0">
-               <p class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">모임 장소</p>
-               <p class="text-xs font-bold text-white truncate"><%= @challenge.meeting_info&.place_name || "장소 정보 없음" %></p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Quick Actions for Gatherings -->
-        <div class="flex items-center gap-2 px-1 mt-3">
-          <button onclick="openNudgeModal('gathering_remind')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-indigo-500/20 active:scale-95 transition-all">
-            <span class="text-sm">📍</span>
-            <span class="text-[10px] font-black text-white italic">리마인드</span>
-          </button>
-          <button onclick="openNudgeModal('gathering_prep')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-amber-500/20 active:scale-95 transition-all">
-            <span class="text-sm">🎒</span>
-            <span class="text-[10px] font-black text-white italic">준비물</span>
-          </button>
-          <button type="button" onclick="openAnnouncementModal()" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all">
-            <span class="text-sm">📢</span>
-            <span class="text-[10px] font-black text-white italic">단체 공지</span>
-          </button>
-        </div>
+        <span class="text-2xl font-black italic text-indigo-400 mb-1"><%= @challenge.meeting_info&.max_attendees %></span>
+        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">모임 정원</span>
       <% else %>
-        <!-- Progress Journey (For Challenges) -->
-        <div class="app-glass-card p-6 bg-indigo-500/[0.03] border-indigo-500/10 relative overflow-hidden">
-          <div class="flex items-end justify-between mb-4">
-            <div class="space-y-1">
-              <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none italic">챌린지 진행도</p>
-              <h2 class="text-2xl font-black text-white italic leading-none"><%= @current_day %>일차 <span class="text-slate-800 font-normal text-lg">/ <%= @total_days %></span></h2>
-            </div>
-            <div class="text-right">
-              <p class="text-lg font-black text-white italic"><%= @progress_percent %>%</p>
-            </div>
-          </div>
-          <div class="h-2.5 bg-black/40 rounded-full overflow-hidden p-0.5 border border-white/5">
-            <div class="h-full bg-gradient-to-r from-indigo-600 to-purple-500 rounded-full transition-all duration-1000 flex items-center justify-end px-0.5" style="width: <%= @progress_percent %>%">
-              <div class="w-1 h-1 rounded-full bg-white/80"></div>
-            </div>
-          </div>
-          <div class="flex justify-between mt-2.5">
-            <span class="text-[8px] font-bold text-slate-600 uppercase"><%= @challenge.start_date.strftime('%m/%d') %></span>
-            <span class="text-[8px] font-bold text-slate-600 uppercase"><%= @challenge.end_date.strftime('%m/%d') %></span>
-          </div>
-        </div>
-        
-        <!-- Quick Actions for Challenges -->
-        <div class="flex items-center gap-2 px-1 mt-3">
-          <button onclick="openNudgeModal('unverified_today')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-indigo-500/20 active:scale-95 transition-all">
-            <span class="text-sm">🔔</span>
-            <span class="text-[10px] font-black text-white italic">미인증 독려</span>
-          </button>
-          <button onclick="openNudgeModal('sluggish')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-amber-500/20 active:scale-95 transition-all">
-            <span class="text-sm">⚠️</span>
-            <span class="text-[10px] font-black text-white italic">부진 경고</span>
-          </button>
-          <button type="button" onclick="openAnnouncementModal()" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all">
-            <span class="text-sm">📢</span>
-            <span class="text-[10px] font-black text-white italic">단체 공지</span>
-          </button>
-        </div>
+        <span class="text-2xl font-black italic text-emerald-400 mb-1"><%= @stats[:active_today] %></span>
+        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">오늘 성공</span>
       <% end %>
-    </header>
+    </div>
+    <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
+      <% if @challenge.offline? %>
+        <span class="text-2xl font-black italic text-white mb-1"><%= ( (@challenge.current_participants.to_f / (@challenge.meeting_info&.max_attendees || 1)) * 100).to_i %><span class="text-lg">%</span></span>
+        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">참여 점유율</span>
+      <% else %>
+        <span class="text-2xl font-black italic text-indigo-400 mb-1"><%= @stats[:avg_completion_rate] %><span class="text-lg">%</span></span>
+        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">평균 달성률</span>
+      <% end %>
+    </div>
+    <div class="app-glass-card p-4 <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'bg-amber-500/5 border-amber-500/20' : '' %> flex flex-col items-center justify-center text-center">
+      <span class="text-2xl font-black italic <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-700' %> mb-1"><%= @challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications] %></span>
+      <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "신청 대기" : "인증 검토" %></span>
+    </div>
+  </section>
 
-    <!-- 2. Performance HUD (Grid) -->
-    <section class="grid grid-cols-2 gap-3 px-1">
-      <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
-        <span class="text-2xl font-black italic text-white mb-1"><%= @stats[:total_participants] %></span>
-        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "최종 참여 루퍼" : "누적 루퍼" %></span>
-      </div>
-      <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
-        <% if @challenge.offline? %>
-          <span class="text-2xl font-black italic text-indigo-400 mb-1"><%= @challenge.meeting_info&.max_attendees %></span>
-          <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">모임 정원</span>
-        <% else %>
-          <span class="text-2xl font-black italic text-emerald-400 mb-1"><%= @stats[:active_today] %></span>
-          <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">오늘 성공</span>
-        <% end %>
-      </div>
-      <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
-        <% if @challenge.offline? %>
-          <span class="text-2xl font-black italic text-white mb-1"><%= ( (@challenge.current_participants.to_f / (@challenge.meeting_info&.max_attendees || 1)) * 100).to_i %><span class="text-lg">%</span></span>
-          <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">참여 점유율</span>
-        <% else %>
-          <span class="text-2xl font-black italic text-indigo-400 mb-1"><%= @stats[:avg_completion_rate] %><span class="text-lg">%</span></span>
-          <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">평균 달성률</span>
-        <% end %>
-      </div>
-      <div class="app-glass-card p-4 <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'bg-amber-500/5 border-amber-500/20' : '' %> flex flex-col items-center justify-center text-center">
-        <span class="text-2xl font-black italic <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-700' %> mb-1"><%= @challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications] %></span>
-        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "신청 대기" : "인증 검토" %></span>
-      </div>
-    </section>
-
-    <!-- 3. Dynamic Tabs Section -->
-    <div class="space-y-4">
-      <nav id="tab-nav-container" class="app-glass-card p-1.5 sticky top-4 z-[200] border-white/10 shadow-3xl mx-1 bg-[#16151D]/90 backdrop-blur-3xl">
-        <div class="flex items-center gap-1 overflow-x-auto scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
-          <% 
-            nav_tabs = [
-              ["dashboard", "대시보드", "M13 10V3L4 14h7v7l9-11h-7z"],
-              ["participants", "참가자", "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"],
-              ["announcements", "공지/인증", "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"],
-              ["settings", "설정", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"]
-            ]
-            nav_tabs.insert(1, ["applications", "승인대기", "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"]) if @challenge.requires_approval?
-            nav_tabs.push(["refunds", "정산/환급", "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"]) if @challenge.cost_type_deposit?
-          %>
-          <% nav_tabs.each do |id, label, icon| %>
-            <%= link_to hosted_challenge_path(@challenge, tab: id, source: params[:source]), 
-                        data: { turbo_frame: "hosted_challenge_tabs", tab_id: id, active: (@tab == id) },
-                        class: "tab-item shrink-0 flex items-center gap-2 py-3 px-5 transition-all rounded-[1.25rem] #{ @tab == id ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 shadow-lg' : 'text-slate-500' }" do %>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= icon %>"/></svg>
-              <span class="text-[10px] font-black tracking-tight whitespace-nowrap"><%= label %></span>
-            <% end %>
+  <!-- 3. Dynamic Tabs Section -->
+  <div class="space-y-4">
+    <nav id="tab-nav-container" class="app-glass-card p-1.5 sticky top-4 z-[200] border-white/10 shadow-3xl mx-1 bg-[#16151D]/90 backdrop-blur-3xl">
+      <div class="flex items-center gap-1 overflow-x-auto scroll-smooth" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <% 
+          nav_tabs = [
+            ["dashboard", "대시보드", "M13 10V3L4 14h7v7l9-11h-7z"],
+            ["participants", "참가자", "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"],
+            ["announcements", "공지/인증", "M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"],
+            ["settings", "설정", "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"]
+          ]
+          nav_tabs.insert(1, ["applications", "승인대기", "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"]) if @challenge.requires_approval?
+          nav_tabs.push(["refunds", "정산/환급", "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2M17 16v2a2 2 0 01-2 2H9a2 2 0 01-2-2v-2m3-5v3m4-3v3m-2-6V5a2 2 0 114 0v2"]) if @challenge.cost_type_deposit?
+        %>
+        <% nav_tabs.each do |id, label, icon| %>
+          <%= link_to hosted_challenge_path(@challenge, tab: id), 
+                      data: { turbo_frame: "hosted_challenge_tabs", tab_id: id, active: (@tab == id) },
+                      class: "tab-item shrink-0 flex items-center gap-2 py-3 px-5 transition-all rounded-[1.25rem] #{ @tab == id ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 shadow-lg' : 'text-slate-500' }" do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= icon %>"/></svg>
+            <span class="text-[10px] font-black tracking-tight whitespace-nowrap"><%= label %></span>
           <% end %>
-        </div>
-      </nav>
+        <% end %>
+      </div>
+    </nav>
 
-      <turbo-frame id="hosted_challenge_tabs" class="block min-h-[40vh]" data-turbo-action="advance">
-        <div class="animate-slide-up pb-20">
-          <!-- Flash Messages (Moved Inside Frame for Turbo Updates) -->
-          <% if notice %>
-            <div id="flash-toast-prototype" class="fixed top-4 left-1/2 -translate-x-1/2 z-[32000] max-w-md w-[90%] animate-slide-down">
-              <div class="flex items-start gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 rounded-3xl shadow-2xl border border-white/20">
-                <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                </div>
-                <span class="font-black text-sm flex-1"><%= notice %></span>
-                <button onclick="this.parentElement.parentElement.remove()" class="hover:bg-white/20 rounded-lg p-1 transition-colors shrink-0">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
+    <turbo-frame id="hosted_challenge_tabs" class="block min-h-[40vh]" data-turbo-action="advance">
+      <div class="animate-slide-up pb-20">
+        <!-- Flash Messages (Moved Inside Frame for Turbo Updates) -->
+        <% if notice %>
+          <div id="flash-toast-prototype" class="fixed top-4 left-1/2 -translate-x-1/2 z-[32000] max-w-md w-[90%] animate-slide-down">
+            <div class="flex items-start gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 rounded-3xl shadow-2xl border border-white/20">
+              <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
               </div>
+              <span class="font-black text-sm flex-1"><%= notice %></span>
+              <button onclick="this.parentElement.parentElement.remove()" class="hover:bg-white/20 rounded-lg p-1 transition-colors shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
             </div>
-            <script>
-              setTimeout(() => {
-                const toast = document.getElementById('flash-toast-prototype');
-                if (toast) {
-                  toast.classList.add('opacity-0', 'translate-y-[-20px]', 'transition-all', 'duration-500');
-                  setTimeout(() => toast.remove(), 500);
-                }
-              }, 3000);
-            </script>
-          <% end %>
+          </div>
+          <script>
+            setTimeout(() => {
+              const toast = document.getElementById('flash-toast-prototype');
+              if (toast) {
+                toast.classList.add('opacity-0', 'translate-y-[-20px]', 'transition-all', 'duration-500');
+                setTimeout(() => toast.remove(), 500);
+              }
+            }, 3000);
+          </script>
+        <% end %>
 
-          <% if alert %>
-            <div id="error-validation-modal" class="fixed inset-0 z-[35000] flex items-center justify-center p-6">
-              <div onclick="this.parentElement.remove(); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-3xl animate-fade-in"></div>
+        <% if alert %>
+          <div id="error-validation-modal" class="fixed inset-0 z-[35000] flex items-center justify-center p-6">
+            <div onclick="this.parentElement.remove(); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-3xl animate-fade-in"></div>
+            
+            <div class="relative w-full max-w-sm app-glass-card border-rose-500/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
+              <div class="w-16 h-16 rounded-3xl bg-rose-500/20 flex items-center justify-center text-3xl mx-auto shadow-glow shadow-rose-500/20">
+                ⚠️
+              </div>
               
-              <div class="relative w-full max-w-sm app-glass-card border-rose-500/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
-                <div class="w-16 h-16 rounded-3xl bg-rose-500/20 flex items-center justify-center text-3xl mx-auto shadow-glow shadow-rose-500/20">
-                  ⚠️
-                </div>
-                
-                <div class="space-y-2">
-                  <p class="text-[10px] font-black text-rose-400 uppercase tracking-[0.3em]">입력 오류 확인</p>
-                  <h3 class="text-2xl font-black text-white italic">설정을 저장할 수 없습니다</h3>
-                </div>
+              <div class="space-y-2">
+                <p class="text-[10px] font-black text-rose-400 uppercase tracking-[0.3em]">입력 오류 확인</p>
+                <h3 class="text-2xl font-black text-white italic">설정을 저장할 수 없습니다</h3>
+              </div>
 
-                <div class="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-left">
-                  <p class="text-sm font-bold text-rose-200 leading-relaxed italic">
-                    <%= alert.gsub("저장에 실패했습니다: ", "") %>
-                  </p>
-                </div>
-
-                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed">
-                  잘못 입력된 항목을 다시 확인하고<br/>수정해 주시기 바랍니다.
+              <div class="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 text-left">
+                <p class="text-sm font-bold text-rose-200 leading-relaxed italic">
+                  <%= alert.gsub("저장에 실패했습니다: ", "") %>
                 </p>
-
-                <button onclick="this.closest('#error-validation-modal').remove(); document.body.classList.remove('overflow-hidden')" 
-                        class="w-full py-4 bg-rose-600 text-white font-black text-sm rounded-2xl shadow-xl shadow-rose-600/20 active:scale-95 transition-all">
-                  다시 확인하기
-                </button>
               </div>
+
+              <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed">
+                잘못 입력된 항목을 다시 확인하고<br/>수정해 주시기 바랍니다.
+              </p>
+
+              <button onclick="this.closest('#error-validation-modal').remove(); document.body.classList.remove('overflow-hidden')" 
+                      class="w-full py-4 bg-rose-600 text-white font-black text-sm rounded-2xl shadow-xl shadow-rose-600/20 active:scale-95 transition-all">
+                다시 확인하기
+              </button>
             </div>
-            <script>document.body.classList.add('overflow-hidden');</script>
-          <% end %>
-          <!-- Change Confirmation Modal (Moved Inside Frame) -->
-          <% if flash[:updated_changes].present? %>
-            <% changes = JSON.parse(flash[:updated_changes]) %>
-            <div id="success-confirmation-modal" class="fixed inset-0 z-[30000] flex items-center justify-center p-6">
-              <div onclick="this.parentElement.remove(); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-3xl animate-fade-in"></div>
+          </div>
+          <script>document.body.classList.add('overflow-hidden');</script>
+        <% end %>
+        <!-- Change Confirmation Modal (Moved Inside Frame) -->
+        <% if flash[:updated_changes].present? %>
+          <% changes = JSON.parse(flash[:updated_changes]) %>
+          <div id="success-confirmation-modal" class="fixed inset-0 z-[30000] flex items-center justify-center p-6">
+            <div onclick="this.parentElement.remove(); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-3xl animate-fade-in"></div>
+            
+            <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
+              <div class="w-16 h-16 rounded-3xl bg-emerald-500/20 flex items-center justify-center text-3xl mx-auto shadow-glow shadow-emerald-500/20">
+                ✅
+              </div>
               
-              <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
-                <div class="w-16 h-16 rounded-3xl bg-emerald-500/20 flex items-center justify-center text-3xl mx-auto shadow-glow shadow-emerald-500/20">
-                  ✅
-                </div>
-                
-                <div class="space-y-2">
-                  <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em]">저장 완료</p>
-                  <h3 class="text-2xl font-black text-white italic">설정이 변경되었습니다</h3>
-                </div>
-
-                <div class="space-y-3 py-2">
-                  <% changes.each do |change| %>
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
-                      <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest"><%= change['l'] %></span>
-                      <div class="text-right">
-                         <p class="text-[11px] font-bold text-white"><%= change['v'] %></p>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-
-                <button onclick="this.closest('#success-confirmation-modal').remove(); document.body.classList.remove('overflow-hidden')" 
-                        class="w-full py-4 bg-indigo-600 text-white font-black text-sm rounded-2xl shadow-xl active:scale-95 transition-all">
-                  확인했습니다
-                </button>
+              <div class="space-y-2">
+                <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em]">저장 완료</p>
+                <h3 class="text-2xl font-black text-white italic">설정이 변경되었습니다</h3>
               </div>
+
+              <div class="space-y-3 py-2">
+                <% changes.each do |change| %>
+                  <div class="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5">
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest"><%= change['l'] %></span>
+                    <div class="text-right">
+                       <p class="text-[11px] font-bold text-white"><%= change['v'] %></p>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+
+              <button onclick="this.closest('#success-confirmation-modal').remove(); document.body.classList.remove('overflow-hidden')" 
+                      class="w-full py-4 bg-indigo-600 text-white font-black text-sm rounded-2xl shadow-xl active:scale-95 transition-all">
+                확인했습니다
+              </button>
             </div>
-            <script>document.body.classList.add('overflow-hidden');</script>
-          <% end %>
-
-          <% case @tab %>
-          <% when "dashboard" %>
-            <%= render "hosted_challenges/tabs/dashboard", challenge: @challenge, participants: @participants, pending_verifications: @pending_verifications, recent_verifications: @recent_verifications %>
-          <% when "applications" %>
-            <%= render "hosted_challenges/tabs/applications", challenge: @challenge, pending_applications: @pending_applications, processed_applications: @processed_applications %>
-          <% when "participants" %>
-            <%= render "hosted_challenges/tabs/participants", challenge: @challenge, participants: @participants %>
-          <% when "announcements" %>
-            <%= render "hosted_challenges/tabs/announcements", challenge: @challenge, announcements: @announcements %>
-          <% when "reviews" %>
-            <%= render "hosted_challenges/tabs/reviews", challenge: @challenge, reviews: @reviews %>
-          <% when "settings" %>
-            <%= render "hosted_challenges/tabs/settings", challenge: @challenge %>
-          <% when "refunds" %>
-            <%= render "hosted_challenges/tabs/refunds", challenge: @challenge, pending_refunds: @pending_refunds, completed_refunds: @completed_refunds %>
-          <% end %>
-        </div>
-      </turbo-frame>
-    </div>
-
-    <script>
-      // 1. Initial Scroll and Click Listener
-      document.addEventListener('turbo:load', () => {
-        scrollActiveTabToCenter();
-      });
-
-      // 2. Handle Tab Clicks (since Nav is outside Turbo Frame)
-      document.addEventListener('click', (e) => {
-        const tabLink = e.target.closest('[data-tab-id]');
-        if (tabLink && tabLink.closest('#tab-nav-container')) {
-          // Update Classes
-          document.querySelectorAll('#tab-nav-container [data-tab-id]').forEach(el => {
-            el.classList.remove('bg-indigo-500/20', 'text-indigo-400', 'border', 'border-indigo-500/20', 'shadow-lg');
-            el.classList.add('text-slate-500');
-            el.setAttribute('data-active', 'false');
-          });
-          
-          tabLink.classList.add('bg-indigo-500/20', 'text-indigo-400', 'border', 'border-indigo-500/20', 'shadow-lg');
-          tabLink.classList.remove('text-slate-500');
-          tabLink.setAttribute('data-active', 'true');
-          
-          // Scroll to center
-          setTimeout(() => scrollActiveTabToCenter(), 50);
-        }
-      });
-      
-      function scrollActiveTabToCenter() {
-        const container = document.querySelector('#tab-nav-container .overflow-x-auto');
-        const activeTab = container?.querySelector('[data-active="true"]');
-        
-        if (container && activeTab) {
-          const containerWidth = container.offsetWidth;
-          const tabLeft = activeTab.offsetLeft;
-          const tabWidth = activeTab.offsetWidth;
-          const scrollPosition = tabLeft - (containerWidth / 2) + (tabWidth / 2);
-          
-          container.scrollTo({
-            left: scrollPosition,
-            behavior: 'smooth'
-          });
-        }
-      }
-    </script>
-  </div>
-
-  <%# Change Confirmation Modal was moved inside turbo-frame %>
-
-  <!-- Nudge Confirmation Modal (Simplified for Prototype) -->
-  <div id="nudge-modal" class="hidden fixed inset-0 z-[20000]">
-    <div onclick="closeNudgeModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-    <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-6 pb-8 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-      <div class="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
-      <h3 id="nudge-title" class="text-lg font-black text-white text-center mb-1 italic">독려 메시지 발송</h3>
-      <p id="nudge-desc" class="text-[10px] font-bold text-indigo-400 text-center uppercase tracking-widest leading-none mb-6">루퍼들에게 활기찬 에너지를 전달하세요</p>
-      
-      <%= form_with url: nudge_participants_hosted_challenge_path(@challenge), method: :post, class: "space-y-4" do |f| %>
-        <%= hidden_field_tag :source, 'prototype' %>
-        <%= hidden_field_tag :group, '', id: 'nudge-group-input' %>
-        <div class="space-y-3">
-          <%= text_area_tag :content, nil, id: 'nudge-content-input', required: true, class: "w-full min-h-[100px] bg-white/5 border border-white/10 rounded-3xl p-5 text-white text-sm font-bold focus:border-indigo-500 outline-none resize-none" %>
-          <div class="flex gap-2">
-             <button type="button" onclick="closeNudgeModal()" class="px-5 py-3 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs h-12">취소</button>
-             <%= f.submit "발송하기", class: "flex-1 rounded-2xl bg-indigo-600 text-white font-black text-xs h-12" %>
           </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
+          <script>document.body.classList.add('overflow-hidden');</script>
+        <% end %>
 
-  <!-- Announcement Modal (New) -->
-  <div id="announcement-modal" class="hidden fixed inset-0 z-[20000]">
-    <div onclick="closeAnnouncementModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-    <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-6 pb-8 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-      <div class="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
-      <h3 class="text-lg font-black text-white text-center mb-1 italic">단체 공지사항 등록</h3>
-      <p class="text-[10px] font-bold text-emerald-400 text-center uppercase tracking-widest leading-none mb-6">모든 참가자에게 중요 소식을 알립니다</p>
-      
-      <%= form_with model: [@challenge, Announcement.new], class: "space-y-4" do |f| %>
-        <%= hidden_field_tag :source, 'prototype' %>
-        <div class="space-y-3">
-          <%= f.text_field :title, placeholder: "공지 제목을 입력하세요", required: true, class: "w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-black focus:border-emerald-500 outline-none" %>
-          <%= f.text_area :content, placeholder: "공지 상세 내용을 입력하세요...", required: true, class: "w-full min-h-[120px] bg-white/5 border border-white/10 rounded-3xl p-5 text-white text-sm font-bold focus:border-emerald-500 outline-none resize-none" %>
-          <div class="flex gap-2">
-             <button type="button" onclick="closeAnnouncementModal()" class="px-5 py-3 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs h-12">취소</button>
-             <%= f.submit "공지 발송", class: "flex-1 rounded-2xl bg-emerald-600 text-white font-black text-xs h-12" %>
-          </div>
-        </div>
-      <% end %>
-    </div>
+        <% case @tab %>
+        <% when "dashboard" %>
+          <%= render "hosted_challenges/tabs/dashboard", challenge: @challenge, participants: @participants, pending_verifications: @pending_verifications, recent_verifications: @recent_verifications %>
+        <% when "applications" %>
+          <%= render "hosted_challenges/tabs/applications", challenge: @challenge, pending_applications: @pending_applications, processed_applications: @processed_applications %>
+        <% when "participants" %>
+          <%= render "hosted_challenges/tabs/participants", challenge: @challenge, participants: @participants %>
+        <% when "announcements" %>
+          <%= render "hosted_challenges/tabs/announcements", challenge: @challenge, announcements: @announcements %>
+        <% when "reviews" %>
+          <%= render "hosted_challenges/tabs/reviews", challenge: @challenge, reviews: @reviews %>
+        <% when "settings" %>
+          <%= render "hosted_challenges/tabs/settings", challenge: @challenge %>
+        <% when "refunds" %>
+          <%= render "hosted_challenges/tabs/refunds", challenge: @challenge, pending_refunds: @pending_refunds, completed_refunds: @completed_refunds %>
+        <% end %>
+      </div>
+    </turbo-frame>
   </div>
 
   <script>
-    function openNudgeModal(group) {
-      const modal = document.getElementById('nudge-modal');
-      const groupInput = document.getElementById('nudge-group-input');
-      const contentInput = document.getElementById('nudge-content-input');
-      const titleText = document.getElementById('nudge-title');
+    // 1. Initial Scroll and Click Listener
+    document.addEventListener('turbo:load', () => {
+      scrollActiveTabToCenter();
+    });
 
-      groupInput.value = (group === 'gathering_remind' || group === 'gathering_prep') ? 'all' : group;
-
-      if (group === 'unverified_today') {
-        titleText.innerText = "미인증 독려하기";
-        contentInput.value = "'<%= j @challenge.title %>' 리더가 보낸 응원 메시지입니다. 아직 오늘의 인증을 안 하셨네요! 잊지 말고 꼭 완료해 주세요. 🔥";
-      } else if (group === 'sluggish') {
-        titleText.innerText = "부진 루퍼 깨우기";
-        contentInput.value = "목표를 향한 발걸음, 다시 힘을 내봐요! 최근 활동이 뜸해 보여 응원 보냅니다. 💪";
-      } else if (group === 'gathering_remind') {
-        titleText.innerText = "모임 일정 리마인드";
-        contentInput.value = "안녕하세요! '<%= j @challenge.title %>' 모임이 곧 진행됩니다. 일정(<%= @challenge.start_date.strftime('%m/%d') %> <%= @challenge.meeting_info&.meeting_time %>)과 장소(<%= @challenge.meeting_info&.place_name %>)를 다시 한번 확인해 주세요! 📍";
-      } else if (group === 'gathering_prep') {
-        titleText.innerText = "준비물 체크 알림";
-        contentInput.value = "모임 준비물(<%= @challenge.preparation_items.presence || '개인 소지품' %>)을 확인하셨나요? 잊지 말고 잘 챙겨서 즐거운 마음으로 만나요! 🎒";
+    // 2. Handle Tab Clicks (since Nav is outside Turbo Frame)
+    document.addEventListener('click', (e) => {
+      const tabLink = e.target.closest('[data-tab-id]');
+      if (tabLink && tabLink.closest('#tab-nav-container')) {
+        // Update Classes
+        document.querySelectorAll('#tab-nav-container [data-tab-id]').forEach(el => {
+          el.classList.remove('bg-indigo-500/20', 'text-indigo-400', 'border', 'border-indigo-500/20', 'shadow-lg');
+          el.classList.add('text-slate-500');
+          el.setAttribute('data-active', 'false');
+        });
+        
+        tabLink.classList.add('bg-indigo-500/20', 'text-indigo-400', 'border', 'border-indigo-500/20', 'shadow-lg');
+        tabLink.classList.remove('text-slate-500');
+        tabLink.setAttribute('data-active', 'true');
+        
+        // Scroll to center
+        setTimeout(() => scrollActiveTabToCenter(), 50);
       }
-
-      modal.classList.remove('hidden');
-    }
-
-    function closeNudgeModal() {
-      document.getElementById('nudge-modal').classList.add('hidden');
-    }
-
-    function openAnnouncementModal() {
-      document.getElementById('announcement-modal').classList.remove('hidden');
-    }
-
-    function closeAnnouncementModal() {
-      document.getElementById('announcement-modal').classList.add('hidden');
+    });
+    
+    function scrollActiveTabToCenter() {
+      const container = document.querySelector('#tab-nav-container .overflow-x-auto');
+      const activeTab = container?.querySelector('[data-active="true"]');
+      
+      if (container && activeTab) {
+        const containerWidth = container.offsetWidth;
+        const tabLeft = activeTab.offsetLeft;
+        const tabWidth = activeTab.offsetWidth;
+        const scrollPosition = tabLeft - (containerWidth / 2) + (tabWidth / 2);
+        
+        container.scrollTo({
+          left: scrollPosition,
+          behavior: 'smooth'
+        });
+      }
     }
   </script>
+</div>
 
-<% else %>
-  <!-- ORIGINAL WEB UI: Safe & Untouched -->
-  <!-- ... existing web code ... -->
-  <div class="space-y-8 pb-32">
-    <!-- ... (Previous web code preserved) ... -->
-    <% theme_color_class = @challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
-    <% theme_bg_class = @challenge.offline? ? "bg-orange-600" : "bg-indigo-600" %>
-    <% theme_light_bg = @challenge.offline? ? "bg-orange-50" : "bg-indigo-50" %>
-    <% theme_text_class = @challenge.offline? ? "text-orange-600" : "text-indigo-600" %>
+<%# Change Confirmation Modal was moved inside turbo-frame %>
+
+<!-- Nudge Confirmation Modal (Simplified for Prototype) -->
+<div id="nudge-modal" class="hidden fixed inset-0 z-[20000]">
+  <div onclick="closeNudgeModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+  <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-6 pb-8 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+    <div class="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
+    <h3 id="nudge-title" class="text-lg font-black text-white text-center mb-1 italic">독려 메시지 발송</h3>
+    <p id="nudge-desc" class="text-[10px] font-bold text-indigo-400 text-center uppercase tracking-widest leading-none mb-6">루퍼들에게 활기찬 에너지를 전달하세요</p>
     
-    <div class="flex items-center justify-between">
-      <%= link_to hosted_challenges_path, class: "p-4 bg-white border border-slate-200 rounded-3xl text-slate-500 hover:#{theme_text_class} shadow-sm transition-all" do %>
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-      <% end %>
-      <div class="flex items-center gap-3">
-        <%= link_to challenge_path(@challenge), class: "px-5 py-2.5 #{theme_bg_class} text-white rounded-2xl font-bold text-sm hover:brightness-110 transition-all shadow-lg shadow-opacity-20" do %>
-          <div class="flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-            공개 페이지 보기
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-[40px] border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
-      <div class="p-8 border-b border-slate-200">
-        <div class="flex items-center gap-6">
-          <% if @challenge.thumbnail_image.attached? %>
-            <%= image_tag @challenge.thumbnail_image, class: "w-24 h-24 rounded-3xl object-cover shadow-lg" %>
-          <% else %>
-            <img src="<%= @challenge.thumbnail %>" class="w-24 h-24 rounded-3xl object-cover shadow-lg" alt="">
-          <% end %>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="px-3 py-1.5 rounded-full text-xs font-black uppercase <%= @challenge.offline? ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' %>">
-                <%= @challenge.offline? ? '오프라인' : '온라인' %>
-              </span>
-              <% if @challenge.requires_approval? %>
-                <span class="px-3 py-1.5 rounded-full text-xs font-black uppercase bg-amber-100 text-amber-700">승인제</span>
-              <% end %>
-              <% if @challenge.is_official %>
-                <span class="px-3 py-1.5 rounded-full text-xs font-black uppercase bg-emerald-100 text-emerald-700">공식</span>
-              <% end %>
-            </div>
-            <h1 class="text-3xl font-black text-slate-900 mb-2"><%= @challenge.title %></h1>
-            <p class="text-slate-500 font-medium"><%= @challenge.start_date.strftime('%Y.%m.%d') %> ~ <%= @challenge.end_date.strftime('%Y.%m.%d') %></p>
-          </div>
+    <%= form_with url: nudge_participants_hosted_challenge_path(@challenge), method: :post, class: "space-y-4" do |f| %>
+      <%= hidden_field_tag :group, '', id: 'nudge-group-input' %>
+      <div class="space-y-3">
+        <%= text_area_tag :content, nil, id: 'nudge-content-input', required: true, class: "w-full min-h-[100px] bg-white/5 border border-white/10 rounded-3xl p-5 text-white text-sm font-bold focus:border-indigo-500 outline-none resize-none" %>
+        <div class="flex gap-2">
+           <button type="button" onclick="closeNudgeModal()" class="px-5 py-3 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs h-12">취소</button>
+           <%= f.submit "발송하기", class: "flex-1 rounded-2xl bg-indigo-600 text-white font-black text-xs h-12" %>
         </div>
       </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border-b border-slate-200">
-        <div class="p-6 text-center border-r border-slate-200">
-          <p class="text-3xl font-black <%= theme_text_class %> mb-1"><%= @stats[:total_participants] %></p>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">총 참가자</p>
-        </div>
-        <div class="p-6 text-center border-r border-slate-200">
-          <div class="flex items-center justify-center gap-2 mb-1">
-            <p class="text-2xl font-black text-green-600"><%= @stats[:active_today] %></p>
-            <span class="text-slate-300 text-xl font-black">/</span>
-            <p class="text-2xl font-black text-slate-400"><%= @stats[:unverified_today] %></p>
-          </div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">오늘 완료/미완료</p>
-        </div>
-        <div class="p-6 text-center border-r border-slate-200">
-          <p class="text-3xl font-black text-slate-900 mb-1"><%= @stats[:avg_completion_rate] %>%</p>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">평균 달성률</p>
-        </div>
-        <div class="p-6 text-center border-r border-slate-200">
-          <p class="text-3xl font-black text-orange-500 mb-1"><%= @stats[:streak_keepers] %></p>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">스트릭 유지</p>
-        </div>
-        <div class="p-6 text-center border-r border-slate-200">
-          <p class="text-3xl font-black text-red-600 mb-1"><%= @stats[:dropped_out] %></p>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">탈락 인원</p>
-        </div>
-        <div class="p-6 text-center">
-          <p class="text-3xl font-black <%= @stats[:pending_verifications] > 0 ? 'text-amber-600' : 'text-slate-300' %> mb-1"><%= @stats[:pending_verifications] %></p>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">인증 대기</p>
-        </div>
-      </div>
-
-      <div class="border-b border-slate-200 bg-slate-50/50">
-        <nav class="flex gap-0 px-8">
-          <% 
-            active_tab_class = "#{theme_color_class.gsub('border-', 'border-b-') .gsub('400', '600')} #{theme_text_class}"
-            inactive_tab_class = "border-transparent text-slate-400 hover:text-slate-600"
-          %>
-          <%= link_to hosted_challenge_path(@challenge, tab: "dashboard"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'dashboard' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-            대시보드
-          <% end %>
-          <% if @challenge.requires_approval? %>
-            <%= link_to hosted_challenge_path(@challenge, tab: "applications"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'applications' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-              신청 관리
-              <% if @stats[:pending_applications] > 0 %>
-                <span class="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full"><%= @stats[:pending_applications] %></span>
-              <% end %>
-            <% end %>
-          <% end %>
-          <%= link_to hosted_challenge_path(@challenge, tab: "participants"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'participants' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-            참가자
-          <% end %>
-          <%= link_to hosted_challenge_path(@challenge, tab: "announcements"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'announcements' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-            공지사항
-          <% end %>
-          <%= link_to hosted_challenge_path(@challenge, tab: "reviews"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'reviews' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-            리뷰
-          <% end %>
-          <% if @challenge.cost_type_deposit? %>
-            <%= link_to hosted_challenge_path(@challenge, tab: "refunds"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'refunds' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-              환급 관리
-              <% if @stats[:pending_refunds] > 0 %>
-                <span class="ml-2 px-2 py-0.5 #{theme_bg_class} text-white text-[10px] rounded-full"><%= @stats[:pending_refunds] %></span>
-              <% end %>
-            <% end %>
-          <% end %>
-          <%= link_to hosted_challenge_path(@challenge, tab: "settings"), class: "px-6 py-4 font-bold text-sm border-b-2 transition-all #{@tab == 'settings' ? active_tab_class + ' bg-white' : inactive_tab_class}" do %>
-            <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              설정
-            </div>
-          <% end %>
-        </nav>
-      </div>
-
-      <details class="border-b border-slate-200 group">
-        <summary class="px-8 py-5 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 transition-colors">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl <%= theme_light_bg %> flex items-center justify-center <%= theme_text_class %>">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <div>
-              <h3 class="text-lg font-black text-slate-900">챌린지 상세 정보</h3>
-              <p class="text-xs font-medium text-slate-400">개설 시 입력한 모든 정보 보기</p>
-            </div>
-          </div>
-          <svg class="w-6 h-6 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-        </summary>
-        <div class="p-8 lg:p-12 space-y-10 bg-slate-50/30">
-          <% if @challenge.summary.present? %>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl <%= theme_light_bg %> flex items-center justify-center <%= theme_text_class %>">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-                </div>
-                <h4 class="text-sm font-black text-slate-900 uppercase tracking-wider">한 줄 요약</h4>
-              </div>
-              <p class="text-base font-bold text-slate-700 pl-11"><%= @challenge.summary %></p>
-            </div>
-          <% end %>
-        </div>
-      </details>
-    </div>
-
-    <div class="mt-8">
-      <% case @tab %>
-      <% when "dashboard" %>
-        <%= render "hosted_challenges/tabs/dashboard", challenge: @challenge, participants: @participants, pending_verifications: @pending_verifications, recent_verifications: @recent_verifications %>
-      <% when "applications" %>
-        <%= render "hosted_challenges/tabs/applications", challenge: @challenge, pending_applications: @pending_applications, processed_applications: @processed_applications %>
-      <% when "participants" %>
-        <%= render "hosted_challenges/tabs/participants", challenge: @challenge, participants: @participants %>
-      <% when "announcements" %>
-        <%= render "hosted_challenges/tabs/announcements", challenge: @challenge, announcements: @announcements %>
-      <% when "reviews" %>
-        <%= render "hosted_challenges/tabs/reviews", challenge: @challenge, reviews: @reviews %>
-      <% when "settings" %>
-        <%= render "hosted_challenges/tabs/settings", challenge: @challenge %>
-      <% when "refunds" %>
-        <%= render "hosted_challenges/tabs/refunds", challenge: @challenge, pending_refunds: @pending_refunds, completed_refunds: @completed_refunds %>
-      <% end %>
-    </div>
+    <% end %>
   </div>
-<% end %>
+</div>
+
+<!-- Announcement Modal (New) -->
+<div id="announcement-modal" class="hidden fixed inset-0 z-[20000]">
+  <div onclick="closeAnnouncementModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
+  <div class="absolute bottom-32 left-4 right-4 max-w-md mx-auto bg-[#1B1A24] rounded-[40px] p-6 pb-8 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+    <div class="w-10 h-1 bg-white/10 rounded-full mx-auto mb-6"></div>
+    <h3 class="text-lg font-black text-white text-center mb-1 italic">단체 공지사항 등록</h3>
+    <p class="text-[10px] font-bold text-emerald-400 text-center uppercase tracking-widest leading-none mb-6">모든 참가자에게 중요 소식을 알립니다</p>
+    
+    <%= form_with model: [@challenge, Announcement.new], class: "space-y-4" do |f| %>
+      <div class="space-y-3">
+        <%= f.text_field :title, placeholder: "공지 제목을 입력하세요", required: true, class: "w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-black focus:border-emerald-500 outline-none" %>
+        <%= f.text_area :content, placeholder: "공지 상세 내용을 입력하세요...", required: true, class: "w-full min-h-[120px] bg-white/5 border border-white/10 rounded-3xl p-5 text-white text-sm font-bold focus:border-emerald-500 outline-none resize-none" %>
+        <div class="flex gap-2">
+           <button type="button" onclick="closeAnnouncementModal()" class="px-5 py-3 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs h-12">취소</button>
+           <%= f.submit "공지 발송", class: "flex-1 rounded-2xl bg-emerald-600 text-white font-black text-xs h-12" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  function openNudgeModal(group) {
+    const modal = document.getElementById('nudge-modal');
+    const groupInput = document.getElementById('nudge-group-input');
+    const contentInput = document.getElementById('nudge-content-input');
+    const titleText = document.getElementById('nudge-title');
+
+    groupInput.value = (group === 'gathering_remind' || group === 'gathering_prep') ? 'all' : group;
+
+    if (group === 'unverified_today') {
+      titleText.innerText = "미인증 독려하기";
+      contentInput.value = "'<%= j @challenge.title %>' 리더가 보낸 응원 메시지입니다. 아직 오늘의 인증을 안 하셨네요! 잊지 말고 꼭 완료해 주세요. 🔥";
+    } else if (group === 'sluggish') {
+      titleText.innerText = "부진 루퍼 깨우기";
+      contentInput.value = "목표를 향한 발걸음, 다시 힘을 내봐요! 최근 활동이 뜸해 보여 응원 보냅니다. 💪";
+    } else if (group === 'gathering_remind') {
+      titleText.innerText = "모임 일정 리마인드";
+      contentInput.value = "안녕하세요! '<%= j @challenge.title %>' 모임이 곧 진행됩니다. 일정(<%= @challenge.start_date.strftime('%m/%d') %> <%= @challenge.meeting_info&.meeting_time %>)과 장소(<%= @challenge.meeting_info&.place_name %>)를 다시 한번 확인해 주세요! 📍";
+    } else if (group === 'gathering_prep') {
+      titleText.innerText = "준비물 체크 알림";
+      contentInput.value = "모임 준비물(<%= @challenge.preparation_items.presence || '개인 소지품' %>)을 확인하셨나요? 잊지 말고 잘 챙겨서 즐거운 마음으로 만나요! 🎒";
+    }
+
+    modal.classList.remove('hidden');
+  }
+
+  function closeNudgeModal() {
+    document.getElementById('nudge-modal').classList.add('hidden');
+  }
+
+  function openAnnouncementModal() {
+    document.getElementById('announcement-modal').classList.remove('hidden');
+  }
+
+  function closeAnnouncementModal() {
+    document.getElementById('announcement-modal').classList.add('hidden');
+  }
+</script>

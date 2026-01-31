@@ -1,184 +1,168 @@
-<% if params[:source] == 'prototype' %>
-  <style>
-    .glass-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      border-radius: 2.5rem;
-    }
-    .glass-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 1.25rem;
-      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
-    }
-    .glass-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
-    .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.15); }
-    
-    .tab-active { color: white; position: relative; }
-    .tab-active::after { 
-      content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); 
-      width: 4px; height: 4px; background: #818cf8; border-radius: 50%; box-shadow: 0 0 10px #818cf8; 
-    }
+<style>
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 2.5rem;
+  }
+  .glass-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+  }
+  .glass-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
+  .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.15); }
+  
+  .tab-active { color: white; position: relative; }
+  .tab-active::after { 
+    content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); 
+    width: 4px; height: 4px; background: #818cf8; border-radius: 50%; box-shadow: 0 0 10px #818cf8; 
+  }
 
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-  </style>
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+</style>
 
-  <div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 -mt-8 pb-32 overflow-x-hidden">
-    <!-- Top Nav -->
-    <header class="sticky top-0 z-50 px-8 py-6 bg-[#0C0B12]/80 backdrop-blur-md flex items-center justify-between">
-      <button onclick="history.back()" class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <div class="flex-1 text-center px-4">
-        <h1 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">루틴러 프로필</h1>
+<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 -mt-8 pb-32 overflow-x-hidden">
+  <!-- Top Nav -->
+  <header class="sticky top-0 z-50 px-8 py-6 bg-[#0C0B12]/80 backdrop-blur-md flex items-center justify-between">
+    <button onclick="history.back()" class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="flex-1 text-center px-4">
+      <h1 class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">루틴러 프로필</h1>
+    </div>
+    <div class="w-11"></div>
+  </header>
+
+  <div class="px-8 space-y-10">
+    <!-- 1. Hero: User Identity -->
+    <section class="relative pt-6 flex flex-col items-center text-center">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
+      
+      <div class="relative mb-8 group">
+        <div class="absolute -inset-1 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-[52px] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+        <div class="w-36 h-36 rounded-[48px] bg-[#16151D] p-1.5 border border-white/10 shadow-2xl relative z-10 overflow-hidden">
+          <img src="<%= @user.profile_image %>" class="w-full h-full object-cover rounded-[42px]" />
+        </div>
+        <div class="absolute -bottom-2 -right-2 bg-indigo-500 text-white font-black text-[10px] px-3 py-1.5 rounded-xl shadow-xl z-20 border-4 border-[#0C0B12]">
+          LV.<%= @user.level %>
+        </div>
       </div>
-      <div class="w-11"></div>
-    </header>
 
-    <div class="px-8 space-y-10">
-      <!-- 1. Hero: User Identity -->
-      <section class="relative pt-6 flex flex-col items-center text-center">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
-        
-        <div class="relative mb-8 group">
-          <div class="absolute -inset-1 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-[52px] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-          <div class="w-36 h-36 rounded-[48px] bg-[#16151D] p-1.5 border border-white/10 shadow-2xl relative z-10 overflow-hidden">
-            <img src="<%= @user.profile_image %>" class="w-full h-full object-cover rounded-[42px]" />
-          </div>
-          <div class="absolute -bottom-2 -right-2 bg-indigo-500 text-white font-black text-[10px] px-3 py-1.5 rounded-xl shadow-xl z-20 border-4 border-[#0C0B12]">
-            LV.<%= @user.level %>
-          </div>
+      <div class="space-y-3 z-10">
+        <div class="flex flex-col items-center gap-1">
+          <h2 class="text-3xl font-black tracking-tight"><%= @user.nickname %></h2>
+          <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] px-3 py-1 bg-indigo-500/10 rounded-full">루틴 거인</span>
         </div>
+        <p class="text-sm font-medium text-slate-400 max-w-[280px] leading-relaxed italic">
+          "<%= @user.bio.presence || "매일의 작은 습관이 모여 위대한 내일을 만듭니다. 함께 성장해요!" %>"
+        </p>
+      </div>
 
-        <div class="space-y-3 z-10">
-          <div class="flex flex-col items-center gap-1">
-            <h2 class="text-3xl font-black tracking-tight"><%= @user.nickname %></h2>
-            <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] px-3 py-1 bg-indigo-500/10 rounded-full">루틴 거인</span>
-          </div>
-          <p class="text-sm font-medium text-slate-400 max-w-[280px] leading-relaxed italic">
-            "<%= @user.bio.presence || "매일의 작은 습관이 모여 위대한 내일을 만듭니다. 함께 성장해요!" %>"
-          </p>
-        </div>
+    </section>
 
-      </section>
+    <!-- 2. Core Stats -->
+    <section class="grid grid-cols-2 gap-4">
+      <div class="glass-card p-6 flex flex-col items-center gap-2">
+        <p class="text-2xl font-black italic text-white"><%= @max_streak %>일</p>
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">최대 연속 달성</p>
+      </div>
+      <div class="glass-card p-6 flex flex-col items-center gap-2">
+        <p class="text-2xl font-black italic text-white"><%= @total_completed %>개</p>
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">완료한 루틴</p>
+      </div>
+    </section>
 
-      <!-- 2. Core Stats -->
-      <section class="grid grid-cols-2 gap-4">
-        <div class="glass-card p-6 flex flex-col items-center gap-2">
-          <p class="text-2xl font-black italic text-white"><%= @max_streak %>일</p>
-          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">최대 연속 달성</p>
-        </div>
-        <div class="glass-card p-6 flex flex-col items-center gap-2">
-          <p class="text-2xl font-black italic text-white"><%= @total_completed %>개</p>
-          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">완료한 루틴</p>
-        </div>
-      </section>
-
-      <!-- 3. Achievement Badges (Compact) -->
-      <section class="space-y-4">
-        <div class="flex items-center justify-between px-2">
-          <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-            <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
-            획득 배지
-          </h3>
-          <span class="text-[10px] font-bold text-slate-600">전체 <%= @badges.count %>개</span>
-        </div>
-        <div class="glass-card p-6">
-          <div class="flex flex-wrap gap-4">
-            <% if @badges.any? %>
-              <% @badges.limit(10).each do |badge| %>
-                <div class="w-11 h-11 bg-white/5 rounded-2xl flex items-center justify-center text-xl shadow-sm border border-white/5 transition-transform active:scale-90" title="<%= badge.name %>">
-                  <%= badge.icon_path %>
-                </div>
-              <% end %>
-              <% if @badges.count > 10 %>
-                <div class="w-11 h-11 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-[10px] font-black border border-indigo-500/20">
-                  +<%= @badges.count - 10 %>
-                </div>
-              <% end %>
-            <% else %>
-              <p class="text-[10px] font-bold text-slate-600 italic py-2">아직 획득한 배지가 없습니다.</p>
-            <% end %>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. Active Challenges -->
-      <section class="space-y-4">
-        <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 px-2">
+    <!-- 3. Achievement Badges (Compact) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between px-2">
+        <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
           <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
-            참여 중인 챌린지
-          </h3>
-        <div class="space-y-3">
-          <% if @participations.any? %>
-            <% @participations.limit(3).each do |p| %>
-              <%= link_to challenge_path(p.challenge, source: 'prototype'), class: "glass-card p-5 flex items-center justify-between group active:scale-[0.98] transition-all" do %>
-                <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/10">
-                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                  </div>
-                  <div>
-                    <h4 class="text-sm font-black text-white group-hover:text-indigo-400 transition-colors"><%= p.challenge.title %></h4>
-                    <p class="text-[10px] font-bold text-slate-500 mt-0.5"><%= p.challenge.current_participants %>명 도전 중</p>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <p class="text-xs font-black italic text-indigo-400"><%= p.completion_rate.to_i %>%</p>
-                  <div class="w-12 h-1 bg-white/5 rounded-full mt-1.5 overflow-hidden">
-                    <div class="h-full bg-indigo-500 rounded-full" style="width: <%= p.completion_rate %>%"></div>
-                  </div>
-                </div>
-              <% end %>
+          획득 배지
+        </h3>
+        <span class="text-[10px] font-bold text-slate-600">전체 <%= @badges.count %>개</span>
+      </div>
+      <div class="glass-card p-6">
+        <div class="flex flex-wrap gap-4">
+          <% if @badges.any? %>
+            <% @badges.limit(10).each do |badge| %>
+              <div class="w-11 h-11 bg-white/5 rounded-2xl flex items-center justify-center text-xl shadow-sm border border-white/5 transition-transform active:scale-90" title="<%= badge.name %>">
+                <%= badge.icon_path %>
+              </div>
             <% end %>
-          <% else %>
-             <div class="glass-card p-8 text-center italic text-[10px] font-bold text-slate-600">
-               참여 중인 챌린지가 없습니다.
-             </div>
-          <% end %>
-        </div>
-      </section>
-
-      <!-- 5. Recent Activity Feed -->
-      <section class="space-y-4">
-        <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 px-2">
-          <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
-            최근 활동 기록
-          </h3>
-        <div class="grid grid-cols-2 gap-4">
-          <% if @verification_logs.any? %>
-            <% @verification_logs.limit(4).each do |log| %>
-              <div class="glass-card overflow-hidden group">
-                <div class="aspect-square bg-[#16151D] relative overflow-hidden">
-                  <img src="<%= log.image_url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400" %>" 
-                       class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
-                  <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
-                    <p class="text-[9px] font-black text-white truncate"><%= log.created_at.strftime("%m.%d") %></p>
-                  </div>
-                </div>
+            <% if @badges.count > 10 %>
+              <div class="w-11 h-11 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-[10px] font-black border border-indigo-500/20">
+                +<%= @badges.count - 10 %>
               </div>
             <% end %>
           <% else %>
-             <div class="col-span-2 glass-card p-8 text-center italic text-[10px] font-bold text-slate-600">
-               활동 기록이 없습니다.
-             </div>
+            <p class="text-[10px] font-bold text-slate-600 italic py-2">아직 획득한 배지가 없습니다.</p>
           <% end %>
         </div>
-      </section>
-    </div>
-  </div>
-<% else %>
-  <!-- Original View (keeping original fallback) -->
-  <div class="max-w-[1240px] mx-auto pb-40 pt-12 px-4">
-    <!-- ... (Original code for non-prototype view would go here if needed, 
-         but we'll keep it simple for now or assume original layout exists) -->
-       <div class="flex items-center gap-4 mb-12">
-        <%= link_to :back, class: "w-12 h-12 bg-white border border-slate-100 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-indigo-600" do %>
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-        <% end %>
-        <h2 class="text-2xl font-black text-slate-900">루틴러 프로필</h2>
       </div>
-      <!-- Add existing body or minimal fallback -->
-      <p class="p-20 text-center text-slate-400 font-bold">Original view omitted for brevity in prototype response.</p>
+    </section>
+
+    <!-- 4. Active Challenges -->
+    <section class="space-y-4">
+      <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 px-2">
+        <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
+          참여 중인 챌린지
+        </h3>
+      <div class="space-y-3">
+        <% if @participations.any? %>
+          <% @participations.limit(3).each do |p| %>
+            <%= link_to challenge_path(p.challenge, source: 'prototype'), class: "glass-card p-5 flex items-center justify-between group active:scale-[0.98] transition-all" do %>
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/10">
+                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <div>
+                  <h4 class="text-sm font-black text-white group-hover:text-indigo-400 transition-colors"><%= p.challenge.title %></h4>
+                  <p class="text-[10px] font-bold text-slate-500 mt-0.5"><%= p.challenge.current_participants %>명 도전 중</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-xs font-black italic text-indigo-400"><%= p.completion_rate.to_i %>%</p>
+                <div class="w-12 h-1 bg-white/5 rounded-full mt-1.5 overflow-hidden">
+                  <div class="h-full bg-indigo-500 rounded-full" style="width: <%= p.completion_rate %>%"></div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        <% else %>
+           <div class="glass-card p-8 text-center italic text-[10px] font-bold text-slate-600">
+             참여 중인 챌린지가 없습니다.
+           </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- 5. Recent Activity Feed -->
+    <section class="space-y-4">
+      <h3 class="text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2 px-2">
+        <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
+          최근 활동 기록
+        </h3>
+      <div class="grid grid-cols-2 gap-4">
+        <% if @verification_logs.any? %>
+          <% @verification_logs.limit(4).each do |log| %>
+            <div class="glass-card overflow-hidden group">
+              <div class="aspect-square bg-[#16151D] relative overflow-hidden">
+                <img src="<%= log.image_url || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400" %>" 
+                     class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
+                <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                  <p class="text-[9px] font-black text-white truncate"><%= log.created_at.strftime("%m.%d") %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+           <div class="col-span-2 glass-card p-8 text-center italic text-[10px] font-bold text-slate-600">
+             활동 기록이 없습니다.
+           </div>
+        <% end %>
+      </div>
+    </section>
   </div>
-<% end %>
+</div>

@@ -1,39 +1,25 @@
-<% if params[:source] == "prototype" %>
-  <style>
-    .host-prototype-env { background: #0C0B12; color: #f8fafc; min-height: 100vh; position: relative; z-index: 10; }
-    body:has(.host-prototype-env) { background: #0C0B12 !important; }
-    .host-prototype-wrapper { background: #0C0B12; padding: env(safe-area-inset-top, 2rem) 0 8rem 0; }
-    @media (min-width: 640px) { .host-prototype-wrapper { padding: 3rem 0 8rem 0; } }
-    @media (min-width: 1024px) { .host-prototype-wrapper { padding: 4rem 0 8rem 0; } }
-    .app-glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-radius: 2.5rem; }
-    .glass-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.25rem; transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1); }
-  </style>
+<style>
+  .host-prototype-env { background: #0C0B12; color: #f8fafc; min-height: 100vh; position: relative; z-index: 10; }
+  body:has(.host-prototype-env) { background: #0C0B12 !important; }
+  .host-prototype-wrapper { background: #0C0B12; padding: env(safe-area-inset-top, 2rem) 0 8rem 0; }
+  @media (min-width: 640px) { .host-prototype-wrapper { padding: 3rem 0 8rem 0; } }
+  @media (min-width: 1024px) { .host-prototype-wrapper { padding: 4rem 0 8rem 0; } }
+  .app-glass-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border-radius: 2.5rem; }
+  .glass-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.25rem; transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1); }
+</style>
 
-  <div class="host-prototype-env host-prototype-wrapper">
-    <div class="w-full py-6 md:py-12 pb-32 px-4">
-      <div class="flex items-center gap-4 md:gap-5 mb-8 md:mb-12">
-        <%= link_to (@challenge ? hosted_challenge_path(@challenge, tab: "announcements", source: "prototype") : @routine_club), class: "glass-btn w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-slate-400" do %>
-          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-        <% end %>
-        <div>
-          <h1 class="text-xl md:text-2xl font-black text-white italic uppercase tracking-tight">공지사항 발송</h1>
-          <p class="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">참가자들에게 새로운 소식을 전송합니다</p>
-        </div>
-      </div>
-
-      <%= render "form", announcement: @announcement, challenge: @challenge, routine_club: @routine_club %>
-    </div>
-  </div>
-
-<% else %>
-  <div class="max-w-2xl mx-auto py-12 pb-32">
-    <div class="flex items-center gap-4 mb-10">
-      <%= link_to (@challenge ? hosted_challenge_path(@challenge, tab: "announcements") : @routine_club), class: "p-2 rounded-xl hover:bg-slate-100 transition-colors" do %>
-        <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+<div class="host-prototype-env host-prototype-wrapper">
+  <div class="w-full py-6 md:py-12 pb-32 px-4">
+    <div class="flex items-center gap-4 md:gap-5 mb-8 md:mb-12">
+      <%= link_to (@challenge ? hosted_challenge_path(@challenge, tab: "announcements", source: "prototype") : @routine_club), class: "glass-btn w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-slate-400" do %>
+        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
       <% end %>
-      <h1 class="text-3xl font-black text-slate-900">공지 작성</h1>
+      <div>
+        <h1 class="text-xl md:text-2xl font-black text-white italic uppercase tracking-tight">공지사항 발송</h1>
+        <p class="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">참가자들에게 새로운 소식을 전송합니다</p>
+      </div>
     </div>
 
     <%= render "form", announcement: @announcement, challenge: @challenge, routine_club: @routine_club %>
   </div>
-<% end %>
+</div>

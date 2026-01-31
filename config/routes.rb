@@ -1,46 +1,47 @@
 Rails.application.routes.draw do
-  get "prototype/home"
-  get "prototype/login"
-  get "prototype/explore"
-  get "prototype/synergy"
-  get "prototype/my"
-  get "prototype/notifications"
-  get "prototype/pwa"
-  post "prototype/notifications/clear", to: "prototype#clear_notifications"
-  post "prototype/record", to: "prototype#record"
-  get "prototype/routine_builder", to: "prototype#routine_builder"
-  get "prototype/routine_editor/:id", to: "prototype#routine_editor", as: :prototype_routine_editor
-  get "prototype/routines", to: "prototype#routines"
-  get "prototype/live", to: "prototype#live"
-  get "prototype/hub", to: "prototype#hub"
-  get "prototype/challenge_builder", to: "prototype#challenge_builder"
-  get "prototype/gathering_builder", to: "prototype#gathering_builder"
-  get "prototype/club_join", to: "prototype#club_join"
-  post "prototype/mark_badges_viewed", to: "prototype#mark_badges_viewed"
-  patch "prototype/update_goals", to: "prototype#update_goals", as: :prototype_update_goals
-  patch "prototype/update_profile", to: "prototype#update_profile", as: :prototype_update_profile
-  get "prototype/lecture_intro", to: "prototype#lecture_intro"
-  get "prototype/admin", to: "prototype#admin_dashboard", as: :prototype_admin_dashboard
-  get "prototype/admin/clubs", to: "prototype#club_management", as: :prototype_admin_clubs
-  get "prototype/admin/clubs/batch_reports", to: "prototype#batch_reports", as: :prototype_batch_reports
-  get "prototype/admin/member_reports/:user_id", to: "prototype#member_reports", as: :prototype_member_reports
-  post "prototype/admin/broadcast", to: "prototype#broadcast"
-  post "prototype/admin/update_user_role", to: "prototype#update_user_role"
-  post "prototype/admin/update_user_status", to: "prototype#update_user_status"
-  post "prototype/admin/update_content_basic", to: "prototype#update_content_basic"
-  post "prototype/admin/approve_challenge", to: "prototype#approve_challenge"
-  delete "prototype/admin/delete_content/:id", to: "prototype#delete_content", as: :prototype_delete_content
-  post "prototype/admin/notify_host/:id", to: "prototype#notify_host", as: :prototype_notify_host
-  post "prototype/admin/purge_cache", to: "prototype#purge_cache"
-  post "prototype/admin/reset_users", to: "prototype#reset_users", as: :prototype_reset_users
-  patch "prototype/admin/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
-  # Main Web Application Routes
+  # Main Service Routes (Formerly Prototype)
+  root "prototype#home"
+  get "home", to: "prototype#home", as: :prototype_home
+  get "login", to: "prototype#login", as: :prototype_login
+  get "explore", to: "prototype#explore", as: :prototype_explore
+  get "synergy", to: "prototype#synergy", as: :prototype_synergy
+  get "my", to: "prototype#my", as: :prototype_my
+  get "notifications_center", to: "prototype#notifications", as: :prototype_notifications
+  get "pwa", to: "prototype#pwa", as: :prototype_pwa
+  post "notifications/clear", to: "prototype#clear_notifications", as: :prototype_clear_notifications
+  post "record", to: "prototype#record", as: :prototype_record
+  get "routine_builder", to: "prototype#routine_builder", as: :prototype_routine_builder
+  get "routine_editor/:id", to: "prototype#routine_editor", as: :prototype_routine_editor
+  get "routines", to: "prototype#routines", as: :prototype_routines
+  get "live", to: "prototype#live", as: :prototype_live
+  get "hub", to: "prototype#hub", as: :prototype_hub
+  get "challenge_builder", to: "prototype#challenge_builder", as: :prototype_challenge_builder
+  get "gathering_builder", to: "prototype#gathering_builder", as: :prototype_gathering_builder
+  get "club_join", to: "prototype#club_join", as: :prototype_club_join
+  post "mark_badges_viewed_legacy", to: "prototype#mark_badges_viewed", as: :mark_badges_viewed_prototype
+  patch "update_goals_main", to: "prototype#update_goals", as: :prototype_update_goals
+  patch "update_profile_main", to: "prototype#update_profile", as: :prototype_update_profile
+  get "lecture_intro", to: "prototype#lecture_intro", as: :prototype_lecture_intro
 
+  # Admin & Management (Formerly Prototype Admin)
+  get "admin_center", to: "prototype#admin_dashboard", as: :prototype_admin_dashboard
+  get "admin_center/clubs", to: "prototype#club_management", as: :prototype_admin_clubs
+  get "admin_center/clubs/batch_reports", to: "prototype#batch_reports", as: :prototype_batch_reports
+  get "admin_center/member_reports/:user_id", to: "prototype#member_reports", as: :prototype_member_reports
+  post "admin_center/broadcast", to: "prototype#broadcast"
+  post "admin_center/update_user_role", to: "prototype#update_user_role"
+  post "admin_center/update_user_status", to: "prototype#update_user_status"
+  post "admin_center/update_content_basic", to: "prototype#update_content_basic"
+  post "admin_center/approve_challenge", to: "prototype#approve_challenge"
+  delete "admin_center/delete_content/:id", to: "prototype#delete_content", as: :prototype_delete_content
+  post "admin_center/notify_host/:id", to: "prototype#notify_host", as: :prototype_notify_host
+  post "admin_center/purge_cache", to: "prototype#purge_cache"
+  post "admin_center/reset_users", to: "prototype#reset_users", as: :prototype_reset_users
+  patch "admin_center/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Root path
-  root "prototype#home"
   get "landing", to: "home#landing"
   get "pwa_guide", to: "home#pwa_guide"
   get "achievement_report", to: "home#achievement_report"
@@ -93,7 +94,7 @@ Rails.application.routes.draw do
   end
 
   # Web routes
-  resources :challenges do
+  resources :challenges, except: [ :index ] do
     member do
       post :join
       delete :leave
@@ -129,9 +130,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :gatherings, only: [ :index, :new, :create ]
+  resources :gatherings, only: [ :new, :create ]
 
-  resources :personal_routines, only: [ :index, :create, :edit, :update, :destroy ] do
+  resources :personal_routines, only: [ :create, :edit, :update, :destroy ] do
     member do
       post :toggle
     end
@@ -183,7 +184,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [ :show ]
 
-  resources :notifications, only: [ :index ] do
+  resources :notifications, only: [] do
     member do
       post :mark_as_read
     end
@@ -191,6 +192,27 @@ Rails.application.routes.draw do
       post :mark_all_as_read
     end
   end
+
+  # Redirect old index paths to new experience
+  get "challenges", to: "prototype#explore"
+  get "gatherings", to: "prototype#explore", type: "gathering"
+  get "personal_routines", to: "prototype#my"
+  get "notifications", to: "prototype#notifications"
+  get "profile", to: "prototype#my"
+  get "rankings", to: "prototype#synergy", tab: "ranking"
+
+  # Redirect old prototype paths to new main paths for SEO and bookmark stability
+  get "prototype/home", to: redirect("/")
+  get "prototype/explore", to: redirect("/explore")
+  get "prototype/synergy", to: redirect("/synergy")
+  get "prototype/my", to: redirect("/my")
+  get "prototype/notifications", to: redirect("/notifications_center")
+  get "prototype/routines", to: redirect("/routines")
+  get "prototype/live", to: redirect("/live")
+  get "prototype/hub", to: redirect("/hub")
+  get "prototype/club_join", to: redirect("/club_join")
+  get "prototype/admin", to: redirect("/admin_center")
+  get "prototype/admin/clubs", to: redirect("/admin_center/clubs")
 
   # API routes
   namespace :api do

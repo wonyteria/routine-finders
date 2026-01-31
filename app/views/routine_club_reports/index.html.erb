@@ -1,68 +1,70 @@
-<div class="max-w-4xl mx-auto px-6 py-20 space-y-12">
-  <nav class="mb-8">
-    <%= link_to personal_routines_path(tab: "club"), class: "inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-2xl font-black text-xs hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm group" do %>
-      <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-      루파 클럽으로 돌아가기
+<%# PROTOTYPE STYLE: My Report Archive %>
+<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 -mt-8 pb-32">
+  <!-- 1. Header -->
+  <header class="sticky top-0 z-50 px-6 py-5 bg-[#0C0B12]/80 backdrop-blur-md flex items-center gap-4">
+    <%= link_to prototype_my_path, class: "w-10 h-10 -ml-2 rounded-full flex items-center justify-center text-slate-400 active:scale-95 transition-all hover:bg-white/5" do %>
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
     <% end %>
-  </nav>
-
-  <header class="space-y-4">
-    <div class="inline-flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-100">
-      <span class="text-[10px] font-black uppercase tracking-[.2em] text-indigo-600">Archive</span>
+    <div>
+      <h1 class="text-xl font-black text-white italic tracking-tight">Report Vault</h1>
+      <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">My Growth History</p>
     </div>
-    <h1 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">루파 리포트 보관함</h1>
-    <p class="text-lg text-slate-500 font-medium">당신이 걸어온 성장의 발자취입니다.</p>
   </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+  <!-- 2. Empty State or List -->
+  <div class="px-6 mt-4 space-y-4">
     <% if @reports.any? %>
-      <% @reports.each do |report| %>
-        <%= link_to routine_club_report_path(report), class: "group bg-white rounded-[40px] p-10 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all relative overflow-hidden" do %>
-          <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full blur-2xl group-hover:bg-indigo-100 transition-colors"></div>
-          
-          <div class="relative z-10 space-y-6">
-            <div class="flex justify-between items-center">
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
-                <%= report.start_date.strftime("%Y.%m") %>
-              </p>
-              <span class="px-3 py-1 bg-indigo-600 text-white rounded-full text-[9px] font-black uppercase tracking-wider">Monthly</span>
-            </div>
-            
-            <div class="space-y-2">
-              <h3 class="text-2xl font-black text-slate-900 group-hover:text-indigo-600 transition-colors"><%= report.start_date.strftime("%B") %> Report</h3>
-              <p class="text-sm font-bold text-slate-400 line-clamp-1"><%= report.identity_title %></p>
-            </div>
+      <div class="flex items-center justify-between px-1 mb-2">
+        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total <%= @reports.count %> Reports</span>
+      </div>
 
-            <div class="pt-6 border-t border-slate-50 flex items-center justify-between">
-              <div class="flex gap-4">
-                <div class="flex flex-col">
-                  <span class="text-[9px] font-black text-slate-300 uppercase leading-none mb-1">Log</span>
-                  <span class="text-sm font-black text-slate-900"><%= report.log_rate.to_i %>%</span>
+      <div class="space-y-4 relative ml-2">
+         <!-- Timeline Line -->
+        <div class="absolute left-[19px] top-2 bottom-4 w-[2px] bg-white/5"></div>
+
+        <% @reports.order(start_date: :desc).each do |report| %>
+          <%= link_to routine_club_report_path(report), class: "block group relative pl-12" do %>
+            <!-- Timeline Dot -->
+            <div class="absolute left-0 top-1.5 w-[10px] h-[10px] rounded-full border-2 border-[#0C0B12] z-10 <%= report.report_type_monthly? ? 'bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]' : 'bg-indigo-500' %> group-hover:scale-125 transition-transform"></div>
+
+            <div class="app-glass-card p-4 border-white/5 hover:border-indigo-500/30 hover:bg-white/[0.04] transition-all">
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex items-center gap-2">
+                   <span class="text-[10px] font-black <%= report.report_type_monthly? ? 'text-purple-400' : 'text-indigo-400' %> uppercase tracking-wider">
+                     <%= report.report_type %>
+                   </span>
+                   <span class="text-[10px] text-slate-500">•</span>
+                   <span class="text-[10px] text-slate-400 font-medium numbers">
+                     <%= report.start_date.strftime("%Y.%m.%d") %>
+                   </span>
                 </div>
-                <div class="flex flex-col">
-                  <span class="text-[9px] font-black text-slate-300 uppercase leading-none mb-1">Achieve</span>
-                  <span class="text-sm font-black text-slate-900"><%= report.achievement_rate.to_i %>%</span>
+                <!-- Rate Badge -->
+                <div class="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg">
+                  <span class="text-[9px] text-slate-400 uppercase font-bold">Achieve</span>
+                  <span class="text-xs font-black <%= report.achievement_rate >= 80 ? 'text-emerald-400' : 'text-slate-200' %>">
+                    <%= report.achievement_rate %>%
+                  </span>
                 </div>
               </div>
-              <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center transition-all group-hover:bg-indigo-600 group-hover:text-white">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-              </div>
+              
+              <h3 class="text-sm font-bold text-white mb-1 truncate">"<%= report.identity_title %>"</h3>
+              <p class="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                <%= report.summary %>
+              </p>
             </div>
-          </div>
-        <% end %>
-      <% end %>
-    <% else %>
-      <div class="col-span-full py-32 text-center bg-slate-50 rounded-[48px] border-2 border-dashed border-slate-200 space-y-6">
-        <div class="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center text-4xl mx-auto">📂</div>
-        <div class="space-y-2">
-          <p class="text-xl font-black text-slate-900">아직 생성된 리포트가 없습니다.</p>
-          <p class="text-sm font-bold text-slate-400">루파 클럽에서 성실함을 증명하고 첫 리포트를 받아보세요.</p>
-        </div>
-        <div class="pt-4">
-          <%= button_to generate_current_routine_club_reports_path, method: :post, class: "inline-flex px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 ring-4 ring-white" do %>
-            테스트용 리포트 생성하기
           <% end %>
+        <% end %>
+      </div>
+
+    <% else %>
+      <div class="py-20 text-center app-glass-card border-white/5 border-dashed flex flex-col items-center justify-center mt-10">
+        <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 text-2xl animate-pulse">
+          📂
         </div>
+        <p class="text-xs font-bold text-slate-400">보관된 리포트가 없습니다.</p>
+        <p class="text-[10px] font-medium text-slate-600 mt-2 max-w-[200px] leading-relaxed">
+          루파 클럽 활동을 통해<br/>첫 번째 리포트를 생성해보세요.
+        </p>
       </div>
     <% end %>
   </div>

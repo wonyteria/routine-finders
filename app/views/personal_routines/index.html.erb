@@ -1,12 +1,12 @@
 <% 
   is_premium = @permission.is_premium_member?
-  is_proto = params[:source] == 'prototype'
+  is_proto = true # Always use prototype experience
   
-  # PROTOTYPE STYLE: Force dark theme if coming from prototype OR if premium
-  is_proto_style = is_premium || is_proto
+  # PROTOTYPE STYLE: Force dark theme
+  is_proto_style = true
   
-  app_bg = is_proto_style ? "bg-[#0C0B12]" : "bg-slate-50"
-  text_color = is_proto_style ? "text-white" : "text-slate-900"
+  app_bg = "bg-[#0C0B12]"
+  text_color = "text-white"
 %>
 
 <div class="<%= app_bg %> <%= text_color %> <%= is_proto ? "" : "-mx-4 -mt-10 px-4 pt-10" %> min-h-screen transition-all duration-700">

@@ -1,1496 +1,463 @@
-<% if params[:source] == 'prototype' %>
-  <style>
-    .glass-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      border-radius: 2.5rem;
-    }
-    .glass-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 1.25rem;
-      transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
-    }
-    .glass-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
-    .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.15); }
-    .tab-active { color: white; position: relative; }
-    .tab-active::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #818cf8; border-radius: 50%; box-shadow: 0 0 10px #818cf8; }
-    
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.05); }
-    }
-    .pulse-glow { animation: pulse-glow 2s infinite; }
+<%# Always use prototype experience %>
+<style>
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 2.5rem;
+  }
+  .glass-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.25rem;
+    transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+  }
+  .glass-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.1); }
+  .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.15); }
+  .tab-active { color: white; position: relative; }
+  .tab-active::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #818cf8; border-radius: 50%; box-shadow: 0 0 10px #818cf8; }
+  
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+  .pulse-glow { animation: pulse-glow 2s infinite; }
 
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
 
-    /* Theme Overrides for Partials */
-    .bg-white, .bg-slate-50, .bg-indigo-50, .bg-orange-50, .bg-emerald-50, .bg-amber-50 { 
-      background: rgba(255, 255, 255, 0.03) !important; 
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-    .text-slate-900, .text-orange-900, .text-emerald-900, .text-amber-900 { color: #ffffff !important; }
-    .text-slate-600, .text-slate-700, .text-emerald-600, .text-amber-600 { color: #a1a1aa !important; }
-    .text-slate-500 { color: #71717a !important; }
+  /* Theme Overrides for Partials */
+  .bg-white, .bg-slate-50, .bg-indigo-50, .bg-orange-50, .bg-emerald-50, .bg-amber-50 { 
+    background: rgba(255, 255, 255, 0.03) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+  .text-slate-900, .text-orange-900, .text-emerald-900, .text-amber-900 { color: #ffffff !important; }
+  .text-slate-600, .text-slate-700, .text-emerald-600, .text-amber-600 { color: #a1a1aa !important; }
+  .text-slate-500 { color: #71717a !important; }
 
-    @keyframes slide-up {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-slide-up {
-      animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-  </style>
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-slide-up {
+    animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+</style>
 
-  <div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 -mt-8 pb-32">
-    <!-- Top Nav -->
-    <header class="sticky top-0 z-50 px-8 py-6 bg-[#0C0B12]/80 backdrop-blur-md flex items-center justify-between">
-      <%= link_to prototype_explore_path, class: "glass-btn w-11 h-11 flex items-center justify-center text-slate-400" do %>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-      <% end %>
-      <div class="flex-1 text-center px-4">
-        <h1 class="text-sm font-black truncate"><%= @challenge.title %></h1>
-        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= @d_day %></p>
-      </div>
-      <div class="flex items-center gap-2">
-        <% if current_user&.admin? %>
-          <%= link_to challenge_path(@challenge), 
-                      method: :delete,
-                      data: { 
-                        turbo_method: :delete,
-                        turbo_confirm: "'#{@challenge.title}' 챌린지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다." 
-                      },
-                      class: "glass-btn w-11 h-11 flex items-center justify-center text-red-400 hover:bg-red-500/10 transition-all" do %>
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          <% end %>
-        <% end %>
-        <button 
-          data-controller="share"
-          data-share-title-value="<%= @challenge.title %>"
-          data-share-text-value="루틴 파인더에서 '<%= @challenge.title %>' 도전에 함께해요! 🌿"
-          data-share-url-value="<%= challenge_url(@challenge) %>"
-          data-action="click->share#share"
-          class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-        </button>
-      </div>
-    </header>
-
-    <div class="px-8 space-y-8">
-      <!-- 1. Hero: Today's Mission -->
-      <section class="relative pt-4">
-        <div class="absolute -top-12 -left-12 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
-        <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-purple-500/10 blur-[100px] pointer-events-none"></div>
-
-        <div class="glass-card p-8 relative overflow-hidden group">
-          <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-700">
-             <span class="text-6xl">🔥</span>
-          </div>
-
-          <div class="space-y-6 relative z-10">
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest">Today's Focus</span>
-              <% unless @today_verified %>
-                <span class="flex items-center gap-1.5 text-[10px] font-black text-rose-500 animate-pulse">
-                  <span class="w-1 h-1 bg-current rounded-full"></span>
-                  MISSING RECORD
-                </span>
-              <% end %>
-            </div>
-
-            <div class="space-y-2">
-              <h2 class="text-2xl font-black leading-tight">
-                <%= @challenge.summary.presence || "매일 꾸준히 목표를 달성해보세요!" %>
-              </h2>
-              <p class="text-xs font-medium text-slate-400 leading-relaxed italic">
-                "작은 습관이 모여 위대한 변화를 만듭니다."
-              </p>
-            </div>
-
-            <% if @today_verified %>
-              <div class="pt-2 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                </div>
-                <div>
-                  <p class="text-sm font-black text-white">오늘의 루틴 완료!</p>
-                  <p class="text-[10px] font-bold text-slate-500">연속 <%= @participant.current_streak %>일째 달성 중입니다.</p>
-                </div>
-              </div>
-            <% else %>
-              <div class="pt-4">
-                <%= link_to "오늘의 성취 기록하기", new_challenge_verification_log_path(@challenge, source: 'prototype'), 
-                            class: "block w-full py-5 bg-indigo-500 text-white text-center rounded-2xl font-black text-sm shadow-xl shadow-indigo-500/20 active:scale-95 transition-all" %>
-                <p class="text-[10px] font-bold text-slate-500 text-center mt-3 uppercase tracking-widest italic opacity-50">Capture your victory of the day</p>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </section>
-
-      <!-- 2. Status Board -->
-      <section class="grid grid-cols-2 gap-4">
-        <!-- Progress Bar -->
-        <div class="glass-card p-6 flex flex-col justify-between gap-6">
-          <div class="relative w-20 h-20 mx-auto">
-            <svg class="w-full h-full transform -rotate-90">
-              <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="8" fill="transparent" class="text-white/5" />
-              <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="8" fill="transparent" 
-                      class="text-indigo-500" stroke-linecap="round"
-                      stroke-dasharray="226.19"
-                      stroke-dashoffset="<%= 226.19 * (1 - (@participant.completion_rate / 100.0)) %>" />
-            </svg>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <span class="text-lg font-black italic"><%= @participant.completion_rate.to_i %>%</span>
-            </div>
-          </div>
-          <div class="text-center">
-            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Progress</p>
-            <p class="text-sm font-black mt-1">총 <%= @completed_days %>회 달성</p>
-          </div>
-        </div>
-
-        <!-- streak Card -->
-        <div class="glass-card p-6 flex flex-col justify-between gap-4">
-          <div class="flex-1 flex flex-col items-center justify-center py-2">
-            <div class="relative">
-              <span class="text-4xl">🔥</span>
-              <div class="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full animate-ping"></div>
-            </div>
-            <p class="text-3xl font-black italic mt-3"><%= @participant.current_streak %><span class="text-sm ml-1">Days</span></p>
-          </div>
-          <div class="text-center">
-            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Streak</p>
-            <p class="text-xs font-bold text-indigo-400 mt-1">최고 <%= @participant.max_streak %>일 연속</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 3. Tabs Navigation -->
-      <turbo-frame id="dashboard_tabs" target="_top">
-        <section class="space-y-6">
-          <div class="flex items-center justify-around border-b border-white/5 px-2">
-            <% 
-              p_tabs = [
-                ["records", "MY LOG"],
-                ["dashboard", "FEED"],
-                ["ranking", "RANK"],
-                ["info", "INFO"]
-              ]
-              p_tabs.insert(1, ["management", "MANAGE"]) if @is_host
-            %>
-            <% p_tabs.each do |id, label| %>
-              <%= link_to challenge_path(@challenge, tab: id, source: 'prototype'), 
-                          data: { turbo_frame: "dashboard_tabs" },
-                          class: "py-4 text-[11px] font-black tracking-widest transition-all #{ @tab == id ? 'tab-active' : 'text-slate-500' }" do %>
-                <%= label %>
-              <% end %>
-            <% end %>
-          </div>
-
-          <!-- Tab Content -->
-          <div class="min-h-[400px]">
-            <% case @tab %>
-          <% when "records" %>
-             <!-- Simplified Calendar-like dots -->
-             <div class="space-y-8">
-                <div class="glass-card p-6" data-controller="calendar-scroll">
-                  <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xs font-black flex items-center gap-2">
-                      <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
-                      ACTIVITY CALENDAR
-                    </h3>
-                    <div class="flex items-center gap-1.5 opacity-50">
-                       <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Swipe</span>
-                       <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                    </div>
-                  </div>
-
-                  <div class="flex gap-4 items-start">
-                    <!-- Day Labels -->
-                    <div class="flex flex-col gap-2 pt-6 shrink-0">
-                      <% %w(S M T W T F S).each do |day| %>
-                        <span class="text-[8px] font-black text-slate-700 w-3 h-3 flex items-center justify-center"><%= day %></span>
-                      <% end %>
-                    </div>
-
-                    <!-- Scrollable Area -->
-                    <div class="flex-1 overflow-x-auto no-scrollbar scroll-smooth" data-calendar-scroll-target="container">
-                      <div class="flex gap-2 pb-2">
-                        <% 
-                          # Ensure we start from Sunday to match S M T W T F S rows
-                          start_date = @challenge.start_date.beginning_of_week(:sunday)
-                          end_date = @challenge.end_date.end_of_week(:sunday)
-                          calendar_days = (start_date..end_date).to_a
-                          weeks = calendar_days.in_groups_of(7)
-                          current_month = nil
-                        %>
-                        <% weeks.each do |week| %>
-                          <div class="flex flex-col gap-2 shrink-0">
-                            <!-- Month Header -->
-                            <div class="h-4 text-[9px] font-black text-slate-500">
-                              <% if week.compact.first&.month != current_month %>
-                                <%= week.compact.first&.strftime('%b') %>
-                                <% current_month = week.compact.first&.month %>
-                              <% end %>
-                            </div>
-
-                            <% week.each do |date| %>
-                              <% if date.nil? || date < @challenge.start_date || date > @challenge.end_date %>
-                                <div class="w-6 h-6 rounded-md bg-white/[0.02]"></div>
-                              <% else %>
-                                <div id="calendar-day-<%= date %>" 
-                                     <%= 'data-calendar-scroll-target=today' if date == Date.current %>
-                                     class="w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-bold transition-all
-                                            <%= if @daily_status_map[date]
-                                                  'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 scale-110 z-10'
-                                                elsif date == Date.current
-                                                  'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-                                                elsif date > Date.current
-                                                  'bg-white/5 text-slate-700'
-                                                else
-                                                  'bg-white/5 text-slate-500'
-                                                end %>">
-                                  <%= date.day %>
-                                </div>
-                              <% end %>
-                            <% end %>
-                          </div>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-               <div class="space-y-4">
-                 <h3 class="text-xs font-black flex items-center gap-2 px-2">
-                   <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
-                   RECENT HISTORY
-                 </h3>
-                 <% my_logs = @participant.verification_logs.where(status: [:approved, :rejected, :pending]).order(created_at: :desc).limit(10) %>
-                 <% if my_logs.any? %>
-                   <div class="space-y-3">
-                     <% my_logs.each do |log| %>
-                       <div class="glass-card p-5 flex items-center justify-between gap-4">
-                         <div class="flex items-center gap-4">
-                           <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-lg">
-                             <%= log.approved? ? "✅" : (log.pending? ? "⏳" : "❌") %>
-                           </div>
-                           <div>
-                             <p class="text-sm font-black text-white"><%= log.created_at.strftime('%m월 %d일') %></p>
-                             <p class="text-[10px] font-bold text-slate-500"><%= log.created_at.strftime('%H:%M') %> • <%= log.status.upcase %></p>
-                           </div>
-                         </div>
-                         <div class="text-right">
-                           <p class="text-xs font-black text-indigo-400"><%= log.value.presence || "Completed" %></p>
-                         </div>
-                       </div>
-                     <% end %>
-                   </div>
-                 <% else %>
-                   <div class="py-12 text-center glass-card">
-                     <p class="text-xs font-bold text-slate-500 italic">"첫 기록을 남겨보세요!"</p>
-                   </div>
-                 <% end %>
-               </div>
-             </div>
-
-          <% when "dashboard" %>
-            <% if @challenge.verification_logs.any? %>
-              <div class="space-y-6">
-                <% @challenge.verification_logs.includes(participant: :user).recent.limit(20).each do |log| %>
-                  <div class="glass-card p-6 space-y-4">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center gap-3">
-                        <img src="<%= log.participant.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover bg-white/10" />
-                        <div>
-                          <p class="text-sm font-black text-white"><%= log.participant.nickname %></p>
-                          <p class="text-[10px] font-bold text-slate-500"><%= time_ago_in_words(log.created_at) %> 전</p>
-                        </div>
-                      </div>
-                      <% if log.approved? %>
-                        <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px]">SUCCESS</span>
-                      <% end %>
-                    </div>
-                    <% if log.image_url.present? %>
-                      <div class="rounded-2xl overflow-hidden aspect-video bg-white/5">
-                        <img src="<%= log.image_url %>" class="w-full h-full object-cover" />
-                      </div>
-                    <% end %>
-                    <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= log.value %></p>
-                  </div>
-                <% end %>
-              </div>
-            <% else %>
-              <div class="py-20 text-center glass-card">
-                <span class="text-3xl block mb-4">🌱</span>
-                <p class="text-xs font-bold text-slate-500 italic">"아직 등록된 인증 피드가 없습니다.<br>첫 번째 주인공이 되어보세요!"</p>
-              </div>
-            <% end %>
-          <% when "ranking" %>
-            <div class="glass-card overflow-hidden">
-               <div class="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-                 <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Rank</p>
-                 <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Achievement</p>
-               </div>
-               <div class="divide-y divide-white/5">
-                 <% @rankings.each_with_index do |p, idx| %>
-                    <div class="p-6 flex items-center justify-between">
-                      <div class="flex items-center gap-4">
-                        <span class="w-6 text-center text-sm font-black <%= idx < 3 ? 'text-indigo-400' : 'text-slate-600' %>">
-                          <%= idx + 1 %>
-                        </span>
-                        <%= link_to user_profile_path(p.user), class: "flex items-center gap-4 group/rank" do %>
-                          <img src="<%= p.user.profile_image %>" class="w-9 h-9 rounded-xl object-cover bg-white/10 group-hover/rank:scale-110 transition-transform" />
-                          <span class="text-sm font-black text-white group-hover/rank:text-indigo-400 transition-colors"><%= p.nickname %></span>
-                        <% end %>
-                      </div>
-                      <div class="text-right">
-                        <p class="text-sm font-black text-white italic"><%= p.completion_rate.to_i %>%</p>
-                        <p class="text-[10px] font-bold text-indigo-500/60 mt-0.5">🔥 <%= p.current_streak %>일</p>
-                      </div>
-                    </div>
-                 <% end %>
-               </div>
-            </div>
-
-          <% when "info" %>
-            <div class="space-y-8">
-              <!-- Summary -->
-              <% if @challenge.summary.present? %>
-                <div class="glass-card p-8 bg-indigo-500/5">
-                  <p class="text-sm font-bold text-slate-300 italic">"<%= @challenge.summary %>"</p>
-                </div>
-              <% end %>
-
-              <!-- Description -->
-              <div class="glass-card p-8 space-y-6">
-                <h3 class="text-sm font-black flex items-center gap-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                  CHALLENGE GUIDE
-                </h3>
-                <div class="text-sm font-medium text-slate-400 leading-relaxed whitespace-pre-wrap"><%= @challenge.description %></div>
-              </div>
-
-              <!-- Preparation -->
-              <% if @challenge.preparation_items.present? %>
-                <div class="glass-card p-8 border-amber-500/20 bg-amber-500/5">
-                   <h3 class="text-xs font-black text-amber-500 mb-4 uppercase tracking-widest flex items-center gap-2">
-                     <span class="text-base">📋</span> PREPARATION & NOTICE
-                   </h3>
-                   <p class="text-sm font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= @challenge.preparation_items %></p>
-                </div>
-              <% end %>
-
-              <!-- Rules Partial -->
-              <div class="glass-card p-8 space-y-6">
-                <h3 class="text-sm font-black flex items-center gap-2">
-                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                  RULES & SCHEDULE
-                </h3>
-                <div class="text-white/80">
-                  <%= render "challenges/tabs/rules", challenge: @challenge %>
-                </div>
-              </div>
-
-              <!-- Extra Stats if needed (keeping original for consistency) -->
-              <div class="grid grid-cols-2 gap-4">
-                <div class="glass-card p-6">
-                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Frequency</p>
-                  <p class="text-sm font-black text-white"><%= @challenge.mission_frequency %></p>
-                </div>
-                <div class="glass-card p-6">
-                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Deposit</p>
-                  <p class="text-sm font-black text-white"><%= number_with_delimiter(@challenge.amount || 0) %>원</p>
-                </div>
-              </div>
-            </div>
-
-          <% when "management" %>
-            <div class="space-y-8">
-              <div class="glass-card p-8 bg-indigo-500/10 border-indigo-500/20 flex items-center justify-between">
-                <div>
-                  <h3 class="text-lg font-black italic mb-2">Host Dashboard</h3>
-                  <p class="text-xs text-indigo-400/80 font-medium">참여자 현황을 실시간으로 분석합니다.</p>
-                </div>
-                <%= link_to hosted_challenge_path(@challenge, source: 'prototype'), class: "px-4 py-2 bg-indigo-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 active:scale-95 transition-all" do %>
-                  ADMIN SUITE
-                <% end %>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div class="glass-card p-6">
-                   <p class="text-[9px] font-black text-slate-500 mb-1 uppercase">Total Members</p>
-                   <p class="text-2xl font-black italic"><%= @challenge.current_participants %></p>
-                </div>
-                <div class="glass-card p-6">
-                   <p class="text-[9px] font-black text-slate-500 mb-1 uppercase">Today Rate</p>
-                   <p class="text-2xl font-black italic text-indigo-400"><%= (@today_verified_count.to_f / [@challenge.current_participants, 1].max * 100).to_i %>%</p>
-                </div>
-              </div>
-
-              <!-- Pending Applications -->
-              <% if @pending_applications&.any? %>
-                <div class="space-y-4">
-                  <h4 class="text-xs font-black px-2 flex items-center justify-between">
-                    <span>PENDING APPROVALS</span>
-                    <span class="text-indigo-400"><%= @pending_applications.count %></span>
-                  </h4>
-                  <div class="space-y-3">
-                    <% @pending_applications.limit(5).each do |app| %>
-                      <div class="glass-card p-6 flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-3">
-                          <img src="<%= app.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover bg-white/10" />
-                          <div>
-                            <p class="text-sm font-black"><%= app.user.nickname %></p>
-                            <p class="text-[10px] font-bold text-slate-500"><%= time_ago_in_words(app.applied_at) %> 전</p>
-                          </div>
-                        </div>
-                        <div class="flex gap-2">
-                           <%= button_to approve_challenge_application_path(@challenge, app, source: 'prototype'), method: :post, class: "px-4 py-2 bg-indigo-500 rounded-xl text-[10px] font-black" do %>APPROVE<% end %>
-                        </div>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      </section>
-    </turbo-frame>
-    </div>
-
-  </div>
-
-<% else %>
-
-  <!-- 1. 상단 바 (테마 컬러 테두리) -->
-  <% theme_color_class = @challenge.offline? ? "border-orange-400" : "border-indigo-400" %>
-  <% theme_bg_class = @challenge.offline? ? "bg-orange-600" : "bg-indigo-600" %>
-  <% theme_light_bg = @challenge.offline? ? "bg-orange-50" : "bg-indigo-50" %>
-  <% theme_text_class = @challenge.offline? ? "text-orange-600" : "text-indigo-600" %>
-
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border-2 <%= theme_color_class %> shadow-xl shadow-opacity-10">
-    <div class="flex items-center gap-4">
-      <div class="px-4 py-2 <%= theme_bg_class %> text-white text-xs font-black tracking-widest rounded-2xl shadow-lg shadow-opacity-20">
-        <%= @d_day %>
-      </div>
-      <div>
-        <h1 class="text-xl font-black text-slate-900 flex items-center gap-2">
-          <%= @challenge.title %>
-          <% if @is_host %>
-            <span class="px-2 py-0.5 <%= theme_light_bg %> <%= theme_text_class %> text-[10px] font-black rounded-lg border <%= theme_color_class %>">Host</span>
-          <% else %>
-            <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg border border-slate-200">Member</span>
-          <% end %>
-          <% if @challenge.is_official %>
-            <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
-          <% end %>
-        </h1>
-        <p class="text-xs text-slate-400 font-bold uppercase tracking-tight mt-0.5">
-          <%= @challenge.start_date.strftime('%Y.%m.%d') %> - <%= @challenge.end_date.strftime('%Y.%m.%d') %> ∙ <%= @challenge.host_name %>
-        </p>
-      </div>
+<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 -mt-8 pb-32">
+  <!-- Top Nav -->
+  <header class="sticky top-0 z-50 px-8 py-6 bg-[#0C0B12]/80 backdrop-blur-md flex items-center justify-between">
+    <%= link_to root_path, class: "glass-btn w-11 h-11 flex items-center justify-center text-slate-400" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    <% end %>
+    <div class="flex-1 text-center px-4">
+      <h1 class="text-sm font-black truncate"><%= @challenge.title %></h1>
+      <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= @d_day %></p>
     </div>
     <div class="flex items-center gap-2">
-      <%= link_to "javascript:history.back()", class: "p-3 bg-slate-50 text-slate-400 hover:text-indigo-600 rounded-2xl transition-all" do %>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-      <% end %>
-      <div class="h-8 w-px bg-slate-100 mx-2"></div>
-      <%= button_to leave_challenge_path(@challenge), method: :delete, class: "px-4 py-2 text-xs font-bold text-slate-400 hover:text-rose-500 transition-all", data: { turbo_confirm: "정말 탈퇴하시겠습니까?" } do %>
-        탈퇴하기
-      <% end %>
-    </div>
-  </div>
-
-  <!-- 2. 메인 그리드 -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    <!-- 왼쪽: 미션 및 탭 영역 (8/12) -->
-    <div class="lg:col-span-8 space-y-6">
-      
-      <!-- 오늘의 미션 카드 / 최종 결과 카드 -->
-      <% if @challenge.status_ended? %>
-        <!-- 챌린지 종료 - 최종 결과 표시 -->
-        <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[32px] p-8 text-white shadow-2xl">
-          <div class="text-center space-y-6">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-md rounded-full">
-              <span class="text-5xl">🎉</span>
-            </div>
-            
-            <div>
-              <h2 class="text-3xl font-black mb-2"><%= @challenge.offline? ? "모임 완료!" : "챌린지 완료!" %></h2>
-              <p class="text-indigo-100 text-sm font-medium">수고하셨습니다. 최종 결과를 확인하세요.</p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div class="p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
-                <p class="text-xs font-bold text-white/60 mb-2">최종 달성률</p>
-                <p class="text-4xl font-black"><%= @participant.final_achievement_rate&.round(1) || @participant.completion_rate.to_i %>%</p>
-              </div>
-              <% if @challenge.cost_type_deposit? && (@participant.refund_amount || 0) > 0 %>
-                <div class="p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
-                  <p class="text-xs font-bold text-white/60 mb-2">환급 예상 금액</p>
-                  <p class="text-3xl font-black"><%= number_with_delimiter(@participant.refund_amount) %><span class="text-lg ml-1">원</span></p>
-                  
-                  <div class="mt-4 pt-4 border-t border-white/10">
-                    <% case @participant.refund_status %>
-                    <% when "refund_applied" %>
-                      <div class="flex items-center gap-2 text-emerald-300 bg-emerald-500/10 px-3 py-2 rounded-xl border border-emerald-500/20">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span class="text-sm font-bold">환급 신청 완료 (호스트 확인 대기중)</span>
-                      </div>
-                    <% when "refund_completed" %>
-                      <div class="flex items-center gap-2 text-white bg-emerald-500 px-3 py-2 rounded-xl shadow-lg shadow-emerald-500/20">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span class="text-sm font-bold">환급 지급 완료!</span>
-                      </div>
-                    <% else %>
-                      <!-- 환급 신청 폼 (토글) -->
-                      <div data-controller="toggle" data-toggle-class="hidden">
-                        <button type="button" data-action="click->toggle#toggle" class="w-full py-3 bg-white text-indigo-600 rounded-xl font-black text-sm hover:bg-indigo-50 transition-all shadow-md mb-2 flex items-center justify-center gap-2">
-                          <span>💰 환급 계좌 입력하고 신청하기</span>
-                          <svg class="w-4 h-4 transition-transform duration-200" data-toggle-target="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        
-                        <div data-toggle-target="content" class="hidden mt-3 bg-white text-slate-900 p-4 rounded-2xl text-left shadow-xl">
-                          <%= form_with url: apply_refund_challenge_path(@challenge), method: :post, local: true, class: "space-y-3" do |f| %>
-                            <div>
-                              <%= f.label :refund_bank_name, "은행명", class: "block text-xs font-bold text-slate-500 mb-1" %>
-                              <%= f.text_field :refund_bank_name, class: "w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500", placeholder: "예: 카카오뱅크", required: true, value: current_user.saved_bank_name %>
-                            </div>
-                            <div>
-                              <%= f.label :refund_account_number, "계좌번호", class: "block text-xs font-bold text-slate-500 mb-1" %>
-                              <%= f.text_field :refund_account_number, class: "w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500", placeholder: "'-' 없이 입력", required: true, value: current_user.saved_account_number %>
-                            </div>
-                            <div>
-                              <%= f.label :refund_account_name, "예금주", class: "block text-xs font-bold text-slate-500 mb-1" %>
-                              <%= f.text_field :refund_account_name, class: "w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500", placeholder: "실명 입력", required: true, value: current_user.saved_account_holder %>
-                            </div>
-                            <%= f.submit "환급 신청 완료", class: "w-full py-3 bg-indigo-600 text-white rounded-xl font-black text-sm hover:bg-indigo-700 transition-colors mt-2" %>
-                          <% end %>
-                        </div>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-
-            <% if !@user_review %>
-              <%= link_to new_challenge_review_path(@challenge), class: "block w-full py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:bg-indigo-50 transition-all shadow-lg" do %>
-                리뷰 작성하고 경험 공유하기 ✨
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-      <% else %>
-        <% if @challenge.offline? %>
-          <!-- 모임 정보 카드 -->
-          <div class="bg-orange-600 rounded-[32px] p-8 text-white shadow-xl relative overflow-hidden">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div class="space-y-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
-                    <svg class="w-6 h-6 border-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657 13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
-                  </div>
-                  <h2 class="text-2xl font-black">모임 일정을 확인하세요!</h2>
-                </div>
-                <div class="space-y-1">
-                  <p class="text-sm font-bold text-orange-100 flex items-center gap-2">
-                    📍 <%= @challenge.meeting_info&.place_name %>
-                  </p>
-                  <p class="text-sm font-bold text-orange-100 flex items-center gap-2">
-                    ⏰ <%= @challenge.meeting_info&.meeting_time %>
-                  </p>
-                </div>
-              </div>
-              
-              <% if @challenge.chat_link.present? %>
-                <%= link_to @challenge.chat_link, target: "_blank", class: "px-8 py-4 bg-white text-orange-600 rounded-2xl font-black text-sm hover:bg-orange-50 transition-all shadow-lg flex items-center gap-2 group" do %>
-                  <span>채팅방에서 소통하기</span>
-                  <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
-        <% else %>
-          <!-- 진행 중 - 오늘의 미션 카드 -->
-          <div class="bg-slate-900 rounded-[32px] p-6 text-white shadow-xl">
-            <div class="flex items-center justify-between mb-6">
-              <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-indigo-600 rounded-xl flex items-center justify-center">
-                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                </div>
-                <h2 class="text-lg font-black italic">오늘의 미션</h2>
-              </div>
-              <% unless @today_verified %>
-                <% 
-                  remaining_seconds = (Time.current.end_of_day - Time.current).to_i
-                  hours = remaining_seconds / 3600
-                  minutes = (remaining_seconds % 3600) / 60
-                %>
-                <div class="px-3 py-1 bg-rose-500/20 text-rose-300 rounded-xl text-[10px] font-black uppercase tracking-widest border border-rose-500/20 flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span>
-                  마감까지 <%= hours %>시간 <%= minutes %>분
-                </div>
-              <% end %>
-            </div>
-
-            <% if @today_verified %>
-              <div class="flex items-center gap-6 py-2">
-                <div class="w-14 h-14 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30">
-                  <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                </div>
-                <div>
-                  <h3 class="text-xl font-black mb-1">오늘의 루틴 달성! 🎉</h3>
-                  <p class="text-slate-400 text-xs font-medium">성공적으로 오늘의 성장을 기록했습니다.</p>
-                </div>
-              </div>
-            <% else %>
-              <div class="space-y-4">
-                <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
-                  <p class="text-sm font-bold text-slate-200">"<%= @challenge.summary %>"</p>
-                </div>
-                <%= form_with url: challenge_verification_logs_path(@challenge), method: :post, class: "flex flex-col sm:flex-row gap-2" do |f| %>
-                  <div class="flex-1">
-                    <% case @challenge.verification_type %>
-                    <% when "metric" %>
-                      <%= f.text_field "verification_log[value]", placeholder: "수치 입력", class: "w-full bg-white/10 text-white px-5 py-3.5 rounded-2xl font-bold text-sm border-0 focus:ring-2 focus:ring-indigo-500 outline-none" %>
-                    <% when "photo" %>
-                      <%= f.text_field "verification_log[image_url]", placeholder: "사진 URL", class: "w-full bg-white/10 text-white px-5 py-3.5 rounded-2xl font-bold text-sm border-0 focus:ring-2 focus:ring-indigo-500 outline-none" %>
-                    <% when "url" %>
-                      <%= f.text_field "verification_log[value]", placeholder: "링크 입력", class: "w-full bg-white/10 text-white px-5 py-3.5 rounded-2xl font-bold text-sm border-0 focus:ring-2 focus:ring-indigo-500 outline-none" %>
-                    <% else %>
-                      <%= f.hidden_field "verification_log[value]", value: "completed" %>
-                      <div class="h-full flex items-center px-4 text-slate-500 text-xs italic">인증하기 버튼을 눌러주세요</div>
-                    <% end %>
-                  </div>
-                  <%= f.submit "인증하기", class: "px-8 py-3.5 #{theme_bg_class} text-white rounded-2xl font-black text-sm shadow-lg hover:brightness-110 transition-all cursor-pointer whitespace-nowrap" %>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
+      <% if current_user&.admin? %>
+        <%= link_to challenge_path(@challenge), 
+                    method: :delete,
+                    data: { 
+                      turbo_method: :delete,
+                      turbo_confirm: "'#{@challenge.title}' 챌린지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다." 
+                    },
+                    class: "glass-btn w-11 h-11 flex items-center justify-center text-red-400 hover:bg-red-500/10 transition-all" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
         <% end %>
       <% end %>
-
-      <!-- 메인 탭 영역 -->
-      <div class="bg-white rounded-[32px] border-2 <%= theme_color_class %> overflow-hidden shadow-sm min-h-[500px]">
-        <!-- 탭 네비게이션 -->
-        <div class="flex items-center px-2 md:px-4 border-b border-slate-100 bg-slate-50/30 overflow-x-auto no-scrollbar">
-          <% 
-            tabs = if @challenge.offline?
-              t = [["dashboard", "소통 피드"], ["announcements", "공지"], ["info", "소개"], ["reviews", "리뷰"]]
-              t.insert(1, ["management", "모임 관리"]) if @is_host
-              t
-            else
-              t = [["records", "내 기록"], ["dashboard", "커뮤니티"], ["ranking", "랭킹"], ["announcements", "공지"], ["info", "소개"], ["reviews", "리뷰"]]
-              t.insert(1, ["management", "챌린지 관리"]) if @is_host
-              t
-            end
-          %>
-          <% tabs.each do |id, label| %>
-            <% 
-              active_tab_border = @challenge.offline? ? 'border-orange-600 text-orange-600' : 'border-indigo-600 text-indigo-600'
-            %>
-            <%= link_to challenge_path(@challenge, tab: id), 
-                        class: "px-3 md:px-5 py-3 md:py-4 text-[10px] md:text-xs font-black transition-all border-b-2 shrink-0 #{ @tab == id ? active_tab_border : 'border-transparent text-slate-400 hover:text-slate-600' }" do %>
-              <%= label %>
-              <% if id == "reviews" && @reviews.count > 0 %>
-                <span class="ml-1 text-[9px] md:text-[10px] opacity-40"><%= @reviews.count %></span>
-              <% end %>
-              <% if id == "announcements" && @announcements_all.to_a.count > 0 %>
-                <span class="ml-1 w-1.5 h-1.5 bg-rose-500 rounded-full inline-block"></span>
-              <% end %>
-            <% end %>
-          <% end %>
-        </div>
-
-        <!-- 탭 콘텐츠 -->
-        <div class="p-6">
-          <% case @tab %>
-          <% when "management" %>
-            <div class="space-y-10">
-              <!-- 관리자 안내 헤더 -->
-              <% admin_header_bg = @challenge.offline? ? "bg-orange-900" : "bg-indigo-900" %>
-              <% admin_sub_bg = @challenge.offline? ? "bg-orange-800" : "bg-indigo-800" %>
-              <% admin_icon_color = @challenge.offline? ? "text-orange-400" : "text-indigo-400" %>
-              <div class="<%= admin_header_bg %> rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
-                <div class="absolute right-0 top-0 w-64 h-64 <%= admin_sub_bg %> rounded-full -mr-32 -mt-32 blur-3xl opacity-50"></div>
-                <div class="relative z-10">
-                  <h2 class="text-2xl font-black mb-2 flex items-center gap-2">
-                    <svg class="w-8 h-8 <%= admin_icon_color %>" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                    <%= @challenge.offline? ? "모임 분석 및 관리" : "챌린지 분석 및 관리" %>
-                  </h2>
-                  <p class="text-indigo-200 text-sm font-medium">참여자 현황을 파악하고 신청 내역을 관리합니다.</p>
-                </div>
-              </div>
-
-              <!-- 요약 스테이터스 -->
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                <div class="p-4 md:p-6 bg-white rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm">
-                  <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">총 참여자</p>
-                  <p class="text-xl md:text-2xl font-black text-slate-900 leading-tight"><%= @challenge.current_participants %> / <%= @challenge.max_participants || '∞' %></p>
-                </div>
-                <div class="p-4 md:p-6 bg-white rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm">
-                  <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">대기 중인 신청</p>
-                  <p class="text-xl md:text-2xl font-black text-amber-500 leading-tight"><%= @pending_applications&.count || 0 %></p>
-                </div>
-                <% if @challenge.cost_type_deposit? %>
-                  <div class="p-4 md:p-6 bg-white rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm">
-                    <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">총 보증금</p>
-                    <p class="text-xl md:text-2xl font-black text-emerald-600 leading-tight"><%= number_with_delimiter(@challenge.total_payment_amount) %>원</p>
-                  </div>
-                <% end %>
-                <div class="p-4 md:p-6 bg-white rounded-2xl md:rounded-3xl border border-slate-100 shadow-sm">
-                  <p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">오늘의 기록율</p>
-                  <p class="text-xl md:text-2xl font-black text-indigo-600 leading-tight"><%= (@today_verified_count.to_f / [@challenge.current_participants, 1].max * 100).to_i %>%</p>
-                </div>
-              </div>
-
-              <!-- 신청 관리 섹션 (가장 중요) -->
-              <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                  <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-indigo-600 rounded-full"></span>
-                    참가 신청 및 입금 확인 (<%= @pending_applications&.count || 0 %>)
-                  </h3>
-                  <%= link_to "전체 보기", challenge_challenge_applications_path(@challenge, source: 'prototype'), class: "text-xs font-bold text-slate-400 hover:text-indigo-600" %>
-                </div>
-
-                <% if @pending_applications&.any? %>
-                  <div class="grid grid-cols-1 gap-4">
-                    <% @pending_applications.limit(5).each do |application| %>
-                      <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                        <div class="flex items-center gap-4">
-                          <img src="<%= application.user.profile_image %>" class="w-14 h-14 rounded-2xl object-cover shadow-sm bg-white">
-                          <div>
-                            <p class="font-black text-slate-900 text-lg"><%= application.user.nickname %></p>
-                            <p class="text-xs font-bold text-slate-400"><%= time_ago_in_words(application.applied_at) %> 전 신청</p>
-                            
-                            <% if application.depositor_name.present? %>
-                              <div class="mt-2 text-[11px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-lg inline-block">
-                                💰 입금자명: <%= application.depositor_name %>
-                              </div>
-                            <% end %>
-
-                            <% if application.contact_info.present? %>
-                              <div class="mt-1 text-[11px] font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg inline-block">
-                                📞 연락처: <%= application.contact_info %>
-                              </div>
-                            <% end %>
-                          </div>
-                        </div>
-
-                        <% if application.message.present? %>
-                          <div class="flex-1 max-w-md p-4 bg-white rounded-2xl border border-slate-100 text-sm font-medium text-slate-600 italic">
-                            "<%= application.message %>"
-                          </div>
-                        <% end %>
-
-                        <div class="flex items-center gap-2 w-full md:w-auto">
-                          <%= button_to "승인하기", approve_challenge_application_path(@challenge, application), method: :post, class: "flex-1 md:flex-none px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-sm hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20" %>
-                          <%= button_to "거절", reject_challenge_application_path(@challenge, application), method: :post, class: "flex-1 md:flex-none px-6 py-3 bg-white text-slate-400 border border-slate-200 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all", data: { turbo_confirm: "본 신청을 거절하시겠습니까?" } %>
-                        </div>
-                      </div>
-                    <% end %>
-                  </div>
-                <% else %>
-                  <div class="py-20 text-center bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
-                    <p class="text-slate-400 font-bold">새로운 참가 신청이 없습니다.</p>
-                  </div>
-                <% end %>
-              </div>
-
-              <!-- 참여자 리스트 (간략히) -->
-              <div class="space-y-6">
-                <div class="flex items-center justify-between">
-                  <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-                    <span class="w-2 h-6 bg-slate-400 rounded-full"></span>
-                    현재 참여 멤버
-                  </h3>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                  <% @challenge.participants.includes(:user).each do |p| %>
-                    <div class="flex flex-col items-center gap-2 p-4 bg-white rounded-2xl border border-slate-50 group relative">
-                      <img src="<%= p.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-transform">
-                      <span class="text-xs font-bold text-slate-900 truncate w-full text-center"><%= p.nickname %></span>
-                      <% if p.contact_info.present? %>
-                        <div class="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm" title="<%= p.contact_info %>">
-                          <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                        </div>
-                      <% end %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-
-          <% when "dashboard" %>
-            <% if @challenge.chat_link.present? %>
-              <div class="mb-6 p-6 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl shadow-xl relative overflow-hidden group">
-                <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                <div class="absolute -left-4 -bottom-4 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
-                
-                <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                    </div>
-                    <div class="text-white">
-                      <h3 class="text-lg font-black mb-1 flex items-center gap-2">
-                        커뮤니티 채팅방
-                        <span class="px-2 py-0.5 bg-white/20 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-wider">Live</span>
-                      </h3>
-                      <p class="text-sm text-white/80 font-medium">참여자들과 실시간으로 소통하고 응원하세요!</p>
-                    </div>
-                  </div>
-                  
-                  <%= link_to @challenge.chat_link, target: "_blank", rel: "noopener noreferrer", class: "px-6 py-3 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:bg-indigo-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2 group/btn" do %>
-                    <span>채팅방 입장</span>
-                    <svg class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-
-            <div class="mb-8 p-6 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
-              <div>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">참여자 현황</p>
-                <p class="text-sm font-bold text-slate-900"><%= @challenge.offline? ? "함께하는 동료들을 확인하고 인사를 나눠보세요! 👋" : "오늘 벌써 " + @today_verified_count.to_i.to_s + "명이 미션을 완료했어요! 🚀" %></p>
-              </div>
-              <div class="flex -space-x-2">
-                <% @participants_with_status.select{|p| p[:verified_today]}.first(5).each do |p| %>
-                  <img src="<%= p[:profile_image] %>" class="w-8 h-8 rounded-full border-2 border-white object-cover">
-                <% end %>
-                 <% if @today_verified_count.to_i > 5 %>
-                  <div class="w-8 h-8 bg-slate-200 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-slate-500">+<%= @today_verified_count.to_i - 5 %></div>
-                <% end %>
-              </div>
-            </div>
-            <%= render "challenges/tabs/verifications", challenge: @challenge, verification_logs: @challenge.verification_logs.includes(participant: :user).recent, participant: @participant, today_verified: @today_verified, is_host: @is_host, pending_verifications: @pending_verifications, hide_form: (@challenge.offline? ? false : true) %>
-
-          <% when "records" %>
-            <div class="space-y-8">
-              <% if @challenge.chat_link.present? && !@challenge.offline? %>
-                <div class="p-4 bg-white border border-indigo-100 rounded-2xl flex items-center justify-between shadow-sm">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                    </div>
-                    <div>
-                      <p class="text-sm font-black text-slate-900">참여자 커뮤니티 채팅방</p>
-                      <p class="text-xs text-slate-500 font-medium">함께 소통하며 동기부여를 받아보세요!</p>
-                    </div>
-                  </div>
-                  <%= link_to @challenge.chat_link, target: "_blank", class: "px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-colors" do %>
-                    입장하기
-                  <% end %>
-                </div>
-              <% end %>
-              <!-- 루틴 잔디 위젯 (캘린더 스타일) -->
-              <div class="p-5 bg-white rounded-2xl border border-slate-100">
-                <div class="flex items-center justify-between mb-6">
-                  <h3 class="text-sm font-black text-slate-900 flex items-center gap-2">
-                    <span>🗺️</span> 나의 성취 지도
-                  </h3>
-                  <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-1.5">
-                      <div class="w-2.5 h-2.5 bg-indigo-600 rounded-sm"></div>
-                      <span class="text-[10px] font-bold text-slate-500">성공</span>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                      <div class="w-2.5 h-2.5 bg-slate-100 rounded-sm"></div>
-                      <span class="text-[10px] font-bold text-slate-400">빈칸</span>
-                    </div>
-                  </div>
-                </div>
-
-                <% 
-                   start_date = @challenge.start_date
-                   end_date = @challenge.end_date
-                   calendar_start = start_date.beginning_of_week
-                   calendar_end = end_date.end_of_week
-                   all_weeks = (calendar_start..calendar_end).to_a.in_groups_of(7)
-                %>
-
-                <% unless @challenge.offline? %>
-                  <div class="w-full max-w-[320px] mx-auto">
-                    <!-- 요일 헤더 -->
-                    <div class="grid grid-cols-7 mb-2">
-                      <% %w[월 화 수 목 금 토 일].each do |day| %>
-                         <div class="text-center text-[9px] font-black text-slate-300"><%= day %></div>
-                      <% end %>
-                    </div>
-                    
-                    <!-- 날짜 그리드 -->
-                    <div class="flex flex-col gap-1">
-                      <% all_weeks.each do |week| %>
-                        <div class="grid grid-cols-7 gap-1">
-                          <% week.each do |date| %>
-                            <% 
-                               if date < start_date || date > end_date
-                                 bg_class = "bg-transparent" # 챌린지 기간 외
-                                 text_class = "text-slate-200 opacity-0"
-                               else
-                                 is_success = @daily_status_map[date]
-                                 is_future = date > Date.current
-                                 
-                                 if is_success
-                                   bg_class = "bg-indigo-600 shadow-sm"
-                                   text_class = "text-white"
-                                 elsif is_future
-                                   bg_class = "bg-slate-50 border border-slate-100"
-                                   text_class = "text-slate-300"
-                                 else
-                                   bg_class = "bg-slate-100"
-                                   text_class = "text-slate-400"
-                                 end
-                               end
-                            %>
-                            <div class="aspect-square rounded-md flex items-center justify-center relative group <%= bg_class %>">
-                              <span class="text-[9px] font-bold <%= text_class %>"><%= date.day %></span>
-                              <% if date >= start_date && date <= end_date %>
-                                 <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-slate-900 text-white text-[9px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
-                                   <%= date.strftime('%m/%d') %>: <%= is_success ? '달성 성공! 🎉' : (is_future ? '예정' : '달성 실패 😢') %>
-                                 </div>
-                              <% end %>
-                            </div>
-                          <% end %>
-                        </div>
-                      <% end %>
-                    </div>
-                  </div>
-                <% else %>
-                  <div class="py-12 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200">
-                    <p class="font-bold text-sm">📅 정기 모임 일정을 확인하고 참여해보세요!</p>
-                  </div>
-                <% end %>
-              </div>
-
-              <% unless @challenge.offline? %>
-                <!-- 통계 분석 섹션 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- 요일별 분석 -->
-                  <div class="p-5 bg-white rounded-2xl border border-slate-100">
-                     <h4 class="text-xs font-black text-slate-900 mb-4 flex items-center gap-1">
-                       <span class="text-amber-500">📊</span> 요일별 달성률
-                     </h4>
-                     <div class="flex items-end justify-between h-24 gap-1">
-                       <% 
-                          day_stats = Hash.new { |h, k| h[k] = { total: 0, success: 0 } }
-                          (@challenge.start_date..[Date.current, @challenge.end_date].min).each do |date|
-                            wday = date.wday
-                            wday = 7 if wday == 0 # 일요일을 마지막으로
-                            day_stats[wday][:total] += 1
-                            day_stats[wday][:success] += 1 if @daily_status_map[date]
-                          end
-                       %>
-                       <% (1..7).each do |wday| %>
-                         <% 
-                            stat = day_stats[wday]
-                            rate = stat[:total] > 0 ? (stat[:success].to_f / stat[:total] * 100).to_i : 0
-                            height_class = rate == 0 ? "h-1 bg-slate-100" : "bg-indigo-500"
-                            opacity = rate > 0 ? (rate / 100.0).round(1) : 1
-                            bar_style = rate > 0 ? "height: #{rate}%; opacity: #{[opacity + 0.3, 1].min}" : ""
-                         %>
-                         <div class="flex-1 flex flex-col items-center gap-1 group relative">
-                           <div class="w-full rounded-t-sm <%= height_class %> transition-all duration-500 relative" style="<%= bar_style %>">
-                              <div class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 text-[9px] font-bold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity"><%= rate %>%</div>
-                           </div>
-                           <span class="text-[9px] font-bold text-slate-400"><%= %w[월 화 수 목 금 토 일][wday-1] %></span>
-                         </div>
-                       <% end %>
-                     </div>
-                  </div>
-
-                  <!-- 활동 시간대 -->
-                  <div class="p-5 bg-white rounded-2xl border border-slate-100">
-                    <h4 class="text-xs font-black text-slate-900 mb-4 flex items-center gap-1">
-                      <span class="text-rose-500">⏰</span> 주 활동 시간
-                    </h4>
-                    <div class="space-y-3">
-                      <% 
-                         time_slots = {
-                           "새벽 (05-09)" => 0,
-                           "오전 (09-12)" => 0,
-                           "오후 (12-18)" => 0,
-                           "저녁 (18-22)" => 0,
-                           "밤 (22-05)" => 0
-                         }
-                         @participant.verification_logs.where(status: :approved).each do |log|
-                           hour = log.created_at.hour
-                           case hour
-                           when 5..8 then time_slots["새벽 (05-09)"] += 1
-                           when 9..11 then time_slots["오전 (09-12)"] += 1
-                           when 12..17 then time_slots["오후 (12-18)"] += 1
-                           when 18..21 then time_slots["저녁 (18-22)"] += 1
-                           else time_slots["밤 (22-05)"] += 1
-                           end
-                         end
-                         max_count = time_slots.values.max.to_i
-                         max_count = 1 if max_count == 0
-                      %>
-                      <% time_slots.each do |label, count| %>
-                        <% next if count == 0 %>
-                        <div class="flex items-center gap-2">
-                          <span class="text-[9px] font-bold text-slate-400 w-16 shrink-0"><%= label.split('(').first %></span>
-                          <div class="flex-1 h-1.5 bg-slate-50 rounded-full overflow-hidden">
-                            <div class="h-full bg-rose-400 rounded-full" style="width: <%= (count.to_f / max_count * 100).to_i %>%;"></div>
-                          </div>
-                          <span class="text-[9px] font-black text-slate-900 w-4 text-right"><%= count %></span>
-                        </div>
-                      <% end %>
-                      <% if time_slots.values.sum == 0 %>
-                        <div class="py-4 text-center text-xs text-slate-400">아직 인증 기록이 없습니다.</div>
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-              
-              <!-- 기록 타임라인 -->
-              <div class="space-y-4">
-                <h4 class="text-sm font-black text-slate-900 flex items-center gap-2">
-                  <span>📝</span> 히스토리
-                </h4>
-                <% my_logs = @participant.verification_logs.where(status: [:approved, :rejected]).order(created_at: :desc) %>
-                <% if my_logs.any? %>
-                  <div class="relative pl-4 border-l-2 border-slate-100 space-y-8 ml-2">
-                    <% my_logs.each do |log| %>
-                      <div class="relative">
-                        <!-- 타임라인 닷 -->
-                        <div class="absolute -left-[21px] top-1.5 w-3 h-3 bg-white border-2 <%= log.approved? ? 'border-indigo-200' : 'border-red-200' %> rounded-full"></div>
-                        
-                        <div class="bg-white p-4 rounded-2xl border <%= log.approved? ? 'border-slate-100' : 'border-red-100 bg-red-50/50' %> shadow-sm relative group hover:border-indigo-100 transition-colors">
-                          <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-black text-slate-700"><%= log.created_at.strftime('%Y.%m.%d') %></span>
-                            <div class="flex items-center gap-2">
-                              <% if log.rejected? %>
-                                <span class="px-2 py-0.5 bg-red-100 text-red-600 rounded text-[9px] font-black">반려됨</span>
-                              <% end %>
-                              <span class="text-[10px] font-bold text-slate-400"><%= log.created_at.strftime('%H:%M') %></span>
-                            </div>
-                          </div>
-                          
-                          <% if log.image_url.present? %>
-                            <div class="w-20 h-20 rounded-lg overflow-hidden mb-2 bg-slate-50 border border-slate-100">
-                               <img src="<%= log.image_url %>" class="w-full h-full object-cover">
-                            </div>
-                          <% end %>
-
-                          <p class="text-sm font-medium text-slate-600"><%= log.value.presence || "인증을 완료했습니다." %></p>
-                          
-                          <% if log.rejected? && log.reject_reason.present? %>
-                            <div class="mt-3 p-3 bg-red-100/50 rounded-xl border border-red-200/50 text-xs text-red-800">
-                              <span class="font-bold">📢 호스트 메시지:</span> <%= log.reject_reason %>
-                            </div>
-                          <% end %>
-                        </div>
-                      </div>
-                    <% end %>
-                  </div>
-                <% else %>
-                   <div class="py-12 text-center text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                    <p class="font-bold text-sm">아직 인증 기록이 없습니다.</p>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-
-
-          <% when "ranking" %>
-            <div class="space-y-3">
-              <% @rankings.each_with_index do |p, idx| %>
-                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                  <div class="flex items-center gap-4">
-                    <span class="w-6 text-center font-black <%= idx == 0 ? 'text-amber-500' : 'text-slate-300' %>">#<%= idx + 1 %></span>
-                    <img src="<%= p.user.profile_image %>" class="w-8 h-8 rounded-full object-cover">
-                    <span class="text-sm font-bold text-slate-900"><%= p.nickname %></span>
-                  </div>
-                  <div class="flex items-center gap-4">
-                     <span class="text-[11px] font-black text-orange-500">🔥 <%= p.current_streak %>일</span>
-                     <span class="text-sm font-black text-indigo-600"><%= p.completion_rate.to_i %>%</span>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-
-          <% when "announcements" %>
-            <div class="space-y-4">
-              <% if @announcements_all.present? && @announcements_all.any? %>
-                <% @announcements_all.each do |announcement| %>
-                  <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="flex items-center justify-between mb-3">
-                      <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest"><%= announcement.created_at.strftime('%Y.%m.%d') %></span>
-                    </div>
-                    <h4 class="text-lg font-black text-slate-900 mb-2"><%= announcement.title %></h4>
-                    <div class="prose prose-sm prose-slate max-w-none text-slate-600">
-                      <%= simple_format announcement.content %>
-                    </div>
-                  </div>
-                <% end %>
-              <% else %>
-                <div class="py-20 text-center text-slate-400">
-                  <p class="font-bold">등록된 공지사항이 없습니다.</p>
-                </div>
-              <% end %>
-            </div>
-
-          <% when "info" %>
-            <div class="space-y-10">
-              <section>
-                <div class="p-6 bg-slate-50 rounded-3xl mb-8 flex items-center gap-4">
-                  <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-xl font-black text-slate-900"><%= @challenge.offline? ? "모임 상세 소개" : "챌린지 상세 소개" %></h3>
-                    <% if @challenge.summary.present? %>
-                      <p class="text-sm font-bold text-indigo-600 mt-0.5 tracking-tight"><%= @challenge.summary %></p>
-                    <% end %>
-                  </div>
-                </div>
-
-                <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed px-2">
-                  <%= simple_format @challenge.description %>
-                </div>
-
-                <% if @challenge.preparation_items.present? %>
-                  <div class="mt-10 p-8 bg-amber-50 rounded-[40px] border border-amber-100">
-                    <h3 class="text-sm font-black text-amber-900 mb-4 flex items-center gap-2">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                      준비물 및 공지사항
-                    </h3>
-                    <p class="text-sm font-bold text-amber-800 leading-relaxed whitespace-pre-wrap"><%= @challenge.preparation_items %></p>
-                  </div>
-                <% end %>
-              </section>
-
-              <div class="mt-8">
-                <h3 class="text-lg font-black text-slate-900 px-2 mb-6 flex items-center gap-2">
-                  <span class="w-1.5 h-6 bg-slate-900 rounded-full"></span>
-                  규칙 및 상세 일정
-                </h3>
-                <div class="bg-white rounded-[40px] border-2 border-slate-100 p-8">
-                  <%= render "challenges/tabs/rules", challenge: @challenge %>
-                </div>
-              </div>
-            </div>
-
-
-          <% when "reviews" %>
-            <div class="space-y-4">
-              <% if @user_review %>
-                <div class="p-5 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-center justify-between">
-                  <div>
-                    <p class="text-xs font-bold text-indigo-600">이미 리뷰를 작성하셨습니다.</p>
-                    <p class="text-[10px] text-slate-400 mt-0.5">남은 수정 횟수: <span class="font-black text-slate-900"><%= 2 - @user_review.edit_count %>회</span> / 총 2회</p>
-                  </div>
-                  <% if @user_review.edit_count < 2 %>
-                    <%= link_to "리뷰 수정하기", edit_challenge_review_path(@challenge, @user_review), class: "px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-[10px] hover:bg-indigo-700 transition-all shadow-md" %>
-                  <% end %>
-                </div>
-              <% end %>
-
-              <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                <%= render "challenges/tabs/reviews", challenge: @challenge, reviews: @reviews, can_write_review: @can_write_review %>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
+      <button 
+        data-controller="share"
+        data-share-title-value="<%= @challenge.title %>"
+        data-share-text-value="루틴 파인더에서 '<%= @challenge.title %>' 도전에 함께해요! 🌿"
+        data-share-url-value="<%= challenge_url(@challenge) %>"
+        data-action="click->share#share"
+        class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+      </button>
     </div>
+  </header>
 
-    <!-- 오른쪽: 루파 가든 및 대시보드 (4/12) -->
-    <div class="lg:col-span-4 space-y-6">
-      <!-- 나의 루파 가든 -->
-      <%
-        # 참가자 상태에 따른 스타일 설정
-        garden_style = case @participant.status.to_sym
-        when :achieving
-          {
-            bg_color: "bg-emerald-50",
-            border_color: "border-emerald-100",
-            title_color: "text-emerald-600",
-            badge_bg: "bg-emerald-500",
-            badge_text: "text-white",
-            badge_label: "🔥 달성 중",
-            plant_filter: "",
-            status_message: "훌륭해요! 식물이 건강하게 자라고 있어요."
-          }
-        when :lagging
-          {
-            bg_color: "bg-amber-50",
-            border_color: "border-amber-100",
-            title_color: "text-amber-600",
-            badge_bg: "bg-amber-500",
-            badge_text: "text-white",
-            badge_label: "⚠️ 부진",
-            plant_filter: "opacity-80 saturate-75",
-            status_message: "조금 더 힘내세요! 식물이 물을 기다리고 있어요."
-          }
-        when :inactive
-          {
-            bg_color: "bg-slate-50",
-            border_color: "border-slate-200",
-            title_color: "text-slate-500",
-            badge_bg: "bg-slate-400",
-            badge_text: "text-white",
-            badge_label: "❌ 미참여",
-            plant_filter: "grayscale opacity-50",
-            status_message: "식물이 시들어가고 있어요. 다시 시작해보세요!"
-          }
-        when :failed
-          {
-            bg_color: "bg-red-50",
-            border_color: "border-red-100",
-            title_color: "text-red-600",
-            badge_bg: "bg-red-500",
-            badge_text: "text-white",
-            badge_label: "☠️ 탈락",
-            plant_filter: "grayscale opacity-30",
-            status_message: "아쉽지만 이번 챌린지는 여기까지입니다."
-          }
-        else
-          {
-            bg_color: "bg-emerald-50",
-            border_color: "border-emerald-100",
-            title_color: "text-indigo-600",
-            badge_bg: "bg-indigo-500",
-            badge_text: "text-white",
-            badge_label: "시작",
-            plant_filter: "",
-            status_message: "새로운 시작! 함께 성장해봐요."
-          }
-        end
-      %>
-      
-      <% unless @challenge.offline? %>
-        <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
-          <!-- ... existing garden content ... -->
-          <div class="p-8 pb-4 text-center space-y-3">
-            <div class="flex items-center justify-center gap-2">
-              <h3 class="text-sm font-black <%= garden_style[:title_color] %> uppercase tracking-widest">나의 루파 가든</h3>
-              <span class="px-2 py-0.5 <%= garden_style[:badge_bg] %> <%= garden_style[:badge_text] %> text-[9px] font-black rounded-full"><%= garden_style[:badge_label] %></span>
-            </div>
-            <p class="text-xl font-black text-slate-900 leading-snug"><%= @current_growth_stage[:name] %></p>
-            <p class="text-xs font-medium text-slate-500"><%= garden_style[:status_message] %></p>
-          </div>
+  <div class="px-8 space-y-8">
+    <!-- 1. Hero: Today's Mission -->
+    <section class="relative pt-4">
+      <div class="absolute -top-12 -left-12 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
+      <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-purple-500/10 blur-[100px] pointer-events-none"></div>
 
-          <!-- 식물 영역 -->
-          <div class="px-6 pb-8">
-            <div class="aspect-square <%= garden_style[:bg_color] %> rounded-[32px] border <%= garden_style[:border_color] %> relative overflow-hidden flex items-center justify-center">
-              <!-- 준비중 표시 -->
-              <div class="text-center space-y-4 p-8">
-                <div class="text-6xl opacity-20">🌱</div>
-                <div>
-                  <p class="text-lg font-black text-slate-900 mb-2">식물 성장 시스템</p>
-                  <p class="text-sm font-bold text-slate-500">더 멋진 모습으로 준비 중입니다</p>
-                  <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-slate-200">
-                    <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
-                    <span class="text-xs font-black text-slate-600 uppercase tracking-wider">Coming Soon</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 성장 지표 -->
-          <div class="p-6 space-y-3">
-            <!-- 주요 지표 -->
-            <div class="grid grid-cols-4 gap-2">
-              <!-- 연속 일수 -->
-              <div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100/50 text-center">
-                <span class="text-2xl block mb-1">⚡</span>
-                <p class="text-lg font-black text-indigo-700"><%= @participant.current_streak %></p>
-                <p class="text-[8px] font-black text-indigo-400 uppercase tracking-tight">연속일</p>
-              </div>
-
-              <!-- 달성도 -->
-              <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100/50 text-center">
-                <span class="text-2xl block mb-1">🎯</span>
-                <p class="text-lg font-black text-emerald-700"><%= @participant.completion_rate.to_i %>%</p>
-                <p class="text-[8px] font-black text-emerald-400 uppercase tracking-tight">달성도</p>
-              </div>
-
-              <!-- 성장 단계 -->
-              <div class="p-3 bg-amber-50 rounded-xl border border-amber-100/50 text-center">
-                <span class="text-2xl block mb-1">🌟</span>
-                <p class="text-lg font-black text-amber-700"><%= @current_growth_stage[:stage] + 1 %></p>
-                <p class="text-[8px] font-black text-amber-400 uppercase tracking-tight">성장도</p>
-              </div>
-
-              <!-- 완료 횟수 -->
-              <div class="p-3 bg-rose-50 rounded-xl border border-rose-100/50 text-center">
-                <span class="text-2xl block mb-1">✓</span>
-                <p class="text-lg font-black text-rose-700"><%= @completed_days %></p>
-                <p class="text-[8px] font-black text-rose-400 uppercase tracking-tight">완료수</p>
-              </div>
-            </div>
-
-            <!-- 이번 주 활동 -->
-            <div class="p-3 bg-slate-900 rounded-xl">
-              <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-base">📊</span>
-                  <span class="text-[9px] font-black text-white uppercase tracking-tight">이번 주</span>
-                </div>
-                <span class="text-xs font-black text-indigo-400"><%= @this_week_completion_rate %>%</span>
-              </div>
-              <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000" style="width: <%= @this_week_completion_rate %>%;"></div>
-              </div>
-            </div>
-
-            <!-- 최고 기록 -->
-            <div class="flex items-center gap-2 p-2.5 bg-violet-50 rounded-xl border border-violet-100/50">
-              <span class="text-xl">🏆</span>
-              <div class="flex-1 min-w-0">
-                <p class="text-[8px] font-black text-violet-400 uppercase tracking-tight">최고 기록</p>
-                <p class="text-xs font-black text-violet-700">최고 <%= @participant.max_streak %>일 연속</p>
-              </div>
-            </div>
-          </div>
+      <div class="glass-card p-8 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-700">
+           <span class="text-6xl">🔥</span>
         </div>
-      <% else %>
-        <!-- 모임 간략 정보 카드 -->
-        <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm p-8 space-y-6">
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest">모임 가이드</h3>
-          <div class="space-y-4">
-            <div class="flex items-start gap-4">
-              <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </div>
-              <div>
-                <p class="text-xs font-black text-slate-400 uppercase">시간 준수</p>
-                <p class="text-sm font-bold text-slate-700 mt-0.5">모임 시작 10분 전까지 도착해주세요.</p>
-              </div>
-            </div>
-            <div class="flex items-start gap-4">
-              <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </div>
-              <div>
-                <p class="text-xs font-black text-slate-400 uppercase">준비물 확인</p>
-                <p class="text-sm font-bold text-slate-700 mt-0.5">상세 소개란의 준비물을 다시 한번 확인해주세요.</p>
-              </div>
-            </div>
-          </div>
-          <div class="pt-4 border-t border-slate-100">
-             <p class="text-[11px] font-medium text-slate-400 leading-relaxed">
-               궁금한 점은 커뮤니티 채팅방을 통해 호스트에게 직접 문의하실 수 있습니다.
-             </p>
-          </div>
-        </div>
-      <% end %>
 
-      <!-- 진행률 바 -->
-
-      <!-- 보증금/환급 정보 -->
-      <% if @challenge.cost_type_deposit? %>
-        <div class="bg-indigo-600 rounded-[32px] p-6 text-white shadow-xl shadow-indigo-600/20">
-          <p class="text-[10px] font-black text-indigo-100/60 uppercase tracking-widest mb-1">나의 환급 보증금</p>
-          <div class="flex items-end justify-between mb-6">
-            <h4 class="text-3xl font-black"><%= number_with_delimiter(((@participant.completion_rate / 100.0) * @participant.paid_amount).to_i) %><span class="text-sm font-bold ml-1 opacity-50">원</span></h4>
-          </div>
-          
-          <div class="space-y-3">
-            <% if @participant.refund_none? %>
-              <% if @can_apply_refund %>
-                <button data-action="click->modal#open" class="w-full py-4 bg-white text-indigo-600 rounded-2xl font-black text-sm hover:bg-slate-50 transition-all shadow-md">
-                  환급 신청하기
-                </button>
-              <% else %>
-                <div class="px-4 py-3 bg-white/10 rounded-2xl border border-white/10 text-center">
-                  <p class="text-[10px] text-indigo-100/60 font-bold leading-tight"><%= @challenge.offline? ? "모임 종료 3일 전부터 환급 신청이 가능해집니다." : "챌린지 종료 3일 전부터 환급 신청이 가능해집니다." %></p>
-                </div>
-              <% end %>
-            <% elsif @participant.refund_applied? %>
-              <div class="px-4 py-3 bg-white/20 rounded-2xl border border-white/10 text-center">
-                <p class="text-xs font-black text-white">환급 신청 완료 (호스트 확인 중)</p>
-              </div>
-            <% elsif @participant.refund_completed? %>
-              <div class="px-4 py-3 bg-emerald-500 rounded-2xl border border-emerald-400 text-center">
-                <p class="text-xs font-black text-white">환급 입금 완료 ✨</p>
-              </div>
+        <div class="space-y-6 relative z-10">
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest">Today's Focus</span>
+            <% unless @today_verified %>
+              <span class="flex items-center gap-1.5 text-[10px] font-black text-rose-500 animate-pulse">
+                <span class="w-1 h-1 bg-current rounded-full"></span>
+                MISSING RECORD
+              </span>
             <% end %>
           </div>
-        </div>
-      <% end %>
 
-      <!-- 소셜 그리드 (소형) -->
-      <div class="bg-white rounded-[32px] p-6 border border-slate-200 shadow-sm">
-        <h3 class="text-xs font-black text-slate-900 mb-4 flex justify-between items-center uppercase tracking-widest">
-          <%= @challenge.offline? ? "함께하는 멤버" : "실시간 챌린저" %>
-          <span class="text-[10px] text-slate-400 font-bold"><%= @participants_with_status.count %>명</span>
-        </h3>
-        <div class="grid grid-cols-4 gap-3">
-          <% @participants_with_status.first(12).each do |p| %>
-            <div class="relative">
-              <img src="<%= p[:profile_image] %>" 
-                   class="w-full aspect-square rounded-xl object-cover transition-all"
-                   title="<%= p[:nickname] %>">
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Refund Modal -->
-  <div data-modal-target="container" 
-       data-action="click->modal#closeOnBackground" 
-       class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl">
-      <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-        <div>
-          <h2 class="text-xl font-black text-slate-900"><%= @challenge.offline? ? "참가비 환급 신청" : "보증금 환급 신청" %></h2>
-          <p class="text-xs font-bold text-slate-400 mt-1">보증금을 돌려받을 계좌 정보를 입력해주세요.</p>
-        </div>
-        <button data-action="click->modal#close" class="p-2 hover:bg-slate-200 rounded-xl transition-all">
-          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-      
-      <%= form_with url: apply_refund_challenge_path(@challenge), method: :post, class: "p-8 space-y-6" do |f| %>
-        <div class="space-y-4">
-          <div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
-            <p class="text-xs font-bold text-indigo-600 mb-1 tracking-tight">예상 환급 금액</p>
-            <p class="text-2xl font-black text-indigo-700">
-              <%= number_with_delimiter(((@participant.completion_rate / 100.0) * @participant.paid_amount).to_i) %>원
+          <div class="space-y-2">
+            <h2 class="text-2xl font-black leading-tight">
+              <%= @challenge.summary.presence || "매일 꾸준히 목표를 달성해보세요!" %>
+            </h2>
+            <p class="text-xs font-medium text-slate-400 leading-relaxed italic">
+              "작은 습관이 모여 위대한 변화를 만듭니다."
             </p>
           </div>
 
-          <div>
-            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">은행명</label>
-            <%= f.text_field :refund_bank_name, required: true, placeholder: "예: 국민은행, 카카오뱅크", class: "w-full mt-1 p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
-          </div>
+          <% if @today_verified %>
+            <div class="pt-2 flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <div>
+                <p class="text-sm font-black text-white">오늘의 루틴 완료!</p>
+                <p class="text-[10px] font-bold text-slate-500">연속 <%= @participant.current_streak %>일째 달성 중입니다.</p>
+              </div>
+            </div>
+          <% else %>
+            <div class="pt-4">
+              <%= link_to "오늘의 성취 기록하기", new_challenge_verification_log_path(@challenge), 
+                          class: "block w-full py-5 bg-indigo-500 text-white text-center rounded-2xl font-black text-sm shadow-xl shadow-indigo-500/20 active:scale-95 transition-all" %>
+              <p class="text-[10px] font-bold text-slate-500 text-center mt-3 uppercase tracking-widest italic opacity-50">Capture your victory of the day</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </section>
 
-          <div>
-            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">계좌번호</label>
-            <%= f.text_field :refund_account_number, required: true, placeholder: "'-'를 제외하고 입력", class: "w-full mt-1 p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
-          </div>
-
-          <div>
-            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">예금주 성함</label>
-            <%= f.text_field :refund_account_name, required: true, placeholder: "성함을 입력하세요", class: "w-full mt-1 p-4 bg-slate-50 border-2 border-transparent rounded-2xl font-black focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none" %>
+    <!-- 2. Status Board -->
+    <section class="grid grid-cols-2 gap-4">
+      <!-- Progress Bar -->
+      <div class="glass-card p-6 flex flex-col justify-between gap-6">
+        <div class="relative w-20 h-20 mx-auto">
+          <svg class="w-full h-full transform -rotate-90">
+            <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="8" fill="transparent" class="text-white/5" />
+            <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="8" fill="transparent" 
+                    class="text-indigo-500" stroke-linecap="round"
+                    stroke-dasharray="226.19"
+                    stroke-dashoffset="<%= 226.19 * (1 - (@participant.completion_rate / 100.0)) %>" />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-lg font-black italic"><%= @participant.completion_rate.to_i %>%</span>
           </div>
         </div>
-
-        <div class="pt-4">
-          <%= f.submit "환급 신청 전송", class: "w-full py-4 bg-indigo-600 text-white rounded-[24px] font-black hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20" %>
+        <div class="text-center">
+          <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Progress</p>
+          <p class="text-sm font-black mt-1">총 <%= @completed_days %>회 달성</p>
         </div>
-      <% end %>
-    </div>
+      </div>
+
+      <!-- streak Card -->
+      <div class="glass-card p-6 flex flex-col justify-between gap-4">
+        <div class="flex-1 flex flex-col items-center justify-center py-2">
+          <div class="relative">
+            <span class="text-4xl">🔥</span>
+            <div class="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full animate-ping"></div>
+          </div>
+          <p class="text-3xl font-black italic mt-3"><%= @participant.current_streak %><span class="text-sm ml-1">Days</span></p>
+        </div>
+        <div class="text-center">
+          <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Active Streak</p>
+          <p class="text-xs font-bold text-indigo-400 mt-1">최고 <%= @participant.max_streak %>일 연속</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Tabs Navigation -->
+    <turbo-frame id="dashboard_tabs" target="_top">
+      <section class="space-y-6">
+        <div class="flex items-center justify-around border-b border-white/5 px-2">
+          <% 
+            p_tabs = [
+              ["records", "MY LOG"],
+              ["dashboard", "FEED"],
+              ["ranking", "RANK"],
+              ["info", "INFO"]
+            ]
+            p_tabs.insert(1, ["management", "MANAGE"]) if @is_host
+          %>
+          <% p_tabs.each do |id, label| %>
+            <%= link_to challenge_path(@challenge, tab: id), 
+                        data: { turbo_frame: "dashboard_tabs" },
+                        class: "py-4 text-[11px] font-black tracking-widest transition-all #{ @tab == id ? 'tab-active' : 'text-slate-500' }" do %>
+              <%= label %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="min-h-[400px]">
+          <% case @tab %>
+        <% when "records" %>
+           <!-- Simplified Calendar-like dots -->
+           <div class="space-y-8">
+              <div class="glass-card p-6" data-controller="calendar-scroll">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="text-xs font-black flex items-center gap-2">
+                    <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
+                    ACTIVITY CALENDAR
+                  </h3>
+                  <div class="flex items-center gap-1.5 opacity-50">
+                     <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Swipe</span>
+                     <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                  </div>
+                </div>
+
+                <div class="flex gap-4 items-start">
+                  <!-- Day Labels -->
+                  <div class="flex flex-col gap-2 pt-6 shrink-0">
+                    <% %w(S M T W T F S).each do |day| %>
+                      <span class="text-[8px] font-black text-slate-700 w-3 h-3 flex items-center justify-center"><%= day %></span>
+                    <% end %>
+                  </div>
+
+                  <!-- Scrollable Area -->
+                  <div class="flex-1 overflow-x-auto no-scrollbar scroll-smooth" data-calendar-scroll-target="container">
+                    <div class="flex gap-2 pb-2">
+                      <% 
+                        # Ensure we start from Sunday to match S M T W T F S rows
+                        start_date = @challenge.start_date.beginning_of_week(:sunday)
+                        end_date = @challenge.end_date.end_of_week(:sunday)
+                        calendar_days = (start_date..end_date).to_a
+                        weeks = calendar_days.in_groups_of(7)
+                        current_month = nil
+                      %>
+                      <% weeks.each do |week| %>
+                        <div class="flex flex-col gap-2 shrink-0">
+                          <!-- Month Header -->
+                          <div class="h-4 text-[9px] font-black text-slate-500">
+                            <% if week.compact.first&.month != current_month %>
+                              <%= week.compact.first&.strftime('%b') %>
+                              <% current_month = week.compact.first&.month %>
+                            <% end %>
+                          </div>
+
+                          <% week.each do |date| %>
+                            <% if date.nil? || date < @challenge.start_date || date > @challenge.end_date %>
+                              <div class="w-6 h-6 rounded-md bg-white/[0.02]"></div>
+                            <% else %>
+                              <div id="calendar-day-<%= date %>" 
+                                   <%= 'data-calendar-scroll-target=today' if date == Date.current %>
+                                   class="w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-bold transition-all
+                                          <%= if @daily_status_map[date]
+                                                'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 scale-110 z-10'
+                                              elsif date == Date.current
+                                                'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+                                              elsif date > Date.current
+                                                'bg-white/5 text-slate-700'
+                                              else
+                                                'bg-white/5 text-slate-500'
+                                              end %>">
+                                <%= date.day %>
+                              </div>
+                            <% end %>
+                          <% end %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+             <div class="space-y-4">
+               <h3 class="text-xs font-black flex items-center gap-2 px-2">
+                 <span class="w-1 h-3 bg-indigo-500 rounded-full"></span>
+                 RECENT HISTORY
+               </h3>
+               <% my_logs = @participant.verification_logs.where(status: [:approved, :rejected, :pending]).order(created_at: :desc).limit(10) %>
+               <% if my_logs.any? %>
+                 <div class="space-y-3">
+                   <% my_logs.each do |log| %>
+                     <div class="glass-card p-5 flex items-center justify-between gap-4">
+                       <div class="flex items-center gap-4">
+                         <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-lg">
+                           <%= log.approved? ? "✅" : (log.pending? ? "⏳" : "❌") %>
+                         </div>
+                         <div>
+                           <p class="text-sm font-black text-white"><%= log.created_at.strftime('%m월 %d일') %></p>
+                           <p class="text-[10px] font-bold text-slate-500"><%= log.created_at.strftime('%H:%M') %> • <%= log.status.upcase %></p>
+                         </div>
+                       </div>
+                       <div class="text-right">
+                         <p class="text-xs font-black text-indigo-400"><%= log.value.presence || "Completed" %></p>
+                       </div>
+                     </div>
+                   <% end %>
+                 </div>
+               <% else %>
+                 <div class="py-12 text-center glass-card">
+                   <p class="text-xs font-bold text-slate-500 italic">"첫 기록을 남겨보세요!"</p>
+                 </div>
+               <% end %>
+             </div>
+           </div>
+
+        <% when "dashboard" %>
+          <% if @challenge.verification_logs.any? %>
+            <div class="space-y-6">
+              <% @challenge.verification_logs.includes(participant: :user).recent.limit(20).each do |log| %>
+                <div class="glass-card p-6 space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <img src="<%= log.participant.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover bg-white/10" />
+                      <div>
+                        <p class="text-sm font-black text-white"><%= log.participant.nickname %></p>
+                        <p class="text-[10px] font-bold text-slate-500"><%= time_ago_in_words(log.created_at) %> 전</p>
+                      </div>
+                    </div>
+                    <% if log.approved? %>
+                      <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px]">SUCCESS</span>
+                    <% end %>
+                  </div>
+                  <% if log.image_url.present? %>
+                    <div class="rounded-2xl overflow-hidden aspect-video bg-white/5">
+                      <img src="<%= log.image_url %>" class="w-full h-full object-cover" />
+                    </div>
+                  <% end %>
+                  <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= log.value %></p>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="py-20 text-center glass-card">
+              <span class="text-3xl block mb-4">🌱</span>
+              <p class="text-xs font-bold text-slate-500 italic">"아직 등록된 인증 피드가 없습니다.<br>첫 번째 주인공이 되어보세요!"</p>
+            </div>
+          <% end %>
+        <% when "ranking" %>
+          <div class="glass-card overflow-hidden">
+             <div class="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+               <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Rank</p>
+               <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Achievement</p>
+             </div>
+             <div class="divide-y divide-white/5">
+               <% @rankings.each_with_index do |p, idx| %>
+                  <div class="p-6 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                      <span class="w-6 text-center text-sm font-black <%= idx < 3 ? 'text-indigo-400' : 'text-slate-600' %>">
+                        <%= idx + 1 %>
+                      </span>
+                      <%= link_to user_profile_path(p.user), class: "flex items-center gap-4 group/rank" do %>
+                        <img src="<%= p.user.profile_image %>" class="w-9 h-9 rounded-xl object-cover bg-white/10 group-hover/rank:scale-110 transition-transform" />
+                        <span class="text-sm font-black text-white group-hover/rank:text-indigo-400 transition-colors"><%= p.nickname %></span>
+                      <% end %>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-sm font-black text-white italic"><%= p.completion_rate.to_i %>%</p>
+                      <p class="text-[10px] font-bold text-indigo-500/60 mt-0.5">🔥 <%= p.current_streak %>일</p>
+                    </div>
+                  </div>
+               <% end %>
+             </div>
+          </div>
+
+        <% when "info" %>
+          <div class="space-y-8">
+            <!-- Summary -->
+            <% if @challenge.summary.present? %>
+              <div class="glass-card p-8 bg-indigo-500/5">
+                <p class="text-sm font-bold text-slate-300 italic">"<%= @challenge.summary %>"</p>
+              </div>
+            <% end %>
+
+            <!-- Description -->
+            <div class="glass-card p-8 space-y-6">
+              <h3 class="text-sm font-black flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                CHALLENGE GUIDE
+              </h3>
+              <div class="text-sm font-medium text-slate-400 leading-relaxed whitespace-pre-wrap"><%= @challenge.description %></div>
+            </div>
+
+            <!-- Preparation -->
+            <% if @challenge.preparation_items.present? %>
+              <div class="glass-card p-8 border-amber-500/20 bg-amber-500/5">
+                 <h3 class="text-xs font-black text-amber-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                   <span class="text-base">📋</span> PREPARATION & NOTICE
+                 </h3>
+                 <p class="text-sm font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= @challenge.preparation_items %></p>
+              </div>
+            <% end %>
+
+            <!-- Rules Partial -->
+            <div class="glass-card p-8 space-y-6">
+              <h3 class="text-sm font-black flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                RULES & SCHEDULE
+              </h3>
+              <div class="text-white/80">
+                <%= render "challenges/tabs/rules", challenge: @challenge %>
+              </div>
+            </div>
+
+            <!-- Extra Stats if needed (keeping original for consistency) -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="glass-card p-6">
+                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Frequency</p>
+                <p class="text-sm font-black text-white"><%= @challenge.mission_frequency %></p>
+              </div>
+              <div class="glass-card p-6">
+                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Deposit</p>
+                <p class="text-sm font-black text-white"><%= number_with_delimiter(@challenge.amount || 0) %>원</p>
+              </div>
+            </div>
+          </div>
+
+        <% when "management" %>
+          <div class="space-y-8">
+            <div class="glass-card p-8 bg-indigo-500/10 border-indigo-500/20 flex items-center justify-between">
+              <div>
+                <h3 class="text-lg font-black italic mb-2">Host Dashboard</h3>
+                <p class="text-xs text-indigo-400/80 font-medium">참여자 현황을 실시간으로 분석합니다.</p>
+              </div>
+              <%= link_to hosted_challenge_path(@challenge), class: "px-4 py-2 bg-indigo-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 active:scale-95 transition-all" do %>
+                ADMIN SUITE
+              <% end %>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="glass-card p-6">
+                 <p class="text-[9px] font-black text-slate-500 mb-1 uppercase">Total Members</p>
+                 <p class="text-2xl font-black italic"><%= @challenge.current_participants %></p>
+              </div>
+              <div class="glass-card p-6">
+                 <p class="text-[9px] font-black text-slate-500 mb-1 uppercase">Today Rate</p>
+                 <p class="text-2xl font-black italic text-indigo-400"><%= (@today_verified_count.to_f / [@challenge.current_participants, 1].max * 100).to_i %>%</p>
+              </div>
+            </div>
+
+            <!-- Pending Applications -->
+            <% if @pending_applications&.any? %>
+              <div class="space-y-4">
+                <h4 class="text-xs font-black px-2 flex items-center justify-between">
+                  <span>PENDING APPROVALS</span>
+                  <span class="text-indigo-400"><%= @pending_applications.count %></span>
+                </h4>
+                <div class="space-y-3">
+                  <% @pending_applications.limit(5).each do |app| %>
+                    <div class="glass-card p-6 flex items-center justify-between gap-4">
+                      <div class="flex items-center gap-3">
+                        <img src="<%= app.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover bg-white/10" />
+                        <div>
+                          <p class="text-sm font-black"><%= app.user.nickname %></p>
+                          <p class="text-[10px] font-bold text-slate-500"><%= time_ago_in_words(app.applied_at) %> 전 신청</p>
+                        </div>
+                      </div>
+                      <div class="flex gap-2">
+                         <%= button_to approve_challenge_application_path(@challenge, app), method: :post, class: "px-4 py-2 bg-indigo-500 rounded-xl text-[10px] font-black" do %>APPROVE<% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </turbo-frame>
   </div>
 </div>
-
-<style>
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
-
-<% end %>

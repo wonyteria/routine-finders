@@ -1,377 +1,352 @@
-<% if params[:source] == 'prototype' %>
-  <div class="space-y-5 md:space-y-6" data-controller="challenge-settings">
-    <div class="app-glass-card p-4 md:p-6">
-      <div class="flex items-center gap-3 mb-5 md:mb-6">
-        <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-          <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
-        </div>
-        <div>
-          <h2 class="text-base md:text-lg font-black text-white italic">운영 환경 설정</h2>
-          <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5"><%= challenge.offline? ? "모임" : "챌린지" %> 파라미터 조정</p>
-        </div>
+<div class="space-y-5 md:space-y-6" data-controller="challenge-settings">
+  <div class="app-glass-card p-4 md:p-6">
+    <div class="flex items-center gap-3 mb-5 md:mb-6">
+      <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl md:rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
+        <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
       </div>
-
-      <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings", source: "prototype"), method: :patch, class: "space-y-6 md:space-y-8", 
-                       data: { challenge_settings_target: "form", action: "submit->challenge-settings#showSummary" } do |f| %>
-        
-        <!-- 01. 기본 정보 -->
-        <section class="space-y-3 md:space-y-4">
-          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-            <span class="text-indigo-400 font-black italic text-xs md:text-sm">01.</span>
-            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">기본 정보</h3>
-          </div>
-
-          <div class="space-y-3">
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">카테고리</label>
-              <%= f.select :category, 
-                           ['건강·운동', '학습·자기계발', 'SNS·브랜딩', '재테크·부업', '취미·라이프', '멘탈·성찰', '기타'],
-                           {},
-                           class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer" %>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1"><%= challenge.offline? ? "모임" : "챌린지" %> 제목</label>
-              <%= f.text_field :title, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-black text-sm md:text-base text-white italic focus:border-indigo-500 outline-none transition-all" %>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">한 줄 요약</label>
-              <%= f.text_field :summary, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all" %>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">상세 설명</label>
-              <%= f.text_area :description, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-indigo-500 outline-none transition-all", rows: 5 %>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">호스트 소개</label>
-              <%= f.text_area :custom_host_bio, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-indigo-500 outline-none transition-all", rows: 3 %>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">채팅방 링크 (선택)</label>
-              <%= f.text_field :chat_link, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all" %>
-            </div>
-          </div>
-        </section>
-
-        <!-- 02. 인증 목표 -->
-        <section class="space-y-3 md:space-y-4">
-          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-            <span class="text-emerald-400 font-black italic text-xs md:text-sm">02.</span>
-            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= challenge.offline? ? "모임 활동" : "인증" %> 목표</h3>
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1"><%= challenge.offline? ? "활동" : "인증" %> 목표</label>
-            <%= f.text_field :certification_goal, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-emerald-500 outline-none transition-all" %>
-          </div>
-        </section>
-
-        <!-- 03. 일정 설정 -->
-        <section class="space-y-3 md:space-y-4">
-          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-            <span class="text-purple-400 font-black italic text-xs md:text-sm">03.</span>
-            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">일정 설정</h3>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1"><%= challenge.offline? ? "모임일" : "시작일" %></label>
-              <%= f.date_field :start_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
-            </div>
-            <% unless challenge.offline? %>
-              <div class="space-y-2">
-                <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">종료일</label>
-                <%= f.date_field :end_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
-              </div>
-            <% end %>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모집 시작일</label>
-              <%= f.date_field :recruitment_start_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
-            </div>
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모집 마감일</label>
-              <%= f.date_field :recruitment_end_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
-            </div>
-          </div>
-        </section>
-
-        <% unless challenge.offline? %>
-          <!-- 04. 인증 방식 -->
-          <section class="space-y-3 md:space-y-4">
-            <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-              <span class="text-amber-400 font-black italic text-xs md:text-sm">04.</span>
-              <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">인증 방식</h3>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div class="space-y-2">
-                <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 시작</label>
-                <%= f.time_field :verification_start_time, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-amber-500 outline-none transition-all" %>
-              </div>
-              <div class="space-y-2">
-                <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 마감</label>
-                <%= f.time_field :verification_end_time, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-amber-500 outline-none transition-all" %>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 유형</label>
-              <%= f.select :verification_type, 
-                          Challenge.verification_types.keys.map { |k| [k == 'simple' ? '간편 인증' : k == 'photo' ? '사진 인증' : k == 'url' ? 'URL 인증' : k == 'metric' ? '수치 인증' : '복합 인증', k] },
-                          {},
-                          class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-amber-500 outline-none transition-all appearance-none cursor-pointer" %>
-            </div>
-
-            <div class="space-y-3">
-              <div class="p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
-                <div>
-                  <p class="font-black text-xs text-white">재인증 허용</p>
-                  <p class="text-[8px] font-bold text-slate-500 mt-0.5">실패 시 재시도 기회</p>
-                </div>
-                <%= f.check_box :re_verification_allowed, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-indigo-600 transition-colors" %>
-              </div>
-
-              <div class="p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
-                <div>
-                  <p class="font-black text-xs text-white">인증 승인제</p>
-                  <p class="text-[8px] font-bold text-slate-500 mt-0.5">호스트가 직접 승인</p>
-                </div>
-                <%= f.check_box :mission_requires_host_approval, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-amber-500 transition-colors" %>
-              </div>
-            </div>
-          </section>
-        <% end %>
-
-        <!-- 05. 참여 조건 -->
-        <section class="space-y-3 md:space-y-4">
-          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-            <span class="text-cyan-400 font-black italic text-xs md:text-sm">05.</span>
-            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">참여 조건</h3>
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">공개 여부</label>
-            <%= f.select :is_private,
-                         [['공개 챌린지', false], ['비공개 챌린지', true]],
-                         {},
-                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer" %>
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">승인 방식</label>
-            <%= f.select :admission_type,
-                         [['선착순', 'first_come'], ['승인제', 'approval']],
-                         {},
-                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer" %>
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">최대 인원</label>
-            <%= f.number_field :max_participants, min: 5, step: 5, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-cyan-500 outline-none transition-all",
-                               data: { action: "change->challenge-settings#validateStep" } %>
-          </div>
-        </section>
-
-        <!-- 06. 비용 및 계좌 -->
-        <section class="space-y-3 md:space-y-4">
-          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-            <span class="text-rose-400 font-black italic text-xs md:text-sm">06.</span>
-            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">비용 및 계좌</h3>
-          </div>
-
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">비용 방식</label>
-            <%= f.select :cost_type,
-                         [['무료', 'free'], ['참가비', 'fee'], ['보증금', 'deposit']],
-                         {},
-                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-rose-500 outline-none transition-all appearance-none cursor-pointer",
-                          data: { challenge_settings_target: "costType", action: "change->challenge-settings#toggleCostInputs" } %>
-          </div>
- 
-           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-             <div class="space-y-2">
-                <label data-challenge-settings-target="amountLabel" class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보증금/참가비 (원)</label>
-                <%= f.number_field :amount, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
-                                   data: { challenge_settings_target: "costInput", action: "change->challenge-settings#validateStep" } %>
-              </div>
-              <div data-challenge-settings-target="participationFeeContainer" class="space-y-2">
-                <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">추가 참가비 (원)</label>
-                <%= f.number_field :participation_fee, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
-                                   data: { challenge_settings_target: "participationFeeInput", action: "change->challenge-settings#validateStep" } %>
-              </div>
-           </div>
-
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">은행명</label>
-            <%= f.text_field :host_bank, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">예금주</label>
-              <%= f.text_field :host_account_holder, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
-            </div>
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">계좌번호</label>
-              <%= f.text_field :host_account, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
-            </div>
-          </div>
-        </section>
-
-        <!-- 07. 혜택 설계 -->
-        <section class="space-y-3 md:space-y-4">
-          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-            <span class="text-green-400 font-black italic text-xs md:text-sm">07.</span>
-            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">혜택 설계</h3>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">전액 환급 기준 (%)</label>
-              <%= f.number_field :full_refund_threshold, value: (f.object.full_refund_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
-            </div>
-            <div class="space-y-2">
-              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보너스 지급 기준 (%)</label>
-              <%= f.number_field :bonus_threshold, value: (f.object.bonus_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
-            </div>
-          </div>
-        </section>
-
-        <!-- Danger Zone -->
-        <section class="mt-6 md:mt-8 p-4 md:p-5 bg-rose-500/5 rounded-xl md:rounded-2xl border border-rose-500/10 flex items-center justify-between">
-          <div>
-            <h3 class="text-xs md:text-sm font-black text-rose-500 italic uppercase">위험 구역</h3>
-          </div>
-          <%= link_to hosted_challenge_path(challenge, source: "prototype"), 
-                      data: { turbo_method: :delete, turbo_confirm: "정말로 이 챌린지를 삭제하시겠습니까?" }, 
-                      class: "inline-flex items-center gap-1.5 px-3 md:px-4 py-2 bg-rose-600/10 text-rose-500 border border-rose-500/20 rounded-lg font-black text-[8px] md:text-[9px] uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all" do %>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            챌린지 영구 삭제
-          <% end %>
-        </section>
-
-        <!-- Desktop Save Button (Hidden on Mobile for Sticky) -->
-        <div class="hidden md:flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 pt-5 md:pt-6 border-t border-white/5">
-          <button type="submit" 
-                  class="flex-1 py-3.5 md:py-4 bg-indigo-600 text-white rounded-xl md:rounded-2xl font-black text-xs md:text-sm shadow-2xl shadow-indigo-600/40 hover:bg-indigo-500 hover:-translate-y-1 active:scale-95 transition-all cursor-pointer">
-            변경 사항 저장
-          </button>
-          <%= link_to "취소", hosted_challenge_path(challenge, tab: "dashboard", source: "prototype"), 
-                      data: { turbo_frame: "hosted_challenge_tabs" },
-                      class: "px-5 md:px-6 py-3.5 md:py-4 bg-white/5 text-slate-500 rounded-xl md:rounded-2xl font-black text-xs md:text-sm hover:bg-white/10 transition-all uppercase tracking-widest text-center" %>
-        </div>
-
-        <!-- Mobile Floating Sticky Save Button -->
-        <div class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[200] md:hidden animate-slide-up">
-          <div class="app-glass-card p-4 !rounded-[32px] border-white/10 bg-[#16151D]/90 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
-            <button type="submit" 
-                    class="w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-indigo-600/20">
-              환경 설정 저장하기
-            </button>
-          </div>
-        </div>
-      <% end %>
+      <div>
+        <h2 class="text-base md:text-lg font-black text-white italic">운영 환경 설정</h2>
+        <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5"><%= challenge.offline? ? "모임" : "챌린지" %> 파라미터 조정</p>
+      </div>
     </div>
 
-    <!-- Change Summary & Announcement Modal (Now Inside Controller Scope) -->
-    <div data-challenge-settings-target="modal" class="hidden fixed inset-0 z-[35000] flex items-center justify-center p-4">
-      <div data-action="click->challenge-settings#hideModal" class="absolute inset-0 bg-black/90 backdrop-blur-3xl"></div>
+    <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings", source: "prototype"), method: :patch, class: "space-y-6 md:space-y-8", 
+                     data: { challenge_settings_target: "form", action: "submit->challenge-settings#showSummary" } do |f| %>
       
-      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-6 md:p-8 space-y-6 animate-badge-pop bg-[#16151D] flex flex-col max-h-[90vh]">
-        <div class="flex items-center justify-between">
-          <div class="space-y-1">
-            <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none italic">변경 사항 요약</p>
-            <h3 class="text-xl font-black text-white italic">저장하시겠습니까?</h3>
-          </div>
-          <button type="button" data-action="click->challenge-settings#hideModal" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
+      <!-- 01. 기본 정보 -->
+      <section class="space-y-3 md:space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <span class="text-indigo-400 font-black italic text-xs md:text-sm">01.</span>
+          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">기본 정보</h3>
         </div>
 
-        <!-- Scrollable Content Section -->
-        <div class="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar">
-          <!-- Changes List -->
-          <div data-challenge-settings-target="summaryContent" class="space-y-3">
-            <!-- Dynamically populated by Stimulus -->
+        <div class="space-y-3">
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">카테고리</label>
+            <%= f.select :category, 
+                         ['건강·운동', '학습·자기계발', 'SNS·브랜딩', '재테크·부업', '취미·라이프', '멘탈·성찰', '기타'],
+                         {},
+                         class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer" %>
           </div>
 
-          <!-- Announcement Option -->
-          <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-                </div>
-                <div>
-                  <p class="text-[10px] font-black text-white">참가자에게 공지</p>
-                  <p class="text-[8px] font-bold text-slate-500">설정 변경 소식을 알림으로 전송</p>
-                </div>
-              </div>
-              <label class="relative inline-block w-10 h-6 cursor-pointer">
-                <input type="checkbox" data-challenge-settings-target="announcementCheckbox" data-action="change->challenge-settings#toggleAnnouncementSection" class="peer sr-only">
-                <div class="w-full h-full bg-slate-700 rounded-full peer-checked:bg-emerald-500 transition-colors"></div>
-                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
-              </label>
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1"><%= challenge.offline? ? "모임" : "챌린지" %> 제목</label>
+            <%= f.text_field :title, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-black text-sm md:text-base text-white italic focus:border-indigo-500 outline-none transition-all" %>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">한 줄 요약</label>
+            <%= f.text_field :summary, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all" %>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">상세 설명</label>
+            <%= f.text_area :description, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-indigo-500 outline-none transition-all", rows: 5 %>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">호스트 소개</label>
+            <%= f.text_area :custom_host_bio, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-indigo-500 outline-none transition-all", rows: 3 %>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">채팅방 링크 (선택)</label>
+            <%= f.text_field :chat_link, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all" %>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02. 인증 목표 -->
+      <section class="space-y-3 md:space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <span class="text-emerald-400 font-black italic text-xs md:text-sm">02.</span>
+          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= challenge.offline? ? "모임 활동" : "인증" %> 목표</h3>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1"><%= challenge.offline? ? "활동" : "인증" %> 목표</label>
+          <%= f.text_field :certification_goal, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-emerald-500 outline-none transition-all" %>
+        </div>
+      </section>
+
+      <!-- 03. 일정 설정 -->
+      <section class="space-y-3 md:space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <span class="text-purple-400 font-black italic text-xs md:text-sm">03.</span>
+          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">일정 설정</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1"><%= challenge.offline? ? "모임일" : "시작일" %></label>
+            <%= f.date_field :start_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+          </div>
+          <% unless challenge.offline? %>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">종료일</label>
+              <%= f.date_field :end_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
             </div>
+          <% end %>
+        </div>
 
-            <div data-challenge-settings-target="announcementSection" class="hidden space-y-3 animate-slide-down">
-              <div class="space-y-2">
-                <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest pl-1">공지 제목</label>
-                <input type="text" data-challenge-settings-target="announcementTitle" class="w-full p-3 bg-black/40 border border-white/5 rounded-xl text-xs font-bold text-white focus:border-emerald-500 outline-none transition-all">
-              </div>
-              <div class="space-y-2">
-                <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest pl-1">공지 내용</label>
-                <textarea data-challenge-settings-target="announcementContent" rows="4" class="w-full p-3 bg-black/40 border border-white/5 rounded-xl text-xs font-medium text-slate-300 focus:border-emerald-500 outline-none transition-all resize-none"></textarea>
-              </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모집 시작일</label>
+            <%= f.date_field :recruitment_start_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모집 마감일</label>
+            <%= f.date_field :recruitment_end_date, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
           </div>
         </div>
+      </section>
 
-        <!-- Action Buttons -->
-        <div class="flex gap-2 pt-2">
-          <button type="button" data-action="click->challenge-settings#hideModal" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs">취소</button>
-          <button type="button" data-action="click->challenge-settings#submitWithAnnouncement" class="flex-1 py-4 rounded-2xl app-fab-gradient text-white font-black text-sm shadow-xl active:scale-95 transition-all">
-            최종 저장하기
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+      <% unless challenge.offline? %>
+        <!-- 04. 인증 방식 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-amber-400 font-black italic text-xs md:text-sm">04.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">인증 방식</h3>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 시작</label>
+              <%= f.time_field :verification_start_time, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-amber-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 마감</label>
+              <%= f.time_field :verification_end_time, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-amber-500 outline-none transition-all" %>
+            </div>
+          </div>
 
-  <style>
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-  </style>
-<% else %>
-  <!-- EXISTING WEB UI (Preserved) -->
-  <div class="space-y-8" data-controller="challenge-settings">
-    <div class="bg-white rounded-[40px] border border-slate-200 shadow-xl shadow-slate-200/40 p-8 lg:p-12">
-      <div class="flex items-center gap-4 mb-8">
-        <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        </div>
-        <h2 class="text-2xl font-black text-slate-900">챌린지 설정</h2>
-      </div>
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">인증 유형</label>
+            <%= f.select :verification_type, 
+                        Challenge.verification_types.keys.map { |k| [k == 'simple' ? '간편 인증' : k == 'photo' ? '사진 인증' : k == 'url' ? 'URL 인증' : k == 'metric' ? '수치 인증' : '복합 인증', k] },
+                        {},
+                        class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-amber-500 outline-none transition-all appearance-none cursor-pointer" %>
+          </div>
 
-      <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings"), method: :patch, class: "space-y-10" do |f| %>
-        <div class="space-y-6">
           <div class="space-y-3">
-            <label class="text-xs font-black text-slate-400 uppercase tracking-widest pl-2">챌린지 제목</label>
-            <%= f.text_field :title, class: "w-full p-5 bg-slate-50 border-2 border-transparent rounded-[24px] font-bold text-lg focus:bg-white focus:border-indigo-500/20 transition-all outline-none" %>
+            <div class="p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
+              <div>
+                <p class="font-black text-xs text-white">재인증 허용</p>
+                <p class="text-[8px] font-bold text-slate-500 mt-0.5">실패 시 재시도 기회</p>
+              </div>
+              <%= f.check_box :re_verification_allowed, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-indigo-600 transition-colors" %>
+            </div>
+
+            <div class="p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
+              <div>
+                <p class="font-black text-xs text-white">인증 승인제</p>
+                <p class="text-[8px] font-bold text-slate-500 mt-0.5">호스트가 직접 승인</p>
+              </div>
+              <%= f.check_box :mission_requires_host_approval, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-amber-500 transition-colors" %>
+            </div>
           </div>
-          <!-- (Rest of web UI preserved) -->
-          <button type="submit" class="px-8 py-5 bg-indigo-600 text-white rounded-[24px] font-black text-lg">변경사항 저장</button>
-        </div>
+        </section>
       <% end %>
+
+      <!-- 05. 참여 조건 -->
+      <section class="space-y-3 md:space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <span class="text-cyan-400 font-black italic text-xs md:text-sm">05.</span>
+          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">참여 조건</h3>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">공개 여부</label>
+          <%= f.select :is_private,
+                       [['공개 챌린지', false], ['비공개 챌린지', true]],
+                       {},
+                       class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer" %>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">승인 방식</label>
+          <%= f.select :admission_type,
+                       [['선착순', 'first_come'], ['승인제', 'approval']],
+                       {},
+                       class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-cyan-500 outline-none transition-all appearance-none cursor-pointer" %>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">최대 인원</label>
+          <%= f.number_field :max_participants, min: 5, step: 5, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-cyan-500 outline-none transition-all",
+                             data: { action: "change->challenge-settings#validateStep" } %>
+        </div>
+      </section>
+
+      <!-- 06. 비용 및 계좌 -->
+      <section class="space-y-3 md:space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <span class="text-rose-400 font-black italic text-xs md:text-sm">06.</span>
+          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">비용 및 계좌</h3>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">비용 방식</label>
+          <%= f.select :cost_type,
+                       [['무료', 'free'], ['참가비', 'fee'], ['보증금', 'deposit']],
+                       {},
+                       class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-rose-500 outline-none transition-all appearance-none cursor-pointer",
+                        data: { challenge_settings_target: "costType", action: "change->challenge-settings#toggleCostInputs" } %>
+        </div>
+
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+           <div class="space-y-2">
+              <label data-challenge-settings-target="amountLabel" class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보증금/참가비 (원)</label>
+              <%= f.number_field :amount, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
+                                 data: { challenge_settings_target: "costInput", action: "change->challenge-settings#validateStep" } %>
+            </div>
+            <div data-challenge-settings-target="participationFeeContainer" class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">추가 참가비 (원)</label>
+              <%= f.number_field :participation_fee, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
+                                 data: { challenge_settings_target: "participationFeeInput", action: "change->challenge-settings#validateStep" } %>
+            </div>
+         </div>
+
+        <div class="space-y-2">
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">은행명</label>
+          <%= f.text_field :host_bank, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">예금주</label>
+            <%= f.text_field :host_account_holder, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">계좌번호</label>
+            <%= f.text_field :host_account, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all" %>
+          </div>
+        </div>
+      </section>
+
+      <!-- 07. 혜택 설계 -->
+      <section class="space-y-3 md:space-y-4">
+        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+          <span class="text-green-400 font-black italic text-xs md:text-sm">07.</span>
+          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">혜택 설계</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">전액 환급 기준 (%)</label>
+            <%= f.number_field :full_refund_threshold, value: (f.object.full_refund_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+          </div>
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보너스 지급 기준 (%)</label>
+            <%= f.number_field :bonus_threshold, value: (f.object.bonus_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+          </div>
+        </div>
+      </section>
+
+      <!-- Danger Zone -->
+      <section class="mt-6 md:mt-8 p-4 md:p-5 bg-rose-500/5 rounded-xl md:rounded-2xl border border-rose-500/10 flex items-center justify-between">
+        <div>
+          <h3 class="text-xs md:text-sm font-black text-rose-500 italic uppercase">위험 구역</h3>
+        </div>
+        <%= link_to hosted_challenge_path(challenge, source: "prototype"), 
+                    data: { turbo_method: :delete, turbo_confirm: "정말로 이 챌린지를 삭제하시겠습니까?" }, 
+                    class: "inline-flex items-center gap-1.5 px-3 md:px-4 py-2 bg-rose-600/10 text-rose-500 border border-rose-500/20 rounded-lg font-black text-[8px] md:text-[9px] uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all" do %>
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          챌린지 영구 삭제
+        <% end %>
+      </section>
+
+      <!-- Desktop Save Button (Hidden on Mobile for Sticky) -->
+      <div class="hidden md:flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3 pt-5 md:pt-6 border-t border-white/5">
+        <button type="submit" 
+                class="flex-1 py-3.5 md:py-4 bg-indigo-600 text-white rounded-xl md:rounded-2xl font-black text-xs md:text-sm shadow-2xl shadow-indigo-600/40 hover:bg-indigo-500 hover:-translate-y-1 active:scale-95 transition-all cursor-pointer">
+          변경 사항 저장
+        </button>
+        <%= link_to "취소", hosted_challenge_path(challenge, tab: "dashboard", source: "prototype"), 
+                    data: { turbo_frame: "hosted_challenge_tabs" },
+                    class: "px-5 md:px-6 py-3.5 md:py-4 bg-white/5 text-slate-500 rounded-xl md:rounded-2xl font-black text-xs md:text-sm hover:bg-white/10 transition-all uppercase tracking-widest text-center" %>
+      </div>
+
+      <!-- Mobile Floating Sticky Save Button -->
+      <div class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[200] md:hidden animate-slide-up">
+        <div class="app-glass-card p-4 !rounded-[32px] border-white/10 bg-[#16151D]/90 backdrop-blur-3xl shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
+          <button type="submit" 
+                  class="w-full py-4.5 app-fab-gradient text-white rounded-2xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-indigo-600/20">
+            환경 설정 저장하기
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Change Summary & Announcement Modal (Now Inside Controller Scope) -->
+  <div data-challenge-settings-target="modal" class="hidden fixed inset-0 z-[35000] flex items-center justify-center p-4">
+    <div data-action="click->challenge-settings#hideModal" class="absolute inset-0 bg-black/90 backdrop-blur-3xl"></div>
+    
+    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-6 md:p-8 space-y-6 animate-badge-pop bg-[#16151D] flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between">
+        <div class="space-y-1">
+          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none italic">변경 사항 요약</p>
+          <h3 class="text-xl font-black text-white italic">저장하시겠습니까?</h3>
+        </div>
+        <button type="button" data-action="click->challenge-settings#hideModal" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Scrollable Content Section -->
+      <div class="flex-1 overflow-y-auto pr-2 space-y-6 custom-scrollbar">
+        <!-- Changes List -->
+        <div data-challenge-settings-target="summaryContent" class="space-y-3">
+          <!-- Dynamically populated by Stimulus -->
+        </div>
+
+        <!-- Announcement Option -->
+        <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-white">참가자에게 공지</p>
+                <p class="text-[8px] font-bold text-slate-500">설정 변경 소식을 알림으로 전송</p>
+              </div>
+            </div>
+            <label class="relative inline-block w-10 h-6 cursor-pointer">
+              <input type="checkbox" data-challenge-settings-target="announcementCheckbox" data-action="change->challenge-settings#toggleAnnouncementSection" class="peer sr-only">
+              <div class="w-full h-full bg-slate-700 rounded-full peer-checked:bg-emerald-500 transition-colors"></div>
+              <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4"></div>
+            </label>
+          </div>
+
+          <div data-challenge-settings-target="announcementSection" class="hidden space-y-3 animate-slide-down">
+            <div class="space-y-2">
+              <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest pl-1">공지 제목</label>
+              <input type="text" data-challenge-settings-target="announcementTitle" class="w-full p-3 bg-black/40 border border-white/5 rounded-xl text-xs font-bold text-white focus:border-emerald-500 outline-none transition-all">
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest pl-1">공지 내용</label>
+              <textarea data-challenge-settings-target="announcementContent" rows="4" class="w-full p-3 bg-black/40 border border-white/5 rounded-xl text-xs font-medium text-slate-300 focus:border-emerald-500 outline-none transition-all resize-none"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2 pt-2">
+        <button type="button" data-action="click->challenge-settings#hideModal" class="px-6 py-4 rounded-2xl bg-white/5 text-slate-500 font-bold text-xs">취소</button>
+        <button type="button" data-action="click->challenge-settings#submitWithAnnouncement" class="flex-1 py-4 rounded-2xl app-fab-gradient text-white font-black text-sm shadow-xl active:scale-95 transition-all">
+          최종 저장하기
+        </button>
+      </div>
     </div>
   </div>
-<% end %>
+</div>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+</style>

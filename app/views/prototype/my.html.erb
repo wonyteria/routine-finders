@@ -763,7 +763,7 @@
                             navigator.share({ 
                               title: '루틴 파인더스 성취 기록', 
                               text: '<%= ub.badge.name %> 배지를 획득했습니다! 함께 루틴을 만들어봐요.', 
-                              url: window.location.origin + '/prototype/home' 
+                              url: '<%= root_url %>'
                             }).catch(console.error);
                           } else {
                             const btn = this;
