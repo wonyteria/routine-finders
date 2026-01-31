@@ -125,7 +125,7 @@
     <!-- 1. Routine Record Bottom Sheet -->
     <div id="record-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('record-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
         <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
@@ -155,7 +155,7 @@
     <!-- 1-2. Today's Commitment Bottom Sheet -->
     <div id="commitment-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('commitment-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
-      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
         <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 다짐</h3>
         <p class="text-xs font-bold text-rose-400 mb-8 text-center uppercase tracking-widest leading-none">Declare your commitment</p>
@@ -185,7 +185,7 @@
     <!-- 2. FAB Menu Sheet (Simple List Style) -->
     <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div data-action="click->proto-ui#toggleFabMenu" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
-      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
 
         
         <div class="space-y-4">
