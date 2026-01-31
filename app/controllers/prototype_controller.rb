@@ -404,10 +404,6 @@ class PrototypeController < ApplicationController
 
   def live
     @current_club = RoutineClub.official.first
-    # Active Members: Users active in the last 24 hours (Sign in or Update)
-    @active_members = User.where("updated_at > ?", 24.hours.ago).order(updated_at: :desc).limit(30)
-    # Fallback to recently joined if no active users (for very early stage)
-    @active_members = User.order(created_at: :desc).limit(5) if @active_members.empty?
 
     # Collective Data for RUFA Club
     @confirmed_members = @current_club&.members&.where(payment_status: :confirmed) || []
