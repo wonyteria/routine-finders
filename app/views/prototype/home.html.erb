@@ -1,6 +1,6 @@
 <!-- 0. Club Member Welcome Modal (Master Celebration) -->
 <% if @show_club_welcome_modal %>
-  <div id="club-welcome-celebration" class="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl">
+  <div id="club-welcome-celebration" class="fixed inset-0 z-[40000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl">
     <div class="relative w-full max-w-md bg-gradient-to-b from-[#1E1C28] to-[#0C0B12] rounded-[48px] border border-white/10 shadow-[0_0_100px_rgba(79,70,229,0.3)] overflow-hidden animate-badge-pop">
       <!-- Glow Decor -->
       <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600/30 blur-[100px] rounded-full animate-pulse"></div>
@@ -66,9 +66,10 @@
         </div>
 
         <div class="w-full pt-4">
-          <%= button_to mark_welcomed_routine_club_path(@routine_club), method: :post, 
-                        class: "w-full py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black rounded-2xl shadow-2xl shadow-indigo-600/40 hover:scale-[1.02] active:scale-95 transition-all outline-none" do %>
-            시스템 시작하기
+          <%= form_with url: mark_welcomed_routine_club_path(@routine_club), method: :post, class: "w-full" do %>
+            <button type="submit" class="w-full py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black rounded-2xl shadow-2xl shadow-indigo-600/40 hover:scale-[1.02] active:scale-95 transition-all outline-none">
+              시스템 시작하기
+            </button>
           <% end %>
         </div>
       </div>
