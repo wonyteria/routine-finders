@@ -84,7 +84,7 @@ class RoutineClubNotificationService
         notification_type: :announcement,
         title: "📢 [#{club.title}] 새 공지사항",
         content: announcement.title,
-        link: "/prototype/home?tab=club"
+        link: "/?tab=club"
       )
     end
   end

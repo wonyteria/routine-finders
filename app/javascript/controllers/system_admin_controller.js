@@ -12,7 +12,7 @@ export default class extends Controller {
         const content = window.prompt("공지 내용:")
         if (!content) return
 
-        this.performPost('/prototype/admin/broadcast', { title, content })
+        this.performPost('/admin_center/broadcast', { title, content })
     }
 
     updateUserRoleSelect(event) {
@@ -24,7 +24,7 @@ export default class extends Controller {
         const label = select.options[select.selectedIndex].text
 
         if (window.confirm(`${nickname}님의 권한을 '${label}'(으)로 변경하시겠습니까?`)) {
-            this.performPost('/prototype/admin/update_user_role', { user_id: userId, role: newRole }, true)
+            this.performPost('/admin_center/update_user_role', { user_id: userId, role: newRole }, true)
         } else {
             // 취소 시 이전 값으로 복구
             select.value = initialRole

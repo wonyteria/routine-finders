@@ -435,7 +435,7 @@
         document.addEventListener('DOMContentLoaded', () => {
           document.body.classList.add('overflow-hidden');
           // Mark as viewed via a silent request or just assume viewed after this render for prototype
-          fetch('/prototype/mark_badges_viewed', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content } });
+          fetch('/mark_badges_viewed', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content } });
         });
       </script>
 
