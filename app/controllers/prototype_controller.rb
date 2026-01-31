@@ -69,11 +69,10 @@ class PrototypeController < ApplicationController
                        .distinct
                        .limit(100)
 
-    # Calculate Global Average Achievement (Prototype style: average of top 50 active users + some variance)
+    # Calculate Global Average Achievement from actual club member data
     @global_average_progress = Rails.cache.fetch("global_avg_progress_#{Date.current}", expires_in: 30.minutes) do
-      # Roughly estimate based on recent active user logs
-      # In a real app, this would be a more precise query
-      65 + rand(15) # For demo, return a realistic range between 65-80%
+      avg = RoutineClubMember.where(status: :active, payment_status: :confirmed).average(:attendance_rate)
+      avg&.round(1) || 0
     end
 
     @total_active_metes = User.joins(:rufa_activities)
@@ -129,11 +128,8 @@ class PrototypeController < ApplicationController
                      { created_at: :desc }
     end
 
-    # Fill with dummy data if not enough real ones
-    dummies = Challenge.generate_dummy_challenges
-
-    @active_challenges = (challenges_query.order(order_clause).limit(6).to_a + dummies.select { |d| d.mode == "online" }).uniq { |c| c.title }.first(6)
-    @gatherings = (gatherings_query.order(order_clause).limit(6).to_a + dummies.select { |d| d.mode == "offline" }).uniq { |c| c.title }.first(6)
+    @active_challenges = challenges_query.order(order_clause).limit(6).to_a
+    @gatherings = gatherings_query.order(order_clause).limit(6).to_a
   end
 
   def synergy
@@ -339,16 +335,6 @@ class PrototypeController < ApplicationController
   end
 
   def notifications
-    if current_user.notifications.none? && !session[:notifications_cleared]
-      # Create mock notifications for demo purposes
-      current_user.notifications.create!([
-        { notification_type: :announcement, title: "루파님, 환영합니다! 🚀", content: "성장에 진심인 루파님을 위해 '루틴 파인더스'가 준비한 첫 선물을 확인해보세요.", created_at: Time.current },
-        { notification_type: :badge_award, title: "새로운 배지 획득! 🏆", content: "'첫걸음' 배지를 획득하셨습니다. 성취 리포트에서 확인해보세요.", created_at: 2.hours.ago },
-        { notification_type: :reminder, title: "루틴 체크 시간이 얼마 남지 않았어요 ✨", content: "오늘 설정하신 '물 2L 마시기' 루틴, 지금 바로 인증하고 루파들의 응원을 받아보세요.", created_at: 1.day.ago },
-        { notification_type: :approval, title: "챌린지 입성 완료! ✅", content: "'새벽 6시 기상' 챌린지 신청이 승인되었습니다. 멋진 팀원들이 기다리고 있어요!", created_at: 2.days.ago }
-      ])
-    end
-
     @notifications = current_user.notifications.order(created_at: :desc).limit(50)
     # Mark as read concurrently (or just mark all if entering this page)
     current_user.notifications.where(is_read: false).update_all(is_read: true)
@@ -559,15 +545,12 @@ class PrototypeController < ApplicationController
       @club_members = @official_club.members.confirmed.includes(:user).order(attendance_rate: :desc)
       @pending_memberships = @official_club.members.payment_status_pending.includes(:user)
 
-      # Member Stats Calculation (Mocked for speed in prototype but conceptually accurate)
       @member_stats = @club_members.map do |member|
-        # Weekly/Monthly logic would normally involve complex SQL,
-        # but for prototype we use stored rates or calculate simple averages
         {
           member: member,
-          weekly_rate: (member.attendance_rate * (0.8 + rand * 0.4)).clamp(0, 100).round(1), # Mock variation
+          weekly_rate: member.attendance_rate,
           monthly_rate: member.attendance_rate,
-          growth_trend: [ "up", "down", "stable" ].sample
+          growth_trend: nil
         }
       end
       # Announcements
@@ -603,42 +586,16 @@ class PrototypeController < ApplicationController
       @target_end = @target_start.end_of_month
     end
 
-    # Try to find real reports in the calculated range
     @reports = RoutineClubReport.where(
       report_type: @report_type,
       start_date: @target_start
     ).includes(:user).order("achievement_rate DESC")
-
-    # Fallback: Populate with members' current data if no formal reports are archived
-    if @reports.empty?
-      @reports = @official_club.members.confirmed.includes(:user).limit(20).map do |m|
-        # Mocking individual routine rates for the prototype
-        routines = [
-          { name: "아침 기상", rate: rand(70..100) },
-          { name: "독서 30분", rate: rand(40..100) },
-          { name: "운동/산책", rate: rand(30..90) }
-        ].first(rand(2..3))
-
-        OpenStruct.new(
-          user: m.user,
-          achievement_rate: m.attendance_rate || rand(60..100),
-          log_rate: (m.attendance_rate || rand(50..95)) - rand(0..5),
-          identity_title: m.identity_title || "정진하는 멤버",
-          start_date: @target_start,
-          end_date: @target_end,
-          summary: "전체적으로 안정적인 루틴을 유지하고 있습니다.",
-          routines: routines
-        )
-      end.sort_by { |r| -r.achievement_rate }
-    end
   end
 
   def broadcast
     title = params[:title]
     content = params[:content]
 
-    # Mock broadcast: Create notifications for all active users
-    # In a real system, this would be a background job.
     User.active.find_each do |user|
       user.notifications.create!(
         title: "📢 #{title}",
@@ -821,22 +778,6 @@ class PrototypeController < ApplicationController
     end
 
     redirect_to prototype_admin_clubs_path, notice: "유저 정보가 초기화되었습니다. (#{keep_email} 제외)"
-  rescue => e
-    redirect_to prototype_admin_clubs_path, alert: "오류 발생: #{e.message}"
-  end
-
-  def reset_dummy_data
-    ActiveRecord::Base.transaction do
-      # Delete all content but keep users
-      Challenge.destroy_all
-      Gathering.destroy_all if defined?(Gathering)
-      RoutineClubGathering.destroy_all if defined?(RoutineClubGathering)
-      RufaActivity.delete_all if defined?(RufaActivity)
-      Notification.delete_all if defined?(Notification)
-      RoutineClubAnnouncement.destroy_all if defined?(RoutineClubAnnouncement)
-    end
-
-    redirect_to prototype_admin_clubs_path, notice: "더미데이터가 삭제되었습니다."
   rescue => e
     redirect_to prototype_admin_clubs_path, alert: "오류 발생: #{e.message}"
   end

@@ -31,7 +31,6 @@ Rails.application.routes.draw do
   post "prototype/admin/notify_host/:id", to: "prototype#notify_host", as: :prototype_notify_host
   post "prototype/admin/purge_cache", to: "prototype#purge_cache"
   post "prototype/admin/reset_users", to: "prototype#reset_users", as: :prototype_reset_users
-  post "prototype/admin/reset_dummy_data", to: "prototype#reset_dummy_data", as: :prototype_reset_dummy_data
   patch "prototype/admin/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
   # Main Web Application Routes
 
