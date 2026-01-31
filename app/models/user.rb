@@ -76,19 +76,18 @@ class User < ApplicationRecord
     # 이미 멤버십이 있는지 확인하고 없으면 생성
     member = routine_club_members.find_or_initialize_by(routine_club: official_club)
 
-    unless member.persisted?
-      member.update!(
-        status: :active,
-        payment_status: :confirmed,
-        membership_start_date: official_club.start_date,
-        membership_end_date: official_club.end_date,
-        depositor_name: nickname,
-        contact_info: phone_number || "010-0000-0000",
-        goal: "관리자로서 루파 클럽을 운영하고 리딩합니다.",
-        is_moderator: true,
-        paid_amount: 0
-      )
-    end
+    # Admin은 항상 Active Confirmed 상태 유지
+    member.status = :active
+    member.payment_status = :confirmed
+    member.membership_start_date ||= official_club.start_date
+    member.membership_end_date ||= official_club.end_date
+    member.depositor_name ||= nickname
+    member.contact_info ||= (phone_number || "Admin-Contact")
+    member.goal ||= "관리자로서 루파 클럽을 운영하고 리딩합니다."
+    member.is_moderator = true
+    member.paid_amount ||= 0
+
+    member.save! if member.changed?
   end
 
   # Backward compatibility: admin? returns true for both club_admin and super_admin
