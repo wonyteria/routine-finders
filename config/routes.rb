@@ -41,6 +41,9 @@ Rails.application.routes.draw do
   post "admin_center/create_club_announcement", to: "prototype#create_club_announcement", as: :prototype_create_club_announcement
   post "admin_center/confirm_club_payment", to: "prototype#confirm_club_payment", as: :prototype_confirm_club_payment
   post "admin_center/reject_club_payment", to: "prototype#reject_club_payment", as: :prototype_reject_club_payment
+
+
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check
 
@@ -206,6 +209,7 @@ Rails.application.routes.draw do
 
   # Redirect old prototype paths to new main paths for SEO and bookmark stability
   get "prototype/home", to: redirect("/")
+  get "prototype/login", to: redirect("/login")
   get "prototype/explore", to: redirect("/explore")
   get "prototype/synergy", to: redirect("/synergy")
   get "prototype/my", to: redirect("/my")
