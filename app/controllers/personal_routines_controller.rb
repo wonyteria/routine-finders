@@ -29,21 +29,10 @@ class PersonalRoutinesController < ApplicationController
 
     set_activity_data
 
-    # 루파 클럽 공식 생성 (없을 경우)
-    @official_club = RoutineClub.official.first
+    # 루파 클럽 공식 확보 (없을 경우 자동 생성)
+    @official_club = RoutineClub.ensure_official_club
     unless @official_club
-      admin = User.where(role: [ :super_admin, :club_admin ]).order(role: :desc).first || User.first
-      @official_club = RoutineClub.create!(
-        title: "루파 클럽 공식",
-        description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",
-        monthly_fee: 3000,
-        min_duration_months: 3,
-        start_date: Date.current,
-        end_date: Date.current + 1.year,
-        is_official: true,
-        host: admin,
-        category: "건강·운동"
-      )
+      return redirect_to root_path, alert: "루파 클럽 정보를 서버에서 초기화할 수 없습니다."
     end
 
     # 관리자는 자동으로 공식 클럽 멤버로 등록 (레코드가 없을 경우)

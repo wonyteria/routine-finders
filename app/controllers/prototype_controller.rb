@@ -803,7 +803,7 @@ class PrototypeController < ApplicationController
   private
 
   def set_shared_data
-    @official_club = RoutineClub.official.first
+    @official_club = RoutineClub.ensure_official_club
     @new_badges = current_user ? current_user.user_badges.where(is_viewed: false).includes(:badge) : []
   end
 

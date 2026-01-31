@@ -14,7 +14,7 @@ class RoutineClubsController < ApplicationController
   end
 
   def guide
-    @routine_club = RoutineClub.order(created_at: :desc).first
+    @routine_club = RoutineClub.ensure_official_club || RoutineClub.order(created_at: :desc).first
     return redirect_to root_path, alert: "현재 운영 중인 루파 클럽이 없습니다." unless @routine_club
 
     # Determine current member (viewer)

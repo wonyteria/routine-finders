@@ -130,6 +130,28 @@ class RoutineClub < ApplicationRecord
     penalties.count
   end
 
+  def self.ensure_official_club
+    official = self.official.first
+    return official if official
+
+    admin = User.where(role: [ :super_admin, :club_admin ]).order(role: :desc).first || User.first
+    return nil unless admin # 유저가 한 명도 없는 극단적 상황 방어
+
+    # 2026년 1분기 기준 공식 클라이언트 설정
+    self.create!(
+      title: "루파 클럽 공식",
+      description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",
+      monthly_fee: 3000,
+      min_duration_months: 3,
+      start_date: Date.new(2026, 1, 1),
+      end_date: Date.new(2026, 3, 31),
+      is_official: true,
+      host: admin,
+      category: "건강·운동",
+      status: :active
+    )
+  end
+
   private
 
   def end_date_after_start_date
