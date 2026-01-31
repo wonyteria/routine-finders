@@ -92,7 +92,7 @@
       <% @monthly_rankings.take(10).each_with_index do |ranking, index| %>
         <% user = ranking[:user] %>
         <% score = ranking[:score] %>
-        <div class="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors <%= index < 3 ? 'bg-indigo-500/5' : '' %>">
+        <%= link_to prototype_user_card_path(user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors #{index < 3 ? 'bg-indigo-500/5' : ''}" do %>
           <div class="flex items-center gap-3">
             <div class="w-8 text-center">
               <% if index == 0 %>
@@ -124,7 +124,7 @@
             <p class="text-base font-black <%= index < 3 ? 'text-indigo-400' : 'text-white' %> tabular-nums"><%= score.round(1) %>P</p>
             <p class="text-[9px] font-bold text-slate-600">이번 달</p>
           </div>
-        </div>
+        <% end %>
       <% end %>
       
       <!-- My Rank & View All Actions -->
@@ -236,7 +236,7 @@
         <div class="app-glass-card p-5 bg-white/[0.02] border-white/5 group relative transition-all active:scale-[0.99]">
           <!-- Header: User & Meta -->
           <div class="flex items-center justify-between mb-4">
-            <%= link_to user_profile_path(activity.user), class: "flex items-center gap-2.5" do %>
+            <%= link_to prototype_user_card_path(activity.user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center gap-2.5" do %>
               <div class="w-7 h-7 rounded-lg overflow-hidden border border-white/10 shrink-0">
                 <img src="<%= activity.user.profile_image %>" class="w-full h-full object-cover">
               </div>
@@ -305,4 +305,7 @@
       <% end %>
     </div>
   </section>
+  
+  <!-- User Profile Modal Frame -->
+  <turbo-frame id="user-profile-modal-frame"></turbo-frame>
 </div>

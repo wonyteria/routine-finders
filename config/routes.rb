@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   patch "update_goals_main", to: "prototype#update_goals", as: :prototype_update_goals
   patch "update_profile_main", to: "prototype#update_profile", as: :prototype_update_profile
   get "lecture_intro", to: "prototype#lecture_intro", as: :prototype_lecture_intro
+  get "user_card/:id", to: "prototype#user_profile", as: :prototype_user_card
 
   # Admin & Management (Formerly Prototype Admin)
   get "admin_center", to: "prototype#admin_dashboard", as: :prototype_admin_dashboard

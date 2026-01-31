@@ -428,6 +428,31 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def user_profile
+    @target_user = User.find(params[:id])
+    @achievements = @target_user.user_badges.includes(:badge).order(created_at: :desc).limit(6)
+    @routines = @target_user.personal_routines.order(created_at: :desc).limit(4)
+
+    # Simple Weekly Stats for Card
+    start_of_week = Date.current.beginning_of_week
+    days_passed = [ (Date.current - start_of_week).to_i + 1, 7 ].min
+
+    @weekly_data = []
+    (0...days_passed).each do |i|
+      date = start_of_week + i.days
+      routines = @target_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      total = routines.count
+      completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
+      @weekly_data << (total.positive? ? ((completed.to_f / total) * 100).round : 0)
+    end
+
+    @weekly_completion = @weekly_data.any? ? (@weekly_data.sum.to_f / @weekly_data.size).round : 0
+
+    render layout: false
+  rescue ActiveRecord::RecordNotFound
+    render plain: "User not found", status: 404
+  end
+
   def lecture_intro
     @hide_nav = true
     @is_club_member = current_user&.is_rufa_club_member?

@@ -1,0 +1,73 @@
+<turbo-frame id="user-profile-modal-frame">
+  <div class="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div onclick="this.parentElement.remove()"
+         class="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in cursor-pointer"></div>
+    
+    <!-- Modal Card -->
+    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 flex flex-col items-center text-center space-y-6 animate-slide-up bg-[#16151D] shadow-2xl shadow-indigo-500/10" onclick="event.stopPropagation()">
+      <!-- Close Button -->
+      <button onclick="this.closest('turbo-frame').innerHTML = ''" 
+              class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <!-- Profile Header -->
+      <div class="relative">
+        <div class="w-24 h-24 rounded-[32px] border-4 border-indigo-500 overflow-hidden shadow-2xl relative z-10">
+          <img src="<%= @target_user.profile_image %>" class="w-full h-full object-cover">
+        </div>
+        <div class="absolute -bottom-2 -right-2 bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-black border-4 border-[#0C0B12] z-20">
+          <%= @target_user.level %>
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        <h4 class="text-2xl font-black text-white"><%= @target_user.nickname %></h4>
+        <p class="text-[11px] font-bold text-indigo-400 max-w-[200px] mx-auto line-clamp-2">
+           <%= @target_user.introduction.presence || "아직 자기소개가 없습니다." %>
+        </p>
+      </div>
+
+      <div class="h-px w-full bg-white/5"></div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 gap-3 w-full">
+         <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex flex-col items-center justify-center">
+            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">이번 주 달성률</p>
+            <p class="text-xl font-black text-emerald-400"><%= @weekly_completion %>%</p>
+         </div>
+         <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex flex-col items-center justify-center">
+            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">실천 중인 루틴</p>
+            <p class="text-xl font-black text-white"><%= @target_user.personal_routines.count %>개</p>
+         </div>
+      </div>
+
+      <!-- Routine List -->
+      <div class="w-full space-y-2">
+         <p class="text-[9px] font-bold text-slate-500 uppercase text-left pl-1 tracking-widest">주요 루틴 (Main Routines)</p>
+         <div class="space-y-2">
+           <% if @routines.any? %>
+             <% @routines.each do |routine| %>
+               <div class="flex items-center gap-3 p-3 bg-white/[0.03] border border-white/5 rounded-xl">
+                 <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-lg shrink-0">
+                   <%= routine.icon %>
+                 </div>
+                 <div class="flex-1 min-w-0 text-left">
+                   <p class="text-xs font-bold text-slate-200 truncate"><%= routine.title %></p>
+                   <p class="text-[9px] font-medium text-slate-500 truncate">
+                     <%= routine.category.presence || "ETC" %> • <%= routine.days.present? ? "주 #{routine.days.count}회" : "매일" %>
+                   </p>
+                 </div>
+               </div>
+             <% end %>
+           <% else %>
+             <div class="text-center py-4 text-[10px] text-slate-500 italic">등록된 루틴이 없습니다</div>
+           <% end %>
+         </div>
+      </div>
+
+
+    </div>
+  </div>
+</turbo-frame>
