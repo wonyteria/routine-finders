@@ -161,3 +161,15 @@ select option:checked {
   background-color: #7C4DFF;
   color: #FFFFFF;
 }
+
+/* Modal bottom padding to prevent content from being hidden by fixed bottom nav */
+.modal-content-safe {
+  padding-bottom: 100px;
+}
+
+/* For mobile devices with bottom navigation */
+@media (max-width: 1024px) {
+  .modal-content-safe {
+    padding-bottom: 120px;
+  }
+}
