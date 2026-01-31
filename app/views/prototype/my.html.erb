@@ -228,84 +228,84 @@
     </div>
   </section>
 
-  <!-- 3. Identity Wallet -->
+  <!-- 3. Badge Collection (Premium Redesign) -->
   <section class="space-y-4">
-    <div class="px-2">
+    <div class="flex justify-between items-end px-2">
       <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">배지 보관함</h3>
+      <span class="text-[10px] font-bold text-indigo-400"><%= @achievements.count %>개 보유 중</span>
     </div>
     
-    <div class="app-glass-card p-6 overflow-hidden">
-      <!-- 1. Earned Badges Header & Scroll -->
-      <div class="space-y-4">
-        <div class="flex items-center gap-3 px-1">
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none shrink-0">획득한 배지</p>
-          <button onclick="const m = document.getElementById('milestones-area'); 
-                           const t = this.querySelector('span');
-                           if (!m) return;
-                           m.classList.toggle('hidden');
-                           t.innerText = m.classList.contains('hidden') ? '다음 배지 보기' : '접기'; 
-                           this.classList.toggle('text-indigo-400');"
-                  class="text-[10px] font-black text-slate-600 hover:text-indigo-400 transition-colors flex items-center gap-1 active:scale-95 bg-white/5 px-2 py-1 rounded-full border border-white/10">
-            <span>다음 배지 보기</span>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-        </div>
-        
-        <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-          <% if @achievements.any? %>
-            <% @achievements.each_with_index do |ub, i| %>
-              <button data-action="click->proto-ui#openModal" 
-                      data-modal-id="badge-detail-<%= i %>"
-                      onclick="document.getElementById('badge-detail-<%= i %>').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
-                      class="shrink-0 w-24 h-24 app-glass-card p-3 flex flex-col justify-between border-indigo-500/20 bg-indigo-500/5 overflow-hidden relative group text-left active:scale-95 transition-all cursor-pointer">
-                <span class="text-3xl relative z-10"><%= ub.badge.icon_path.presence || "🏆" %></span>
-                <div class="space-y-0.5 relative z-10">
-                  <p class="text-[9px] font-black text-white truncate"><%= ub.badge.name %></p>
-                  <p class="text-[8px] font-bold text-indigo-400 capitalize"><%= ub.badge.level %></p>
-                </div>
-                <div class="absolute -right-2 -bottom-2 w-12 h-12 bg-indigo-500/10 rounded-full blur-xl group-hover:bg-indigo-500/20 transition-colors"></div>
-              </button>
-            <% end %>
-          <% else %>
-            <div class="w-full py-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
-              <p class="text-xs font-bold text-slate-600">첫 배지에 도전해보세요!</p>
+    <div class="app-glass-card p-6 overflow-hidden relative">
+      <!-- Background Decor -->
+      <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-500/5 blur-3xl rounded-full pointer-events-none"></div>
+
+      <!-- 1. Collection Grid -->
+      <div class="grid grid-cols-3 gap-3 relative z-10">
+        <% if @achievements.any? %>
+          <% @achievements.each_with_index do |ub, i| %>
+            <button onclick="document.getElementById('badge-detail-<%= i %>').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
+                    class="aspect-square rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 hover:border-indigo-500/40 hover:from-indigo-500/20 hover:to-purple-500/20 transition-all group relative flex flex-col items-center justify-center gap-2 overflow-hidden active:scale-95 ring-1 ring-inset ring-white/5">
+              <!-- Glow -->
+              <div class="absolute inset-0 bg-indigo-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              
+              <span class="text-3xl relative z-10 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] group-hover:scale-110 transition-transform duration-500"><%= ub.badge.icon_path.presence || "🏆" %></span>
+              <div class="relative z-10 text-center px-1 w-full">
+                <p class="text-[9px] font-bold text-slate-300 truncate group-hover:text-white transition-colors"><%= ub.badge.name %></p>
+              </div>
+              
+              <!-- Level Tag (Absolute) -->
+              <div class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
+            </button>
+          <% end %>
+          
+          <!-- Empty Slots Filler (Visual Motivation) -->
+          <% (6 - @achievements.count).positive? && [(6 - @achievements.count), 3].min.times do %>
+            <div class="aspect-square rounded-2xl bg-black/20 border border-white/5 flex items-center justify-center opacity-30">
+              <div class="w-8 h-8 rounded-full border border-dashed border-white/20"></div>
             </div>
           <% end %>
-        </div>
-      </div>
-
-      <!-- 2. Hidden Next Milestones (Progress Visualization) -->
-      <div id="milestones-area" class="hidden mt-8 pt-8 border-t border-white/5 space-y-4 animate-slide-down">
-        <% if @milestones&.any? %>
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none px-1">달성 예정 목표</p>
-          <div class="space-y-3">
-            <% @milestones.each do |m| %>
-              <% progress = (m[:current].to_f / m[:target] * 100).clamp(0, 100).round %>
-              <div class="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-3">
-                <div class="flex justify-between items-center">
-                  <div class="flex items-center gap-3">
-                    <span class="text-xl shrink-0"><%= m[:icon] %></span>
-                    <div class="min-w-0">
-                      <p class="text-[11px] font-black text-white truncate"><%= m[:name] %></p>
-                      <p class="text-[9px] font-bold text-slate-500">남은 목표: <%= [m[:target] - m[:current], 0].max %><%= m[:unit] %></p>
-                    </div>
-                  </div>
-                  <span class="text-[10px] font-black text-indigo-400"><%= progress %>%</span>
-                </div>
-                <!-- Progress Bar -->
-                <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-1000" style="width: <%= progress %>%"></div>
-                </div>
-              </div>
-            <% end %>
-          </div>
         <% else %>
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none px-1">달성 예정 목표</p>
-          <div class="py-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
-            <p class="text-xs font-bold text-slate-600">축하합니다! 모든 핵심 배지를 마스터하셨습니다.</p>
+          <!-- Empty State (No badges yet) -->
+          <div class="col-span-3 py-10 flex flex-col items-center justify-center text-center gap-3 bg-white/[0.02] rounded-2xl border border-dashed border-white/10">
+             <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-2xl grayscale opacity-50">🏆</div>
+             <div class="space-y-1">
+               <p class="text-xs font-bold text-slate-400">아직 획득한 배지가 없습니다.</p>
+               <p class="text-[10px] text-slate-600">루틴을 완료하고 첫 배지를 획득해보세요!</p>
+             </div>
           </div>
         <% end %>
       </div>
+
+      <!-- 2. Next Milestones (Progress List) -->
+      <% if @milestones&.any? %>
+        <div class="mt-8 pt-6 border-t border-white/5 space-y-4">
+          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">도전 과제 (Next Goals)</p>
+          <div class="space-y-3">
+             <% @milestones.first(3).each do |m| %>
+                <% progress = (m[:current].to_f / m[:target] * 100).clamp(0, 100).round %>
+                <div class="p-4 bg-black/20 rounded-2xl border border-white/5 flex gap-4 items-center group hover:bg-white/[0.02] transition-colors">
+                  <!-- Lock Icon Wrapper -->
+                  <div class="relative w-10 h-10 shrink-0 flex items-center justify-center">
+                     <span class="text-2xl grayscale opacity-50 group-hover:scale-110 transition-transform mix-blend-luminosity"><%= m[:icon] %></span>
+                     <div class="absolute -right-1 -bottom-1 w-4 h-4 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-[8px]">🔒</div>
+                  </div>
+                  
+                  <div class="flex-1 min-w-0 space-y-2">
+                    <div class="flex justify-between items-baseline">
+                      <p class="text-[11px] font-bold text-slate-300 truncate"><%= m[:name] %></p>
+                      <span class="text-[10px] font-black text-indigo-400"><%= progress %>%</span>
+                    </div>
+                    <!-- Progress Bar -->
+                     <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-500 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]" style="width: <%= progress %>%"></div>
+                     </div>
+                     <p class="text-[9px] font-medium text-slate-600 text-right">목표까지 <%= m[:target] - m[:current] %><%= m[:unit] %> 남음</p>
+                  </div>
+                </div>
+             <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </section>
 
