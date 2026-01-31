@@ -49,6 +49,33 @@ class User < ApplicationRecord
   enum :role, { user: 0, club_admin: 1, super_admin: 2 }
   scope :admin, -> { where(role: [ :club_admin, :super_admin ]) }
 
+  after_save :ensure_rufa_club_membership_for_admin
+
+  def ensure_rufa_club_membership_for_admin
+    return unless admin?
+
+    # 공식 클럽 찾기 (없으면 무시)
+    official_club = RoutineClub.official.first || RoutineClub.order(created_at: :desc).first
+    return unless official_club
+
+    # 이미 멤버십이 있는지 확인하고 없으면 생성
+    member = routine_club_members.find_or_initialize_by(routine_club: official_club)
+
+    unless member.persisted?
+      member.update!(
+        status: :active,
+        payment_status: :confirmed,
+        membership_start_date: official_club.start_date,
+        membership_end_date: official_club.end_date,
+        depositor_name: nickname,
+        contact_info: phone_number || "010-0000-0000",
+        goal: "관리자로서 루파 클럽을 운영하고 리딩합니다.",
+        is_moderator: true,
+        paid_amount: 0
+      )
+    end
+  end
+
   # Backward compatibility: admin? returns true for both club_admin and super_admin
   def admin?
     club_admin? || super_admin?

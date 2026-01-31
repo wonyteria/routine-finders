@@ -19,7 +19,7 @@ class RoutineClubMember < ApplicationRecord
   validates :user_id, uniqueness: { scope: :routine_club_id }
   validates :depositor_name, presence: true, if: -> { payment_status_pending? }
   validates :contact_info, presence: true, if: -> { payment_status_pending? }
-  validates :paid_amount, presence: true, numericality: { greater_than: 0 }
+  validates :paid_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   # Callbacks
   before_create :set_membership_dates
