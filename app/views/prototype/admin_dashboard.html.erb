@@ -67,22 +67,27 @@
       <section class="px-6 space-y-4">
         <h2 class="text-xs font-black text-slate-500 uppercase tracking-widest pl-1">빠른 실행</h2>
         <div class="grid grid-cols-2 gap-3">
-          <button data-action="system-admin#broadcast" class="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex flex-col items-center gap-2 group active:scale-95 transition-all">
-            <span class="text-2xl group-hover:scale-110 transition-transform">🚨</span>
-            <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest text-center">전체 공지 발송</span>
-          </button>
-          <%= link_to prototype_admin_clubs_path, class: "p-5 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex flex-col items-center gap-2 group active:scale-95 transition-all text-center" do %>
+          <% if current_user.super_admin? %>
+            <button data-action="system-admin#broadcast" class="p-5 rounded-2xl bg-rose-500/5 border border-rose-500/10 flex flex-col items-center gap-2 group active:scale-95 transition-all">
+              <span class="text-2xl group-hover:scale-110 transition-transform">🚨</span>
+              <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest text-center">전체 공지 발송</span>
+            </button>
+          <% end %>
+          
+          <%= link_to prototype_admin_clubs_path, class: "p-5 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex flex-col items-center gap-2 group active:scale-95 transition-all text-center #{current_user.super_admin? ? '' : 'col-span-2'}" do %>
             <span class="text-2xl group-hover:scale-110 transition-transform">🔱</span>
             <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">루파 클럽 관리</span>
           <% end %>
 
           <!-- DANGER ZONE: Reset Users -->
-          <%= button_to prototype_reset_users_path, 
-                        method: :post, 
-                        data: { turbo_confirm: "jorden00@naver.com 계정을 제외한 모든 회원이 삭제됩니다. 정말 진행할까요?" },
-                        class: "p-5 rounded-2xl bg-red-600/10 border border-red-600 flex flex-col items-center gap-2 group active:scale-95 transition-all text-center w-full" do %>
-            <span class="text-2xl group-hover:scale-110 transition-transform">💀</span>
-            <span class="text-[10px] font-black text-red-500 uppercase tracking-widest">전체 유저 초기화</span>
+          <% if current_user.super_admin? %>
+            <%= button_to prototype_reset_users_path, 
+                          method: :post, 
+                          data: { turbo_confirm: "jorden00@naver.com 계정을 제외한 모든 회원이 삭제됩니다. 정말 진행할까요?" },
+                          class: "p-5 rounded-2xl bg-red-600/10 border border-red-600 flex flex-col items-center gap-2 group active:scale-95 transition-all text-center w-full col-span-2" do %>
+              <span class="text-2xl group-hover:scale-110 transition-transform">💀</span>
+              <span class="text-[10px] font-black text-red-500 uppercase tracking-widest">전체 유저 초기화</span>
+            <% end %>
           <% end %>
         </div>
       </section>
@@ -155,27 +160,35 @@
                       </div>
                     </td>
                     <td class="px-4 py-4 text-center">
-                      <select data-action="change->system-admin#updateUserRoleSelect"
-                              data-user-id="<%= user.id %>"
-                              data-nickname="<%= user.nickname %>"
-                              data-initial-value="<%= user.role %>"
-                              class="w-24 bg-black/40 border border-white/10 rounded-xl px-2 py-2 text-[10px] font-black text-white focus:border-indigo-500 outline-none cursor-pointer appearance-none text-center">
-                        <% [["user", "일반 사용자"], ["club_admin", "운영 관리자"], ["super_admin", "마스터 권한"]].each do |role, label| %>
-                          <option value="<%= role %>" <%= 'selected' if user.role == role %> class="bg-[#1A1921]"><%= label %></option>
-                        <% end %>
-                      </select>
+                      <% if current_user.super_admin? %>
+                        <select data-action="change->system-admin#updateUserRoleSelect"
+                                data-user-id="<%= user.id %>"
+                                data-nickname="<%= user.nickname %>"
+                                data-initial-value="<%= user.role %>"
+                                class="w-24 bg-black/40 border border-white/10 rounded-xl px-2 py-2 text-[10px] font-black text-white focus:border-indigo-500 outline-none cursor-pointer appearance-none text-center">
+                          <% [["user", "일반 사용자"], ["club_admin", "루파 클럽 관리자"], ["super_admin", "마스터 권한"]].each do |role, label| %>
+                            <option value="<%= role %>" <%= 'selected' if user.role == role %> class="bg-[#1A1921]"><%= label %></option>
+                          <% end %>
+                        </select>
+                      <% else %>
+                        <span class="text-[10px] font-medium text-slate-400"><%= user.role %></span>
+                      <% end %>
                     </td>
                     <td class="px-4 py-4 text-right">
                       <div class="flex flex-col items-end gap-1">
-                        <select data-action="change->system-admin#updateUserStatusSelect"
-                                data-user-id="<%= user.id %>"
-                                data-nickname="<%= user.nickname %>"
-                                data-initial-value="<%= user.active_status %>"
-                                class="w-24 bg-black/40 border border-white/10 rounded-xl px-2 py-2 text-[10px] font-black text-white focus:border-indigo-500 outline-none cursor-pointer appearance-none text-center">
-                          <% [["active", "이용 중"], ["suspended", "정지"], ["withdrawn", "탈퇴"]].each do |status, label| %>
-                            <option value="<%= status %>" <%= 'selected' if user.active_status == status %> class="bg-[#1A1921]"><%= label %></option>
-                          <% end %>
-                        </select>
+                        <% if current_user.super_admin? %>
+                          <select data-action="change->system-admin#updateUserStatusSelect"
+                                  data-user-id="<%= user.id %>"
+                                  data-nickname="<%= user.nickname %>"
+                                  data-initial-value="<%= user.active_status %>"
+                                  class="w-24 bg-black/40 border border-white/10 rounded-xl px-2 py-2 text-[10px] font-black text-white focus:border-indigo-500 outline-none cursor-pointer appearance-none text-center">
+                            <% [["active", "이용 중"], ["suspended", "정지"], ["withdrawn", "탈퇴"]].each do |status, label| %>
+                              <option value="<%= status %>" <%= 'selected' if user.active_status == status %> class="bg-[#1A1921]"><%= label %></option>
+                            <% end %>
+                          </select>
+                        <% else %>
+                          <span class="px-2 py-1 bg-white/5 rounded-lg text-[10px] text-slate-400"><%= user.active_status %></span>
+                        <% end %>
                       </div>
                     </td>
                   </tr>
@@ -333,13 +346,23 @@
       </section>
 
       <section class="space-y-3">
-        <button data-action="system-admin#purgeCache" class="w-full p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all">
-          <div>
-            <p class="text-xs font-black text-rose-500">시스템 캐시 초기화</p>
-            <p class="text-[9px] font-bold text-slate-600 italic">서버의 모든 캐시 데이터를 삭제합니다.</p>
+        <% if current_user.super_admin? %>
+          <button data-action="system-admin#purgeCache" class="w-full p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all">
+            <div>
+              <p class="text-xs font-black text-rose-500">시스템 캐시 초기화</p>
+              <p class="text-[9px] font-bold text-slate-600 italic">서버의 모든 캐시 데이터를 삭제합니다.</p>
+            </div>
+            <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        <% else %>
+          <div class="p-4 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-between opacity-50 cursor-not-allowed">
+            <div>
+              <p class="text-xs font-black text-slate-500">시스템 캐시 초기화</p>
+              <p class="text-[9px] font-bold text-slate-600 italic">마스터 권한이 필요합니다.</p>
+            </div>
+            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
           </div>
-          <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-        </button>
+        <% end %>
       </section>
     </div>
   </main>

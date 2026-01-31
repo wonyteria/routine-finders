@@ -5,7 +5,8 @@ class PrototypeController < ApplicationController
   layout "prototype"
   before_action :set_shared_data
   before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports ]
-  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :broadcast, :update_user_role, :update_user_status, :approve_challenge, :purge_cache ]
+  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports ]
+  before_action :require_super_admin, only: [ :broadcast, :update_user_role, :update_user_status, :approve_challenge, :purge_cache, :reset_users ]
   before_action :require_can_create_challenge, only: [ :challenge_builder ]
   before_action :require_can_create_gathering, only: [ :gathering_builder ]
 
