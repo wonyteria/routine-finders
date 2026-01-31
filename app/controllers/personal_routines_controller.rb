@@ -197,7 +197,7 @@ class PersonalRoutinesController < ApplicationController
       respond_to do |format|
         format.html do
           if params[:source] == "prototype"
-            redirect_to prototype_home_path, notice: "새로운 루틴이 추가되었습니다!"
+            redirect_to prototype_routines_path, notice: "새로운 루틴이 추가되었습니다!"
           else
             redirect_to personal_routines_path(tab: "personal"), notice: "Personal routine was successfully created."
           end
@@ -215,10 +215,23 @@ class PersonalRoutinesController < ApplicationController
   end
 
   def update
+    if params[:personal_routine] && params[:personal_routine][:days].is_a?(String)
+      begin
+        params[:personal_routine][:days] = JSON.parse(params[:personal_routine][:days]).map(&:to_s)
+      rescue JSON::ParserError
+      end
+    end
+
     if @routine.update(routine_params)
       respond_to do |format|
         set_recommended_routines
-        format.html { redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 수정되었습니다!" }
+        format.html do
+          if params[:source] == "prototype"
+            redirect_to prototype_routines_path, notice: "루틴이 수정되었습니다!"
+          else
+            redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 수정되었습니다!"
+          end
+        end
         format.turbo_stream
       end
     else
@@ -322,7 +335,13 @@ class PersonalRoutinesController < ApplicationController
                                      .order(created_at: :desc)
 
     respond_to do |format|
-      format.html { redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 삭제되었습니다." }
+      format.html do
+        if params[:source] == "prototype"
+          redirect_to prototype_routines_path, notice: "루틴이 삭제되었습니다."
+        else
+          redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), notice: "루틴이 삭제되었습니다."
+        end
+      end
       format.turbo_stream
     end
   end

@@ -378,6 +378,24 @@ class PrototypeController < ApplicationController
     @icons = [ "✨", "🔥", "🏋️", "📚", "🧘", "📝", "💧", "🏃", "🥗", "💡", "⏰", "🎯", "🧠", "💰", "☀️" ]
   end
 
+  def routine_editor
+    @routine = current_user.personal_routines.find(params[:id])
+    @categories = [
+      { key: "HEALTH", label: "건강/운동" },
+      { key: "LIFE", label: "생활/일기" },
+      { key: "MIND", label: "마음챙김" },
+      { key: "HOBBY", label: "취미/여가" },
+      { key: "STUDY", label: "학습/성장" },
+      { key: "MONEY", label: "자산/금융" }
+    ]
+    @icons = [ "✨", "🔥", "🏋️", "📚", "🧘", "📝", "💧", "🏃", "🥗", "💡", "⏰", "🎯", "🧠", "💰", "☀️" ]
+  end
+
+  def routines
+    @routines = current_user&.personal_routines || []
+    render layout: "prototype"
+  end
+
   def live
     @current_club = RoutineClub.official.first
     @active_members = User.order("RANDOM()").limit(22) # Active in the orbit

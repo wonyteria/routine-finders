@@ -46,4 +46,4 @@ jobs:
 
       - name: List All Admins
         run: |
-          bundle exec kamal app exec --reuse "bin/rails admin:list_super_admins"
+          bundle exec kamal app exec --reuse "bin/rails admin:list_admins"

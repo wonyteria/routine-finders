@@ -300,6 +300,7 @@
         <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">오늘의 루틴</h3>
         <span class="text-[10px] font-bold text-slate-600 bg-white/5 px-2 py-0.5 rounded-full"><%= Date.current.strftime("%m월 %d일") %></span>
       </div>
+      <%= link_to "관리", prototype_routines_path, class: "text-[10px] font-black text-indigo-400 hover:text-white transition-colors" %>
       
       <%# 아이템 관리 버튼 (항상 노출하도록 수정) %>
       <div class="flex items-center gap-1.5">

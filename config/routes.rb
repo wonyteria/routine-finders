@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   post "prototype/notifications/clear", to: "prototype#clear_notifications"
   post "prototype/record", to: "prototype#record"
   get "prototype/routine_builder", to: "prototype#routine_builder"
+  get "prototype/routine_editor/:id", to: "prototype#routine_editor", as: :prototype_routine_editor
+  get "prototype/routines", to: "prototype#routines"
   get "prototype/live", to: "prototype#live"
   get "prototype/hub", to: "prototype#hub"
   get "prototype/challenge_builder", to: "prototype#challenge_builder"

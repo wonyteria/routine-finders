@@ -1,0 +1,294 @@
+<div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none" data-controller="routine-wizard">
+  <style>
+    /* Ultra-clear Selection Effects from Routine Builder */
+    .premium-selection {
+      border-color: #818cf8 !important;
+      background: rgba(99, 102, 241, 0.25) !important;
+      box-shadow: 0 0 25px rgba(99, 102, 241, 0.6), inset 0 0 10px rgba(99, 102, 241, 0.4) !important;
+      transform: scale(1.1);
+    }
+    .check-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 22px;
+      height: 22px;
+      background: #818cf8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.8);
+      z-index: 20;
+    }
+    .unselected-opt {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      filter: grayscale(0.5);
+      opacity: 0.6;
+    }
+    .selected-cat {
+      background: #FFFFFF !important;
+      color: #0C0B12 !important;
+      border: none !important;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4) !important;
+    }
+    .step-section { 
+      transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1); 
+    }
+    @keyframes check-pop {
+      0% { transform: scale(0); }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .animate-check { animation: check-pop 0.3s ease-out forwards; }
+  </style>
+
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-2 px-6 shrink-0 z-20">
+    <button id="prevBtn" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <div class="flex gap-2 h-1.5 px-4 flex-1 max-w-[140px] justify-center">
+      <% 4.times do |i| %>
+        <div class="step-indicator h-full rounded-full transition-all duration-700 ease-out" style="background: rgba(255,255,255,0.05); width: 8px;"></div>
+      <% end %>
+    </div>
+    <div class="w-10"></div>
+  </header>
+
+  <%= form_with model: @routine, url: personal_routine_path(@routine), method: :patch, data: { turbo: false }, class: "flex-1 flex flex-col px-6 min-h-0 relative" do |f| %>
+    <%= hidden_field_tag :source, 'prototype' %>
+    <%= f.hidden_field :icon, id: "routine_icon_hidden", value: @routine.icon || "✨" %>
+    <%= f.hidden_field :category, id: "routine_category_hidden", value: @routine.category || "LIFE" %>
+    <%= f.hidden_field :days, id: "routine_days_hidden", value: (@routine.days || []).to_json %>
+
+    <div class="flex-1 min-h-0 py-4 flex flex-col relative z-10">
+      
+      <!-- STEP 1: Title & Icon -->
+      <section id="step-0" class="step-section flex-1 flex flex-col gap-4">
+        <div class="space-y-1">
+          <h2 class="text-xl font-black text-white tracking-tight">루틴을 어떻게 <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">수정</span>할까요?</h2>
+        </div>
+
+        <div class="space-y-4">
+          <div class="relative bg-white/5 rounded-xl p-0.5 border border-white/10 focus-within:border-indigo-500 transition-all">
+            <%= f.text_field :title, id: "routine_title_input", placeholder: "습관 이름", autocomplete: "off",
+                            class: "w-full bg-transparent border-none py-3 text-base font-bold text-white focus:ring-0" %>
+          </div>
+
+          <div class="space-y-2 shrink-0">
+            <p class="text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] pl-1">Choose Persona Icon</p>
+            <div class="grid grid-cols-5 gap-2.5">
+              <% @icons.each do |icon| %>
+                <button type="button" data-icon="<%= icon %>" 
+                        class="icon-opt relative aspect-square rounded-xl flex items-center justify-center text-2xl transition-all duration-300 active:scale-95 <%= icon == @routine.icon ? 'premium-selection' : 'unselected-opt' %>">
+                  <span><%= icon %></span>
+                  <% if icon == @routine.icon %>
+                    <div class="check-badge animate-check">
+                      <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                  <% end %>
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2: Category -->
+      <section id="step-1" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight">이 루틴의<br/><span class="text-indigo-500">카테고리</span>는 무엇인가요?</h2>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 pb-8">
+          <% @categories.each do |cat| %>
+            <button type="button" data-category="<%= cat[:key] %>" data-label="<%= cat[:label] %>"
+                    class="cat-opt py-5 rounded-2xl font-black text-sm transition-all duration-300 border active:scale-[0.97] <%= cat[:key] == @routine.category ? 'selected-cat' : 'unselected-opt' %>">
+              #<%= cat[:label] %>
+            </button>
+          <% end %>
+        </div>
+      </section>
+
+      <!-- STEP 3: Days -->
+      <section id="step-2" class="step-section hidden flex-1 flex flex-col gap-6">
+        <div class="space-y-1">
+          <h2 class="text-2xl font-black text-white tracking-tight">언제 이 루틴에<br/><span class="text-indigo-500">몰입</span>할까요?</h2>
+        </div>
+
+        <div class="space-y-6">
+          <div class="flex justify-between gap-1">
+            <% [['월', '1'], ['화', '2'], ['수', '3'], ['목', '4'], ['금', '5'], ['토', '6'], ['일', '0']].each do |label, val| %>
+              <button type="button" data-day="<%= val %>" 
+                      class="day-opt relative flex-1 aspect-[4/5.5] rounded-xl flex flex-col items-center justify-center gap-1 font-black transition-all duration-300 border <%= (@routine.days || []).include?(val) ? 'selected-cat' : 'unselected-opt' %>">
+                <span class="text-[8px] uppercase"><%= label %></span>
+                <span class="text-sm font-bold"><%= ['M','T','W','T','F','S','S'][val.to_i == 0 ? 6 : val.to_i-1] %></span>
+                <% if (@routine.days || []).include?(val) %>
+                   <div class="check-badge w-3 h-3 !-top-1 !-right-1 bg-indigo-500"></div>
+                <% end %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4: Summary -->
+      <section id="step-3" class="step-section hidden flex-1 flex flex-col gap-4">
+        <h2 class="text-2xl font-black text-white text-center">수정 <span class="text-indigo-500">완료!</span></h2>
+        
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <div class="w-full max-w-[280px] bg-[#1A1924] rounded-[40px] border border-indigo-500/30 shadow-2xl overflow-hidden p-8 text-center space-y-6">
+            <div id="sum-icon" class="w-24 h-24 rounded-[32px] bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center text-5xl mx-auto shadow-2xl shadow-indigo-500/20">✨</div>
+            <div class="space-y-1">
+              <p id="sum-cat" class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">#LIFE</p>
+              <h3 id="sum-title" class="text-2xl font-black text-white break-words"></h3>
+            </div>
+            <div class="space-y-1 pt-4 border-t border-white/5">
+              <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Schedule</p>
+              <p id="sum-days" class="text-xs font-black text-indigo-100 italic">월, 화, 수, 목, 금</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Global Footer Button -->
+    <div class="py-4 pb-24 shrink-0 z-20">
+      <button id="nextBtn" type="button" class="group relative w-full py-5 rounded-2xl bg-indigo-500 text-white font-black text-base shadow-xl active:scale-95 transition-all">
+        <span>다음 단계로</span>
+      </button>
+
+      <button id="submitBtn" type="submit" class="hidden w-full py-5 rounded-2xl bg-indigo-500 text-white font-black text-lg shadow-2xl shadow-indigo-500/40 active:scale-95 transition-all">
+        이 루틴을 수정하기
+      </button>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  (function() {
+    const sections = document.querySelectorAll('.step-section');
+    const indicators = document.querySelectorAll('.step-indicator');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    
+    let currentStep = 0;
+
+    const titleInput = document.getElementById('routine_title_input');
+    const iconHidden = document.getElementById('routine_icon_hidden');
+    const catHidden = document.getElementById('routine_category_hidden');
+    const daysHidden = document.getElementById('routine_days_hidden');
+
+    function validate() {
+      if (currentStep === 0) {
+        const isValid = titleInput.value.trim().length > 0;
+        nextBtn.disabled = !isValid;
+        nextBtn.classList.toggle('opacity-30', !isValid);
+        nextBtn.classList.toggle('cursor-not-allowed', !isValid);
+      } else {
+        nextBtn.disabled = false;
+        nextBtn.classList.remove('opacity-30', 'cursor-not-allowed');
+      }
+    }
+
+    function update() {
+      sections.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep));
+      indicators.forEach((ind, i) => {
+        ind.style.background = i <= currentStep ? '#818cf8' : 'rgba(255,255,255,0.05)';
+        ind.style.width = i === currentStep ? '32px' : '8px';
+      });
+
+      if (currentStep === sections.length - 1) {
+        nextBtn.classList.add('hidden');
+        submitBtn.classList.remove('hidden');
+      } else {
+        nextBtn.classList.remove('hidden');
+        submitBtn.classList.add('hidden');
+      }
+
+      document.getElementById('sum-title').textContent = titleInput.value;
+      document.getElementById('sum-icon').textContent = iconHidden.value;
+      
+      const activeCat = document.querySelector('.cat-opt.selected-cat');
+      if (activeCat) {
+        document.getElementById('sum-cat').textContent = '#' + activeCat.dataset.label;
+      }
+
+      const labels = {"1":"월","2":"화","3":"수","4":"목","5":"금","6":"토","0":"일"};
+      const selected = JSON.parse(daysHidden.value || "[]");
+      const sorted = selected.sort((a,b) => (a == "0" ? 7 : a) - (b == "0" ? 7 : b));
+      document.getElementById('sum-days').textContent = selected.length === 7 ? "매일" : sorted.map(d => labels[d]).join(", ");
+      
+      validate();
+    }
+
+    titleInput.addEventListener('input', validate);
+
+    document.querySelectorAll('.icon-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        iconHidden.value = btn.dataset.icon;
+        document.querySelectorAll('.icon-opt').forEach(b => {
+          b.className = "icon-opt relative aspect-square rounded-xl flex items-center justify-center text-2xl transition-all duration-300 active:scale-95 unselected-opt";
+          const badge = b.querySelector('.check-badge');
+          if (badge) badge.remove();
+        });
+        btn.classList.replace('unselected-opt', 'premium-selection');
+        btn.innerHTML += '<div class="check-badge animate-check"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path d="M5 13l4 4L19 7"/></svg></div>';
+        update();
+      });
+    });
+
+    document.querySelectorAll('.cat-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        catHidden.value = btn.dataset.category;
+        document.querySelectorAll('.cat-opt').forEach(b => {
+          b.className = "cat-opt py-5 rounded-2xl font-black text-sm transition-all duration-300 border active:scale-[0.97] unselected-opt";
+        });
+        btn.className = "cat-opt py-5 rounded-2xl font-black text-sm transition-all duration-300 border active:scale-[0.97] selected-cat";
+        update();
+      });
+    });
+
+    document.querySelectorAll('.day-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const isSelected = btn.classList.contains('selected-cat');
+        if (isSelected) {
+          btn.className = "day-opt relative flex-1 aspect-[4/5.5] rounded-xl flex flex-col items-center justify-center gap-1 font-black transition-all duration-300 border unselected-opt";
+          const badge = btn.querySelector('.check-badge');
+          if (badge) badge.remove();
+        } else {
+          btn.className = "day-opt relative flex-1 aspect-[4/5.5] rounded-xl flex flex-col items-center justify-center gap-1 font-black transition-all duration-300 border selected-cat";
+          btn.innerHTML += '<div class="check-badge w-3 h-3 !-top-1 !-right-1 bg-indigo-500"></div>';
+        }
+        
+        const selected = Array.from(document.querySelectorAll('.day-opt.selected-cat')).map(b => b.dataset.day);
+        daysHidden.value = JSON.stringify(selected);
+        update();
+      });
+    });
+
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentStep < sections.length - 1) {
+        currentStep++;
+        update();
+      }
+    });
+
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentStep > 0) {
+        currentStep--;
+        update();
+      } else {
+        window.history.back();
+      }
+    });
+
+    update();
+  })();
+</script>
