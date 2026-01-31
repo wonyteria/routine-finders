@@ -86,45 +86,27 @@
     <% end %>
   </section>
 
-  <!-- 3. Current Focus Orbit -->
-  <main class="flex-1 flex flex-col items-center justify-center text-center space-y-10 px-4">
-    <div class="relative w-80 h-80 flex items-center justify-center">
-      <div class="absolute inset-0 bg-indigo-500/5 blur-[60px] rounded-full animate-pulse"></div>
-      <div class="absolute inset-0 border border-white/5 rounded-full"></div>
-      <div class="absolute inset-10 border border-white/5 rounded-full"></div>
-      
-      <div class="relative z-20 bg-[#07060A]/60 backdrop-blur-md w-32 h-32 rounded-full border border-white/10 flex flex-col items-center justify-center space-y-0.5 shadow-2xl">
-        <h2 class="text-4xl font-black text-white tabular-nums"><%= @active_members.count %></h2>
-        <p class="text-[8px] font-black text-indigo-400 uppercase tracking-[0.2em] leading-none">Focusing Now</p>
-      </div>
-
-      <div class="absolute inset-0 z-0 pointer-events-none">
-        <% @active_members.each_with_index do |user, idx| %>
-          <% 
-             orbit_class = ["animate-orbit-1", "animate-orbit-2", "animate-orbit-3"][idx % 3]
-             is_reverse = (idx % 3 == 1)
-             duration = is_reverse ? 70 : (idx % 3 == 2 ? 60 : 45)
-             initial_angle = idx * (360.0 / @active_members.size)
-             delay = -(initial_angle / 360.0) * duration
-             top_percent = [8, 15, 22, 29, 36, 43][idx % 6]
-          %>
-          <div class="absolute inset-0 <%= orbit_class %>" style="animation-duration: <%= duration %>s; animation-delay: <%= delay %>s">
-            <div class="absolute w-9 h-9 rounded-full border-2 border-white/10 overflow-hidden shadow-xl" style="top: <%= top_percent %>%; left: 50%; transform: translateX(-50%)">
-              <div class="w-full h-full" style="animation: <%= is_reverse ? 'orbit-spin 70s' : 'orbit-spin-reverse 50s' %> linear infinite; animation-delay: <%= delay %>s">
-                <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
-              </div>
-            </div>
-          </div>
-        <% end %>
-      </div>
+  <!-- 3. Current Focus Status (Simple) -->
+  <main class="flex-1 flex flex-col items-center justify-center text-center space-y-12 px-4 py-8">
+    <!-- Center Number -->
+    <div class="relative group cursor-default">
+       <div class="absolute inset-0 bg-indigo-500/20 blur-[100px] rounded-full animate-pulse group-hover:bg-indigo-500/30 transition-all duration-1000"></div>
+       <div class="relative z-10 space-y-4">
+         <h2 class="text-8xl font-black text-white tabular-nums tracking-tighter drop-shadow-2xl">
+           <%= @active_members.count %>
+         </h2>
+         <p class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/20">
+           Focusing Now
+         </p>
+       </div>
     </div>
 
-    <div class="space-y-3 px-6 text-center">
-      <h3 class="text-xl md:text-2xl font-black text-white leading-tight">성장의 즐거움이 모이는 곳</h3>
-      <p class="text-[15px] font-black text-indigo-400">루파 클럽 <%= @current_club&.generation_number %>기 라운지</p>
-      <p class="text-[11px] font-bold text-slate-500 leading-relaxed max-w-[280px] mx-auto mt-4">
-        라운지에서는 함께 몰입하고 배우며 성장합니다.<br/>
-        오늘도 <%= @active_members.count %>명의 멤버들이 라운지에 머물고 있어요.
+    <!-- Message -->
+    <div class="space-y-3 px-6 text-center max-w-sm mx-auto">
+      <h3 class="text-xl md:text-2xl font-black text-white leading-tight">성장의 에너지가 모이는 곳</h3>
+      <p class="text-[11px] font-bold text-slate-400 leading-relaxed">
+        지금 이 순간, 라운지에서는 루파 멤버들이<br/>
+        서로의 열정을 나누며 함께 성장하고 있습니다.
       </p>
     </div>
   </main>
@@ -232,6 +214,9 @@
       <svg class="w-5 h-5 text-slate-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
     </a>
   </section>
+
+  <!-- User Profile Modal Frame -->
+  <turbo-frame id="user-profile-modal-frame"></turbo-frame>
 </div>
 
 <style>
