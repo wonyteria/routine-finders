@@ -635,6 +635,31 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def confirm_club_payment
+    member = RoutineClubMember.find(params[:member_id])
+
+    if member.confirm_payment!
+      redirect_to prototype_club_management_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 승인되었습니다."
+    else
+      redirect_to prototype_club_management_path(tab: "members"), alert: "승인 처리에 실패했습니다."
+    end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to prototype_club_management_path, alert: "멤버를 찾을 수 없습니다."
+  end
+
+  def reject_club_payment
+    member = RoutineClubMember.find(params[:member_id])
+    reason = params[:reason] || "입금 확인 불가"
+
+    if member.reject_payment!(reason)
+      redirect_to prototype_club_management_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 거부되었습니다."
+    else
+      redirect_to prototype_club_management_path(tab: "members"), alert: "거부 처리에 실패했습니다."
+    end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to prototype_club_management_path, alert: "멤버를 찾을 수 없습니다."
+  end
+
   def broadcast
     title = params[:title]
     content = params[:content]

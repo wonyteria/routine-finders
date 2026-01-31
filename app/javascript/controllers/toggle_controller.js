@@ -1,11 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["button", "indicator"]
+    static targets = ["button", "indicator", "content", "icon"]
 
     connect() {
         // Detect initial state from classes
-        this.isOn = this.buttonTarget.classList.contains("justify-end")
+        this.isOn = this.buttonTarget?.classList.contains("justify-end")
     }
 
     switch() {
@@ -23,6 +23,15 @@ export default class extends Controller {
             this.buttonTarget.classList.add("justify-start", "bg-slate-800")
             this.indicatorTarget.classList.remove("bg-white")
             this.indicatorTarget.classList.add("bg-slate-600")
+        }
+    }
+
+    toggle() {
+        if (this.hasContentTarget) {
+            this.contentTarget.classList.toggle("hidden")
+        }
+        if (this.hasIconTarget) {
+            this.iconTarget.classList.toggle("rotate-180")
         }
     }
 }

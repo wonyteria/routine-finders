@@ -106,23 +106,51 @@
             </div>
             <div class="space-y-3">
               <% @pending_memberships.each do |member| %>
-                <div class="app-glass-card p-4 border-amber-500/20 bg-amber-500/5 flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white font-black text-xs">
-                      <%= member.user.nickname[0].upcase %>
-                    </div>
-                    <div>
-                      <p class="text-sm font-black text-white leading-tight"><%= member.user.nickname %></p>
-                      <p class="text-[9px] font-bold text-slate-500 mt-0.5">입금명: <%= member.depositor_name %> · ₩<%= number_with_delimiter(member.paid_amount) %></p>
+                <div class="app-glass-card border-amber-500/20 bg-amber-500/5" data-controller="toggle">
+                  <!-- 기본 정보 (클릭 가능) -->
+                  <div class="p-4 flex items-center justify-between cursor-pointer hover:bg-amber-500/10 transition-all rounded-3xl" data-action="click->toggle#toggle">
+                    <div class="flex items-center gap-3 flex-1">
+                      <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white font-black text-xs">
+                        <%= member.user.nickname[0].upcase %>
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-sm font-black text-white leading-tight"><%= member.user.nickname %></p>
+                        <p class="text-[9px] font-bold text-slate-500 mt-0.5">입금명: <%= member.depositor_name %> · ₩<%= number_with_delimiter(member.paid_amount) %></p>
+                      </div>
+                      <svg class="w-5 h-5 text-slate-500 transition-transform" data-toggle-target="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                      </svg>
                     </div>
                   </div>
-                  <div class="flex gap-2">
-                    <button class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                    </button>
-                    <button class="w-8 h-8 rounded-lg bg-white/5 text-slate-500 flex items-center justify-center">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
+
+                  <!-- 상세 정보 (토글) -->
+                  <div class="hidden px-4 pb-4 space-y-3 border-t border-amber-500/10 pt-3" data-toggle-target="content">
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="space-y-1">
+                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">연락처</p>
+                        <p class="text-xs font-bold text-white"><%= member.contact_info || '-' %></p>
+                      </div>
+                      <div class="space-y-1">
+                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Threads ID</p>
+                        <p class="text-xs font-bold text-white"><%= member.threads_nickname || '-' %></p>
+                      </div>
+                    </div>
+                    <div class="space-y-1">
+                      <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">가입 포부</p>
+                      <p class="text-xs font-medium text-slate-300 leading-relaxed"><%= member.goal || '-' %></p>
+                    </div>
+                    
+                    <!-- 승인/거부 버튼 -->
+                    <div class="flex gap-2 pt-2">
+                      <%= button_to prototype_confirm_club_payment_path(member_id: member.id), method: :post, class: "flex-1 py-2.5 rounded-xl bg-emerald-500 text-white font-black text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2", form: { data: { turbo_confirm: "#{member.user.nickname}님의 입금을 승인하시겠습니까?" } } do %>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>승인</span>
+                      <% end %>
+                      <%= button_to prototype_reject_club_payment_path(member_id: member.id), method: :post, class: "flex-1 py-2.5 rounded-xl bg-rose-500/20 text-rose-400 font-black text-xs hover:bg-rose-500/30 transition-all flex items-center justify-center gap-2", form: { data: { turbo_confirm: "#{member.user.nickname}님의 입금을 거부하시겠습니까?" } } do %>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <span>거부</span>
+                      <% end %>
+                    </div>
                   </div>
                 </div>
               <% end %>
