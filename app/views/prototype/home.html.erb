@@ -610,11 +610,25 @@
             </div>
             <h4 class="text-sm font-black text-white line-clamp-1 mb-1"><%= challenge.title %></h4>
             <div class="flex items-center justify-between mt-4">
+              <%
+                total_days = [(challenge.end_date - challenge.start_date).to_i + 1, 1].max
+                if Date.current < challenge.start_date
+                   status_text = "D-#{ (challenge.start_date - Date.current).to_i }"
+                   progress_percent = 0
+                else
+                   current_day = [(Date.current - challenge.start_date).to_i + 1, total_days].min
+                   status_text = Date.current > challenge.end_date ? "종료됨" : "#{current_day}일차 / #{total_days}일"
+                   participation = current_user.participations.find_by(challenge: challenge)
+                   my_count = participation ? VerificationLog.where(participant: participation).count : 0
+                   target_count = Date.current > challenge.end_date ? total_days : current_day
+                   progress_percent = (my_count.to_f / target_count * 100).to_i rescue 0
+                end
+              %>
               <div class="flex items-center gap-1.5">
                 <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></div>
-                <p class="text-[9px] font-bold text-indigo-400">85% 달성 중</p>
+                <p class="text-[9px] font-bold text-indigo-400"><%= progress_percent %>% 달성 중</p>
               </div>
-              <p class="text-[10px] font-bold text-slate-500">4일차 / 14일</p>
+              <p class="text-[10px] font-bold text-slate-500"><%= status_text %></p>
             </div>
           <% end %>
         <% end %>

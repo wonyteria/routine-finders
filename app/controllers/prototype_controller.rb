@@ -404,15 +404,23 @@ class PrototypeController < ApplicationController
 
   def live
     @current_club = RoutineClub.official.first
-    @active_members = User.order("RANDOM()").limit(22) # Active in the orbit
+    # Active Members: Users active in the last 24 hours (Sign in or Update)
+    @active_members = User.where("updated_at > ?", 24.hours.ago).order(updated_at: :desc).limit(30)
+    # Fallback to recently joined if no active users (for very early stage)
+    @active_members = User.order(created_at: :desc).limit(5) if @active_members.empty?
 
     # Collective Data for RUFA Club
     @confirmed_members = @current_club&.members&.where(payment_status: :confirmed) || []
-    @club_total_members_count = @confirmed_members.count || 42  # Dummy if empty
+    @club_total_members_count = @confirmed_members.count
 
-    # Weekly completion stats (summing members' record counts)
-    @club_weekly_completions = (@confirmed_members.sum { |m| m.user.total_routine_completions % 100 } + 4200) # Base + random offset for proto
-    @club_temperature = 98.6 # High energy
+    # Weekly completion stats (Real Data)
+    # Sum of all verifications in the current week
+    @club_weekly_completions = VerificationLog.where(created_at: Date.current.beginning_of_week..Date.current.end_of_week).count
+
+    # Club Temperature (Real Calculation)
+    # Base 36.5 + 0.5 per verification today
+    today_verifications = VerificationLog.where(created_at: Date.current.all_day).count
+    @club_temperature = (36.5 + (today_verifications * 0.5)).round(1)
 
     @club_announcements = @current_club&.announcements&.order(created_at: :desc)&.limit(2) || []
     @is_club_member = current_user&.is_rufa_club_member?
