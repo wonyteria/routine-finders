@@ -181,8 +181,13 @@ class RoutineClubsController < ApplicationController
     return redirect_to @routine_club, alert: "지금은 정기 모집 기간이 아닙니다. 다음 모집 기간에 신청해주세요."
     end
 
-    if @routine_club.members.exists?(user: current_user)
-      return redirect_to @routine_club, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
+    existing_member = @routine_club.members.find_by(user: current_user)
+    if existing_member
+      if existing_member.status_kicked?
+        return redirect_to @routine_club, alert: "죄송합니다. 이전에 클럽에서 제명된 이력이 있어 가입 신청이 제한됩니다. 문의사항은 관리자에게 연락해 주세요."
+      else
+        return redirect_to @routine_club, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
+      end
     end
 
     join_date = Date.current
@@ -305,6 +310,16 @@ class RoutineClubsController < ApplicationController
     member.kick!(params[:reason])
 
     redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), notice: "#{member.user.nickname}님이 강퇴되었습니다."
+  end
+
+  def warn_member
+    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
+
+    member = @routine_club.members.find(params[:member_id])
+    reason = params[:reason].presence || "호스트가 경고를 부여했습니다."
+    member.warn!(reason)
+
+    redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), notice: "#{member.user.nickname}님에게 경고를 부여했습니다."
   end
 
   def cheer

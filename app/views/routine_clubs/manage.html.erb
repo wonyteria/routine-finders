@@ -237,7 +237,17 @@
                 <div class="<%= card_bg %> border rounded-xl p-3">
                   <div class="flex items-start justify-between gap-2 mb-2">
                     <div class="flex items-center gap-2 flex-1 min-w-0">
-                      <span class="text-sm font-black <%= index < 3 ? 'text-indigo-600' : 'text-slate-400' %> shrink-0">#<%= index + 1 %></span>
+                      <% 
+                          status_icon = case stats[:monthly_rate]
+                          when 95..100 then "👑"
+                          when 90..94 then "🔥"
+                          when 70..89 then "✅"
+                          when 50..69 then "🌿"
+                          when 30..49 then "⚠️"
+                          else "🚨"
+                          end
+                      %>
+                      <span class="text-xl shrink-0"><%= status_icon %></span>
                       <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-black text-slate-500 text-[10px] border border-slate-200 shrink-0">
                         <%= stats[:membership].user.nickname[0].upcase %>
                       </div>
@@ -253,9 +263,15 @@
                     </div>
                   </div>
                   
-                  <div class="flex items-center justify-between text-[10px] font-bold text-slate-600">
+                  <div class="flex items-center justify-between text-[10px] font-bold text-slate-600 mb-3">
                     <span>결석 <%= stats[:monthly_absence] %>일</span>
                     <span class="<%= stats[:membership].penalty_count > 0 ? 'text-orange-600' : 'text-slate-300' %>">경고 <%= stats[:membership].penalty_count %>회</span>
+                  </div>
+
+                  <div class="flex gap-1.5 border-t border-slate-100 pt-3">
+                    <button onclick="openMessageModal(<%= stats[:membership].user.id %>, '<%= stats[:membership].user.nickname %>')" class="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black">메시지</button>
+                    <button onclick="openPenaltyModal(<%= stats[:membership].id %>, '<%= stats[:membership].user.nickname %>', 'warn')" class="flex-1 py-2 bg-orange-50 text-orange-600 rounded-lg text-[10px] font-black">경고</button>
+                    <button onclick="openPenaltyModal(<%= stats[:membership].id %>, '<%= stats[:membership].user.nickname %>', 'kick')" class="flex-1 py-2 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-black">강퇴</button>
                   </div>
                 </div>
               <% end %>
@@ -272,6 +288,7 @@
               <thead>
                 <tr class="bg-slate-50/50 border-b border-slate-100">
                   <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">순위</th>
+                  <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">상태</th>
                   <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">멤버</th>
                   <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">진행 루틴</th>
                   <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">월간 성공률</th>
@@ -290,6 +307,31 @@
                     <tr class="<%= row_bg %> hover:bg-slate-50/80 transition-colors">
                       <td class="px-8 py-6">
                         <span class="text-lg font-black <%= index < 3 ? 'text-indigo-600' : 'text-slate-400' %>">#<%= index + 1 %></span>
+                      </td>
+                      <td class="px-8 py-6">
+                        <% 
+                          status_icon = case stats[:monthly_rate]
+                          when 95..100 then "👑"
+                          when 90..94 then "🔥"
+                          when 70..89 then "✅"
+                          when 50..69 then "🌿"
+                          when 30..49 then "⚠️"
+                          else "🚨"
+                          end
+                          
+                          status_label = case stats[:monthly_rate]
+                          when 95..100 then "레전드"
+                          when 90..94 then "열정맨"
+                          when 70..89 then "안정권"
+                          when 50..69 then "분발중"
+                          when 30..49 then "주의요망"
+                          else "위험"
+                          end
+                        %>
+                        <div class="flex flex-col items-center gap-1">
+                          <span class="text-2xl"><%= status_icon %></span>
+                          <span class="text-[8px] font-black text-slate-400 uppercase shrink-0"><%= status_label %></span>
+                        </div>
                       </td>
                       <td class="px-8 py-6">
                         <div class="flex items-center gap-4">
@@ -346,8 +388,19 @@
                             title="개인 메시지">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                           </button>
-                          <button class="p-2 bg-slate-50 text-slate-400 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-all" title="경고 부여">
+                          
+                          <button 
+                            onclick="openPenaltyModal(<%= stats[:membership].id %>, '<%= stats[:membership].user.nickname %>', 'warn')" 
+                            class="p-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-all" 
+                            title="경고 부여">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                          </button>
+
+                          <button 
+                            onclick="openPenaltyModal(<%= stats[:membership].id %>, '<%= stats[:membership].user.nickname %>', 'kick')" 
+                            class="p-2 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition-all" 
+                            title="강제 퇴장">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/></svg>
                           </button>
                         </div>
                       </td>
@@ -527,8 +580,9 @@
               </div>
 
               <div class="flex gap-2 mt-4 md:mt-5 pt-4 border-t border-slate-50">
-                <button onclick="openMessageModal(<%= membership.user.id %>, '<%= membership.user.nickname %>')" class="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-black text-[10px] hover:bg-indigo-600 hover:text-white transition-all">메시지</button>
-                <button class="flex-1 py-2 bg-slate-50 text-slate-400 rounded-xl font-black text-[10px] hover:bg-orange-50 hover:text-orange-600 transition-all">경고</button>
+                <button onclick="openMessageModal(<%= membership.user.id %>, '<%= membership.user.nickname %>')" class="flex-1 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg font-black text-[10px] hover:bg-indigo-600 hover:text-white transition-all">메시지</button>
+                <%= button_to "경고", warn_member_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "flex-1 py-1.5 bg-orange-50 text-orange-600 rounded-lg font-black text-[10px] hover:bg-orange-100 transition-all", data: { turbo_confirm: "#{membership.user.nickname}님에게 경고를 부여하시겠습니까?" } %>
+                <%= button_to "강퇴", kick_member_routine_club_path(@routine_club, member_id: membership.id), method: :post, class: "flex-1 py-1.5 bg-rose-50 text-rose-600 rounded-lg font-black text-[10px] hover:bg-rose-100 transition-all", data: { turbo_confirm: "#{membership.user.nickname}님을 정말로 강퇴하시겠습니까?" } %>
               </div>
             </div>
           <% end %>
@@ -956,16 +1010,52 @@
     }
   });
 
+  // Penalty Modal Functions
+  function openPenaltyModal(memberId, userName, actionType) {
+    const modal = document.getElementById('penalty-modal');
+    const title = document.getElementById('penalty-title');
+    const form = document.getElementById('penalty-form');
+    const targetName = document.getElementById('penalty-target-name');
+    const submitBtn = document.getElementById('penalty-submit-btn');
+    
+    document.getElementById('penalty-member-id').value = memberId;
+    targetName.textContent = userName;
+    
+    if (actionType === 'warn') {
+      title.textContent = '경고 부여';
+      form.action = `<%= warn_member_routine_club_path(@routine_club) %>`;
+      submitBtn.textContent = '경고 부여하기';
+      submitBtn.className = 'flex-1 py-3 bg-orange-600 text-white rounded-xl font-black hover:bg-orange-700 transition-colors cursor-pointer';
+    } else {
+      title.textContent = '강제 퇴장(제명)';
+      form.action = `<%= kick_member_routine_club_path(@routine_club) %>`;
+      submitBtn.textContent = '제명 처리하기';
+      submitBtn.className = 'flex-1 py-3 bg-rose-600 text-white rounded-xl font-black hover:bg-rose-700 transition-colors cursor-pointer';
+    }
+    
+    modal.classList.remove('hidden');
+    document.getElementById('penalty-reason').value = '';
+    document.getElementById('penalty-reason').focus();
+  }
+
+  function closePenaltyModal() {
+    document.getElementById('penalty-modal').classList.add('hidden');
+  }
+
   // Close modal when clicking outside
   document.addEventListener('click', function(event) {
     const messageModal = document.getElementById('message-modal');
     const userListModal = document.getElementById('user-list-modal');
+    const penaltyModal = document.getElementById('penalty-modal');
     
     if (event.target === messageModal) {
       closeMessageModal();
     }
     if (event.target === userListModal) {
       closeUserListModal();
+    }
+    if (event.target === penaltyModal) {
+      closePenaltyModal();
     }
   });
 </script>
@@ -1030,5 +1120,45 @@
         닫기
       </button>
     </div>
+  </div>
+</div>
+
+<!-- Penalty Modal (Warn/Kick) -->
+<div id="penalty-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl md:rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-xl md:text-2xl font-black text-slate-900" id="penalty-title">경고/제명 처리</h3>
+      <button onclick="closePenaltyModal()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <%= form_with url: "#", method: :post, id: "penalty-form", class: "space-y-4" do |f| %>
+      <%= hidden_field_tag :member_id, "", id: "penalty-member-id" %>
+      
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <p class="text-xs font-black text-slate-400 mb-1 uppercase">Target Member</p>
+        <p class="text-sm font-black text-slate-900" id="penalty-target-name"></p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-black text-slate-700 mb-2">처리 사유 <span class="text-rose-500">*</span></label>
+        <%= text_area_tag :reason, "", 
+            id: "penalty-reason",
+            rows: 4, 
+            required: true,
+            class: "w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-medium text-sm resize-none",
+            placeholder: "사유를 입력하세요 (알림에 포함됩니다)..." %>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <%= f.submit "처리하기", id: "penalty-submit-btn", class: "flex-1 py-3 bg-indigo-600 text-white rounded-xl font-black transition-all cursor-pointer" %>
+        <button type="button" onclick="closePenaltyModal()" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black hover:bg-slate-200 transition-colors">
+          취소
+        </button>
+      </div>
+    <% end %>
   </div>
 </div>

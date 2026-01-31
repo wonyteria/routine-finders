@@ -46,6 +46,20 @@ class RoutineClubMember < ApplicationRecord
     RoutineClubNotificationService.notify_payment_rejected(self, reason)
   end
 
+  def warn!(reason)
+    transaction do
+      penalties.create!(
+        routine_club: routine_club,
+        reason: reason
+      )
+      increment!(:penalty_count)
+      status_warned!
+    end
+
+    # 알림 전송
+    RoutineClubNotificationService.notify_warning(self, penalty_count, reason)
+  end
+
   def kick!(reason)
     update!(
       status: :kicked,

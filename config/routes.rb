@@ -152,6 +152,7 @@ Rails.application.routes.draw do
       post :confirm_payment
       post :reject_payment
       post :kick_member
+      post :warn_member
       post :record
       post :cheer
       post :send_message

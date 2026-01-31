@@ -26,13 +26,14 @@ class RoutineClubNotificationService
 
   # 강퇴 알림
   def self.notify_kicked(membership, reason = nil)
-    content = "#{membership.routine_club.title} 클럽에서 강퇴되었습니다."
-    content += " 사유: #{reason}" if reason.present?
+    content = "루파 클럽 운영 정책에 따라 해당 클럽의 서비스 이용이 제한(제명)되었습니다."
+    content += "\n사유: #{reason}" if reason.present?
+    content += "\n\n제명된 유저는 향후 클럽 재가입이 영구적으로 제한됩니다."
 
     Notification.create!(
       user: membership.user,
       notification_type: :club_kicked,
-      title: "⚠️ 클럽에서 강퇴되었습니다",
+      title: "🚫 루파 클럽 제명 안내",
       content: content
     )
   end
@@ -49,13 +50,14 @@ class RoutineClubNotificationService
 
   # 경고 알림
   def self.notify_warning(membership, warning_count, reason = nil)
-    content = "#{membership.routine_club.title} 클럽에서 경고를 받았습니다. (총 #{warning_count}회)"
-    content += " 사유: #{reason}" if reason.present?
+    content = "루파 클럽 운영 수칙에 따라 경고가 부여되었습니다. (현재 누적: #{warning_count}회)"
+    content += "\n사유: #{reason}" if reason.present?
+    content += "\n\n누적 경고가 #{membership.routine_club.auto_kick_threshold}회가 될 경우 시스템에 의해 자동 제명(Kick)되오니 성실한 참여를 부탁드립니다."
 
     Notification.create!(
       user: membership.user,
       notification_type: :club_warning,
-      title: "⚠️ 경고가 발생했습니다",
+      title: "🚨 루파 클럽 경고 안내",
       content: content
     )
   end
