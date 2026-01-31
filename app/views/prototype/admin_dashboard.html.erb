@@ -76,15 +76,6 @@
             <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">루파 클럽 관리</span>
           <% end %>
 
-          <!-- DANGER ZONE: Reset Dummy Data -->
-          <%= button_to prototype_reset_dummy_data_path, 
-                        method: :post, 
-                        data: { turbo_confirm: "모든 챌린지, 모임, 활동로그, 알림이 영구 삭제됩니다. 정말 진행할까요?" },
-                        class: "p-5 rounded-2xl bg-slate-800 border border-red-500/30 flex flex-col items-center gap-2 group active:scale-95 transition-all text-center w-full" do %>
-            <span class="text-2xl group-hover:scale-110 transition-transform">🧹</span>
-            <span class="text-[10px] font-black text-red-400 uppercase tracking-widest">더미데이터 삭제</span>
-          <% end %>
-
           <!-- DANGER ZONE: Reset Users -->
           <%= button_to prototype_reset_users_path, 
                         method: :post, 

@@ -53,15 +53,7 @@ class ChallengeApplicationsController < ApplicationController
   # POST /challenges/:challenge_id/applications
   def create
     # First, handle re-application by cleaning up previous rejected application
-    @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all unless @challenge.id >= 10000
-
-    if @challenge.id >= 10000
-      # Mock success for dummy challenges
-      notice_msg = "신청이 완료되었습니다. 호스트의 승인을 기다려주세요. (데모 모드)"
-      path = params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype") ?
-             challenge_path(@challenge, source: "prototype") : @challenge
-      return redirect_to path, notice: notice_msg
-    end
+    @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all
 
     @application = @challenge.challenge_applications.build(application_params)
     @application.user = current_user
@@ -165,13 +157,7 @@ class ChallengeApplicationsController < ApplicationController
   private
 
   def set_challenge
-    challenge_id = params[:challenge_id].to_i
-    if challenge_id >= 10000
-      @challenge = Challenge.generate_dummy_challenges.find { |c| c.id == challenge_id }
-      raise ActiveRecord::RecordNotFound, "Couldn't find dummy Challenge with 'id'=#{params[:challenge_id]}" if @challenge.nil?
-    else
-      @challenge = Challenge.find(params[:challenge_id])
-    end
+    @challenge = Challenge.find(params[:challenge_id])
   end
 
   def set_application

@@ -107,8 +107,8 @@ builder:
 
 ssh:
   user: root
-#   keys:
-#     - "~/.ssh/routine-finders-droplet"
+  keys:
+    - "~/.ssh/routine-finders-droplet"
 
 # Use a different ssh user than root
 # ssh:

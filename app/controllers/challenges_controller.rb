@@ -213,11 +213,6 @@ class ChallengesController < ApplicationController
       end
     end
 
-    if @challenge.id >= 10000
-      path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
-      return redirect_to path, notice: "챌린지에 참여했습니다! (데모 모드)"
-    end
-
     begin
       ActiveRecord::Base.transaction do
         @challenge.participants.create!(
@@ -276,45 +271,6 @@ class ChallengesController < ApplicationController
     filter_by_category
     filter_by_status
     @challenges = @challenges.order(created_at: :desc)
-
-    # If no results in DB, fallback to dummy for development/demo
-    if @challenges.empty?
-      @challenges = Challenge.generate_dummy_challenges
-      filter_dummies
-    end
-  end
-
-  def filter_dummies
-    return if @challenges.blank? || !@challenges.is_a?(Array)
-
-    if params[:keyword].present?
-      kw = params[:keyword]
-      @challenges = @challenges.select { |c| c.title.to_s.include?(kw) || c.summary.to_s.include?(kw) }
-    end
-
-    if params[:category].present?
-      @challenges = @challenges.select { |c| c.category.to_s == params[:category] }
-    end
-
-    if params[:status].present?
-      today = Date.current
-      case params[:status]
-      when "recruiting"
-        @challenges = @challenges.select do |c|
-          c.recruitment_start_date.present? && c.recruitment_end_date.present? &&
-          (c.recruitment_start_date..c.recruitment_end_date).cover?(today)
-        end
-      when "active"
-        @challenges = @challenges.select do |c|
-          c.start_date.present? && c.end_date.present? &&
-          (c.start_date..c.end_date).cover?(today)
-        end
-      when "ended"
-        @challenges = @challenges.select do |c|
-          c.end_date.present? && c.end_date < today
-        end
-      end
-    end
   end
 
   def filter_by_keyword
@@ -342,20 +298,8 @@ class ChallengesController < ApplicationController
     end
   end
 
-  # Removed load_landing_data as landing mode is deprecated in favor of unified explore view
-
-
-  # Removed local generate_dummy_challenges as it's now in the model
-
-
   def set_challenge
-    challenge_id = params[:id].to_i
-    if challenge_id >= 10000
-      @challenge = Challenge.generate_dummy_challenges.find { |c| c.id == challenge_id }
-      raise ActiveRecord::RecordNotFound, "Couldn't find dummy Challenge with 'id'=#{params[:id]}" if @challenge.nil?
-    else
-      @challenge = Challenge.find(params[:id])
-    end
+    @challenge = Challenge.find(params[:id])
   end
 
   def challenge_params
