@@ -63,7 +63,7 @@ class User < ApplicationRecord
   has_many :reviews, dependent: :destroy
 
   # Routine Clubs
-  has_many :hosted_routine_clubs, class_name: "RoutineClub", foreign_key: :host_id, dependent: :destroy
+  has_many :hosted_routine_clubs, class_name: "RoutineClub", foreign_key: :host_id
   has_many :routine_club_members, dependent: :destroy
   has_many :routine_clubs, through: :routine_club_members
   has_many :routine_club_reports, dependent: :destroy

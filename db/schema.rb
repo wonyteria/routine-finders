@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_30_180708) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_31_085630) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -434,7 +434,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_30_180708) do
     t.text "description"
     t.date "end_date", null: false
     t.integer "golden_fire_bonus", default: 20
-    t.integer "host_id", null: false
+    t.integer "host_id"
     t.boolean "is_official"
     t.boolean "lecture_room_active"
     t.text "lecture_room_description"

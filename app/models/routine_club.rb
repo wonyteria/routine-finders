@@ -5,7 +5,7 @@ class RoutineClub < ApplicationRecord
   enum :status, { recruiting: 0, active: 1, ended: 2 }, prefix: true
 
   # Associations
-  belongs_to :host, class_name: "User"
+  belongs_to :host, class_name: "User", optional: true
   has_many :members, class_name: "RoutineClubMember", dependent: :destroy
   has_many :users, through: :members
   has_many :rules, class_name: "RoutineClubRule", dependent: :destroy
@@ -134,10 +134,7 @@ class RoutineClub < ApplicationRecord
     official = self.official.first
     return official if official
 
-    admin = User.where(role: [ :super_admin, :club_admin ]).order(role: :desc).first || User.first
-    return nil unless admin # 유저가 한 명도 없는 극단적 상황 방어
-
-    # 2026년 1분기 기준 공식 클라이언트 설정
+    # 2026년 1분기 기준 공식 클라이언트 설정 (시스템 고유 자산)
     self.create!(
       title: "루파 클럽 공식",
       description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",
@@ -146,7 +143,6 @@ class RoutineClub < ApplicationRecord
       start_date: Date.new(2026, 1, 1),
       end_date: Date.new(2026, 3, 31),
       is_official: true,
-      host: admin,
       category: "건강·운동",
       status: :active
     )
