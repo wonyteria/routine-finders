@@ -13,7 +13,7 @@ export default class extends Controller {
         if (!content) return
 
         if (confirm(`'${title}' 공지를 모든 사용자에게 발송하시겠습니까?`)) {
-            this.sendAction('/prototype/admin/broadcast', { title, content })
+            this.sendAction('/admin_center/broadcast', { title, content })
         }
     }
 
@@ -25,7 +25,7 @@ export default class extends Controller {
         const newRole = currentRole === 'user' ? 'club_admin' : 'super_admin'
 
         if (confirm(`${nickname}님의 권한을 ${newRole}(으)로 승격하시겠습니까?`)) {
-            this.sendAction('/prototype/admin/update_user_role', { user_id: userId, role: newRole }, true)
+            this.sendAction('/admin_center/update_user_role', { user_id: userId, role: newRole }, true)
         }
     }
 
@@ -35,7 +35,7 @@ export default class extends Controller {
         const userId = btn.dataset.userId
 
         if (confirm(`${nickname}님의 계정 상태를 변경하시겠습니까?`)) {
-            this.sendAction('/prototype/admin/toggle_user_status', { user_id: userId }, true)
+            this.sendAction('/admin_center/update_user_status', { user_id: userId, status: 'inactive' }, true)
         }
     }
 
@@ -45,13 +45,13 @@ export default class extends Controller {
         const title = btn.dataset.title
 
         if (confirm(`'${title}' 챌린지를 승인하시겠습니까?`)) {
-            this.sendAction('/prototype/admin/approve_challenge', { challenge_id: challengeId }, true)
+            this.sendAction('/admin_center/approve_challenge', { challenge_id: challengeId }, true)
         }
     }
 
     purgeCache() {
         if (confirm("모든 시스템 캐시를 초기화하시겠습니까?")) {
-            this.sendAction('/prototype/admin/purge_cache', {})
+            this.sendAction('/admin_center/purge_cache', {})
         }
     }
 

@@ -40,7 +40,7 @@ export default class extends Controller {
         const label = select.options[select.selectedIndex].text
 
         if (window.confirm(`${nickname}님의 상태를 '${label}'(으)로 변경하시겠습니까?`)) {
-            this.performPost('/prototype/admin/update_user_status', { user_id: userId, status: newStatus }, true)
+            this.performPost('/admin_center/update_user_status', { user_id: userId, status: newStatus }, true)
         } else {
             select.value = initialStatus
         }
@@ -51,7 +51,7 @@ export default class extends Controller {
         const title = event.currentTarget.dataset.title
 
         if (window.confirm(`'${title}' 챌린지를 승인하시겠습니까?`)) {
-            this.performPost('/prototype/admin/approve_challenge', { challenge_id: challengeId }, true)
+            this.performPost('/admin_center/approve_challenge', { challenge_id: challengeId }, true)
         }
     }
 
@@ -60,7 +60,7 @@ export default class extends Controller {
         const title = event.currentTarget.dataset.title
 
         if (window.confirm(`'${title}'을(를) 영구 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
-            fetch(`/prototype/admin/delete_content/${id}`, {
+            fetch(`/admin_center/delete_content/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
@@ -87,7 +87,7 @@ export default class extends Controller {
         const message = window.prompt(`${nickname}님께 보낼 공지 내용을 입력해주세요.`, `'${title}' 관련 관리자 안내입니다.`)
 
         if (message) {
-            this.performPost(`/prototype/admin/notify_host/${id}`, { content: message }, true)
+            this.performPost(`/admin_center/notify_host/${id}`, { content: message }, true)
         }
     }
 
@@ -100,13 +100,13 @@ export default class extends Controller {
 
         if (newTitle && newTitle !== title) {
             // Reusing a general update logic if exists, or adding it to PrototypeController
-            this.performPost('/prototype/admin/update_content_basic', { id: id, title: newTitle }, true)
+            this.performPost('/admin_center/update_content_basic', { id: id, title: newTitle }, true)
         }
     }
 
     purgeCache() {
         if (window.confirm("시스템 캐시를 전체 초기화하시겠습니까?")) {
-            this.performPost('/prototype/admin/purge_cache', {})
+            this.performPost('/admin_center/purge_cache', {})
         }
     }
 

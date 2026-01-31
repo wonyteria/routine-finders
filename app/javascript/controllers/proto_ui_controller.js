@@ -4,7 +4,7 @@ export default class extends Controller {
     connect() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('show_login') === 'true') {
-            window.location.href = '/prototype/login'
+            window.location.href = '/login'
         }
     }
 
@@ -69,7 +69,7 @@ export default class extends Controller {
 
             // Redirect to dedicated login page
             // This ensures a "move" to the login state as requested
-            window.location.href = '/prototype/login'
+            window.location.href = '/login'
             return false
         }
         return true
