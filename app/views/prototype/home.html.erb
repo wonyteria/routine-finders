@@ -100,7 +100,7 @@
 <% end %>
 
 <% if params[:created_challenge] %>
-  <div id="challenge-success-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-6">
+  <div id="challenge-success-modal" class="fixed inset-0 z-[42000] flex items-center justify-center p-6">
     <div onclick="this.closest('#challenge-success-modal').remove()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
     <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-pop">
       <div class="w-24 h-24 bg-emerald-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-emerald-500/50">⚡</div>
@@ -401,7 +401,7 @@
 
             <!-- Pass Usage Modal (Redesigned) -->
             <% if @is_club_member && !routine.completed_today? %>
-              <div id="pass-confirm-<%= routine.id %>" class="hidden fixed inset-0 z-[1100] flex items-center justify-center p-6">
+              <div id="pass-confirm-<%= routine.id %>" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
                 <div onclick="document.getElementById('pass-confirm-<%= routine.id %>').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
                 
                 <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 space-y-8 animate-badge-pop bg-[#16151D]">
@@ -625,7 +625,7 @@
   <%# Legacy PWA modal removed in favor of integrated onboarding flow %>
 
   <!-- (NEW) Premium Item Nudge Modal (For Non-members) -->
-  <div id="premium-item-nudge" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-6">
+  <div id="premium-item-nudge" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
     <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
     <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
       <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[28px] flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-indigo-500/40 nudge-icon">🔒</div>
@@ -648,7 +648,7 @@
 
   <!-- (NEW) Global Pass Manager Modal (For Members) -->
   <% if @is_club_member %>
-    <div id="global-pass-modal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-6">
+    <div id="global-pass-modal" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
       <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
       <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 space-y-8 animate-badge-pop bg-[#16151D] max-h-[90vh] overflow-y-auto hide-scrollbar">
         <div class="text-center space-y-2">
