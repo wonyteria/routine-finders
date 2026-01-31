@@ -265,18 +265,25 @@ class PrototypeController < ApplicationController
         }
       end
 
-    # 4. Growth Analytics (Real Data)
-    # Weekly: Last 7 days completion rate
-    @weekly_labels = []
-    @weekly_data = (0..6).map do |days_ago|
-      date = Date.current - days_ago.days
-      @weekly_labels << date.strftime("%m/%d")
+  # 4. Growth Analytics (Real Data)
+  # Weekly: Current Week (Mon-Sun)
+  @weekly_labels = []
+  @weekly_data = []
+  start_of_week = Date.current.beginning_of_week
+
+  (0..6).each do |i|
+    date = start_of_week + i.days
+    @weekly_labels << date.strftime("%m/%d")
+
+    if date > Date.current
+      @weekly_data << 0
+    else
       routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
       total = routines.count
       completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
-      total.positive? ? ((completed.to_f / total) * 100).round : 0
-    end.reverse
-    @weekly_labels.reverse!
+      @weekly_data << (total.positive? ? ((completed.to_f / total) * 100).round : 0)
+    end
+  end
 
   # Monthly: Last 4 weeks completion rate (average of daily rates)
   @monthly_labels = []
@@ -324,13 +331,17 @@ class PrototypeController < ApplicationController
   end
 
     # Summaries
-    @weekly_completion = @weekly_data.last || 0
-    @weekly_growth = @weekly_data.size >= 2 ? (@weekly_data[-1] - @weekly_data[-2]) : 0
+    # Summaries (Calculated as Average of the period)
+    # Only compute average up to today for weekly to avoid diluting with future zeros
+    days_passed = [ (Date.current - Date.current.beginning_of_week).to_i + 1, 7 ].min
+    current_week_values = @weekly_data.take(days_passed)
+    @weekly_completion = current_week_values.any? ? (current_week_values.sum.to_f / current_week_values.size).round : 0
+    @weekly_growth = @weekly_data.size >= 2 ? (@weekly_data[days_passed-1] - (@weekly_data[days_passed-2] || 0)) : 0
 
-    @monthly_completion = @monthly_data.last || 0
+    @monthly_completion = @monthly_data.any? ? (@monthly_data.sum.to_f / @monthly_data.size).round : 0
     @monthly_growth = @monthly_data.size >= 2 ? (@monthly_data[-1] - @monthly_data[-2]) : 0
 
-    @yearly_completion = @yearly_data.last || 0
+    @yearly_completion = @yearly_data.any? ? (@yearly_data.sum.to_f / @yearly_data.size).round : 0
     @yearly_growth = @yearly_data.size >= 2 ? (@yearly_data[-1] - @yearly_data[-2]) : 0
     end
   end
