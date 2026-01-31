@@ -276,9 +276,13 @@
                 <div class="flex-1">
                   <p class="text-white font-black text-lg">나의 멤버십 혜택</p>
                   <p class="text-indigo-100 text-xs font-bold mt-0.5">
-                    🎟️ <%= membership.remaining_relax_passes %> · 
-                    🛡️ <%= membership.remaining_save_passes %> · 
-                    ⚡ <%= number_with_delimiter(membership.growth_points || 0) %>P
+                    <% if membership %>
+                      🎟️ <%= membership.remaining_relax_passes %> · 
+                      🛡️ <%= membership.remaining_save_passes %> · 
+                      ⚡ <%= number_with_delimiter(membership.growth_points || 0) %>P
+                    <% else %>
+                      관리자 권한으로 모든 기능을 이용할 수 있습니다.
+                    <% end %>
                   </p>
                 </div>
                 <svg class="w-6 h-6 text-white opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
