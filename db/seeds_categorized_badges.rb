@@ -23,7 +23,15 @@ badges = [
   { name: "인기 호스트", badge_type: "host_participants", target_type: "host", level: :silver, requirement_value: 50, description: "누적 참여 인원 50명 달성", icon_path: "🔥" },
   { name: "베테랑 호스트", badge_type: "host_count", target_type: "host", level: :gold, requirement_value: 10, description: "챌린지/만남 10회 주최 완료", icon_path: "🎖️" },
   { name: "완벽한 진행자", badge_type: "host_completion", target_type: "host", level: :platinum, requirement_value: 90, description: "주최한 챌린지 평균 달성률 90% 이상", icon_path: "✨" },
-  { name: "전설의 리더", badge_type: "host_participants", target_type: "host", level: :diamond, requirement_value: 500, description: "누적 참여 인원 500명 달성", icon_path: "👑" }
+  { name: "전설의 리더", badge_type: "host_participants", target_type: "host", level: :diamond, requirement_value: 500, description: "누적 참여 인원 500명 달성", icon_path: "👑" },
+
+  # --- Cheer Badges (Social) ---
+  { name: "치어리더", badge_type: "cheer_count", target_type: "all", level: :bronze, requirement_value: 10, description: "응원 10회 보내기", icon_path: "👏" },
+  { name: "에너지 메이커", badge_type: "cheer_count", target_type: "all", level: :silver, requirement_value: 50, description: "응원 50회 보내기", icon_path: "⚡" },
+
+  # --- Participation Badges (Challenge Join) ---
+  { name: "도전자", badge_type: "participation_count", target_type: "challenge", level: :bronze, requirement_value: 1, description: "챌린지 1회 참여", icon_path: "🌱" },
+  { name: "프로 챌린저", badge_type: "participation_count", target_type: "challenge", level: :silver, requirement_value: 5, description: "챌린지 5회 참여", icon_path: "🏃" }
 ]
 
 badges.each do |badge_data|
