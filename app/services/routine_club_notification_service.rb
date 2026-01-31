@@ -62,14 +62,18 @@ class RoutineClubNotificationService
     )
   end
 
-  # 호스트에게 입금 신청 알림
+  # 호스트 및 운영진에게 입금 신청 알림
   def self.notify_host_new_payment(club, membership)
-    Notification.create!(
-      user: club.host,
-      notification_type: :system,
-      title: "💰 새로운 입금 신청",
-      content: "#{membership.user.nickname}님이 #{club.title} 클럽에 참여 신청했습니다. 입금을 확인해주세요."
-    )
+    # 모든 관리자(club_admin + super_admin)에게 알림
+    User.admin.find_each do |admin|
+      Notification.create!(
+        user: admin,
+        notification_type: :system,
+        title: "💰 새로운 루파 클럽 가입 신청",
+        content: "#{membership.user.nickname}님이 #{club.title} 클럽에 참여 신청했습니다. 입금을 확인해주세요.",
+        link: "/admin_center/clubs?tab=members"
+      )
+    end
   end
 
   # 공지사항 알림

@@ -50,6 +50,21 @@ class User < ApplicationRecord
   scope :admin, -> { where(role: [ :club_admin, :super_admin ]) }
 
   after_save :ensure_rufa_club_membership_for_admin
+  after_create :notify_admins_of_new_signup
+
+  def notify_admins_of_new_signup
+    # 신규 가입 시 마스터 권한에게 알림
+    User.where(role: :super_admin).find_each do |admin|
+      admin.notifications.create!(
+        notification_type: :system,
+        title: "🎉 신규 회원 가입",
+        content: "#{nickname}님이 루틴 파인더스에 가입했습니다.",
+        link: "/admin_center"
+      )
+    end
+  rescue => e
+    Rails.logger.error "Failed to notify admins of new signup: #{e.message}"
+  end
 
   def ensure_rufa_club_membership_for_admin
     return unless admin?
