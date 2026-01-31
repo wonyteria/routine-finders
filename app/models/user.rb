@@ -28,6 +28,16 @@
 # 예: 50회 완료 = 레벨 5
 #
 class User < ApplicationRecord
+  after_initialize :set_default_preferences, if: :new_record?
+
+  def set_default_preferences
+    self.notification_preferences ||= {
+      routine_reminder: true,
+      challenge_updates: true,
+      community_alerts: true,
+      marketing: true
+    }
+  end
   has_secure_password
   has_one_attached :avatar
 

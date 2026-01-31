@@ -612,6 +612,29 @@ class PrototypeController < ApplicationController
     ).includes(:user).order("achievement_rate DESC")
   end
 
+  def create_club_announcement
+    @official_club = RoutineClub.official.first || RoutineClub.first
+
+    if @official_club
+      announcement = @official_club.announcements.build(
+        title: params[:title],
+        content: params[:content]
+      )
+
+      # Assuming Announcement belongs_to :challenge is optional or we don't need it here.
+      # If validation fails due to missing challenge_id, we might need to handle it.
+
+      if announcement.save
+        RoutineClubNotificationService.notify_announcement(@official_club, announcement)
+        redirect_to prototype_club_management_path(tab: "announcements"), notice: "공지사항이 등록되고 모든 멤버에게 알림이 발송되었습니다."
+      else
+        redirect_to prototype_club_management_path(tab: "announcements"), alert: "공지 등록 실패: #{announcement.errors.full_messages.join(', ')}"
+      end
+    else
+      redirect_to prototype_club_management_path, alert: "운영 중인 공식 클럽이 없습니다."
+    end
+  end
+
   def broadcast
     title = params[:title]
     content = params[:content]

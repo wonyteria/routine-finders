@@ -72,6 +72,19 @@ class RoutineClubNotificationService
     )
   end
 
+  # 공지사항 알림
+  def self.notify_announcement(club, announcement)
+    club.members.where(status: :active, payment_status: :confirmed).find_each do |membership|
+      Notification.create!(
+        user: membership.user,
+        notification_type: :announcement,
+        title: "📢 [#{club.title}] 새 공지사항",
+        content: announcement.title,
+        link: "/prototype/home?tab=club"
+      )
+    end
+  end
+
   # 일괄 출석 알림 전송 (스케줄러용)
   def self.send_daily_attendance_reminders
     # 활성화된 클럽의 모든 멤버에게 알림

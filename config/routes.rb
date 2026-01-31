@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   post "admin_center/purge_cache", to: "prototype#purge_cache"
   post "admin_center/reset_users", to: "prototype#reset_users", as: :prototype_reset_users
   patch "admin_center/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
+  post "admin_center/create_club_announcement", to: "prototype#create_club_announcement", as: :prototype_create_club_announcement
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   get "up" => "rails/health#show", as: :rails_health_check
 
