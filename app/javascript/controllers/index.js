@@ -2,94 +2,118 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import { application } from "controllers/application"
+import { application } from "./application"
 
-import SystemAdminController from "controllers/system_admin_controller"
-application.register("system-admin", SystemAdminController)
+import AdminToolsController from "./admin_tools_controller"
+application.register("admin-tools", AdminToolsController)
 
-import LoungeSettingsController from "controllers/lounge_settings_controller"
-application.register("lounge-settings", LoungeSettingsController)
-
-import ApplicationFormController from "controllers/application_form_controller"
+import ApplicationFormController from "./application_form_controller"
 application.register("application-form", ApplicationFormController)
 
-import AuthTabsController from "controllers/auth_tabs_controller"
+import AuthTabsController from "./auth_tabs_controller"
 application.register("auth-tabs", AuthTabsController)
 
-import AuthToggleController from "controllers/auth_toggle_controller"
+import AuthToggleController from "./auth_toggle_controller"
 application.register("auth-toggle", AuthToggleController)
 
-import BadgeAwardController from "controllers/badge_award_controller"
+import BadgeAwardController from "./badge_award_controller"
 application.register("badge-award", BadgeAwardController)
 
-import CalendarScrollController from "controllers/calendar_scroll_controller"
+import CalendarScrollController from "./calendar_scroll_controller"
 application.register("calendar-scroll", CalendarScrollController)
 
-import ChallengeFormController from "controllers/challenge_form_controller"
+import ChallengeFormController from "./challenge_form_controller"
 application.register("challenge-form", ChallengeFormController)
 
-import ChallengeSettingsController from "controllers/challenge_settings_controller"
+import ChallengeSettingsController from "./challenge_settings_controller"
 application.register("challenge-settings", ChallengeSettingsController)
 
-import CostTypeController from "controllers/cost_type_controller"
+import ClubJoinController from "./club_join_controller"
+application.register("club-join", ClubJoinController)
+
+import CostTypeController from "./cost_type_controller"
 application.register("cost-type", CostTypeController)
 
-import DropdownController from "controllers/dropdown_controller"
+import DropdownController from "./dropdown_controller"
 application.register("dropdown", DropdownController)
 
-import FlashController from "controllers/flash_controller"
+import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
-import GatheringFormController from "controllers/gathering_form_controller"
+import GatheringFormController from "./gathering_form_controller"
 application.register("gathering-form", GatheringFormController)
 
-import HelloController from "controllers/hello_controller"
+import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
-import ModalController from "controllers/modal_controller"
+import InappBrowserController from "./inapp_browser_controller"
+application.register("inapp-browser", InappBrowserController)
+
+import LazyLoadController from "./lazy_load_controller"
+application.register("lazy-load", LazyLoadController)
+
+import LoadingController from "./loading_controller"
+application.register("loading", LoadingController)
+
+import LoungeSettingsController from "./lounge_settings_controller"
+application.register("lounge-settings", LoungeSettingsController)
+
+import ModalController from "./modal_controller"
 application.register("modal", ModalController)
 
-import NotificationToggleController from "controllers/notification_toggle_controller"
+import NotificationCenterController from "./notification_center_controller"
+application.register("notification-center", NotificationCenterController)
+
+import NotificationToggleController from "./notification_toggle_controller"
 application.register("notification-toggle", NotificationToggleController)
 
-import OnboardingController from "controllers/onboarding_controller"
+import OnboardingController from "./onboarding_controller"
 application.register("onboarding", OnboardingController)
 
-import ProtoUiController from "controllers/proto_ui_controller"
+import PhoneFormatController from "./phone_format_controller"
+application.register("phone-format", PhoneFormatController)
+
+import ProtoUiController from "./proto_ui_controller"
 application.register("proto-ui", ProtoUiController)
 
-import PwaBannerController from "controllers/pwa_banner_controller"
+import PwaBannerController from "./pwa_banner_controller"
 application.register("pwa-banner", PwaBannerController)
 
-import RatingController from "controllers/rating_controller"
+import RatingController from "./rating_controller"
 application.register("rating", RatingController)
 
-import RoutineWizardController from "controllers/routine_wizard_controller"
+import RoutineWizardController from "./routine_wizard_controller"
 application.register("routine-wizard", RoutineWizardController)
 
-import ScrollNavController from "controllers/scroll_nav_controller"
+import ScrollNavController from "./scroll_nav_controller"
 application.register("scroll-nav", ScrollNavController)
 
-import ShareController from "controllers/share_controller"
+import ShareController from "./share_controller"
 application.register("share", ShareController)
 
-import SliderController from "controllers/slider_controller"
+import SliderController from "./slider_controller"
 application.register("slider", SliderController)
 
-import SnsLinksController from "controllers/sns_links_controller"
+import SnsLinksController from "./sns_links_controller"
 application.register("sns-links", SnsLinksController)
 
-import SubTabsController from "controllers/sub_tabs_controller"
+import SubTabsController from "./sub_tabs_controller"
 application.register("sub-tabs", SubTabsController)
 
-import TabsController from "controllers/tabs_controller"
+import SystemAdminController from "./system_admin_controller"
+application.register("system-admin", SystemAdminController)
+
+import TabsController from "./tabs_controller"
 application.register("tabs", TabsController)
 
-import ThresholdInputController from "controllers/threshold_input_controller"
+import ThresholdInputController from "./threshold_input_controller"
 application.register("threshold-input", ThresholdInputController)
 
-import ToggleController from "controllers/toggle_controller"
+import ToastController from "./toast_controller"
+application.register("toast", ToastController)
+
+import ToggleController from "./toggle_controller"
 application.register("toggle", ToggleController)
 
-import ToggleListController from "controllers/toggle_list_controller"
+import ToggleListController from "./toggle_list_controller"
 application.register("toggle-list", ToggleListController)
