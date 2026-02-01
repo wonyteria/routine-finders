@@ -41,6 +41,30 @@ class User < ApplicationRecord
   has_secure_password
   has_one_attached :avatar
 
+  # 통합 프로필 이미지 호출 메서드 (ActiveStorage 우선)
+  def profile_image
+    if avatar.attached?
+      begin
+        # Variant를 사용하여 최적화된 크기로 반환
+        Rails.application.routes.url_helpers.rails_representation_url(
+          avatar.variant(resize_to_fill: [ 300, 300 ]),
+          only_path: true
+        )
+      rescue => e
+        Rails.logger.error "Avatar representation failed for User #{id}: #{e.message}"
+        # 에러 시 원본 또는 레거시 컬럼 반환
+        read_attribute(:profile_image).presence || default_avatar_url
+      end
+    else
+      # 레거시 컬럼 또는 기본 아바타 반환
+      read_attribute(:profile_image).presence || default_avatar_url
+    end
+  end
+
+  def default_avatar_url
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=#{id}"
+  end
+
   # Enums
   # Role hierarchy: user (0) < club_admin (1) < super_admin (2)
   # - user: Regular platform user

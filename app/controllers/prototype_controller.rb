@@ -823,9 +823,13 @@ class PrototypeController < ApplicationController
 
       update_params = {}
       # Use key? to check existence of parameter to support clearing bio/nickname
-      # Support both string and symbol keys via ActionController::Parameters behavior
-      update_params[:nickname] = p[:nickname] if p[:nickname].present?
-      update_params[:bio] = p[:bio] if p.key?(:bio) || p.key?("bio")
+      # Robust access for both string and symbol keys
+      nickname_val = p[:nickname] || p["nickname"]
+      update_params[:nickname] = nickname_val if nickname_val.present?
+
+      if p.key?(:bio) || p.key?("bio")
+        update_params[:bio] = p[:bio] || p["bio"]
+      end
 
       # Handle profile image upload correctly via ActiveStorage
       img = params[:profile_image] || p[:profile_image] || params[:avatar] || p[:avatar]
@@ -865,11 +869,12 @@ class PrototypeController < ApplicationController
       end
 
       if current_user.update(update_params)
-        Rails.logger.info "Profile updated for User #{current_user.id}: #{update_params.keys.join(', ')}"
+        Rails.logger.info "Profile successfully updated for User #{current_user.id}: #{update_params.keys.join(', ')}"
         redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!"
       else
-        Rails.logger.error "Profile update failed for User #{current_user.id}: #{current_user.errors.full_messages.join(', ')}"
-        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{current_user.errors.full_messages.join(', ')}"
+        error_msg = current_user.errors.full_messages.join(", ")
+        Rails.logger.error "Profile update failed for User #{current_user.id}: #{error_msg}"
+        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{error_msg}"
       end
     else
       redirect_to prototype_login_path, alert: "로그인이 필요합니다."
