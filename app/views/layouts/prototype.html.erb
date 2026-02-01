@@ -227,9 +227,12 @@
     </div>
 
     <!-- 2. FAB Menu Sheet (Simple List Style) -->
-    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
-      <div data-action="click->proto-ui#toggleFabMenu" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
-      <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
+    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-4">
+      <div data-action="click->proto-ui#toggleFabMenu" 
+           data-proto-ui-target="fabBg"
+           class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
+      <div data-proto-ui-target="fabContent"
+           class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
 
         
         <div class="space-y-4">

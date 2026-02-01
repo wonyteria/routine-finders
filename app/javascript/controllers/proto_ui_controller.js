@@ -1,19 +1,19 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+    static targets = ["fabBg", "fabContent"]
+
     connect() {
+        console.log("✅ ProtoUI Controller Connected")
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('show_login') === 'true') {
             window.location.href = '/login'
         }
 
-        // Handle Turbo Frame errors gracefully
         document.addEventListener("turbo:frame-missing", (event) => {
-            event.preventDefault(); // 'Content missing' 텍스트 삽입 방지
-            const { response, visit } = event.detail;
+            event.preventDefault();
+            const { response } = event.detail;
             console.warn("Turbo frame missing, redirecting to:", response.url);
-            // 프레임이 없을 경우 전체 페이지 이동 시도 (필요시)
-            // visit(response);
         });
     }
 
@@ -35,15 +35,48 @@ export default class extends Controller {
     }
 
     toggleFabMenu() {
+        // 1. 메뉴 컨테이너 찾기
         const menu = document.getElementById('fab-menu-sheet')
-        const content = menu.querySelector('.relative.bg-\\[\\#1B1A24\\]')
-        const bg = menu.querySelector('.absolute.inset-0.bg-black\\/80')
+        if (!menu) {
+            console.error("❌ Critical: 'fab-menu-sheet' not found")
+            return
+        }
 
+        // 2. 내부 요소 찾기 (Stimulus Target 우선, 없으면 QuerySelector Fallback)
+        let bg, content
+
+        if (this.hasFabBgTarget) {
+            bg = this.fabBgTarget
+        } else {
+            // Fallback for HTML updates delayed
+            bg = menu.querySelector('[data-proto-ui-target="fabBg"]') || menu.firstElementChild
+        }
+
+        if (this.hasFabContentTarget) {
+            content = this.fabContentTarget
+        } else {
+            // Fallback
+            content = menu.querySelector('[data-proto-ui-target="fabContent"]') || menu.lastElementChild
+        }
+
+        // 3. 요소 유효성 검사
+        if (!bg || !content) {
+            console.error("❌ Critical: Sub-elements missing", { bg, content })
+            // 최소 동작 보장
+            menu.classList.toggle('hidden')
+            document.body.classList.toggle('overflow-hidden')
+            return
+        }
+
+        // 4. 토글 로직
         if (menu.classList.contains('hidden')) {
             // Open
             menu.classList.remove('hidden')
             bg.style.opacity = '0'
             content.style.transform = 'translateY(100%)'
+
+            // Force Reflow
+            void menu.offsetWidth
 
             requestAnimationFrame(() => {
                 bg.style.transition = 'opacity 0.3s ease'
@@ -60,24 +93,20 @@ export default class extends Controller {
             setTimeout(() => {
                 menu.classList.add('hidden')
                 document.body.classList.remove('overflow-hidden')
-                // Reset styles
+                // Reset
                 content.style.transform = ''
+                content.style.transition = ''
                 bg.style.opacity = ''
+                bg.style.transition = ''
             }, 300)
         }
     }
 
     checkLogin(event) {
-        // We use data-logged-in on body to check status
         const isLoggedIn = document.body.getAttribute('data-logged-in')
-
         if (isLoggedIn === "false") {
-            // Stop current action
             event.preventDefault()
             event.stopImmediatePropagation()
-
-            // Redirect to dedicated login page
-            // This ensures a "move" to the login state as requested
             window.location.href = '/login'
             return false
         }
