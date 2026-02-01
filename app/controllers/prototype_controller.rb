@@ -77,7 +77,7 @@ class PrototypeController < ApplicationController
 
     # Calculate Global Average Achievement from actual club member data
     @global_average_progress = Rails.cache.fetch("global_avg_progress_#{Date.current}", expires_in: 30.minutes) do
-      avg = RoutineClubMember.where(status: :active, payment_status: :confirmed).average(:attendance_rate)
+      avg = RoutineClubMember.joins(:user).where(users: { deleted_at: nil }, status: :active, payment_status: :confirmed).average(:attendance_rate)
       avg&.round(1) || 0
     end
 
@@ -417,7 +417,7 @@ class PrototypeController < ApplicationController
     @current_club = RoutineClub.official.first
 
     # Collective Data for RUFA Club
-    @confirmed_members = @current_club&.members&.where(payment_status: :confirmed) || []
+    @confirmed_members = @current_club&.members&.joins(:user)&.where(users: { deleted_at: nil }, payment_status: :confirmed) || []
     @club_total_members_count = @confirmed_members.count
 
     # Weekly completion stats (Real Data)
