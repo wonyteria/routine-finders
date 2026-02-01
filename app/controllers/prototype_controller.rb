@@ -820,76 +820,72 @@ class PrototypeController < ApplicationController
   end
 
   def update_profile
-    if current_user
-      # 1. Parameter Normalization
-      # Convert to hash with indifferent access to handle symbol/string keys safely
-      safe_params = params.to_unsafe_h.with_indifferent_access
-
-      # Extract user attributes checking both root and nested :user key
-      # Ensure user_attrs is a Hash before using it
-      user_attrs = safe_params[:user].is_a?(Hash) ? safe_params[:user] : safe_params
-
-      update_params = {}
-
-      # 2. Attribute Extraction
-      # Explicitly check for keys to allow clearing values (sending empty strings)
-      if user_attrs.key?(:nickname)
-        update_params[:nickname] = user_attrs[:nickname]
-      end
-
-      if user_attrs.key?(:bio)
-        update_params[:bio] = user_attrs[:bio]
-      end
-
-      # 3. Image Handling
-      # Check multiple possible keys for profile image
-      img = safe_params[:profile_image] || user_attrs[:profile_image] || safe_params[:avatar] || user_attrs[:avatar]
-
-      if img.present? && img.respond_to?(:content_type)
-        validation_result = FileUploadValidator.validate_image(img)
-        unless validation_result[:valid]
-          redirect_to prototype_my_path, alert: validation_result[:error], status: :see_other and return
-        end
-
-        current_user.avatar.attach(img)
-        update_params[:profile_image] = nil # Clear legacy field
-      end
-
-      # 4. SNS Links Handling
-      sns = safe_params[:sns_links] || user_attrs[:sns_links]
-      if sns.present? && sns.is_a?(Array)
-        links = {}
-        sns.each do |link|
-          next if link.blank?
-          if link.include?("instagram.com")
-            links["instagram"] = link
-          elsif link.include?("threads.net")
-            links["threads"] = link
-          elsif link.include?("youtube.com")
-            links["youtube"] = link
-          elsif link.include?("twitter.com") || link.include?("x.com")
-            links["twitter"] = link
-          elsif link.include?("blog.naver.com") || link.include?("tistory.com")
-            links["blog"] = link
-          else
-            links["other_#{links.size}"] = link
-          end
-        end
-        update_params[:sns_links] = links
-      end
-
-      # 5. Update & Logging
-      Rails.logger.info "[Profile Update] User #{current_user.id} params: #{update_params.inspect}"
-
-      if current_user.update(update_params)
-        redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!", status: :see_other
-      else
-        error_msg = current_user.errors.full_messages.join(", ")
-        Rails.logger.error "[Profile Update Failed] User #{current_user.id}: #{error_msg}"
-        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{error_msg}", status: :see_other
-      end
-    else
+    unless current_user
       redirect_to prototype_login_path, alert: "로그인이 필요합니다.", status: :see_other
+      return
+    end
+
+    # 1. Strong Parameters - 정석적인 방법으로 파라미터 추출
+    # View에서 name="user[nickname]" 형태로 보내므로 user 키가 반드시 존재해야 함을 가정하되,
+    # 예외 상황(직접 요청 등)을 대비해 안전하게 처리
+    begin
+      user_params = params.require(:user).permit(:nickname, :bio, :profile_image, :avatar, sns_links: [])
+    rescue ActionController::ParameterMissing
+      # user 키가 없는 경우 (예: 잘못된 요청)
+      user_params = ActionController::Parameters.new
+    end
+
+    update_params = {}
+
+    # 2. Basic Info - 키가 존재하면(빈 문자열 포함) 업데이트 파라미터에 포함
+    # permit을 통과한 파라미터 객체는 key? 메서드를 지원함
+    update_params[:nickname] = user_params[:nickname] if user_params.key?(:nickname)
+    update_params[:bio] = user_params[:bio] if user_params.key?(:bio)
+
+    # 3. Image Handling
+    img = user_params[:profile_image] || user_params[:avatar]
+    if img.present? && img.respond_to?(:content_type)
+      validation_result = FileUploadValidator.validate_image(img)
+      unless validation_result[:valid]
+        redirect_to prototype_my_path, alert: validation_result[:error], status: :see_other
+        return
+      end
+
+      current_user.avatar.attach(img)
+      update_params[:profile_image] = nil # Clear legacy field
+    end
+
+    # 4. SNS Links Handling
+    if user_params[:sns_links].is_a?(Array)
+      links = {}
+      user_params[:sns_links].each do |link|
+        next if link.blank?
+        if link.include?("instagram.com")
+          links["instagram"] = link
+        elsif link.include?("threads.net")
+          links["threads"] = link
+        elsif link.include?("youtube.com")
+          links["youtube"] = link
+        elsif link.include?("twitter.com") || link.include?("x.com")
+          links["twitter"] = link
+        elsif link.include?("blog.naver.com") || link.include?("tistory.com")
+          links["blog"] = link
+        else
+          links["other_#{links.size}"] = link
+        end
+      end
+      update_params[:sns_links] = links
+    end
+
+    # 5. Execute Update
+    Rails.logger.info "[Profile Update] User #{current_user.id} payload: #{update_params.inspect}"
+
+    if current_user.update(update_params)
+      redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!", status: :see_other
+    else
+      error_msg = current_user.errors.full_messages.join(", ")
+      Rails.logger.error "[Profile Update Failed] User #{current_user.id}: #{error_msg}"
+      redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{error_msg}", status: :see_other
     end
   end
 
