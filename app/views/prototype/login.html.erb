@@ -13,20 +13,20 @@
   }
 </style>
 
-<div class="min-h-screen bg-[#0C0B12] flex flex-col justify-center py-12">
+<div class="min-h-screen bg-[#0C0B12] flex flex-col justify-center pt-12 pb-48">
   <!-- Top Background Decor -->
   <div class="fixed top-0 left-0 w-full h-1/2 bg-gradient-to-b from-indigo-600/20 to-transparent pointer-events-none"></div>
   <div class="fixed top-20 right-[-10%] w-80 h-80 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-  <div class="relative z-10 space-y-12 w-full">
+  <div class="relative z-10 space-y-6 w-full">
     <!-- Brand Info -->
-    <div class="text-center space-y-6 animate-fade-in max-w-sm mx-auto px-6">
-      <div class="w-20 h-20 bg-white rounded-[32px] flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(255,255,255,0.1)]">
-        <img src="<%= asset_path('rf_symbol_v9.png') %>" class="w-12 h-12" alt="Routine Finders">
+    <div class="text-center space-y-4 animate-fade-in max-w-sm mx-auto px-6">
+      <div class="w-16 h-16 bg-white rounded-[24px] flex items-center justify-center mx-auto shadow-[0_0_40px_rgba(255,255,255,0.1)]">
+        <img src="<%= asset_path('rf_symbol_v9.png') %>" class="w-10 h-10" alt="Routine Finders">
       </div>
       <div class="space-y-2">
-        <h1 class="text-3xl font-black text-white tracking-tight">반가워요, 루파님!</h1>
-        <p class="text-slate-400 font-medium leading-relaxed">
+        <h1 class="text-2xl font-black text-white tracking-tight">반가워요, 루파님!</h1>
+        <p class="text-sm text-slate-400 font-medium leading-relaxed">
           어제보다 더 나은 나를 만드는 여정,<br/>
           루틴 파인더스에서 다시 시작해볼까요?
         </p>
@@ -49,11 +49,11 @@
           items = features + features
         %>
         <% items.each do |item| %>
-          <div class="shrink-0 w-[180px] p-5 bg-white/5 rounded-3xl border border-white/5 space-y-3 backdrop-blur-sm">
-            <div class="text-2xl"><%= item[:icon] %></div>
+          <div class="shrink-0 w-[130px] p-3 bg-white/5 rounded-2xl border border-white/5 space-y-2 backdrop-blur-sm">
+            <div class="text-xl"><%= item[:icon] %></div>
             <div>
-              <p class="text-xs font-black text-white"><%= item[:title] %></p>
-              <p class="text-[10px] font-bold text-slate-500 mt-1 leading-relaxed"><%= item[:desc] %></p>
+              <p class="text-[11px] font-black text-white leading-tight"><%= item[:title] %></p>
+              <p class="text-[9px] font-bold text-slate-500 mt-0.5 leading-tight"><%= item[:desc] %></p>
             </div>
           </div>
         <% end %>
@@ -66,7 +66,7 @@
     <!-- Login Options -->
     <div class="space-y-4 animate-slide-up max-w-sm mx-auto w-full px-6" style="animation-delay: 0.2s">
       <!-- Kakao Login -->
-      <%= button_to "/auth/kakao", data: { turbo: false }, class: "w-full py-4 bg-[#FEE500] hover:bg-[#FEE500]/90 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg" do %>
+      <%= button_to "/auth/kakao", data: { turbo: false }, class: "w-full py-3.5 bg-[#FEE500] hover:bg-[#FEE500]/90 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg" do %>
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 3c-4.97 0-9 3.18-9 7.11 0 2.55 1.7 4.79 4.27 6.05-.17.59-.62 2.13-.71 2.45-.11.4.15.39.31.28.13-.08 2.05-1.39 2.87-1.95.73.2 1.5.31 2.26.31 4.97 0 9-3.18 9-7.11S16.97 3 12 3z"/>
         </svg>
@@ -74,7 +74,7 @@
       <% end %>
 
       <!-- Google Login -->
-      <%= button_to "/auth/google_oauth2", data: { turbo: false }, class: "w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-white font-black text-[15px]" do %>
+      <%= button_to "/auth/google_oauth2", data: { turbo: false }, class: "w-full py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-white font-black text-[15px]" do %>
         <svg class="w-5 h-5" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>

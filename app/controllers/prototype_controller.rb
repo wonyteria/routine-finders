@@ -11,7 +11,6 @@ class PrototypeController < ApplicationController
   before_action :require_can_create_gathering, only: [ :gathering_builder ]
 
   def login
-    @hide_nav = true
   end
 
   def home
