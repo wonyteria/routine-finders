@@ -821,39 +821,42 @@ class PrototypeController < ApplicationController
 
   def update_profile
     if current_user
-      # Support both nested (params[:user]) and flat parameters
-      # More robust parameter extraction
-      user_params = params.fetch(:user, params)
+      # 1. Parameter Normalization
+      # Convert to hash with indifferent access to handle symbol/string keys safely
+      safe_params = params.to_unsafe_h.with_indifferent_access
+
+      # Extract user attributes checking both root and nested :user key
+      # Ensure user_attrs is a Hash before using it
+      user_attrs = safe_params[:user].is_a?(Hash) ? safe_params[:user] : safe_params
 
       update_params = {}
 
-      # Use key? to check existence of parameter to support clearing bio/nickname
-      # Check BOTH symbol and string keys to be safe
-      if user_params.key?(:nickname) || user_params.key?("nickname")
-        update_params[:nickname] = user_params[:nickname] || user_params["nickname"]
+      # 2. Attribute Extraction
+      # Explicitly check for keys to allow clearing values (sending empty strings)
+      if user_attrs.key?(:nickname)
+        update_params[:nickname] = user_attrs[:nickname]
       end
 
-      if user_params.key?(:bio) || user_params.key?("bio")
-        update_params[:bio] = user_params[:bio] || user_params["bio"]
+      if user_attrs.key?(:bio)
+        update_params[:bio] = user_attrs[:bio]
       end
 
-      # Handle profile image upload correctly via ActiveStorage
-      img = params[:profile_image] || user_params[:profile_image] || params[:avatar] || user_params[:avatar]
+      # 3. Image Handling
+      # Check multiple possible keys for profile image
+      img = safe_params[:profile_image] || user_attrs[:profile_image] || safe_params[:avatar] || user_attrs[:avatar]
 
-      if img.present? && img.respond_to?(:content_type) # Ensure it's a file upload
-        # 파일 검증
+      if img.present? && img.respond_to?(:content_type)
         validation_result = FileUploadValidator.validate_image(img)
         unless validation_result[:valid]
           redirect_to prototype_my_path, alert: validation_result[:error], status: :see_other and return
         end
 
         current_user.avatar.attach(img)
-        # Clear legacy string column to let the profile_image method prefer avatar
-        update_params[:profile_image] = nil
+        update_params[:profile_image] = nil # Clear legacy field
       end
 
-      # Handle SNS links if provided
-      sns = params[:sns_links] || user_params[:sns_links]
+      # 4. SNS Links Handling
+      sns = safe_params[:sns_links] || user_attrs[:sns_links]
       if sns.present? && sns.is_a?(Array)
         links = {}
         sns.each do |link|
@@ -875,12 +878,14 @@ class PrototypeController < ApplicationController
         update_params[:sns_links] = links
       end
 
+      # 5. Update & Logging
+      Rails.logger.info "[Profile Update] User #{current_user.id} params: #{update_params.inspect}"
+
       if current_user.update(update_params)
-        Rails.logger.info "Profile successfully updated for User #{current_user.id}: #{update_params.keys.join(', ')}"
         redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!", status: :see_other
       else
         error_msg = current_user.errors.full_messages.join(", ")
-        Rails.logger.error "Profile update failed for User #{current_user.id}: #{error_msg}"
+        Rails.logger.error "[Profile Update Failed] User #{current_user.id}: #{error_msg}"
         redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{error_msg}", status: :see_other
       end
     else
