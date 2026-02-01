@@ -6,6 +6,15 @@ export default class extends Controller {
         if (urlParams.get('show_login') === 'true') {
             window.location.href = '/login'
         }
+
+        // Handle Turbo Frame errors gracefully
+        document.addEventListener("turbo:frame-missing", (event) => {
+            event.preventDefault(); // 'Content missing' 텍스트 삽입 방지
+            const { response, visit } = event.detail;
+            console.warn("Turbo frame missing, redirecting to:", response.url);
+            // 프레임이 없을 경우 전체 페이지 이동 시도 (필요시)
+            // visit(response);
+        });
     }
 
     openModal(event) {

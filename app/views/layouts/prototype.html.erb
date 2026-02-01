@@ -72,6 +72,25 @@
         transform: scale(0.96);
         transition: transform 0.1s ease;
       }
+
+      /* Turbo Frame Handling */
+      turbo-frame {
+        display: block;
+        min-height: 1px;
+      }
+      /* Hide direct text nodes (like 'Content missing') */
+      turbo-frame:not([src]) {
+        font-size: 0 !important;
+      }
+      turbo-frame > * {
+        font-size: initial !important;
+      }
+      /* Loading State */
+      turbo-frame[busy] {
+        opacity: 0.6;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
     </style>
   </head>
 
