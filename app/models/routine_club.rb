@@ -134,6 +134,13 @@ class RoutineClub < ApplicationRecord
     official = self.official.first
     return official if official
 
+    # 기존 클럽이 있다면 최신 클럽을 공식으로 승격 (데이터 파편화 방지)
+    latest_club = self.order(created_at: :desc).first
+    if latest_club
+      latest_club.update(is_official: true)
+      return latest_club
+    end
+
     # 2026년 1분기 기준 공식 클라이언트 설정 (시스템 고유 자산)
     self.create!(
       title: "루파 클럽 공식",
