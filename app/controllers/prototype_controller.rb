@@ -684,17 +684,14 @@ class PrototypeController < ApplicationController
         content: params[:content]
       )
 
-      # Assuming Announcement belongs_to :challenge is optional or we don't need it here.
-      # If validation fails due to missing challenge_id, we might need to handle it.
-
       if announcement.save
         RoutineClubNotificationService.notify_announcement(@official_club, announcement)
-        redirect_to prototype_club_management_path(tab: "announcements"), notice: "공지사항이 등록되고 모든 멤버에게 알림이 발송되었습니다."
+        redirect_to prototype_admin_clubs_path(tab: "announcements"), notice: "공지사항이 등록되고 모든 멤버에게 알림이 발송되었습니다."
       else
-        redirect_to prototype_club_management_path(tab: "announcements"), alert: "공지 등록 실패: #{announcement.errors.full_messages.join(', ')}"
+        redirect_to prototype_admin_clubs_path(tab: "announcements"), alert: "공지 등록 실패: #{announcement.errors.full_messages.join(', ')}"
       end
     else
-      redirect_to prototype_club_management_path, alert: "운영 중인 공식 클럽이 없습니다."
+      redirect_to prototype_admin_clubs_path, alert: "운영 중인 공식 클럽이 없습니다."
     end
   end
 
@@ -703,12 +700,12 @@ class PrototypeController < ApplicationController
 
     begin
       member.confirm_payment!
-      redirect_to prototype_club_management_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 승인되었습니다."
+      redirect_to prototype_admin_clubs_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 승인되었습니다."
     rescue => e
-      redirect_to prototype_club_management_path(tab: "members"), alert: "승인 처리에 실패했습니다: #{e.message}"
+      redirect_to prototype_admin_clubs_path(tab: "members"), alert: "승인 처리에 실패했습니다: #{e.message}"
     end
   rescue ActiveRecord::RecordNotFound
-    redirect_to prototype_club_management_path, alert: "멤버를 찾을 수 없습니다."
+    redirect_to prototype_admin_clubs_path, alert: "멤버를 찾을 수 없습니다."
   end
 
   def reject_club_payment
@@ -717,12 +714,12 @@ class PrototypeController < ApplicationController
 
     begin
       member.reject_payment!(reason)
-      redirect_to prototype_club_management_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 거부되었습니다."
+      redirect_to prototype_admin_clubs_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 거부되었습니다."
     rescue => e
-      redirect_to prototype_club_management_path(tab: "members"), alert: "거부 처리에 실패했습니다: #{e.message}"
+      redirect_to prototype_admin_clubs_path(tab: "members"), alert: "거부 처리에 실패했습니다: #{e.message}"
     end
   rescue ActiveRecord::RecordNotFound
-    redirect_to prototype_club_management_path, alert: "멤버를 찾을 수 없습니다."
+    redirect_to prototype_admin_clubs_path, alert: "멤버를 찾을 수 없습니다."
   end
 
   def broadcast
@@ -893,11 +890,15 @@ class PrototypeController < ApplicationController
     if @official_club
       if @official_club.update(lounge_params)
         Rails.logger.info "Club settings updated for RoutineClub #{@official_club.id}"
-        redirect_to prototype_admin_clubs_path, notice: "클럽 설정이 성공적으로 저장되었습니다."
+
+        # Determine strict tab redirection based on what was updated
+        target_tab = params.dig(:routine_club, :live_room_title) ? "lounge" : "settings"
+
+        redirect_to prototype_admin_clubs_path(tab: target_tab), notice: "설정이 성공적으로 저장되었습니다."
       else
         error_msg = @official_club.errors.full_messages.join(", ")
         Rails.logger.error "Club update failed for RoutineClub #{@official_club.id}: #{error_msg}"
-        redirect_to prototype_admin_clubs_path, alert: "저장에 실패했습니다: #{error_msg}"
+        redirect_to prototype_admin_clubs_path(tab: "settings"), alert: "저장에 실패했습니다: #{error_msg}"
       end
     else
       redirect_to prototype_admin_clubs_path, alert: "공식 클럽을 찾을 수 없습니다."

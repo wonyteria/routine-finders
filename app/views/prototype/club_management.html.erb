@@ -142,13 +142,18 @@
                     
                     <!-- 승인/거부 버튼 -->
                     <div class="flex gap-2 pt-2">
-                      <%= button_to prototype_confirm_club_payment_path(member_id: member.id), method: :post, class: "flex-1 py-2.5 rounded-xl bg-emerald-500 text-white font-black text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2", form: { data: { turbo_confirm: "#{member.user.nickname}님의 입금을 승인하시겠습니까?" } } do %>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <span>승인</span>
+                      <%= form_with url: prototype_confirm_club_payment_path(member_id: member.id), method: :post, class: "flex-1" do %>
+                        <button type="submit" onclick="return confirm('<%= member.user.nickname %>님의 입금을 승인하시겠습니까?')" class="w-full py-3 rounded-2xl bg-emerald-500 text-white font-black text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                          <span>승인</span>
+                        </button>
                       <% end %>
-                      <%= button_to prototype_reject_club_payment_path(member_id: member.id), method: :post, class: "flex-1 py-2.5 rounded-xl bg-rose-500/20 text-rose-400 font-black text-xs hover:bg-rose-500/30 transition-all flex items-center justify-center gap-2", form: { data: { turbo_confirm: "#{member.user.nickname}님의 입금을 거부하시겠습니까?" } } do %>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        <span>거부</span>
+                      
+                      <%= form_with url: prototype_reject_club_payment_path(member_id: member.id), method: :post, class: "flex-1" do %>
+                        <button type="submit" onclick="return confirm('<%= member.user.nickname %>님의 입금을 거부하시겠습니까?')" class="w-full py-3 rounded-2xl bg-rose-500/10 text-rose-500 font-black text-xs hover:bg-rose-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 border border-rose-500/20">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                          <span>거부</span>
+                        </button>
                       <% end %>
                     </div>
                   </div>
