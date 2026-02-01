@@ -23,7 +23,7 @@
 <% end %>
 <%# Update Prototype Progress if in prototype view %>
 <% 
-  todays_routines = current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) }
+  todays_routines = current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(Date.current.wday.to_s) }
   joined_participations = current_user ? current_user.participations.active.joins(:challenge) : []
   
   routine_total = todays_routines.count

@@ -28,7 +28,7 @@ class PrototypeController < ApplicationController
     end
 
     # 2. Routine & Task Progress (Real data)
-    @todays_routines = current_user ? current_user.personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
+    @todays_routines = current_user ? current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
     @joined_participations = current_user ? current_user.participations.active.joins(:challenge) : Participant.none
 
     # Progress Calculation
@@ -191,7 +191,7 @@ class PrototypeController < ApplicationController
       @milestones = []
 
       # 1. Verification Count (Routine)
-      current_verifications = current_user.personal_routines.joins(:completions).count
+      current_verifications = current_user.personal_routines.where(deleted_at: nil).joins(:completions).count
       next_v_badge = Badge.where(badge_type: :verification_count)
                           .where("requirement_value > ?", current_verifications)
                           .order(requirement_value: :asc).first
@@ -206,7 +206,7 @@ class PrototypeController < ApplicationController
       end
 
       # 2. Max Streak
-      max_streak = current_user.personal_routines.maximum(:current_streak) || 0
+      max_streak = current_user.personal_routines.where(deleted_at: nil).maximum(:current_streak) || 0
       next_s_badge = Badge.where(badge_type: :max_streak)
                           .where("requirement_value > ?", max_streak)
                           .order(requirement_value: :asc).first
@@ -277,7 +277,7 @@ class PrototypeController < ApplicationController
     if date > Date.current
       @weekly_data << 0
     else
-      routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      routines = current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(date.wday.to_s) }
       total = routines.count
       completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
       @weekly_data << (total.positive? ? ((completed.to_f / total) * 100).round : 0)
@@ -295,7 +295,7 @@ class PrototypeController < ApplicationController
     daily_rates = []
 
     (week_start..week_end).each do |date|
-      routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      routines = current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(date.wday.to_s) }
       next if routines.empty?
 
       total = routines.count
@@ -318,7 +318,7 @@ class PrototypeController < ApplicationController
     daily_rates = []
 
     (month_start..month_end).each do |date|
-      routines = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      routines = current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(date.wday.to_s) }
       next if routines.empty?
 
       total = routines.count
@@ -403,7 +403,7 @@ class PrototypeController < ApplicationController
   end
 
   def routines
-    @routines = current_user&.personal_routines || []
+    @routines = current_user ? current_user.personal_routines.where(deleted_at: nil).order(created_at: :desc) : []
     render layout: "prototype"
   end
 
@@ -434,7 +434,7 @@ class PrototypeController < ApplicationController
   def user_profile
     @target_user = User.find(params[:id])
     @achievements = @target_user.user_badges.includes(:badge).order(created_at: :desc).limit(6)
-    @routines = @target_user.personal_routines.order(created_at: :desc).limit(4)
+    @routines = @target_user.personal_routines.where(deleted_at: nil).order(created_at: :desc).limit(4)
 
     # Simple Weekly Stats for Card
     start_of_week = Date.current.beginning_of_week
@@ -443,7 +443,7 @@ class PrototypeController < ApplicationController
     @weekly_data = []
     (0...days_passed).each do |i|
       date = start_of_week + i.days
-      routines = @target_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      routines = @target_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(date.wday.to_s) }
       total = routines.count
       completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
       @weekly_data << (total.positive? ? ((completed.to_f / total) * 100).round : 0)
