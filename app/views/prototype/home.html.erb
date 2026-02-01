@@ -743,6 +743,5 @@
 <% end %>
 
 <!-- Daily Greeting Modal for Existing Users -->
-<% if flash[:show_daily_greeting] && current_user %>
-  <%= render 'shared/daily_greeting' %>
-<% end %>
+<%# Daily Greeting is now rendered in the global layout to ensure correct z-index %>
+

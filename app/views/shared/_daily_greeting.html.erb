@@ -1,6 +1,6 @@
 <% info = current_user.daily_greeting_info %>
 <div id="daily-greeting-modal" 
-     class="fixed inset-0 z-[45000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm"
+     class="fixed inset-0 z-[60000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm"
      onclick="this.remove(); document.body.classList.remove('overflow-hidden')">
   
   <!-- 배경 블러 -->
@@ -43,7 +43,7 @@
     </div>
 
     <!-- 닫기 버튼 -->
-    <button onclick="this.closest('#daily_greeting_modal').remove(); document.body.classList.remove('overflow-hidden')"
+    <button onclick="this.closest('#daily-greeting-modal').remove(); document.body.classList.remove('overflow-hidden')"
             class="w-full bg-white text-[#0C0B12] py-4 rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-white/5">
       오늘 하루도 시작하기!
     </button>
