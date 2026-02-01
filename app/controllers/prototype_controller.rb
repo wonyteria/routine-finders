@@ -535,16 +535,18 @@ class PrototypeController < ApplicationController
 
   def update_goals
     if current_user
-      success = current_user.update(
-        weekly_goal: params[:weekly_goal],
-        monthly_goal: params[:monthly_goal],
-        yearly_goal: params[:yearly_goal],
-        weekly_goal_updated_at: Time.current,
-        monthly_goal_updated_at: Time.current,
-        yearly_goal_updated_at: Time.current
-      )
+      # Ensure we handle both string and symbol keys by accessing directly
+      update_params = {}
+      update_params[:weekly_goal] = params[:weekly_goal] if params.has_key?(:weekly_goal) || params.has_key?("weekly_goal")
+      update_params[:monthly_goal] = params[:monthly_goal] if params.has_key?(:monthly_goal) || params.has_key?("monthly_goal")
+      update_params[:yearly_goal] = params[:yearly_goal] if params.has_key?(:yearly_goal) || params.has_key?("yearly_goal")
 
-      if success
+      # Timestamps
+      update_params[:weekly_goal_updated_at] = Time.current if update_params.has_key?(:weekly_goal)
+      update_params[:monthly_goal_updated_at] = Time.current if update_params.has_key?(:monthly_goal)
+      update_params[:yearly_goal_updated_at] = Time.current if update_params.has_key?(:yearly_goal)
+
+      if current_user.update(update_params)
         redirect_to prototype_my_path, notice: "목표가 성공적으로 저장되었습니다!"
       else
         Rails.logger.error "Failed to update goals for User #{current_user.id}: #{current_user.errors.full_messages.join(', ')}"
@@ -811,13 +813,14 @@ class PrototypeController < ApplicationController
       p = params[:user].presence || params
 
       update_params = {}
-      # Use fetch or bracket to ensure we get the value even if it's an empty string (to allow clearing)
-      update_params[:nickname] = p[:nickname] if p.has_key?(:nickname) && p[:nickname].present?
-      update_params[:bio] = p[:bio] if p.has_key?(:bio)
+      # Use key? to check existence of parameter to support clearing bio/nickname
+      # Support both string and symbol keys via ActionController::Parameters behavior
+      update_params[:nickname] = p[:nickname] if p[:nickname].present?
+      update_params[:bio] = p[:bio] if p.key?(:bio) || p.key?("bio")
 
       # Handle profile image upload correctly via ActiveStorage
       img = params[:profile_image] || p[:profile_image] || params[:avatar] || p[:avatar]
-      if img.present? && img != ""
+      if img.present? && img.respond_to?(:content_type) # Ensure it's a file upload
         # 파일 검증
         validation_result = FileUploadValidator.validate_image(img)
         unless validation_result[:valid]
