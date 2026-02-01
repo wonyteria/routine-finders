@@ -14,18 +14,8 @@ class RoutineClubsController < ApplicationController
   end
 
   def guide
-    @routine_club = RoutineClub.ensure_official_club || RoutineClub.order(created_at: :desc).first
-    return redirect_to root_path, alert: "현재 운영 중인 루파 클럽이 없습니다." unless @routine_club
-
-    # Determine current member (viewer)
-    @my_membership = current_user&.routine_club_members&.find_by(routine_club: @routine_club)
-    @is_member = @my_membership&.payment_status_confirmed?
-    @is_pending = @my_membership&.payment_status_pending?
-    @is_host = current_user && @routine_club.host == current_user
-
-    if params[:source] == "prototype"
-      render "prototype/club_guide", layout: "prototype"
-    end
+    # Force redirect to the new prototype club join page to avoid legacy UI
+    redirect_to prototype_club_join_path
   end
 
   def show
