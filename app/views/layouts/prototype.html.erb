@@ -122,7 +122,7 @@
   <body class="min-h-screen overflow-x-hidden" data-controller="proto-ui toast loading" data-logged-in="<%= logged_in? %>">
     <!-- App Bottom Navigation Bar (Standalone Fixed Layer) -->
     <% unless content_for?(:hide_nav) %>
-      <div class="fixed bottom-10 inset-x-0 z-[30000] flex justify-center pointer-events-none">
+      <div class="fixed bottom-10 inset-x-0 z-[60000] flex justify-center pointer-events-none">
         <div class="w-full max-w-md mx-auto px-4 flex justify-center">
           <nav class="pointer-events-auto w-[92%] max-w-[360px] h-20 bg-[#16151D]/98 backdrop-blur-3xl rounded-[32px] border border-white/10 flex items-center justify-between px-2 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
             <!-- Left Side Icons -->
@@ -141,7 +141,7 @@
               <button type="button" 
                       onclick="window.toggleFabMenu && window.toggleFabMenu()"
                       data-action="click->proto-ui#toggleFabMenu" 
-                      class="w-16 h-16 app-fab-gradient rounded-full flex items-center justify-center -translate-y-7 shadow-[0_15px_35px_rgba(124,77,255,0.6)] border-4 border-[#0C0B12] active:scale-90 transition-transform cursor-pointer relative z-[31000]">
+                      class="w-16 h-16 app-fab-gradient rounded-full flex items-center justify-center -translate-y-7 shadow-[0_15px_35px_rgba(124,77,255,0.6)] border-4 border-[#0C0B12] active:scale-90 transition-transform cursor-pointer relative z-[61000]">
                 <span class="text-2xl text-white font-black leading-none">+</span>
               </button>
             </div>
@@ -228,7 +228,7 @@
     </div>
 
     <!-- 2. FAB Menu Sheet (Simple List Style) -->
-    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-4" style="z-index: 2147483647 !important;">
+    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-4">
       <div id="fab-menu-overlay"
            onclick="window.toggleFabMenu && window.toggleFabMenu()" 
            class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity z-0"></div>
