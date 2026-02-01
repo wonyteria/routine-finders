@@ -26,7 +26,7 @@
       <!-- Activity Temperature -->
       <div class="app-glass-card p-5 bg-gradient-to-br from-rose-500/10 to-transparent border-rose-500/20 rounded-[32px] flex flex-col justify-between">
         <div>
-          <p class="text-[9px] font-black text-rose-400 uppercase tracking-widest leading-none mb-1">Club Temp</p>
+          <p class="text-[9px] font-black text-rose-400 uppercase tracking-widest leading-none mb-1">열정 온도</p>
           <h4 class="text-xs font-bold text-slate-300">클럽 열정 온도</h4>
         </div>
         <div class="flex items-baseline gap-1.5 mt-4">
@@ -38,7 +38,7 @@
       <!-- Weekly Completions -->
       <div class="app-glass-card p-5 bg-gradient-to-br from-indigo-500/10 to-transparent border-indigo-500/20 rounded-[32px] flex flex-col justify-between">
         <div>
-          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Team Power</p>
+          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">팀 성취도</p>
           <h4 class="text-xs font-bold text-slate-300">이번 주 성취</h4>
         </div>
         <div class="flex items-baseline gap-1 mt-4">
@@ -56,7 +56,7 @@
               class="w-full text-left app-glass-card p-4 bg-indigo-500/10 border-indigo-500/20 rounded-[24px] flex items-center gap-4 active:scale-[0.98] transition-all">
         <div class="w-10 h-10 rounded-xl bg-indigo-600/20 flex items-center justify-center text-lg shadow-inner shrink-0">📢</div>
         <div class="flex-1 min-w-0">
-          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">Announcement</p>
+          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">공지사항</p>
           <p class="text-xs font-bold text-white truncate"><%= announcement.title %></p>
         </div>
         <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
@@ -69,7 +69,7 @@
           <div class="p-8 space-y-6">
             <div class="flex justify-between items-start">
               <div class="space-y-1">
-                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Official Notice</p>
+                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">공식 공지</p>
                 <h4 class="text-xl font-black text-white leading-tight"><%= announcement.title %></h4>
                 <p class="text-[10px] font-bold text-slate-500"><%= announcement.created_at.strftime('%Y.%m.%d %H:%M') %></p>
               </div>
@@ -103,7 +103,7 @@
   <!-- 4. Integrated Experience Rooms -->
   <section class="mt-12 px-6 space-y-4">
     <div class="flex items-center justify-between px-1 mb-2">
-      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Premium Rooms</h4>
+      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">프리미엄 룸</h4>
       <span class="w-12 h-px bg-white/5"></span>
     </div>
 
@@ -113,7 +113,7 @@
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">📹</div>
           <div>
-            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Live Room</p>
+            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">라이브 룸</p>
             <h4 class="text-sm font-black text-white"><%= @current_club&.live_room_title.presence || "온라인 공동 몰입 세션" %></h4>
           </div>
         </div>
@@ -137,7 +137,7 @@
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">🎓</div>
           <div>
-            <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">Lecture Room</p>
+            <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-none mb-1">강의실</p>
             <h4 class="text-sm font-black text-white"><%= @current_club&.lecture_room_title.presence || "스페셜 인사이트 강의실" %></h4>
           </div>
         </div>
@@ -158,15 +158,15 @@
   <!-- 5. Hall of Fame (Club Members List) -->
   <section class="mt-12 px-6 space-y-6">
     <div class="flex items-center justify-between px-1">
-      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Member Hall of Fame</h4>
+      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">명예의 전당</h4>
       <p class="text-[9px] font-bold text-indigo-400"><%= @club_total_members_count %>명의 루파들이 함께하는 중</p>
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
-      <% @confirmed_members.take(10).each do |member| %>
+    <div class="grid grid-cols-2 gap-3 transition-all">
+      <% @confirmed_members.each_with_index do |member, index| %>
         <%= link_to prototype_user_card_path(member.user), 
                     data: { turbo_frame: "user-profile-modal-frame" },
-                    class: "app-glass-card p-3 bg-white/[0.02] border-white/5 rounded-2xl flex items-center gap-3 hover:bg-white/5 active:scale-95 transition-all" do %>
+                    class: "app-glass-card p-3 bg-white/[0.02] border-white/5 rounded-2xl flex items-center gap-3 hover:bg-white/5 active:scale-95 transition-all #{'hidden extra-member' if index >= 10}" do %>
           <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white/10">
             <img src="<%= member.user.profile_image %>" class="w-full h-full object-cover">
           </div>
@@ -178,9 +178,9 @@
       <% end %>
       
       <% if @confirmed_members.count > 10 %>
-        <div class="app-glass-card p-3 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex items-center justify-center">
-          <p class="text-[9px] font-black text-indigo-400">+ <%= @confirmed_members.count - 10 %> MORE</p>
-        </div>
+        <button type="button" onclick="document.querySelectorAll('.extra-member').forEach(el => el.classList.remove('hidden')); this.remove();" class="app-glass-card p-3 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex items-center justify-center col-span-2 sm:col-span-1 active:scale-95 transition-all cursor-pointer hover:bg-indigo-500/10">
+          <p class="text-[9px] font-black text-indigo-400">+ <%= @confirmed_members.count - 10 %>명 더 보기</p>
+        </button>
       <% end %>
     </div>
   </section>
@@ -188,7 +188,7 @@
   <!-- 6. Support & Communication -->
   <section class="mt-12 px-6 pb-24 space-y-4">
     <div class="flex items-center justify-between px-1 mb-2">
-      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Support & Link</h4>
+      <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">고객 지원 & 링크</h4>
       <span class="w-12 h-px bg-white/5"></span>
     </div>
 
@@ -197,7 +197,7 @@
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-2xl bg-[#FEE500] flex items-center justify-center text-2xl shadow-lg shadow-yellow-900/20">💬</div>
         <div>
-          <p class="text-[10px] font-black text-[#FEE500] uppercase tracking-widest leading-none mb-1">Official Chat</p>
+          <p class="text-[10px] font-black text-[#FEE500] uppercase tracking-widest leading-none mb-1">공식 채팅방</p>
           <h4 class="text-sm font-black text-white">클럽 실시간 단톡방</h4>
           <p class="text-[9px] font-bold text-slate-500 mt-0.5">멤버들과의 실시간 소통 및 공지</p>
         </div>
