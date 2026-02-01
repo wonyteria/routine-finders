@@ -428,6 +428,23 @@ class User < ApplicationRecord
     (completed_count.to_f / todays_routines.size * 100).round(1)
   end
 
+  def period_routine_rate(start_date, end_date)
+    target_routines = personal_routines.where(deleted_at: nil).to_a
+
+    total_required = 0
+    (start_date..end_date).each do |date|
+      total_required += target_routines.count { |r| (r.days || []).include?(date.wday.to_s) }
+    end
+
+    return 0.0 if total_required == 0
+
+    completed_count = personal_routines.joins(:completions)
+                                      .where(personal_routine_completions: { completed_on: start_date..end_date })
+                                      .count
+
+    (completed_count.to_f / total_required * 100).round(1)
+  end
+
   def all_routines_completed?(date = Date.current)
     todays_routines = personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
     return false if todays_routines.empty?

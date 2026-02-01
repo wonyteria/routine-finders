@@ -122,7 +122,9 @@ class HomeController < ApplicationController
     # Based on average completion rate of last 7 days + consistency factor
     last_7_days = (0..6).map { |i| Date.current - i.days }
     @efficiency_data = last_7_days.map { |date| @current_user.daily_achievement_rate(date) }.reverse
-    avg_completion = @efficiency_data.sum / 7.0
+
+    # Use Total Routine Rate for accurate weekly performance measurement
+    avg_completion = @current_user.period_routine_rate(Date.current - 6.days, Date.current)
 
     # Consistency factor: points for each day with > 0% completion
     consistency_days = @efficiency_data.count { |v| v > 0 }

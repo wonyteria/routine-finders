@@ -70,36 +70,41 @@ class RoutineClubReportService
     daily_rates = []
     active_days_count = 0
     completions_by_hour = Hash.new(0)
-    total_completed_count = 0
+
+    # 새로 추가: 기간 전체 합산 변수 (Total Routine Rate 계산용)
+    total_target_count_period = 0
+    total_completed_count_period = 0
 
     target_period.each do |date|
       # 해당 요일에 수행해야 하는 루틴들
       target_routines_for_day = routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      target_count = target_routines_for_day.count
+      total_target_count_period += target_count
 
-      if target_routines_for_day.any?
+      if target_count > 0
         completed_for_day = target_routines_for_day.select { |r| r.completions.exists?(completed_on: date) }
-        date_rate = (completed_for_day.count.to_f / target_routines_for_day.count) * 100
+        completed_count = completed_for_day.count
+        total_completed_count_period += completed_count
+
+        date_rate = (completed_count.to_f / target_count) * 100
         daily_rates << date_rate
 
-        if completed_for_day.any?
+        if completed_count > 0
           active_days_count += 1
-          total_completed_count += completed_for_day.count
-          # 시간대 분석 (간단하게 완료 기록의 생성 시간 사용)
+          # 시간대 분석
           completed_for_day.each do |r|
-             # 최적화를 위해 메모리에 로드된 association 사용
              completion = r.completions.find { |c| c.completed_on == date }
              completions_by_hour[completion.created_at.hour] += 1 if completion
           end
         end
       else
-        # 목표 루틴이 없는 날은 통계에서 제외 (성취율 평균 깎지 않음)
+        # 목표 루틴이 없는 날은 통계에서 제외
       end
     end
 
-    # 2. Achievement Rate (효율성 점수): 평균 달성률
-    # HomeController 로직: avg_completion * 0.8 + consistency * 0.2
-    # 하지만 여기서는 직관적인 '평균 달성률'로 단순화하되, 데이터가 없는 날은 제외하고 계산
-    achievement_rate = daily_rates.any? ? (daily_rates.sum / daily_rates.size).round(1) : 0
+    # 2. Achievement Rate (효율성 점수): 기간 전체 '완료 / 목표' 비율 (Total Routine Rate)
+    # 기존 평균의 평균 방식에서 '루틴 개수 기반' 정확한 달성률로 변경
+    achievement_rate = total_target_count_period > 0 ? (total_completed_count_period.to_f / total_target_count_period * 100).round(1) : 0
 
     # 3. Log Rate (성실도 점수): 활동일 / 전체 기간 (단, 목표가 있었던 기간 기준이 더 정확할 수 있으나 유저 인식엔 전체 기간이 익숙함)
     # 여기서는 "루틴을 하나라도 수행한 날" 비율로 정의
@@ -127,7 +132,7 @@ class RoutineClubReportService
   def determine_identity_title(achievement_rate, log_rate)
     if achievement_rate >= 90 && log_rate >= 90
       "빈틈없는 완벽주의자 👑"
-     পেয়েelsif achievement_rate >= 80
+    elsif achievement_rate >= 80
       "성실한 루틴 마스터 ⭐"
     elsif log_rate >= 80
       "끈기있는 개척자 🏃"
