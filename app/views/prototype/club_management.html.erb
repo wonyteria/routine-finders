@@ -109,12 +109,8 @@
                 <div class="app-glass-card border-amber-500/20 bg-amber-500/5" data-controller="toggle">
                   <!-- 기본 정보 (클릭 가능) -->
                   <div class="p-4 flex items-center justify-between cursor-pointer hover:bg-amber-500/10 transition-all rounded-3xl" data-action="click->toggle#toggle">
-                    <div class="flex items-center gap-3 flex-1">
-                      <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white font-black text-xs">
-                        <%= member.user.nickname[0].upcase %>
-                      </div>
-                      <div class="flex-1">
-                        <p class="text-sm font-black text-white leading-tight"><%= member.user.nickname %></p>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm font-black text-white leading-tight truncate"><%= member.user.nickname %></p>
                         <p class="text-[9px] font-bold text-slate-500 mt-0.5">입금명: <%= member.depositor_name %> · ₩<%= number_with_delimiter(member.paid_amount) %></p>
                       </div>
                       <svg class="w-5 h-5 text-slate-500 transition-transform" data-toggle-target="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,47 +182,33 @@
             <% if @club_members.any? %>
               <% @club_members.each do |member| %>
                 <% 
-                  monthly_rate = member.monthly_routine_rate # Use accurate routine-based rate
-                  status_icon = case monthly_rate
-                  when 95..100 then "👑"
-                  when 90..94 then "🔥"
-                  when 70..89 then "✅"
-                  when 50..69 then "🌿"
-                  when 30..49 then "⚠️"
-                  else "🚨"
-                  end
+                  monthly_rate = member.monthly_routine_rate 
                   
-                  status_label = case monthly_rate
-                  when 95..100 then "레전드"
-                  when 90..94 then "열정맨"
-                  when 70..89 then "안정권"
-                  when 50..69 then "분발중"
-                  when 30..49 then "주의요망"
-                  else "위험"
+                  status_styles = case monthly_rate
+                  when 95..100 then "bg-indigo-500/10 border-indigo-500/20"
+                  when 90..94 then "bg-orange-500/10 border-orange-500/20"
+                  when 70..89 then "bg-emerald-500/10 border-emerald-500/20"
+                  when 50..69 then "bg-slate-500/5 border-white/5"
+                  when 30..49 then "bg-amber-500/10 border-amber-500/20"
+                  else "bg-rose-500/10 border-rose-500/20"
                   end
-
-                  is_warning = monthly_rate < 60 || member.penalty_count > 0
                 %>
-                <div class="app-glass-card p-4 border-white/5 <%= is_warning ? 'bg-orange-500/5 border-orange-500/10' : '' %> flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <div class="flex flex-col items-center gap-1 shrink-0 px-1">
-                      <span class="text-xl"><%= status_icon %></span>
-                      <span class="text-[7px] font-black text-slate-500 uppercase"><%= status_label %></span>
+                <div class="app-glass-card p-4 transition-all <%= status_styles %> flex items-center justify-between gap-4">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm font-black text-white leading-tight truncate"><%= member.user.nickname %></p>
+                      <% if monthly_rate < 30 %>
+                        <span class="px-1.5 py-0.5 rounded-md bg-rose-500 text-[8px] font-black text-white">RE-DASH</span>
+                      <% end %>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white font-black text-xs">
-                      <%= member.user.nickname[0].upcase %>
-                    </div>
-                    <div>
-                      <p class="text-sm font-black text-white leading-tight"><%= member.user.nickname %></p>
-                      <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= monthly_rate.to_i %>% Monthly Success · <%= member.identity_title || '클럽 멤버' %></p>
-                    </div>
+                    <p class="text-[9px] font-bold text-slate-400 mt-1"><%= monthly_rate.to_i %>% Monthly Success · <%= member.identity_title || '클럽 멤버' %></p>
                   </div>
-                  <div class="flex gap-2">
-                    <button onclick="openMessageModal(<%= member.user.id %>, '<%= member.user.nickname %>')" class="w-8 h-8 rounded-lg bg-white/5 text-slate-400 flex items-center justify-center hover:bg-white/10 transition-all">💬</button>
-                    <button onclick="openPenaltyModal(<%= member.id %>, '<%= member.user.nickname %>', 'warn')" class="w-8 h-8 rounded-lg bg-white/5 text-amber-500/60 flex items-center justify-center hover:bg-amber-500/20 transition-all">
+                  <div class="flex gap-2 shrink-0">
+                    <button onclick="openMessageModal(<%= member.user.id %>, '<%= member.user.nickname %>')" class="w-9 h-9 rounded-xl bg-white/5 text-slate-400 flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all">💬</button>
+                    <button onclick="openPenaltyModal(<%= member.id %>, '<%= member.user.nickname %>', 'warn')" class="w-9 h-9 rounded-xl bg-white/5 text-amber-500/60 flex items-center justify-center hover:bg-amber-500/20 active:scale-95 transition-all">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     </button>
-                    <button onclick="openPenaltyModal(<%= member.id %>, '<%= member.user.nickname %>', 'kick')" class="w-8 h-8 rounded-lg bg-white/5 text-rose-500/60 flex items-center justify-center hover:bg-rose-500/20 transition-all">
+                    <button onclick="openPenaltyModal(<%= member.id %>, '<%= member.user.nickname %>', 'kick')" class="w-9 h-9 rounded-xl bg-white/5 text-rose-500/60 flex items-center justify-center hover:bg-rose-500/20 active:scale-95 transition-all">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/></svg>
                     </button>
                   </div>
@@ -244,14 +226,9 @@
             <% @member_stats.each do |stat| %>
               <div class="app-glass-card p-5 border-white/5 space-y-4">
                 <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs">
-                      <%= stat[:member].user.nickname[0].upcase %>
-                    </div>
-                    <div>
-                      <h4 class="text-sm font-black text-white leading-tight"><%= stat[:member].user.nickname %></h4>
-                      <p class="text-[9px] font-bold text-slate-500 mt-1">지표 분석 가동 중...</p>
-                    </div>
+                  <div class="flex-1 min-w-0">
+                    <h4 class="text-sm font-black text-white leading-tight truncate"><%= stat[:member].user.nickname %></h4>
+                    <p class="text-[9px] font-bold text-slate-500 mt-1">지표 분석 가동 중...</p>
                   </div>
                   <div class="text-right">
                      <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest"><%= stat[:weekly_rate] %>% Success</span>
@@ -302,14 +279,9 @@
             <% if @club_admins.any? %>
               <% @club_admins.each do |admin| %>
                 <div class="app-glass-card p-4 flex items-center justify-between border-white/5">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-white font-black text-xs">
-                      <%= admin.nickname[0].upcase %>
-                    </div>
-                    <div>
-                      <p class="text-sm font-black text-white"><%= admin.nickname %></p>
-                      <p class="text-[9px] font-bold text-indigo-400/60 uppercase tracking-widest">Moderator</p>
-                    </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-black text-white truncate"><%= admin.nickname %></p>
+                    <p class="text-[9px] font-bold text-indigo-400/60 uppercase tracking-widest">Moderator</p>
                   </div>
                   <button class="text-slate-600 hover:text-rose-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
                 </div>
