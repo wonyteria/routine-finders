@@ -69,25 +69,33 @@ class User < ApplicationRecord
   def ensure_rufa_club_membership_for_admin
     return unless admin?
 
-    # 공식 클럽 찾기 (없으면 무시)
-    official_club = RoutineClub.official.first || RoutineClub.order(created_at: :desc).first
+    # 공식 클럽 찾기 (없으면 보장)
+    official_club = RoutineClub.official.first || RoutineClub.ensure_official_club
     return unless official_club
 
     # 이미 멤버십이 있는지 확인하고 없으면 생성
-    member = routine_club_members.find_or_initialize_by(routine_club: official_club)
+    begin
+      member = routine_club_members.find_or_initialize_by(routine_club: official_club)
 
-    # Admin은 항상 Active Confirmed 상태 유지
-    member.status = :active
-    member.payment_status = :confirmed
-    member.membership_start_date ||= official_club.start_date
-    member.membership_end_date ||= official_club.end_date
-    member.depositor_name ||= nickname
-    member.contact_info ||= (phone_number || "Admin-Contact")
-    member.goal ||= "관리자로서 루파 클럽을 운영하고 리딩합니다."
-    member.is_moderator = true
-    member.paid_amount ||= 0
+      # Admin은 항상 Active Confirmed 상태 유지
+      member.status = :active
+      member.payment_status = :confirmed
+      member.membership_start_date ||= official_club.start_date
+      member.membership_end_date ||= official_club.end_date
+      member.depositor_name ||= (nickname.presence || "Admin-#{id}")
+      member.contact_info ||= (phone_number.presence || "Admin-Contact")
+      member.goal ||= "관리자로서 루파 클럽을 운영하고 리딩합니다."
+      member.is_moderator = true
+      member.paid_amount ||= 0
 
-    member.save! if member.changed?
+      if member.changed?
+        unless member.save
+          Rails.logger.error "Admin membership auto-update failed for User #{id}: #{member.errors.full_messages.join(', ')}"
+        end
+      end
+    rescue => e
+      Rails.logger.error "Error in ensure_rufa_club_membership_for_admin for User #{id}: #{e.message}"
+    end
   end
 
   # Backward compatibility: admin? returns true for both club_admin and super_admin

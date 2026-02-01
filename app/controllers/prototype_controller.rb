@@ -605,12 +605,16 @@ class PrototypeController < ApplicationController
   end
 
   def club_management
-    @official_club = RoutineClub.official.first || RoutineClub.first
+    @official_club = RoutineClub.ensure_official_club
 
     if @official_club
+      # Ensure current admin has membership before loading the page (Fix for admins not being members)
+      current_user.ensure_rufa_club_membership_for_admin if current_user&.admin?
+
       # Real members of the official club
       @club_members = @official_club.members.confirmed.includes(:user).order(attendance_rate: :desc)
-      @pending_memberships = @official_club.members.payment_status_pending.includes(:user)
+      # Using explicit where for pending status to be safer
+      @pending_memberships = @official_club.members.where(payment_status: :pending).includes(:user)
 
       @member_stats = @club_members.map do |member|
         {
@@ -629,7 +633,8 @@ class PrototypeController < ApplicationController
       @announcements = []
     end
 
-    @club_admins = User.where(role: :club_admin).order(created_at: :desc)
+    # Include both club_admin and super_admin in staff list (Fix for Park Jin-hyung missing from staff)
+    @club_admins = User.where(role: [ :club_admin, :super_admin ]).order(created_at: :desc)
   end
 
   def member_reports
