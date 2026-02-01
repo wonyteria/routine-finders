@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "utils/notification_helper"
+import "pwa/service-worker-registration"
