@@ -25,7 +25,7 @@
       <div class="space-y-1">
         <h4 class="text-2xl font-black text-white"><%= @target_user.nickname %></h4>
         <p class="text-[11px] font-bold text-indigo-400 max-w-[200px] mx-auto line-clamp-2">
-           <%= @target_user.introduction.presence || "아직 자기소개가 없습니다." %>
+           <%= @target_user.bio.presence || "아직 자기소개가 없습니다." %>
         </p>
       </div>
 

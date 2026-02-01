@@ -669,8 +669,87 @@
     <turbo-frame id="user-profile-modal-frame"></turbo-frame>
 
     <!-- Daily Greeting Modal (Priority Layer) -->
-    <% if flash[:show_daily_greeting] && current_user %>
+    <% if flash[:show_daily_greeting] && current_user && !@show_club_welcome_modal %>
       <%= render 'shared/daily_greeting' %>
+    <% end %>
+
+    <!-- 0. Club Member Welcome Modal (Master Celebration - Global Layer) -->
+    <% if @show_club_welcome_modal %>
+      <div id="club-welcome-celebration" class="fixed inset-0 z-[65000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl">
+        <div class="relative w-full max-w-md bg-gradient-to-b from-[#1E1C28] to-[#0C0B12] rounded-[48px] border border-white/10 shadow-[0_0_100px_rgba(79,70,229,0.3)] overflow-hidden animate-badge-pop">
+          <!-- Glow Decor -->
+          <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600/30 blur-[100px] rounded-full animate-pulse"></div>
+          <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-600/20 blur-[100px] rounded-full"></div>
+          
+          <!-- Content -->
+          <div class="relative z-10 p-10 flex flex-col items-center text-center space-y-8">
+            <!-- Visual Badge -->
+            <div class="relative group">
+              <div class="absolute inset-0 bg-indigo-500 blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+              <div class="w-32 h-32 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-[40px] flex items-center justify-center text-6xl shadow-2xl relative z-10 border border-white/20">
+                👑
+              </div>
+              <!-- Orbiting dots decor -->
+              <div class="absolute -inset-4 border-2 border-dashed border-indigo-500/20 rounded-full animate-spin-slower"></div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Membership Approved</span>
+              </div>
+              <h2 class="text-3xl font-black text-white leading-tight">
+                환영합니다, 루파님!<br/>
+                이제 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"><%= @routine_club.generation_number %>기 정식 멤버</span>입니다.
+              </h2>
+              <p class="text-sm font-bold text-slate-400">당신의 성장을 가속화할 전용 시스템이 활성화되었습니다.</p>
+            </div>
+
+            <!-- Benefits Summary Card -->
+            <div class="w-full bg-white/[0.03] border border-white/5 rounded-[32px] p-6 space-y-4">
+              <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest text-left pl-1">Unlocked Member Benefits</p>
+              <div class="grid grid-cols-1 gap-3 text-left">
+                <div class="flex items-center gap-4 group">
+                  <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-xl shrink-0">🔮</div>
+                  <div class="space-y-0.5">
+                    <p class="text-xs font-black text-white">아이템 마스터 권한</p>
+                    <p class="text-[10px] font-bold text-slate-500 leading-tight">매월 3장의 휴식권/세이브권 자동 리필</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-xl shrink-0">🎟️</div>
+                  <div class="space-y-0.5">
+                    <p class="text-xs font-black text-white">상시 20% 자동 할인</p>
+                    <p class="text-[10px] font-bold text-slate-500 leading-tight">모든 챌린지 및 모임 참가비 즉시 할인</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-xl shrink-0">🏛️</div>
+                  <div class="space-y-0.5">
+                    <p class="text-xs font-black text-white">프라이빗 라운지 입장</p>
+                    <p class="text-[10px] font-bold text-slate-500 leading-tight">멤버 전용 딥워크 세션 및 인사이트 강의</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-xl shrink-0">✨</div>
+                  <div class="space-y-0.5">
+                    <p class="text-xs font-black text-white">골든 아우라 ID</p>
+                    <p class="text-[10px] font-bold text-slate-500 leading-tight">프리미엄 멤버십 전용 프로필 효과 적용</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-full pt-4">
+              <%= form_with url: mark_welcomed_routine_club_path(@routine_club), method: :post, class: "w-full" do %>
+                <button type="submit" class="w-full py-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black rounded-2xl shadow-2xl shadow-indigo-600/40 hover:scale-[1.02] active:scale-95 transition-all outline-none">
+                  시스템 시작하기
+                </button>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
     <% end %>
   </body>
 </html>

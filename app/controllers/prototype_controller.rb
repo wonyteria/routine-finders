@@ -25,6 +25,9 @@ class PrototypeController < ApplicationController
     if @my_membership && @my_membership.payment_status_confirmed? && !@my_membership.welcomed?
       @show_club_welcome_modal = true
       @routine_club = @official_club
+      # Force removal of greeting flash so they NEVER overlap
+      flash.delete(:show_daily_greeting)
+      flash.now[:show_daily_greeting] = nil
     end
 
     # 2. Routine & Task Progress (Real data)
