@@ -621,11 +621,11 @@ class PrototypeController < ApplicationController
       # Ensure current admin has membership before loading the page (Fix for admins not being members)
       current_user.ensure_rufa_club_membership_for_admin if current_user&.admin?
 
-      # Real members of the official club
-      @club_members = @official_club.members.confirmed.includes(:user).order(attendance_rate: :desc)
+      # Real members of the official club (Exclude deleted users)
+      @club_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(:user).order(attendance_rate: :desc)
 
-      # Fix: Fetch pending memberships from ALL active clubs to ensure no application is missed
-      @pending_memberships = RoutineClubMember.where(payment_status: :pending).includes(:user, :routine_club).order(created_at: :desc)
+      # Fix: Fetch pending memberships from ALL active clubs to ensure no application is missed (Exclude deleted users)
+      @pending_memberships = RoutineClubMember.where(payment_status: :pending).joins(:user).where(users: { deleted_at: nil }).includes(:user, :routine_club).order(created_at: :desc)
 
       @member_stats = @club_members.map do |member|
         {
@@ -644,8 +644,8 @@ class PrototypeController < ApplicationController
       @announcements = []
     end
 
-    # Include both club_admin and super_admin in staff list (Fix for Park Jin-hyung missing from staff)
-    @club_admins = User.where(role: [ :club_admin, :super_admin ]).order(created_at: :desc)
+    # Include both club_admin and super_admin in staff list (Exclude deleted users)
+    @club_admins = User.where(role: [ :club_admin, :super_admin ]).where(deleted_at: nil).order(created_at: :desc)
   end
 
   def member_reports
