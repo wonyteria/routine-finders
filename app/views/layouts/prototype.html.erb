@@ -229,11 +229,13 @@
 
     <!-- 2. FAB Menu Sheet (Simple List Style) -->
     <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-4">
-      <div data-action="click->proto-ui#toggleFabMenu" 
-           data-proto-ui-target="fabBg"
-           class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"></div>
-      <div data-proto-ui-target="fabContent"
-           class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
+      <div id="fab-menu-overlay"
+           onclick="window.toggleFabMenu && window.toggleFabMenu()" 
+           class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"
+           style="opacity: 0;"></div>
+      <div id="fab-menu-content"
+           class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe"
+           style="transform: translateY(100%);">
 
         
         <div class="space-y-4">
@@ -767,48 +769,55 @@
             return;
         }
 
-        // 요소 찾기 (가장 단순한 선택자 사용)
-        const bg = menu.querySelector('div[class*="backdrop-blur"]') || menu.children[0];
-        const content = menu.querySelector('div[class*="modal-content-safe"]') || menu.children[1];
+        // 요소 찾기 (ID로 확실하게 찾기)
+        const bg = document.getElementById('fab-menu-overlay');
+        const content = document.getElementById('fab-menu-content');
 
         if (!bg || !content) {
-            console.error("Critical: FAB menu parts missing");
+            console.error("Critical: FAB menu parts missing (Check IDs: fab-menu-overlay, fab-menu-content)");
+            // 최후의 수단: 단순히 보이기/숨기기
             menu.classList.toggle('hidden');
             document.body.classList.toggle('overflow-hidden');
             return;
         }
 
         if (menu.classList.contains('hidden')) {
-            // Open
+            // Open Sequence
             menu.classList.remove('hidden');
             
-            // Animation Reset
+            // 1. 초기 상태 강제 설정 (중요: 트랜지션 전에 확실히 적용)
             bg.style.transition = 'none';
             content.style.transition = 'none';
+            
             bg.style.opacity = '0';
             content.style.transform = 'translateY(100%)';
             
-            // Reflow
+            // 2. 브라우저 렌더링 강제 (Reflow)
             void menu.offsetWidth;
+            void bg.offsetWidth;
 
-            // Animate
+            // 3. 애니메이션 시작
             requestAnimationFrame(() => {
+                // 트랜지션 속성 복구
                 bg.style.transition = 'opacity 0.3s ease';
                 content.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                
+                // 목표값 설정
                 bg.style.opacity = '1';
                 content.style.transform = 'translateY(0)';
             });
             
             document.body.classList.add('overflow-hidden');
         } else {
-            // Close
+            // Close Sequence
             bg.style.opacity = '0';
             content.style.transform = 'translateY(100%)';
 
             setTimeout(() => {
                 menu.classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
-                // Cleanup
+                
+                // Cleanup Styles
                 content.style.transform = '';
                 content.style.transition = '';
                 bg.style.opacity = '';
