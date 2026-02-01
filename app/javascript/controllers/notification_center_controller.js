@@ -4,10 +4,17 @@ export default class extends Controller {
     static targets = ["masterButton", "masterIndicator", "detailContainer", "detail", "detailButton", "detailIndicator"]
 
     connect() {
-        this.syncMasterState()
+        // UI가 완전히 렌더링된 후 초기화
+        requestAnimationFrame(() => {
+            this.syncMasterState()
+        })
     }
 
     toggleMaster(event) {
+        if (event) event.preventDefault()
+
+        if (!this.hasMasterButtonTarget) return
+
         const isCurrentlyOn = this.masterButtonTarget.classList.contains("justify-end")
         const newState = !isCurrentlyOn
 
@@ -16,8 +23,13 @@ export default class extends Controller {
     }
 
     toggleDetail(event) {
+        if (event) event.preventDefault()
+
         const detailWrapper = event.currentTarget
         const btn = detailWrapper.querySelector('[data-notification-center-target="detailButton"]')
+
+        if (!btn) return
+
         const isCurrentlyOn = btn.classList.contains("justify-end")
         const newState = !isCurrentlyOn
 
@@ -26,15 +38,19 @@ export default class extends Controller {
     }
 
     syncMasterState() {
+        if (!this.hasDetailTarget) return
+
         const allOn = this.detailTargets.every(detail => {
             const btn = detail.querySelector('[data-notification-center-target="detailButton"]')
-            return btn.classList.contains("justify-end")
+            return btn && btn.classList.contains("justify-end")
         })
 
         this.updateMasterUI(allOn)
     }
 
     updateMasterUI(state) {
+        if (!this.hasMasterButtonTarget || !this.hasMasterIndicatorTarget) return
+
         if (state) {
             this.masterButtonTarget.classList.replace("justify-start", "justify-end")
             this.masterButtonTarget.classList.replace("bg-slate-800", "bg-indigo-500")
@@ -56,16 +72,18 @@ export default class extends Controller {
         const btn = wrapper.querySelector('[data-notification-center-target="detailButton"]')
         const ind = wrapper.querySelector('[data-notification-center-target="detailIndicator"]')
 
+        if (!btn) return
+
         if (state) {
             btn.classList.replace("justify-start", "justify-end")
             btn.classList.remove("bg-indigo-500/20")
             btn.classList.add("bg-indigo-500")
-            ind?.classList.replace("bg-indigo-400", "bg-white")
+            if (ind) ind.classList.replace("bg-indigo-400", "bg-white")
         } else {
             btn.classList.replace("justify-end", "justify-start")
             btn.classList.remove("bg-indigo-500")
             btn.classList.add("bg-indigo-500/20")
-            ind?.classList.replace("bg-white", "bg-indigo-400")
+            if (ind) ind.classList.replace("bg-white", "bg-indigo-400")
         }
     }
 
