@@ -413,9 +413,9 @@ class User < ApplicationRecord
 
   # ② 루틴 달성률 (작성한 루틴 중 하루에 하나 이상 실천한 날 기준 70% 이상)
   def monthly_achievement_rate(date = Date.current)
-    # 실제로는 개별 루틴의 '달성 비중'을 평균내는 것이 더 정확할 수 있으나,
-    # 현재는 전체 로그일 수를 기준으로 계산 (추후 고도화 가능)
-    monthly_routine_log_rate(date)
+    start_date = date.beginning_of_month
+    end_date = [ date.end_of_month, Date.current ].min
+    period_routine_rate(start_date, end_date)
   end
 
   def daily_achievement_rate(date = Date.current)
