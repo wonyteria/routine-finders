@@ -10,62 +10,68 @@
     <div class="relative h-60 flex items-end justify-center gap-2 px-4">
       <!-- Top 2 -->
       <div class="flex flex-col items-center gap-3 w-24">
-        <div class="relative">
-          <div class="w-16 h-16 rounded-full border-4 border-slate-400 overflow-hidden shadow-2xl">
-            <img src="<%= @top_users[1]&.profile_image %>" class="w-full h-full object-cover">
+        <%= link_to prototype_user_card_path(@top_users[1]&.id || 0), data: { turbo_frame: "user-profile-modal-frame" }, class: "group contents" do %>
+          <div class="relative">
+            <div class="w-16 h-16 rounded-full border-4 border-slate-400 overflow-hidden shadow-2xl group-active:scale-95 transition-transform">
+              <img src="<%= @top_users[1]&.profile_image %>" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute -top-2 -right-2 w-7 h-7 bg-slate-400 rounded-full flex items-center justify-center text-white font-black border-2 border-[#0C0B12] text-xs shadow-lg">2</div>
           </div>
-          <div class="absolute -top-2 -right-2 w-7 h-7 bg-slate-400 rounded-full flex items-center justify-center text-white font-black border-2 border-[#0C0B12] text-xs shadow-lg">2</div>
-        </div>
-        <div class="w-full h-24 bg-slate-800/40 rounded-t-[20px] border border-white/5 flex flex-col items-center justify-center">
-           <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[1]&.nickname %></p>
-           <div class="flex items-center gap-1 mt-0.5">
-             <% if @monthly_rankings[1]&.dig(:is_club) %>
-               <span class="text-[8px]">🔱</span>
-             <% end %>
-             <p class="text-[9px] font-bold text-slate-500"><%= @monthly_rankings[1]&.dig(:score)&.round(1) || 0 %>P</p>
-           </div>
-        </div>
+          <div class="w-full h-24 bg-slate-800/40 rounded-t-[20px] border border-white/5 flex flex-col items-center justify-center group-hover:bg-slate-800/60 transition-colors">
+             <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[1]&.nickname %></p>
+             <div class="flex items-center gap-1 mt-0.5">
+               <% if @monthly_rankings[1]&.dig(:is_club) %>
+                 <span class="text-[8px]">🔱</span>
+               <% end %>
+               <p class="text-[9px] font-bold text-slate-500"><%= @monthly_rankings[1]&.dig(:score)&.round(1) || 0 %>P</p>
+             </div>
+          </div>
+        <% end %>
       </div>
 
       <!-- Top 1 (Center) -->
       <div class="flex flex-col items-center gap-3 w-28 -translate-y-4">
-        <div class="relative">
-          <div class="absolute inset-0 bg-indigo-500 blur-2xl opacity-40 animate-pulse"></div>
-          <div class="relative w-20 h-20 rounded-full border-4 border-amber-400 overflow-hidden shadow-2xl">
-            <img src="<%= @top_users[0]&.profile_image %>" class="w-full h-full object-cover">
+        <%= link_to prototype_user_card_path(@top_users[0]&.id || 0), data: { turbo_frame: "user-profile-modal-frame" }, class: "group contents" do %>
+          <div class="relative">
+            <div class="absolute inset-0 bg-indigo-500 blur-2xl opacity-40 animate-pulse"></div>
+            <div class="relative w-20 h-20 rounded-full border-4 border-amber-400 overflow-hidden shadow-2xl group-active:scale-95 transition-transform">
+              <img src="<%= @top_users[0]&.profile_image %>" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute -top-3 -right-3 w-9 h-9 bg-amber-400 rounded-full flex items-center justify-center text-white font-black border-4 border-[#0C0B12] text-sm shadow-xl">👑</div>
           </div>
-          <div class="absolute -top-3 -right-3 w-9 h-9 bg-amber-400 rounded-full flex items-center justify-center text-white font-black border-4 border-[#0C0B12] text-sm shadow-xl">👑</div>
-        </div>
-        <div class="w-full h-32 bg-indigo-500/10 rounded-t-[20px] border border-indigo-500/30 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(124,77,255,0.2)]">
-           <p class="text-sm font-black text-white line-clamp-1"><%= @top_users[0]&.nickname %></p>
-           <div class="flex items-center gap-1 mt-1">
-              <% if @monthly_rankings[0]&.dig(:is_club) %>
-                <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white flex items-center gap-1">
-                  🔱 루파
-                </span>
-              <% end %>
-             <p class="text-[10px] font-bold text-indigo-400"><%= @monthly_rankings[0]&.dig(:score)&.round(1) || 0 %>P</p>
-           </div>
-        </div>
+          <div class="w-full h-32 bg-indigo-500/10 rounded-t-[20px] border border-indigo-500/30 flex flex-col items-center justify-center shadow-[0_0_20px_rgba(124,77,255,0.2)] group-hover:bg-indigo-500/20 transition-colors">
+             <p class="text-sm font-black text-white line-clamp-1"><%= @top_users[0]&.nickname %></p>
+             <div class="flex items-center gap-1 mt-1">
+                <% if @monthly_rankings[0]&.dig(:is_club) %>
+                  <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white flex items-center gap-1">
+                    🔱 루파
+                  </span>
+                <% end %>
+               <p class="text-[10px] font-bold text-indigo-400"><%= @monthly_rankings[0]&.dig(:score)&.round(1) || 0 %>P</p>
+             </div>
+          </div>
+        <% end %>
       </div>
 
       <!-- Top 3 -->
       <div class="flex flex-col items-center gap-3 w-24">
-        <div class="relative">
-          <div class="w-16 h-16 rounded-full border-4 border-amber-700/50 overflow-hidden shadow-2xl">
-            <img src="<%= @top_users[2]&.profile_image %>" class="w-full h-full object-cover">
+        <%= link_to prototype_user_card_path(@top_users[2]&.id || 0), data: { turbo_frame: "user-profile-modal-frame" }, class: "group contents" do %>
+          <div class="relative">
+            <div class="w-16 h-16 rounded-full border-4 border-amber-700/50 overflow-hidden shadow-2xl group-active:scale-95 transition-transform">
+              <img src="<%= @top_users[2]&.profile_image %>" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute -top-2 -right-2 w-7 h-7 bg-amber-700/80 rounded-full flex items-center justify-center text-white font-black border-2 border-[#0C0B12] text-xs shadow-lg">3</div>
           </div>
-          <div class="absolute -top-2 -right-2 w-7 h-7 bg-amber-700/80 rounded-full flex items-center justify-center text-white font-black border-2 border-[#0C0B12] text-xs shadow-lg">3</div>
-        </div>
-        <div class="w-full h-20 bg-slate-800/20 rounded-t-[20px] border border-white/5 flex flex-col items-center justify-center">
-           <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[2]&.nickname %></p>
-           <div class="flex items-center gap-1 mt-0.5">
-             <% if @monthly_rankings[2]&.dig(:is_club) %>
-               <span class="text-[8px]">🔱</span>
-             <% end %>
-             <p class="text-[9px] font-bold text-slate-500"><%= @monthly_rankings[2]&.dig(:score)&.round(1) || 0 %>P</p>
-           </div>
-        </div>
+          <div class="w-full h-20 bg-slate-800/20 rounded-t-[20px] border border-white/5 flex flex-col items-center justify-center group-hover:bg-slate-800/40 transition-colors">
+             <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[2]&.nickname %></p>
+             <div class="flex items-center gap-1 mt-0.5">
+               <% if @monthly_rankings[2]&.dig(:is_club) %>
+                 <span class="text-[8px]">🔱</span>
+               <% end %>
+               <p class="text-[9px] font-bold text-slate-500"><%= @monthly_rankings[2]&.dig(:score)&.round(1) || 0 %>P</p>
+             </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </section>
@@ -130,7 +136,9 @@
       <!-- My Rank & View All Actions -->
       <div class="p-3 bg-white/[0.02] space-y-3">
         <% if @my_ranking %>
-          <div class="flex items-center justify-between p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-600/20">
+          <%= link_to prototype_user_card_path(current_user), 
+                      data: { turbo_frame: "user-profile-modal-frame" },
+                      class: "flex items-center justify-between p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all" do %>
             <div class="flex items-center gap-3">
               <div class="w-8 text-center text-xs font-black text-white/50"><%= @my_ranking[:rank] %></div>
               <div class="w-9 h-9 rounded-lg overflow-hidden border border-white/20">
@@ -142,7 +150,7 @@
               </div>
             </div>
             <p class="text-sm font-black text-white"><%= @my_ranking[:score] %>P</p>
-          </div>
+          <% end %>
         <% end %>
 
         <button type="button" 
@@ -188,7 +196,7 @@
       <div class="flex-1 overflow-y-auto p-4 space-y-2 pb-10">
         <% @monthly_rankings.each_with_index do |ranking, index| %>
           <% user = ranking[:user] %>
-          <div class="flex items-center justify-between p-4 <%= user == current_user ? 'bg-indigo-600/10 border border-indigo-500/20' : 'bg-white/[0.03]' %> rounded-2xl">
+          <%= link_to prototype_user_card_path(user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center justify-between p-4 #{user == current_user ? 'bg-indigo-600/10 border border-indigo-500/20' : 'bg-white/[0.03]'} rounded-2xl hover:bg-white/[0.08] transition-colors" do %>
             <div class="flex items-center gap-4">
               <div class="w-6 text-center text-[10px] font-black <%= index < 3 ? 'text-amber-400' : 'text-slate-500' %>"><%= index + 1 %></div>
               <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0">
@@ -205,24 +213,15 @@
               </div>
             </div>
             <p class="text-xs font-bold text-white"><%= ranking[:score] %>P</p>
-          </div>
+          <% end %>
         <% end %>
       </div>
     </div>
   </div>
 
-  <style>
-    @keyframes slide-up {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-    .animate-slide-up {
-      animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
   </style>
 
 
   
-  <!-- User Profile Modal Frame -->
-  <turbo-frame id="user-profile-modal-frame"></turbo-frame>
 </div>
+

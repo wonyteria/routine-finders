@@ -164,7 +164,9 @@
 
     <div class="grid grid-cols-2 gap-3">
       <% @confirmed_members.take(10).each do |member| %>
-        <div class="app-glass-card p-3 bg-white/[0.02] border-white/5 rounded-2xl flex items-center gap-3">
+        <%= link_to prototype_user_card_path(member.user), 
+                    data: { turbo_frame: "user-profile-modal-frame" },
+                    class: "app-glass-card p-3 bg-white/[0.02] border-white/5 rounded-2xl flex items-center gap-3 hover:bg-white/5 active:scale-95 transition-all" do %>
           <div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-white/10">
             <img src="<%= member.user.profile_image %>" class="w-full h-full object-cover">
           </div>
@@ -172,7 +174,7 @@
             <p class="text-[11px] font-black text-white truncate"><%= member.user.nickname %></p>
             <p class="text-[9px] font-bold text-slate-500">Lv.<%= member.user.level %></p>
           </div>
-        </div>
+        <% end %>
       <% end %>
       
       <% if @confirmed_members.count > 10 %>

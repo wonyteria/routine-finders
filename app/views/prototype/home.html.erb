@@ -228,12 +228,14 @@
         
         <% if activities.any? %>
           <% activities.each do |activity| %>
-            <div class="h-6 flex items-center gap-2 opacity-60">
-              <img src="<%= activity[:user].profile_image %>" class="w-4 h-4 rounded-full border border-white/10">
-              <p class="text-[10px] font-bold text-slate-400 truncate">
+            <%= link_to prototype_user_card_path(activity[:user]), 
+                        data: { turbo_frame: "user-profile-modal-frame", action: "click->proto-ui#checkLogin" },
+                        class: "h-6 flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-pointer group" do %>
+              <img src="<%= activity[:user].profile_image %>" class="w-4 h-4 rounded-full border border-white/10 group-hover:scale-110 transition-transform">
+              <p class="text-[10px] font-bold text-slate-400 truncate group-hover:text-white transition-colors">
                 <%= activity[:text] %>
               </p>
-            </div>
+            <% end %>
           <% end %>
         <% else %>
           <div class="h-6 flex items-center gap-2 opacity-40">
