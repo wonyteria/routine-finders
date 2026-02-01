@@ -823,25 +823,28 @@ class PrototypeController < ApplicationController
     if current_user
       # Support both nested (params[:user]) and flat parameters
       # More robust parameter extraction
-      p = params[:user].presence || params
+      user_params = params.fetch(:user, params)
 
       update_params = {}
-      # Use key? to check existence of parameter to support clearing bio/nickname
-      # Robust access for both string and symbol keys
-      nickname_val = p[:nickname] || p["nickname"]
-      update_params[:nickname] = nickname_val if nickname_val.present?
 
-      if p.key?(:bio) || p.key?("bio")
-        update_params[:bio] = p[:bio] || p["bio"]
+      # Use key? to check existence of parameter to support clearing bio/nickname
+      # Check BOTH symbol and string keys to be safe
+      if user_params.key?(:nickname) || user_params.key?("nickname")
+        update_params[:nickname] = user_params[:nickname] || user_params["nickname"]
+      end
+
+      if user_params.key?(:bio) || user_params.key?("bio")
+        update_params[:bio] = user_params[:bio] || user_params["bio"]
       end
 
       # Handle profile image upload correctly via ActiveStorage
-      img = params[:profile_image] || p[:profile_image] || params[:avatar] || p[:avatar]
+      img = params[:profile_image] || user_params[:profile_image] || params[:avatar] || user_params[:avatar]
+
       if img.present? && img.respond_to?(:content_type) # Ensure it's a file upload
         # 파일 검증
         validation_result = FileUploadValidator.validate_image(img)
         unless validation_result[:valid]
-          redirect_to prototype_my_path, alert: validation_result[:error] and return
+          redirect_to prototype_my_path, alert: validation_result[:error], status: :see_other and return
         end
 
         current_user.avatar.attach(img)
@@ -850,8 +853,8 @@ class PrototypeController < ApplicationController
       end
 
       # Handle SNS links if provided
-      sns = params[:sns_links] || p[:sns_links]
-      if sns.present?
+      sns = params[:sns_links] || user_params[:sns_links]
+      if sns.present? && sns.is_a?(Array)
         links = {}
         sns.each do |link|
           next if link.blank?
@@ -874,14 +877,14 @@ class PrototypeController < ApplicationController
 
       if current_user.update(update_params)
         Rails.logger.info "Profile successfully updated for User #{current_user.id}: #{update_params.keys.join(', ')}"
-        redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!"
+        redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!", status: :see_other
       else
         error_msg = current_user.errors.full_messages.join(", ")
         Rails.logger.error "Profile update failed for User #{current_user.id}: #{error_msg}"
-        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{error_msg}"
+        redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{error_msg}", status: :see_other
       end
     else
-      redirect_to prototype_login_path, alert: "로그인이 필요합니다."
+      redirect_to prototype_login_path, alert: "로그인이 필요합니다.", status: :see_other
     end
   end
 
