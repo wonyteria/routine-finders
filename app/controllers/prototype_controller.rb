@@ -175,6 +175,11 @@ class PrototypeController < ApplicationController
   end
 
   def my
+    if current_user
+      Rails.logger.info "[Debug] User #{current_user.id} loaded My page. " \
+                        "Nickname: '#{current_user.nickname}', Bio: '#{current_user.bio}', " \
+                        "Weekly Goal: '#{current_user.weekly_goal}', Monthly Goal: '#{current_user.monthly_goal}'"
+    end
     @total_activities = current_user&.total_routine_completions || 0
     @current_streak = current_user&.personal_routines&.maximum(:current_streak) || 0
     @current_month_points = current_user&.current_month_points || 0
