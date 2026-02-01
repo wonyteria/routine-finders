@@ -206,7 +206,78 @@ class RoutineClubMember < ApplicationRecord
     payment_status_confirmed? && (status_active? || status_warned?) && Date.current >= membership_start_date
   end
 
+  # 주간 달성률 계산 (월~일 전체 기간 기준)
+  def weekly_attendance_rate(date = Date.current)
+    start_date = date.beginning_of_week
+    end_date = date.end_of_week
+    calculate_period_rate(start_date, end_date)
+  end
+
+  # 월간 달성률 계산 (1일~말일 전체 기간 기준)
+  def monthly_attendance_rate(date = Date.current)
+    start_date = date.beginning_of_month
+    end_date = date.end_of_month
+    calculate_period_rate(start_date, end_date)
+  end
+
+  # 주간 루틴 수행률 계산 (루틴 개수 기준)
+  def weekly_routine_rate(date = Date.current)
+    start_date = date.beginning_of_week
+    end_date = date.end_of_week
+    calculate_routine_rate(start_date, end_date)
+  end
+
+  # 월간 루틴 수행률 계산 (루틴 개수 기준)
+  def monthly_routine_rate(date = Date.current)
+    start_date = date.beginning_of_month
+    end_date = date.end_of_month
+    calculate_routine_rate(start_date, end_date)
+  end
+
   private
+
+  def calculate_period_rate(start_date, end_date)
+    # 사용자의 루틴 설정 요일 가져오기 (active 루틴만)
+    routines = user.personal_routines
+    target_routine_wdays = routines.map { |r| r.days }.flatten.compact.map(&:to_i).uniq
+
+    return 0.0 if target_routine_wdays.empty?
+
+    # 기간 내의 날짜 중 루틴 설정 요일과 일치하는 날들의 수 (분모 - 전체 기간 기준)
+    total_target_days = (start_date..end_date).count { |date| target_routine_wdays.include?(date.wday) }
+
+    return 0.0 if total_target_days == 0
+
+    # 기간 내 출석 인정 횟수 (분자 - 현재까지 달성한 횟수)
+    actual_attendance_count = attendances.where(attendance_date: start_date..end_date, status: [ :present, :excused ]).count
+
+    # 100%를 초과하지 않도록 (데이터 정합성 보장)
+    rate = (actual_attendance_count.to_f / total_target_days * 100).round(1)
+    [ rate, 100.0 ].min
+  end
+
+  def calculate_routine_rate(start_date, end_date)
+    routines = user.personal_routines
+
+    # 1. 분모: 기간 내 수행해야 할 총 루틴 개수 계산
+    total_required = 0
+    (start_date..end_date).each do |date|
+      # 해당 요일에 활성화된 루틴 개수를 더함
+      total_required += routines.count { |r| r.days&.include?(date.wday.to_s) }
+    end
+
+    return 0.0 if total_required == 0
+
+    # 2. 분자: 기간 내 실제 완료된 루틴 개수 (Completion 기록 조회)
+    completed_count = PersonalRoutineCompletion
+                      .joins(:personal_routine)
+                      .where(personal_routines: { user_id: user.id })
+                      .where(completed_on: start_date..end_date)
+                      .count
+
+    # percent calculation
+    (completed_count.to_f / total_required * 100).round(1)
+  end
 
   def set_membership_dates
     self.joined_at ||= Time.current

@@ -630,8 +630,10 @@ class PrototypeController < ApplicationController
       @member_stats = @club_members.map do |member|
         {
           member: member,
-          weekly_rate: member.attendance_rate,
-          monthly_rate: member.attendance_rate,
+          weekly_rate: member.weekly_routine_rate, # 메인 노출: 루틴 개수 기준 수행률
+          monthly_rate: member.monthly_routine_rate,
+          weekly_attendance: member.weekly_attendance_rate, # 보조: 출석 기준 달성률
+          monthly_attendance: member.monthly_attendance_rate,
           growth_trend: nil
         }
       end
