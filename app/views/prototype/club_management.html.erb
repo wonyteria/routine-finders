@@ -12,7 +12,7 @@
   </div>
 <% end %>
 
-<div class="space-y-8 py-10 pb-32" data-controller="tabs" data-tabs-active-class="text-indigo-400 border-indigo-400" data-tabs-inactive-class="text-slate-500 border-transparent">
+<div class="space-y-8 py-10 pb-32">
   <!-- 1. Header -->
   <header class="px-6 space-y-4">
     <div class="flex items-center justify-between">
@@ -69,24 +69,20 @@
     <nav class="px-6 sticky top-0 z-30 bg-[#1B1A24]/80 backdrop-blur-md py-4">
       <div class="flex items-center justify-between gap-2 border-b border-white/5">
         <button type="button" 
-                data-tabs-target="tab" 
-                data-id="members" 
-                data-action="click->tabs#change"
+                id="tab-btn-members"
+                onclick="switchClubTab('members')"
                 class="flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all text-indigo-400 border-indigo-400">회원 관리</button>
         <button type="button" 
-                data-tabs-target="tab" 
-                data-id="lounge" 
-                data-action="click->tabs#change"
+                id="tab-btn-lounge"
+                onclick="switchClubTab('lounge')"
                 class="flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all text-slate-500 border-transparent">라운지 관리</button>
         <button type="button" 
-                data-tabs-target="tab" 
-                data-id="announcements" 
-                data-action="click->tabs#change"
+                id="tab-btn-announcements"
+                onclick="switchClubTab('announcements')"
                 class="flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all text-slate-500 border-transparent">공지</button>
         <button type="button" 
-                data-tabs-target="tab" 
-                data-id="settings" 
-                data-action="click->tabs#change"
+                id="tab-btn-settings"
+                onclick="switchClubTab('settings')"
                 class="flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all text-slate-500 border-transparent">클럽 설정</button>
       </div>
     </nav>
@@ -94,7 +90,7 @@
     <!-- 4. Tab Panels -->
     <div class="space-y-12">
       <!-- Member Management Panel -->
-      <div class="space-y-12" data-tabs-target="panel" data-id="members">
+      <div id="panel-members" class="space-y-12">
         <!-- Pending Approvals -->
         <% if @pending_memberships.any? %>
           <section class="px-6 space-y-4">
@@ -106,20 +102,20 @@
             </div>
             <div class="space-y-3">
               <% @pending_memberships.each do |member| %>
-                <div class="app-glass-card border-amber-500/20 bg-amber-500/5" data-controller="toggle">
+                <div class="app-glass-card border-amber-500/20 bg-amber-500/5">
                   <!-- 기본 정보 (클릭 가능) -->
-                  <div class="p-4 flex items-center justify-between cursor-pointer hover:bg-amber-500/10 transition-all rounded-3xl" data-action="click->toggle#toggle">
+                  <div onclick="toggleMemberDetail(<%= member.id %>)" class="p-4 flex items-center justify-between cursor-pointer hover:bg-amber-500/10 transition-all rounded-3xl">
                       <div class="flex-1 min-w-0">
                         <p class="text-sm font-black text-white leading-tight truncate"><%= member.user.nickname %></p>
                         <p class="text-[9px] font-bold text-slate-500 mt-0.5">입금명: <%= member.depositor_name %> · ₩<%= number_with_delimiter(member.paid_amount) %></p>
                       </div>
-                      <svg class="w-5 h-5 text-slate-500 transition-transform" data-toggle-target="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg id="member-icon-<%= member.id %>" class="w-5 h-5 text-slate-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                       </svg>
                     </div>
 
                   <!-- 상세 정보 (토글) -->
-                  <div class="hidden px-4 pb-4 space-y-3 border-t border-amber-500/10 pt-3" data-toggle-target="content">
+                  <div id="member-detail-<%= member.id %>" class="hidden px-4 pb-4 space-y-3 border-t border-amber-500/10 pt-3">
                     <div class="grid grid-cols-2 gap-3">
                       <div class="space-y-1">
                         <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">연락처</p>
@@ -158,26 +154,24 @@
           </section>
         <% end %>
 
-        <!-- Active Members Sub-Tabs (Sub-Tabs controller already exists) -->
-        <section class="px-6 space-y-6" data-controller="sub-tabs" data-sub-tabs-active-class="bg-white/10 text-white" data-sub-tabs-inactive-class="text-slate-500">
+        <!-- Active Members Sub-Tabs -->
+        <section class="px-6 space-y-6">
           <div class="flex items-center justify-between px-1">
             <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">회원 상태 리빙 데이터</h2>
             <div class="flex bg-white/5 rounded-lg p-1 gap-1">
                <button type="button" 
-                       data-sub-tabs-target="tab" 
-                       data-id="members_list" 
-                       data-action="click->sub-tabs#change"
+                       id="sub-tab-btn-list"
+                       onclick="switchSubTab('list')"
                        class="px-3 py-1 text-[9px] font-black rounded transition-all bg-white/10 text-white">현황</button>
                <button type="button" 
-                       data-sub-tabs-target="tab" 
-                       data-id="members_analysis" 
-                       data-action="click->sub-tabs#change"
+                       id="sub-tab-btn-analysis"
+                       onclick="switchSubTab('analysis')"
                        class="px-3 py-1 text-[9px] font-black rounded transition-all text-slate-500">성과지표</button>
             </div>
           </div>
 
           <!-- Sub-Tab: 현황 -->
-          <div class="space-y-3" data-sub-tabs-target="panel" data-id="members_list">
+          <div id="sub-panel-list" class="space-y-3">
             <% if @club_members.any? %>
               <% @club_members.each do |member| %>
                 <% 
@@ -221,7 +215,7 @@
           </div>
 
           <!-- Sub-Tab: 성과지표 -->
-          <div class="space-y-4 hidden" data-sub-tabs-target="panel" data-id="members_analysis">
+          <div id="sub-panel-analysis" class="space-y-4 hidden">
             <% @member_stats.each do |stat| %>
               <div class="app-glass-card p-5 border-white/5 space-y-4">
                 <div class="flex items-center justify-between">
@@ -291,7 +285,7 @@
       </div>
 
       <!-- Lounge Management Panel -->
-      <div class="px-6 hidden" data-tabs-target="panel" data-id="lounge">
+      <div id="panel-lounge" class="px-6 hidden">
         <div class="app-glass-card p-6 border-white/5 space-y-8" data-controller="lounge-settings">
           <div class="flex items-center justify-between border-b border-white/5 pb-4">
             <h3 class="text-lg font-black text-indigo-400 uppercase tracking-widest">라운지 실시간 설정</h3>
@@ -345,7 +339,7 @@
       </div>
 
       <!-- Club Settings Panel -->
-      <div class="px-6 hidden space-y-8" data-tabs-target="panel" data-id="settings">
+      <div id="panel-settings" class="px-6 hidden space-y-8">
         <div class="app-glass-card p-6 border-white/5 space-y-8">
           <div class="flex items-center justify-between border-b border-white/5 pb-4">
             <h3 class="text-lg font-black text-indigo-400 uppercase tracking-widest">클럽 기본 및 운영 설정</h3>
@@ -456,7 +450,7 @@
       </div>
 
       <!-- Announcements Panel -->
-      <div class="px-6 hidden space-y-8" data-tabs-target="panel" data-id="announcements">
+      <div id="panel-announcements" class="px-6 hidden space-y-8">
         <!-- Create Announcement Placeholder -->
         <div class="app-glass-card p-6 border-white/5 bg-white/2 space-y-4">
            <div class="flex items-center gap-3">
@@ -545,6 +539,63 @@
 </div>
 
 <script>
+  // Main Tab Switcher
+  function switchClubTab(tabName) {
+    const tabs = ['members', 'lounge', 'announcements', 'settings'];
+    const activeClass = "text-indigo-400 border-indigo-400";
+    const inactiveClass = "text-slate-500 border-transparent";
+    
+    tabs.forEach(t => {
+       const btn = document.getElementById(`tab-btn-${t}`);
+       const panel = document.getElementById(`panel-${t}`);
+       
+       if (t === tabName) {
+         btn.className = `flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all ${activeClass}`;
+         panel.classList.remove('hidden');
+       } else {
+         btn.className = `flex-1 pb-4 text-xs font-black uppercase tracking-widest border-b-2 transition-all ${inactiveClass}`;
+         panel.classList.add('hidden');
+       }
+    });
+  }
+
+  // Sub Tab Switcher (Live Data)
+  function switchSubTab(tabName) {
+    const listBtn = document.getElementById('sub-tab-btn-list');
+    const analysisBtn = document.getElementById('sub-tab-btn-analysis');
+    const listPanel = document.getElementById('sub-panel-list');
+    const analysisPanel = document.getElementById('sub-panel-analysis');
+    
+    const activeClass = "bg-white/10 text-white";
+    const inactiveClass = "text-slate-500";
+    const baseClass = "px-3 py-1 text-[9px] font-black rounded transition-all";
+
+    if (tabName === 'list') {
+      listBtn.className = `${baseClass} ${activeClass}`;
+      analysisBtn.className = `${baseClass} ${inactiveClass}`;
+      listPanel.classList.remove('hidden');
+      analysisPanel.classList.add('hidden');
+    } else {
+      analysisBtn.className = `${baseClass} ${activeClass}`;
+      listBtn.className = `${baseClass} ${inactiveClass}`;
+      analysisPanel.classList.remove('hidden');
+      listPanel.classList.add('hidden');
+    }
+  }
+
+  function toggleMemberDetail(memberId) {
+    const detail = document.getElementById(`member-detail-${memberId}`);
+    const icon = document.getElementById(`member-icon-${memberId}`);
+    
+    if (detail.classList.contains('hidden')) {
+      detail.classList.remove('hidden');
+      icon.classList.add('rotate-180');
+    } else {
+      detail.classList.add('hidden');
+      icon.classList.remove('rotate-180');
+    }
+  }
+
   function openMessageModal(userId, userName) {
     document.getElementById('message-modal').classList.remove('hidden');
     document.getElementById('recipient-id').value = userId;
