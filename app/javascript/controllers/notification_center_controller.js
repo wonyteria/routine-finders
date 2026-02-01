@@ -4,77 +4,85 @@ export default class extends Controller {
     static targets = ["masterButton", "masterIndicator", "detailContainer", "detail", "detailButton", "detailIndicator"]
 
     connect() {
-        // UI가 완전히 렌더링된 후 초기화
-        requestAnimationFrame(() => {
-            this.syncMasterState()
-        })
+        // 초기화: 데이터 속성을 기준으로 상태 동기화
+        this.syncStateFromData()
     }
 
+    // 마스터 토글 클릭 핸들러
     toggleMaster(event) {
         if (event) event.preventDefault()
 
-        if (!this.hasMasterButtonTarget) return
+        const currentChecked = this.masterButtonTarget.dataset.checked === "true"
+        const newChecked = !currentChecked
 
-        const isCurrentlyOn = this.masterButtonTarget.classList.contains("justify-end")
-        const newState = !isCurrentlyOn
-
-        this.updateMasterUI(newState)
-        this.updateAllDetailsUI(newState)
+        this.setMasterState(newChecked)
+        this.setAllDetailsState(newChecked)
     }
 
+    // 상세 토글 클릭 핸들러
     toggleDetail(event) {
         if (event) event.preventDefault()
 
-        const detailWrapper = event.currentTarget
-        const btn = detailWrapper.querySelector('[data-notification-center-target="detailButton"]')
-
+        const wrapper = event.currentTarget
+        const btn = wrapper.querySelector('[data-notification-center-target="detailButton"]')
         if (!btn) return
 
-        const isCurrentlyOn = btn.classList.contains("justify-end")
-        const newState = !isCurrentlyOn
+        const currentChecked = btn.dataset.checked === "true"
+        const newChecked = !currentChecked
 
-        this.updateDetailUI(detailWrapper, newState)
-        this.syncMasterState()
+        this.setDetailState(wrapper, newChecked)
+        this.checkMasterStateCompliance()
     }
 
-    syncMasterState() {
+    // 초기 상태 동기화
+    syncStateFromData() {
+        this.checkMasterStateCompliance()
+    }
+
+    // 모든 상세 설정 상태가 켜져있는지 확인하고 마스터 업데이트
+    checkMasterStateCompliance() {
         if (!this.hasDetailTarget) return
 
-        const allOn = this.detailTargets.every(detail => {
+        const allDetailsOn = this.detailTargets.every(detail => {
             const btn = detail.querySelector('[data-notification-center-target="detailButton"]')
-            return btn && btn.classList.contains("justify-end")
+            return btn && btn.dataset.checked === "true"
         })
 
-        this.updateMasterUI(allOn)
+        // 마스터 상태 업데이트 (UI만, 하위 전파 X)
+        this.setMasterState(allDetailsOn)
     }
 
-    updateMasterUI(state) {
-        if (!this.hasMasterButtonTarget || !this.hasMasterIndicatorTarget) return
+    setMasterState(checked) {
+        if (!this.hasMasterButtonTarget) return
 
-        if (state) {
+        this.masterButtonTarget.dataset.checked = checked
+
+        if (checked) {
+            // ON Style
             this.masterButtonTarget.classList.replace("justify-start", "justify-end")
             this.masterButtonTarget.classList.replace("bg-slate-800", "bg-indigo-500")
             this.masterIndicatorTarget.classList.replace("bg-slate-600", "bg-white")
+
             if (this.hasDetailContainerTarget) {
-                this.detailContainerTarget.classList.remove("opacity-40", "pointer-events-none")
+                this.detailContainerTarget.classList.remove("opacity-50", "pointer-events-none")
             }
         } else {
+            // OFF Style
             this.masterButtonTarget.classList.replace("justify-end", "justify-start")
             this.masterButtonTarget.classList.replace("bg-indigo-500", "bg-slate-800")
             this.masterIndicatorTarget.classList.replace("bg-white", "bg-slate-600")
-            if (this.hasDetailContainerTarget) {
-                this.detailContainerTarget.classList.add("opacity-40", "pointer-events-none")
-            }
         }
     }
 
-    updateDetailUI(wrapper, state) {
+    setDetailState(wrapper, checked) {
         const btn = wrapper.querySelector('[data-notification-center-target="detailButton"]')
         const ind = wrapper.querySelector('[data-notification-center-target="detailIndicator"]')
 
         if (!btn) return
 
-        if (state) {
+        btn.dataset.checked = checked
+
+        if (checked) {
             btn.classList.replace("justify-start", "justify-end")
             btn.classList.remove("bg-indigo-500/20")
             btn.classList.add("bg-indigo-500")
@@ -87,9 +95,9 @@ export default class extends Controller {
         }
     }
 
-    updateAllDetailsUI(state) {
+    setAllDetailsState(checked) {
         this.detailTargets.forEach(detail => {
-            this.updateDetailUI(detail, state)
+            this.setDetailState(detail, checked)
         })
     }
 }
