@@ -11,7 +11,7 @@
     </div>
     
     <% if @notifications.any? %>
-      <%= button_to prototype_notifications_clear_path, method: :post, class: "text-[10px] font-black text-indigo-400 uppercase tracking-widest px-3 py-1.5 rounded-full bg-indigo-500/10 active:scale-95 transition-all cursor-pointer" do %>
+      <%= button_to prototype_clear_notifications_path, method: :post, class: "text-[10px] font-black text-indigo-400 uppercase tracking-widest px-3 py-1.5 rounded-full bg-indigo-500/10 active:scale-95 transition-all cursor-pointer" do %>
         전체 삭제
       <% end %>
     <% end %>
