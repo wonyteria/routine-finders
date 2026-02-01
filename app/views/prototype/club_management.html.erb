@@ -186,7 +186,7 @@
             <% if @club_members.any? %>
               <% @club_members.each do |member| %>
                 <% 
-                  monthly_rate = member.attendance_rate # Prototype handles this via member.attendance_rate
+                  monthly_rate = member.monthly_routine_rate # Use accurate routine-based rate
                   status_icon = case monthly_rate
                   when 95..100 then "👑"
                   when 90..94 then "🔥"
@@ -218,7 +218,7 @@
                     </div>
                     <div>
                       <p class="text-sm font-black text-white leading-tight"><%= member.user.nickname %></p>
-                      <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= monthly_rate.to_i %>% Success · <%= member.identity_title || '클럽 멤버' %></p>
+                      <p class="text-[9px] font-bold text-slate-500 mt-0.5"><%= monthly_rate.to_i %>% Monthly Success · <%= member.identity_title || '클럽 멤버' %></p>
                     </div>
                   </div>
                   <div class="flex gap-2">

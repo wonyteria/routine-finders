@@ -613,7 +613,7 @@ class PrototypeController < ApplicationController
       current_user.ensure_rufa_club_membership_for_admin if current_user&.admin?
 
       # Real members of the official club (Exclude deleted users)
-      @club_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(:user).order(attendance_rate: :desc)
+      @club_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(user: { personal_routines: :completions }).order(attendance_rate: :desc)
 
       # Fix: Fetch pending memberships from ALL active clubs to ensure no application is missed (Exclude deleted users)
       @pending_memberships = RoutineClubMember.where(payment_status: :pending).joins(:user).where(users: { deleted_at: nil }).includes(:user, :routine_club).order(created_at: :desc)
