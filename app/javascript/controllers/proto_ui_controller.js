@@ -5,6 +5,10 @@ export default class extends Controller {
 
     connect() {
         console.log("✅ ProtoUI Controller Connected")
+
+        // 1. 전역 함수로 등록 (onclick="window.toggleFabMenu()" 지원)
+        window.toggleFabMenu = this.toggleFabMenu.bind(this)
+
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('show_login') === 'true') {
             window.location.href = '/login'
@@ -35,6 +39,8 @@ export default class extends Controller {
     }
 
     toggleFabMenu() {
+        console.log("🔘 FAB Menu Toggle Triggered (Global/Controller)")
+
         // 1. 메뉴 컨테이너 찾기
         const menu = document.getElementById('fab-menu-sheet')
         if (!menu) {
@@ -42,22 +48,10 @@ export default class extends Controller {
             return
         }
 
-        // 2. 내부 요소 찾기 (Stimulus Target 우선, 없으면 QuerySelector Fallback)
-        let bg, content
-
-        if (this.hasFabBgTarget) {
-            bg = this.fabBgTarget
-        } else {
-            // Fallback for HTML updates delayed
-            bg = menu.querySelector('[data-proto-ui-target="fabBg"]') || menu.firstElementChild
-        }
-
-        if (this.hasFabContentTarget) {
-            content = this.fabContentTarget
-        } else {
-            // Fallback
-            content = menu.querySelector('[data-proto-ui-target="fabContent"]') || menu.lastElementChild
-        }
+        // 2. 내부 요소 찾기 (직접 쿼리)
+        // Stimulus Target에 의존하지 않고 직접 찾아서 확실하게 처리
+        const bg = menu.querySelector('[data-proto-ui-target="fabBg"]') || menu.querySelector('.bg-black\\/80') || menu.children[0]
+        const content = menu.querySelector('[data-proto-ui-target="fabContent"]') || menu.querySelector('.bg-\\[\\#1B1A24\\]') || menu.children[1]
 
         // 3. 요소 유효성 검사
         if (!bg || !content) {
@@ -105,8 +99,10 @@ export default class extends Controller {
     checkLogin(event) {
         const isLoggedIn = document.body.getAttribute('data-logged-in')
         if (isLoggedIn === "false") {
-            event.preventDefault()
-            event.stopImmediatePropagation()
+            if (event) {
+                event.preventDefault()
+                event.stopImmediatePropagation()
+            }
             window.location.href = '/login'
             return false
         }
