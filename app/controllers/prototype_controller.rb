@@ -535,18 +535,22 @@ class PrototypeController < ApplicationController
 
   def update_goals
     if current_user
-      # Ensure we handle both string and symbol keys by accessing directly
-      update_params = {}
-      update_params[:weekly_goal] = params[:weekly_goal] if params.has_key?(:weekly_goal) || params.has_key?("weekly_goal")
-      update_params[:monthly_goal] = params[:monthly_goal] if params.has_key?(:monthly_goal) || params.has_key?("monthly_goal")
-      update_params[:yearly_goal] = params[:yearly_goal] if params.has_key?(:yearly_goal) || params.has_key?("yearly_goal")
+      # Support both nested (params[:user]) and flat parameters
+      p = params[:user].presence || params
 
-      # Timestamps
-      update_params[:weekly_goal_updated_at] = Time.current if update_params.has_key?(:weekly_goal)
-      update_params[:monthly_goal_updated_at] = Time.current if update_params.has_key?(:monthly_goal)
-      update_params[:yearly_goal_updated_at] = Time.current if update_params.has_key?(:yearly_goal)
+      update_params = {}
+      # Use key? check to support both string and symbol keys and allow clearing content
+      update_params[:weekly_goal] = p[:weekly_goal] if p.key?(:weekly_goal) || p.key?("weekly_goal")
+      update_params[:monthly_goal] = p[:monthly_goal] if p.key?(:monthly_goal) || p.key?("monthly_goal")
+      update_params[:yearly_goal] = p[:yearly_goal] if p.key?(:yearly_goal) || p.key?("yearly_goal")
+
+      # Timestamps: Only update if the goal parameter was actually sent
+      update_params[:weekly_goal_updated_at] = Time.current if update_params.key?(:weekly_goal)
+      update_params[:monthly_goal_updated_at] = Time.current if update_params.key?(:monthly_goal)
+      update_params[:yearly_goal_updated_at] = Time.current if update_params.key?(:yearly_goal)
 
       if current_user.update(update_params)
+        Rails.logger.info "Goals updated for User #{current_user.id}: #{update_params.keys.join(', ')}"
         redirect_to prototype_my_path, notice: "목표가 성공적으로 저장되었습니다!"
       else
         Rails.logger.error "Failed to update goals for User #{current_user.id}: #{current_user.errors.full_messages.join(', ')}"
