@@ -60,14 +60,14 @@ class Rack::Attack
     req.user_agent =~ /curl|wget|python-requests|scrapy/i
   end
 
-  # 2. 특정 경로에 대한 과도한 요청 차단
-  blocklist("block-excessive-requests") do |req|
-    # 5분 동안 동일 IP에서 300회 이상 요청 시 1시간 차단
-    Rack::Attack::Allow2Ban.filter(req.ip, maxretry: 300, findtime: 5.minutes, bantime: 1.hour) do
-      # 요청 카운트
-      true
-    end
-  end
+  # 2. 특정 경로에 대한 과도한 요청 차단 (정상 사용자 오차단 방지를 위해 비활성화)
+  # blocklist("block-excessive-requests") do |req|
+  #   # 5분 동안 동일 IP에서 300회 이상 요청 시 1시간 차단
+  #   Rack::Attack::Allow2Ban.filter(req.ip, maxretry: 300, findtime: 5.minutes, bantime: 1.hour) do
+  #     # 요청 카운트
+  #     true
+  #   end
+  # end
 
   ### 커스텀 응답 ###
 
