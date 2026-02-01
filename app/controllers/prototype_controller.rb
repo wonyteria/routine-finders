@@ -871,9 +871,12 @@ class PrototypeController < ApplicationController
     @official_club = RoutineClub.official.first || RoutineClub.first
     if @official_club
       if @official_club.update(lounge_params)
-        redirect_to prototype_admin_clubs_path, notice: "라운지 설정이 저장되었습니다."
+        Rails.logger.info "Club settings updated for RoutineClub #{@official_club.id}"
+        redirect_to prototype_admin_clubs_path, notice: "클럽 설정이 성공적으로 저장되었습니다."
       else
-        redirect_to prototype_admin_clubs_path, alert: "저장에 실패했습니다."
+        error_msg = @official_club.errors.full_messages.join(", ")
+        Rails.logger.error "Club update failed for RoutineClub #{@official_club.id}: #{error_msg}"
+        redirect_to prototype_admin_clubs_path, alert: "저장에 실패했습니다: #{error_msg}"
       end
     else
       redirect_to prototype_admin_clubs_path, alert: "공식 클럽을 찾을 수 없습니다."

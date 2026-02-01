@@ -316,7 +316,7 @@
             <span class="text-[9px] font-black text-slate-500">Live & Lecture Room</span>
           </div>
 
-          <%= form_with model: @official_club, url: prototype_update_club_lounge_path, method: :post, local: true, class: "space-y-8" do |f| %>
+          <%= form_with model: @official_club, url: prototype_update_club_lounge_path, method: :patch, local: true, class: "space-y-8" do |f| %>
             <!-- LIVE ROOM -->
             <div class="space-y-4" data-lounge-settings-target="liveContainer">
               <div class="flex items-center justify-between">
@@ -369,7 +369,7 @@
             <h3 class="text-lg font-black text-indigo-400 uppercase tracking-widest">클럽 기본 및 운영 설정</h3>
           </div>
 
-          <%= form_with model: @official_club, url: prototype_update_club_lounge_path, method: :post, local: true, class: "space-y-8" do |f| %>
+          <%= form_with model: @official_club, url: prototype_update_club_lounge_path, method: :patch, local: true, class: "space-y-8" do |f| %>
             <!-- Basic Info -->
             <div class="space-y-4">
               <div class="flex items-center gap-3">
