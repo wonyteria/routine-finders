@@ -11,12 +11,12 @@ class Rack::Attack
   ### 일반 요청 제한 (Throttle) ###
 
   # 1. 일반 요청: IP당 분당 60회
-  throttle("req/ip", limit: 60, period: 1.minute) do |req|
+  throttle("req/ip", limit: 300, period: 1.minute) do |req|
     req.ip unless req.path.start_with?("/assets")
   end
 
-  # 2. 로그인 시도: IP당 5분에 5회
-  throttle("logins/ip", limit: 5, period: 5.minutes) do |req|
+  # 2. 로그인 시도: IP당 5분에 20회
+  throttle("logins/ip", limit: 20, period: 5.minutes) do |req|
     if req.path == "/auth/kakao" || req.path == "/auth/google_oauth2" || req.path == "/dev_login"
       req.ip
     end
