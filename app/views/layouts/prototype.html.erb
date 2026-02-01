@@ -420,8 +420,8 @@
     <!-- 3. Badge Celebration Modal -->
     <% if @new_badges&.any? %>
       <% @new_badges.each_with_index do |ub, idx| %>
-        <div id="badge-celebration-<%= idx %>" class="fixed inset-0 z-[1000] flex items-center justify-center p-6 <%= 'hidden' if idx > 0 %>">
-          <div class="absolute inset-0 bg-black/90 backdrop-blur-2xl animate-fade-in"></div>
+        <div id="badge-celebration-<%= idx %>" class="fixed inset-0 z-[99990] flex items-center justify-center p-6 bg-[#0C0B12] <%= 'hidden' if idx > 0 %>">
+          <div class="absolute inset-0 bg-[#0C0B12] animate-fade-in"></div>
           
           <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 text-center space-y-8 animate-badge-pop">
             <!-- Particle Effect Decoration -->
@@ -675,7 +675,7 @@
 
     <!-- 0. Club Member Welcome Modal (Master Celebration - Global Layer) -->
     <% if @show_club_welcome_modal %>
-      <div id="club-welcome-celebration" class="fixed inset-0 z-[65000] flex items-center justify-center p-6 bg-black/95 backdrop-blur-2xl">
+      <div id="club-welcome-celebration" class="fixed inset-0 z-[99999] flex items-center justify-center p-6 bg-[#0C0B12]">
         <div class="relative w-full max-w-md bg-gradient-to-b from-[#1E1C28] to-[#0C0B12] rounded-[48px] border border-white/10 shadow-[0_0_100px_rgba(79,70,229,0.3)] overflow-hidden animate-badge-pop">
           <!-- Glow Decor -->
           <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600/30 blur-[100px] rounded-full animate-pulse"></div>
