@@ -623,8 +623,9 @@ class PrototypeController < ApplicationController
 
       # Real members of the official club
       @club_members = @official_club.members.confirmed.includes(:user).order(attendance_rate: :desc)
-      # Using explicit where for pending status to be safer
-      @pending_memberships = @official_club.members.where(payment_status: :pending).includes(:user)
+
+      # Fix: Fetch pending memberships from ALL active clubs to ensure no application is missed
+      @pending_memberships = RoutineClubMember.where(payment_status: :pending).includes(:user, :routine_club).order(created_at: :desc)
 
       @member_stats = @club_members.map do |member|
         {
