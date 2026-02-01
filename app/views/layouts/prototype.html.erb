@@ -139,6 +139,7 @@
             <!-- Master FAB Button -->
             <div class="flex-none px-1 relative">
               <button type="button" 
+                      onclick="window.toggleFabMenu && window.toggleFabMenu()"
                       data-action="click->proto-ui#toggleFabMenu" 
                       class="w-16 h-16 app-fab-gradient rounded-full flex items-center justify-center -translate-y-7 shadow-[0_15px_35px_rgba(124,77,255,0.6)] border-4 border-[#0C0B12] active:scale-90 transition-transform cursor-pointer relative z-[31000]">
                 <span class="text-2xl text-white font-black leading-none">+</span>
@@ -754,5 +755,78 @@
         </div>
       </div>
     <% end %>
+    <!-- CORE SCRIPT: Manual Fab Menu Handler (Circuit Breaker) -->
+    <script>
+      // Stimulus 로딩 실패를 대비한 안전장치 함수 직접 정의
+      window.toggleFabMenu = function() {
+        console.log("🔘 FAB Menu Toggle: Vanilla JS Fallback Executed");
+        
+        const menu = document.getElementById('fab-menu-sheet');
+        if (!menu) {
+            console.error("Critical: FAB menu element not found");
+            return;
+        }
+
+        // 요소 찾기 (가장 단순한 선택자 사용)
+        const bg = menu.querySelector('div[class*="backdrop-blur"]') || menu.children[0];
+        const content = menu.querySelector('div[class*="modal-content-safe"]') || menu.children[1];
+
+        if (!bg || !content) {
+            console.error("Critical: FAB menu parts missing");
+            menu.classList.toggle('hidden');
+            document.body.classList.toggle('overflow-hidden');
+            return;
+        }
+
+        if (menu.classList.contains('hidden')) {
+            // Open
+            menu.classList.remove('hidden');
+            
+            // Animation Reset
+            bg.style.transition = 'none';
+            content.style.transition = 'none';
+            bg.style.opacity = '0';
+            content.style.transform = 'translateY(100%)';
+            
+            // Reflow
+            void menu.offsetWidth;
+
+            // Animate
+            requestAnimationFrame(() => {
+                bg.style.transition = 'opacity 0.3s ease';
+                content.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                bg.style.opacity = '1';
+                content.style.transform = 'translateY(0)';
+            });
+            
+            document.body.classList.add('overflow-hidden');
+        } else {
+            // Close
+            bg.style.opacity = '0';
+            content.style.transform = 'translateY(100%)';
+
+            setTimeout(() => {
+                menu.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+                // Cleanup
+                content.style.transform = '';
+                content.style.transition = '';
+                bg.style.opacity = '';
+                bg.style.transition = '';
+            }, 300);
+        }
+      };
+
+      // 로그인 체크 함수 Fallback
+      window.checkLoginFallback = function(e) {
+        const isLoggedIn = document.body.getAttribute('data-logged-in');
+        if (isLoggedIn === "false") {
+          e.preventDefault();
+          window.location.href = '/login';
+          return false;
+        }
+        return true;
+      };
+    </script>
   </body>
 </html>
