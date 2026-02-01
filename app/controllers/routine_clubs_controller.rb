@@ -31,65 +31,8 @@ class RoutineClubsController < ApplicationController
   end
 
   def manage
-    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
-
-    @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
-    @pending_payments = @routine_club.members.where(payment_status: :pending)
-
-    # Calculate Monthly vs Cumulative
-    current_month_range = Time.current.all_month
-
-    @member_stats = @members.map do |m|
-      monthly_atts = m.attendances.where(attendance_date: current_month_range)
-      monthly_present = monthly_atts.where(status: [ :present, :excused ]).count
-      monthly_total = monthly_atts.count
-      monthly_rate = monthly_total > 0 ? (monthly_present.to_f / monthly_total * 100).round(2) : 0.0
-
-      # Get user's ongoing challenges
-      ongoing_challenges = m.user.participations
-                            .joins(:challenge)
-                            .where(status: :approved)
-                            .where("challenges.start_date <= ? AND challenges.end_date >= ?", Date.current, Date.current)
-                            .includes(:challenge)
-                            .limit(5) # Limit to 5 to avoid clutter
-
-      {
-        membership: m,
-        monthly_rate: monthly_rate,
-        monthly_absence: monthly_total - monthly_present,
-        cumulative_rate: m.attendance_rate,
-        cumulative_points: m.growth_points || 0,
-        ongoing_challenges: ongoing_challenges
-      }
-    end
-
-    # Default sort for Monthly
-    @monthly_sorted = @member_stats.sort_by { |s| -s[:monthly_rate] }
-    # Default sort for Cumulative
-    @cumulative_sorted = @member_stats.sort_by { |s| -s[:cumulative_points] }
-
-    # Additional Statistics
-    # 1. 운영 일수
-    @days_running = (Date.current - @routine_club.start_date).to_i
-    @total_days = (@routine_club.end_date - @routine_club.start_date).to_i
-
-    # 2. 이번 주 출석률
-    week_range = (Date.current - 6.days)..Date.current
-    week_attendances = @routine_club.attendances.where(attendance_date: week_range)
-    week_present = week_attendances.where(status: [ :present, :excused ]).count
-    week_total = week_attendances.count
-    @weekly_attendance_rate = week_total > 0 ? (week_present.to_f / week_total * 100).round(1) : 0.0
-
-    # 3. 저조한 멤버 수 (출석률 60% 미만)
-    @low_performers_count = @members.select { |m| m.attendance_rate < 60 }.count
-
-    # Community Data
-    @announcements = @routine_club.announcements.order(created_at: :desc)
-    @gatherings = @routine_club.gatherings.order(gathering_at: :asc)
-
-    if params[:source] == "prototype"
-      render "prototype/club_manage", layout: "prototype"
-    end
+    # Disable legacy management view; redirect to Admin Center
+    redirect_to prototype_admin_clubs_path
   end
 
   def new
@@ -101,41 +44,42 @@ class RoutineClubsController < ApplicationController
     @routine_club = current_user.hosted_routine_clubs.build(routine_club_params)
 
     if @routine_club.save
-      redirect_to @routine_club, notice: "루틴 클럽이 성공적으로 개설되었습니다!"
+      redirect_to prototype_admin_clubs_path, notice: "루틴 클럽이 성공적으로 개설되었습니다!"
     else
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
+    redirect_to prototype_admin_clubs_path, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
   end
 
   def update
-    return redirect_to @routine_club, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
+    return redirect_to prototype_admin_clubs_path, alert: "권한이 없습니다." unless current_user.admin? || @routine_club.host_id == current_user.id
 
     if @routine_club.update(routine_club_params)
-      redirect_to manage_routine_club_path(@routine_club), notice: "설정이 성공적으로 저장되었습니다."
+      redirect_to prototype_admin_clubs_path, notice: "설정이 성공적으로 저장되었습니다."
     else
-      redirect_to manage_routine_club_path(@routine_club), alert: "설정 저장에 실패했습니다."
+      redirect_to prototype_admin_clubs_path, alert: "설정 저장에 실패했습니다."
     end
   end
 
   def join
     if @routine_club.is_full?
-      return redirect_to @routine_club, alert: "정원이 마감되었습니다."
+      return redirect_to prototype_club_join_path, alert: "정원이 마감되었습니다."
     end
 
     if !@routine_club.recruitment_open? && current_user.role != "admin" && params[:beta_test] != "true"
-    return redirect_to @routine_club, alert: "지금은 정기 모집 기간이 아닙니다. 다음 모집 기간에 신청해주세요."
+      return redirect_to prototype_club_join_path, alert: "지금은 정기 모집 기간이 아닙니다. 다음 모집 기간에 신청해주세요."
     end
 
     existing_member = @routine_club.members.find_by(user: current_user)
     if existing_member
       if existing_member.status_kicked?
-        return redirect_to @routine_club, alert: "죄송합니다. 이전에 클럽에서 제명된 이력이 있어 가입 신청이 제한됩니다. 문의사항은 관리자에게 연락해 주세요."
+        # Redirect to a generic safe place (home or join path with alert)
+        return redirect_to prototype_club_join_path, alert: "죄송합니다. 이전에 클럽에서 제명된 이력이 있어 가입 신청이 제한됩니다. 문의사항은 관리자에게 연락해 주세요."
       else
-        return redirect_to @routine_club, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
+        return redirect_to prototype_club_join_path, alert: "이미 가입 신청을 했거나 멤버인 상태입니다."
       end
     end
 
