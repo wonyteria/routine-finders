@@ -185,8 +185,10 @@ class User < ApplicationRecord
     if user.nil? && email.present?
       user = active.find_by(email: email)
       if user
-        Rails.logger.info "OmniAuth: Linking existing user (#{user.id}) with #{auth.provider}"
+        Rails.logger.info "OmniAuth: Linking existing user ID: #{user.id}, Nickname: #{user.nickname} with #{auth.provider} (UID: #{auth.uid})"
         user.update(provider: auth.provider, uid: auth.uid)
+      else
+        Rails.logger.info "OmniAuth: No existing active user found with email: #{email}. Will create a new account."
       end
     end
 

@@ -88,7 +88,7 @@
             <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[8px] font-black rounded-full">갱신 필요</span>
           <% end %>
         </div>
-        <% if current_user.weekly_goal.present? && !weekly_needs_update %>
+        <% if current_user.weekly_goal.present? %>
           <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= current_user.weekly_goal %></p>
         <% else %>
           <p class="text-sm font-medium text-slate-500 italic">이번 주 목표를 설정해보세요</p>
@@ -109,7 +109,7 @@
             <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[8px] font-black rounded-full">갱신 필요</span>
           <% end %>
         </div>
-        <% if current_user.monthly_goal.present? && !monthly_needs_update %>
+        <% if current_user.monthly_goal.present? %>
           <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= current_user.monthly_goal %></p>
         <% else %>
           <p class="text-sm font-medium text-slate-500 italic">이번 달 목표를 설정해보세요</p>
@@ -130,7 +130,7 @@
             <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[8px] font-black rounded-full">갱신 필요</span>
           <% end %>
         </div>
-        <% if current_user.yearly_goal.present? && !yearly_needs_update %>
+        <% if current_user.yearly_goal.present? %>
           <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= current_user.yearly_goal %></p>
         <% else %>
           <p class="text-sm font-medium text-slate-500 italic">올해 목표를 설정해보세요</p>

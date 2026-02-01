@@ -530,7 +530,7 @@ class PrototypeController < ApplicationController
 
   def update_goals
     if current_user
-      current_user.update(
+      success = current_user.update(
         weekly_goal: params[:weekly_goal],
         monthly_goal: params[:monthly_goal],
         yearly_goal: params[:yearly_goal],
@@ -538,7 +538,13 @@ class PrototypeController < ApplicationController
         monthly_goal_updated_at: Time.current,
         yearly_goal_updated_at: Time.current
       )
-      redirect_to prototype_my_path, notice: "목표가 성공적으로 저장되었습니다!"
+
+      if success
+        redirect_to prototype_my_path, notice: "목표가 성공적으로 저장되었습니다!"
+      else
+        Rails.logger.error "Failed to update goals for User #{current_user.id}: #{current_user.errors.full_messages.join(', ')}"
+        redirect_to prototype_my_path, alert: "목표 저장에 실패했습니다: #{current_user.errors.full_messages.join(', ')}"
+      end
     else
       redirect_to prototype_login_path, alert: "로그인이 필요합니다."
     end
@@ -796,15 +802,17 @@ class PrototypeController < ApplicationController
   def update_profile
     if current_user
       # Support both nested (params[:user]) and flat parameters
+      # More robust parameter extraction
       p = params[:user].presence || params
 
       update_params = {}
-      update_params[:nickname] = p[:nickname] if p[:nickname].present?
-      update_params[:bio] = p[:bio] if p[:bio].present?
+      # Use fetch or bracket to ensure we get the value even if it's an empty string (to allow clearing)
+      update_params[:nickname] = p[:nickname] if p.has_key?(:nickname) && p[:nickname].present?
+      update_params[:bio] = p[:bio] if p.has_key?(:bio)
 
       # Handle profile image upload correctly via ActiveStorage
       img = params[:profile_image] || p[:profile_image] || params[:avatar] || p[:avatar]
-      if img.present?
+      if img.present? && img != ""
         # 파일 검증
         validation_result = FileUploadValidator.validate_image(img)
         unless validation_result[:valid]
@@ -840,8 +848,10 @@ class PrototypeController < ApplicationController
       end
 
       if current_user.update(update_params)
+        Rails.logger.info "Profile updated for User #{current_user.id}: #{update_params.keys.join(', ')}"
         redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!"
       else
+        Rails.logger.error "Profile update failed for User #{current_user.id}: #{current_user.errors.full_messages.join(', ')}"
         redirect_to prototype_my_path, alert: "프로필 업데이트에 실패했습니다: #{current_user.errors.full_messages.join(', ')}"
       end
     else
