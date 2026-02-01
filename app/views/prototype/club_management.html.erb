@@ -535,7 +535,7 @@
       </button>
     </div>
 
-    <%= form_with url: send_message_routine_club_path(@official_club), method: :post, class: "space-y-6" do |f| %>
+    <%= form_with url: send_message_routine_club_path(@official_club, source: 'prototype'), method: :post, class: "space-y-6" do |f| %>
       <%= hidden_field_tag :recipient_id, "", id: "recipient-id" %>
       
       <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-4">
@@ -599,12 +599,12 @@
     
     if (actionType === 'warn') {
       title.textContent = '운영 정책 경고 부여';
-      form.action = `<%= @official_club ? warn_member_routine_club_path(@official_club) : "#" %>`;
+      form.action = `<%= @official_club ? warn_member_routine_club_path(@official_club, source: 'prototype') : "#" %>`;
       submitBtn.textContent = '경고 부여 확정';
       submitBtn.className = 'flex-1 py-4 bg-amber-600 text-white rounded-2xl font-black text-xs hover:bg-amber-700 transition-all shadow-xl shadow-amber-600/20 cursor-pointer';
     } else {
       title.textContent = '시스템 영구 제명';
-      form.action = `<%= @official_club ? kick_member_routine_club_path(@official_club) : "#" %>`;
+      form.action = `<%= @official_club ? kick_member_routine_club_path(@official_club, source: 'prototype') : "#" %>`;
       submitBtn.textContent = '제명 처리 확정';
       submitBtn.className = 'flex-1 py-4 bg-rose-600 text-white rounded-2xl font-black text-xs hover:bg-rose-700 transition-all shadow-xl shadow-rose-600/20 cursor-pointer';
     }

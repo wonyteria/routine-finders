@@ -300,7 +300,12 @@ class RoutineClubsController < ApplicationController
     member = @routine_club.members.find(params[:member_id])
     member.reject_payment!(params[:reason])
 
-    redirect_to manage_routine_club_path(@routine_club, tab: "pending"), notice: "입금이 거부되었습니다."
+    path = if params[:source] == "prototype" || request.referer&.include?("admin_center/clubs")
+             prototype_admin_clubs_path(tab: "members")
+    else
+             manage_routine_club_path(@routine_club, tab: "pending")
+    end
+    redirect_to path, notice: "입금이 거부되었습니다."
   end
 
   def kick_member
@@ -309,7 +314,12 @@ class RoutineClubsController < ApplicationController
     member = @routine_club.members.find(params[:member_id])
     member.kick!(params[:reason])
 
-    redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), notice: "#{member.user.nickname}님이 강퇴되었습니다."
+    path = if params[:source] == "prototype" || request.referer&.include?("admin_center/clubs")
+             prototype_admin_clubs_path(tab: "members")
+    else
+             manage_routine_club_path(@routine_club, tab: "monthly")
+    end
+    redirect_to path, notice: "#{member.user.nickname}님이 강퇴되었습니다."
   end
 
   def warn_member
@@ -319,7 +329,12 @@ class RoutineClubsController < ApplicationController
     reason = params[:reason].presence || "호스트가 경고를 부여했습니다."
     member.warn!(reason)
 
-    redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), notice: "#{member.user.nickname}님에게 경고를 부여했습니다."
+    path = if params[:source] == "prototype" || request.referer&.include?("admin_center/clubs")
+             prototype_admin_clubs_path(tab: "members")
+    else
+             manage_routine_club_path(@routine_club, tab: "monthly")
+    end
+    redirect_to path, notice: "#{member.user.nickname}님에게 경고를 부여했습니다."
   end
 
   def cheer
@@ -377,7 +392,12 @@ class RoutineClubsController < ApplicationController
         link: personal_routines_path(tab: "club")
       )
 
-      redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), notice: "#{recipient.nickname}님에게 메시지를 전송했습니다."
+      path = if params[:source] == "prototype" || request.referer&.include?("admin_center/clubs")
+               prototype_admin_clubs_path(tab: "members")
+      else
+               manage_routine_club_path(@routine_club, tab: "monthly")
+      end
+      redirect_to path, notice: "#{recipient.nickname}님에게 메시지를 전송했습니다."
     else
       redirect_to manage_routine_club_path(@routine_club, tab: "monthly"), alert: "메시지 내용을 입력해주세요."
     end
