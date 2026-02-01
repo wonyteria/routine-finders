@@ -19,56 +19,15 @@ class RoutineClubsController < ApplicationController
   end
 
   def show
-    @is_member = current_user && (@routine_club.members.confirmed.exists?(user: current_user) || current_user.admin?)
-    @is_host = current_user && (@routine_club.host_id == current_user.id || current_user.super_admin?)
+    # Legacy View Blocker: Redirect all traffic to modern prototype pages
 
-    # Redirect members to their club dashboard (Only for Official Club)
-    if @is_member && !@is_host && @routine_club.is_official?
-      return redirect_to personal_routines_path(tab: "club")
+    # 1. If user is a member or host -> Go to Dashboard
+    if current_user && (@routine_club.members.confirmed.exists?(user: current_user) || @routine_club.host_id == current_user.id || current_user.admin?)
+      return redirect_to prototype_home_path(tab: "club")
     end
 
-    # Default to dashboard if member/admin and no tab specified
-    if params[:tab].blank? && @is_member
-      params[:tab] = "dashboard"
-    end
-
-    if @my_membership
-       @my_membership.recalculate_growth_points!
-    end
-
-    # Calculate Rank Percentile
-    if @my_membership && @my_membership.status_active?
-      active_members = @routine_club.members.active
-      total_members = active_members.count
-      if total_members > 0
-        my_rate = @my_membership.achievement_rate.to_f
-        better_count = active_members.where("achievement_rate > ?", my_rate).count
-        @my_rank_percentile = ((better_count + 1).to_f / total_members * 100).ceil
-      else
-        @my_rank_percentile = 0
-      end
-    end
-
-    @members = @routine_club.members.includes(:user).where(payment_status: :confirmed)
-    @rankings = @members.order(growth_points: :desc).limit(10)
-
-    @pending_payments = @is_host ? @routine_club.members.where(payment_status: :pending) : []
-    @rules = @routine_club.rules.order(:position)
-
-    # Community Data
-    @announcements = @routine_club.announcements.order(created_at: :desc)
-    @gatherings = @routine_club.gatherings.order(gathering_at: :asc)
-
-    # User Routines for Dashboard Checklist
-    @personal_routines = current_user&.personal_routines&.includes(:completions)&.order(created_at: :desc) || []
-    @daily_achievement_rate = current_user&.daily_achievement_rate(Date.current) || 0
-    @member_days = current_user&.rufa_member_days || 0
-    @my_score = current_user&.rufa_club_score || 0
-
-    active_members = @routine_club.members.active
-    @rufa_rankings = active_members.map { |m| { user: m.user, score: m.growth_points || 0 } }.sort_by { |r| -r[:score] }.take(10)
-    @top_avg_score = @rufa_rankings.any? ? (@rufa_rankings.sum { |r| r[:score] } / @rufa_rankings.size).round(1) : 0
-    @category_stats = current_user&.category_stats || {}
+    # 2. If user is not yet a member -> Go to Join Page
+    redirect_to prototype_club_join_path
   end
 
   def manage
