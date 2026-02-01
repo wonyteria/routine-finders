@@ -680,7 +680,7 @@
        onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
        class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
   
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[80vh] overflow-y-auto modal-content-safe">
+  <div data-controller="notification-center" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[80vh] overflow-y-auto modal-content-safe">
     <div class="flex justify-between items-center">
       <h3 class="text-xl font-black text-white">알림 설정</h3>
       <button type="button" 
@@ -692,37 +692,19 @@
 
     <div class="space-y-6">
       <!-- Master Switch -->
-      <div data-controller="notification-toggle" 
-           data-action="click->notification-toggle#switch"
-           onclick="
-             const btn = this.querySelector('[data-notification-toggle-target=\'button\']');
-             const ind = this.querySelector('[data-notification-toggle-target=\'indicator\']');
-             const detailContainer = document.getElementById('detailed-notification-settings');
-             const isOff = btn.classList.contains('justify-start');
-             if(isOff) {
-               btn.classList.replace('justify-start', 'justify-end');
-               btn.classList.replace('bg-slate-800', 'bg-indigo-500');
-               ind.classList.replace('bg-slate-600', 'bg-white');
-               detailContainer.classList.remove('opacity-40', 'pointer-events-none');
-             } else {
-               btn.classList.replace('justify-end', 'justify-start');
-               btn.classList.replace('bg-indigo-500', 'bg-slate-800');
-               ind.classList.replace('bg-white', 'bg-slate-600');
-               detailContainer.classList.add('opacity-40', 'pointer-events-none');
-             }
-           "
+      <div data-action="click->notification-center#toggleMaster"
            class="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-between cursor-pointer group">
         <div>
           <p class="text-sm font-black text-white">푸시 알림 허용</p>
           <p class="text-[10px] font-bold text-indigo-400 mt-1">루틴 체크와 소식을 놓치지 않으려면 활성화해주세요</p>
         </div>
-        <div data-notification-toggle-target="button" class="w-11 h-6 bg-slate-800 rounded-full relative p-0.5 flex items-center justify-start px-1 transition-all">
-           <div data-notification-toggle-target="indicator" class="w-5 h-5 bg-slate-600 rounded-full transition-all shadow-sm"></div>
+        <div data-notification-center-target="masterButton" class="w-11 h-6 bg-slate-800 rounded-full relative p-0.5 flex items-center justify-start px-1 transition-all">
+           <div data-notification-center-target="masterIndicator" class="w-5 h-5 bg-slate-600 rounded-full transition-all shadow-sm"></div>
         </div>
       </div>
 
-      <!-- Categories Group (ID added for linking) -->
-      <div id="detailed-notification-settings" class="space-y-3 opacity-40 pointer-events-none transition-all duration-300">
+      <!-- Categories Group -->
+      <div data-notification-center-target="detailContainer" class="space-y-3 opacity-40 pointer-events-none transition-all duration-300">
         <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2">상세 설정</h4>
         <div class="space-y-2">
           <% [
@@ -731,31 +713,15 @@
               { label: '👏 커뮤니티 소통', desc: '응원 및 댓글 알림' },
               { label: '📢 마케팅 혜택', desc: '신규 기능 및 이벤트' }
              ].each do |item| %>
-            <div data-controller="toggle"
-                 data-action="click->toggle#switch"
-                 onclick="
-                   const btn = this.querySelector('[data-toggle-target=\'button\']');
-                   const ind = this.querySelector('[data-toggle-target=\'indicator\']');
-                   const isOff = btn.classList.contains('justify-start');
-                   if(isOff) {
-                     btn.classList.replace('justify-start', 'justify-end');
-                     btn.classList.remove('bg-indigo-500/20');
-                     btn.classList.add('bg-indigo-500');
-                     ind.classList.replace('bg-indigo-400', 'bg-white');
-                   } else {
-                     btn.classList.replace('justify-end', 'justify-start');
-                     btn.classList.remove('bg-indigo-500');
-                     btn.classList.add('bg-indigo-500/20');
-                     ind.classList.replace('bg-white', 'bg-indigo-400');
-                   }
-                 "
+            <div data-notification-center-target="detail"
+                 data-action="click->notification-center#toggleDetail"
                  class="flex items-center justify-between p-4 bg-white/[0.03] border border-white/5 rounded-2xl cursor-pointer active:bg-white/5 transition-colors">
               <div>
                 <p class="text-xs font-bold text-slate-200"><%= item[:label] %></p>
                 <p class="text-[9px] font-medium text-slate-500 mt-0.5"><%= item[:desc] %></p>
               </div>
-              <div data-toggle-target="button" class="w-10 h-5 bg-indigo-500 rounded-full relative p-0.5 flex items-center justify-end px-1 border border-indigo-500/30 transition-all">
-                 <div data-toggle-target="indicator" class="w-4 h-4 bg-white rounded-full shadow-sm transition-all"></div>
+              <div data-notification-center-target="detailButton" class="w-10 h-5 bg-indigo-500 rounded-full relative p-0.5 flex items-center justify-end px-1 border border-indigo-500/30 transition-all">
+                 <div data-notification-center-target="detailIndicator" class="w-4 h-4 bg-white rounded-full shadow-sm transition-all"></div>
               </div>
             </div>
           <% end %>
