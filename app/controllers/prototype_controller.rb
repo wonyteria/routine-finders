@@ -88,7 +88,8 @@ class PrototypeController < ApplicationController
 
     # 5. Specialized Content (Ranking & Goals) - Use minimal calculation
     @rufa_rankings = Rails.cache.fetch("home_rankings_stable", expires_in: 1.hour) do
-      User.joins(:routine_club_members)
+      User.where(deleted_at: nil)
+          .joins(:routine_club_members)
           .where(routine_club_members: { status: :active, payment_status: :confirmed })
           .limit(10)
           .map { |u| { user: u, score: u.rufa_club_score } }
@@ -147,7 +148,7 @@ class PrototypeController < ApplicationController
     admin_user_ids = User.admin.pluck(:id)
     all_club_ids = (club_member_user_ids + admin_user_ids).uniq
 
-    relevant_users = User.where(id: (active_activity_user_ids + all_club_ids).uniq)
+    relevant_users = User.where(deleted_at: nil).where(id: (active_activity_user_ids + all_club_ids).uniq)
 
     @monthly_rankings = relevant_users.map { |u|
       {
