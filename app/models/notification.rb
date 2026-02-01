@@ -16,7 +16,10 @@ class Notification < ApplicationRecord
     club_kicked: 11,
     club_attendance_reminder: 12,
     club_warning: 13,
-    club_message: 14
+    club_message: 14,
+    challenge_approval: 15,
+    challenge_rejection: 16,
+    nudge: 17
   }
 
   # Associations

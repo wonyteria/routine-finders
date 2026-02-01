@@ -29,6 +29,7 @@ class RoutineClubMember < ApplicationRecord
   def confirm_payment!
     update!(
       payment_status: :confirmed,
+      status: :active,
       deposit_confirmed_at: Time.current
     )
 

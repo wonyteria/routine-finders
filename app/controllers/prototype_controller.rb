@@ -4,9 +4,9 @@ class PrototypeController < ApplicationController
 
   layout "prototype"
   before_action :set_shared_data
-  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports ]
-  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports ]
-  before_action :require_super_admin, only: [ :broadcast, :update_user_role, :update_user_status, :approve_challenge, :purge_cache, :reset_users ]
+  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports, :confirm_club_payment, :reject_club_payment, :create_club_announcement, :update_club_lounge ]
+  before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :confirm_club_payment, :reject_club_payment, :create_club_announcement, :update_club_lounge ]
+  before_action :require_super_admin, only: [ :broadcast, :update_user_role, :update_user_status, :approve_challenge, :purge_cache, :reset_users, :delete_content, :notify_host, :update_content_basic ]
   before_action :require_can_create_challenge, only: [ :challenge_builder ]
   before_action :require_can_create_gathering, only: [ :gathering_builder ]
 
@@ -672,10 +672,11 @@ class PrototypeController < ApplicationController
   def confirm_club_payment
     member = RoutineClubMember.find(params[:member_id])
 
-    if member.confirm_payment!
+    begin
+      member.confirm_payment!
       redirect_to prototype_club_management_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 승인되었습니다."
-    else
-      redirect_to prototype_club_management_path(tab: "members"), alert: "승인 처리에 실패했습니다."
+    rescue => e
+      redirect_to prototype_club_management_path(tab: "members"), alert: "승인 처리에 실패했습니다: #{e.message}"
     end
   rescue ActiveRecord::RecordNotFound
     redirect_to prototype_club_management_path, alert: "멤버를 찾을 수 없습니다."
@@ -685,10 +686,11 @@ class PrototypeController < ApplicationController
     member = RoutineClubMember.find(params[:member_id])
     reason = params[:reason] || "입금 확인 불가"
 
-    if member.reject_payment!(reason)
+    begin
+      member.reject_payment!(reason)
       redirect_to prototype_club_management_path(tab: "members"), notice: "#{member.user.nickname}님의 입금이 거부되었습니다."
-    else
-      redirect_to prototype_club_management_path(tab: "members"), alert: "거부 처리에 실패했습니다."
+    rescue => e
+      redirect_to prototype_club_management_path(tab: "members"), alert: "거부 처리에 실패했습니다: #{e.message}"
     end
   rescue ActiveRecord::RecordNotFound
     redirect_to prototype_club_management_path, alert: "멤버를 찾을 수 없습니다."
