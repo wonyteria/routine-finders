@@ -231,11 +231,9 @@
     <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-4">
       <div id="fab-menu-overlay"
            onclick="window.toggleFabMenu && window.toggleFabMenu()" 
-           class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity"
-           style="opacity: 0;"></div>
+           class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity z-0"></div>
       <div id="fab-menu-content"
-           class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe"
-           style="transform: translateY(100%);">
+           class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe z-10">
 
         
         <div class="space-y-4">
@@ -761,55 +759,51 @@
     <script>
       // Stimulus 로딩 실패를 대비한 안전장치 함수 직접 정의
       window.toggleFabMenu = function() {
-        console.log("🔘 FAB Menu Toggle: Vanilla JS Fallback Executed");
+        // console.log("🔘 FAB Menu Toggle: Vanilla JS Fallback Executed");
         
         const menu = document.getElementById('fab-menu-sheet');
-        if (!menu) {
-            console.error("Critical: FAB menu element not found");
-            return;
-        }
+        if (!menu) return;
 
-        // 요소 찾기 (ID로 확실하게 찾기)
         const bg = document.getElementById('fab-menu-overlay');
         const content = document.getElementById('fab-menu-content');
 
         if (!bg || !content) {
-            console.error("Critical: FAB menu parts missing (Check IDs: fab-menu-overlay, fab-menu-content)");
-            // 최후의 수단: 단순히 보이기/숨기기
             menu.classList.toggle('hidden');
             document.body.classList.toggle('overflow-hidden');
             return;
         }
 
         if (menu.classList.contains('hidden')) {
-            // Open Sequence
+            // [OPEN]
             menu.classList.remove('hidden');
             
-            // 1. 초기 상태 강제 설정 (중요: 트랜지션 전에 확실히 적용)
+            // 1. 초기 스타일 설정 (트랜지션 끄고 시작값 설정)
             bg.style.transition = 'none';
             content.style.transition = 'none';
             
             bg.style.opacity = '0';
+            bg.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // 강제 배경색 지정
             content.style.transform = 'translateY(100%)';
             
-            // 2. 브라우저 렌더링 강제 (Reflow)
-            void menu.offsetWidth;
-            void bg.offsetWidth;
+            // 2. 강제 리플로우 (브라우저가 초기값을 인식하도록 함)
+            bg.offsetHeight; 
+            content.offsetHeight;
 
-            // 3. 애니메이션 시작
+            // 3. Double rAF 패턴: 다음 페인트 프레임까지 확실히 기다림
             requestAnimationFrame(() => {
-                // 트랜지션 속성 복구
-                bg.style.transition = 'opacity 0.3s ease';
-                content.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                
-                // 목표값 설정
-                bg.style.opacity = '1';
-                content.style.transform = 'translateY(0)';
+                requestAnimationFrame(() => {
+                    // 트랜지션 켜고 목표값 설정
+                    bg.style.transition = 'opacity 0.3s ease';
+                    content.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    
+                    bg.style.opacity = '1';
+                    content.style.transform = 'translateY(0)';
+                });
             });
             
             document.body.classList.add('overflow-hidden');
         } else {
-            // Close Sequence
+            // [CLOSE]
             bg.style.opacity = '0';
             content.style.transform = 'translateY(100%)';
 
@@ -817,7 +811,7 @@
                 menu.classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
                 
-                // Cleanup Styles
+                // 스타일 정리
                 content.style.transform = '';
                 content.style.transition = '';
                 bg.style.opacity = '';
