@@ -163,7 +163,7 @@
       </div>
     <% end %>
 
-    <main data-controller="modal" class="w-full max-w-md mx-auto min-h-screen relative pt-14 pb-40 px-4 bg-[#0C0B12]">
+    <main data-controller="modal" class="w-full max-w-md mx-auto min-h-screen relative pt-14 pb-40 px-4 bg-[#0C0B12] z-0 isolate">
       <%= yield %>
     </main>
 
@@ -228,7 +228,7 @@
     </div>
 
     <!-- 2. FAB Menu Sheet (Simple List Style) -->
-    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-4">
+    <div id="fab-menu-sheet" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-4" style="z-index: 2147483647 !important;">
       <div id="fab-menu-overlay"
            onclick="window.toggleFabMenu && window.toggleFabMenu()" 
            class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer transition-opacity z-0"></div>
