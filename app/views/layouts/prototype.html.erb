@@ -122,7 +122,7 @@
   <body class="min-h-screen overflow-x-hidden" data-controller="proto-ui toast loading" data-logged-in="<%= logged_in? %>">
     <!-- App Bottom Navigation Bar (Standalone Fixed Layer) -->
     <% unless content_for?(:hide_nav) %>
-      <div class="fixed bottom-10 inset-x-0 z-[60000] flex justify-center pointer-events-none">
+      <div class="fixed bottom-10 inset-x-0 z-[60000] flex justify-center pointer-events-none" style="transform: translate3d(0,0,0);">
         <div class="w-full max-w-md mx-auto px-4 flex justify-center">
           <nav class="pointer-events-auto w-[92%] max-w-[360px] h-20 bg-[#16151D]/98 backdrop-blur-3xl rounded-[32px] border border-white/10 flex items-center justify-between px-2 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
             <!-- Left Side Icons -->
