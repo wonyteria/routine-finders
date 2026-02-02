@@ -884,7 +884,18 @@
         </div>
       </div>
     <% end %>
-    <!-- Global User Profile Modal Frame -->
-    <turbo-frame id="user-profile-modal-frame"></turbo-frame>
+    <script>
+      window.closeUserProfileModal = function() {
+        const frame = document.getElementById('user-profile-modal-frame');
+        if (frame) {
+          // 애니메이션 없이 즉시 비움 (오류 방지 위해 가장 안전한 방법)
+          frame.innerHTML = '';
+          frame.removeAttribute('src');
+          frame.style.display = 'none';
+        }
+        document.body.classList.remove('overflow-hidden');
+      };
+    </script>
+    <turbo-frame id="user-profile-modal-frame" class="hidden"></turbo-frame>
   </body>
 </html>

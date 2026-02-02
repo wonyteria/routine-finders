@@ -435,20 +435,9 @@ class PrototypeController < ApplicationController
     @is_club_member = @target_user.routine_club_members.active.exists?
     @my_membership = @target_user.routine_club_members.active.first
 
-    # Simple Weekly Stats for Card
+    # Weekly Stats for Card (Matches Achievement Report logic)
     start_of_week = Date.current.beginning_of_week
-    days_passed = [ (Date.current - start_of_week).to_i + 1, 7 ].min
-
-    @weekly_data = []
-    (0...days_passed).each do |i|
-      date = start_of_week + i.days
-      routines = @target_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(date.wday.to_s) }
-      total = routines.count
-      completed = routines.select { |r| r.completions.exists?(completed_on: date) }.count
-      @weekly_data << (total.positive? ? ((completed.to_f / total) * 100).round : 0)
-    end
-
-    @weekly_completion = @weekly_data.any? ? (@weekly_data.sum.to_f / @weekly_data.size).round : 0
+    @weekly_completion = @target_user.period_routine_rate(start_of_week, Date.current).to_i
 
     if request.headers["Turbo-Frame"]
       render layout: false
