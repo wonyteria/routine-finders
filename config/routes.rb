@@ -7,6 +7,12 @@ Rails.application.routes.draw do
   get "synergy", to: "prototype#synergy", as: :prototype_synergy
   get "my", to: "prototype#my", as: :prototype_my
   get "notifications_center", to: "prototype#notifications", as: :prototype_notifications
+
+  # PWA routes
+  get "/service-worker.js" => "pwa#service_worker", as: :pwa_service_worker
+  get "/manifest.json" => "pwa#manifest", as: :pwa_manifest
+  get "/offline" => "pwa#offline", as: :pwa_offline
+
   get "pwa", to: "prototype#pwa", as: :prototype_pwa
   post "notifications/clear", to: "prototype#clear_notifications", as: :prototype_clear_notifications
   post "record", to: "prototype#record", as: :prototype_record
