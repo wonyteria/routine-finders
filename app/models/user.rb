@@ -622,6 +622,30 @@ class User < ApplicationRecord
     score
   end
 
+  # 특정 월의 활동 점수 계산
+  def monthly_platform_score(target_date = Date.current)
+    start_date = target_date.beginning_of_month
+    end_date = target_date.end_of_month
+    range = start_date..end_date
+
+    score = 0
+
+    # 1. 루틴 활동 (해당 기간 내 완료)
+    score += personal_routines.joins(:completions)
+                              .where(personal_routine_completions: { completed_on: range })
+                              .count * ACTIVITY_POINTS[:routine_completion]
+
+    # 2. 챌린지/모임 참여 (해당 기간 내 참여)
+    score += participations.where(created_at: range).count * ACTIVITY_POINTS[:challenge_participation]
+    score += hosted_challenges.where(created_at: range).count * ACTIVITY_POINTS[:challenge_hosting]
+
+    # 3. 커뮤니티 활동 (확언, 라이브 등)
+    score += rufa_activities.where(created_at: range, activity_type: "reflection").count * ACTIVITY_POINTS[:feed_post]
+    score += rufa_activities.where(created_at: range, activity_type: "live_join").count * ACTIVITY_POINTS[:live_participation]
+
+    score
+  end
+
   def total_routine_completions
     # 모든 유저: 전체 루틴 완료 횟수
     personal_routines.joins(:completions).count

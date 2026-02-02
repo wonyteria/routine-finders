@@ -55,8 +55,8 @@
                <img src="<%= @target_user.profile_image %>" class="w-full h-full object-cover">
             </div>
             <% if @is_club_member %>
-              <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-sm shadow-xl border-2 border-[#0C0B12] z-20">
-                🔱
+              <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-[#0C0B12] border-2 border-indigo-500 flex items-center justify-center shadow-xl z-20 overflow-hidden">
+                <span class="text-[10px] font-black text-white leading-none tracking-tighter" style="font-family: 'Outfit', sans-serif;">RF</span>
               </div>
             <% end %>
             <div class="absolute -bottom-2 -right-2 px-2.5 py-1 rounded-full bg-white text-[#0C0B12] text-[10px] font-black shadow-xl border-2 border-[#0C0B12] z-20">
@@ -132,6 +132,42 @@
               <span class="text-[10px] font-bold text-slate-500">개</span>
             </div>
           </div>
+        </div>
+
+        <!-- Points Grid -->
+        <div class="grid grid-cols-2 gap-3">
+           <div class="p-4 bg-white/5 border border-white/5 rounded-[24px] space-y-1">
+             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Monthly Points</p>
+             <div class="flex items-baseline gap-1">
+               <span class="text-xl font-black text-indigo-400"><%= @target_user.monthly_platform_score %></span>
+               <span class="text-[10px] font-bold text-indigo-500/50">P</span>
+             </div>
+           </div>
+           <div class="p-4 bg-white/5 border border-white/5 rounded-[24px] space-y-1">
+             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Total Points</p>
+             <div class="flex items-baseline gap-1">
+               <span class="text-xl font-black text-white"><%= @target_user.total_platform_score %></span>
+               <span class="text-[10px] font-bold text-slate-500">P</span>
+             </div>
+           </div>
+        </div>
+
+        <!-- Points Grid -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+           <div class="p-4 bg-white/5 border border-white/5 rounded-[24px] space-y-1">
+             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Monthly Points</p>
+             <div class="flex items-baseline gap-1">
+               <span class="text-xl font-black text-indigo-400"><%= @target_user.monthly_platform_score %></span>
+               <span class="text-[10px] font-bold text-indigo-500/50">P</span>
+             </div>
+           </div>
+           <div class="p-4 bg-white/5 border border-white/5 rounded-[24px] space-y-1">
+             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Total Points</p>
+             <div class="flex items-baseline gap-1">
+               <span class="text-xl font-black text-white"><%= @target_user.total_platform_score %></span>
+               <span class="text-[10px] font-bold text-slate-500">P</span>
+             </div>
+           </div>
         </div>
 
         <!-- Routine List Summary -->
