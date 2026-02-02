@@ -50,38 +50,71 @@ class RoutineClubMember < ApplicationRecord
     RoutineClubNotificationService.notify_payment_rejected(self, reason)
   end
 
-  def warn!(reason)
+  # 경고 부여 (날짜 지정 가능)
+  def warn!(reason, date = Time.current)
     transaction do
       penalties.create!(
         routine_club: routine_club,
-        reason: reason
+        reason: reason,
+        created_at: date # 월 귀속을 위해 날짜 강제 지정
       )
+      # penalty_count는 단순 누적용으로 유지하거나 제거.
+      # 여기서는 로직의 일관성을 위해 increment하되, 판정은 monthly counts로 함.
       increment!(:penalty_count)
       status_warned!
       check_kick_condition!
     end
 
     # 알림 전송
-    RoutineClubNotificationService.notify_warning(self, penalty_count, reason)
+    RoutineClubNotificationService.notify_warning(self, current_month_penalty_count, reason)
+  end
+
+  def current_month_penalty_count
+    # 현재 월에 귀속된 경고장 개수 (매월 1일 자동 초기화 효과)
+    # created_at이 이번 달에 속하는 경고만 카운트
+    penalties.where(created_at: Time.current.all_month).count
   end
 
   def check_kick_condition!
-    if penalty_count >= 3
-      kick!("경고 3회 누적")
+    # 동일한 월 내에서 경고장 3회 누적 시 제명
+    if current_month_penalty_count >= 3
+      kick!("월간 경고 3회 누적 (자동 제명)")
     end
   end
 
-  # 주간 성과 점검 (매주 월요일 실행 권장)
-  def check_weekly_performance!(date = Date.current)
-    return unless status_active? || status_warned?
+  # 주간 성과 점검 (매주 월요일 실행)
+  def check_weekly_performance!(date = Date.current, dry_run: false)
+    return false unless status_active? || status_warned?
 
-    # 지난주 데이터 기준
-    base_date = date.last_week.end_of_week
-    rate = weekly_routine_rate(base_date)
+    # 1. 평가 대상 주차 확정 (지난주 월요일 ~ 일요일)
+    # date가 월요일이면 지난주 전체를 본다.
+    last_week_end = date.last_week.end_of_week
+    last_week_start = date.last_week.beginning_of_week
+
+    # 2. 월 귀속 기준일 (평가 대상 주차의 "월요일")
+    # 규칙: 한 주는 해당 주의 ‘월요일이 속한 월’에 귀속된다.
+    attribution_date = last_week_start
+
+    # 3. 중복 실행 방지 (Dry run일 때는 스킵하지 않음)
+    # 해당 주차(attribution_date)에 해당하는 경고가 이미 있는지 확인
+    unless dry_run
+      if penalties.where(created_at: attribution_date.all_day).exists?
+        Rails.logger.info "[Skip] User #{user.nickname} already evaluated for week of #{attribution_date}"
+        return false
+      end
+    end
+
+    # 4. 달성률 계산 및 판정
+    rate = weekly_routine_rate(last_week_end)
 
     if rate < 70.0
-      warn!("주간 루틴 달성률 저조 (#{rate}% < 70%)")
-      true
+      if dry_run
+        true # 경고 대상임
+      else
+        # 경고 부여 (귀속일자 기준)
+        warn!("주간 루틴 달성률 저조 (#{rate}% < 70%)", attribution_date)
+        true
+      end
     else
       false
     end

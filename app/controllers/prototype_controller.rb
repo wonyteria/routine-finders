@@ -746,15 +746,28 @@ class PrototypeController < ApplicationController
   end
 
   def admin_weekly_check
-    club = RoutineClub.official.first
-    if club
-      results = club.check_all_members_weekly_performance!
-      msg = "주간 점검 완료: 총 #{results[:checked]}명 중 경고 #{results[:warned]}명, 제명 #{results[:kicked]}명 처리됨."
-    else
-      msg = "공식 클럽을 찾을 수 없습니다."
+    @official_club = RoutineClub.official.first
+    unless @official_club
+      redirect_to prototype_club_management_path, alert: "공식 클럽을 찾을 수 없습니다." and return
     end
 
-    redirect_to prototype_club_management_path, notice: msg
+    # 1. 이번 주차 경고 위험군 시뮬레이션 (지난주 성과 기준)
+    # active 또는 warned 상태인 멤버 대상
+    @at_risk_members = []
+    target_members = @official_club.members.where(status: [ :active, :warned ]).includes(:user, :personal_routines, :attendances)
+
+    target_members.find_each do |member|
+      # dry_run: true로 실제 경고 생성 없이 판정만 수행
+      if member.check_weekly_performance!(Date.current, dry_run: true)
+        @at_risk_members << member
+      end
+    end
+
+    # 2. 이번 달 경고 보유자 (1회 이상인 멤버들)
+    # 이미 제명된 멤버(kicked)도 포함하여 이번 달 현황을 보여줌
+    all_members = @official_club.members.includes(:user, :penalties)
+    @warned_members_this_month = all_members.select { |m| m.current_month_penalty_count > 0 }
+           .sort_by { |m| -m.current_month_penalty_count } # 경고 많은 순 정렬
   end
 
   def broadcast

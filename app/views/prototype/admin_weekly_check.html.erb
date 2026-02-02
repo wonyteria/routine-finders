@@ -1,0 +1,126 @@
+<div class="min-h-screen bg-[#0C0B12] pb-32">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-[#0C0B12]/80 backdrop-blur-md border-b border-white/5">
+    <div class="px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <%= link_to prototype_club_management_path, class: "w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <% end %>
+        <div>
+          <h1 class="text-lg font-black text-white">시스템 점검 리포트</h1>
+          <p class="text-[10px] font-bold text-slate-500">Weekly System Check Simulation</p>
+        </div>
+      </div>
+      <div class="px-3 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+        <span class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">AUTO PILOT</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="px-6 py-8 space-y-12">
+    <!-- 1. At Risk Members -->
+    <section class="space-y-4">
+      <div class="flex items-end justify-between px-1">
+        <div>
+          <h2 class="text-sm font-black text-rose-500 uppercase tracking-[0.2em] flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            이번 주 경고 위험군
+          </h2>
+          <p class="text-[10px] text-slate-500 mt-1 font-medium">지난주 달성률 70% 미만으로, 자동 점검 시 경고가 부여될 대상입니다.</p>
+        </div>
+        <span class="text-xs font-black text-white"><%= @at_risk_members.count %>명</span>
+      </div>
+
+      <% if @at_risk_members.any? %>
+        <div class="grid gap-3">
+          <% @at_risk_members.each do |member| %>
+            <% rate = member.weekly_routine_rate(Date.current.last_week.end_of_week) %>
+            <div class="app-glass-card p-4 border-rose-500/20 bg-rose-500/5 flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-800 border border-white/10 overflow-hidden">
+                  <img src="<%= member.user.profile_image %>" class="w-full h-full object-cover">
+                </div>
+                <div>
+                  <p class="text-sm font-black text-white"><%= member.user.nickname %></p>
+                  <p class="text-[10px] font-bold text-rose-400">지난주 달성률 <%= rate %>% <span class="text-slate-600">|</span> 기준 70%</p>
+                </div>
+              </div>
+              <div class="px-3 py-1 rounded-lg bg-rose-500 text-white text-[10px] font-black">
+                경고 예정
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="py-12 text-center border border-dashed border-white/10 rounded-3xl bg-white/2">
+          <p class="text-xs font-bold text-slate-500">위험군 회원이 없습니다. 모두 훌륭합니다! 🎉</p>
+        </div>
+      <% end %>
+    </section>
+
+    <!-- 2. This Month Penalties -->
+    <section class="space-y-4">
+      <div class="flex items-end justify-between px-1">
+        <div>
+          <h2 class="text-sm font-black text-amber-500 uppercase tracking-[0.2em]">
+            이번 달 누적 경고 현황
+          </h2>
+          <p class="text-[10px] text-slate-500 mt-1 font-medium"><%= Time.current.month %>월 1일부터 현재까지 누적된 경고입니다 (매월 1일 리셋)</p>
+        </div>
+        <span class="text-xs font-black text-white"><%= @warned_members_this_month.count %>명</span>
+      </div>
+
+      <% if @warned_members_this_month.any? %>
+        <div class="grid gap-3">
+          <% @warned_members_this_month.each do |member| %>
+            <% count = member.current_month_penalty_count %>
+            <div class="app-glass-card p-4 border-white/5 flex items-center justify-between gap-4 <%= count >= 3 ? 'opacity-50 grayscale' : '' %>">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-slate-800 border border-white/10 overflow-hidden">
+                  <img src="<%= member.user.profile_image %>" class="w-full h-full object-cover">
+                </div>
+                <div>
+                  <p class="text-sm font-black text-white flex items-center gap-2">
+                    <%= member.user.nickname %>
+                    <% if member.status_kicked? %>
+                      <span class="px-1.5 py-0.5 rounded bg-rose-500 text-[8px] text-white">제명됨</span>
+                    <% end %>
+                  </p>
+                  <p class="text-[10px] font-bold text-slate-400">
+                    현재 상태: <%= member.status.upcase %>
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Progress Bar -->
+              <div class="flex items-center gap-3">
+                <div class="flex gap-1">
+                  <% 3.times do |i| %>
+                    <div class="w-2 h-6 rounded-full <%= i < count ? (count >= 3 ? 'bg-rose-500' : 'bg-amber-500') : 'bg-white/10' %>"></div>
+                  <% end %>
+                </div>
+                <div class="text-right min-w-[3rem]">
+                   <span class="text-lg font-black <%= count >= 3 ? 'text-rose-500' : 'text-amber-500' %>"><%= count %></span><span class="text-xs font-bold text-slate-600">/3</span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="py-12 text-center border border-dashed border-white/10 rounded-3xl bg-white/2">
+          <p class="text-xs font-bold text-slate-500">이번 달 경고를 받은 회원이 없습니다.</p>
+        </div>
+      <% end %>
+    </section>
+
+    <!-- Info Box -->
+    <div class="p-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-center space-y-2">
+      <p class="text-xs font-black text-indigo-300">ℹ️ 시스템 운영 안내</p>
+      <p class="text-[11px] font-medium text-indigo-200/60 leading-relaxed">
+        이 리포트는 현재 데이터 기반 시뮬레이션입니다.<br/>
+        실제 점검 및 경고/제명 처리는<br/>
+        <span class="text-white font-bold">매주 월요일 00:00</span>에 시스템에 의해 자동으로 수행됩니다.
+      </p>
+    </div>
+  </main>
+</div>

@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   post "admin_center/create_club_announcement", to: "prototype#create_club_announcement", as: :prototype_create_club_announcement
   post "admin_center/confirm_club_payment", to: "prototype#confirm_club_payment", as: :prototype_confirm_club_payment
   post "admin_center/reject_club_payment", to: "prototype#reject_club_payment", as: :prototype_reject_club_payment
-  post "admin_center/clubs/weekly_check", to: "prototype#admin_weekly_check", as: :prototype_admin_weekly_check
+  get "admin_center/clubs/weekly_report", to: "prototype#admin_weekly_check", as: :prototype_admin_weekly_check
 
 
 
