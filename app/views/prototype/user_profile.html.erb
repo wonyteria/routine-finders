@@ -1,73 +1,123 @@
 <turbo-frame id="user-profile-modal-frame">
-  <div class="fixed inset-0 z-[1000] flex items-center justify-center p-4">
-    <!-- Backdrop -->
-    <div onclick="this.parentElement.remove()"
-         class="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in cursor-pointer"></div>
+  <div data-controller="modal"
+       data-modal-auto-open-value="true"
+       data-modal-target="container"
+       class="fixed inset-0 z-[60000] flex items-center justify-center p-6 bg-[#0C0B12]/95 backdrop-blur-2xl animate-in fade-in duration-500 hidden">
+    <!-- Backdrop Overlay (Dismiss) -->
+    <div data-action="click->modal#close"
+         class="absolute inset-0 cursor-pointer"></div>
     
-    <!-- Modal Card -->
-    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 flex flex-col items-center text-center space-y-6 animate-slide-up bg-[#16151D] shadow-2xl shadow-indigo-500/10" onclick="event.stopPropagation()">
-      <!-- Close Button -->
-      <button onclick="this.closest('turbo-frame').innerHTML = ''" 
-              class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
+    <!-- Premium Profile Card -->
+    <div class="relative w-full max-w-sm bg-white/5 border border-white/10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden animate-badge-pop" onclick="event.stopPropagation()">
+      
+      <!-- Top Decoration -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 blur-[80px] rounded-full"></div>
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/10 blur-[80px] rounded-full"></div>
 
-      <!-- Profile Header -->
-      <div class="relative">
-        <div class="w-24 h-24 rounded-[32px] border-4 border-indigo-500 overflow-hidden shadow-2xl relative z-10">
-          <img src="<%= @target_user.profile_image %>" class="w-full h-full object-cover">
+      <div class="relative z-10 p-8 space-y-8">
+        <!-- Close button -->
+        <button data-action="click->modal#close" 
+                class="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-500 hover:text-white transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+
+        <!-- Profile Header -->
+        <div class="flex flex-col items-center gap-4 pt-4">
+          <div class="relative group">
+            <div class="absolute -inset-1.5 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-[36px] blur-sm opacity-40 group-hover:opacity-60 transition-opacity"></div>
+            <div class="relative w-24 h-24 rounded-[32px] bg-[#16151D] border border-white/10 overflow-hidden">
+               <img src="<%= @target_user.profile_image %>" class="w-full h-full object-cover">
+            </div>
+            <% if @is_club_member %>
+              <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-sm shadow-xl border-2 border-[#0C0B12] z-20">
+                🔱
+              </div>
+            <% end %>
+            <div class="absolute -bottom-2 -right-2 px-2.5 py-1 rounded-full bg-white text-[#0C0B12] text-[10px] font-black shadow-xl border-2 border-[#0C0B12] z-20">
+              Lv.<%= @target_user.level %>
+            </div>
+          </div>
+
+          <div class="text-center space-y-1">
+            <h3 class="text-2xl font-black text-white tracking-tight"><%= @target_user.nickname %></h3>
+            <p class="text-[11px] font-bold text-slate-400 max-w-[220px] mx-auto leading-relaxed">
+              <%= @target_user.bio.presence || "아직 성장의 다짐을 작성하지 않았습니다." %>
+            </p>
+          </div>
         </div>
-        <div class="absolute -bottom-2 -right-2 bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-black border-4 border-[#0C0B12] z-20">
-          <%= @target_user.level %>
+
+        <!-- Badges Showcase -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between px-1">
+            <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest italic">Achievements</p>
+            <p class="text-[9px] font-bold text-slate-500">Total <%= @total_badges_count %> collected</p>
+          </div>
+          <div class="flex gap-2.5 overflow-x-auto hide-scrollbar pb-1">
+            <% if @achievements.any? %>
+              <% @achievements.each do |ua| %>
+                <div class="w-11 h-11 shrink-0 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-xl shadow-lg" title="<%= ua.badge.name %>">
+                  <%= ua.badge.icon_path %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="w-full py-4 text-center border border-dashed border-white/5 rounded-2xl text-[10px] text-slate-600 italic">No badges earned yet</div>
+            <% end %>
+          </div>
         </div>
-      </div>
 
-      <div class="space-y-1">
-        <h4 class="text-2xl font-black text-white"><%= @target_user.nickname %></h4>
-        <p class="text-[11px] font-bold text-indigo-400 max-w-[200px] mx-auto line-clamp-2">
-           <%= @target_user.bio.presence || "아직 자기소개가 없습니다." %>
-        </p>
-      </div>
+        <!-- Growth Stats Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-4 bg-white/5 border border-white/5 rounded-[24px] space-y-1">
+            <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Weekly Success</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-xl font-black text-emerald-400"><%= @weekly_completion %></span>
+              <span class="text-[10px] font-bold text-emerald-500/50">%</span>
+            </div>
+            <%# Progress mini bar %>
+            <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden mt-2">
+              <div class="h-full bg-emerald-500" style="width: <%= @weekly_completion %>%"></div>
+            </div>
+          </div>
+          <div class="p-4 bg-white/5 border border-white/5 rounded-[24px] space-y-1">
+            <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Active Routines</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-xl font-black text-white"><%= @target_user.personal_routines.count %></span>
+              <span class="text-[10px] font-bold text-slate-500">Live</span>
+            </div>
+          </div>
+        </div>
 
-      <div class="h-px w-full bg-white/5"></div>
-
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-2 gap-3 w-full">
-         <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex flex-col items-center justify-center">
-            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">이번 주 달성률</p>
-            <p class="text-xl font-black text-emerald-400"><%= @weekly_completion %>%</p>
-         </div>
-         <div class="bg-white/5 rounded-2xl p-4 border border-white/5 flex flex-col items-center justify-center">
-            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">실천 중인 루틴</p>
-            <p class="text-xl font-black text-white"><%= @target_user.personal_routines.count %>개</p>
-         </div>
-      </div>
-
-      <!-- Routine List -->
-      <div class="w-full space-y-2">
-         <p class="text-[9px] font-bold text-slate-500 uppercase text-left pl-1 tracking-widest">주요 루틴 (Main Routines)</p>
-         <div class="space-y-2">
-           <% if @routines.any? %>
-             <% @routines.each do |routine| %>
-               <div class="flex items-center gap-3 p-3 bg-white/[0.03] border border-white/5 rounded-xl">
-                 <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-lg shrink-0">
-                   <%= routine.icon %>
-                 </div>
-                 <div class="flex-1 min-w-0 text-left">
-                   <p class="text-xs font-bold text-slate-200 truncate"><%= routine.title %></p>
-                   <p class="text-[9px] font-medium text-slate-500 truncate">
-                     <%= routine.category.presence || "ETC" %> • <%= routine.days.present? ? "주 #{routine.days.count}회" : "매일" %>
-                   </p>
-                 </div>
+        <!-- Routine List Summary -->
+        <div class="space-y-3">
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 italic">Main Routine Deck</p>
+          <div class="space-y-2">
+            <% if @routines.any? %>
+              <% @routines.each do |routine| %>
+                <div class="flex items-center gap-4 p-3.5 bg-white/[0.03] border border-white/5 rounded-2xl hover:bg-white/[0.06] transition-all group">
+                   <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                     <%= routine.icon %>
+                   </div>
+                   <div class="flex-1 min-w-0">
+                     <p class="text-xs font-black text-white truncate"><%= routine.title %></p>
+                     <p class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter"><%= routine.category.presence || "Personal" %> • Weekly <%= routine.days&.count || 7 %>x</p>
+                   </div>
+                </div>
+              <% end %>
+            <% else %>
+               <div class="py-10 text-center bg-white/[0.02] border border-dashed border-white/5 rounded-2xl">
+                 <p class="text-[10px] font-bold text-slate-600">등록된 루틴 정보가 없습니다.</p>
                </div>
-             <% end %>
-           <% else %>
-             <div class="text-center py-4 text-[10px] text-slate-500 italic">등록된 루틴이 없습니다</div>
-           <% end %>
-         </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Action Button (Cheer or Profile Link) -->
+        <div class="pt-2">
+          <%= link_to "#", class: "w-full py-4 bg-white text-[#0C0B12] rounded-2xl font-black text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-white/5" do %>
+            <span>✨</span> 응원 에너지 보내기
+          <% end %>
+        </div>
       </div>
-
-
     </div>
   </div>
 </turbo-frame>

@@ -431,6 +431,9 @@ class PrototypeController < ApplicationController
     @target_user = User.find(params[:id])
     @achievements = @target_user.user_badges.includes(:badge).order(created_at: :desc).limit(6)
     @routines = @target_user.personal_routines.where(deleted_at: nil).order(created_at: :desc).limit(4)
+    @total_badges_count = @target_user.user_badges.count
+    @is_club_member = @target_user.routine_club_members.active.exists?
+    @my_membership = @target_user.routine_club_members.active.first
 
     # Simple Weekly Stats for Card
     start_of_week = Date.current.beginning_of_week
@@ -447,7 +450,11 @@ class PrototypeController < ApplicationController
 
     @weekly_completion = @weekly_data.any? ? (@weekly_data.sum.to_f / @weekly_data.size).round : 0
 
-    render layout: false
+    if request.headers["Turbo-Frame"]
+      render layout: false
+    else
+      render layout: "prototype"
+    end
   rescue ActiveRecord::RecordNotFound
     render plain: "User not found", status: 404
   end
