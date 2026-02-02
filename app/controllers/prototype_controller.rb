@@ -748,13 +748,13 @@ class PrototypeController < ApplicationController
   def admin_weekly_check
     @official_club = RoutineClub.official.first
     unless @official_club
-      redirect_to prototype_club_management_path, alert: "공식 클럽을 찾을 수 없습니다." and return
+      redirect_to prototype_admin_clubs_path, alert: "공식 클럽을 찾을 수 없습니다." and return
     end
 
     # 1. 이번 주차 경고 위험군 시뮬레이션 (지난주 성과 기준)
     # active 또는 warned 상태인 멤버 대상
     @at_risk_members = []
-    target_members = @official_club.members.where(status: [ :active, :warned ]).includes(:user, :personal_routines, :attendances)
+    target_members = @official_club.members.where(status: [ :active, :warned ]).includes(:attendances, user: :personal_routines)
 
     target_members.find_each do |member|
       # dry_run: true로 실제 경고 생성 없이 판정만 수행

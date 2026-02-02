@@ -95,6 +95,13 @@ class RoutineClubMember < ApplicationRecord
     # 규칙: 한 주는 해당 주의 ‘월요일이 속한 월’에 귀속된다.
     attribution_date = last_week_start
 
+    # [신규 회원 평가 시작 규칙]
+    # 가입일이 평가 대상 주차의 월요일보다 늦으면 평가 제외 (가입 주차 제외)
+    # 단, 가입일이 월요일인 경우 해당 주부터 평가 포함 (joined_at <= attribution_date)
+    if joined_at && joined_at.to_date > attribution_date
+      return false
+    end
+
     # 3. 중복 실행 방지 (Dry run일 때는 스킵하지 않음)
     # 해당 주차(attribution_date)에 해당하는 경고가 이미 있는지 확인
     unless dry_run

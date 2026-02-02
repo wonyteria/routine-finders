@@ -171,7 +171,7 @@
                        id="sub-tab-btn-analysis"
                        onclick="switchSubTab('analysis')"
                        class="px-3 py-1 text-[9px] font-black rounded transition-all text-slate-500 whitespace-nowrap">성과지표</button>
-               <%= link_to "⚡ 주간 점검", prototype_admin_weekly_check_path, data: { turbo_method: :post, turbo_confirm: "⚠️ 정말로 [주간 멤버 점검]을 실행하시겠습니까?\n\n- 지난주 루틴 달성률 70% 미만인 멤버에게 [경고]가 1회 부여됩니다.\n- 경고가 3회 누적된 멤버는 [자동 제명] 처리됩니다.\n\n이 작업은 되돌릴 수 없습니다." }, class: "px-3 py-1 text-[9px] font-black rounded transition-all text-amber-500 hover:text-amber-400 border border-amber-500/20 hover:bg-amber-500/10 ml-2 whitespace-nowrap" %>
+               <%= link_to "⚡ 주간 점검", prototype_admin_weekly_check_path, class: "px-3 py-1 text-[9px] font-black rounded transition-all text-amber-500 hover:text-amber-400 border border-amber-500/20 hover:bg-amber-500/10 ml-2 whitespace-nowrap" %>
             </div>
           </div>
 
