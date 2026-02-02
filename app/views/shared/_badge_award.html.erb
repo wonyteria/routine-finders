@@ -3,53 +3,36 @@
        data-controller="badge-award" 
        data-badge-award-badge-ids="<%= @unviewed_badges.map(&:id).to_json %>"
        data-action="click->badge-award#handleBackdropClick"
-       class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+       class="fixed inset-0 z-[60000] flex items-center justify-center p-6 bg-[#0C0B12]/95 backdrop-blur-2xl transition-all duration-500">
     
     <% @unviewed_badges.each_with_index do |ub, index| %>
       <div data-badge-award-target="container"
            data-action="click->badge-award#preventClosing"
-           class="absolute bg-white rounded-[24px] md:rounded-[40px] p-6 md:p-12 text-center shadow-2xl max-w-sm md:max-w-lg w-full transform transition-all duration-300 ease-out <%= index == 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none' %>"
+           class="absolute w-full max-w-sm bg-white/5 border border-white/10 rounded-[40px] p-10 text-center shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] transform transition-all duration-500 ease-out <%= index == 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none' %>"
            style="z-index: <%= 100 - index %>;">
         
-        <!-- Close Button -->
-        <button data-action="click->badge-award#close" 
-                class="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 md:p-2 text-slate-300 hover:text-slate-500 hover:bg-slate-50 rounded-full transition-all z-10">
-          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+        <!-- Decoration -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 blur-[80px] rounded-full"></div>
 
-        <!-- Shine Effect -->
-        <div class="absolute inset-0 bg-gradient-radial from-indigo-500/10 to-transparent rounded-[24px] md:rounded-[40px] pointer-events-none"></div>
-
-        <div class="relative space-y-4 md:space-y-6">
-          <div class="inline-flex items-center justify-center w-16 h-16 md:w-24 md:h-24 bg-indigo-50 rounded-[20px] md:rounded-[32px] text-3xl md:text-5xl shadow-inner mb-1 md:mb-2 animate-bounce">
+        <div class="relative space-y-8">
+          <!-- Icon Badge -->
+          <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-[32px] text-5xl shadow-inner border border-white/10 animate-badge-pop">
             <%= ub.badge.icon_path %>
           </div>
 
-          <div class="space-y-2 md:space-y-3">
-            <p class="text-[9px] md:text-xs font-black text-indigo-500 uppercase tracking-[0.2em] md:tracking-[0.3em]">New Achievement!</p>
-            <h3 class="text-xl md:text-3xl font-[900] text-slate-900 tracking-tight leading-tight"><%= ub.badge.name %></h3>
-            <p class="text-slate-500 font-bold text-xs md:text-sm leading-snug"><%= ub.badge.description %></p>
+          <!-- Text Info -->
+          <div class="space-y-3">
+            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] animate-in fade-in slide-in-from-bottom-2 duration-700">New Achievement Unlocked</p>
+            <h3 class="text-3xl font-black text-white tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-3 duration-700 delay-100"><%= ub.badge.name %></h3>
+            <p class="text-slate-400 font-bold text-sm leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200"><%= ub.badge.description %></p>
           </div>
 
-          <div class="pt-2 md:pt-4 flex flex-col gap-2 md:gap-3">
-            <button data-action="click->badge-award#goToRoadmap" 
-                    class="w-full py-3 md:py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl md:rounded-2xl font-black text-sm md:text-base shadow-xl transition-all active:scale-95">
-              <%= @unviewed_badges.size > 1 && index < @unviewed_badges.size - 1 ? '전체 로드맵 보기' : '배지 로드맵 확인' %>
+          <!-- Single Action Button -->
+          <div class="pt-4 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300">
+            <button data-action="click->badge-award#next" 
+                    class="w-full bg-white text-[#0C0B12] py-5 rounded-2xl font-black text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-white/5">
+              확인했어요
             </button>
-            
-            <% if @unviewed_badges.size > 1 && index < @unviewed_badges.size - 1 %>
-              <button data-action="click->badge-award#next" 
-                      class="w-full py-3 md:py-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl md:rounded-2xl font-black text-sm md:text-base transition-all active:scale-95">
-                다음 보상 보기 (<%= index + 1 %>/<%= @unviewed_badges.size %>)
-              </button>
-            <% else %>
-              <button data-action="click->badge-award#close" 
-                      class="w-full py-2.5 md:py-3 text-slate-400 hover:text-slate-600 font-bold text-xs md:text-sm transition-colors">
-                창 닫기
-              </button>
-            <% end %>
           </div>
         </div>
       </div>
