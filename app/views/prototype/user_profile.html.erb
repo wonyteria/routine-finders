@@ -1,12 +1,13 @@
 <turbo-frame id="user-profile-modal-frame">
   <div id="user-profile-modal-container"
-       class="fixed inset-0 z-[70000] flex items-center justify-center p-4 bg-[#0C0B12]/90 backdrop-blur-xl animate-in fade-in duration-300 overflow-y-auto">
-    <!-- Backdrop Overlay (Dismiss) -->
-    <div onclick="const frame = this.closest('turbo-frame'); if(frame) frame.innerHTML = ''; document.body.classList.remove('overflow-hidden');"
-         class="absolute inset-0 cursor-pointer bg-black/20"></div>
+       class="fixed inset-0 z-[70000] bg-[#0C0B12]/90 backdrop-blur-xl animate-in fade-in duration-300 overflow-y-auto pt-10 pb-[160px]">
+    <!-- Backdrop Overlay (Dismiss) - Scoped to whole container but clickable underneath -->
+    <div onclick="const frame = document.getElementById('user-profile-modal-frame'); if(frame) frame.innerHTML = ''; document.body.classList.remove('overflow-hidden');"
+         class="fixed inset-0 cursor-pointer bg-black/20"></div>
     
-    <!-- Premium Profile Card -->
-    <div class="relative w-full max-w-sm my-auto bg-[#1A1A24] border border-white/10 rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] overflow-hidden animate-badge-pop" onclick="event.stopPropagation()">
+    <!-- Premium Profile Card Wrapper (For Centering/Z-index) -->
+    <div class="relative w-full max-w-sm mx-auto px-4 z-10">
+      <div class="relative w-full bg-[#1A1A24] border border-white/10 rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] overflow-hidden animate-badge-pop" onclick="event.stopPropagation()">
       
       <!-- Top Decoration -->
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 blur-[80px] rounded-full"></div>
@@ -14,8 +15,8 @@
 
       <div class="relative z-10 p-8 space-y-8">
         <!-- Close button -->
-        <button onclick="const frame = this.closest('turbo-frame'); if(frame) frame.innerHTML = ''; document.body.classList.remove('overflow-hidden');" 
-                class="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-500 hover:text-white transition-all">
+        <button onclick="const frame = document.getElementById('user-profile-modal-frame'); if(frame) frame.innerHTML = ''; document.body.classList.remove('overflow-hidden');" 
+                class="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-500 hover:text-white transition-all z-20">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
 
@@ -47,7 +48,7 @@
         <!-- Badges Showcase -->
         <div class="space-y-4">
           <div class="flex items-center justify-between px-1">
-            <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest italic">Achievement Collection</p>
+            <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest italic font-outfit">Achievement Collection</p>
             <p class="text-[9px] font-bold text-slate-500">총 <%= @total_badges_count %>개의 성취</p>
           </div>
           <div class="flex gap-2.5 overflow-x-auto hide-scrollbar pb-1">
@@ -87,7 +88,7 @@
 
         <!-- Routine List Summary -->
         <div class="space-y-3">
-          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 italic">Main Routine Deck</p>
+          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 italic font-outfit">Main Routine Deck</p>
           <div class="space-y-2">
             <% if @routines.any? %>
               <% @routines.each do |routine| %>
@@ -115,6 +116,7 @@
             <span>✨</span> 응원 에너지 보내기
           <% end %>
         </div>
+      </div>
       </div>
     </div>
   </div>
