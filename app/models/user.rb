@@ -544,12 +544,10 @@ class User < ApplicationRecord
   # Activity point configuration
   ACTIVITY_POINTS = {
     routine_completion: 10,      # 루틴 1회 완료
-    challenge_completion: 50,    # 챌린지 완료
-    challenge_hosting: 100,      # 챌린지 개설
-    clap: 2,                     # 박수 보내기
-    feed_post: 5,                # 피드 작성
-    badge: 30,                   # 배지 획득
-    club_membership: 200         # 루파 클럽 기수 참여
+    feed_post: 5,                # 오늘의 확언 작성
+    live_participation: 20,      # 라이브룸 참여
+    challenge_hosting: 100,      # 챌린지/모임 개설
+    challenge_participation: 50  # 챌린지/모임 참여 (단순 참여)
   }.freeze
 
   # Level thresholds (비선형 성장)
@@ -572,21 +570,17 @@ class User < ApplicationRecord
     # 1. 루틴 활동
     score += total_routine_completions * ACTIVITY_POINTS[:routine_completion]
 
-    # 2. 챌린지 참여
-    score += participations.where(status: :completed).count * ACTIVITY_POINTS[:challenge_completion]
+    # 2. 챌린지 및 모임 활동 (참여만 해도 점수 지급)
+    score += participations.count * ACTIVITY_POINTS[:challenge_participation]
     score += hosted_challenges.count * ACTIVITY_POINTS[:challenge_hosting]
 
-    # 3. 커뮤니티 활동
-    score += rufa_claps.count * ACTIVITY_POINTS[:clap]
-    score += rufa_activities.count * ACTIVITY_POINTS[:feed_post]
+    # 3. 커뮤니티 활동 (확언 작성 등)
+    # activity_type: 'reflection' 인 것만 확언 작성으로 간주
+    score += rufa_activities.where(activity_type: "reflection").count * ACTIVITY_POINTS[:feed_post]
 
-    # 4. 성취 및 배지
-    score += user_badges.count * ACTIVITY_POINTS[:badge]
-
-    # 5. 루파 클럽 활동
-    if is_rufa_club_member?
-      score += routine_club_members.where(status: :active, payment_status: :confirmed).count * ACTIVITY_POINTS[:club_membership]
-    end
+    # 4. 라이브룸 참여 (Activity 테이블에 live_join 타입이 있다고 가정하거나 추가 구현 필요)
+    # 현재는 placeholder 로직: rufa_activities 중 type이 'live_join'인 것
+    score += rufa_activities.where(activity_type: "live_join").count * ACTIVITY_POINTS[:live_participation]
 
     score
   end
