@@ -93,7 +93,7 @@
       <%= f.hidden_field :activity_type, value: "reflection" %>
       <span class="text-xl group-hover:scale-110 transition-transform shrink-0">💪</span>
       <%= f.text_field :body, 
-                       placeholder: "오늘의 다짐을 적어보세요...", 
+                       placeholder: "오늘의 강력한 확언 한 줄", 
                        class: "w-full bg-transparent border-none p-0 text-[13px] font-bold text-white placeholder:text-slate-500 focus:ring-0",
                        onkeydown: "if(event.key === 'Enter') { event.preventDefault(); this.form.submit(); }" %>
       <button type="submit" class="ml-auto shrink-0 app-tap-active">
@@ -189,7 +189,7 @@
   </style>
 
   <!-- 3. Visual Focus: The Digital Garden (Premium Redesign) -->
-  <section id="garden-root-container" class="relative px-2">
+  <section id="garden-root-container" class="relative px-2 -mt-4">
     <%= render partial: "prototype/garden", locals: { 
           progress: @progress, 
           completed_count: @completed_count, 
