@@ -419,21 +419,48 @@ class User < ApplicationRecord
   end
 
   def daily_achievement_rate(date = Date.current)
-    todays_routines = personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
-    return 0 if todays_routines.empty?
+    # 해당 날짜 기준으로 유효했던 루틴만 필터링
+    # 1. 생성일이 해당 날짜 또는 그 이전이어야 함
+    # 2. 삭제되지 않았거나, 삭제일이 해당 날짜 이후여야 함
+    # 3. 해당 요일에 수행해야 하는 루틴이어야 함
+
+    # unscoped를 사용하여 삭제된 루틴도 포함해서 조회
+    all_routines = personal_routines.try(:unscoped) || personal_routines
+
+    todays_active_routines = all_routines.select do |r|
+      created_condition = r.created_at.to_date <= date
+      deleted_condition = r.deleted_at.nil? || r.deleted_at.to_date > date
+      day_condition = (r.days || []).include?(date.wday.to_s)
+
+      created_condition && deleted_condition && day_condition
+    end
+
+    return 0 if todays_active_routines.empty?
 
     completed_count = personal_routines.joins(:completions)
                                       .where(personal_routine_completions: { completed_on: date })
                                       .count
-    (completed_count.to_f / todays_routines.size * 100).round(1)
+    (completed_count.to_f / todays_active_routines.size * 100).round(1)
   end
 
   def period_routine_rate(start_date, end_date)
-    target_routines = personal_routines.where(deleted_at: nil).to_a
+    # unscoped를 사용하여 삭제된 루틴도 포함해서 조회 (과거 시점 계산을 위해)
+    all_routines = personal_routines.try(:unscoped) || personal_routines
+
+    # to_a로 미리 로드하여 DB 쿼리 최소화
+    loaded_routines = all_routines.to_a
 
     total_required = 0
     (start_date..end_date).each do |date|
-      total_required += target_routines.count { |r| (r.days || []).include?(date.wday.to_s) }
+      # 해당 날짜(date)에 '살아있었던' 루틴만 필터링하여 합산
+      active_count_for_day = loaded_routines.count do |r|
+        created_condition = r.created_at.to_date <= date
+        deleted_condition = r.deleted_at.nil? || r.deleted_at.to_date > date
+        day_condition = (r.days || []).include?(date.wday.to_s)
+
+        created_condition && deleted_condition && day_condition
+      end
+      total_required += active_count_for_day
     end
 
     return 0.0 if total_required == 0
@@ -446,13 +473,23 @@ class User < ApplicationRecord
   end
 
   def all_routines_completed?(date = Date.current)
-    todays_routines = personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }
-    return false if todays_routines.empty?
+    # unscoped 사용
+    all_routines = personal_routines.try(:unscoped) || personal_routines
+
+    todays_active_routines = all_routines.select do |r|
+      created_condition = r.created_at.to_date <= date
+      deleted_condition = r.deleted_at.nil? || r.deleted_at.to_date > date
+      day_condition = (r.days || []).include?(date.wday.to_s)
+
+      created_condition && deleted_condition && day_condition
+    end
+
+    return false if todays_active_routines.empty?
 
     completed_count = personal_routines.joins(:completions)
                                       .where(personal_routine_completions: { completed_on: date })
                                       .count
-    completed_count >= todays_routines.size
+    completed_count >= todays_active_routines.size
   end
 
   def rufa_club_score
