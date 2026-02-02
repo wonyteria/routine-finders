@@ -21,7 +21,7 @@
              <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[1]&.nickname %></p>
              <div class="flex items-center gap-1 mt-0.5">
                <% if @monthly_rankings[1]&.dig(:is_club) %>
-                 <span class="text-[8px]">🔱</span>
+                 <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white">루파</span>
                <% end %>
                <p class="text-[9px] font-bold text-slate-500"><%= @monthly_rankings[1]&.dig(:score)&.round(1) || 0 %>P</p>
              </div>
@@ -43,8 +43,8 @@
              <p class="text-sm font-black text-white line-clamp-1"><%= @top_users[0]&.nickname %></p>
              <div class="flex items-center gap-1 mt-1">
                 <% if @monthly_rankings[0]&.dig(:is_club) %>
-                  <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white flex items-center gap-1">
-                    🔱 루파
+                  <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white">
+                    루파
                   </span>
                 <% end %>
                <p class="text-[10px] font-bold text-indigo-400"><%= @monthly_rankings[0]&.dig(:score)&.round(1) || 0 %>P</p>
@@ -66,7 +66,7 @@
              <p class="text-[11px] font-black text-white line-clamp-1"><%= @top_users[2]&.nickname %></p>
              <div class="flex items-center gap-1 mt-0.5">
                <% if @monthly_rankings[2]&.dig(:is_club) %>
-                 <span class="text-[8px]">🔱</span>
+                 <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white">루파</span>
                <% end %>
                <p class="text-[9px] font-bold text-slate-500"><%= @monthly_rankings[2]&.dig(:score)&.round(1) || 0 %>P</p>
              </div>
@@ -91,32 +91,10 @@
       </div>
     </div>
 
-    <!-- Period Tabs (Updated) -->
-    <div class="grid grid-cols-2 bg-white/5 p-1 rounded-2xl mx-1">
-      <%= link_to prototype_synergy_path(period: 'monthly', rank_type: params[:rank_type]), 
-                  data: { turbo_frame: "ranking_list" },
-                  class: "py-2.5 text-center rounded-xl text-[11px] font-black transition-all #{@period == 'monthly' || @period.nil? ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-500 hover:text-white'}" do %>
-        <span>📅 이번 달</span>
-      <% end %>
-      <%= link_to prototype_synergy_path(period: 'total', rank_type: params[:rank_type]), 
-                  data: { turbo_frame: "ranking_list" },
-                  class: "py-2.5 text-center rounded-xl text-[11px] font-black transition-all #{@period == 'total' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-500 hover:text-white'}" do %>
-        <span>🔥 전체 누적</span>
-      <% end %>
-    </div>
-
-    <!-- Type Filters (Secondary) -->
-    <div class="flex gap-2 px-2 justify-end">
-       <%= link_to "전체 보기", prototype_synergy_path(period: @period, rank_type: 'all'), 
-                   data: { turbo_frame: "ranking_list" },
-                   class: "text-[10px] font-bold px-2 py-1 rounded-lg transition-colors #{params[:rank_type] != 'club' ? 'text-white bg-white/10' : 'text-slate-600 hover:text-slate-400'}" %>
-       <%= link_to "루파 멤버만", prototype_synergy_path(period: @period, rank_type: 'club'), 
-                   data: { turbo_frame: "ranking_list" },
-                   class: "text-[10px] font-bold px-2 py-1 rounded-lg transition-colors #{params[:rank_type] == 'club' ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-600 hover:text-slate-400'}" %>
-    </div>
-
-    <!-- Ranking List Partial -->
-    <%= render partial: "ranking_list", locals: { rankings: @monthly_rankings, period: @period || 'monthly' } %>
+    <!-- Ranking List Partial (Tabs included inside for Turbo updates) -->
+    <turbo-frame id="ranking_list">
+      <%= render partial: "ranking_list", locals: { rankings: @monthly_rankings, period: @period || 'monthly' } %>
+    </turbo-frame>
   </section>
 
   <!-- Full Ranking Modal -->
