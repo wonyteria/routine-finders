@@ -886,14 +886,40 @@
     <% end %>
     <script>
       window.closeUserProfileModal = function() {
+        const container = document.getElementById('user-profile-modal-container');
         const frame = document.getElementById('user-profile-modal-frame');
-        if (frame) {
-          // 애니메이션 없이 즉시 비움 (오류 방지 위해 가장 안전한 방법)
-          frame.innerHTML = '';
-          frame.removeAttribute('src');
-          frame.style.display = 'none';
+        const overlay = document.getElementById('user-profile-modal-overlay');
+        
+        if (container) {
+          // 1. 애니메이션 시작 (배경 투명화 + 카드 슬라이드)
+          container.style.transition = 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+          container.style.backgroundColor = 'transparent';
+          container.style.backdropFilter = 'blur(0px)';
+          if (overlay) overlay.style.opacity = '0';
+          container.classList.add('animate-modal-out');
+
+          // 2. 카드가 사라지는 도중에 다음 페이지 로드를 미리 시작 (핵심!)
+          if (window.location.pathname.includes('/user_card/')) {
+            setTimeout(() => {
+              if (window.Turbo) {
+                Turbo.visit('/synergy', { action: 'replace' });
+              } else {
+                window.location.href = '/synergy';
+              }
+            }, 100); // 0.1초 후에 바로 이동 시작
+          } else {
+            // 프레임으로 열린 경우의 마무리
+            setTimeout(() => {
+              if (frame) {
+                frame.innerHTML = '';
+                frame.style.display = 'none';
+              }
+              document.body.classList.remove('overflow-hidden');
+            }, 300);
+          }
+        } else {
+          window.location.href = '/synergy';
         }
-        document.body.classList.remove('overflow-hidden');
       };
     </script>
     <turbo-frame id="user-profile-modal-frame" class="hidden"></turbo-frame>
