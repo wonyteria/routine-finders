@@ -457,7 +457,7 @@ class PrototypeController < ApplicationController
     @is_club_member = current_user&.is_rufa_club_member?
     unless @is_club_member
       flash[:is_rufa_pending] = true if current_user&.is_rufa_pending?
-      redirect_to guide_routine_clubs_path(source: "prototype"), alert: "라운지 입장은 루파 클럽 멤버 전용 혜택입니다." and return
+      redirect_to guide_routine_clubs_path(source: "prototype"), alert: "라운지 입장은\n루파 클럽 멤버 전용 혜택입니다." and return
     end
   end
 
@@ -487,7 +487,7 @@ class PrototypeController < ApplicationController
     @is_club_member = current_user&.is_rufa_club_member?
     unless @is_club_member
       flash[:is_rufa_pending] = true if current_user&.is_rufa_pending?
-      redirect_to guide_routine_clubs_path(source: "prototype"), alert: "강의 시청은 루파 클럽 멤버 전용 혜택입니다." and return
+      redirect_to guide_routine_clubs_path(source: "prototype"), alert: "강의 시청은\n루파 클럽 멤버 전용 혜택입니다." and return
     end
     @lecture = {
       title: "성공하는 리더들의 '회복 탄력성' 강화 전략",
