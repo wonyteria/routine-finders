@@ -409,20 +409,6 @@
       <% end %>
     <% end %>
 
-    <button type="button" 
-            data-action="click->proto-ui#openModal" 
-            data-modal-id="notification-settings"
-            onclick="document.getElementById('notification-settings').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
-            class="w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer">
-      <div class="flex items-center gap-4">
-        <span class="text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"/></svg></span>
-        <span class="text-sm font-bold text-slate-300">알림 설정</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">맞춤 설정</span>
-        <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-      </div>
-    </button>
 
     <%= link_to prototype_pwa_path, class: "w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer group" do %>
       <div class="flex items-center gap-4">
@@ -677,69 +663,6 @@
   </div>
 </div>
 
-<!-- Notification Settings Modal (Redesigned to match Edit Profile Modal style) -->
-<div id="notification-settings" class="hidden fixed inset-0 z-[600]">
-  <div data-action="click->proto-ui#closeModal" 
-       onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
-       class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
-  
-  <div data-controller="notification-center" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[80vh] overflow-y-auto modal-content-safe">
-    <div class="flex justify-between items-center">
-      <h3 class="text-xl font-black text-white">알림 설정</h3>
-      <button type="button" 
-              onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
-              class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <div class="space-y-6">
-      <!-- Master Switch -->
-      <div data-action="click->notification-center#toggleMaster"
-           class="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-between cursor-pointer group">
-        <div>
-          <p class="text-sm font-black text-white">푸시 알림 허용</p>
-          <p class="text-[10px] font-bold text-indigo-400 mt-1">루틴 체크와 소식을 놓치지 않으려면 활성화해주세요</p>
-        </div>
-        <div data-notification-center-target="masterButton" data-checked="false" class="w-11 h-6 bg-slate-800 rounded-full relative p-0.5 flex items-center justify-start px-1 transition-all">
-           <div data-notification-center-target="masterIndicator" class="w-5 h-5 bg-slate-600 rounded-full transition-all shadow-sm"></div>
-        </div>
-      </div>
-
-      <!-- Categories Group -->
-      <div data-notification-center-target="detailContainer" class="space-y-3 transition-all duration-300">
-        <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2">상세 설정</h4>
-        <div class="space-y-2">
-          <% [
-              { label: '✨ 나의 루틴 소식', desc: '루틴 체크 및 달성 알림' },
-              { label: '🌿 챌린지 및 모임', desc: '참여 활동 업데이트' },
-              { label: '👏 커뮤니티 소통', desc: '응원 및 댓글 알림' },
-              { label: '📢 마케팅 혜택', desc: '신규 기능 및 이벤트' }
-             ].each do |item| %>
-            <div data-notification-center-target="detail"
-                 data-action="click->notification-center#toggleDetail"
-                 class="flex items-center justify-between p-4 bg-white/[0.03] border border-white/5 rounded-2xl cursor-pointer active:bg-white/5 transition-colors">
-              <div>
-                <p class="text-xs font-bold text-slate-200"><%= item[:label] %></p>
-                <p class="text-[9px] font-medium text-slate-500 mt-0.5"><%= item[:desc] %></p>
-              </div>
-              <div data-notification-center-target="detailButton" data-checked="true" class="w-10 h-5 bg-indigo-500 rounded-full relative p-0.5 flex items-center justify-end px-1 border border-indigo-500/30 transition-all">
-                 <div data-notification-center-target="detailIndicator" class="w-4 h-4 bg-white rounded-full shadow-sm transition-all"></div>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-
-      <div class="pt-4">
-        <button onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
-                class="w-full py-4.5 bg-indigo-500 text-white font-black text-sm rounded-2xl active:scale-95 transition-all shadow-lg shadow-indigo-500/25">
-          저장하기
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 <% @achievements.each_with_index do |ub, i| %>
   <div id="badge-detail-<%= i %>" class="hidden fixed inset-0 z-[600]">
     <div onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"

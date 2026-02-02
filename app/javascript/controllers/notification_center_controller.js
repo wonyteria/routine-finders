@@ -4,24 +4,49 @@ export default class extends Controller {
     static targets = ["masterButton", "masterIndicator", "detailContainer", "detail", "detailButton", "detailIndicator"]
 
     connect() {
-        // 초기화: 데이터 속성을 기준으로 상태 동기화
+        console.log("✅ Notification Center Connected")
+        // Stimulus 내부 디버깅 활성화
+        this.application.debug = true
         this.syncStateFromData()
     }
 
-    // 마스터 토글 클릭 핸들러
+    // 마스터 토글 클릭
     toggleMaster(event) {
-        if (event) event.preventDefault()
+        if (event) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
+        // 중복 실행 방지 (0.1초)
+        if (this.isToggling) return
+        this.isToggling = true
+        setTimeout(() => { this.isToggling = false }, 100)
 
         const currentChecked = this.masterButtonTarget.dataset.checked === "true"
         const newChecked = !currentChecked
 
+        console.log("Master Toggle Triggered:", newChecked)
         this.setMasterState(newChecked)
         this.setAllDetailsState(newChecked)
     }
 
-    // 상세 토글 클릭 핸들러
+    // 상세 토글 클릭
     toggleDetail(event) {
-        if (event) event.preventDefault()
+        if (event) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
+        // 중복 실행 방지
+        if (this.isTogglingDetail) return
+        this.isTogglingDetail = true
+        setTimeout(() => { this.isTogglingDetail = false }, 100)
+
+        // 마스터가 꺼져있으면 작동하지 않도록 함 (UI적으로만)
+        if (this.masterButtonTarget.dataset.checked === "false") {
+            console.log("Detail Toggle blocked because Master is OFF")
+            return
+        }
 
         const wrapper = event.currentTarget
         const btn = wrapper.querySelector('[data-notification-center-target="detailButton"]')
@@ -30,16 +55,12 @@ export default class extends Controller {
         const currentChecked = btn.dataset.checked === "true"
         const newChecked = !currentChecked
 
+        console.log("Detail Toggle Triggered:", newChecked)
         this.setDetailState(wrapper, newChecked)
         this.checkMasterStateCompliance()
     }
 
-    // 초기 상태 동기화
-    syncStateFromData() {
-        this.checkMasterStateCompliance()
-    }
-
-    // 모든 상세 설정 상태가 켜져있는지 확인하고 마스터 업데이트
+    // 모든 상세 설정 상태가 켜져있는지 확인하여 마스터 업데이트
     checkMasterStateCompliance() {
         if (!this.hasDetailTarget) return
 
@@ -48,29 +69,45 @@ export default class extends Controller {
             return btn && btn.dataset.checked === "true"
         })
 
-        // 마스터 상태 업데이트 (UI만, 하위 전파 X)
+        // 마스터 상태 업데이트 (UI만 변경, 자식 전파 X)
         this.setMasterState(allDetailsOn)
+    }
+
+    syncStateFromData() {
+        // 초기 데이터에 따른 UI 동기화
+        const isMasterOn = this.masterButtonTarget.dataset.checked === "true"
+        this.setMasterState(isMasterOn)
+
+        this.detailTargets.forEach(detail => {
+            const btn = detail.querySelector('[data-notification-center-target="detailButton"]')
+            if (btn) {
+                this.setDetailState(detail, btn.dataset.checked === "true")
+            }
+        })
     }
 
     setMasterState(checked) {
         if (!this.hasMasterButtonTarget) return
+        console.log("Applying Master State UI:", checked)
 
-        this.masterButtonTarget.dataset.checked = checked
+        this.masterButtonTarget.dataset.checked = checked.toString()
 
         if (checked) {
-            // ON Style
-            this.masterButtonTarget.classList.replace("justify-start", "justify-end")
-            this.masterButtonTarget.classList.replace("bg-slate-800", "bg-indigo-500")
-            this.masterIndicatorTarget.classList.replace("bg-slate-600", "bg-white")
+            // ON Style: Purple background, circle on right
+            this.masterButtonTarget.className = "w-11 h-6 rounded-full relative p-0.5 flex items-center transition-all bg-indigo-500 justify-end px-1"
+            this.masterIndicatorTarget.className = "w-5 h-5 rounded-full transition-all shadow-sm bg-white"
 
             if (this.hasDetailContainerTarget) {
                 this.detailContainerTarget.classList.remove("opacity-50", "pointer-events-none")
             }
         } else {
-            // OFF Style
-            this.masterButtonTarget.classList.replace("justify-end", "justify-start")
-            this.masterButtonTarget.classList.replace("bg-indigo-500", "bg-slate-800")
-            this.masterIndicatorTarget.classList.replace("bg-white", "bg-slate-600")
+            // OFF Style: Dark background, circle on left
+            this.masterButtonTarget.className = "w-11 h-6 rounded-full relative p-0.5 flex items-center transition-all bg-slate-800 justify-start px-1"
+            this.masterIndicatorTarget.className = "w-5 h-5 rounded-full transition-all shadow-sm bg-slate-600"
+
+            if (this.hasDetailContainerTarget) {
+                this.detailContainerTarget.classList.add("opacity-50", "pointer-events-none")
+            }
         }
     }
 
@@ -79,19 +116,16 @@ export default class extends Controller {
         const ind = wrapper.querySelector('[data-notification-center-target="detailIndicator"]')
 
         if (!btn) return
+        console.log("Applying Detail State UI:", checked)
 
-        btn.dataset.checked = checked
+        btn.dataset.checked = checked.toString()
 
         if (checked) {
-            btn.classList.replace("justify-start", "justify-end")
-            btn.classList.remove("bg-indigo-500/20")
-            btn.classList.add("bg-indigo-500")
-            if (ind) ind.classList.replace("bg-indigo-400", "bg-white")
+            btn.className = "w-10 h-5 rounded-full relative p-0.5 flex items-center border border-indigo-500/30 transition-all bg-indigo-500 justify-end px-1"
+            if (ind) ind.className = "w-4 h-4 rounded-full shadow-sm transition-all bg-white"
         } else {
-            btn.classList.replace("justify-end", "justify-start")
-            btn.classList.remove("bg-indigo-500")
-            btn.classList.add("bg-indigo-500/20")
-            if (ind) ind.classList.replace("bg-white", "bg-indigo-400")
+            btn.className = "w-10 h-5 rounded-full relative p-0.5 flex items-center border border-indigo-500/30 transition-all bg-indigo-500/20 justify-start px-1"
+            if (ind) ind.className = "w-4 h-4 rounded-full shadow-sm transition-all bg-indigo-400"
         }
     }
 
@@ -99,5 +133,15 @@ export default class extends Controller {
         this.detailTargets.forEach(detail => {
             this.setDetailState(detail, checked)
         })
+    }
+
+    save() {
+        console.log("Save clicked")
+        alert("알림 설정이 저장되었습니다.")
+        const modal = this.element.closest('.fixed')
+        if (modal) {
+            modal.classList.add('hidden')
+            document.body.classList.remove('overflow-hidden')
+        }
     }
 }
