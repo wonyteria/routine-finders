@@ -81,7 +81,12 @@
     <div class="flex justify-between items-center px-2">
       <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">이달의 리더보드</h3>
       <div class="flex items-center gap-2">
-        <span class="px-2 py-0.5 bg-indigo-500/10 rounded-full text-[8px] font-black text-indigo-400">실시간 종합 집계</span>
+        <button type="button" 
+                onclick="document.getElementById('score-guide-modal').classList.remove('hidden')"
+                class="px-2 py-0.5 bg-indigo-500/10 rounded-full flex items-center gap-1 hover:bg-indigo-500/20 transition-colors">
+          <span class="text-[8px] font-black text-indigo-400">포인트 기준</span>
+          <svg class="w-2.5 h-2.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
         <p class="text-[10px] font-bold text-indigo-400"><%= Date.current.strftime('%Y년 %m월') %></p>
       </div>
     </div>
@@ -216,6 +221,58 @@
           <% end %>
         <% end %>
       </div>
+  <!-- Score Guide Modal -->
+  <div id="score-guide-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="relative w-full max-w-sm bg-[#1B1A24] rounded-[32px] border border-white/10 p-8 animate-badge-pop shadow-2xl">
+      <div class="text-center mb-6">
+        <h3 class="text-xl font-black text-white mb-2">🏆 랭킹 포인트 기준</h3>
+        <p class="text-xs font-bold text-slate-500">활동에 따라 점수가 자동으로 집계됩니다.</p>
+      </div>
+      
+      <div class="space-y-3">
+        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">✔️</span>
+            <span class="text-xs font-bold text-white">루틴 1회 완료</span>
+          </div>
+          <span class="text-xs font-black text-indigo-400">+10 P</span>
+        </div>
+        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">👏</span>
+            <span class="text-xs font-bold text-white">응원 박수 보내기</span>
+          </div>
+          <span class="text-xs font-black text-indigo-400">+2 P</span>
+        </div>
+        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">📝</span>
+            <span class="text-xs font-bold text-white">피드 작성</span>
+          </div>
+          <span class="text-xs font-black text-indigo-400">+5 P</span>
+        </div>
+        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">🚩</span>
+            <span class="text-xs font-bold text-white">챌린지 완주</span>
+          </div>
+          <span class="text-xs font-black text-indigo-400">+50 P</span>
+        </div>
+        <div class="flex justify-between items-center p-3 rounded-xl bg-white/5 border border-white/5">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">🔱</span>
+            <span class="text-xs font-bold text-white">루파 멤버십 활동</span>
+          </div>
+          <span class="text-xs font-black text-indigo-400">+200 P</span>
+        </div>
+      </div>
+
+      <button onclick="this.closest('#score-guide-modal').classList.add('hidden')" class="w-full mt-6 py-3.5 bg-indigo-600 rounded-2xl text-white font-black text-sm hover:bg-indigo-500 transition-colors">
+        확인했습니다
+      </button>
+    </div>
+  </div>
     </div>
   </div>
 
