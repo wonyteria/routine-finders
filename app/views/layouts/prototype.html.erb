@@ -604,7 +604,7 @@
                         <span class="text-sm font-black text-white">휴식권</span>
                         <span class="px-1.5 py-0.5 bg-indigo-500/20 rounded text-[8px] font-black text-indigo-400"><%= membership&.remaining_relax_passes || 0 %>개 남음</span>
                       </div>
-                      <p class="text-[10px] font-bold text-slate-500 leading-tight">공식 휴가로 처리되어 출석이 유지됩니다.</p>
+                      <p class="text-[10px] font-bold text-slate-500 leading-tight whitespace-nowrap truncate">공식 휴가로 처리되어 출석이 유지됩니다.</p>
                     </div>
                   </button>
                 <% end %>
@@ -621,7 +621,7 @@
                         <span class="text-sm font-black text-white">세이브권</span>
                         <span class="px-1.5 py-0.5 bg-emerald-500/20 rounded text-[8px] font-black text-emerald-400"><%= membership&.remaining_save_passes || 0 %>개 남음</span>
                       </div>
-                      <p class="text-[10px] font-bold text-slate-500 leading-tight">지나간 결석을 출석으로 긴급 복구합니다.</p>
+                      <p class="text-[10px] font-bold text-slate-500 leading-tight whitespace-nowrap truncate">지나간 결석을 출석으로 긴급 복구합니다.</p>
                     </div>
                   </button>
                 <% end %>
