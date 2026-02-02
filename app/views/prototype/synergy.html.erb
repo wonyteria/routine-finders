@@ -91,10 +91,8 @@
       </div>
     </div>
 
-    <!-- Ranking List Partial (Tabs included inside for Turbo updates) -->
-    <turbo-frame id="ranking_list">
-      <%= render partial: "ranking_list", locals: { rankings: @monthly_rankings, period: @period || 'monthly' } %>
-    </turbo-frame>
+    <!-- Ranking List Partial (Turbo Frame is inside the partial) -->
+    <%= render partial: "ranking_list", locals: { rankings: @monthly_rankings, period: @period || 'monthly' } %>
   </section>
 
   <!-- Full Ranking Modal -->
