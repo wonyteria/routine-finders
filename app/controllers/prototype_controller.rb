@@ -342,7 +342,7 @@ class PrototypeController < ApplicationController
     w_end = Date.current
     @weekly_completion = current_user.period_routine_rate(w_start, w_end).round
 
-    days_passed = [ (Date.current - start_of_week).to_i, 0 ].max
+    days_passed = [ (Date.current - w_start).to_i, 0 ].max
     today_val = @weekly_data[days_passed]
     yesterday_val = days_passed > 0 ? @weekly_data[days_passed - 1] : 0
     @weekly_growth = today_val - yesterday_val
