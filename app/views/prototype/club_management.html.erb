@@ -171,7 +171,7 @@
                        id="sub-tab-btn-analysis"
                        onclick="switchSubTab('analysis')"
                        class="px-3 py-1 text-[9px] font-black rounded transition-all text-slate-500">성과지표</button>
-               <%= link_to "⚡ 주간 점검", prototype_admin_weekly_check_path, method: :post, onclick: "return confirm('⚠️ 정말로 [주간 멤버 점검]을 실행하시겠습니까?\\n\\n- 지난주 루틴 달성률 70% 미만인 멤버에게 [경고]가 1회 부여됩니다.\\n- 경고가 3회 누적된 멤버는 [자동 제명] 처리됩니다.\\n\\n이 작업은 되돌릴 수 없습니다.')", class: "px-3 py-1 text-[9px] font-black rounded transition-all text-amber-500 hover:text-amber-400 border border-amber-500/20 hover:bg-amber-500/10 ml-2" %>
+               <%= link_to "⚡ 주간 점검", prototype_admin_weekly_check_path, data: { turbo_method: :post, turbo_confirm: "⚠️ 정말로 [주간 멤버 점검]을 실행하시겠습니까?\n\n- 지난주 루틴 달성률 70% 미만인 멤버에게 [경고]가 1회 부여됩니다.\n- 경고가 3회 누적된 멤버는 [자동 제명] 처리됩니다.\n\n이 작업은 되돌릴 수 없습니다." }, class: "px-3 py-1 text-[9px] font-black rounded transition-all text-amber-500 hover:text-amber-400 border border-amber-500/20 hover:bg-amber-500/10 ml-2" %>
             </div>
           </div>
 
@@ -496,7 +496,9 @@
      <!-- No Club State (Keep as is) -->
      <div class="px-6">
         <div class="py-20 text-center app-glass-card border-white/10">
-           <span class="text-4xl">🔱</span>
+           <div class="w-20 h-20 mx-auto bg-indigo-500/10 rounded-3xl flex items-center justify-center p-4 border border-indigo-500/20">
+             <%= image_tag "rf_official_logo.png", class: "w-full h-full object-contain" %>
+           </div>
            <h2 class="text-xl font-black text-white mt-6">공식 클럽 정보 없음</h2>
            <button class="mt-8 px-8 py-4 bg-indigo-600 rounded-2xl text-white font-black text-sm">루파 클럽 개설하기</button>
         </div>
