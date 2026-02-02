@@ -499,7 +499,7 @@ class User < ApplicationRecord
   end
 
   def daily_greeting_info
-    todays_routines = personal_routines.select { |r| (r.days || []).include?(Date.current.wday.to_s) }
+    todays_routines = personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(Date.current.wday.to_s) }
     completed_today = personal_routines.joins(:completions).where(personal_routine_completions: { completed_on: Date.current }).count
 
     rate = todays_routines.any? ? (completed_today.to_f / todays_routines.size * 100).round : 0
