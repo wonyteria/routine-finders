@@ -35,6 +35,9 @@ class RoutineClubMember < ApplicationRecord
 
     # 알림 전송
     RoutineClubNotificationService.notify_payment_confirmed(self)
+
+    # 뱃지 지급
+    award_season_badge
   end
 
   def reject_payment!(reason = nil)
@@ -291,6 +294,28 @@ class RoutineClubMember < ApplicationRecord
       routine_club.increment!(:current_members)
     elsif payment_status_rejected? && saved_change_to_payment_status&.first == "confirmed"
       routine_club.decrement!(:current_members)
+    end
+  end
+
+  def award_season_badge
+    # TODO: 기수별로 동적으로 뱃지를 찾도록 개선 가능 (예: routine_club.title 파싱)
+    # 현재는 7기 뱃지 하드코딩 (이름에 '7기'가 포함된 클럽 멤버십 뱃지)
+
+    target_badge_name = "루파 클럽 7기 멤버"
+    badge = Badge.find_by(badge_type: :club_membership, name: target_badge_name)
+
+    return unless badge
+
+    # 이미 뱃지가 있는지 확인 후 지급
+    unless user.badges.exists?(id: badge.id)
+      UserBadge.create!(
+        user: user,
+        badge: badge,
+        acquired_at: Time.current
+      )
+
+      # 뱃지 획득 알림 (선택 사항)
+      # Notification.create(user: user, title: "뱃지 획득!", message: "#{badge.name} 뱃지를 획득하셨습니다.", ...)
     end
   end
 end
