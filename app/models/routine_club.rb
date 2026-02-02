@@ -130,6 +130,26 @@ class RoutineClub < ApplicationRecord
     penalties.count
   end
 
+  def check_all_members_weekly_performance!
+    results = { warned: 0, kicked: 0, checked: 0 }
+
+    members.where(status: [ :active, :warned ]).find_each do |member|
+      results[:checked] += 1
+
+      # 경고 부여 여부 체크 (true면 경고 부여됨)
+      if member.check_weekly_performance!
+        results[:warned] += 1
+
+        # 경고 후 제명되었는지 확인
+        if member.reload.status_kicked?
+          results[:kicked] += 1
+        end
+      end
+    end
+
+    results
+  end
+
   def self.ensure_official_club
     official = self.official.first
     return official if official

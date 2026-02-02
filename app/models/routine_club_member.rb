@@ -58,10 +58,33 @@ class RoutineClubMember < ApplicationRecord
       )
       increment!(:penalty_count)
       status_warned!
+      check_kick_condition!
     end
 
     # 알림 전송
     RoutineClubNotificationService.notify_warning(self, penalty_count, reason)
+  end
+
+  def check_kick_condition!
+    if penalty_count >= 3
+      kick!("경고 3회 누적")
+    end
+  end
+
+  # 주간 성과 점검 (매주 월요일 실행 권장)
+  def check_weekly_performance!(date = Date.current)
+    return unless status_active? || status_warned?
+
+    # 지난주 데이터 기준
+    base_date = date.last_week.end_of_week
+    rate = weekly_routine_rate(base_date)
+
+    if rate < 70.0
+      warn!("주간 루틴 달성률 저조 (#{rate}% < 70%)")
+      true
+    else
+      false
+    end
   end
 
   def kick!(reason)

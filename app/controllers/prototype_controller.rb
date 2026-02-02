@@ -745,6 +745,18 @@ class PrototypeController < ApplicationController
     redirect_to prototype_admin_clubs_path, alert: "멤버를 찾을 수 없습니다."
   end
 
+  def admin_weekly_check
+    club = RoutineClub.official.first
+    if club
+      results = club.check_all_members_weekly_performance!
+      msg = "주간 점검 완료: 총 #{results[:checked]}명 중 경고 #{results[:warned]}명, 제명 #{results[:kicked]}명 처리됨."
+    else
+      msg = "공식 클럽을 찾을 수 없습니다."
+    end
+
+    redirect_to prototype_club_management_path, notice: msg
+  end
+
   def broadcast
     title = params[:title]
     content = params[:content]
