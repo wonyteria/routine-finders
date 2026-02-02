@@ -269,51 +269,71 @@ class PrototypeController < ApplicationController
         }
       end
 
-    # 4. Growth Analytics (Real Data with Accurate Rates)
-    # Weekly: Current Week (Mon-Sun)
-    @weekly_labels = []
-    @weekly_data = []
-    start_of_week = Date.current.beginning_of_week
+    # 4. Growth Analytics (Fixed Period Logic)
 
-    (0..6).each do |i|
-      date = start_of_week + i.days
-      @weekly_labels << date.strftime("%m/%d")
+    # [Weekly]: 월~일 (7일 고정)
+    @weekly_labels = [ "월", "화", "수", "목", "금", "토", "일" ]
+    @weekly_data = Array.new(7, 0)
+    current_week_start = Date.current.beginning_of_week
+    # 오늘이 월요일이면 0, 일요일이면 6
+    @daily_index = (Date.current - current_week_start).to_i
 
-      if date > Date.current
-        @weekly_data << 0
-      else
-        @weekly_data << current_user.daily_achievement_rate(date).round
-      end
+    (0..@daily_index).each do |i|
+      date = current_week_start + i.days
+      @weekly_data[i] = current_user.daily_achievement_rate(date).round
     end
 
-    # Monthly: Last 4 weeks completion rate (True Week Rate)
+    # [Monthly]: 1일~말일 기준 주차별 (최대 6주, 보통 4-5주) -> UI상 5개 고정 권장이나 로직은 유연하게
+    # 이번 달의 1주차, 2주차... 로직
+    # 해당 월의 첫 날이 속한 주를 1주차로 계산
+    current_month_start = Date.current.beginning_of_month
+    current_month_end = Date.current.end_of_month
+
+    # 이번 달의 전체 주 수 계산 (보통 4~6주)
+    # 방식: 매주 월요일 기준으로 주차를 나눔
+    # 1주차: 1일 ~ 첫번째 일요일
+    # 2주차: 그 다음 월요일 ~ 일요일 ...
     @monthly_labels = []
-    @monthly_data = (0..3).map do |weeks_ago|
-      week_start = Date.current.beginning_of_week - weeks_ago.weeks
-      week_of_month = ((week_start.day - 1) / 7) + 1
-      @monthly_labels << "#{week_start.month}월 #{week_of_month}주"
+    @monthly_data = []
 
-      week_end = week_start + 6.days
-      # 미래 날짜는 제외하여 계산
-      calc_end = [ week_end, Date.current ].min
+    temp_date = current_month_start
+    week_num = 1
+    @weekly_index = 0 # 이번 주가 몇 번째 인덱스인지
 
-      if calc_end < week_start
-        0
+    while temp_date <= current_month_end
+      week_end = [ temp_date.end_of_week, current_month_end ].min
+      label = "#{Date.current.month}월 #{week_num}주"
+      @monthly_labels << label
+
+      # 미래 주차는 0, 지나간/현재 주차는 계산
+      if temp_date > Date.current
+        @monthly_data << 0
       else
-        current_user.period_routine_rate(week_start, calc_end).round
+        @monthly_data << current_user.period_routine_rate(temp_date, week_end).round
       end
-    end.reverse
-    @monthly_labels.reverse!
 
-    # Yearly: This year's monthly completion rates (True Month Rate)
-    current_month = Date.current.month
-    @yearly_labels = []
-    @yearly_data = (1..current_month).map do |month|
-      @yearly_labels << "#{month}월"
-      month_start = Date.new(Date.current.year, month, 1)
-      month_end = [ month_start.end_of_month, Date.current ].min
+      # 현재 날짜가 이 주간에 포함되면 인덱스 저장
+      if (temp_date..week_end).cover?(Date.current)
+        @weekly_index = week_num - 1
+      end
 
-      current_user.period_routine_rate(month_start, month_end).round
+      temp_date = week_end + 1.day
+      week_num += 1
+    end
+
+    # [Yearly]: 1월~12월 (12개월 고정)
+    @yearly_labels = (1..12).map { |m| "#{m}월" }
+    @yearly_data = Array.new(12, 0)
+    @monthly_index = Date.current.month - 1 # 현재 월 인덱스 (0-based)
+
+    (1..Date.current.month).each do |m|
+      month_start = Date.new(Date.current.year, m, 1)
+      month_end = month_start.end_of_month
+
+      # 미래 날짜 제외 로직 (이번 달은 오늘까지만, 지난 달은 전체)
+      calc_end = [ month_end, Date.current ].min
+
+      @yearly_data[m-1] = current_user.period_routine_rate(month_start, calc_end).round
     end
 
     # Summaries (Calculated as Total Completed / Total Required for the period)
