@@ -147,7 +147,9 @@ class PrototypeController < ApplicationController
     admin_user_ids = User.admin.pluck(:id)
     all_club_ids = (club_member_user_ids + admin_user_ids).uniq
 
-    relevant_users = User.where(deleted_at: nil).where(id: (active_activity_user_ids + all_club_ids).uniq)
+    relevant_users = User.where(deleted_at: nil)
+                         .where.not(role: :super_admin)
+                         .where(id: (active_activity_user_ids + all_club_ids).uniq)
 
     @monthly_rankings = relevant_users.map { |u|
       {
