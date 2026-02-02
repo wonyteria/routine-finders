@@ -26,12 +26,7 @@
           </div>
           <p class="text-[11px] font-medium leading-relaxed opacity-70 break-words"><%= activity.body %></p>
           <% if is_premium %>
-            <div class="flex items-center gap-3 pt-1">
-               <button class="flex items-center gap-1 text-[10px] font-black group">
-                 <span class="group-hover:scale-125 transition-transform">👏</span>
-                 <span class="opacity-40 group-hover:opacity-100"><%= activity.claps_count %></span>
-               </button>
-            </div>
+            <!-- 클랩 버튼 제거됨 -->
           <% end %>
         </div>
       </div>
@@ -42,7 +37,7 @@
       <div class="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center bg-white/10 backdrop-blur-sm rounded-3xl">
         <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-xl mb-4 shadow-xl">🤝</div>
         <h4 class="text-sm font-black text-slate-900 mb-2">프리미엄 시너지에 합류하세요</h4>
-        <p class="text-[10px] font-bold text-slate-500 leading-relaxed mb-6">검증된 멤버들의 실시간 기록을 확인하고 서로를 응원하며 폭발적으로 성장하세요.</p>
+        <p class="text-[10px] font-bold text-slate-500 leading-relaxed mb-6">검증된 멤버들의 실시간 기록을 확인하고 함께 자극받으며 폭발적으로 성장하세요.</p>
         <%= link_to "시너지 피드 해제하기", routine_clubs_path, class: "px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-black text-[10px] hover:bg-indigo-700 transition-all shadow-lg" %>
       </div>
     <% end %>

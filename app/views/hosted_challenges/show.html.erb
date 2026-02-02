@@ -368,10 +368,10 @@
 
     if (group === 'unverified_today') {
       titleText.innerText = "미인증 독려하기";
-      contentInput.value = "'<%= j @challenge.title %>' 리더가 보낸 응원 메시지입니다. 아직 오늘의 인증을 안 하셨네요! 잊지 말고 꼭 완료해 주세요. 🔥";
+      contentInput.value = "'<%= j @challenge.title %>' 리더가 보낸 알림입니다. 아직 오늘의 인증을 안 하셨네요! 잊지 말고 꼭 완료해 주세요. 🔥";
     } else if (group === 'sluggish') {
       titleText.innerText = "부진 루퍼 깨우기";
-      contentInput.value = "목표를 향한 발걸음, 다시 힘을 내봐요! 최근 활동이 뜸해 보여 응원 보냅니다. 💪";
+      contentInput.value = "목표를 향한 발걸음, 다시 힘을 내봐요! 최근 활동이 뜸해 보여 리마인드 메시지를 보냅니다. 💪";
     } else if (group === 'gathering_remind') {
       titleText.innerText = "모임 일정 리마인드";
       contentInput.value = "안녕하세요! '<%= j @challenge.title %>' 모임이 곧 진행됩니다. 일정(<%= @challenge.start_date.strftime('%m/%d') %> <%= @challenge.meeting_info&.meeting_time %>)과 장소(<%= @challenge.meeting_info&.place_name %>)를 다시 한번 확인해 주세요! 📍";
