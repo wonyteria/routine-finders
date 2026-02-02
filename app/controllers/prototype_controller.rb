@@ -546,6 +546,7 @@ class PrototypeController < ApplicationController
       update_params[:yearly_goal_updated_at] = Time.current if update_params.key?(:yearly_goal)
 
       if current_user.update(update_params)
+        current_user.reload
         Rails.logger.info "Goals updated for User #{current_user.id}: #{update_params.keys.join(', ')}"
         redirect_to prototype_my_path, notice: "목표가 성공적으로 저장되었습니다!"
       else
@@ -873,6 +874,7 @@ class PrototypeController < ApplicationController
     Rails.logger.info "[Profile Update] User #{current_user.id} payload: #{update_params.inspect}"
 
     if current_user.update(update_params)
+      current_user.reload # Ensure fresh data for the view after redirect
       redirect_to prototype_my_path, notice: "프로필이 성공적으로 업데이트되었습니다!", status: :see_other
     else
       error_msg = current_user.errors.full_messages.join(", ")

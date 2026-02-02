@@ -98,10 +98,13 @@
 
     <div class="grid grid-cols-1 gap-3">
       <% 
-        weekly_needs_update = current_user.weekly_goal_updated_at.nil? || current_user.weekly_goal_updated_at < Date.current.beginning_of_week
+        week_of_month = ((Date.current.day - 1) / 7) + 1
+        week_start_day = (week_of_month - 1) * 7 + 1
+        current_week_start = Date.new(Date.current.year, Date.current.month, week_start_day)
+        
+        weekly_needs_update = current_user.weekly_goal_updated_at.nil? || current_user.weekly_goal_updated_at < current_week_start
         monthly_needs_update = current_user.monthly_goal_updated_at.nil? || current_user.monthly_goal_updated_at < Date.current.beginning_of_month
         yearly_needs_update = current_user.yearly_goal_updated_at.nil? || current_user.yearly_goal_updated_at < Date.current.beginning_of_year
-        week_of_month = ((Date.current.day - 1) / 7) + 1
       %>
       
       <!-- Weekly Goal -->
