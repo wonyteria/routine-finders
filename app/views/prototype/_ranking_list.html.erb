@@ -13,9 +13,9 @@
   <!-- Type Filters (Secondary) -->
   <div class="flex gap-2 px-2 justify-end mb-4">
       <%= link_to "전체 보기", prototype_synergy_path(period: period, rank_type: 'all'), 
-                  class: "text-[10px] font-bold px-2 py-1 rounded-lg transition-colors #{params[:rank_type] != 'club' ? 'text-white bg-white/10' : 'text-slate-600 hover:text-slate-400'}" %>
+                  class: "px-3 py-1.5 rounded-lg text-[10px] transition-all #{params[:rank_type] != 'club' ? 'bg-white/20 text-white font-black border border-white/10' : 'text-slate-500 font-bold hover:text-slate-300 hover:bg-white/5'}" %>
       <%= link_to "루파 멤버만", prototype_synergy_path(period: period, rank_type: 'club'), 
-                  class: "text-[10px] font-bold px-2 py-1 rounded-lg transition-colors #{params[:rank_type] == 'club' ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-600 hover:text-slate-400'}" %>
+                  class: "px-3 py-1.5 rounded-lg text-[10px] transition-all #{params[:rank_type] == 'club' ? 'bg-indigo-500 text-white font-black shadow-lg shadow-indigo-500/20' : 'text-slate-500 font-bold hover:text-slate-300 hover:bg-white/5'}" %>
   </div>
 
   <div class="app-glass-card divide-y divide-white/5 overflow-hidden">
