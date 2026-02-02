@@ -228,7 +228,10 @@
       <% end %>
     </div>
 
-    <div class="app-glass-card p-6 aspect-video bg-gradient-to-br from-indigo-500/5 to-transparent flex flex-col justify-between">
+    <div class="app-glass-card p-6 aspect-video bg-gradient-to-br from-indigo-500/5 to-transparent flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-all"
+         data-action="click->proto-ui#openModal" 
+         data-modal-id="growth-detail"
+         onclick="document.getElementById('growth-detail').classList.remove('hidden'); document.body.classList.add('overflow-hidden')">
       <div class="flex justify-between items-start">
         <div class="space-y-1">
           <p class="growth-period-text text-[10px] font-bold text-slate-500">이번 주 달성률</p>
