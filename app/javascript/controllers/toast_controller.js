@@ -48,7 +48,7 @@ export default class extends Controller {
             info: "bg-indigo-600"
         }[type] || "bg-indigo-600"
 
-        toast.className = `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100000] px-8 py-5 rounded-[32px] ${bgClass} text-white font-black text-sm shadow-[0_20px_60px_rgba(0,0,0,0.5)] animate-badge-pop flex flex-col items-center gap-4 min-w-[280px] text-center backdrop-blur-xl border border-white/20`
+        toast.className = `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100000] px-8 py-5 rounded-[32px] ${bgClass} text-white font-black text-sm shadow-[0_20px_60px_rgba(0,0,0,0.5)] animate-toast-pop flex flex-col items-center gap-4 min-w-[280px] text-center backdrop-blur-xl border border-white/20`
 
         const icon = {
             success: "✨",

@@ -1,41 +1,45 @@
 
 
-<% if params[:joined_club] %>
-  <div id="club-success-modal" class="fixed top-0 left-0 w-full h-full z-[1000] flex items-center justify-center p-6">
-    <div onclick="this.closest('#club-success-modal').remove()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
-    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-pop bg-[#16151D] m-0">
-      <div class="w-24 h-24 bg-indigo-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-indigo-500/50">🎉</div>
-      <div class="space-y-4">
-        <div class="space-y-2">
-          <h3 class="text-2xl font-black text-white">클럽 가입 신청 완료!</h3>
-          <p class="text-sm font-bold text-slate-400">호스트가 입금을 확인한 후<br/>정식 멤버로 활성화됩니다.</p>
+<% content_for :modal_container do %>
+  <% if params[:joined_club] %>
+    <div id="club-success-modal" class="fixed top-0 left-0 w-full h-full z-[1000] flex items-center justify-center p-6">
+      <div onclick="this.closest('#club-success-modal').remove()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-celebration-pop bg-[#16151D] m-0">
+        <div class="w-24 h-24 bg-indigo-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-indigo-500/50">🎉</div>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <h3 class="text-2xl font-black text-white">클럽 가입 신청 완료!</h3>
+            <p class="text-sm font-bold text-slate-400">호스트가 입금을 확인한 후<br/>정식 멤버로 활성화됩니다.</p>
+          </div>
+          <div class="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
+            <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">Notice</p>
+            <p class="text-[11px] font-bold text-slate-300 leading-relaxed">루파 클럽은 규정 위반으로 인한 제명(Kick) 시<br/>향후 재가입이 절대 불가하니 유의해주세요.</p>
+          </div>
         </div>
-        <div class="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
-          <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">Notice</p>
-          <p class="text-[11px] font-bold text-slate-300 leading-relaxed">루파 클럽은 규정 위반으로 인한 제명(Kick) 시<br/>향후 재가입이 절대 불가하니 유의해주세요.</p>
+        <div class="w-full pt-4">
+          <button onclick="this.closest('#club-success-modal').remove()" class="w-full py-4 bg-indigo-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none">확인했습니다</button>
         </div>
-      </div>
-      <div class="w-full pt-4">
-        <button onclick="this.closest('#club-success-modal').remove()" class="w-full py-4 bg-indigo-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none">확인했습니다</button>
       </div>
     </div>
-  </div>
+  <% end %>
 <% end %>
 
-<% if params[:created_challenge] %>
-  <div id="challenge-success-modal" class="fixed inset-0 z-[42000] flex items-center justify-center p-6">
-    <div onclick="this.closest('#challenge-success-modal').remove()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
-    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-pop">
-      <div class="w-24 h-24 bg-emerald-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-emerald-500/50">⚡</div>
-      <div class="space-y-2">
-        <h3 class="text-2xl font-black text-white">챌린지 개설 완료!</h3>
-        <p class="text-sm font-bold text-slate-400">새로운 도약의 시작입니다.<br/>호스트 센터에서 관리해보세요.</p>
-      </div>
-      <div class="w-full pt-4">
-        <button onclick="this.closest('#challenge-success-modal').remove()" class="w-full py-4 bg-emerald-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none">확인했습니다</button>
+<% content_for :modal_container do %>
+  <% if params[:created_challenge] %>
+    <div id="challenge-success-modal" class="fixed inset-0 z-[42000] flex items-center justify-center p-6">
+      <div onclick="this.closest('#challenge-success-modal').remove()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-celebration-pop">
+        <div class="w-24 h-24 bg-emerald-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-emerald-500/50">⚡</div>
+        <div class="space-y-2">
+          <h3 class="text-2xl font-black text-white">챌린지 개설 완료!</h3>
+          <p class="text-sm font-bold text-slate-400">새로운 도약의 시작입니다.<br/>호스트 센터에서 관리해보세요.</p>
+        </div>
+        <div class="w-full pt-4">
+          <button onclick="this.closest('#challenge-success-modal').remove()" class="w-full py-4 bg-emerald-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none">확인했습니다</button>
+        </div>
       </div>
     </div>
-  </div>
+  <% end %>
 <% end %>
 
 <div class="space-y-8 pt-2">
@@ -236,27 +240,7 @@
       
       <%# 아이템 관리 버튼 (항상 노출하도록 수정) %>
       <div class="flex items-center gap-1.5">
-        <script>
-          window.showPremiumNudge = function(type) {
-            const modal = document.getElementById('premium-item-nudge');
-            const title = modal.querySelector('.nudge-title');
-            const desc = modal.querySelector('.nudge-desc');
-            const icon = modal.querySelector('.nudge-icon');
 
-            if (type === 'relax') {
-              title.innerText = "휴식권";
-              desc.innerHTML = "루틴을 쉬고 싶을 때 사용하면 공식 휴가로 인정되어 출석률을 지켜주는 특별한 기능입니다. 루파 클럽 멤버가 되어 여유 있는 성장을 경험하세요.";
-              icon.innerText = "🎟️";
-            } else {
-              title.innerText = "세이브권";
-              desc.innerHTML = "깜빡하고 놓친 인증이나 지나간 결석을 출석으로 복구해주는 스트릭 방어 기능입니다. 루파 클럽 멤버가 되어 당신의 성실한 기록을 끝까지 지킬 수 있습니다.";
-              icon.innerText = "🛡️";
-            }
-            
-            modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-          }
-        </script>
         <!-- 휴식권 버튼 -->
         <button type="button" 
                 onclick="<%= @is_club_member ? "document.getElementById('global-pass-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')" : "showPremiumNudge('relax')" %>"
@@ -563,33 +547,14 @@
 
   <%# Legacy PWA modal removed in favor of integrated onboarding flow %>
 
-  <!-- (NEW) Premium Item Nudge Modal (For Non-members) -->
-  <div id="premium-item-nudge" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
-    <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
-    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
-      <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[28px] flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-indigo-500/40 nudge-icon">🔒</div>
-      <div class="space-y-2">
-        <h3 class="text-2xl font-black text-white nudge-title">멤버십 전용 기능입니다</h3>
-        <p class="text-sm font-bold text-slate-400 leading-relaxed px-4 nudge-desc">
-          휴식권과 세이브권은 루파 클럽 멤버에게만 제공되는 특별한 혜택입니다.
-        </p>
-      </div>
-      <div class="space-y-3 pt-4">
-        <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "block w-full py-4 bg-white text-black rounded-2xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-white/10" do %>
-          멤버십 혜택 알아보기
-        <% end %>
-        <button onclick="this.closest('#premium-item-nudge').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="w-full py-3 text-slate-500 font-bold text-xs hover:text-white transition-colors">
-          다음에 할게요
-        </button>
-      </div>
-    </div>
-  </div>
+<% content_for :modal_container do %>
+
 
   <!-- (NEW) Global Pass Manager Modal (For Members) -->
   <% if @is_club_member %>
     <div id="global-pass-modal" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
       <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
-      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 space-y-8 animate-badge-pop bg-[#16151D] max-h-[90vh] overflow-y-auto hide-scrollbar">
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 space-y-8 animate-badge-celebration-pop bg-[#16151D] max-h-[90vh] overflow-y-auto hide-scrollbar">
         <div class="text-center space-y-2">
           <div class="w-16 h-16 bg-indigo-500/20 rounded-[24px] flex items-center justify-center text-3xl mx-auto mb-4">🔮</div>
           <h3 class="text-xl font-black text-white">아이템 마스터 센터</h3>
@@ -658,7 +623,7 @@
       </div>
     </div>
   <% end %>
-</div>
+<% end %>
 
 <!-- Welcome Onboarding Modal for New Users -->
 <% if flash[:show_onboarding] && current_user && current_user.respond_to?(:onboarding_completed?) && !current_user.onboarding_completed? %>

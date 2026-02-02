@@ -117,9 +117,19 @@
         transition: opacity 0.2s ease;
       }
 
-      @keyframes badge-pop {
+      /* Animation for Toast Messages (Centered via transform) */
+      @keyframes toast-pop {
         0% { transform: translate(-50%, -45%) scale(0.95); opacity: 0; }
         100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      }
+      .animate-toast-pop {
+        animation: toast-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      /* Animation for Standard Modals (Centered via Flexbox) */
+      @keyframes badge-pop {
+        0% { transform: scale(0.95); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
       }
       .animate-badge-pop {
         animation: badge-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -133,6 +143,66 @@
     <main data-controller="modal" class="w-full max-w-md mx-auto min-h-screen relative pt-14 pb-40 px-4 bg-[#0C0B12] z-0 isolate">
       <%= yield %>
     </main>
+
+    <!-- Content for hoisted modals (Fixes z-index issues) -->
+    <%= yield :modal_container %>
+
+    <!-- Global Premium Nudge Modal (Accessible from anywhere) -->
+    <script>
+      window.showPremiumNudge = function(type) {
+        const modal = document.getElementById('premium-item-nudge');
+        const title = modal.querySelector('.nudge-title');
+        const desc = modal.querySelector('.nudge-desc');
+        const icon = modal.querySelector('.nudge-icon');
+
+        if (type === 'relax') {
+          title.innerText = "휴식권";
+          desc.innerHTML = "루틴을 쉬고 싶을 때 사용하면 공식 휴가로 인정되어 출석률을 지켜주는 특별한 기능입니다. 루파 클럽 멤버가 되어 여유 있는 성장을 경험하세요.";
+          icon.innerText = "🎟️";
+        } else if (type === 'save') {
+          title.innerText = "세이브권";
+          desc.innerHTML = "깜빡하고 놓친 인증이나 지나간 결석을 출석으로 복구해주는 스트릭 방어 기능입니다. 루파 클럽 멤버가 되어 당신의 성실한 기록을 끝까지 지킬 수 있습니다.";
+          icon.innerText = "🛡️";
+        } else if (type === 'report') {
+          title.innerText = "성장 리포트";
+          desc.innerHTML = "나의 성장 데이터를 정밀하게 분석해주는 프리미엄 리포트입니다. 루파 클럽 멤버가 되어 인사이트를 얻어보세요.";
+          icon.innerText = "📊";
+        }
+        
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      }
+    </script>
+    <div id="premium-item-nudge" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
+      <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-center-pop bg-[#16151D]">
+        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[28px] flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-indigo-500/40 nudge-icon">🔒</div>
+        <div class="space-y-2">
+          <h3 class="text-2xl font-black text-white nudge-title">멤버십 전용 기능입니다</h3>
+          <p class="text-sm font-bold text-slate-400 leading-relaxed px-4 nudge-desc">
+            휴식권과 세이브권은 루파 클럽 멤버에게만 제공되는 특별한 혜택입니다.
+          </p>
+        </div>
+        <div class="space-y-3 pt-4">
+          <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "block w-full py-4 bg-white text-black rounded-2xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-white/10" do %>
+            멤버십 혜택 알아보기
+          <% end %>
+          <button onclick="this.closest('#premium-item-nudge').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="w-full py-3 text-slate-500 font-bold text-xs hover:text-white transition-colors">
+            다음에 할게요
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes center-pop {
+        0% { transform: scale(0.95); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      .animate-center-pop {
+        animation: center-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+    </style>
 
     <!-- 1. Routine Record Bottom Sheet -->
     <div id="record-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
@@ -394,7 +464,7 @@
         <div id="badge-celebration-<%= idx %>" class="fixed inset-0 z-[99990] flex items-center justify-center p-6 bg-[#0C0B12] <%= 'hidden' if idx > 0 %>">
           <div class="absolute inset-0 bg-[#0C0B12] animate-fade-in"></div>
           
-          <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 text-center space-y-8 animate-badge-pop">
+          <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 text-center space-y-8 animate-badge-celebration-pop">
             <!-- Particle Effect Decoration -->
             <div class="absolute inset-0 overflow-hidden rounded-[32px] pointer-events-none">
               <div class="absolute top-0 left-1/4 w-20 h-20 bg-indigo-500/20 blur-3xl animate-pulse"></div>
@@ -470,7 +540,7 @@
       </script>
 
       <style>
-        @keyframes badge-pop {
+        @keyframes badge-celebration-pop {
           0% { transform: scale(0.5); opacity: 0; }
           70% { transform: scale(1.05); }
           100% { transform: scale(1); opacity: 1; }
@@ -487,7 +557,7 @@
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-10px); }
         }
-        .animate-badge-pop { animation: badge-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-badge-celebration-pop { animation: badge-celebration-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
         .animate-float { animation: float 3s ease-in-out infinite; }
         
