@@ -42,7 +42,7 @@
             <h2 class="text-xl font-black text-white"><%= @official_club.title %></h2>
             <div class="flex items-center gap-2">
                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-               <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Active Season</p>
+               <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">활성 시즌 (Active)</p>
             </div>
           </div>
           <div class="text-right">
@@ -52,13 +52,17 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-6 mt-8 pt-6 border-t border-white/5">
+        <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/5">
            <div class="text-center border-r border-white/5">
-             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1 text-center">Avg. Dash</p>
+             <p class="text-[9px] font-black text-slate-500 mb-1 text-center">현재 인원</p>
+             <p class="text-lg font-black text-white"><%= @club_members.count %>명</p>
+           </div>
+           <div class="text-center border-r border-white/5">
+             <p class="text-[9px] font-black text-slate-500 mb-1 text-center">평균 달성률</p>
              <p class="text-lg font-black text-indigo-400"><%= @official_club.average_attendance_rate %>%</p>
            </div>
            <div class="text-center">
-             <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Growth Points</p>
+             <p class="text-[9px] font-black text-slate-500 mb-1">누적 포인트</p>
              <p class="text-lg font-black text-white"><%= number_with_delimiter(@club_members.sum(:growth_points)) %>P</p>
            </div>
         </div>
