@@ -1,14 +1,14 @@
 <turbo-frame id="user-profile-modal-frame">
-  <div data-controller="modal"
+  <div data-controller="modal" 
        data-modal-auto-open-value="true"
        data-modal-target="container"
-       class="fixed inset-0 z-[60000] flex items-center justify-center p-6 bg-[#0C0B12]/95 backdrop-blur-2xl animate-in fade-in duration-500 hidden">
+       class="fixed inset-0 z-[70000] flex items-center justify-center p-4 bg-[#0C0B12]/90 backdrop-blur-xl animate-in fade-in duration-300">
     <!-- Backdrop Overlay (Dismiss) -->
     <div data-action="click->modal#close"
-         class="absolute inset-0 cursor-pointer"></div>
+         class="absolute inset-0 cursor-pointer bg-black/20"></div>
     
     <!-- Premium Profile Card -->
-    <div class="relative w-full max-w-sm bg-white/5 border border-white/10 rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden animate-badge-pop" onclick="event.stopPropagation()">
+    <div class="relative w-full max-w-sm bg-[#1A1A24] border border-white/10 rounded-[32px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.8)] overflow-hidden animate-badge-pop" onclick="event.stopPropagation()">
       
       <!-- Top Decoration -->
       <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 blur-[80px] rounded-full"></div>
