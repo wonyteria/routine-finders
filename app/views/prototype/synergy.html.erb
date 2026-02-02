@@ -79,7 +79,7 @@
   <!-- 1.5 Integrated Leaderboard Table -->
   <section class="space-y-4">
     <div class="flex justify-between items-center px-2">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">이달의 리더보드</h3>
+      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">🏆 리더보드</h3>
       <div class="flex items-center gap-2">
         <button type="button" 
                 onclick="document.getElementById('score-guide-modal').classList.remove('hidden')"
@@ -91,87 +91,32 @@
       </div>
     </div>
 
-    <!-- Filter Tabs -->
-    <div class="flex gap-2 px-2">
-      <%= link_to "전체 통합", prototype_synergy_path(rank_type: 'all'), 
-                  class: "px-4 py-2 rounded-xl text-[10px] font-black transition-all #{params[:rank_type] != 'club' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}" %>
-      <%= link_to "루파 전용", prototype_synergy_path(rank_type: 'club'), 
-                  class: "px-4 py-2 rounded-xl text-[10px] font-black transition-all #{params[:rank_type] == 'club' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'bg-white/5 text-slate-500 hover:bg-white/10'}" %>
-    </div>
-
-    <div class="app-glass-card divide-y divide-white/5 overflow-hidden">
-      <% @monthly_rankings.take(10).each_with_index do |ranking, index| %>
-        <% user = ranking[:user] %>
-        <% score = ranking[:score] %>
-        <%= link_to prototype_user_card_path(user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors #{index < 3 ? 'bg-indigo-500/5' : ''}" do %>
-          <div class="flex items-center gap-3">
-            <div class="w-8 text-center">
-              <% if index == 0 %>
-                <span class="text-xl">🥇</span>
-              <% elsif index == 1 %>
-                <span class="text-xl">🥈</span>
-              <% elsif index == 2 %>
-                <span class="text-xl">🥉</span>
-              <% else %>
-                <span class="text-sm font-black text-slate-600"><%= index + 1 %></span>
-              <% end %>
-            </div>
-            <div class="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0">
-              <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
-            </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <p class="text-sm font-black text-white"><%= user.nickname %></p>
-                <% if ranking[:is_club] %>
-                  <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white flex items-center gap-1">
-                    🔱 루파
-                  </span>
-                <% end %>
-              </div>
-              <p class="text-[9px] font-bold text-slate-500">Lv.<%= user.level %></p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="text-base font-black <%= index < 3 ? 'text-indigo-400' : 'text-white' %> tabular-nums"><%= score.round(1) %>P</p>
-            <p class="text-[9px] font-bold text-slate-600">이번 달</p>
-          </div>
-        <% end %>
+    <!-- Period Tabs (Updated) -->
+    <div class="grid grid-cols-2 bg-white/5 p-1 rounded-2xl mx-1">
+      <%= link_to prototype_synergy_path(period: 'monthly', rank_type: params[:rank_type]), 
+                  data: { turbo_frame: "ranking_list" },
+                  class: "py-2.5 text-center rounded-xl text-[11px] font-black transition-all #{@period == 'monthly' || @period.nil? ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-500 hover:text-white'}" do %>
+        <span>📅 이번 달</span>
       <% end %>
-      
-      <!-- My Rank & View All Actions -->
-      <div class="p-3 bg-white/[0.02] space-y-3">
-        <% if @my_ranking %>
-          <%= link_to prototype_user_card_path(current_user), 
-                      data: { turbo_frame: "user-profile-modal-frame" },
-                      class: "flex items-center justify-between p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all" do %>
-            <div class="flex items-center gap-3">
-              <div class="w-8 text-center text-xs font-black text-white/50"><%= @my_ranking[:rank] %></div>
-              <div class="w-9 h-9 rounded-lg overflow-hidden border border-white/20">
-                <img src="<%= current_user.profile_image %>" class="w-full h-full object-cover">
-              </div>
-              <div>
-                <p class="text-xs font-black text-white">나의 순위</p>
-                <p class="text-[9px] font-bold text-indigo-100"><%= current_user.nickname %></p>
-              </div>
-            </div>
-            <p class="text-sm font-black text-white"><%= @my_ranking[:score] %>P</p>
-          <% end %>
-        <% end %>
-
-        <button type="button" 
-                onclick="document.getElementById('full-ranking-modal').classList.remove('hidden')"
-                class="w-full py-4 rounded-2xl border-2 border-dashed border-white/10 text-[10px] font-black text-slate-500 hover:text-white hover:border-white/20 transition-all">
-          전체 통합 리더보드 확인하기 (TOP 500) 🔱
-        </button>
-      </div>
-
-      <% if @monthly_rankings.empty? %>
-        <div class="p-12 text-center">
-          <p class="text-sm font-bold text-slate-500">아직 랭킹 데이터가 없습니다</p>
-          <p class="text-xs font-bold text-slate-600 mt-2">루파클럽에 가입하고 루틴을 실천해보세요!</p>
-        </div>
+      <%= link_to prototype_synergy_path(period: 'total', rank_type: params[:rank_type]), 
+                  data: { turbo_frame: "ranking_list" },
+                  class: "py-2.5 text-center rounded-xl text-[11px] font-black transition-all #{@period == 'total' ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20' : 'text-slate-500 hover:text-white'}" do %>
+        <span>🔥 전체 누적</span>
       <% end %>
     </div>
+
+    <!-- Type Filters (Secondary) -->
+    <div class="flex gap-2 px-2 justify-end">
+       <%= link_to "전체 보기", prototype_synergy_path(period: @period, rank_type: 'all'), 
+                   data: { turbo_frame: "ranking_list" },
+                   class: "text-[10px] font-bold px-2 py-1 rounded-lg transition-colors #{params[:rank_type] != 'club' ? 'text-white bg-white/10' : 'text-slate-600 hover:text-slate-400'}" %>
+       <%= link_to "루파 멤버만", prototype_synergy_path(period: @period, rank_type: 'club'), 
+                   data: { turbo_frame: "ranking_list" },
+                   class: "text-[10px] font-bold px-2 py-1 rounded-lg transition-colors #{params[:rank_type] == 'club' ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-600 hover:text-slate-400'}" %>
+    </div>
+
+    <!-- Ranking List Partial -->
+    <%= render partial: "ranking_list", locals: { rankings: @monthly_rankings, period: @period || 'monthly' } %>
   </section>
 
   <!-- Full Ranking Modal -->

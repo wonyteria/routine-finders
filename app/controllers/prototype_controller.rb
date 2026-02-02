@@ -151,10 +151,18 @@ class PrototypeController < ApplicationController
                          .where.not(role: :super_admin)
                          .where(id: (active_activity_user_ids + all_club_ids).uniq)
 
+    @period = params[:period] || "monthly" # monthly or total
+
     @monthly_rankings = relevant_users.map { |u|
+      score = if @period == "total"
+                u.total_platform_score
+      else
+                u.rufa_club_score # This is monthly score logic
+      end
+
       {
         user: u,
-        score: u.rufa_club_score,
+        score: score,
         is_club: all_club_ids.include?(u.id)
       }
     }.sort_by { |r| -r[:score] }
@@ -163,7 +171,7 @@ class PrototypeController < ApplicationController
       @monthly_rankings = @monthly_rankings.select { |r| r[:is_club] }
     end
 
-    @monthly_rankings = @monthly_rankings.take(500)
+    @monthly_rankings = @monthly_rankings.take(100) # Limit to top 100
 
     # Find my ranking
     @my_ranking = nil
@@ -179,6 +187,10 @@ class PrototypeController < ApplicationController
     end
 
     @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
+
+    if request.headers["Turbo-Frame"]
+      render partial: "prototype/ranking_list", locals: { rankings: @monthly_rankings, period: @period }
+    end
   end
 
   def my

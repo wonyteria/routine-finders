@@ -1,0 +1,75 @@
+<turbo-frame id="ranking_list">
+  <div class="app-glass-card divide-y divide-white/5 overflow-hidden">
+    <% rankings.take(10).each_with_index do |ranking, index| %>
+      <% user = ranking[:user] %>
+      <% score = ranking[:score] %>
+      <%= link_to prototype_user_card_path(user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors #{index < 3 ? 'bg-indigo-500/5' : ''}" do %>
+        <div class="flex items-center gap-3">
+          <div class="w-8 text-center">
+            <% if index == 0 %>
+              <span class="text-xl">🥇</span>
+            <% elsif index == 1 %>
+              <span class="text-xl">🥈</span>
+            <% elsif index == 2 %>
+              <span class="text-xl">🥉</span>
+            <% else %>
+              <span class="text-sm font-black text-slate-600"><%= index + 1 %></span>
+            <% end %>
+          </div>
+          <div class="w-10 h-10 rounded-xl overflow-hidden border border-white/10 shrink-0">
+            <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <p class="text-sm font-black text-white"><%= user.nickname %></p>
+              <% if ranking[:is_club] %>
+                <span class="px-2 py-0.5 rounded-full bg-indigo-500 text-[8px] font-black text-white flex items-center gap-1">
+                  🔱 루파
+                </span>
+              <% end %>
+            </div>
+            <p class="text-[9px] font-bold text-slate-500">Lv.<%= user.level %></p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-base font-black <%= index < 3 ? 'text-indigo-400' : 'text-white' %> tabular-nums"><%= score.round(0) %>P</p>
+          <p class="text-[9px] font-bold text-slate-600"><%= period == 'total' ? '누적 포인트' : '이번 달' %></p>
+        </div>
+      <% end %>
+    <% end %>
+    
+    <!-- My Rank & View All Actions -->
+    <div class="p-3 bg-white/[0.02] space-y-3">
+      <% if defined?(@my_ranking) && @my_ranking %>
+        <%= link_to prototype_user_card_path(current_user), 
+                    data: { turbo_frame: "user-profile-modal-frame" },
+                    class: "flex items-center justify-between p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all" do %>
+          <div class="flex items-center gap-3">
+            <div class="w-8 text-center text-xs font-black text-white/50"><%= @my_ranking[:rank] %></div>
+            <div class="w-9 h-9 rounded-lg overflow-hidden border border-white/20">
+              <img src="<%= current_user.profile_image %>" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <p class="text-xs font-black text-white">나의 순위</p>
+              <p class="text-[9px] font-bold text-indigo-100"><%= current_user.nickname %></p>
+            </div>
+          </div>
+          <p class="text-sm font-black text-white"><%= @my_ranking[:score] %>P</p>
+        <% end %>
+      <% end %>
+
+      <button type="button" 
+              onclick="document.getElementById('full-ranking-modal').classList.remove('hidden')"
+              class="w-full py-4 rounded-2xl border-2 border-dashed border-white/10 text-[10px] font-black text-slate-500 hover:text-white hover:border-white/20 transition-all">
+        전체 통합 리더보드 확인하기 (TOP 100) 🔱
+      </button>
+    </div>
+
+    <% if rankings.empty? %>
+      <div class="p-12 text-center">
+        <p class="text-sm font-bold text-slate-500">아직 랭킹 데이터가 없습니다</p>
+        <p class="text-xs font-bold text-slate-600 mt-2">루파클럽에 가입하고 루틴을 실천해보세요!</p>
+      </div>
+    <% end %>
+  </div>
+</turbo-frame>
