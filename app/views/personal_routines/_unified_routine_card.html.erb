@@ -63,17 +63,23 @@
           <p class="text-[11px] font-medium text-white/50 leading-relaxed">오늘 루틴을 넘기려면 휴식권을, 이미 놓친 기록을 복구하려면 세이브권을 사용하세요.</p>
           
           <div class="grid grid-cols-2 gap-2">
-            <%= button_to use_pass_routine_club_path(@routine_club, date: Date.current, routine_id: routine.id, pass_type: 'relax'), 
-                          disabled: ((@my_membership.remaining_relax_passes rescue 0) <= 0),
-                          data: { turbo_confirm: "휴식권 1장을 사용하여 오늘 루틴을 완료 처리하시겠습니까?" },
-                          class: "py-2.5 bg-indigo-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1 text-white border-none" do %>
-              <span>🎟️</span> 휴식
+            <%= form_with url: use_pass_routine_club_path(@routine_club, date: Date.current, routine_id: routine.id, pass_type: 'relax'), 
+                          id: "card-#{routine.id}-relax-form", class: "contents" do |f| %>
+              <button type="button" 
+                            disabled: ((@my_membership.remaining_relax_passes rescue 0) <= 0),
+                            onclick="requestItemUse('card-<%= routine.id %>-relax-form', '휴식권을 사용하시겠습니까?', '오늘 루틴을 완료 처리하고 출석을 유지합니다.', '🎟️')"
+                            class="w-full py-2.5 bg-indigo-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1 text-white border-none">
+                <span>🎟️</span> 휴식
+              </button>
             <% end %>
-            <%= button_to use_pass_routine_club_path(@routine_club, date: Date.current, routine_id: routine.id, pass_type: 'save'), 
-                          disabled: ((@my_membership.remaining_save_passes rescue 0) <= 0),
-                          data: { turbo_confirm: "세이브권 1장을 사용하여 루틴을 복구하시겠습니까?" },
-                          class: "py-2.5 bg-emerald-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1 text-white border-none" do %>
-              <span>🛡️</span> 세이브
+            <%= form_with url: use_pass_routine_club_path(@routine_club, date: Date.current, routine_id: routine.id, pass_type: 'save'), 
+                          id: "card-#{routine.id}-save-form", class: "contents" do |f| %>
+              <button type="button" 
+                            disabled: ((@my_membership.remaining_save_passes rescue 0) <= 0),
+                            onclick="requestItemUse('card-<%= routine.id %>-save-form', '세이브권을 사용하시겠습니까?', '지나간 결석을 출석으로 긴급 복구합니다.', '🛡️')"
+                            class="w-full py-2.5 bg-emerald-600 rounded-xl text-[10px] font-black shadow-lg disabled:opacity-30 flex items-center justify-center gap-1 text-white border-none">
+                <span>🛡️</span> 세이브
+              </button>
             <% end %>
           </div>
         </div>

@@ -191,7 +191,7 @@
               </button>
             </div>
 
-            <form action="<%= use_pass_routine_club_path(@routine_club) %>" method="post" data-turbo="false" onsubmit="return confirm('휴식권을 사용하시겠습니까?');">
+            <form action="<%= use_pass_routine_club_path(@routine_club) %>" method="post" id="free-relax-form" data-turbo="false">
                <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
                
                <div class="space-y-4 mb-5">
@@ -215,7 +215,9 @@
                  </div>
                </div>
                
-               <button type="submit" class="w-full py-3 bg-indigo-500 text-white rounded-xl font-black text-sm hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-500/30 active:translate-y-0.5 transition-all flex items-center justify-center gap-2">
+               <button type="button" 
+                       onclick="requestItemUse('free-relax-form', '휴식권을 사용하시겠습니까?', '선택하신 날짜에 루틴 휴식이 공식적으로 인정됩니다.', '🎟️')"
+                       class="w-full py-3 bg-indigo-500 text-white rounded-xl font-black text-sm hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-500/30 active:translate-y-0.5 transition-all flex items-center justify-center gap-2">
                  <span>사용하기</span>
                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                </button>

@@ -360,12 +360,12 @@
                       <!-- Relax Pass Choice -->
                       <div class="relative group">
                         <%= form_with url: use_pass_routine_club_path(@official_club, routine_id: routine.id, pass_type: 'relax', source: 'prototype'), 
-                                      method: :post, class: "contents" do |f| %>
+                                      method: :post, id: "routine-#{routine.id}-relax-form", class: "contents" do |f| %>
                           <%= f.hidden_field :date, value: Date.current, class: "pass-date-#{routine.id}" %>
-                          <button type="submit" 
+                          <button type="button" 
                                   disabled: (@my_membership&.remaining_relax_passes.to_i <= 0),
-                                  data: { turbo_confirm: "휴식권 1장을 사용하여 루틴을 챌린지 성취도에 반영하시겠습니까? (출석 유지)" },
-                                  class: "w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
+                                  onclick="requestItemUse('routine-<%= routine.id %>-relax-form', '휴식권을 사용하시겠습니까?', '오늘 루틴을 쉰 것으로 처리하고 출석을 유지합니다.', '🎟️')"
+                                  class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
                             <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                             <div class="flex-1 min-w-0">
                               <div class="flex justify-between items-center mb-0.5">
@@ -381,12 +381,12 @@
                       <!-- Save Pass Choice -->
                       <div class="relative group">
                         <%= form_with url: use_pass_routine_club_path(@official_club, routine_id: routine.id, pass_type: 'save', source: 'prototype'), 
-                                      method: :post, class: "contents" do |f| %>
+                                      method: :post, id: "routine-#{routine.id}-save-form", class: "contents" do |f| %>
                           <%= f.hidden_field :date, value: Date.current, class: "pass-date-#{routine.id}" %>
-                          <button type="submit" 
+                          <button type="button" 
                                   disabled: (@my_membership&.remaining_save_passes.to_i <= 0),
-                                  data: { turbo_confirm: "세이브권 1장을 사용하여 루틴을 복구하시겠습니까? (출석 유지)" },
-                                  class: "w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
+                                  onclick="requestItemUse('routine-<%= routine.id %>-save-form', '세이브권을 사용하시겠습니까?', '지나간 결석을 출석으로 긴급 복구합니다.', '🛡️')"
+                                  class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
                             <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                             <div class="flex-1 min-w-0">
                               <div class="flex justify-between items-center mb-0.5">
@@ -617,11 +617,11 @@
           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1 italic">Step 2. 아이템 선택</label>
           <div class="grid grid-cols-1 gap-4">
             <!-- Relax Pass Card -->
-            <%= form_with url: use_pass_routine_club_path(@official_club, pass_type: 'relax', source: 'prototype'), method: :post, class: "contents" do |f| %>
+            <%= form_with url: use_pass_routine_club_path(@official_club, pass_type: 'relax', source: 'prototype'), method: :post, id: "global-relax-form", class: "contents" do |f| %>
               <%= f.hidden_field :date, value: Date.current, class: "global-pass-date" %>
-              <button type="submit" 
+              <button type="button" 
                       <% if @my_membership&.remaining_relax_passes.to_i <= 0 %>disabled<% end %>
-                      data-turbo-confirm="선택하신 날짜에 휴식권 1장을 사용하시겠습니까?"
+                      onclick="requestItemUse('global-relax-form', '휴식권을 사용하시겠습니까?', '선택하신 날짜가 공식 휴가(출석 인정)로 등록됩니다.', '🎟️')"
                       class="w-full p-5 rounded-[28px] bg-white/[0.03] border border-white/5 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                 <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                 <div>
@@ -635,11 +635,11 @@
             <% end %>
 
             <!-- Save Pass Card -->
-            <%= form_with url: use_pass_routine_club_path(@official_club, pass_type: 'save', source: 'prototype'), method: :post, class: "contents" do |f| %>
+            <%= form_with url: use_pass_routine_club_path(@official_club, pass_type: 'save', source: 'prototype'), method: :post, id: "global-save-form", class: "contents" do |f| %>
               <%= f.hidden_field :date, value: Date.current, class: "global-pass-date" %>
-              <button type="submit" 
+              <button type="button" 
                       <% if @my_membership&.remaining_save_passes.to_i <= 0 %>disabled<% end %>
-                      data-turbo-confirm="선택하신 날짜에 세이브권 1장을 사용하시겠습니까?"
+                      onclick="requestItemUse('global-save-form', '세이브권을 사용하시겠습니까?', '지나간 결석을 출석으로 소급 방어합니다.', '🛡️')"
                       class="w-full p-5 rounded-[28px] bg-white/[0.03] border border-white/5 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                 <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                 <div>

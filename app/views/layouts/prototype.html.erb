@@ -577,11 +577,11 @@
 
               <!-- Pass Buttons -->
               <div class="grid grid-cols-1 gap-3">
-                <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'relax', source: 'prototype'), method: :post, class: "contents" do |f| %>
+                <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'relax', source: 'prototype'), method: :post, id: "master-relax-form", class: "contents" do |f| %>
                   <%= f.hidden_field :date, value: Date.current, class: "master-center-date" %>
-                  <button type="submit" 
+                  <button type="button" 
                           <% if membership&.remaining_relax_passes.to_i <= 0 %>disabled<% end %>
-                          data-turbo-confirm="선택하신 날짜에 휴식권 1장을 사용하시겠습니까?"
+                          onclick="requestItemUse('master-relax-form', '휴식권을 사용하시겠습니까?', '해당 날짜가 공식 휴가로 처리됩니다.', '🎟️')"
                           class="w-full p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                     <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                     <div>
@@ -594,11 +594,11 @@
                   </button>
                 <% end %>
 
-                <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'save', source: 'prototype'), method: :post, class: "contents" do |f| %>
+                <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'save', source: 'prototype'), method: :post, id: "master-save-form", class: "contents" do |f| %>
                   <%= f.hidden_field :date, value: Date.current, class: "master-center-date" %>
-                  <button type="submit" 
+                  <button type="button" 
                           <% if membership&.remaining_save_passes.to_i <= 0 %>disabled<% end %>
-                          data-turbo-confirm="선택하신 날짜에 세이브권 1장을 사용하시겠습니까?"
+                          onclick="requestItemUse('master-save-form', '세이브권을 사용하시겠습니까?', '지나간 결석을 출석으로 복구합니다.', '🛡️')"
                           class="w-full p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                     <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                     <div>
@@ -628,6 +628,22 @@
       </div>
     <% end %>
     
+    <!-- Global Item Confirmation Modal -->
+    <div id="item-confirm-modal" class="hidden fixed inset-0 z-[100000] flex items-center justify-center p-6">
+      <div onclick="document.getElementById('item-confirm-modal').classList.add('hidden')" class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-badge-pop bg-[#16151D]">
+        <div class="w-20 h-20 bg-indigo-500/20 rounded-[28px] flex items-center justify-center text-4xl mx-auto confirm-icon">🔮</div>
+        <div class="space-y-2">
+          <h3 class="text-2xl font-black text-white confirm-title">아이템을 사용하시겠습니까?</h3>
+          <p class="text-sm font-bold text-slate-400 leading-relaxed px-4 confirm-subtitle">사용 후에는 취소할 수 없습니다.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 pt-4">
+          <button onclick="document.getElementById('item-confirm-modal').classList.add('hidden')" class="py-4 bg-white/5 text-slate-500 font-black rounded-2xl active:scale-95 transition-all">취소</button>
+          <button id="item-confirm-submit" class="py-4 bg-indigo-500 text-white font-black rounded-2xl active:scale-95 transition-all shadow-lg shadow-indigo-500/20">사용하기</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Global User Profile Modal Frame -->
     <turbo-frame id="user-profile-modal-frame"></turbo-frame>
 
@@ -777,6 +793,27 @@
                 bg.style.transition = '';
             }, 300);
         }
+      };
+
+      // 아이템 사용 확인 팝업 함수
+      window.requestItemUse = function(formId, title, subtitle, icon) {
+        const modal = document.getElementById('item-confirm-modal');
+        if (!modal) return;
+
+        modal.querySelector('.confirm-title').innerText = title;
+        modal.querySelector('.confirm-subtitle').innerText = subtitle;
+        modal.querySelector('.confirm-icon').innerText = icon;
+        
+        const submitBtn = document.getElementById('item-confirm-submit');
+        submitBtn.onclick = () => {
+          const form = document.getElementById(formId);
+          if (form) {
+            form.requestSubmit(); // Turbo 지원 방식으로 제출
+          }
+          modal.classList.add('hidden');
+        };
+        
+        modal.classList.remove('hidden');
       };
 
       // 로그인 체크 함수 Fallback

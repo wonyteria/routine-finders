@@ -244,10 +244,12 @@
             can_use_pass = @my_membership.remaining_passes > 0 && !today_attendance&.status_excused?
           %>
           <% if can_use_pass %>
-            <%= button_to use_pass_routine_club_path(@routine_club), method: :post, 
-                          class: "px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] md:text-xs font-black border border-blue-100 hover:bg-blue-600 hover:text-white transition-all whitespace-nowrap", 
-                          data: { turbo_confirm: "휴식권을 사용하시겠습니까?", turbo: false } do %>
-              사용
+            <%= form_with url: use_pass_routine_club_path(@routine_club), method: :post, id: "rufa-stats-relax-form", data: { turbo: false } do %>
+              <button type="button" 
+                      onclick="requestItemUse('rufa-stats-relax-form', '휴식권을 사용하시겠습니까?', '오늘 분량 면제 및 출석 보호를 적용합니다.', '🎟️')"
+                      class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] md:text-xs font-black border border-blue-100 hover:bg-blue-600 hover:text-white transition-all whitespace-nowrap">
+                사용
+              </button>
             <% end %>
           <% elsif today_attendance&.status_excused? %>
             <span class="px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-[10px] md:text-xs font-black">완료</span>
