@@ -428,9 +428,11 @@ class User < ApplicationRecord
 
     todays_active_routines = all_routines.select do |r|
       created_condition = r.created_at.to_date <= date
+      # [Fix] 삭제된 루틴은 분모에서 제외 (해당 날짜에 이미 삭제되어 있었다면 제외)
+      deleted_condition = r.deleted_at.nil? || r.deleted_at.to_date > date
       day_condition = (r.days || []).include?(date.wday.to_s)
 
-      created_condition && day_condition
+      created_condition && deleted_condition && day_condition
     end
 
     total_count = todays_active_routines.size
