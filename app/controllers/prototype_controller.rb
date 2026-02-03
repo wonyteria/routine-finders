@@ -622,8 +622,9 @@ class PrototypeController < ApplicationController
 
     # 5. Push Notification Settings
     @push_configs = [
-      PushNotificationConfig.morning_reminder,
-      PushNotificationConfig.evening_check
+      PushNotificationConfig.morning_affirmation,
+      PushNotificationConfig.evening_reminder,
+      PushNotificationConfig.night_check
     ] rescue []
   end
 

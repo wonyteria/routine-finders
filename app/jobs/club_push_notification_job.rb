@@ -2,24 +2,24 @@ class ClubPushNotificationJob < ApplicationJob
   queue_as :default
 
   def perform
-    current_time = Time.current.in_time_zone("Seoul").strftime("%H:00")
+    current_time = Time.current.in_time_zone("Seoul").strftime("%H:%M")
 
     # 해당 시간에 예약된 활성 설정 가져오기
     configs = PushNotificationConfig.where(schedule_time: current_time, enabled: true)
 
     configs.each do |config|
       case config.config_type
-      when "morning_reminder"
-        send_reminders(config)
-      when "evening_check"
-        send_evening_checks(config)
+      when "morning_affirmation", "evening_reminder"
+        send_general_reminders(config)
+      when "night_check"
+        send_completion_checks(config)
       end
     end
   end
 
   private
 
-  def send_reminders(config)
+  def send_general_reminders(config)
     club = RoutineClub.official.first
     return unless club
 
@@ -31,7 +31,7 @@ class ClubPushNotificationJob < ApplicationJob
     end
   end
 
-  def send_evening_checks(config)
+  def send_completion_checks(config)
     club = RoutineClub.official.first
     return unless club
 

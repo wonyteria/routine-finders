@@ -26,4 +26,4 @@ production:
 
   club_push_checker:
     class: ClubPushNotificationJob
-    schedule: "0 * * * *" # 매시간 정각 실행 (분 단위 체크가 필요하면 간격 조정 가능)
+    schedule: "*/10 * * * *" # 10분마다 실행하여 HH:MM 스케줄 체크
