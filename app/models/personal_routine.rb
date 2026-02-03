@@ -7,14 +7,6 @@ class PersonalRoutine < ApplicationRecord
   validates :title, presence: true
   validate :validate_active_routines_limit, on: :create
 
-  private
-
-  def validate_active_routines_limit
-    if user && user.personal_routines.where(deleted_at: nil).count >= 6
-      errors.add(:base, "루틴은 최대 6개까지만 설정할 수 있습니다. 이미 6개의 루틴이 설정되어 있습니다.")
-    end
-  end
-
   # Methods
   def completed_today?
     completed_on?(Date.current)
@@ -84,5 +76,13 @@ class PersonalRoutine < ApplicationRecord
 
   def active_on?(date)
     created_at.to_date <= date && (deleted_at.nil? || deleted_at.to_date > date)
+  end
+
+  private
+
+  def validate_active_routines_limit
+    if user && user.personal_routines.where(deleted_at: nil).count >= 6
+      errors.add(:base, "루틴은 최대 6개까지만 설정할 수 있습니다. 이미 6개의 루틴이 설정되어 있습니다.")
+    end
   end
 end
