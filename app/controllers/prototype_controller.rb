@@ -704,9 +704,9 @@ class PrototypeController < ApplicationController
 
   def analyze_member_performance
     @target_user = User.find(params[:user_id])
-    type = params[:type] || "weekly"
+    @analysis_type = params[:type] || "weekly"
 
-    if type == "weekly"
+    if @analysis_type == "weekly"
       start_date = Date.current.beginning_of_week
       end_date = Date.current
       @analysis_title = "이번 주 실시간 분석"
@@ -716,11 +716,11 @@ class PrototypeController < ApplicationController
       @analysis_title = "이번 달 실시간 분석"
     end
 
-    # Pre-fetch personal routines
-    personal_routines = @target_user.personal_routines
+    # [Fix] 삭제된 루틴은 통계에서 영구 제외
+    personal_routines = @target_user.personal_routines.where(deleted_at: nil)
 
-    @daily_analysis = (start_date..end_date).map do |date|
-      # Filter active routines for this date
+    # 1. 일별 데이터 계산
+    daily_data = (start_date..end_date).map do |date|
       todays_active_routines = personal_routines.select do |r|
         created_condition = r.created_at.to_date <= date
         day_condition = (r.days || []).include?(date.wday.to_s)
@@ -729,7 +729,6 @@ class PrototypeController < ApplicationController
 
       total_count = todays_active_routines.size
 
-      # Find completed routine IDs
       completed_routine_ids = PersonalRoutineCompletion
                                 .where(personal_routine_id: todays_active_routines.map(&:id))
                                 .where(completed_on: date)
@@ -748,7 +747,54 @@ class PrototypeController < ApplicationController
         rate: achievement_rate,
         missed: missed_routines.map(&:title)
       }
-    end.reverse # Show recent first
+    end
+
+    # 2. 월간일 경우 주차별 그룹화 (Weekly Aggregation)
+    if @analysis_type == "monthly"
+      # 날짜 오름차순으로 정렬 후 그룹화
+      sorted_days = daily_data.sort_by { |d| d[:date] }
+
+      # 주차별 그룹화 (ActiveSupport의 beginning_of_week 기준)
+      # 그 달의 첫째 주, 둘째 주... 계산
+      grouped_weeks = sorted_days.group_by do |d|
+        # 월의 몇 번째 주인지 계산 (간단한 버전: 날짜 / 7 + 1 아님. 달력 기준)
+        # strftime("%W")는 연중 주차. 이걸로 그룹화하면 됨.
+        d[:date].strftime("%W").to_i
+      end
+
+      @daily_analysis = grouped_weeks.map do |week_num, days|
+        total_required = days.sum { |d| d[:total] }
+        total_completed = days.sum { |d| d[:completed] }
+        avg_rate = total_required > 0 ? (total_completed.to_f / total_required * 100).round(1) : 0
+
+        # 해당 주차의 기간 (시작일 ~ 종료일)
+        week_start = days.first[:date]
+        week_end = days.last[:date]
+
+        # 월의 몇 주차인지 재계산 (표시용)
+        # 해당 월의 1일이 속한 연중 주차와 비교
+        first_week_of_month = week_start.beginning_of_month.strftime("%W").to_i
+        current_week_of_month = week_num - first_week_of_month + 1
+
+        # 가장 많이 놓친 루틴 Top 3
+        missed_counts = days.flat_map { |d| d[:missed] }.tally
+        top_missed = missed_counts.sort_by { |_, v| -v }.take(2).map(&:first)
+
+        {
+          is_weekly_summary: true,
+          week_label: "#{week_start.month}월 #{current_week_of_month}주차",
+          date_range: "#{week_start.strftime('%m.%d')} ~ #{week_end.strftime('%m.%d')}",
+          total: total_required,
+          completed: total_completed,
+          rate: avg_rate,
+          missed: top_missed, # 주요 미달성 루틴만
+          missed_more_count: [ missed_counts.size - 2, 0 ].max
+        }
+      end.reverse # 최신 주차가 위로 오게
+    else
+      # 주간일 경우 일별 데이터 그대로 사용 (역순 정렬)
+      @daily_analysis = daily_data.reverse
+    end
 
     render partial: "prototype/member_analysis_modal_content", layout: false
   end
