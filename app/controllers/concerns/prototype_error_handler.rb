@@ -20,6 +20,11 @@ module PrototypeErrorHandler
   def handle_not_found(exception)
     Rails.logger.error "Not Found: #{exception.message}"
 
+    if action_name == "home" && controller_name == "prototype"
+      render plain: "페이지를 구성하는 일부 데이터를 찾을 수 없습니다. (에러: #{exception.message})", status: :not_found
+      return
+    end
+
     respond_to do |format|
       format.html { redirect_to prototype_home_path, alert: "요청하신 페이지를 찾을 수 없습니다." }
       format.json { render json: { error: "Not found" }, status: :not_found }
@@ -30,6 +35,11 @@ module PrototypeErrorHandler
   def handle_parameter_missing(exception)
     Rails.logger.error "Parameter Missing: #{exception.message}"
 
+    if action_name == "home" && controller_name == "prototype"
+      render plain: "필수 데이터 요청이 잘못되었습니다. (에러: #{exception.message})", status: :bad_request
+      return
+    end
+
     respond_to do |format|
       format.html { redirect_back fallback_location: prototype_home_path, alert: "필수 정보가 누락되었습니다." }
       format.json { render json: { error: exception.message }, status: :bad_request }
@@ -39,6 +49,11 @@ module PrototypeErrorHandler
   # 레코드 검증 실패
   def handle_record_invalid(exception)
     Rails.logger.error "Record Invalid: #{exception.message}"
+
+    if action_name == "home" && controller_name == "prototype"
+      render plain: "데이터 무결성 오류가 발생했습니다. (에러: #{exception.message})", status: :unprocessable_entity
+      return
+    end
 
     respond_to do |format|
       format.html { redirect_back fallback_location: prototype_home_path, alert: "입력하신 정보가 올바르지 않습니다." }
