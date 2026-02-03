@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "/service-worker.js" => "pwa#service_worker", as: :pwa_service_worker
   get "/manifest.json" => "pwa#manifest", as: :pwa_manifest
   get "/offline" => "pwa#offline", as: :pwa_offline
+  post "/pwa/subscribe" => "pwa#subscribe", as: :pwa_subscribe
 
   get "pwa", to: "prototype#pwa", as: :prototype_pwa
   post "notifications/clear", to: "prototype#clear_notifications", as: :prototype_clear_notifications

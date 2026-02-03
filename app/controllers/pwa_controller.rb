@@ -1,6 +1,7 @@
 class PwaController < ApplicationController
-  # Skip CSRF protection for service worker and manifest
-  skip_before_action :verify_authenticity_token, only: [ :service_worker, :manifest ]
+  # Skip CSRF protection for service worker, manifest and subscription
+  skip_before_action :verify_authenticity_token, only: [ :service_worker, :manifest, :subscribe ]
+  before_action :require_login, only: [ :subscribe ]
 
   def manifest
     render file: "app/views/pwa/manifest.json.erb", content_type: "application/manifest+json"
@@ -12,5 +13,17 @@ class PwaController < ApplicationController
 
   def offline
     render file: "app/views/pwa/offline.html", layout: false
+  end
+
+  def subscribe
+    subscription = current_user.web_push_subscriptions.find_or_initialize_by(endpoint: params[:endpoint])
+    subscription.p256dh_key = params[:p256dh]
+    subscription.auth_key = params[:auth]
+
+    if subscription.save
+      render json: { status: "ok" }, status: :ok
+    else
+      render json: { errors: subscription.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 end

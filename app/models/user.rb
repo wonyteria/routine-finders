@@ -151,6 +151,7 @@ class User < ApplicationRecord
   has_many :routine_clubs, through: :routine_club_members
   has_many :routine_club_reports, dependent: :destroy
   has_many :rufa_activities, dependent: :destroy
+  has_many :web_push_subscriptions, dependent: :destroy
 
   # Validations
   validates :nickname, presence: true

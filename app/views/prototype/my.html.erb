@@ -433,6 +433,25 @@
       </div>
     <% end %>
 
+    <div data-controller="push-subscription" 
+         data-push-subscription-vapid-public-key-value="<%= ENV['VAPID_PUBLIC_KEY'] %>"
+         class="w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer group"
+         data-action="click->push-subscription#subscribe">
+      <div class="flex items-center gap-4">
+        <span class="text-slate-500 group-hover:text-amber-400 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </span>
+        <div class="text-left">
+          <span class="text-sm font-bold text-slate-300 block">앱 푸시 알림 설정</span>
+          <p class="text-[9px] font-medium text-slate-500 mt-0.5">휴대폰 알림으로 루틴을 잊지 마세요</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">활성화</span>
+        <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+
     <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "w-full flex items-center justify-between p-5 hover:bg-red-500/5 active:bg-red-500/10 transition-colors cursor-pointer block" do %>
       <div class="flex items-center gap-4">
         <span class="text-red-500/50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_03_021222) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_04_001500) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -583,6 +583,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_021222) do
     t.index ["status"], name: "index_verification_logs_on_status"
   end
 
+  create_table "web_push_subscriptions", force: :cascade do |t|
+    t.string "auth_key", null: false
+    t.datetime "created_at", null: false
+    t.string "endpoint", null: false
+    t.string "p256dh_key", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["endpoint"], name: "index_web_push_subscriptions_on_endpoint", unique: true
+    t.index ["user_id"], name: "index_web_push_subscriptions_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "announcements", "challenges"
@@ -620,4 +631,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_03_021222) do
   add_foreign_key "user_goals", "users"
   add_foreign_key "verification_logs", "challenges"
   add_foreign_key "verification_logs", "participants"
+  add_foreign_key "web_push_subscriptions", "users"
 end
