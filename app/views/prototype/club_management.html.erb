@@ -672,7 +672,7 @@
    modal.classList.remove('hidden');
 
    // Fetch data
-   fetch(`/prototype/analyze_member_performance?user_id=${userId}&type=${type}`)
+   fetch(`/admin_center/analyze_member_performance?user_id=${userId}&type=${type}`)
      .then(response => response.text())
      .then(html => {
        content.innerHTML = html;
