@@ -434,12 +434,17 @@ class User < ApplicationRecord
       created_condition && deleted_condition && day_condition
     end
 
-    return 0 if todays_active_routines.empty?
+    total_count = todays_active_routines.size
+    return 0 if total_count.zero?
 
-    completed_count = personal_routines.joins(:completions)
-                                      .where(personal_routine_completions: { completed_on: date })
-                                      .count
-    (completed_count.to_f / todays_active_routines.size * 100).round(1)
+    # [Fix] 분자 계산 시에도 삭제된 루틴의 완료 기록을 포함해야 함
+    # todays_active_routines에 포함된 루틴 ID를 기준으로 완료 기록 조회
+    completed_count = PersonalRoutineCompletion
+                        .where(personal_routine_id: todays_active_routines.map(&:id))
+                        .where(completed_on: date)
+                        .count
+
+    (completed_count.to_f / total_count * 100).round(1)
   end
 
   def period_routine_rate(start_date, end_date)
