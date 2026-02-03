@@ -629,7 +629,10 @@ class PrototypeController < ApplicationController
       current_user.ensure_rufa_club_membership_for_admin if current_user&.admin?
 
       # Real members of the official club (Exclude deleted users)
-      @club_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(user: { personal_routines: :completions }).order(attendance_rate: :desc)
+      @club_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(user: { personal_routines: :completions })
+
+      # [Sorting Logic]
+      @member_sort = params[:member_sort] || "attendance_high"
 
       # Fix: Fetch pending memberships from ALL active clubs to ensure no application is missed (Exclude deleted users)
       @pending_memberships = RoutineClubMember.where(payment_status: :pending).joins(:user).where(users: { deleted_at: nil }).includes(:user, :routine_club).order(created_at: :desc)
@@ -641,9 +644,31 @@ class PrototypeController < ApplicationController
           monthly_rate: member.monthly_routine_rate,
           weekly_attendance: member.weekly_attendance_rate, # 보조: 출석 기준 달성률
           monthly_attendance: member.monthly_attendance_rate,
+          created_at: member.created_at,
           growth_trend: nil
         }
       end
+
+      case @member_sort
+      when "weekly_high"
+        @member_stats.sort_by! { |s| -s[:weekly_rate] }
+      when "weekly_low"
+        @member_stats.sort_by! { |s| s[:weekly_rate] }
+      when "monthly_high"
+        @member_stats.sort_by! { |s| -s[:monthly_rate] }
+      when "monthly_low"
+        @member_stats.sort_by! { |s| s[:monthly_rate] }
+      when "join_newest"
+        @member_stats.sort_by! { |s| -s[:created_at].to_i }
+      when "join_oldest"
+        @member_stats.sort_by! { |s| s[:created_at].to_i }
+      when "attendance_low"
+        @member_stats.sort_by! { |s| s[:member].attendance_rate }
+      else # attendance_high
+        @member_stats.sort_by! { |s| -s[:member].attendance_rate }
+      end
+
+      @club_members = @member_stats.map { |s| s[:member] }
       # Announcements
       @announcements = @official_club.announcements.order(created_at: :desc)
     else
