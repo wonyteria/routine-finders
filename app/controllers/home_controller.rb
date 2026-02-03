@@ -91,8 +91,6 @@ class HomeController < ApplicationController
 
     # Social & Support Data
     @social_stats = {
-      received_cheers: RufaClap.joins(:rufa_activity).where(rufa_activities: { user_id: @current_user.id }).count,
-      sent_cheers: @current_user.rufa_claps.count,
       best_routine_count: @current_user.personal_routines.where("current_streak >= 7").count,
       rating: (@current_user.reviews.average(:rating) || 5.0).round(1)
     }

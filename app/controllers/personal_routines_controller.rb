@@ -142,7 +142,7 @@ class PersonalRoutinesController < ApplicationController
     end
 
     # 루파 시너지 피드
-    @rufa_activities = RufaActivity.includes(:user, :claps).recent.limit(10)
+    @rufa_activities = RufaActivity.includes(:user).recent.limit(10)
 
     # 루파 인사이트 (전문가 템플릿)
     if RoutineTemplate.none?

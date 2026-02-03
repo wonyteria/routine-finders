@@ -1,7 +1,0 @@
-<%= button_to rufa_activity_claps_path(activity), 
-          method: :post, 
-          class: "flex items-center gap-1.5 lg:gap-3 px-3 py-1.5 lg:px-6 lg:py-3 #{current_user.rufa_claps.exists?(rufa_activity: activity) ? 'bg-amber-100' : 'bg-white'} hover:bg-amber-50 rounded-full transition-all border border-slate-100 group/clap shadow-sm",
-          data: { turbo: true } do %>
-  <span class="text-base lg:text-2xl group-hover/clap:scale-150 transition-transform duration-500"><%= current_user.rufa_claps.exists?(rufa_activity: activity) ? "👏" : "🙌" %></span>
-  <span class="text-[10px] lg:text-sm font-black <%= activity.claps_count.to_i > 0 ? 'text-amber-600' : 'text-slate-400' %>"><%= activity.claps_count.to_i %></span>
-<% end %>

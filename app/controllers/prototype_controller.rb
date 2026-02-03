@@ -239,21 +239,6 @@ class PrototypeController < ApplicationController
         }
       end
 
-      # 3. Cheer Count
-      current_cheers = current_user.rufa_claps.count
-      next_c_badge = Badge.where(badge_type: :cheer_count)
-                          .where("requirement_value > ?", current_cheers)
-                          .order(requirement_value: :asc).first
-      if next_c_badge
-        @milestones << {
-          name: next_c_badge.name,
-          icon: "👏",
-          current: current_cheers,
-          target: next_c_badge.requirement_value.to_i,
-          unit: "회"
-        }
-      end
-
       # 4. Challenge Participation
       current_challenges = current_user.participations.count
       next_ch_badge = Badge.participation_count.where("requirement_value > ?", current_challenges)

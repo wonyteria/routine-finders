@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_31_085630) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_03_021222) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -477,22 +477,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_31_085630) do
   create_table "rufa_activities", force: :cascade do |t|
     t.string "activity_type"
     t.text "body"
-    t.integer "claps_count", default: 0
     t.datetime "created_at", null: false
     t.integer "target_id"
     t.string "target_type"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_rufa_activities_on_user_id"
-  end
-
-  create_table "rufa_claps", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "rufa_activity_id", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["rufa_activity_id"], name: "index_rufa_claps_on_rufa_activity_id"
-    t.index ["user_id"], name: "index_rufa_claps_on_user_id"
   end
 
   create_table "staffs", force: :cascade do |t|
@@ -623,8 +613,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_31_085630) do
   add_foreign_key "routine_club_rules", "routine_clubs"
   add_foreign_key "routine_clubs", "users", column: "host_id"
   add_foreign_key "rufa_activities", "users"
-  add_foreign_key "rufa_claps", "rufa_activities"
-  add_foreign_key "rufa_claps", "users"
   add_foreign_key "staffs", "challenges"
   add_foreign_key "staffs", "users"
   add_foreign_key "user_badges", "badges"
