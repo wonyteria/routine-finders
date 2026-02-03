@@ -285,14 +285,16 @@ class RoutineClubMember < ApplicationRecord
   # 주간 루틴 수행률 계산 (루틴 개수 기준)
   def weekly_routine_rate(date = Date.current)
     start_date = date.beginning_of_week
-    end_date = date.end_of_week
+    # 미래의 날짜는 모수에 포함하지 않음 (오늘까지만 계산)
+    end_date = [ date.end_of_week, Date.current ].min
     calculate_routine_rate(start_date, end_date)
   end
 
   # 월간 루틴 수행률 계산 (루틴 개수 기준)
   def monthly_routine_rate(date = Date.current)
     start_date = date.beginning_of_month
-    end_date = date.end_of_month
+    # 미래의 날짜는 모수에 포함하지 않음 (오늘까지만 계산)
+    end_date = [ date.end_of_month, Date.current ].min
     calculate_routine_rate(start_date, end_date)
   end
 
