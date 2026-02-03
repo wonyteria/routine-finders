@@ -418,27 +418,25 @@ class User < ApplicationRecord
   end
 
   def daily_achievement_rate(date = Date.current)
+    # [수정] 삭제된 루틴은 계산에서 영구 제외 (현재 유효한 루틴만 기준)
     # 해당 날짜 기준으로 유효했던 루틴만 필터링
     # 1. 생성일이 해당 날짜 또는 그 이전이어야 함
-    # 2. 삭제되지 않았거나, 삭제일이 해당 날짜 이후여야 함
-    # 3. 해당 요일에 수행해야 하는 루틴이어야 함
+    # 2. 해당 요일에 수행해야 하는 루틴이어야 함
 
-    # unscoped를 사용하여 삭제된 루틴도 포함해서 조회
-    all_routines = personal_routines.try(:unscoped) || personal_routines
+    # unscoped 제거: 현재 삭제되지 않은(deleted_at: nil) 루틴만 조회
+    all_routines = personal_routines
 
     todays_active_routines = all_routines.select do |r|
       created_condition = r.created_at.to_date <= date
-      deleted_condition = r.deleted_at.nil? || r.deleted_at.to_date > date
       day_condition = (r.days || []).include?(date.wday.to_s)
 
-      created_condition && deleted_condition && day_condition
+      created_condition && day_condition
     end
 
     total_count = todays_active_routines.size
     return 0 if total_count.zero?
 
-    # [Fix] 분자 계산 시에도 삭제된 루틴의 완료 기록을 포함해야 함
-    # todays_active_routines에 포함된 루틴 ID를 기준으로 완료 기록 조회
+    # 현재 유효한 루틴 중 완료된 것 카운트
     completed_count = PersonalRoutineCompletion
                         .where(personal_routine_id: todays_active_routines.map(&:id))
                         .where(completed_on: date)
@@ -448,8 +446,8 @@ class User < ApplicationRecord
   end
 
   def period_routine_rate(start_date, end_date)
-    # unscoped를 사용하여 삭제된 루틴도 포함해서 조회 (과거 시점 계산을 위해)
-    all_routines = personal_routines.try(:unscoped) || personal_routines
+    # [수정] 삭제된 루틴 제외
+    all_routines = personal_routines
 
     # to_a로 미리 로드하여 DB 쿼리 최소화
     loaded_routines = all_routines.to_a
