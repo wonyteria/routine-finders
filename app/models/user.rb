@@ -426,7 +426,15 @@ class User < ApplicationRecord
 
     todays_active_routines = all_routines.select do |r|
       created_condition = r.created_at.to_date <= date
-      day_condition = (r.days || []).include?(date.wday.to_s)
+      days_list = r.days
+      if days_list.is_a?(String)
+        begin
+          days_list = JSON.parse(days_list)
+        rescue JSON::ParserError
+          days_list = []
+        end
+      end
+      day_condition = (days_list || []).include?(date.wday.to_s)
 
       created_condition && day_condition
     end
@@ -455,7 +463,15 @@ class User < ApplicationRecord
       # 해당 날짜(date)에 설정되어 있던 루틴 합산
       active_count_for_day = loaded_routines.count do |r|
         created_condition = r.created_at.to_date <= date
-        day_condition = (r.days || []).include?(date.wday.to_s)
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        day_condition = (days_list || []).include?(date.wday.to_s)
 
         created_condition && day_condition
       end
@@ -478,9 +494,18 @@ class User < ApplicationRecord
     all_routines = personal_routines.try(:unscoped) || personal_routines
 
     todays_active_routines = all_routines.select do |r|
+      days_list = r.days
+      if days_list.is_a?(String)
+        begin
+          days_list = JSON.parse(days_list)
+        rescue JSON::ParserError
+          days_list = []
+        end
+      end
+
       created_condition = r.created_at.to_date <= date
       deleted_condition = r.deleted_at.nil? || r.deleted_at.to_date > date
-      day_condition = (r.days || []).include?(date.wday.to_s)
+      day_condition = (days_list || []).include?(date.wday.to_s)
 
       created_condition && deleted_condition && day_condition
     end

@@ -77,7 +77,17 @@ class RoutineClubReportService
 
     target_period.each do |date|
       # 해당 요일에 수행해야 하는 루틴들
-      target_routines_for_day = routines.select { |r| (r.days || []).include?(date.wday.to_s) }
+      target_routines_for_day = routines.select do |r|
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        (days_list || []).include?(date.wday.to_s)
+      end
       target_count = target_routines_for_day.count
       total_target_count_period += target_count
 

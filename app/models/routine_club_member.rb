@@ -303,7 +303,19 @@ class RoutineClubMember < ApplicationRecord
   def calculate_period_rate(start_date, end_date)
     # 사용자의 루틴 설정 요일 가져오기 (active 루틴만)
     routines = user.personal_routines
-    target_routine_wdays = routines.map { |r| r.days }.flatten.compact.map(&:to_i).uniq
+    target_routine_wdays = []
+    routines.each do |r|
+      d = r.days
+      if d.is_a?(String)
+        begin
+          d = JSON.parse(d)
+        rescue JSON::ParserError
+          d = []
+        end
+      end
+      target_routine_wdays.concat(d || [])
+    end
+    target_routine_wdays = target_routine_wdays.compact.map(&:to_i).uniq
 
     return 0.0 if target_routine_wdays.empty?
 
@@ -331,7 +343,17 @@ class RoutineClubMember < ApplicationRecord
 
     (start_date..end_date).each do |date|
       # 해당 요일에 설정된 루틴들의 개수
-      routines_on_day = routines.count { |r| r.days&.include?(date.wday.to_s) && r.active_on?(date) }
+      routines_on_day = routines.count do |r|
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        (days_list || []).include?(date.wday.to_s) && r.active_on?(date)
+      end
       total_required += routines_on_day
 
       # 패스를 사용한 날이라면 해당 날의 모든 루틴을 '완료점수'로 인정 (경고 방어용)

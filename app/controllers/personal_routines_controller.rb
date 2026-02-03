@@ -163,7 +163,17 @@ class PersonalRoutinesController < ApplicationController
     @achievement_trend = (0..6).map do |i|
       date = i.days.ago.to_date
       completions = current_user.personal_routines.joins(:completions).where(personal_routine_completions: { completed_on: date }).count
-      total = current_user.personal_routines.select { |r| (r.days || []).include?(date.wday.to_s) }.count
+      total = current_user.personal_routines.select do |r|
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        (days_list || []).include?(date.wday.to_s)
+      end.count
       total > 0 ? (completions.to_f / total * 100).round : 0
     end.reverse
   end
