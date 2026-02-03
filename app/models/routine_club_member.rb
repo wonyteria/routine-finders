@@ -321,7 +321,8 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def calculate_routine_rate(start_date, end_date)
-    routines = user.personal_routines.to_a
+    # 삭제된 루틴은 철저히 배제 (User Request)
+    routines = user.personal_routines.where(deleted_at: nil).to_a
     # 해당 기간 내 패스(휴식/세이브)를 사용한 날짜들 확보
     excused_dates = attendances.where(attendance_date: start_date..end_date, status: :excused).pluck(:attendance_date)
 
