@@ -702,6 +702,57 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def analyze_member_performance
+    @target_user = User.find(params[:user_id])
+    type = params[:type] || "weekly"
+
+    if type == "weekly"
+      start_date = Date.current.beginning_of_week
+      end_date = Date.current
+      @analysis_title = "이번 주 실시간 분석"
+    else
+      start_date = Date.current.beginning_of_month
+      end_date = Date.current
+      @analysis_title = "이번 달 실시간 분석"
+    end
+
+    # Pre-fetch personal routines
+    personal_routines = @target_user.personal_routines
+
+    @daily_analysis = (start_date..end_date).map do |date|
+      # Filter active routines for this date
+      todays_active_routines = personal_routines.select do |r|
+        created_condition = r.created_at.to_date <= date
+        day_condition = (r.days || []).include?(date.wday.to_s)
+        created_condition && day_condition
+      end
+
+      total_count = todays_active_routines.size
+
+      # Find completed routine IDs
+      completed_routine_ids = PersonalRoutineCompletion
+                                .where(personal_routine_id: todays_active_routines.map(&:id))
+                                .where(completed_on: date)
+                                .pluck(:personal_routine_id)
+
+      completed_count = completed_routine_ids.size
+      achievement_rate = total_count > 0 ? (completed_count.to_f / total_count * 100).round(1) : 0
+
+      missed_routines = todays_active_routines.reject { |r| completed_routine_ids.include?(r.id) }
+
+      {
+        date: date,
+        day_name: %w[일 월 화 수 목 금 토][date.wday],
+        total: total_count,
+        completed: completed_count,
+        rate: achievement_rate,
+        missed: missed_routines.map(&:title)
+      }
+    end.reverse # Show recent first
+
+    render partial: "prototype/member_analysis_modal_content", layout: false
+  end
+
   def batch_reports
     @official_club = RoutineClub.official.first || RoutineClub.first
     @report_type = params[:type] || "weekly"

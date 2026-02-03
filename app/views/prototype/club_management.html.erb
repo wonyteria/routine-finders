@@ -233,9 +233,9 @@
                   </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                   <div class="p-3 bg-white/2 rounded-2xl border border-white/5">
+                   <div onclick="openAnalysisModal(<%= stat[:member].user.id %>, 'weekly')" class="p-3 bg-white/2 rounded-2xl border border-white/5 cursor-pointer hover:bg-white/5 hover:border-white/10 transition-all group">
                      <div class="flex items-center justify-between mb-1.5">
-                       <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Weekly</p>
+                       <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none group-hover:text-indigo-400 transition-colors">Weekly Check</p>
                        <span class="text-[8px] font-bold text-slate-600">출석 <%= stat[:weekly_attendance] %>%</span>
                      </div>
                      <div class="flex items-baseline gap-2">
@@ -245,9 +245,9 @@
                        </div>
                      </div>
                    </div>
-                   <div class="p-3 bg-white/2 rounded-2xl border border-white/5">
+                   <div onclick="openAnalysisModal(<%= stat[:member].user.id %>, 'monthly')" class="p-3 bg-white/2 rounded-2xl border border-white/5 cursor-pointer hover:bg-white/5 hover:border-white/10 transition-all group">
                      <div class="flex items-center justify-between mb-1.5">
-                       <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Monthly</p>
+                       <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none group-hover:text-purple-400 transition-colors">Monthly Check</p>
                        <span class="text-[8px] font-bold text-slate-600">출석 <%= stat[:monthly_attendance] %>%</span>
                      </div>
                      <div class="flex items-baseline gap-2">
@@ -619,11 +619,15 @@
   document.addEventListener('click', function(event) {
     const messageModal = document.getElementById('message-modal');
     const penaltyModal = document.getElementById('penalty-modal');
+    const analysisModal = document.getElementById('analysis-modal');
     if (event.target === messageModal) {
       closeMessageModal();
     }
     if (event.target === penaltyModal) {
       closePenaltyModal();
+    }
+    if (event.target === analysisModal) {
+       closeAnalysisModal();
     }
   });
 
@@ -657,6 +661,31 @@
   function closePenaltyModal() {
     document.getElementById('penalty-modal').classList.add('hidden');
   }
+
+  // Analysis Modal Logic
+  function openAnalysisModal(userId, type) {
+   const modal = document.getElementById('analysis-modal');
+   const content = document.getElementById('analysis-modal-content');
+   
+   // Show spinner or loading state
+   content.innerHTML = '<div class="flex items-center justify-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div></div>';
+   modal.classList.remove('hidden');
+
+   // Fetch data
+   fetch(`/prototype/analyze_member_performance?user_id=${userId}&type=${type}`)
+     .then(response => response.text())
+     .then(html => {
+       content.innerHTML = html;
+     })
+     .catch(error => {
+       content.innerHTML = '<div class="text-center py-10 text-rose-500 text-xs font-bold">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+       console.error('Error:', error);
+     });
+  }
+
+   function closeAnalysisModal() {
+       document.getElementById('analysis-modal').classList.add('hidden');
+   }
 </script>
 
 <!-- Penalty Modal -->
@@ -697,4 +726,20 @@
       </div>
     <% end %>
   </div>
+</div>
+
+<!-- Analysis Modal -->
+<div id="analysis-modal" class="hidden fixed inset-0 bg-black/50 z-[6000] flex items-center justify-center p-4">
+   <div class="bg-[#1B1A24] rounded-3xl max-w-md w-full p-8 border border-white/10 shadow-2xl animate-badge-pop relative" onclick="event.stopPropagation()">
+       <!-- Close button set absolutely to top-right -->
+       <button onclick="closeAnalysisModal()" class="absolute top-4 right-4 p-2 hover:bg-white/5 rounded-lg transition-colors z-20">
+           <svg class="w-6 h-6 text-slate-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+           </svg>
+       </button>
+
+       <div id="analysis-modal-content">
+           <!-- Content loaded via AJAX -->
+       </div>
+   </div>
 </div>
