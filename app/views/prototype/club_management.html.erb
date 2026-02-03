@@ -156,28 +156,31 @@
 
         <!-- Active Members Sub-Tabs -->
         <section class="px-6 space-y-6">
-          <div class="space-y-4">
+          <div class="flex flex-col gap-4">
             <div class="flex items-center justify-between px-1">
               <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">회원 데이터</h2>
-              
-              <!-- Sorting Selector -->
-              <div class="flex items-center gap-1.5 bg-white/5 rounded-xl px-3 py-1.5 border border-white/5">
-                <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
-                <select onchange="updateMemberSort(this.value)" class="bg-transparent text-[10px] font-black text-slate-300 outline-none cursor-pointer focus:text-indigo-400 transition-colors">
+              <div class="px-2 py-1 rounded bg-white/5 border border-white/10">
+                <span class="text-[9px] font-black text-slate-500 truncate">총 <%= @club_members.count %>명</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 px-1 overflow-x-auto no-scrollbar">
+              <!-- Sorting Selector (Main Filter) -->
+              <div class="flex items-center gap-1.5 bg-white/10 rounded-xl px-2.5 py-1.5 border border-white/20 shrink-0">
+                <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
+                <select onchange="updateMemberSort(this.value)" class="bg-transparent text-[10px] font-black text-white outline-none cursor-pointer focus:text-indigo-400">
                   <option value="attendance_high" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'attendance_high' %>>평균 달성률 높은순</option>
                   <option value="attendance_low" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'attendance_low' %>>평균 달성률 낮은순</option>
-                  <option value="weekly_high" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'weekly_high' %>>Weekly Check 높은순</option>
-                  <option value="weekly_low" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'weekly_low' %>>Weekly Check 낮은순</option>
-                  <option value="monthly_high" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'monthly_high' %>>Monthly Check 높은순</option>
-                  <option value="monthly_low" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'monthly_low' %>>Monthly Check 낮은순</option>
+                  <option value="weekly_high" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'weekly_high' %>>Weekly 높은순</option>
+                  <option value="weekly_low" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'weekly_low' %>>Weekly 낮은순</option>
+                  <option value="monthly_high" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'monthly_high' %>>Monthly 높은순</option>
+                  <option value="monthly_low" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'monthly_low' %>>Monthly 낮은순</option>
                   <option value="join_newest" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'join_newest' %>>최신 가입순</option>
                   <option value="join_oldest" class="bg-[#1B1A24]" <%= 'selected' if @member_sort == 'join_oldest' %>>오래된 가입순</option>
                 </select>
               </div>
-            </div>
 
-            <div class="flex items-center justify-end px-1 overflow-x-auto pb-1 no-scrollbar">
-              <div class="flex bg-white/5 rounded-lg p-1 gap-1">
+              <div class="flex bg-white/5 rounded-lg p-1 gap-1 shrink-0">
                  <button type="button" 
                          id="sub-tab-btn-list"
                          onclick="switchSubTab('list')"
