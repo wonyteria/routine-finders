@@ -661,6 +661,45 @@ class PrototypeController < ApplicationController
     @target_user = User.find(params[:user_id])
     @reports = @target_user.routine_club_reports.order(start_date: :desc)
     @official_club = RoutineClub.official.first
+
+    # [Added] Weekly Live Analysis for transparency
+    week_start = Date.current.beginning_of_week
+    week_end = Date.current
+
+    # Pre-fetch personal routines to minimize queries, using the new logic (exclude deleted)
+    personal_routines = @target_user.personal_routines
+
+    @weekly_analysis = (week_start..week_end).map do |date|
+      # Filter active routines for this date: created on/before date AND includes the day of week
+      todays_active_routines = personal_routines.select do |r|
+        created_condition = r.created_at.to_date <= date
+        day_condition = (r.days || []).include?(date.wday.to_s)
+        created_condition && day_condition
+      end
+
+      total_count = todays_active_routines.size
+
+      # Find completed routine IDs for this date
+      completed_routine_ids = PersonalRoutineCompletion
+                                .where(personal_routine_id: todays_active_routines.map(&:id))
+                                .where(completed_on: date)
+                                .pluck(:personal_routine_id)
+
+      completed_count = completed_routine_ids.size
+      achievement_rate = total_count > 0 ? (completed_count.to_f / total_count * 100).round(1) : 0
+
+      # Identify missed routines for detailed feedback
+      missed_routines = todays_active_routines.reject { |r| completed_routine_ids.include?(r.id) }
+
+      {
+        date: date,
+        day_name: %w[일 월 화 수 목 금 토][date.wday],
+        total: total_count,
+        completed: completed_count,
+        rate: achievement_rate,
+        missed: missed_routines.map(&:title)
+      }
+    end
   end
 
   def batch_reports
