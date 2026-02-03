@@ -732,6 +732,12 @@
   <% end %>
 <% end %>
 
+<% content_for :modal_container do %>
+  <% if @show_push_onboarding %>
+    <%= render "prototype/push_onboarding_modal" %>
+  <% end %>
+<% end %>
+
 <!-- Welcome Onboarding Modal for New Users -->
 <% if flash[:show_onboarding] && current_user && current_user.respond_to?(:onboarding_completed?) && !current_user.onboarding_completed? %>
   <%= render 'shared/welcome_onboarding' %>

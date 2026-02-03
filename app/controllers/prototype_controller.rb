@@ -104,6 +104,14 @@ class PrototypeController < ApplicationController
       @mid_term_goal = @user_goals["mid_term"]&.body
       @long_term_goal = @user_goals["long_term"]&.body
       @weekly_goal = current_user.weekly_goal
+
+      # [Push Notification Onboarding]
+      # Show if club member + not dismissed + not subscribed
+      if @is_club_member
+        dismissed = current_user.notification_preferences&.dig("push_onboarding_dismissed")
+        subscribed = current_user.web_push_subscriptions.exists?
+        @show_push_onboarding = !dismissed && !subscribed
+      end
     else
       @hosted_challenges = []
       @joined_challenges = []

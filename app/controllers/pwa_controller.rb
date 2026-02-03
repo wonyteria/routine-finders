@@ -1,7 +1,7 @@
 class PwaController < ApplicationController
   # Skip CSRF protection for service worker, manifest and subscription
-  skip_before_action :verify_authenticity_token, only: [ :service_worker, :manifest, :subscribe ]
-  before_action :require_login, only: [ :subscribe ]
+  skip_before_action :verify_authenticity_token, only: [ :service_worker, :manifest, :subscribe, :dismiss_notice ]
+  before_action :require_login, only: [ :subscribe, :dismiss_notice ]
 
   def manifest
     render file: "app/views/pwa/manifest.json.erb", content_type: "application/manifest+json"
@@ -24,6 +24,18 @@ class PwaController < ApplicationController
       render json: { status: "ok" }, status: :ok
     else
       render json: { errors: subscription.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def dismiss_notice
+    # JSON column handles string keys
+    current_user.notification_preferences ||= {}
+    current_user.notification_preferences["push_onboarding_dismissed"] = true
+
+    if current_user.save
+      render json: { status: "ok" }, status: :ok
+    else
+      render json: { error: current_user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 end
