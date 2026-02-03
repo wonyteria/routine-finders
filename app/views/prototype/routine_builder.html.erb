@@ -67,7 +67,18 @@
       <!-- STEP 1: Title & Icon -->
       <section id="step-0" class="step-section flex-1 flex flex-col gap-4">
         <div class="space-y-1">
-          <h2 class="text-xl font-black text-white tracking-tight">어떤 <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">루틴</span>을 시작할까요?</h2>
+          <div class="flex justify-between items-end mb-2">
+            <h2 class="text-xl font-black text-white tracking-tight">어떤 <span class="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">루틴</span>을 시작할까요?</h2>
+            <div class="px-3 py-1 bg-white/5 border border-white/10 rounded-full flex items-center gap-1.5">
+              <span class="text-[10px] font-black <%= @active_routine_count >= 5 ? 'text-rose-500' : 'text-indigo-400' %>"><%= @active_routine_count %>/5</span>
+              <span class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Capacity</span>
+            </div>
+          </div>
+          <% if @active_routine_count >= 5 %>
+            <p class="text-[10px] font-bold text-rose-500/80 leading-relaxed italic">⚠️ 성실한 몰입을 위해 루틴은 최대 5개까지만 설정할 수 있습니다.</p>
+          <% else %>
+            <p class="text-[10px] font-bold text-slate-500 leading-relaxed">성장 핵심 팁: 확실히 해낼 수 있는 3~5개가 가장 좋습니다.</p>
+          <% end %>
         </div>
 
         <div class="space-y-4">
@@ -187,15 +198,17 @@
     const catHidden = document.getElementById('routine_category_hidden');
     const daysHidden = document.getElementById('routine_days_hidden');
 
+    const activeRoutineCount = <%= @active_routine_count %>;
+    
     function validate() {
       if (currentStep === 0) {
-        const isValid = titleInput.value.trim().length > 0;
+        const isValid = titleInput.value.trim().length > 0 && activeRoutineCount < 5;
         nextBtn.disabled = !isValid;
         nextBtn.classList.toggle('opacity-30', !isValid);
         nextBtn.classList.toggle('cursor-not-allowed', !isValid);
       } else {
-        nextBtn.disabled = false;
-        nextBtn.classList.remove('opacity-30', 'cursor-not-allowed');
+        nextBtn.disabled = activeRoutineCount >= 5;
+        nextBtn.classList.toggle('opacity-30', activeRoutineCount >= 5);
       }
     }
 

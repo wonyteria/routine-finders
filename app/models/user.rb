@@ -582,8 +582,8 @@ class User < ApplicationRecord
     routine_completion: 10,      # 루틴 1회 완료
     feed_post: 5,                # 오늘의 확언 작성
     live_participation: 20,      # 라이브룸 참여
-    challenge_hosting: 100,      # 챌린지/모임 개설
-    challenge_participation: 50  # 챌린지/모임 참여 (단순 참여)
+    challenge_hosting: 60,       # 챌린지/모임 개설 (밸런스 조정: 100 -> 60)
+    challenge_participation: 30  # 챌린지/모임 참여 (밸런스 조정: 50 -> 30)
   }.freeze
 
   # Level thresholds (비선형 성장)

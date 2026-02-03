@@ -195,7 +195,7 @@ class PersonalRoutinesController < ApplicationController
         format.json { render :show, status: :created, location: @routine }
       end
     else
-      redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), alert: "루틴 추가에 실패했습니다."
+      redirect_to personal_routines_path(date: params[:date], tab: params[:tab]), alert: @routine.errors.full_messages.to_sentence
     end
   end
 

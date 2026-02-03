@@ -5,6 +5,15 @@ class PersonalRoutine < ApplicationRecord
 
   # Validations
   validates :title, presence: true
+  validate :validate_active_routines_limit, on: :create
+
+  private
+
+  def validate_active_routines_limit
+    if user && user.personal_routines.where(deleted_at: nil).count >= 5
+      errors.add(:base, "루틴은 최대 5개까지만 설정할 수 있습니다. 이미 5개의 루틴이 설정되어 있습니다.")
+    end
+  end
 
   # Methods
   def completed_today?

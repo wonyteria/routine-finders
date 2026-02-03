@@ -196,9 +196,9 @@ class RoutineClubMember < ApplicationRecord
     # Points logic:
     # 1. 10 pts per present day (기본 출석)
     # 2. Bonus for routine achievement:
-    #    - 100% achievement: +20 pts bonus
+    #    - 100% achievement: +30 pts bonus
     #    - 50-99% achievement: +5 pts bonus
-    # 3. 20 pts Golden Fire bonus (per 7-day perfect streak)
+    # 3. 50 pts Golden Fire bonus (per 7-day perfect streak)
 
     points = 0
     attendances_data = attendances.where(status: :present)
@@ -209,14 +209,14 @@ class RoutineClubMember < ApplicationRecord
     # 2. Achievement Bonuses
     attendances_data.each do |a|
       if a.achievement_rate.to_f >= 100.0
-        points += 20
+        points += 30 # 밸런스 조정: 20 -> 30
       elsif a.achievement_rate.to_f >= 50.0
         points += 5
       end
     end
 
     # 3. Golden Fire (7-day streaks)
-    points += (attendances_data.count / 7) * (routine_club.golden_fire_bonus || 20)
+    points += (attendances_data.count / 7) * 50 # 밸런스 조정: 20 -> 50
 
     update!(growth_points: points)
   end

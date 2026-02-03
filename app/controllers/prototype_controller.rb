@@ -407,6 +407,7 @@ class PrototypeController < ApplicationController
   end
 
   def routine_builder
+    @active_routine_count = current_user ? current_user.personal_routines.where(deleted_at: nil).count : 0
     @routine = PersonalRoutine.new
     @categories = [
       { key: "HEALTH", label: "건강/운동" },
