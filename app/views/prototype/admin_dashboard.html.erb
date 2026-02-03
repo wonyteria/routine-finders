@@ -425,10 +425,11 @@
 
         <div class="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
           <span class="text-lg">ℹ️</span>
-          <p class="text-[10px] font-bold text-amber-500/80 leading-relaxed">
-            발송 시간은 1시간 단위로 체크됩니다. (예: 09:00 설정 시 매일 오전 9시 정각 발송)<br/>
-            구독 중인 모든 PWA 유저들에게 발송되며, 활성화 상태에서만 자동 발송됩니다.
-          </p>
+          <div class="text-[10px] font-bold text-amber-500/80 leading-relaxed">
+            <p>발송 시간은 1시간 단위로 체크됩니다. (예: 09:00 설정 시 매일 오전 9시 정각 발송)</p>
+            <p class="mt-1 pb-1 border-b border-amber-500/20">사용 가능한 변수: <code class="bg-amber-500/20 px-1 rounded text-amber-400 font-black">{{nickname}}</code> (유저 닉네임으로 자동 치환)</p>
+            <p class="mt-1">구독 중인 모든 PWA 유저들에게 발송되며, 활성화 상태에서만 자동 발송됩니다.</p>
+          </div>
         </div>
       </section>
     </div>

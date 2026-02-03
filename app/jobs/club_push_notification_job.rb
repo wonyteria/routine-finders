@@ -25,7 +25,9 @@ class ClubPushNotificationJob < ApplicationJob
 
     club.members.confirmed.active.find_each do |membership|
       user = membership.user
-      WebPushService.send_notification(user, config.title, config.content, "/")
+      title = config.title.gsub("{{nickname}}", user.nickname)
+      content = config.content.gsub("{{nickname}}", user.nickname)
+      WebPushService.send_notification(user, title, content, "/")
     end
   end
 
@@ -37,7 +39,9 @@ class ClubPushNotificationJob < ApplicationJob
       user = membership.user
       # 오늘 완료한 루틴이 없는 경우에만 발송
       unless user.personal_routines.joins(:completions).where(personal_routine_completions: { completed_on: Date.current }).exists?
-        WebPushService.send_notification(user, config.title, config.content, "/")
+        title = config.title.gsub("{{nickname}}", user.nickname)
+        content = config.content.gsub("{{nickname}}", user.nickname)
+        WebPushService.send_notification(user, title, content, "/")
       end
     end
   end
