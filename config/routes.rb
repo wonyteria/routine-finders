@@ -169,7 +169,6 @@ Rails.application.routes.draw do
       post :kick_member
       post :warn_member
       post :record
-      post :cheer
       post :send_message
       post :mark_welcomed
     end
@@ -186,9 +185,7 @@ Rails.application.routes.draw do
 
   resources :rankings, only: [ :index ]
 
-  resources :rufa_activities, only: [ :index ] do
-    resources :claps, controller: "rufa_claps", only: [ :create ]
-  end
+  resources :rufa_activities, only: [ :index ]
 
   resources :routine_templates, only: [] do
     member do
@@ -263,9 +260,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :rufa_activities do
-        resources :claps, controller: "rufa_claps", only: [ :create ]
-      end
+      resources :rufa_activities
 
       resources :routine_club_reports, only: [ :index, :show ] do
         collection do

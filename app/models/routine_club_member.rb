@@ -195,11 +195,10 @@ class RoutineClubMember < ApplicationRecord
   def recalculate_growth_points!
     # Points logic:
     # 1. 10 pts per present day (기본 출석)
-    # 2. 5 pts per clap received (동료 응원)
-    # 3. Bonus for routine achievement:
+    # 2. Bonus for routine achievement:
     #    - 100% achievement: +20 pts bonus
     #    - 50-99% achievement: +5 pts bonus
-    # 4. 20 pts Golden Fire bonus (per 7-day perfect streak)
+    # 3. 20 pts Golden Fire bonus (per 7-day perfect streak)
 
     points = 0
     attendances_data = attendances.where(status: :present)
@@ -207,10 +206,7 @@ class RoutineClubMember < ApplicationRecord
     # 1. Base Attendance
     points += attendances_data.count * 10
 
-    # 2. Cheers
-    points += attendances_data.sum(:cheers_count) * 5
-
-    # 3. Achievement Bonuses
+    # 2. Achievement Bonuses
     attendances_data.each do |a|
       if a.achievement_rate.to_f >= 100.0
         points += 20
@@ -219,7 +215,7 @@ class RoutineClubMember < ApplicationRecord
       end
     end
 
-    # 4. Golden Fire (7-day streaks)
+    # 3. Golden Fire (7-day streaks)
     points += (attendances_data.count / 7) * (routine_club.golden_fire_bonus || 20)
 
     update!(growth_points: points)

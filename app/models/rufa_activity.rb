@@ -1,9 +1,6 @@
 class RufaActivity < ApplicationRecord
   belongs_to :user
-  has_many :claps, class_name: "RufaClap", dependent: :destroy
-
   validates :activity_type, presence: true
-
   scope :recent, -> { order(created_at: :desc) }
 
   def self.create_goal_activity(user, goal)
