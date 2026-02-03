@@ -465,7 +465,7 @@ class PrototypeController < ApplicationController
   def user_profile
     @target_user = User.find(params[:id])
     @achievements = @target_user.user_badges.includes(:badge).order(created_at: :desc).limit(6)
-    @routines = @target_user.personal_routines.where(deleted_at: nil).order(created_at: :desc).limit(4)
+    @routines = @target_user.personal_routines.where(deleted_at: nil).order(created_at: :desc)
     @total_badges_count = @target_user.user_badges.count
     @is_club_member = @target_user.routine_club_members.active.exists?
     @my_membership = @target_user.routine_club_members.active.first
