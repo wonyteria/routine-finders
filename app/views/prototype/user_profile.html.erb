@@ -163,10 +163,22 @@
                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                      <%= routine.icon %>
                    </div>
-                   <div class="flex-1 min-w-0">
-                     <p class="text-xs font-black text-white truncate"><%= routine.title %></p>
-                     <p class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter"><%= routine.category.presence || "개인" %> • 주 <%= routine.days&.count || 7 %>회</p>
-                   </div>
+                     <div class="flex-1 min-w-0">
+                       <p class="text-xs font-black text-white truncate"><%= routine.title %></p>
+                       <% 
+                         rdays = routine.days 
+                         if rdays.is_a?(String)
+                           begin
+                             rdays = JSON.parse(rdays)
+                           rescue
+                             rdays = []
+                           end
+                         end
+                         rdays ||= []
+                         frequency = rdays.empty? ? "매일" : "주 #{rdays.count}회"
+                       %>
+                       <p class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter"><%= routine.category.presence || "개인" %> • <%= frequency %></p>
+                     </div>
                 </div>
               <% end %>
             <% else %>
