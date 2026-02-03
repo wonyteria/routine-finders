@@ -723,7 +723,18 @@ class PrototypeController < ApplicationController
     daily_data = (start_date..end_date).map do |date|
       todays_active_routines = personal_routines.select do |r|
         created_condition = r.created_at.to_date <= date
-        day_condition = (r.days || []).include?(date.wday.to_s)
+
+        # [Safety] days가 String(JSON)으로 반환될 경우 배열로 파싱
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = [] # 파싱 실패 시 빈 배열 처리
+          end
+        end
+
+        day_condition = (days_list || []).include?(date.wday.to_s)
         created_condition && day_condition
       end
 
