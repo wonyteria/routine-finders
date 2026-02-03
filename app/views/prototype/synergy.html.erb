@@ -220,6 +220,12 @@
 
       <!-- Content -->
       <div class="flex-1 overflow-y-auto p-8 pt-2 space-y-8 custom-scrollbar">
+        <!-- Intro Message (Moved to Top) -->
+        <div class="p-6 bg-indigo-500/10 border border-indigo-500/20 rounded-[28px] text-center space-y-1.5">
+           <p class="text-[11px] font-black text-white leading-relaxed">루파 클럽은 성실함을 보상하는 구조로 운영됩니다.</p>
+           <p class="text-[10px] font-bold text-slate-400 leading-relaxed">적절한 루틴 개수로 꾸준히 실천하는 유저가<br/>가장 높게 평가됩니다.</p>
+        </div>
+
         <!-- 1. Platform Level -->
         <div class="space-y-4">
           <div class="flex items-center gap-2">
@@ -227,24 +233,21 @@
             <h5 class="text-xs font-black text-indigo-400 uppercase tracking-widest">1. 플랫폼 레벨 점수</h5>
           </div>
           <div class="p-5 bg-white/[0.03] border border-white/5 rounded-3xl space-y-3">
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">루틴 완료</span>
-               <span class="text-[11px] font-black text-white">+10P</span>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-400">루틴 완료 (1회당)</span>
+               <span class="text-white">+10P</span>
              </div>
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">확언 작성</span>
-               <span class="text-[11px] font-black text-white">+5P</span>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-400">오늘의 확언 작성</span>
+               <span class="text-white">+5P</span>
              </div>
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">라이브 참여</span>
-               <span class="text-[11px] font-black text-white">+20P</span>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-400">라이브 세션 참여</span>
+               <span class="text-white">+20P</span>
              </div>
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">모임 개설</span>
-               <span class="text-[11px] font-black text-white">+100P</span>
-             </div>
-             <div class="py-2 border-t border-white/5 mt-2">
-               <p class="text-[10px] text-slate-500 leading-relaxed italic">레벨 점수는 누적되며, 높을수록 서비스 내 등급이 상승합니다.</p>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-400">모임/챌린지 개설</span>
+               <span class="text-white">+100P</span>
              </div>
           </div>
         </div>
@@ -256,52 +259,66 @@
             <h5 class="text-xs font-black text-emerald-400 uppercase tracking-widest">2. 루파 클럽 성장 포인트</h5>
           </div>
           <div class="p-5 bg-emerald-500/[0.02] border border-emerald-500/10 rounded-3xl space-y-3">
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">기본 출석</span>
-               <span class="text-[11px] font-black text-white">+10P</span>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-400">기본 출석</span>
+               <span class="text-white">+10P</span>
              </div>
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">고농도 달성 (100%)</span>
-               <span class="text-[11px] font-black text-emerald-400">+20P</span>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-emerald-400">루틴 100% 완수 보너스</span>
+               <span class="text-emerald-400">+20P</span>
              </div>
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">부분 실천 (50%~99%)</span>
-               <span class="text-[11px] font-black text-white">+5P</span>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-slate-400">루틴 50% 이상 실천 보너스</span>
+               <span class="text-white">+5P</span>
              </div>
-             <div class="flex justify-between items-center">
-               <span class="text-[11px] font-bold text-slate-400">골든 파이어 (7일 스트릭)</span>
-               <span class="text-[11px] font-black text-amber-400">+20P</span>
-             </div>
-             <div class="py-2 border-t border-emerald-500/10 mt-2">
-                <p class="text-[10px] text-emerald-500/70 leading-relaxed">📣 이제 응원(박수) 점수는 제외되며, 오직 본인의 실천만으로 랭킹이 결정됩니다.</p>
+             <div class="flex justify-between items-center text-[11px] font-bold">
+               <span class="text-amber-400">7일 연속 완수 (골든 파이어)</span>
+               <span class="text-amber-400">+20P</span>
              </div>
           </div>
         </div>
 
-        <!-- 3. Identity Guide -->
+        <!-- 3. Growth Identity -->
         <div class="space-y-4">
           <div class="flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
             <h5 class="text-xs font-black text-slate-500 uppercase tracking-widest">3. 성장 정체성 등급</h5>
           </div>
-          <div class="space-y-2">
+          <div class="grid grid-cols-1 gap-2">
              <div class="p-4 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex justify-between items-center">
-               <span class="text-[11px] font-black text-white">루파 로드 마스터</span>
-               <span class="text-[10px] font-bold text-indigo-400 text-right">상위 85%↑</span>
+               <div class="flex items-center gap-2">
+                 <span class="text-xs">🔱</span>
+                 <span class="text-[11px] font-black text-white">진화된 로드 마스터</span>
+               </div>
+               <span class="text-[10px] font-bold text-indigo-400">Top 15%</span>
              </div>
              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex justify-between items-center">
-               <span class="text-[11px] font-black text-white">정진하는 가이드</span>
-               <span class="text-[10px] font-bold text-slate-500">70% 이상</span>
+               <span class="text-[11px] font-black text-white pl-6">정진하는 가이드</span>
+               <span class="text-[10px] font-bold text-slate-500">달성 70%↑</span>
              </div>
              <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex justify-between items-center">
-               <span class="text-[11px] font-black text-white">성장의 개척자</span>
-               <span class="text-[10px] font-bold text-slate-500">40% 이상</span>
+               <span class="text-[11px] font-black text-white pl-6">성장의 개척자</span>
+               <span class="text-[10px] font-bold text-slate-500">달성 40%↑</span>
              </div>
           </div>
         </div>
 
-        <div class="pt-4 pb-8">
-           <p class="text-[10px] text-slate-500 text-center leading-relaxed">루파 클럽은 성실함을 보상하는 구조로 운영됩니다.<br/>적절한 루틴 개수로 꾸준히 실천하는 유저가 가장 높게 평가됩니다.</p>
+        <!-- 4. Strategic Core Tips -->
+        <div class="space-y-4 pb-12">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            <h5 class="text-xs font-black text-amber-500 uppercase tracking-widest">💡 고득점을 위한 핵심 팁</h5>
+          </div>
+          <div class="space-y-3">
+             <div class="flex gap-3">
+               <span class="text-xs shrink-0">🎯</span>
+               <p class="text-[11px] font-bold text-slate-400 leading-relaxed">루틴 개수를 늘리면 <strong class="text-white">플랫폼 레벨</strong>이 빠르게 오르지만, <strong class="text-white">클럽 보너스 점수</strong>를 받기는 더 어려워집니다.</p>
+             </div>
+             <div class="flex gap-3">
+               <span class="text-xs shrink-0">⚖️</span>
+               <p class="text-[11px] font-bold text-slate-400 leading-relaxed">클럽 랭킹에서 유리하려면 나에게 <strong class="text-white">가장 중요한 루틴 3~5개</strong>를 확실하게 완수하는 것이 가장 스마트한 전략입니다.</p>
+             </div>
+          </div>
         </div>
       </div>
     </div>
