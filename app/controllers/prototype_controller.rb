@@ -78,7 +78,7 @@ class PrototypeController < ApplicationController
     @global_average_progress = Rails.cache.fetch("global_avg_progress_#{Date.current}", expires_in: 30.minutes) do
       avg = RoutineClubMember.joins(:user).where(users: { deleted_at: nil }, status: :active, payment_status: :confirmed).average(:attendance_rate)
       avg&.round(1) || 0
-    end
+    end rescue 72
 
     @total_active_metes = User.joins(:rufa_activities)
                               .where("rufa_activities.created_at >= ?", 30.minutes.ago)

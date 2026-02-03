@@ -49,13 +49,16 @@ module PrototypeErrorHandler
   # 일반 에러
   def handle_standard_error(exception)
     Rails.logger.error "Standard Error: #{exception.class} - #{exception.message}"
-    Rails.logger.error exception.backtrace.join("\n")
+    Rails.logger.error exception.backtrace.first(20).join("\n")
 
-    # Sentry나 다른 에러 트래킹 서비스에 전송 (향후 추가 가능)
-    # Sentry.capture_exception(exception) if defined?(Sentry)
+    # 리다이렉트 루프 방지: 현재 페이지가 홈인 경우 리다이렉트하지 않음
+    if action_name == "home" && controller_name == "prototype"
+      render plain: "시스템 오류가 발생했습니다. 담당자에게 문의해주세요. (에러: #{exception.message})", status: :internal_server_error
+      return
+    end
 
     respond_to do |format|
-      format.html { redirect_to prototype_home_path, alert: "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요." }
+      format.html { redirect_to prototype_home_path, alert: "일시적인 오류가 발생했습니다. (오류: #{exception.message})" }
       format.json { render json: { error: "Internal server error" }, status: :internal_server_error }
     end
   end
