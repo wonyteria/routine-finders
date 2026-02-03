@@ -619,6 +619,21 @@ class PrototypeController < ApplicationController
     # 5. Financial Overview (Concept)
     @total_deposits = Challenge.where(cost_type: :deposit).sum(:amount)
     @total_fees = Challenge.where(cost_type: :fee).sum(:amount)
+
+    # 5. Push Notification Settings
+    @push_configs = [
+      PushNotificationConfig.morning_reminder,
+      PushNotificationConfig.evening_check
+    ] rescue []
+  end
+
+  def update_push_config
+    config = PushNotificationConfig.find_or_initialize_by(config_type: params[:config_type])
+    if config.update(push_notification_config_params)
+      redirect_to prototype_admin_dashboard_path(tab: "push"), notice: "푸시 설정이 저장되었습니다."
+    else
+      redirect_to prototype_admin_dashboard_path(tab: "push"), alert: "실패: #{config.errors.full_messages.join(', ')}"
+    end
   end
 
   def club_management
@@ -1150,6 +1165,10 @@ class PrototypeController < ApplicationController
     :relax_pass_limit, :save_pass_limit, :golden_fire_bonus, :auto_kick_threshold, :completion_attendance_rate,
     :zoom_link, :live_room_title, :live_room_button_text, :live_room_active,
     :special_lecture_link, :lecture_room_title, :lecture_room_description, :lecture_room_active
-  )
+    )
+  end
+
+  def push_notification_config_params
+    params.require(:push_notification_config).permit(:title, :content, :schedule_time, :enabled)
   end
 end

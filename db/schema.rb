@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_04_001500) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_04_002600) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -269,6 +269,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_04_001500) do
     t.index ["user_id", "created_at"], name: "index_personal_routines_on_user_id_and_created_at"
     t.index ["user_id", "title"], name: "index_personal_routines_on_user_id_and_title"
     t.index ["user_id"], name: "index_personal_routines_on_user_id"
+  end
+
+  create_table "push_notification_configs", force: :cascade do |t|
+    t.string "config_type", null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.boolean "enabled", default: true
+    t.string "schedule_time", default: "09:00"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["config_type"], name: "index_push_notification_configs_on_config_type", unique: true
   end
 
   create_table "reviews", force: :cascade do |t|

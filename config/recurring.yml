@@ -24,12 +24,6 @@ production:
     args: [ "monthly" ]
     schedule: "0 7 1 * *"  # 매월 1일 오전 7시 (UTC)
 
-  club_morning_push:
+  club_push_checker:
     class: ClubPushNotificationJob
-    args: [ "morning_reminder" ]
-    schedule: "0 0 * * *" # 매일 오전 9시 (KST = UTC 00:00)
-
-  club_evening_push:
-    class: ClubPushNotificationJob
-    args: [ "evening_check" ]
-    schedule: "0 13 * * *" # 매일 오후 10시 (KST = UTC 13:00)
+    schedule: "0 * * * *" # 매시간 정각 실행 (분 단위 체크가 필요하면 간격 조정 가능)

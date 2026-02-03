@@ -29,6 +29,7 @@
       <button data-action="tabs#change" data-tabs-target="tab" data-id="overview" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">개요</button>
       <button data-action="tabs#change" data-tabs-target="tab" data-id="users" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">유저 관리</button>
       <button data-action="tabs#change" data-tabs-target="tab" data-id="content" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">콘텐츠 관리</button>
+      <button data-action="tabs#change" data-tabs-target="tab" data-id="push" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">푸시 설정</button>
       <button data-action="tabs#change" data-tabs-target="tab" data-id="system" class="flex-1 py-3 rounded-xl text-[10px] font-black transition-all">시스템 로그</button>
     </nav>
   </header>
@@ -363,6 +364,72 @@
             <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
           </div>
         <% end %>
+      </section>
+    </div>
+
+    <!-- SECTION 5: PUSH SETTINGS -->
+    <div data-tabs-target="panel" data-id="push" class="hidden px-6 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <section class="space-y-4">
+        <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest pl-1">정기 자동 알림 설정</h3>
+        
+        <div class="grid grid-cols-1 gap-6">
+          <% (@push_configs || []).each do |config| %>
+            <div class="app-glass-card p-6 border-white/5 space-y-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-xl">
+                    <%= config.config_type == 'morning_reminder' ? '☀️' : '🌙' %>
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-black text-white"><%= config.config_type == 'morning_reminder' ? '아침 리마인더' : '저녁 기록 체크' %></h4>
+                    <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= config.config_type %></p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-black <%= config.enabled ? 'text-emerald-500' : 'text-slate-500' %> uppercase tracking-widest"><%= config.enabled ? '활성화' : '비활성화' %></span>
+                </div>
+              </div>
+
+              <%= form_with model: config, url: prototype_update_push_config_path(config_type: config.config_type), method: :patch, class: "space-y-4" do |f| %>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="col-span-2">
+                    <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">알림 제목</label>
+                    <%= f.text_field :title, class: "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                  </div>
+                  <div class="col-span-2">
+                    <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">알림 내용</label>
+                    <%= f.text_area :content, rows: 2, class: "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all resize-none" %>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">발송 시간 (HH:00)</label>
+                    <%= f.text_field :schedule_time, placeholder: "09:00", class: "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all text-center" %>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">활성화 여부</label>
+                    <div class="flex items-center gap-3 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5">
+                      <label class="flex items-center gap-2 cursor-pointer group">
+                        <%= f.check_box :enabled, class: "w-4 h-4 rounded border-white/20 bg-transparent text-indigo-500 focus:ring-offset-0 focus:ring-0" %>
+                        <span class="text-xs font-bold text-slate-400 group-hover:text-slate-200 transition-colors">푸시 발송 활성화</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex justify-end pt-2">
+                  <%= f.submit "설정 저장하기", class: "px-6 py-3 rounded-xl bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all shadow-lg shadow-indigo-600/20" %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
+          <span class="text-lg">ℹ️</span>
+          <p class="text-[10px] font-bold text-amber-500/80 leading-relaxed">
+            발송 시간은 1시간 단위로 체크됩니다. (예: 09:00 설정 시 매일 오전 9시 정각 발송)<br/>
+            구독 중인 모든 PWA 유저들에게 발송되며, 활성화 상태에서만 자동 발송됩니다.
+          </p>
+        </div>
       </section>
     </div>
   </main>

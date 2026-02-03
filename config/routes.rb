@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   post "admin_center/reject_club_payment", to: "prototype#reject_club_payment", as: :prototype_reject_club_payment
   get "admin_center/clubs/weekly_report", to: "prototype#admin_weekly_check", as: :prototype_admin_weekly_check
   get "admin_center/analyze_member_performance", to: "prototype#analyze_member_performance", as: :prototype_analyze_member_performance
+  patch "admin_center/update_push_config", to: "prototype#update_push_config", as: :prototype_update_push_config
 
 
 
