@@ -160,8 +160,8 @@ class User < ApplicationRecord
   validates :email, uniqueness: { conditions: -> { where(deleted_at: nil) } }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, unless: -> { email.to_s.end_with?(".temp") }
 
-  # 비밀번호: 소셜 로그인 유저를 위해 nil 허용 명시
-  validates :password, length: { minimum: 8 }, allow_nil: true
+  # 비밀번호: 소셜 로그인 유저를 위해 nil 허용, 변경 시나 신규 생성 시에만 검사
+  validates :password, length: { minimum: 8 }, allow_nil: true, if: -> { new_record? || will_save_change_to_password_digest? }
   validates :password, presence: true, on: :create, if: -> { provider.blank? }
 
   # Soft delete scopes
