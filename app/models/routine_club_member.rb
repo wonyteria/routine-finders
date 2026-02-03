@@ -319,26 +319,37 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def calculate_routine_rate(start_date, end_date)
-    routines = user.personal_routines
+    routines = user.personal_routines.to_a
+    # 해당 기간 내 패스(휴식/세이브)를 사용한 날짜들 확보
+    excused_dates = attendances.where(attendance_date: start_date..end_date, status: :excused).pluck(:attendance_date)
 
-    # 1. 분모: 기간 내 수행해야 할 총 루틴 개수 계산
     total_required = 0
+    pass_completed_count = 0
+
     (start_date..end_date).each do |date|
-      # 해당 요일에 활성화된 루틴 개수를 더함
-      total_required += routines.count { |r| r.days&.include?(date.wday.to_s) }
+      # 해당 요일에 설정된 루틴들의 개수
+      routines_on_day = routines.count { |r| r.days&.include?(date.wday.to_s) && r.active_on?(date) }
+      total_required += routines_on_day
+
+      # 패스를 사용한 날이라면 해당 날의 모든 루틴을 '완료점수'로 인정 (경고 방어용)
+      if excused_dates.include?(date)
+        pass_completed_count += routines_on_day
+      end
     end
 
     return 0.0 if total_required == 0
 
-    # 2. 분자: 기간 내 실제 완료된 루틴 개수 (Completion 기록 조회)
-    completed_count = PersonalRoutineCompletion
-                      .joins(:personal_routine)
-                      .where(personal_routines: { user_id: user.id })
-                      .where(completed_on: start_date..end_date)
-                      .count
+    # 실제 루틴 완료 기록(체크박스 클릭) 개수
+    actual_completed_count = PersonalRoutineCompletion
+                             .joins(:personal_routine)
+                             .where(personal_routines: { user_id: user.id })
+                             .where(completed_on: start_date..end_date)
+                             .count
 
-    # percent calculation
-    (completed_count.to_f / total_required * 100).round(1)
+    total_completed = actual_completed_count + pass_completed_count
+
+    rate = (total_completed.to_f / total_required * 100).round(1)
+    [ rate, 100.0 ].min
   end
 
   def set_membership_dates

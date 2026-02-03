@@ -605,6 +605,11 @@
         <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/95 backdrop-blur-2xl"></div>
         
         <div class="relative w-full max-w-md bg-gradient-to-b from-[#1E1C28] to-[#0C0B12] rounded-[48px] border border-white/10 shadow-[0_0_100px_rgba(79,70,229,0.3)] overflow-y-auto max-h-[90vh] hide-scrollbar animate-badge-pop">
+          <!-- Close Button (Top-Right) -->
+          <button onclick="document.getElementById('membership-master-modal').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" 
+                  class="absolute right-8 top-8 w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors z-20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
           <!-- Glow Decor -->
           <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-600/20 blur-[100px] rounded-full"></div>
           
@@ -656,25 +661,68 @@
               </div>
 
               <!-- Date Selection -->
-              <div class="relative group">
-                <input type="date" 
-                       id="master-center-date-picker"
-                       value="<%= Date.current.to_s %>"
-                       max="<%= Date.current.to_s %>"
-                       class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500 outline-none transition-all appearance-none"
-                       onchange="document.querySelectorAll('.master-center-date').forEach(input => input.value = this.value)">
-                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between px-1">
+                  <h4 class="text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em]">Step 1. 대상 날짜 선택</h4>
+                  <span id="master-date-context-label" class="text-[9px] font-bold text-slate-500">오늘 기준</span>
+                </div>
+                <div class="relative group">
+                  <input type="date" 
+                         id="master-center-date-picker"
+                         value="<%= Date.current.to_s %>"
+                         class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500 outline-none transition-all appearance-none"
+                         onchange="updateMasterDateContext(this.value)">
+                  <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  </div>
                 </div>
               </div>
+
+              <script>
+                function updateMasterDateContext(selectedDate) {
+                  const today = new Date().toISOString().split('T')[0];
+                  const label = document.getElementById('master-date-context-label');
+                  const saveBtn = document.getElementById('master-save-btn');
+                  
+                  document.querySelectorAll('.master-center-date').forEach(input => input.value = selectedDate);
+                  
+                  if (selectedDate > today) {
+                    label.innerText = '미래 날짜 선택됨';
+                    label.className = 'text-[9px] font-bold text-indigo-400 animate-pulse';
+                    if (saveBtn) saveBtn.style.opacity = '0.3';
+                    if (saveBtn) saveBtn.querySelector('.pass-status-master').innerText = '과거만 가능';
+                  } else {
+                    label.innerText = selectedDate < today ? '과거 날짜 선택됨' : '오늘 기준';
+                    label.className = 'text-[9px] font-bold text-slate-500';
+                    if (saveBtn) saveBtn.style.opacity = '1';
+                    if (saveBtn) saveBtn.querySelector('.pass-status-master').innerText = '<%= membership&.remaining_save_passes || 0 %>개 남음';
+                  }
+                }
+
+                function validateMasterPassUse(formId, type) {
+                  const selectedDate = document.getElementById('master-center-date-picker').value;
+                  const today = new Date().toISOString().split('T')[0];
+                  
+                  if (type === 'save' && selectedDate > today) {
+                    alert('세이브권은 이미 발생한 결석을 구제하는 아이템입니다. 오늘 이후의 날짜에는 사용할 수 없습니다.');
+                    return;
+                  }
+                  
+                  if (type === 'relax') {
+                    requestItemUse(formId, '휴식권을 사용하시겠습니까?', '오늘 루틴이 모두 완료 처리되어 주간 달성률(70%)을 지켜줍니다. (단, 점수는 쌓이지 않아요! ☕)', '🎟️');
+                  } else {
+                    requestItemUse(formId, '세이브권을 사용하시겠습니까?', '결석한 날의 루틴들을 모두 완료 상태로 되살려 제명을 막아줍니다. (단, 포인트는 지급되지 않아요! 🛡️)', '🛡️');
+                  }
+                }
+              </script>
 
               <!-- Pass Buttons -->
               <div class="grid grid-cols-1 gap-3">
                 <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'relax', source: 'prototype'), method: :post, id: "master-relax-form", class: "contents" do |f| %>
                   <%= f.hidden_field :date, value: Date.current, class: "master-center-date" %>
-                  <button type="button" 
+                  <button type="button" id="master-relax-btn"
                           <% if membership&.remaining_relax_passes.to_i <= 0 %>disabled<% end %>
-                          onclick="requestItemUse('master-relax-form', '휴식권을 사용하시겠습니까?', '해당 날짜가 공식 휴가로 처리됩니다.', '🎟️')"
+                          onclick="validateMasterPassUse('master-relax-form', 'relax')"
                           class="w-full p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                     <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
                     <div>
@@ -682,24 +730,24 @@
                         <span class="text-sm font-black text-white">휴식권</span>
                         <span class="px-1.5 py-0.5 bg-indigo-500/20 rounded text-[8px] font-black text-indigo-400"><%= membership&.remaining_relax_passes || 0 %>개 남음</span>
                       </div>
-                      <p class="text-[10px] font-bold text-slate-500 leading-tight whitespace-nowrap truncate">공식 휴가로 처리되어 출석이 유지됩니다.</p>
+                      <p class="text-[10px] font-bold text-slate-500 leading-tight">출석 도장 꾹! 오늘 루틴은 모두 완료 처리됩니다. (단, 포인트는 제외 ☕)</p>
                     </div>
                   </button>
                 <% end %>
 
                 <%= form_with url: use_pass_routine_club_path(official_club, pass_type: 'save', source: 'prototype'), method: :post, id: "master-save-form", class: "contents" do |f| %>
                   <%= f.hidden_field :date, value: Date.current, class: "master-center-date" %>
-                  <button type="button" 
+                  <button type="button" id="master-save-btn"
                           <% if membership&.remaining_save_passes.to_i <= 0 %>disabled<% end %>
-                          onclick="requestItemUse('master-save-form', '세이브권을 사용하시겠습니까?', '지나간 결석을 출석으로 복구합니다.', '🛡️')"
+                          onclick="validateMasterPassUse('master-save-form', 'save')"
                           class="w-full p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/40 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center group disabled:opacity-30">
                     <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
                     <div>
                       <div class="flex items-center gap-2 mb-0.5">
                         <span class="text-sm font-black text-white">세이브권</span>
-                        <span class="px-1.5 py-0.5 bg-emerald-500/20 rounded text-[8px] font-black text-emerald-400"><%= membership&.remaining_save_passes || 0 %>개 남음</span>
+                        <span class="pass-status-master px-1.5 py-0.5 bg-emerald-500/20 rounded text-[8px] font-black text-emerald-400"><%= membership&.remaining_save_passes || 0 %>개 남음</span>
                       </div>
-                      <p class="text-[10px] font-bold text-slate-500 leading-tight whitespace-nowrap truncate">지나간 결석을 출석으로 긴급 복구합니다.</p>
+                      <p class="text-[10px] font-bold text-slate-500 leading-tight">깜빡한 결석 부활! 놓친 루틴들이 모두 완료 처리됩니다. (단, 포인트는 제외 🛡️)</p>
                     </div>
                   </button>
                 <% end %>
