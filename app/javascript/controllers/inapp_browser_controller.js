@@ -1,41 +1,48 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    connect() {
-        this.checkInAppBrowser()
+  connect() {
+    this.checkInAppBrowser()
+  }
+
+  checkInAppBrowser() {
+    const userAgent = navigator.userAgent.toLowerCase()
+    const targetUrl = window.location.href
+
+    // 인앱 브라우저 식별 (카카오, 네이버, 인스타그램, 페이스북, 라인, 밴드)
+    const isInApp = /kakaotalk|naver|fban|fbav|instagram|line|band/i.test(userAgent)
+
+    // [KakaoTalk Special Handling]
+    // 구글 로그인 차단 방지를 위해 카카오톡 내부 기능을 통해 강제로 외부 브라우저 호출 (iOS/Android 공통)
+    if (/kakaotalk/i.test(userAgent)) {
+      location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(targetUrl);
+      return;
     }
 
-    checkInAppBrowser() {
-        const userAgent = navigator.userAgent.toLowerCase()
-        const targetUrl = window.location.href
+    if (isInApp) {
+      if (/android/i.test(userAgent)) {
+        // 안드로이드: 크롬으로 강제 이동 시도
+        // intent 스킴 사용
+        const scheme = location.protocol === 'https:' ? 'https' : 'http';
+        const urlWithoutScheme = targetUrl.replace(/^https?:\/\//, '');
 
-        // 인앱 브라우저 식별 (카카오, 네이버, 인스타그램, 페이스북, 라인, 밴드)
-        const isInApp = /kakaotalk|naver|fban|fbav|instagram|line|band/i.test(userAgent)
+        // 크롬으로 열기 Intent
+        // S.browser_fallback_url은 크롬이 없을 경우 대비용 (현재 페이지 유지)
+        const intentUrl = `intent://${urlWithoutScheme}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${targetUrl};end`;
 
-        if (isInApp) {
-            if (/android/i.test(userAgent)) {
-                // 안드로이드: 크롬으로 강제 이동 시도
-                // intent 스킴 사용
-                const scheme = location.protocol === 'https:' ? 'https' : 'http';
-                const urlWithoutScheme = targetUrl.replace(/^https?:\/\//, '');
-
-                // 크롬으로 열기 Intent
-                // S.browser_fallback_url은 크롬이 없을 경우 대비용 (현재 페이지 유지)
-                const intentUrl = `intent://${urlWithoutScheme}#Intent;scheme=${scheme};package=com.android.chrome;S.browser_fallback_url=${targetUrl};end`;
-
-                window.location.href = intentUrl;
-            } else if (/iphone|ipad|ipod/i.test(userAgent)) {
-                // iOS: 강제 이동 불가 -> 안내 모달 표시
-                this.showGuideModal()
-            }
-        }
+        window.location.href = intentUrl;
+      } else if (/iphone|ipad|ipod/i.test(userAgent)) {
+        // iOS: 강제 이동 불가 -> 안내 모달 표시
+        this.showGuideModal()
+      }
     }
+  }
 
-    showGuideModal() {
-        // 이미 모달이 있으면 중복 생성 방지
-        if (document.getElementById('inapp-browser-guide')) return;
+  showGuideModal() {
+    // 이미 모달이 있으면 중복 생성 방지
+    if (document.getElementById('inapp-browser-guide')) return;
 
-        const guideHtml = `
+    const guideHtml = `
       <div id="inapp-browser-guide" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:99999; background:#0C0B12; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; color:white; font-family:'Outfit', sans-serif;">
         <div style="width:64px; height:64px; background:#4F46E5; border-radius:16px; display:flex; align-items:center; justify-content:center; margin-bottom:24px; box-shadow:0 10px 25px -5px rgba(79, 70, 229, 0.4);">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" style="width:32px; height:32px;">
@@ -73,23 +80,23 @@ export default class extends Controller {
         </button>
       </div>
     `
-        document.body.insertAdjacentHTML('beforeend', guideHtml)
-    }
+    document.body.insertAdjacentHTML('beforeend', guideHtml)
+  }
 
-    copyUrl() {
-        const url = window.location.href
-        navigator.clipboard.writeText(url).then(() => {
-            alert("링크가 복사되었습니다. 브라우저 주소창에 붙여넣어주세요.")
-        }).catch(err => {
-            console.error('Could not copy text: ', err)
-            // 클립보드 API 실패 시 fallback (input 생성 후 선택)
-            const textArea = document.createElement("textarea");
-            textArea.value = url;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand("Copy");
-            textArea.remove();
-            alert("링크가 복사되었습니다. 브라우저 주소창에 붙여넣어주세요.")
-        })
-    }
+  copyUrl() {
+    const url = window.location.href
+    navigator.clipboard.writeText(url).then(() => {
+      alert("링크가 복사되었습니다. 브라우저 주소창에 붙여넣어주세요.")
+    }).catch(err => {
+      console.error('Could not copy text: ', err)
+      // 클립보드 API 실패 시 fallback (input 생성 후 선택)
+      const textArea = document.createElement("textarea");
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("Copy");
+      textArea.remove();
+      alert("링크가 복사되었습니다. 브라우저 주소창에 붙여넣어주세요.")
+    })
+  }
 }
