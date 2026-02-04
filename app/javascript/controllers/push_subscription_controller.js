@@ -44,7 +44,7 @@ export default class extends Controller {
             alert('푸시 알림 구독이 완료되었습니다! ✨')
         } catch (error) {
             console.error('Failed to subscribe to push notifications:', error)
-            alert('알림 구독에 실패했습니다. 다시 시도해주세요.')
+            alert(`알림 구독에 실패했습니다: ${error.message}`)
         }
     }
 
