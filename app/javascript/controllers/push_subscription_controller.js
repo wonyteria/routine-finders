@@ -35,6 +35,11 @@ export default class extends Controller {
                 return
             }
 
+            if (!this.vapidPublicKeyValue) {
+                alert('VAPID Public Key가 설정되지 않았습니다. 관리자에게 문의하세요.')
+                return
+            }
+
             const subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKeyValue)
