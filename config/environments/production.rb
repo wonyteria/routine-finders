@@ -58,11 +58,19 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Replace the default in-process memory cache store with a durable alternative.
-  config.cache_store = :solid_cache_store
+  if ENV["SECRET_KEY_BASE_DUMMY"]
+    config.cache_store = :memory_store
+  else
+    config.cache_store = :solid_cache_store
+  end
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  if ENV["SECRET_KEY_BASE_DUMMY"]
+    config.active_job.queue_adapter = :async
+  else
+    config.active_job.queue_adapter = :solid_queue
+    config.solid_queue.connects_to = { database: { writing: :queue } }
+  end
 
   # Raise delivery errors to catch email issues
   config.action_mailer.raise_delivery_errors = true
