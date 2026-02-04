@@ -42,21 +42,27 @@ export default class extends Controller {
 
 
 
-            // Remove any whitespace or quotes that might have snuck in (Sanitization)
-            const cleanKey = this.vapidPublicKeyValue.replace(/["'\s]/g, '')
+            // Detailed Sanitization & Logging
+            console.log('Original VAPID Key:', this.vapidPublicKeyValue)
+
+            // Remove everything except what's valid for Base64 (A-Z, a-z, 0-9, +, /, -, _, =)
+            const cleanKey = this.vapidPublicKeyValue.replace(/[^A-Za-z0-9\+\/\-\_=]/g, '')
+            console.log('Cleaned VAPID Key:', cleanKey, 'Length:', cleanKey.length)
 
             let applicationServerKey
 
             try {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
+                console.log('Converted Buffer Length:', applicationServerKey.length)
             } catch (e) {
                 console.error('VAPID Key Convert Error:', e)
-                alert('알림 시스템 초기화 오류가 발생했습니다. (Key Conversion Failed)')
+                const firstPart = cleanKey ? cleanKey.substring(0, 10) : 'None'
+                alert(`알림 시스템 초기화 오류가 발생했습니다.\n(Key Conversion Failed)\n\nKey: ${firstPart}...\nLen: ${cleanKey?.length}\nError: ${e.message}`)
                 return
             }
 
             if (applicationServerKey.length !== 65) {
-                alert(`설정된 VAPID Key 값이 올바르지 않습니다.\n(길이 오류: ${applicationServerKey.length} bytes / 65 bytes required)\n\n서버 환경 변수(VAPID_PUBLIC_KEY)를 확인해주세요.`)
+                alert(`설정된 VAPID Key의 길이가 올바르지 않습니다.\n(현재: ${applicationServerKey.length} bytes / 필요: 65 bytes)\n\n서버의 VAPID_PUBLIC_KEY 환경 변수를 확인해주세요.`)
                 return
             }
 
@@ -98,8 +104,10 @@ export default class extends Controller {
     }
 
     urlBase64ToUint8Array(base64String) {
-        const padding = '='.repeat((4 - base64String.length % 4) % 4)
-        const base64 = (base64String + padding)
+        // Strip existing padding if any, then re-pad correctly
+        const base64WithoutPadding = base64String.split('=')[0]
+        const padding = '='.repeat((4 - (base64WithoutPadding.length % 4)) % 4)
+        const base64 = (base64WithoutPadding + padding)
             .replace(/-/g, '+')
             .replace(/_/g, '/')
 
