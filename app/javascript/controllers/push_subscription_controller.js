@@ -31,7 +31,7 @@ export default class extends Controller {
             // Request permission
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') {
-                alert('알림 권한이 차단되어 있습니다.\n\n브라우저 주소창의 [자물쇠 아이콘] 또는 [설정 > 애플리케이션 > 브라우저]에서 알림 권한을 허용으로 변경 후 다시 시도해주세요.')
+                alert('알림 권한이 설정되어 있지 않습니다.\n\n[해결 방법]\n1. 안드로이드: 바탕화면 앱 아이콘 길게 누르기 > [앱 정보(i)] > [알림] > 허용\n2. 아이폰: 설정 앱 > 알림 > [Routine Finders] 찾기 > 알림 허용\n\n권한을 켜신 후 다시 [앱 푸시 알림 설정]을 눌러주세요.')
                 return
             }
 
@@ -40,18 +40,16 @@ export default class extends Controller {
                 return
             }
 
-            // Debugging: Check if key looks correct
-            console.log('VAPID Key:', this.vapidPublicKeyValue)
+
 
             // Remove any whitespace or quotes that might have snuck in
             const cleanKey = this.vapidPublicKeyValue.replace(/["'\s]/g, '')
 
-            let applicationServerKey
             try {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
-                console.log('Converted Key Length:', applicationServerKey.length)
             } catch (e) {
-                alert(`VAPID 키 변환 오류: ${e.message}\n키 값: ${cleanKey.substring(0, 10)}...`)
+                console.error('VAPID Key Convert Error:', e)
+                alert('알림 시스템 초기화 오류가 발생했습니다. 관리자에게 문의해주세요.')
                 return
             }
 
