@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require "webpush"
+require "web-push"
 
 class WebPushService
   def self.send_notification(user, title, body, url = "/")
     user.web_push_subscriptions.find_each do |subscription|
       begin
-        Webpush.payload_send(
+        WebPush.payload_send(
           message: JSON.generate({
             title: title,
             body: body,
@@ -21,7 +21,7 @@ class WebPushService
             subject: "mailto:admin@routinefinders.life"
           }
         )
-      rescue Webpush::ExpiredSubscription, Webpush::InvalidSubscription => e
+      rescue WebPush::ExpiredSubscription, WebPush::InvalidSubscription => e
         Rails.logger.info "Deleting expired/invalid subscription for User #{user.id}: #{e.message}"
         subscription.destroy
       rescue => e
