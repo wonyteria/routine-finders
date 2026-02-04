@@ -31,7 +31,7 @@ export default class extends Controller {
             // Request permission
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') {
-                alert('알림 권한이 거부되었습니다. 설정에서 알림을 허용해주세요.')
+                alert('알림 권한이 차단되어 있습니다.\n\n브라우저 주소창의 [자물쇠 아이콘] 또는 [설정 > 애플리케이션 > 브라우저]에서 알림 권한을 허용으로 변경 후 다시 시도해주세요.')
                 return
             }
 
