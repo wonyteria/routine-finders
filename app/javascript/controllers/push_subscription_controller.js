@@ -42,14 +42,20 @@ export default class extends Controller {
 
 
 
-            // Remove any whitespace or quotes that might have snuck in
+            // Remove any whitespace or quotes that might have snuck in (Sanitization)
             const cleanKey = this.vapidPublicKeyValue.replace(/["'\s]/g, '')
+            let applicationServerKey
 
             try {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
             } catch (e) {
                 console.error('VAPID Key Convert Error:', e)
-                alert('알림 시스템 초기화 오류가 발생했습니다. 관리자에게 문의해주세요.')
+                alert('알림 시스템 초기화 오류가 발생했습니다. (Key Conversion Failed)')
+                return
+            }
+
+            if (applicationServerKey.length !== 65) {
+                alert(`설정된 VAPID Key 값이 올바르지 않습니다.\n(길이 오류: ${applicationServerKey.length} bytes / 65 bytes required)\n\n서버 환경 변수(VAPID_PUBLIC_KEY)를 확인해주세요.`)
                 return
             }
 
