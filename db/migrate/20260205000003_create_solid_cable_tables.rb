@@ -1,4 +1,4 @@
-class CreateSolidCableTables < ActiveRecord::Migration[7.1]
+class CreateSolidCableTables < ActiveRecord::Migration[8.1]
   def change
     create_table :solid_cable_messages do |t|
       t.binary :channel, null: false, limit: 1024
