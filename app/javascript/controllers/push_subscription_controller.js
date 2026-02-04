@@ -36,13 +36,28 @@ export default class extends Controller {
             }
 
             if (!this.vapidPublicKeyValue) {
-                alert('VAPID Public Key가 설정되지 않았습니다. 관리자에게 문의하세요.')
+                alert('VAPID 키가 누락되었습니다. 관리자에게 문의하세요.')
+                return
+            }
+
+            // Debugging: Check if key looks correct
+            console.log('VAPID Key:', this.vapidPublicKeyValue)
+
+            // Remove any whitespace or quotes that might have snuck in
+            const cleanKey = this.vapidPublicKeyValue.replace(/["'\s]/g, '')
+
+            let applicationServerKey
+            try {
+                applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
+                console.log('Converted Key Length:', applicationServerKey.length)
+            } catch (e) {
+                alert(`VAPID 키 변환 오류: ${e.message}\n키 값: ${cleanKey.substring(0, 10)}...`)
                 return
             }
 
             const subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKeyValue)
+                applicationServerKey: applicationServerKey
             })
 
             await this.sendSubscriptionToServer(subscription)
