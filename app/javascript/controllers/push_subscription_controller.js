@@ -55,21 +55,17 @@ export default class extends Controller {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
                 console.log('Converted Buffer Length:', applicationServerKey.length)
 
-                // Final safeguard: If we got 66 bytes, check for leading null or extra padding junk
-                if (applicationServerKey.length === 66) {
-                    console.log('Detected 66 bytes. First byte:', applicationServerKey[0], 'Last byte:', applicationServerKey[65])
-                    if (applicationServerKey[0] === 0) {
-                        console.log('Trimming leading null byte from 66-byte key')
-                        applicationServerKey = applicationServerKey.slice(1)
-                    } else if (applicationServerKey[0] !== 4 && applicationServerKey[1] === 4) {
-                        // Some encodings add a junk byte at the start
-                        console.log('Trimming suspicious leading byte from 66-byte key (Second byte is 0x04)')
-                        applicationServerKey = applicationServerKey.slice(1)
-                    } else if (applicationServerKey[65] === 0 || applicationServerKey[65] === 61) {
-                        // Trailing padding artifacts
-                        console.log('Trimming trailing byte from 66-byte key')
-                        applicationServerKey = applicationServerKey.slice(0, 65)
-                    }
+                // Final safeguard: Force 65 bytes if we have 66 and it starts with 0x04
+                if (applicationServerKey.length === 66 && applicationServerKey[0] === 4) {
+                    console.log('Force trimming 66-byte key starting with 0x04 to 65 bytes')
+                    applicationServerKey = applicationServerKey.slice(0, 65)
+                } else if (applicationServerKey.length === 66 && applicationServerKey[1] === 4) {
+                    console.log('Force trimming 66-byte key starting with junk byte to 65 bytes')
+                    applicationServerKey = applicationServerKey.slice(1)
+                } else if (applicationServerKey.length > 65) {
+                    // Last resort for any other length issues
+                    console.log('Key length issue:', applicationServerKey.length, 'Attempting last 65 bytes')
+                    applicationServerKey = applicationServerKey.slice(-65)
                 }
             } catch (e) {
                 console.error('VAPID Key Convert Error:', e)
