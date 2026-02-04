@@ -71,7 +71,7 @@ class RoutineClub < ApplicationRecord
 
     # 2026년 1분기(1월~3월)에 한해 2월 1일까지 모집 기간 연장
     if current_quarter_start == Date.new(2026, 1, 1)
-      deadline = Date.new(2026, 2, 3)
+      deadline = Date.new(2026, 2, 6)
       return date >= (current_quarter_start - 14.days) && date <= deadline
     end
 
