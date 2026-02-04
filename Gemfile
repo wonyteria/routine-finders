@@ -81,3 +81,5 @@ group :test do
 end
 
 gem "web-push", "~> 3.1"
+
+gem "rack-attack", "~> 6.8"
