@@ -46,7 +46,7 @@ export default class extends Controller {
             console.log('Original VAPID Key:', this.vapidPublicKeyValue)
 
             // Remove everything except what's valid for Base64 (A-Z, a-z, 0-9, +, /, -, _, =)
-            const cleanKey = this.vapidPublicKeyValue.replace(/[^A-Za-z0-9\+\/\-\_=]/g, '')
+            let cleanKey = (this.vapidPublicKeyValue || "").replace(/[^A-Za-z0-9\+\/\-\_=]/g, '')
             console.log('Cleaned VAPID Key:', cleanKey, 'Length:', cleanKey.length)
 
             let applicationServerKey
@@ -54,6 +54,23 @@ export default class extends Controller {
             try {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
                 console.log('Converted Buffer Length:', applicationServerKey.length)
+
+                // Final safeguard: If we got 66 bytes, check for leading null or extra padding junk
+                if (applicationServerKey.length === 66) {
+                    console.log('Detected 66 bytes. First byte:', applicationServerKey[0], 'Last byte:', applicationServerKey[65])
+                    if (applicationServerKey[0] === 0) {
+                        console.log('Trimming leading null byte from 66-byte key')
+                        applicationServerKey = applicationServerKey.slice(1)
+                    } else if (applicationServerKey[0] !== 4 && applicationServerKey[1] === 4) {
+                        // Some encodings add a junk byte at the start
+                        console.log('Trimming suspicious leading byte from 66-byte key (Second byte is 0x04)')
+                        applicationServerKey = applicationServerKey.slice(1)
+                    } else if (applicationServerKey[65] === 0 || applicationServerKey[65] === 61) {
+                        // Trailing padding artifacts
+                        console.log('Trimming trailing byte from 66-byte key')
+                        applicationServerKey = applicationServerKey.slice(0, 65)
+                    }
+                }
             } catch (e) {
                 console.error('VAPID Key Convert Error:', e)
                 const firstPart = cleanKey ? cleanKey.substring(0, 10) : 'None'
@@ -62,7 +79,7 @@ export default class extends Controller {
             }
 
             if (applicationServerKey.length !== 65) {
-                alert(`설정된 VAPID Key의 길이가 올바르지 않습니다.\n(현재: ${applicationServerKey.length} bytes / 필요: 65 bytes)\n\n서버의 VAPID_PUBLIC_KEY 환경 변수를 확인해주세요.`)
+                alert(`설정된 VAPID Key의 길이가 올바르지 않습니다.\n(현재: ${applicationServerKey.length} bytes / 필요: 65 bytes)\n\n서버의 VAPID_PUBLIC_KEY 환경 변수를 확인해주세요.\n(Key: ${cleanKey.substring(0, 8)}...)`)
                 return
             }
 
