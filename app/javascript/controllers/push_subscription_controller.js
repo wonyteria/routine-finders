@@ -69,6 +69,12 @@ export default class extends Controller {
             alert('푸시 알림 구독이 완료되었습니다! ✨')
         } catch (error) {
             console.error('Failed to subscribe to push notifications:', error)
+
+            if (error.message && error.message.includes('applicationServerKey is not valid')) {
+                alert('서버에 설정된 VAPID Key가 유효하지 않습니다.\n\n서버의 .env 파일에 있는 VAPID_PUBLIC_KEY 값이 손상되었거나 잘못 입력되었습니다.\n새로운 키로 교체해주세요.')
+                return
+            }
+
             alert(`알림 구독에 실패했습니다: ${error.message}`)
         }
     }
