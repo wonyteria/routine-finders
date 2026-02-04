@@ -61,17 +61,15 @@ Rails.application.configure do
   if ENV["SECRET_KEY_BASE_DUMMY"]
     config.cache_store = :memory_store
   else
-    # config.cache_store = :solid_cache_store
-    config.cache_store = :memory_store
+    config.cache_store = :solid_cache_store
   end
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   if ENV["SECRET_KEY_BASE_DUMMY"]
     config.active_job.queue_adapter = :async
   else
-    # config.active_job.queue_adapter = :solid_queue
-    # config.solid_queue.connects_to = { database: { writing: :queue } }
-    config.active_job.queue_adapter = :async
+    config.active_job.queue_adapter = :solid_queue
+    config.solid_queue.connects_to = { database: { writing: :queue } }
   end
 
   # Raise delivery errors to catch email issues
