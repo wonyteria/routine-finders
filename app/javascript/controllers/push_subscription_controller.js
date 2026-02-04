@@ -44,6 +44,7 @@ export default class extends Controller {
 
             // Remove any whitespace or quotes that might have snuck in (Sanitization)
             const cleanKey = this.vapidPublicKeyValue.replace(/["'\s]/g, '')
+
             let applicationServerKey
 
             try {
