@@ -105,18 +105,15 @@ export default class extends Controller {
                 // If the user manually blocked it before, the browser won't ask again and returns 'denied' immediately.
                 // Or if they just switched text in OS settings but didn't reload, the browser might not know yet.
                 if (permission === 'denied') {
-                    const resetConfirmed = confirm(
-                        '🔒 사이트 알림이 잠겨있습니다.\n\n' +
-                        '휴대폰 설정은 완벽합니다! 👍\n' +
-                        '하지만 이 웹사이트의 권한이 [차단]되어 있습니다.\n\n' +
+                    // PWA environment doesn't have an address bar, so we guide to App Settings.
+                    alert(
+                        '🚫 알림 권한이 차단되어 있습니다.\n\n' +
+                        '이미 설정을 켜셨다면, 일시적인 오류일 수 있습니다.\n\n' +
                         '[해결 방법]\n' +
-                        '1. 상단 주소창 왼쪽의 자물쇠(🔒)나 설정 아이콘 클릭\n' +
-                        '2. [권한] 또는 [알림] 메뉴 찾기\n' +
-                        '3. [재설정]을 누르거나 "허용"으로 변경 후 [새로고침] 하세요.'
+                        '1. 앱을 완전히 종료 후 다시 실행해보세요.\n' +
+                        '2. 그래도 안 되면 휴대폰 [설정 > 애플리케이션 > 루틴파인더스 > 저장공간 > 데이터 삭제] 후 다시 로그인해보세요. (가장 확실)\n' +
+                        '   (*데이터 삭제 시 권한 설정이 초기화됩니다)'
                     )
-                    if (resetConfirmed) {
-                        window.location.reload()
-                    }
                 } else {
                     alert('알림 권한이 거부되었습니다.\n권한을 허용해야 알림을 받을 수 있습니다.')
                 }
