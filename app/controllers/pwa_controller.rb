@@ -42,15 +42,40 @@ class PwaController < ApplicationController
   def push_test
     if current_user
       nickname = current_user.nickname.presence || "멤버"
-      WebPushService.send_notification(
-        current_user,
-        "🚀 즉시 테스트 알림",
-        "#{nickname}님, 이 알림이 보인다면 푸시 서버 통로가 정상적으로 연결된 것입니다!",
-        "/"
-      )
-      render plain: "Push sent to #{nickname}! Please check your phone."
+      subscriptions = current_user.web_push_subscriptions
+
+      if subscriptions.empty?
+        render plain: "❌ #{nickname}님은 현재 등록된 알림 기기가 없습니다. [앱 푸시 알림 설정] 버튼을 먼저 눌러주세요."
+        return
+      end
+
+      results = []
+      subscriptions.find_each do |subscription|
+        begin
+          WebPush.payload_send(
+            message: JSON.generate({
+              title: "🚀 즉시 테스트 알림",
+              body: "#{nickname}님, 이 알림이 보인다면 푸시 서버와 폰이 정상 연결된 것입니다!",
+              url: "/"
+            }),
+            endpoint: subscription.endpoint,
+            p256dh: subscription.p256dh_key,
+            auth: subscription.auth_key,
+            vapid: {
+              public_key: ENV["VAPID_PUBLIC_KEY"],
+              private_key: ENV["VAPID_PRIVATE_KEY"],
+              subject: "mailto:admin@routinefinders.life"
+            }
+          )
+          results << "✅ 기기(#{subscription.endpoint.last(10)}...): 발송 성공"
+        rescue => e
+          results << "❌ 기기(#{subscription.endpoint.last(10)}...): 발송 실패 (#{e.message})"
+        end
+      end
+
+      render plain: "발송 결과 (대상: #{nickname}):\n\n" + results.join("\n") + "\n\n알림이 여전히 오지 않는다면 폰의 알림 권한이나 PWA 앱 설정을 확인해주세요."
     else
-      render plain: "Please login first.", status: :unauthorized
+      render plain: "로그인이 필요합니다.", status: :unauthorized
     end
   end
 end
