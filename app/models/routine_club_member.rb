@@ -352,7 +352,10 @@ class RoutineClubMember < ApplicationRecord
             days_list = []
           end
         end
-        (days_list || []).include?(date.wday.to_s) && r.active_on?(date)
+        # 클럽 멤버십 달성률 계산 시에는 루틴 생성일(active_on?)을 따지지 않고,
+        # 멤버십 기간 내라면 해당 루틴이 있었어야 하는 것으로 간주함 (User Request)
+        # 단, 루틴이 date 이후에 삭제된 경우는 제외해야 함 (이미 query에서 deleted_at: nil로 필터링됨)
+        (days_list || []).include?(date.wday.to_s)
       end
       total_required += routines_on_day
 

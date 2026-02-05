@@ -371,6 +371,16 @@ class User < ApplicationRecord
                        .exists?
   end
 
+  # 특정 날짜 기준으로 루파 클럽 멤버였는지 확인
+  def is_rufa_club_member_on?(date)
+    return true if admin?
+
+    routine_club_members.where(status: [ :active, :warned ])
+                       .where(payment_status: :confirmed)
+                       .where("membership_start_date <= ? AND membership_end_date >= ?", date, date)
+                       .exists?
+  end
+
   def exclude_rufa_promotions?
     return true if admin?
     routine_club_members.where(status: [ :active, :warned ], payment_status: [ :confirmed, :pending ]).exists?
@@ -425,8 +435,12 @@ class User < ApplicationRecord
     # 현재 활성화된(삭제되지 않은) 루틴만 조회
     all_routines = personal_routines.where(deleted_at: nil)
 
+    # 루파 클럽 멤버 여부 확인
+    is_club_member = is_rufa_club_member_on?(date)
+
     todays_active_routines = all_routines.select do |r|
-      created_condition = r.created_at.to_date <= date
+      # 클럽 멤버라면 오늘 루틴이 생성되었더라도 무조건 수행해야 함
+      created_condition = is_club_member || r.created_at.to_date <= date
       days_list = r.days
       if days_list.is_a?(String)
         begin
@@ -459,11 +473,21 @@ class User < ApplicationRecord
     # to_a로 미리 로드하여 DB 쿼리 최소화
     loaded_routines = all_routines.to_a
 
+    # 루파 클럽 멤버십 기간 확인 (N+1 방지)
+    memberships = routine_club_members.confirmed.where(status: [ :active, :warned ])
+                                     .where("membership_start_date <= ? AND membership_end_date >= ?", end_date, start_date)
+                                     .to_a
+
     total_required = 0
     (start_date..end_date).each do |date|
+      # 해당 날짜에 루파 클럽 멤버였는지 확인
+      is_club_member = admin? || memberships.any? { |m| date >= m.membership_start_date && date <= m.membership_end_date }
+
       # 해당 날짜(date)에 설정되어 있던 루틴 합산
       active_count_for_day = loaded_routines.count do |r|
-        created_condition = r.created_at.to_date <= date
+        # 루파 클럽 멤버라면 생성일과 무관하게 멤버십 기간 동안은 루틴이 있었어야 함 (User Request)
+        created_condition = is_club_member || r.created_at.to_date <= date
+
         days_list = r.days
         if days_list.is_a?(String)
           begin
