@@ -59,6 +59,14 @@ Rails.application.config.after_initialize do
     c.title = "🚀 오후 3시 55분 스케줄 테스트"
     c.content = "이 알림은 서버가 스스로 스케줄에 맞춰 보낸 것입니다! 완벽합니다!"
     c.schedule_time = "15:55"
+    c.schedule_time = "15:55"
+    c.enabled = true
+  end
+
+  PushNotificationConfig.find_or_create_by!(config_type: "test_1610") do |c|
+    c.title = "🚀 오후 4시 10분 스케줄 테스트"
+    c.content = "이 알림은 4시 10분에 정확히 도착해야 합니다!"
+    c.schedule_time = "16:10"
     c.enabled = true
   end
 end
