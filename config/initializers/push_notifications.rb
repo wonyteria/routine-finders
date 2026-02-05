@@ -33,4 +33,18 @@ Rails.application.config.after_initialize do
     c.schedule_time = "12:30"
     c.enabled = true
   end
+
+  PushNotificationConfig.find_or_create_by!(config_type: "test_1245") do |c|
+    c.title = "🚀 오후 12시 45분 테스트"
+    c.content = "배포 성공 후 첫 알림 테스트입니다!"
+    c.schedule_time = "12:45"
+    c.enabled = true
+  end
+
+  PushNotificationConfig.find_or_create_by!(config_type: "test_1300") do |c|
+    c.title = "🚀 오후 1시 정각 테스트"
+    c.content = "안정성 확인을 위한 추가 테스트입니다."
+    c.schedule_time = "13:00"
+    c.enabled = true
+  end
 end
