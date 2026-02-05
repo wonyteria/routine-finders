@@ -87,13 +87,9 @@ export default class extends Controller {
     }
 
     startSubscribeFlow() {
-        const isGuideDismissed = localStorage.getItem('push_guide_dismissed') === 'true'
-
-        if (isGuideDismissed) {
-            this.processSubscription()
-        } else {
-            this.openGuide()
-        }
+        // Simple and robust: Just trigger the subscription process.
+        // This is how it was when it worked earlier today.
+        this.processSubscription()
     }
 
     handleDeniedPermission(status) {
