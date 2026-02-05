@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.config.after_initialize do
+  # Skip during asset precompilation where DB might not be available
+  next if ENV["SECRET_KEY_BASE_DUMMY"] || !ActiveRecord::Base.connection.data_source_exists?("routine_clubs")
+
   # Ensure official club exists
   RoutineClub.ensure_official_club
 
