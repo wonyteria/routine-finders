@@ -10,9 +10,8 @@ export default class extends Controller {
 
     showSetup() {
         this.hideModal()
-        // Redirect to my page with hash to trigger setup if needed, 
-        // or just let them find it. The user requested "설정을 하라는 공지"
-        window.location.href = "/prototype/my"
+        // Anchor to the specific settings section
+        window.location.href = "/prototype/my#push-settings-section"
     }
 
     hideModal() {

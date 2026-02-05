@@ -8,6 +8,19 @@ export default class extends Controller {
 
     connect() {
         this.checkSubscription()
+        this.checkHighlight()
+    }
+
+    checkHighlight() {
+        if (window.location.hash === "#push-settings-section") {
+            const element = document.getElementById("push-settings-section")
+            if (element) {
+                element.classList.add("ring-2", "ring-indigo-500", "ring-offset-4", "ring-offset-[#0C0B12]", "rounded-xl", "bg-indigo-500/10")
+                setTimeout(() => {
+                    element.classList.remove("ring-2", "ring-indigo-500", "ring-offset-4", "ring-offset-[#0C0B12]", "bg-indigo-500/10")
+                }, 3000)
+            }
+        }
     }
 
     async checkSubscription() {
