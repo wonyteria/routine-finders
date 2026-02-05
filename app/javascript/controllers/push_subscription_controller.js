@@ -102,7 +102,22 @@ export default class extends Controller {
             // Request permission
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') {
-                alert('알림 권한이 거부되었습니다.\n\n앱 설정 또는 휴대폰 설정에서\n[알림] 권한을 직접 허용해주세요.')
+                // If the user manually blocked it before, the browser won't ask again and returns 'denied' immediately.
+                // Or if they just switched text in OS settings but didn't reload, the browser might not know yet.
+                if (permission === 'denied') {
+                    const resetConfirmed = confirm(
+                        '🚫 브라우저 알림 권한이 차단되어 있습니다.\n\n' +
+                        '휴대폰 설정은 켜져 있더라도, 현재 사이트의 권한이 잠겨있을 수 있습니다.\n\n' +
+                        '1. 주소창의 🔒(자물쇠) 아이콘 클릭 > [권한 재설정/허용]\n' +
+                        '2. 설정을 이미 바꾸셨다면 [확인]을 눌러 페이지를 새로고침해주세요.'
+                    )
+                    if (resetConfirmed) {
+                        window.location.reload()
+                    }
+                } else {
+                    alert('알림 권한이 거부되었습니다.\n권한을 허용해야 알림을 받을 수 있습니다.')
+                }
+
                 // Revert toggle visually
                 this.updateUI(false)
                 return
