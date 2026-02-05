@@ -452,6 +452,19 @@
       </div>
     </div>
 
+    <%= link_to pwa_push_test_path, class: "w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer group" do %>
+      <div class="flex items-center gap-4">
+        <span class="text-indigo-400 group-hover:scale-110 transition-transform">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </span>
+        <div class="text-left">
+          <span class="text-sm font-bold text-indigo-400 block">🚀 푸시 즉시 테스트</span>
+          <p class="text-[9px] font-medium text-slate-500 mt-0.5">버튼을 눌러 알림이 잘 오는지 즉시 확인합니다</p>
+        </div>
+      </div>
+      <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+    <% end %>
+
     <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "w-full flex items-center justify-between p-5 hover:bg-red-500/5 active:bg-red-500/10 transition-colors cursor-pointer block" do %>
       <div class="flex items-center gap-4">
         <span class="text-red-500/50"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></span>
