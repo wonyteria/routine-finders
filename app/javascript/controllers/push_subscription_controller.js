@@ -87,16 +87,11 @@ export default class extends Controller {
     }
 
     startSubscribeFlow() {
-        const permission = Notification.permission;
+        const isGuideDismissed = localStorage.getItem('push_guide_dismissed') === 'true'
 
-        if (permission === 'granted') {
-            // [Smart Action] Already allowed! No need to show guide.
+        if (isGuideDismissed) {
             this.processSubscription()
-        } else if (permission === 'denied') {
-            // [Issue Case] Explicitly blocked by site settings.
-            this.handleDeniedPermission()
         } else {
-            // [First Time] Show the onboarding guide.
             this.openGuide()
         }
     }
@@ -107,12 +102,11 @@ export default class extends Controller {
         let message = '🚫 알림 권한이 차단되어 있습니다.\n\n'
 
         if (status === 'denied') {
-            message += '휴대폰 설정을 마쳤는데도 이 창이 뜬다면, 아래 순서대로 꼭 확인해주세요:\n\n' +
-                '1. 크롬(Chrome) 앱 실행\n' +
-                '2. 주소창 우측 [︙] 메뉴 -> [설정]\n' +
-                '3. [사이트 설정] -> [알림]\n' +
-                '4. [차단됨] 목록에서 routinefinders.life 가 있다면 눌러서 [허용]으로 변경\n\n' +
-                '이 방법이 가장 확실한 해결책입니다!'
+            message += '휴대폰 설정에서 알림을 허용하셨음에도 이 창이 뜬다면:\n\n' +
+                '1. 홈 화면의 [루틴파인더스] 앱 아이콘을 꾹 눌러주세요.\n' +
+                '2. [i] 버튼 또는 [앱 정보]를 눌러주세요.\n' +
+                '3. [알림] 설정을 껐다가 다시 켜보시거나, [저장공간 > 데이터 삭제]를 하시면 가장 확실하게 초기화됩니다.\n\n' +
+                '※ 그래도 안 된다면 앱을 삭제 후 다시 설치(홈 화면에 추가)해주시면 해결됩니다.'
         } else {
             message += '알림 권한을 허용해야 서비스를 원활히 이용하실 수 있습니다.'
         }
