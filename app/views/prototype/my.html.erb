@@ -420,18 +420,6 @@
       </div>
     <% end %>
 
-    <%= link_to "https://open.kakao.com/o/sY2xEswh", target: "_blank", rel: "noopener noreferrer", class: "w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer group" do %>
-      <div class="flex items-center gap-4">
-        <span class="text-slate-500 group-hover:text-yellow-400 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-        </span>
-        <span class="text-sm font-bold text-slate-300">문의하기</span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Kakao</span>
-        <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-      </div>
-    <% end %>
 
     <div data-controller="push-subscription" 
          data-push-subscription-vapid-public-key-value="BOSk9RTXuuwHy1nIfECrhja1c7jy48zRrrTnFczxmPkY7_pfm9uajihHnqvRSObUe7qpoXhNdNxRV62EUvlDBcU="
@@ -511,6 +499,19 @@
 
     </div>
 
+
+    <%= link_to "https://open.kakao.com/o/sY2xEswh", target: "_blank", rel: "noopener noreferrer", class: "w-full flex items-center justify-between p-5 hover:bg-white/[0.02] active:bg-white/5 transition-colors cursor-pointer group" do %>
+      <div class="flex items-center gap-4">
+        <span class="text-slate-500 group-hover:text-yellow-400 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+        </span>
+        <span class="text-sm font-bold text-slate-300">문의하기</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Kakao</span>
+        <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+      </div>
+    <% end %>
 
     <%= link_to logout_path, data: { turbo_method: :delete, turbo_confirm: "로그아웃 하시겠습니까?" }, class: "w-full flex items-center justify-between p-5 hover:bg-red-500/5 active:bg-red-500/10 transition-colors cursor-pointer block" do %>
       <div class="flex items-center gap-4">
