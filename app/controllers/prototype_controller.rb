@@ -199,10 +199,6 @@ class PrototypeController < ApplicationController
     end
 
     @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
-
-    if request.headers["Turbo-Frame"]
-      render partial: "prototype/ranking_list", locals: { rankings: @monthly_rankings, period: @period }
-    end
   end
 
   def my
