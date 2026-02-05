@@ -71,7 +71,8 @@ self.addEventListener("push", async (event) => {
     const title = data.title || '루틴 파인더스';
     const options = {
         body: data.body || data.content || '새로운 알림이 있습니다.',
-        icon: '/icon-192.png',
+        icon: '/rf_logo.png',
+        badge: '/rf_logo.png',
         data: {
             url: data.url || data.link || '/'
         },
