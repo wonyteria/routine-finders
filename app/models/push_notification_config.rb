@@ -7,7 +7,7 @@ class PushNotificationConfig < ApplicationRecord
   def self.morning_affirmation
     find_or_create_by!(config_type: "morning_affirmation") do |c|
       c.title = "☀️ 루파 클럽 아침 확언"
-      c.content = "{{nickname}}님, 오늘 하루를 여는 나만의 확언(Affirmation)과 함께 멋진 루틴을 시작해 보세요!"
+      c.content = "{{nickname}}님, 오늘 하루를 여는 나만의 확언과 함께 멋진 루틴을 시작해 보세요!"
       c.schedule_time = "08:30"
     end
   end

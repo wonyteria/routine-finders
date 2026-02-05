@@ -22,3 +22,9 @@ Challenge.destroy_all
 User.destroy_all
 
 puts "Database cleaned successfully!"
+
+puts "Initializing PushNotificationConfig..."
+PushNotificationConfig.morning_affirmation
+PushNotificationConfig.evening_reminder
+PushNotificationConfig.night_check
+puts "PushNotificationConfig initialized!"
