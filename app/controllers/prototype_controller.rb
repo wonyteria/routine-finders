@@ -108,9 +108,8 @@ class PrototypeController < ApplicationController
         # [Push Notification Onboarding]
         # Show if club member + not dismissed + not subscribed
         if @is_club_member
-        subscribed = current_user.web_push_subscriptions.exists?
-        # [Launch Special] Ignore dismissed history! Show to everyone who hasn't subscribed yet.
-        @show_push_onboarding = !subscribed
+        # [Launch Special] Show to ALL club members regardless of settings!
+        @show_push_onboarding = true
         end
     else
       @hosted_challenges = []
