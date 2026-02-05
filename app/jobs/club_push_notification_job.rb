@@ -3,13 +3,16 @@ class ClubPushNotificationJob < ApplicationJob
 
   def perform
     current_time = Time.current.in_time_zone("Seoul").strftime("%H:%M")
+    Rails.logger.info "[ClubPushNotificationJob] Checking for schedule at #{current_time}"
 
     # 해당 시간에 예약된 활성 설정 가져오기
     configs = PushNotificationConfig.where(schedule_time: current_time, enabled: true)
+    Rails.logger.info "[ClubPushNotificationJob] Found #{configs.count} configs to send"
 
     configs.each do |config|
       case config.config_type
-      when "morning_affirmation", "evening_reminder", "test_1020", "test_1040", "test_1045", "test_1100", "test_1110", "test_1130"
+      when "morning_affirmation", "evening_reminder", "test_1020", "test_1040", "test_1045", "test_1100", "test_1110", "test_1130", "test_1150"
+        Rails.logger.info "[ClubPushNotificationJob] Processing general reminder: #{config.config_type}"
         send_general_reminders(config)
       when "night_check"
         send_completion_checks(config)
@@ -25,6 +28,7 @@ class ClubPushNotificationJob < ApplicationJob
 
     club.members.confirmed.active.find_each do |membership|
       user = membership.user
+      Rails.logger.info "[ClubPushNotificationJob] Sending push to User #{user.id} (#{user.nickname})"
       title = config.title.gsub("{{nickname}}", user.nickname)
       content = config.content.gsub("{{nickname}}", user.nickname)
       WebPushService.send_notification(user, title, content, "/")
