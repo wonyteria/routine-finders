@@ -106,10 +106,13 @@ export default class extends Controller {
                 // Or if they just switched text in OS settings but didn't reload, the browser might not know yet.
                 if (permission === 'denied') {
                     const resetConfirmed = confirm(
-                        '🚫 브라우저 알림 권한이 차단되어 있습니다.\n\n' +
-                        '휴대폰 설정은 켜져 있더라도, 현재 사이트의 권한이 잠겨있을 수 있습니다.\n\n' +
-                        '1. 주소창의 🔒(자물쇠) 아이콘 클릭 > [권한 재설정/허용]\n' +
-                        '2. 설정을 이미 바꾸셨다면 [확인]을 눌러 페이지를 새로고침해주세요.'
+                        '🔒 사이트 알림이 잠겨있습니다.\n\n' +
+                        '휴대폰 설정은 완벽합니다! 👍\n' +
+                        '하지만 이 웹사이트의 권한이 [차단]되어 있습니다.\n\n' +
+                        '[해결 방법]\n' +
+                        '1. 상단 주소창 왼쪽의 자물쇠(🔒)나 설정 아이콘 클릭\n' +
+                        '2. [권한] 또는 [알림] 메뉴 찾기\n' +
+                        '3. [재설정]을 누르거나 "허용"으로 변경 후 [새로고침] 하세요.'
                     )
                     if (resetConfirmed) {
                         window.location.reload()
