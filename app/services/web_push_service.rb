@@ -6,6 +6,13 @@ class WebPushService
   def self.send_notification(user, title, body, url = "/")
     user.web_push_subscriptions.find_each do |subscription|
       begin
+        # Ensure keys are clean and properly encoded
+        vapid_options = {
+          public_key: ENV["VAPID_PUBLIC_KEY"].strip.gsub(/[[:space:]]/, ""),
+          private_key: ENV["VAPID_PRIVATE_KEY"].strip.gsub(/[[:space:]]/, ""),
+          subject: "mailto:admin@routinefinders.life"
+        }
+
         WebPush.payload_send(
           message: JSON.generate({
             title: title,
@@ -15,11 +22,7 @@ class WebPushService
           endpoint: subscription.endpoint,
           p256dh: subscription.p256dh_key,
           auth: subscription.auth_key,
-          vapid: {
-            public_key: ENV["VAPID_PUBLIC_KEY"],
-            private_key: ENV["VAPID_PRIVATE_KEY"],
-            subject: "mailto:admin@routinefinders.life"
-          }
+          vapid: vapid_options
         )
       rescue WebPush::ExpiredSubscription, WebPush::InvalidSubscription => e
         Rails.logger.info "Deleting expired/invalid subscription for User #{user.id}: #{e.message}"
