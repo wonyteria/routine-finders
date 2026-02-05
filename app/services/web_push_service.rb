@@ -6,10 +6,16 @@ class WebPushService
   def self.send_notification(user, title, body, url = "/")
     user.web_push_subscriptions.find_each do |subscription|
       begin
-        # Ensure keys are clean and properly encoded
+        # Aggressive cleaning of VAPID keys
+        def self.sanitize_base64(key)
+          return nil if key.blank?
+          # Remove quotes, whitespace, and normalize to URL-safe base64
+          key.gsub(/\A['"]+|['"]+\z/, "").strip.gsub(/[[:space:]]/, "").tr("+/", "-_")
+        end
+
         vapid_options = {
-          public_key: ENV["VAPID_PUBLIC_KEY"].strip.gsub(/[[:space:]]/, ""),
-          private_key: ENV["VAPID_PRIVATE_KEY"].strip.gsub(/[[:space:]]/, ""),
+          public_key: sanitize_base64(ENV["VAPID_PUBLIC_KEY"]),
+          private_key: sanitize_base64(ENV["VAPID_PRIVATE_KEY"]),
           subject: "mailto:admin@routinefinders.life"
         }
 
