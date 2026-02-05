@@ -473,7 +473,14 @@
              </div>
              <div class="flex gap-3 items-start">
                <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
-               <p class="text-[11px] text-slate-300 leading-tight">만약 알림이 오지 않는다면<br/><span class="text-indigo-400 font-bold">휴대폰 설정 > 알림</span>에서 켜주세요.</p>
+               <div class="space-y-1">
+                 <p class="text-[11px] text-slate-300 leading-tight">알림이 안 오나요? <span class="text-amber-400 font-bold">가장 확실한 방법</span>:</p>
+                 <p class="text-[10px] text-slate-400 bg-black/20 p-2.5 rounded-lg border border-white/5 leading-relaxed">
+                   ① 바탕화면 앱 아이콘 <span class="text-white font-bold">1초간 꾹 누르기</span><br/>
+                   ② <span class="text-white font-bold">앱 정보(ⓘ)</span> 버튼 누르기<br/>
+                   ③ <span class="text-white font-bold">알림 > 허용</span> 켜주기
+                 </p>
+               </div>
              </div>
           </div>
 
@@ -488,42 +495,6 @@
         </div>
       </div>
 
-      <!-- Push Notification Guide Modal -->
-      <div data-push-subscription-target="guideModal" class="hidden fixed inset-0 z-[700]">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" data-action="click->push-subscription#closeGuide"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm app-glass-card border-white/20 p-6 space-y-6 animate-popup">
-          <div class="text-center space-y-3">
-            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center text-3xl shadow-xl shadow-indigo-500/20 mx-auto mb-4">
-              🔔
-            </div>
-            <h3 class="text-lg font-black text-white">알림 설정 안내</h3>
-            <p class="text-xs font-medium text-slate-400 leading-relaxed break-keep">
-              루틴 파인더스 알림을 받으시려면<br/>
-              휴대폰 설정에서 알림 권한을 켜주세요.
-            </p>
-          </div>
-
-          <div class="bg-white/5 rounded-xl p-4 space-y-2 text-left">
-             <div class="flex gap-3 items-start">
-               <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
-               <p class="text-[11px] text-slate-300 leading-tight">이 팝업을 닫은 후 나오는<br/><span class="text-indigo-400 font-bold">시스템 권한 요청</span>을 허용해주세요.</p>
-             </div>
-             <div class="flex gap-3 items-start">
-               <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
-               <p class="text-[11px] text-slate-300 leading-tight">만약 알림이 오지 않는다면<br/><span class="text-indigo-400 font-bold">휴대폰 설정 > 알림</span>에서 켜주세요.</p>
-             </div>
-          </div>
-
-          <div class="space-y-2 pt-2">
-            <button data-action="click->push-subscription#confirmGuide" class="w-full py-3.5 rounded-xl bg-indigo-500 text-white font-bold text-sm hover:bg-indigo-600 transition-colors">
-              확인했어요
-            </button>
-            <button data-action="click->push-subscription#dontShowAgain" class="w-full py-2 rounded-xl text-slate-500 font-bold text-xs hover:text-slate-400 transition-colors">
-              다시 보지 않음
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
 
 
