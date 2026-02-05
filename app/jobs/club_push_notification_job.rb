@@ -9,7 +9,7 @@ class ClubPushNotificationJob < ApplicationJob
 
     configs.each do |config|
       case config.config_type
-      when "morning_affirmation", "evening_reminder", "test_1020", "test_1040", "test_1045", "test_1100", "test_1110"
+      when "morning_affirmation", "evening_reminder", "test_1020", "test_1040", "test_1045", "test_1100", "test_1110", "test_1130"
         send_general_reminders(config)
       when "night_check"
         send_completion_checks(config)
