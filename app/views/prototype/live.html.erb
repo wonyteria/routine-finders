@@ -23,27 +23,27 @@
   <!-- 2. Collective Status Dashboard -->
   <section class="px-6 space-y-4 mb-10">
     <div class="grid grid-cols-2 gap-3">
-      <!-- Activity Temperature -->
+      <!-- Today's Avg Achievement -->
       <div class="app-glass-card p-5 bg-gradient-to-br from-rose-500/10 to-transparent border-rose-500/20 rounded-[32px] flex flex-col justify-between">
         <div>
-          <p class="text-[9px] font-black text-rose-400 uppercase tracking-widest leading-none mb-1">열정 온도</p>
-          <h4 class="text-xs font-bold text-slate-300">클럽 열정 온도</h4>
+          <p class="text-[9px] font-black text-rose-400 uppercase tracking-widest leading-none mb-1">오늘의 활력</p>
+          <h4 class="text-xs font-bold text-slate-300">오늘 평균 성취도</h4>
         </div>
         <div class="flex items-baseline gap-1.5 mt-4">
-          <span class="text-3xl font-black text-white tabular-nums"><%= @club_temperature %>°</span>
-          <span class="text-[9px] font-black text-rose-500 animate-pulse">HOT</span>
+          <span class="text-3xl font-black text-white tabular-nums"><%= @club_today_avg_achievement %>%</span>
+          <span class="text-[9px] font-black text-rose-500 animate-pulse">AVG</span>
         </div>
       </div>
       
-      <!-- Weekly Completions -->
+      <!-- Season Avg Achievement -->
       <div class="app-glass-card p-5 bg-gradient-to-br from-indigo-500/10 to-transparent border-indigo-500/20 rounded-[32px] flex flex-col justify-between">
         <div>
-          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">팀 성취도</p>
-          <h4 class="text-xs font-bold text-slate-300">이번 주 성취</h4>
+          <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">시즌 성적</p>
+          <h4 class="text-xs font-bold text-slate-300">시즌 누적 성취도</h4>
         </div>
         <div class="flex items-baseline gap-1 mt-4">
-          <span class="text-3xl font-black text-white tabular-nums"><%= number_with_delimiter(@club_weekly_completions) %></span>
-          <span class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Hits</span>
+          <span class="text-3xl font-black text-white tabular-nums"><%= @club_season_avg_achievement %>%</span>
+          <span class="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">AVG</span>
         </div>
       </div>
     </div>

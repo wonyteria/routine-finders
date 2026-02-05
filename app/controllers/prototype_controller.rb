@@ -438,14 +438,20 @@ class PrototypeController < ApplicationController
     @confirmed_members = @current_club&.members&.joins(:user)&.where(users: { deleted_at: nil }, payment_status: :confirmed) || []
     @club_total_members_count = @confirmed_members.count
 
-    # Weekly completion stats (Real Data)
-    # Sum of all verifications in the current week
-    @club_weekly_completions = VerificationLog.where(created_at: Date.current.beginning_of_week..Date.current.end_of_week).count
+    # 1. Today's Average Achievement for Club Members
+    @club_today_avg_achievement = Rails.cache.fetch("club_today_avg_#{Date.current}", expires_in: 30.minutes) do
+      member_rates = @confirmed_members.map { |m| m.user.daily_achievement_rate(Date.current) }
+      (member_rates.sum.to_f / [ member_rates.size, 1 ].max).round(1)
+    end
 
-    # Club Temperature (Real Calculation)
-    # Base 36.5 + 0.5 per verification today
-    today_verifications = VerificationLog.where(created_at: Date.current.all_day).count
-    @club_temperature = (36.5 + (today_verifications * 0.5)).round(1)
+    # 2. Season Cumulative Average Achievement for Club Members
+    @club_season_avg_achievement = Rails.cache.fetch("club_season_avg_#{Date.current}", expires_in: 30.minutes) do
+      avg = @confirmed_members.average(:attendance_rate)
+      avg&.round(1) || 0
+    end
+
+    @club_weekly_completions = @club_season_avg_achievement
+    @club_temperature = @club_today_avg_achievement
 
     @club_announcements = @current_club&.announcements&.order(created_at: :desc)&.limit(2) || []
     @is_club_member = current_user&.is_rufa_club_member?
