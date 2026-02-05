@@ -51,13 +51,8 @@ class PwaController < ApplicationController
 
       results = []
 
-      def clean_key(key)
-        return "MISSING" if key.blank?
-        key.gsub(/\A['"]+|['"]+\z/, "").strip.gsub(/[[:space:]]/, "").tr("+/", "-_")
-      end
-
-      pub = clean_key(ENV["VAPID_PUBLIC_KEY"])
-      priv = clean_key(ENV["VAPID_PRIVATE_KEY"])
+      pub = "BOSk9RTXuuwHy1nIfECrhja1c7jy48zRrrTnFczxmPkY7_pfm9uajihHnqvRSObUe7qpoXhNdNxRV62EUvlDBcU="
+      priv = "4kb6yCVfIXWwC2tCpFsPXH8sB5uI9cioBwOceY31UkM="
 
       subscriptions.find_each do |subscription|
         begin
