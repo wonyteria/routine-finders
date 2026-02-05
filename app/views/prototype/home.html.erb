@@ -143,6 +143,12 @@
     <% end %>
   </header>
 
+  <% if @push_debug_msg %>
+    <div class="px-4 py-2 bg-red-500/20 text-[10px] text-red-200 font-mono mb-4 text-center">
+      [DEBUG] <%= @push_debug_msg %>
+    </div>
+  <% end %>
+
   <!-- 2. Commitment Input & Live Feed -->
   <div class="space-y-3">
     <%= form_with url: prototype_record_path, method: :post, 
