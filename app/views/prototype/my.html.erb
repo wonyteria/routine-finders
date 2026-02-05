@@ -466,20 +466,34 @@
             </p>
           </div>
 
-          <div class="bg-white/5 rounded-xl p-4 space-y-2 text-left">
+          <div class="bg-white/5 rounded-xl p-4 space-y-3 text-left">
+             <!-- Step 1 -->
              <div class="flex gap-3 items-start">
                <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] shrink-0 mt-0.5">1</span>
-               <p class="text-[11px] text-slate-300 leading-tight">이 팝업을 닫은 후 나오는<br/><span class="text-indigo-400 font-bold">시스템 권한 요청</span>을 허용해주세요.</p>
+               <p class="text-[11px] text-slate-300 leading-tight">잠시 후 뜨는 <span class="text-indigo-400 font-bold">시스템 권한 요청</span>을<br/>꼭 '허용'해주세요.</p>
              </div>
+             
+             <!-- Step 2 -->
              <div class="flex gap-3 items-start">
                <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] shrink-0 mt-0.5">2</span>
-               <div class="space-y-1">
-                 <p class="text-[11px] text-slate-300 leading-tight">알림이 안 오나요? <span class="text-amber-400 font-bold">가장 확실한 방법</span>:</p>
-                 <p class="text-[10px] text-slate-400 bg-black/20 p-2.5 rounded-lg border border-white/5 leading-relaxed">
-                   ① 바탕화면 앱 아이콘 <span class="text-white font-bold">1초간 꾹 누르기</span><br/>
-                   ② <span class="text-white font-bold">앱 정보(ⓘ)</span> 버튼 누르기<br/>
-                   ③ <span class="text-white font-bold">알림 > 허용</span> 켜주기
-                 </p>
+               <div class="space-y-2 w-full">
+                 <p class="text-[11px] text-slate-300 leading-tight"><span class="text-amber-400 font-bold">휴대폰 알림 설정(필수)</span>을 켜주세요.</p>
+                 
+                 <!-- Android Instructions -->
+                 <div class="bg-black/20 p-2 rounded-lg border border-white/5">
+                   <p class="text-[10px] text-slate-400 leading-relaxed">
+                     <span class="text-xs">🤖</span> <span class="text-white font-bold">갤럭시/안드로이드</span><br/>
+                     앱 아이콘 꾹 → ⓘ 앱 정보 → 알림 → 허용
+                   </p>
+                 </div>
+
+                 <!-- iOS Instructions -->
+                 <div class="bg-black/20 p-2 rounded-lg border border-white/5">
+                   <p class="text-[10px] text-slate-400 leading-relaxed">
+                     <span class="text-xs">🍎</span> <span class="text-white font-bold">아이폰 (iOS)</span><br/>
+                     설정 앱 → Routine Finders → 알림 → 허용
+                   </p>
+                 </div>
                </div>
              </div>
           </div>
