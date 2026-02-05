@@ -10,12 +10,11 @@ class ClubPushNotificationJob < ApplicationJob
     Rails.logger.info "[ClubPushNotificationJob] Found #{configs.count} configs to send"
 
     configs.each do |config|
-      case config.config_type
-      when "morning_affirmation", "evening_reminder", "test_1020", "test_1040", "test_1045", "test_1100", "test_1110", "test_1130", "test_1150", "test_1230", "test_1245", "test_1300", "test_1340", "test_1555", "test_1610"
+      if config.config_type == "night_check"
+        send_completion_checks(config)
+      elsif [ "morning_affirmation", "evening_reminder" ].include?(config.config_type) || config.config_type.start_with?("test_")
         Rails.logger.info "[ClubPushNotificationJob] Processing general reminder: #{config.config_type}"
         send_general_reminders(config)
-      when "night_check"
-        send_completion_checks(config)
       end
     end
   end
