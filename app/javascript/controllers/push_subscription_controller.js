@@ -28,6 +28,14 @@ export default class extends Controller {
         try {
             const registration = await navigator.serviceWorker.ready
 
+            // [Important] Force VAPID Key Rotation
+            // If a subscription exists, unsubscribe it first to ensure we use the NEW public key.
+            const existingSubscription = await registration.pushManager.getSubscription()
+            if (existingSubscription) {
+                console.log('Found existing subscription, unsubscribing to force key update...')
+                await existingSubscription.unsubscribe()
+            }
+
             // Request permission
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') {
@@ -53,32 +61,13 @@ export default class extends Controller {
 
             try {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
-                console.log('Converted Buffer Length:', applicationServerKey.length)
-
-                // Final safeguard: Force 65 bytes if we have 66 and it starts with 0x04
-                if (applicationServerKey.length === 66 && applicationServerKey[0] === 4) {
-                    console.log('Force trimming 66-byte key starting with 0x04 to 65 bytes')
-                    applicationServerKey = applicationServerKey.slice(0, 65)
-                } else if (applicationServerKey.length === 66 && applicationServerKey[1] === 4) {
-                    console.log('Force trimming 66-byte key starting with junk byte to 65 bytes')
-                    applicationServerKey = applicationServerKey.slice(1)
-                } else if (applicationServerKey.length > 65) {
-                    // Last resort for any other length issues
-                    console.log('Key length issue:', applicationServerKey.length, 'Attempting last 65 bytes')
-                    applicationServerKey = applicationServerKey.slice(-65)
-                }
             } catch (e) {
                 console.error('VAPID Key Convert Error:', e)
-                const firstPart = cleanKey ? cleanKey.substring(0, 10) : 'None'
-                alert(`알림 시스템 초기화 오류가 발생했습니다.\n(Key Conversion Failed)\n\nKey: ${firstPart}...\nLen: ${cleanKey?.length}\nError: ${e.message}`)
+                alert(`키 변환 오류: ${e.message}`)
                 return
             }
 
-            if (applicationServerKey.length !== 65) {
-                alert(`설정된 VAPID Key의 길이가 올바르지 않습니다.\n(현재: ${applicationServerKey.length} bytes / 필요: 65 bytes)\n\n서버의 VAPID_PUBLIC_KEY 환경 변수를 확인해주세요.\n(Key: ${cleanKey.substring(0, 8)}...)`)
-                return
-            }
-
+            // Subscribe with NEW key
             const subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: applicationServerKey
