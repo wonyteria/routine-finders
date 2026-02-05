@@ -48,11 +48,27 @@ export default class extends Controller {
         const subscription = await registration.pushManager.getSubscription()
 
         if (subscription) {
+            // Sync with server first to ensure DB is updated
+            await this.removeSubscriptionFromServer(subscription)
+            // Then unsubscribe from browser
             await subscription.unsubscribe()
         }
 
         this.updateUI(false)
         alert('알림이 해제되었습니다.')
+    }
+
+    async removeSubscriptionFromServer(subscription) {
+        return fetch('/pwa/subscribe', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': document.querySelector("[name='csrf-token']").content
+            },
+            body: JSON.stringify({
+                endpoint: subscription.endpoint
+            })
+        }).catch(err => console.error('Server sync failed:', err))
     }
 
     startSubscribeFlow() {

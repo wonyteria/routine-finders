@@ -27,6 +27,11 @@ class PwaController < ApplicationController
     end
   end
 
+  def unsubscribe
+    current_user.web_push_subscriptions.where(endpoint: params[:endpoint]).destroy_all
+    render json: { status: "ok" }, status: :ok
+  end
+
   def dismiss_notice
     # JSON column handles string keys
     current_user.notification_preferences ||= {}

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   get "/manifest.json" => "pwa#manifest", as: :pwa_manifest
   get "/offline" => "pwa#offline", as: :pwa_offline
   post "/pwa/subscribe" => "pwa#subscribe", as: :pwa_subscribe
+  delete "/pwa/subscribe" => "pwa#unsubscribe", as: :pwa_unsubscribe
   post "/pwa/dismiss_notice" => "pwa#dismiss_notice", as: :pwa_dismiss_push_notice
   get "/push_test" => "pwa#push_test", as: :pwa_push_test
 
