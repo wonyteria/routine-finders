@@ -86,11 +86,12 @@ class PrototypeController < ApplicationController
     @total_active_metes = [ @total_active_metes, @orbit_users.count ].max
 
     # 5. Specialized Content (Ranking & Goals) - Use minimal calculation
-    @rufa_rankings = Rails.cache.fetch("home_rankings_stable", expires_in: 1.hour) do
-      User.where(deleted_at: nil)
+    @rufa_rankings = Rails.cache.fetch("home_rankings_stable_v2", expires_in: 1.hour) do
+      User.active
           .joins(:routine_club_members)
-          .where(routine_club_members: { status: :active, payment_status: :confirmed })
-          .limit(10)
+          .where(routine_club_members: { status: [ :active, :warned ], payment_status: :confirmed })
+          .where("routine_club_members.membership_start_date <= ? AND routine_club_members.membership_end_date >= ?", Date.current, Date.current)
+          .limit(20)
           .map { |u| { user: u, score: u.rufa_club_score } }
           .sort_by { |r| -r[:score] } rescue []
     end
@@ -151,7 +152,10 @@ class PrototypeController < ApplicationController
     # We include users who have recent activities or are club members
     active_activity_user_ids = RufaActivity.where("created_at >= ?", 7.days.ago).pluck(:user_id)
     # Include both active club members AND admins in the club badge logic
-    club_member_user_ids = User.joins(:routine_club_members).where(routine_club_members: { status: :active, payment_status: :confirmed }).pluck(:id)
+    club_member_user_ids = User.joins(:routine_club_members)
+                               .where(routine_club_members: { status: [ :active, :warned ], payment_status: :confirmed })
+                               .where("routine_club_members.membership_start_date <= ? AND routine_club_members.membership_end_date >= ?", Date.current, Date.current)
+                               .pluck(:id)
     admin_user_ids = User.admin.pluck(:id)
     all_club_ids = (club_member_user_ids + admin_user_ids).uniq
 
