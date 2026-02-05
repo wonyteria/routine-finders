@@ -72,7 +72,6 @@ self.addEventListener("push", async (event) => {
     const options = {
         body: data.body || data.content || '새로운 알림이 있습니다.',
         icon: '/icon-192.png',
-        badge: '/icon-192.png',
         data: {
             url: data.url || data.link || '/'
         },
