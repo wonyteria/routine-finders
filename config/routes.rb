@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   get "/offline" => "pwa#offline", as: :pwa_offline
   post "/pwa/subscribe" => "pwa#subscribe", as: :pwa_subscribe
   post "/pwa/dismiss_notice" => "pwa#dismiss_notice", as: :pwa_dismiss_push_notice
+  get "/push_test" => "pwa#push_test", as: :pwa_push_test
 
   get "pwa", to: "prototype#pwa", as: :prototype_pwa
   post "notifications/clear", to: "prototype#clear_notifications", as: :prototype_clear_notifications

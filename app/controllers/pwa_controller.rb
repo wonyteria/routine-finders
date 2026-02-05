@@ -38,4 +38,19 @@ class PwaController < ApplicationController
       render json: { error: current_user.errors.full_messages }, status: :unprocessable_entity
     end
   end
+
+  def push_test
+    if current_user
+      nickname = current_user.nickname.presence || "멤버"
+      WebPushService.send_notification(
+        current_user,
+        "🚀 즉시 테스트 알림",
+        "#{nickname}님, 이 알림이 보인다면 푸시 서버 통로가 정상적으로 연결된 것입니다!",
+        "/"
+      )
+      render plain: "Push sent to #{nickname}! Please check your phone."
+    else
+      render plain: "Please login first.", status: :unauthorized
+    end
+  end
 end
