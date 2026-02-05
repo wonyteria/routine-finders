@@ -15,9 +15,11 @@ export default class extends Controller {
         if (window.location.hash === "#push-settings-section") {
             const element = document.getElementById("push-settings-section")
             if (element) {
-                element.classList.add("ring-2", "ring-indigo-500", "ring-offset-4", "ring-offset-[#0C0B12]", "rounded-xl", "bg-indigo-500/10")
+                // Remove offset and use inset to prevent cutoff, added transition for smoothness
+                element.classList.add("ring-2", "ring-indigo-500", "ring-inset", "bg-indigo-500/10", "transition-all", "duration-500")
+
                 setTimeout(() => {
-                    element.classList.remove("ring-2", "ring-indigo-500", "ring-offset-4", "ring-offset-[#0C0B12]", "bg-indigo-500/10")
+                    element.classList.remove("ring-2", "ring-indigo-500", "ring-inset", "bg-indigo-500/10")
                 }, 3000)
             }
         }
