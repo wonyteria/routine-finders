@@ -105,13 +105,16 @@ class PrototypeController < ApplicationController
       @long_term_goal = @user_goals["long_term"]&.body
       @weekly_goal = current_user.weekly_goal
 
-      # [Push Notification Onboarding]
-      # Show if club member + not dismissed + not subscribed
-      if @is_club_member
-        dismissed = current_user.notification_preferences&.dig("push_onboarding_dismissed")
+        # [Push Notification Onboarding]
+        # Show if club member + not dismissed + not subscribed
+        if @is_club_member
         subscribed = current_user.web_push_subscriptions.exists?
-        @show_push_onboarding = !dismissed && !subscribed
-      end
+        # [Launch Special] Ignore dismissed history! Show to everyone who hasn't subscribed yet.
+        @show_push_onboarding = !subscribed
+
+        # Log for debugging
+        Rails.logger.info "[PushPromo] User #{current_user.id}: Subscribed=#{subscribed}, ShowModal=#{@show_push_onboarding}"
+        end
     else
       @hosted_challenges = []
       @joined_challenges = []
