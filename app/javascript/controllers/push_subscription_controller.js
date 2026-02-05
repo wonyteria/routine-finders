@@ -101,18 +101,23 @@ export default class extends Controller {
         }
     }
 
-    handleDeniedPermission() {
-        // Revert toggle immediately to prevent visual confusion
+    handleDeniedPermission(status) {
         this.updateUI(false)
 
-        alert(
-            '🚫 알림 권한이 차단되어 있습니다.\n\n' +
-            '휴대폰 설정에서 알림을 허용하셨음에도 이 메시지가 뜬다면, 아래 방법이 가장 확실합니다:\n\n' +
-            '1. 휴대폰 [설정 > 애플리케이션 > 루틴파인더스 > 저장공간]\n' +
-            '2. [데이터 삭제] 버튼을 눌러주세요.\n' +
-            '3. 앱을 다시 실행하여 로그인하면 권한을 다시 물어보게 됩니다.\n\n' +
-            '*데이터 삭제 시 권한 설정만 초기화되며, 기록된 루틴 데이터는 안전합니다.'
-        )
+        let message = '🚫 알림 권한이 차단되어 있습니다.\n\n'
+
+        if (status === 'denied') {
+            message += '휴대폰 설정을 마쳤는데도 이 창이 뜬다면, 아래 순서대로 꼭 확인해주세요:\n\n' +
+                '1. 크롬(Chrome) 앱 실행\n' +
+                '2. 주소창 우측 [︙] 메뉴 -> [설정]\n' +
+                '3. [사이트 설정] -> [알림]\n' +
+                '4. [차단됨] 목록에서 routinefinders.life 가 있다면 눌러서 [허용]으로 변경\n\n' +
+                '이 방법이 가장 확실한 해결책입니다!'
+        } else {
+            message += '알림 권한을 허용해야 서비스를 원활히 이용하실 수 있습니다.'
+        }
+
+        alert(message)
     }
 
     openGuide() {
@@ -138,19 +143,25 @@ export default class extends Controller {
 
     async processSubscription() {
         try {
-            const registration = await navigator.serviceWorker.ready
+            // 1. Request Permission FIRST
+            const permission = await Notification.requestPermission()
 
-            // Clean up to ensure fresh subscription
-            const existingSubscription = await registration.pushManager.getSubscription()
-            if (existingSubscription) {
-                await existingSubscription.unsubscribe()
+            if (permission !== 'granted') {
+                this.handleDeniedPermission(permission)
+                return
             }
 
-            // Request permission
-            const permission = await Notification.requestPermission()
-            if (permission !== 'granted') {
-                this.handleDeniedPermission()
-                return
+            // 2. Prepare service worker
+            const registration = await navigator.serviceWorker.ready
+
+            // Clean up old subscriptions to prevent conflicts
+            const existingSubscription = await registration.pushManager.getSubscription()
+            if (existingSubscription) {
+                try {
+                    await existingSubscription.unsubscribe()
+                } catch (e) {
+                    console.warn('Unsubscribe error (safe to ignore):', e)
+                }
             }
 
             if (!this.vapidPublicKeyValue) {
@@ -159,20 +170,17 @@ export default class extends Controller {
                 return
             }
 
-            // Remove everything except what's valid for Base64 (A-Z, a-z, 0-9, +, /, -, _, =)
             let cleanKey = (this.vapidPublicKeyValue || "").replace(/[^A-Za-z0-9\+\/\-\_=]/g, '')
-
             let applicationServerKey
             try {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
             } catch (e) {
-                console.error('Key error:', e)
                 alert('알림 시스템 초기화 실패')
                 this.updateUI(false)
                 return
             }
 
-            // Subscribe
+            // 3. Final Subscription
             const subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: applicationServerKey
@@ -184,13 +192,9 @@ export default class extends Controller {
             alert('푸시 알림이 설정되었습니다! ✨')
 
         } catch (error) {
-            console.error('Subscription failed:', error)
-            if (Notification.permission === 'denied') {
-                this.handleDeniedPermission()
-            } else {
-                alert(`알림 설정 중 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.`)
-                this.updateUI(false)
-            }
+            console.error('Push setting crash:', error)
+            alert(`알림 설정 실패: ${error.message}\n브라우저를 껐다 켜보시거나 잠시 후 다시 시도해주세요.`)
+            this.updateUI(false)
         }
     }
 
