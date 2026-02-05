@@ -87,14 +87,32 @@ export default class extends Controller {
     }
 
     startSubscribeFlow() {
-        // Check if user has dismissed the guide
-        const isGuideDismissed = localStorage.getItem('push_guide_dismissed') === 'true'
+        const permission = Notification.permission;
 
-        if (isGuideDismissed) {
+        if (permission === 'granted') {
+            // [Smart Action] Already allowed! No need to show guide.
             this.processSubscription()
+        } else if (permission === 'denied') {
+            // [Issue Case] Explicitly blocked by site settings.
+            this.handleDeniedPermission()
         } else {
+            // [First Time] Show the onboarding guide.
             this.openGuide()
         }
+    }
+
+    handleDeniedPermission() {
+        // Revert toggle immediately to prevent visual confusion
+        this.updateUI(false)
+
+        alert(
+            '🚫 알림 권한이 차단되어 있습니다.\n\n' +
+            '휴대폰 설정에서 알림을 허용하셨음에도 이 메시지가 뜬다면, 아래 방법이 가장 확실합니다:\n\n' +
+            '1. 휴대폰 [설정 > 애플리케이션 > 루틴파인더스 > 저장공간]\n' +
+            '2. [데이터 삭제] 버튼을 눌러주세요.\n' +
+            '3. 앱을 다시 실행하여 로그인하면 권한을 다시 물어보게 됩니다.\n\n' +
+            '*데이터 삭제 시 권한 설정만 초기화되며, 기록된 루틴 데이터는 안전합니다.'
+        )
     }
 
     openGuide() {
@@ -122,9 +140,7 @@ export default class extends Controller {
         try {
             const registration = await navigator.serviceWorker.ready
 
-            // [Important] Force VAPID Key Rotation check
-            // Although usually we are here because we are unsubscribed,
-            // double check to ensure clean state.
+            // Clean up to ensure fresh subscription
             const existingSubscription = await registration.pushManager.getSubscription()
             if (existingSubscription) {
                 await existingSubscription.unsubscribe()
@@ -133,29 +149,13 @@ export default class extends Controller {
             // Request permission
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') {
-                // If the user manually blocked it before, the browser won't ask again and returns 'denied' immediately.
-                // Or if they just switched text in OS settings but didn't reload, the browser might not know yet.
-                if (permission === 'denied') {
-                    // PWA environment doesn't have an address bar, so we guide to App Settings.
-                    alert(
-                        '🚫 알림 권한이 차단되어 있습니다.\n\n' +
-                        '이미 설정을 켜셨다면, 일시적인 오류일 수 있습니다.\n\n' +
-                        '[해결 방법]\n' +
-                        '1. 앱을 완전히 종료 후 다시 실행해보세요.\n' +
-                        '2. 그래도 안 되면 휴대폰 [설정 > 애플리케이션 > 루틴파인더스 > 저장공간 > 데이터 삭제] 후 다시 로그인해보세요. (가장 확실)\n' +
-                        '   (*데이터 삭제 시 권한 설정이 초기화됩니다)'
-                    )
-                } else {
-                    alert('알림 권한이 거부되었습니다.\n권한을 허용해야 알림을 받을 수 있습니다.')
-                }
-
-                // Revert toggle visually
-                this.updateUI(false)
+                this.handleDeniedPermission()
                 return
             }
 
             if (!this.vapidPublicKeyValue) {
-                alert('VAPID 키가 누락되었습니다.')
+                alert('알림 서버 설정 오류(VAPID)')
+                this.updateUI(false)
                 return
             }
 
@@ -167,7 +167,8 @@ export default class extends Controller {
                 applicationServerKey = this.urlBase64ToUint8Array(cleanKey)
             } catch (e) {
                 console.error('Key error:', e)
-                alert('알림 시스템 초기화 오류')
+                alert('알림 시스템 초기화 실패')
+                this.updateUI(false)
                 return
             }
 
@@ -184,8 +185,12 @@ export default class extends Controller {
 
         } catch (error) {
             console.error('Subscription failed:', error)
-            alert(`알림 설정 실패: ${error.message}`)
-            this.updateUI(false)
+            if (Notification.permission === 'denied') {
+                this.handleDeniedPermission()
+            } else {
+                alert(`알림 설정 중 오류가 발생했습니다.\n잠시 후 다시 시도해 주세요.`)
+                this.updateUI(false)
+            }
         }
     }
 
