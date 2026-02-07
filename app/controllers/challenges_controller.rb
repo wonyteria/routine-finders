@@ -171,6 +171,12 @@ class ChallengesController < ApplicationController
     @challenge = Challenge.new(params_hash)
     @challenge.host = current_user
 
+    # Ensure offline gatherings have consistent dates
+    if @challenge.offline?
+      @challenge.end_date = @challenge.start_date
+      @challenge.mission_frequency = :daily
+    end
+
     if @challenge.save
       if @challenge.save_account_to_profile == "1"
         current_user.update(
