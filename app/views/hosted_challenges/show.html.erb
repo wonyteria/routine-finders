@@ -103,7 +103,7 @@
   <section class="grid grid-cols-2 gap-3 px-1">
     <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
       <span class="text-2xl font-black italic text-white mb-1"><%= @stats[:total_participants] %></span>
-      <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "최종 참여 루퍼" : "누적 루퍼" %></span>
+      <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "최종 참여자" : "누적 루퍼" %></span>
     </div>
     <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
       <% if @challenge.offline? %>
