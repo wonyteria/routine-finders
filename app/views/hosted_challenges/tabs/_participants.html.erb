@@ -47,7 +47,9 @@
     <div class="p-4 md:p-6 border-b border-white/5 flex items-center justify-between">
       <div>
         <h2 class="text-base md:text-lg font-black text-white italic">참가자 목록</h2>
-        <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">총 <%= participants.count %>명의 루퍼가 활동 중입니다</p>
+        <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">
+          총 <%= participants.count %>명의 <%= @challenge.gathering? ? '멤버' : '루퍼' %>가 <%= @challenge.gathering? ? '참여' : '활동' %> 중입니다
+        </p>
       </div>
       <%= link_to new_challenge_announcement_path(@challenge, source: "prototype"), 
                   data: { turbo_frame: "_top" },
@@ -67,26 +69,42 @@
             <div class="flex items-center gap-3 overflow-hidden min-w-0">
               <div class="relative shrink-0">
                 <img src="<%= participant.user.profile_image %>" class="w-10 h-10 rounded-full object-cover bg-slate-800 border border-white/10">
-                <% if participant.today_verified %>
-                  <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#1a1b1e] flex items-center justify-center shadow-sm" title="오늘 인증 완료">
-                    <svg class="w-2 h-2 text-[#1a1b1e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
-                  </div>
+                <% unless @challenge.gathering? %>
+                  <% if participant.today_verified %>
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#1a1b1e] flex items-center justify-center shadow-sm" title="오늘 인증 완료">
+                      <svg class="w-2 h-2 text-[#1a1b1e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                  <% end %>
                 <% end %>
               </div>
               
               <div class="flex flex-col min-w-0 justify-center">
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-white text-sm truncate"><%= participant.user.nickname %></span>
-                  <!-- Badge Dot -->
-                  <% badge = participant.status_badge_info %>
-                  <% badge_color_class = badge[:class].scan(/text-\w+-\d+/).first || 'text-slate-400' %>
-                  <% bg_color_class = badge_color_class.gsub('text-', 'bg-') %>
-                  <div class="w-1.5 h-1.5 rounded-full <%= bg_color_class %>" title="<%= badge[:label] %>"></div>
+                  
+                  <% if @challenge.gathering? %>
+                    <!-- Gathering: Simple Member Badge -->
+                    <span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">멤버</span>
+                  <% else %>
+                    <!-- Challenge: Status Dot -->
+                    <% badge = participant.status_badge_info %>
+                    <% badge_color_class = badge[:class].scan(/text-\w+-\d+/).first || 'text-slate-400' %>
+                    <% bg_color_class = badge_color_class.gsub('text-', 'bg-') %>
+                    <div class="w-1.5 h-1.5 rounded-full <%= bg_color_class %>" title="<%= badge[:label] %>"></div>
+                  <% end %>
                 </div>
+
                 <div class="text-[10px] text-slate-500 font-medium truncate flex items-center gap-1.5">
-                  <span class="<%= badge[:class] %> opacity-90"><%= badge[:label] %></span>
-                  <span class="text-slate-700">|</span>
-                  <span class="text-orange-500 font-bold">🔥 <%= participant.current_streak %>일</span>
+                  <% if @challenge.gathering? %>
+                    <!-- Gathering: Simple Info -->
+                    <span class="text-slate-500">가입: <%= participant.joined_at&.strftime("%y.%m.%d") %></span>
+                  <% else %>
+                    <!-- Challenge: Detailed Status -->
+                    <% badge = participant.status_badge_info %>
+                    <span class="<%= badge[:class] %> opacity-90"><%= badge[:label] %></span>
+                    <span class="text-slate-700">|</span>
+                    <span class="text-orange-500 font-bold">🔥 <%= participant.current_streak %>일</span>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -94,15 +112,17 @@
             <!-- Right: Stats & Actions -->
             <div class="flex items-center gap-4 shrink-0">
               
-              <!-- Completion Rate -->
-              <div class="text-right hidden xs:block">
-                <div class="text-xs font-black text-white"><%= participant.completion_rate.to_i %>%</div>
-                <div class="text-[9px] text-slate-600 font-bold">달성률</div>
-              </div>
+              <% unless @challenge.gathering? %>
+                <!-- Completion Rate (Challenge Only) -->
+                <div class="text-right hidden xs:block">
+                  <div class="text-xs font-black text-white"><%= participant.completion_rate.to_i %>%</div>
+                  <div class="text-[9px] text-slate-600 font-bold">달성률</div>
+                </div>
+              <% end %>
 
               <!-- Action Buttons (Icon Only) -->
               <div class="flex items-center gap-1 pl-3 border-l border-white/5">
-                <button class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-slate-400 flex items-center justify-center transition-all" title="알림 보내기">
+                <button class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-slate-400 flex items-center justify-center transition-all" title="공지/알림 보내기">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 </button>
                 <button class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-slate-400 flex items-center justify-center transition-all" title="채팅하기">
