@@ -451,7 +451,7 @@
             <div class="glass-card p-8 space-y-6">
               <h3 class="text-sm font-black flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                CHALLENGE GUIDE
+                <%= @challenge.offline? ? "GATHERING GUIDE" : "CHALLENGE GUIDE" %>
               </h3>
               <div class="text-sm font-medium text-slate-400 leading-relaxed whitespace-pre-wrap"><%= @challenge.description %></div>
             </div>
@@ -508,8 +508,12 @@
                  <p class="text-2xl font-black italic"><%= @challenge.current_participants %></p>
               </div>
               <div class="glass-card p-6">
-                 <p class="text-[9px] font-black text-slate-500 mb-1 uppercase">Today Rate</p>
-                 <p class="text-2xl font-black italic text-indigo-400"><%= (@today_verified_count.to_f / [@challenge.current_participants, 1].max * 100).to_i %>%</p>
+                 <p class="text-[9px] font-black text-slate-500 mb-1 uppercase"><%= @challenge.offline? ? "Capacity" : "Today Rate" %></p>
+                 <% if @challenge.offline? %>
+                   <p class="text-2xl font-black italic text-indigo-400"><%= @challenge.current_participants %> / <%= @challenge.meeting_info&.max_attendees || '∞' %></p>
+                 <% else %>
+                   <p class="text-2xl font-black italic text-indigo-400"><%= (@today_verified_count.to_f / [@challenge.current_participants, 1].max * 100).to_i %>%</p>
+                 <% end %>
               </div>
             </div>
 
