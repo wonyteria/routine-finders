@@ -449,7 +449,7 @@ class User < ApplicationRecord
           days_list = []
         end
       end
-      day_condition = (days_list || []).include?(date.wday.to_s)
+      day_condition = (days_list || []).include?(Date::DAYNAMES[date.wday])
 
       created_condition && day_condition
     end
@@ -496,7 +496,7 @@ class User < ApplicationRecord
             days_list = []
           end
         end
-        day_condition = (days_list || []).include?(date.wday.to_s)
+        day_condition = (days_list || []).include?(Date::DAYNAMES[date.wday])
 
         created_condition && day_condition
       end
@@ -530,7 +530,7 @@ class User < ApplicationRecord
 
       created_condition = r.created_at.to_date <= date
       deleted_condition = r.deleted_at.nil? || r.deleted_at.to_date > date
-      day_condition = (days_list || []).include?(date.wday.to_s)
+      day_condition = (days_list || []).include?(Date::DAYNAMES[date.wday])
 
       created_condition && deleted_condition && day_condition
     end
@@ -587,7 +587,8 @@ class User < ApplicationRecord
   end
 
   def daily_greeting_info
-    todays_routines = personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(Date.current.wday.to_s) }
+    current_day_name = Date::DAYNAMES[Date.current.wday]
+    todays_routines = personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(current_day_name) }
     completed_today = personal_routines.joins(:completions).where(personal_routine_completions: { completed_on: Date.current }).count
 
     rate = todays_routines.any? ? (completed_today.to_f / todays_routines.size * 100).round : 0

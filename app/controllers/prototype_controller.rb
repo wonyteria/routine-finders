@@ -30,7 +30,9 @@ class PrototypeController < ApplicationController
     end
 
     # 2. Routine & Task Progress (Real data)
-    @todays_routines = current_user ? current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(Date.current.wday.to_s) } : []
+    # Convert wday (0-6) to day name (Sun, Mon, Tue, ...)
+    current_day_name = Date::DAYNAMES[Date.current.wday]
+    @todays_routines = current_user ? current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).include?(current_day_name) } : []
 
     # Fix: Filter out finished challenges from 'Today's Tasks'
     @joined_participations = current_user ? current_user.participations.active.joins(:challenge).where("challenges.start_date <= ? AND challenges.end_date >= ?", Date.current, Date.current) : Participant.none
