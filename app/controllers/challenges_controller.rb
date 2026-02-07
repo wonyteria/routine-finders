@@ -118,10 +118,18 @@ class ChallengesController < ApplicationController
       end
     end
 
-    # Can write review? (Joined for 7+ days and not reviewed yet)
-    @can_write_review = @is_joined &&
-                        @participant.joined_at <= 7.days.ago &&
-                        !@challenge.reviews.exists?(user: current_user)
+    # Can write review? Improved for Offline Gatherings
+    if @is_joined && !@challenge.reviews.exists?(user: current_user)
+      if @challenge.offline?
+        # 오프라인 모임은 모임 당일 혹은 그 이후부터 작성 가능
+        @can_write_review = Date.current >= @challenge.start_date
+      else
+        # 온라인 챌린지는 기존처럼 7일 경과 후 작성 가능
+        @can_write_review = @participant.joined_at <= 7.days.ago
+      end
+    else
+      @can_write_review = false
+    end
 
     if params[:source] == "prototype"
       render layout: "prototype"

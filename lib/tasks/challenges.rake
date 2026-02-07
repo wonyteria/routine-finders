@@ -23,6 +23,25 @@ namespace :challenges do
       end
     end
 
+    # 3. 리뷰 리마인드 알림 (어제 종료된 챌린지 대상)
+    yesterday_ended_challenges = Challenge.where(end_date: Date.yesterday)
+    puts "Found #{yesterday_ended_challenges.count} challenges ended yesterday for review reminders"
+
+    yesterday_ended_challenges.find_each do |challenge|
+      challenge.participants.each do |participant|
+        # 리뷰를 아직 작성하지 않은 유저에게만 발송
+        unless challenge.reviews.exists?(user: participant.user)
+          Notification.create!(
+            user: participant.user,
+            notification_type: :review_reminder,
+            title: "어제의 모임은 어떠셨나요? 🌿",
+            message: "'#{challenge.title}' 모임의 후기를 남겨주세요. 당신의 따뜻한 한마디가 호스트에게 큰 힘이 됩니다!",
+            data: { challenge_id: challenge.id }
+          )
+        end
+      end
+    end
+
     puts "Daily challenge processing completed at #{Time.current}"
   end
 
