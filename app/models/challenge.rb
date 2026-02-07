@@ -77,9 +77,8 @@ class Challenge < ApplicationRecord
   end
 
   def gathering?
-    # A gathering is identified by having a meeting_type set
-    # This distinguishes it from regular challenges (both online and offline)
-    meeting_type.present?
+    # Gatherings are challenges with offline mode
+    offline?
   end
 
   def online?

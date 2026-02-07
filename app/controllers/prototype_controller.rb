@@ -132,8 +132,15 @@ class PrototypeController < ApplicationController
                             .order(:recruitment_end_date).limit(5)
 
     # 2. Base Queries with eager loading
-    challenges_query = Challenge.includes(:host, :participants).where("end_date >= ?", Date.current)
-    gatherings_query = Challenge.includes(:host, :participants).where("end_date >= ?", Date.current).where.not(meeting_type: nil)
+    # Challenges: online mode only
+    challenges_query = Challenge.includes(:host, :participants)
+                                .where("end_date >= ?", Date.current)
+                                .where(mode: :online)
+
+    # Gatherings: offline mode only
+    gatherings_query = Challenge.includes(:host, :participants)
+                                .where("end_date >= ?", Date.current)
+                                .where(mode: :offline)
 
     # 3. Apply Sorting
     order_clause = case @sort_type
