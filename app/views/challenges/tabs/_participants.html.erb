@@ -13,44 +13,38 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <% participants.each do |p| %>
       <%= link_to prototype_user_card_path(p.user), data: { turbo_frame: "user-profile-modal-frame" }, class: "group block" do %>
-        <div class="p-6 bg-white/[0.04] border border-white/5 rounded-3xl hover:border-indigo-500/30 transition-all group overflow-hidden relative active:scale-95">
-          <div class="flex items-center gap-4">
-            <div class="relative shrink-0">
-              <img src="<%= p.user.profile_image %>" class="w-14 h-14 rounded-2xl object-cover bg-white/5 shadow-2xl transition-transform group-hover:scale-105">
-              <% if !challenge.offline? && p.completion_rate.to_i >= 90 %>
-                <div class="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full border-2 border-[#0C0B12] flex items-center justify-center text-[10px] shadow-lg">👑</div>
-              <% end %>
+        <div class="p-6 bg-white/[0.04] border border-white/5 rounded-3xl hover:border-indigo-500/30 transition-all group overflow-hidden relative active:scale-95 flex flex-col items-center text-center">
+          <div class="relative shrink-0 mb-4">
+            <!-- Profile Image -->
+            <div class="w-20 h-20 rounded-[28px] overflow-hidden border-2 border-white/5 shadow-2xl transition-transform group-hover:scale-105">
+              <img src="<%= p.user.profile_image %>" class="w-full h-full object-cover bg-white/5">
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 min-w-0">
-                <% if p.user.is_rufa_club_member? %>
-                  <span class="shrink-0 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-[9px] font-black text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]">R</span>
-                <% end %>
-                <span class="text-base font-black text-white truncate"><%= p.user.nickname %></span>
+            
+            <!-- RF Badge (Top-Right) -->
+            <% if p.user.is_rufa_club_member? %>
+              <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-[#0C0B12] border-2 border-indigo-500 flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.4)] z-10 transition-transform group-hover:rotate-12">
+                <span class="text-[10px] font-black text-white italic tracking-tighter">RF</span>
               </div>
-              <% if challenge.offline? %>
-                <p class="text-[10px] font-medium text-slate-500 mt-1 line-clamp-1 italic">
-                  <%= p.user.bio.present? ? p.user.bio : "루틴으로 변화를 꿈꾸는 중" %>
-                </p>
-              <% else %>
-                <p class="text-[10px] font-bold text-indigo-400 mt-1">
-                  🔥 <%= p.current_streak %>일 연속 달성 중
-                </p>
-              <% end %>
+            <% end %>
+
+            <!-- Level Badge (Bottom-Right) -->
+            <div class="absolute -bottom-1 -right-1 px-2.5 py-1 bg-white rounded-full border border-black/10 flex items-center justify-center shadow-lg z-10">
+              <span class="text-[10px] font-black text-black leading-none italic">Lv.<%= p.user.level %></span>
             </div>
           </div>
 
-          <% unless challenge.offline? %>
-            <div class="mt-4 space-y-2">
-              <div class="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-slate-500">
-                <span>Progress</span>
-                <span><%= p.completion_rate.to_i %>%</span>
+          <div class="w-full min-w-0">
+            <h3 class="text-base font-black text-white truncate group-hover:text-indigo-400 transition-colors"><%= p.user.nickname %></h3>
+            <% if challenge.offline? %>
+              <p class="text-[10px] font-medium text-slate-500 mt-1 line-clamp-1 italic">
+                <%= p.user.bio.present? ? p.user.bio : "루틴으로 변화를 꿈꾸는 중" %>
+              </p>
+            <% else %>
+              <div class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+                <span class="text-[10px] font-black text-indigo-400">🔥 <%= p.current_streak %>일 연속</span>
               </div>
-              <div class="h-1 bg-white/5 rounded-full overflow-hidden">
-                <div class="h-full bg-indigo-500" style="width: <%= p.completion_rate.to_i %>%"></div>
-              </div>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
         </div>
       <% end %>
     <% end %>
