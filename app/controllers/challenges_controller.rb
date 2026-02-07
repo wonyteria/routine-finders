@@ -27,24 +27,30 @@ class ChallengesController < ApplicationController
                      .recent.includes(:user)
 
     if @is_joined
-      # Dashboard specific data
-      @remaining_days = (@challenge.end_date - Date.current).to_i
-      @d_day = @remaining_days.positive? ? "D-#{@remaining_days}" : (@remaining_days.zero? ? "D-Day" : "종료")
+      # Dashboard specific data (Safe handling for nil dates)
+      if @challenge.end_date
+        @remaining_days = (@challenge.end_date - Date.current).to_i
+        @d_day = @remaining_days.positive? ? "D-#{@remaining_days}" : (@remaining_days.zero? ? "D-Day" : "종료")
+      else
+        @remaining_days = 0
+        @d_day = "설정 전"
+      end
       @today_verified = @participant.verification_logs.today.exists?
       @recent_verifications = @challenge.verification_logs.includes(participant: :user).recent.limit(5)
       @announcements = @challenge.announcements.order(is_pinned: :desc, created_at: :desc).limit(3)
 
-      # Participants with today's verification status
+      # Participants with today's verification status (Safe handling)
       @participants_with_status = @challenge.participants.includes(:user).map do |p|
+        next nil unless p.user
         {
           id: p.id,
-          nickname: p.nickname,
+          nickname: p.nickname || "익명",
           profile_image: p.profile_image,
-          is_me: p.user_id == current_user.id,
+          is_me: p.user_id == current_user&.id,
           verified_today: p.verification_logs.today.exists?,
-          completion_rate: p.completion_rate
+          completion_rate: p.completion_rate || 0
         }
-      end.sort_by { |p| [ p[:is_me] ? 0 : 1, p[:verified_today] ? 0 : 1 ] }
+      end.compact.sort_by { |p| [ p[:is_me] ? 0 : 1, p[:verified_today] ? 0 : 1 ] }
 
       # Rankings (top 5)
       @rankings = @challenge.participants.includes(:user).order(completion_rate: :desc, current_streak: :desc).limit(5)
@@ -68,11 +74,13 @@ class ChallengesController < ApplicationController
       # User's existing review (for edit limit info)
       @user_review = @challenge.reviews.find_by(user: current_user)
 
-      # Grass Data (Daily verification status map)
+      # Grass Data (Safe date range)
       all_logs = @participant.verification_logs.approved.pluck(:created_at).map(&:to_date)
       @daily_status_map = {}
-      (@challenge.start_date..@challenge.end_date).each do |date|
-        @daily_status_map[date] = all_logs.include?(date)
+      if @challenge.start_date && @challenge.end_date
+        (@challenge.start_date..@challenge.end_date).each do |date|
+          @daily_status_map[date] = all_logs.include?(date)
+        end
       end
 
       # 식물 성장 단계 (루파 열매 컨셉)
@@ -94,7 +102,7 @@ class ChallengesController < ApplicationController
       start_of_week = Date.current.beginning_of_week
       verifications_this_week = @participant.verification_logs.approved.where("created_at >= ?", start_of_week).count
       @this_week_completion_rate = (verifications_this_week / 7.0 * 100).to_i
-      @this_week_count = verifications_this_week
+      @this_week_count = verifications_this_week || 0
     end
 
     # All data needed for the new vertical-scroll guest show

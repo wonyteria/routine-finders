@@ -124,7 +124,7 @@
              <div class="w-full h-40 bg-slate-800 rounded-3xl flex items-center justify-center text-slate-500 font-medium border border-white/5">
                 지도 데이터를 로딩 중...
              </div>
-             <p class="text-xs font-bold text-white px-2"><%= @challenge.meeting_info.address %></p>
+             <p class="text-xs font-bold text-white px-2"><%= @challenge.meeting_info&.address %></p>
           </div>
         <% end %>
       </div>
