@@ -779,6 +779,11 @@ class PrototypeController < ApplicationController
     # [Fix] 삭제된 루틴은 통계에서 영구 제외
     personal_routines = @target_user.personal_routines.where(deleted_at: nil)
 
+    # [Added] 해당 기간 내 출석 데이터(패스 사용 여부 확인용)
+    attendance_map = @target_user.routine_club_members.confirmed.first&.attendances
+                      &.where(attendance_date: start_date..end_date)
+                      &.index_by(&:attendance_date) || {}
+
     # 1. 일별 데이터 계산
     daily_data = (start_date..end_date).map do |date|
       todays_active_routines = personal_routines.select do |r|
@@ -790,7 +795,7 @@ class PrototypeController < ApplicationController
           begin
             days_list = JSON.parse(days_list)
           rescue JSON::ParserError
-            days_list = [] # 파싱 실패 시 빈 배열 처리
+            days_list = []
           end
         end
 
@@ -805,8 +810,17 @@ class PrototypeController < ApplicationController
                                 .where(completed_on: date)
                                 .pluck(:personal_routine_id)
 
+      # [Logic] 패스 사용 여부 확인
+      is_excused = attendance_map[date]&.status == "excused"
+
       completed_count = completed_routine_ids.size
-      achievement_rate = total_count > 0 ? (completed_count.to_f / total_count * 100).round(1) : 0
+
+      # 패스 사용 시 100%로 간주, 아닐 경우 실제 완료율 계산
+      achievement_rate = if is_excused
+                           100.0
+      else
+                           total_count > 0 ? (completed_count.to_f / total_count * 100).round(1) : 0
+      end
 
       missed_routines = todays_active_routines.reject { |r| completed_routine_ids.include?(r.id) }
 
@@ -814,9 +828,10 @@ class PrototypeController < ApplicationController
         date: date,
         day_name: %w[일 월 화 수 목 금 토][date.wday],
         total: total_count,
-        completed: completed_count,
+        completed: is_excused ? total_count : completed_count, # 패스 사용 시 전체 완료로 표시
         rate: achievement_rate,
-        missed: missed_routines.map(&:title)
+        is_excused: is_excused,
+        missed: is_excused ? [] : missed_routines.map(&:title)
       }
     end
 

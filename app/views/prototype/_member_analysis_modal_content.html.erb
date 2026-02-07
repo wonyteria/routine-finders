@@ -96,7 +96,12 @@
                 </span>
               </td>
               <td class="px-4 py-3">
-                <% if day[:missed].any? %>
+                <% if day[:is_excused] %>
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 rounded-md bg-indigo-500/20 border border-indigo-500/30 text-[9px] font-black text-indigo-400">PASS ✨</span>
+                    <span class="text-[9px] font-bold text-slate-500 italic">패스권 사용</span>
+                  </div>
+                <% elsif day[:missed].any? %>
                   <div class="flex flex-wrap gap-1">
                     <% day[:missed].each do |task| %>
                       <span class="px-1.5 py-0.5 rounded bg-rose-500/10 border border-rose-500/20 text-[9px] font-bold text-rose-400 truncate max-w-[150px]"><%= task %></span>
