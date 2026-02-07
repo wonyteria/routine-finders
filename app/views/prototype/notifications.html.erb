@@ -45,30 +45,40 @@
                          else { icon: "💎", color: "bg-slate-500/20 text-slate-400" }
                          end %>
               
-              <div class="app-glass-card p-4 flex gap-4 border-white/5 active:scale-[0.98] transition-all cursor-pointer group relative overflow-hidden">
-                <!-- Background decoration for unread (visual only for prototype) -->
-                <% if notification.created_at > 1.hour.ago %>
-                  <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-500/5 blur-xl rounded-full -mr-4 -mt-4"></div>
-                <% end %>
+              <% card_content = capture do %>
+                <div class="app-glass-card p-4 flex gap-4 border-white/5 active:scale-[0.98] transition-all cursor-pointer group relative overflow-hidden">
+                  <!-- Background decoration for unread (visual only for prototype) -->
+                  <% if notification.created_at > 1.hour.ago %>
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-500/5 blur-xl rounded-full -mr-4 -mt-4"></div>
+                  <% end %>
 
-                <div class="w-12 h-12 rounded-2xl <%= style[:color] %> flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <%= style[:icon] %>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center justify-between gap-2 mb-1">
-                    <h3 class="text-sm font-black text-white truncate group-hover:text-indigo-300 transition-colors"><%= notification.title %></h3>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                      <span class="text-[9px] font-bold text-slate-600"><%= time_ago_in_words(notification.created_at) %> 전</span>
-                      <% if notification.created_at > 1.hour.ago %>
-                        <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                      <% end %>
-                    </div>
+                  <div class="w-12 h-12 rounded-2xl <%= style[:color] %> flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform duration-300">
+                    <%= style[:icon] %>
                   </div>
-                  <p class="text-[11px] font-bold text-slate-400 leading-relaxed line-clamp-2">
-                    <%= notification.content %>
-                  </p>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2 mb-1">
+                      <h3 class="text-sm font-black text-white truncate group-hover:text-indigo-300 transition-colors"><%= notification.title %></h3>
+                      <div class="flex items-center gap-1.5 shrink-0">
+                        <span class="text-[9px] font-bold text-slate-600"><%= time_ago_in_words(notification.created_at) %> 전</span>
+                        <% if notification.created_at > 1.hour.ago %>
+                          <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                        <% end %>
+                      </div>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-400 leading-relaxed line-clamp-2">
+                      <%= notification.content %>
+                    </p>
+                  </div>
                 </div>
-              </div>
+              <% end %>
+
+              <% if notification.link.present? %>
+                <%= link_to notification.link, class: "block no-underline" do %>
+                  <%= card_content %>
+                <% end %>
+              <% else %>
+                <%= card_content %>
+              <% end %>
             <% end %>
           </div>
         </div>

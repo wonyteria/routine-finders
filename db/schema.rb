@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_07_050011) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -95,7 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
   end
 
   create_table "challenges", force: :cascade do |t|
-    t.integer "active_rate_threshold", default: 80
+    t.decimal "active_rate_threshold", precision: 5, scale: 2, default: "0.8"
     t.integer "admission_type", default: 0, null: false
     t.integer "amount", default: 0, null: false
     t.text "application_question"
@@ -157,7 +157,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
     t.string "refund_timing"
     t.boolean "requires_application_message", default: false, null: false
     t.json "reward_policy"
-    t.integer "sluggish_rate_threshold", default: 50
+    t.decimal "sluggish_rate_threshold", precision: 5, scale: 2, default: "0.5"
     t.date "start_date", null: false
     t.integer "status", default: 0, null: false
     t.text "summary"
@@ -262,10 +262,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
     t.datetime "deleted_at"
     t.string "icon", default: "✨"
     t.date "last_completed_date"
+    t.bigint "routine_club_id"
     t.string "title", null: false
     t.integer "total_completions", default: 0, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.index ["routine_club_id"], name: "index_personal_routines_on_routine_club_id"
     t.index ["user_id", "created_at"], name: "index_personal_routines_on_user_id_and_created_at"
     t.index ["user_id", "title"], name: "index_personal_routines_on_user_id_and_title"
     t.index ["user_id"], name: "index_personal_routines_on_user_id"
@@ -276,6 +278,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
     t.text "content", null: false
     t.datetime "created_at", null: false
     t.boolean "enabled", default: true
+    t.string "link_url"
     t.string "schedule_time", default: "09:00"
     t.string "title", null: false
     t.datetime "updated_at", null: false
@@ -438,7 +441,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
     t.integer "auto_kick_threshold", default: 10
     t.decimal "average_attendance_rate", precision: 5, scale: 2, default: "0.0"
     t.string "bank_name", default: "신한은행"
+    t.string "brand_color"
     t.string "category"
+    t.integer "club_status", default: 1, null: false
+    t.integer "club_type", default: 0, null: false
     t.float "completion_attendance_rate", default: 70.0
     t.datetime "created_at", null: false
     t.integer "current_members", default: 0
@@ -446,6 +452,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
     t.date "end_date", null: false
     t.integer "golden_fire_bonus", default: 20
     t.integer "host_id"
+    t.json "host_permissions", default: {}
+    t.string "icon"
     t.boolean "is_official"
     t.boolean "lecture_room_active"
     t.text "lecture_room_description"
@@ -458,8 +466,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
     t.integer "monthly_fee", default: 0, null: false
     t.string "monthly_reward_info"
     t.integer "relax_pass_limit", default: 3
+    t.json "revenue_settings", default: {}
     t.integer "save_pass_limit", default: 3
     t.string "season_reward_info"
+    t.string "short_name"
     t.string "special_lecture_link"
     t.date "start_date", null: false
     t.integer "status", default: 0, null: false
@@ -470,6 +480,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_05_000003) do
     t.string "weekly_reward_info"
     t.string "zoom_link"
     t.index ["category"], name: "index_routine_clubs_on_category"
+    t.index ["club_status"], name: "index_routine_clubs_on_club_status"
+    t.index ["club_type"], name: "index_routine_clubs_on_club_type"
     t.index ["host_id"], name: "index_routine_clubs_on_host_id"
     t.index ["status"], name: "index_routine_clubs_on_status"
   end

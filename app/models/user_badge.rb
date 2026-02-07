@@ -21,7 +21,8 @@ class UserBadge < ApplicationRecord
       user: user,
       title: "🎉 새로운 배지 획득!",
       content: "'#{badge.name}' 배지를 획득하셨습니다. 축하합니다!",
-      notification_type: "badge_award"
+      notification_type: "badge_award",
+      link: "/my"
     ) if defined?(Notification)
   end
 end

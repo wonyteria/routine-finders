@@ -400,8 +400,12 @@
                     <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">알림 내용</label>
                     <%= f.text_area :content, rows: 2, class: "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all resize-none" %>
                   </div>
+                  <div class="col-span-2">
+                    <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">이동 경로 (Local Path)</label>
+                    <%= f.text_field :link_url, placeholder: "/?tab=club", class: "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all" %>
+                  </div>
                   <div>
-                    <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">발송 시간 (HH:00)</label>
+                    <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1 mb-1.5 block">발송 시간 (HH:MM)</label>
                     <%= f.text_field :schedule_time, placeholder: "09:00", class: "w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-indigo-500 outline-none transition-all text-center" %>
                   </div>
                   <div>

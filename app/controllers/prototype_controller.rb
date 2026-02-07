@@ -1202,6 +1202,6 @@ class PrototypeController < ApplicationController
   end
 
   def push_notification_config_params
-    params.require(:push_notification_config).permit(:title, :content, :schedule_time, :enabled)
+    params.require(:push_notification_config).permit(:title, :content, :schedule_time, :enabled, :link_url)
   end
 end

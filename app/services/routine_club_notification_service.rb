@@ -7,7 +7,8 @@ class RoutineClubNotificationService
       user: membership.user,
       notification_type: :club_payment_confirmed,
       title: "🎉 입금이 확인되었습니다!",
-      content: "#{membership.routine_club.title} 클럽 참여가 승인되었습니다. 이제 클럽 활동을 시작할 수 있습니다."
+      content: "#{membership.routine_club.title} 클럽 참여가 승인되었습니다. 이제 클럽 활동을 시작할 수 있습니다.",
+      link: "/?tab=club"
     )
   end
 
@@ -44,7 +45,8 @@ class RoutineClubNotificationService
       user: membership.user,
       notification_type: :club_attendance_reminder,
       title: "📝 오늘의 출석을 체크하세요!",
-      content: "#{membership.routine_club.title} 클럽의 오늘 루틴을 완료하고 인증해주세요."
+      content: "#{membership.routine_club.title} 클럽의 오늘 루틴을 완료하고 인증해주세요.",
+      link: "/?tab=club"
     )
   end
 

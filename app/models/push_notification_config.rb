@@ -9,6 +9,7 @@ class PushNotificationConfig < ApplicationRecord
       c.title = "☀️ 루파 클럽 아침 확언"
       c.content = "{{nickname}}님, 오늘 하루를 여는 나만의 확언과 함께 멋진 루틴을 시작해 보세요!"
       c.schedule_time = "08:30"
+      c.link_url = "/?tab=club"
     end
   end
 
@@ -17,6 +18,7 @@ class PushNotificationConfig < ApplicationRecord
       c.title = "🌆 루파 클럽 저녁 리마인더"
       c.content = "{{nickname}}님, 오늘 하루도 고생 많으셨어요! 저녁 식사 전, 남은 루틴들을 하나씩 체크하며 나를 챙겨볼까요?"
       c.schedule_time = "19:00"
+      c.link_url = "/?tab=club"
     end
   end
 
@@ -25,6 +27,7 @@ class PushNotificationConfig < ApplicationRecord
       c.title = "🌙 루파 클럽 밤의 기록"
       c.content = "{{nickname}}님, 오늘 성장을 기록하셨나요? 잊기 전에 루틴을 완료하고 평온한 밤을 맞이하세요!"
       c.schedule_time = "22:00"
+      c.link_url = "/"
     end
   end
 end

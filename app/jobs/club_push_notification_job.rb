@@ -12,7 +12,7 @@ class ClubPushNotificationJob < ApplicationJob
     configs.each do |config|
       if config.config_type == "night_check"
         send_completion_checks(config)
-      elsif [ "morning_affirmation", "evening_reminder" ].include?(config.config_type) || config.config_type.start_with?("test_")
+      elsif [ "morning_affirmation", "evening_reminder" ].include?(config.config_type)
         Rails.logger.info "[ClubPushNotificationJob] Processing general reminder: #{config.config_type}"
         send_general_reminders(config)
       end
@@ -22,14 +22,6 @@ class ClubPushNotificationJob < ApplicationJob
   private
 
   def send_general_reminders(config)
-    # For tests, send to ALL users with subscriptions
-    if config.config_type.start_with?("test_")
-      User.joins(:web_push_subscriptions).distinct.find_each do |user|
-        send_to_user(user, config)
-      end
-      return
-    end
-
     club = RoutineClub.official.first
     unless club
       Rails.logger.error "[ClubPushNotificationJob] Official club not found"
@@ -63,6 +55,6 @@ class ClubPushNotificationJob < ApplicationJob
     content = config.content.gsub("{{nickname}}", nickname)
 
     Rails.logger.info "[ClubPushNotificationJob] Sending push to User #{user.id} (#{nickname}): #{title}"
-    WebPushService.send_notification(user, title, content, "/")
+    WebPushService.send_notification(user, title, content, config.link_url || "/")
   end
 end

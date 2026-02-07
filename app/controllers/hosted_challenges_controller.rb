@@ -146,13 +146,13 @@ class HostedChallengesController < ApplicationController
 
             # Notify all participants
             @challenge.participants.each do |participant|
-              Notification.create!(
-                user: participant.user,
-                title: "[공지] #{@challenge.title}",
-                content: announcement.title,
-                link: challenge_path(@challenge, tab: "announcements"),
-                notification_type: :announcement
-              )
+                Notification.create!(
+                  user: participant.user,
+                  title: "[공지] #{@challenge.title}",
+                  content: announcement.title,
+                  link: challenge_path(@challenge, tab: "announcements", source: "prototype"),
+                  notification_type: :announcement
+                )
             end
           end
           success = true
@@ -243,7 +243,7 @@ class HostedChallengesController < ApplicationController
             user: app.user,
             title: "신청 승인 완료",
             content: "'#{@challenge.title}' 챌린지 신청이 승인되었습니다!",
-            link: challenge_path(@challenge),
+            link: challenge_path(@challenge, source: "prototype"),
             notification_type: :challenge_approval
           )
         end
@@ -267,7 +267,7 @@ class HostedChallengesController < ApplicationController
           user: app.user,
           title: "신청 반려 안내",
           content: "'#{@challenge.title}' 챌린지 신청이 반려되었습니다.",
-          link: challenge_path(@challenge),
+          link: challenge_path(@challenge, source: "prototype"),
           notification_type: :challenge_rejection
         )
       end
@@ -310,7 +310,7 @@ class HostedChallengesController < ApplicationController
           user: p.user,
           title: "운영자 독려 메시지",
           content: content,
-          link: challenge_path(@challenge),
+          link: challenge_path(@challenge, source: "prototype"),
           notification_type: :nudge
         )
       end
