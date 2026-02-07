@@ -1,4 +1,4 @@
-<div class="space-y-8 pt-8">
+<div class="space-y-5 pt-4">
   
   <!-- Header removed flash from here -->
   <header class="space-y-6 px-1">
@@ -22,40 +22,43 @@
     </div>
 
     <% if @challenge.offline? %>
-      <!-- Meeting Info Card (For Gatherings) -->
-      <div class="app-glass-card p-6 bg-emerald-500/[0.03] border-emerald-500/10 relative overflow-hidden">
-        <div class="absolute -right-12 -top-12 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full"></div>
-        <div class="flex items-center justify-between mb-4 relative z-10">
-          <div class="space-y-1">
-            <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest leading-none italic">모임 일정</p>
-            <h2 class="text-2xl font-black text-white italic leading-none"><%= @challenge.start_date.strftime('%m.%d') %> <span class="text-slate-500 font-normal text-lg ml-1"><%= @challenge.meeting_info&.meeting_time.presence || "시간 미정" %></span></h2>
+      <!-- Meeting Info Card (Compact) -->
+      <div class="app-glass-card p-5 bg-emerald-500/[0.02] border-emerald-500/10 relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-24 h-24 bg-emerald-500/5 blur-3xl rounded-full"></div>
+        <div class="flex items-center justify-between mb-3 relative z-10">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-lg">🗓️</div>
+            <div class="space-y-0.5">
+              <p class="text-[8px] font-black text-emerald-400 uppercase tracking-widest leading-none italic">일정</p>
+              <h2 class="text-lg font-black text-white italic leading-none"><%= @challenge.start_date.strftime('%m.%d') %> <span class="text-slate-500 font-normal text-sm ml-1"><%= @challenge.meeting_info&.meeting_time.presence || "시간 미정" %></span></h2>
+            </div>
           </div>
-          <div class="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30">
-             <span class="text-xs font-black text-emerald-400 italic">D-<%= ( @challenge.start_date - Date.current).to_i %></span>
+          <div class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+             <span class="text-[10px] font-black text-emerald-400 italic">D-<%= ( @challenge.start_date - Date.current).to_i %></span>
           </div>
         </div>
-        <div class="flex items-center gap-2 pt-3 border-t border-white/5 relative z-10">
-          <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-base">📍</div>
+        <div class="flex items-center gap-3 pt-3 border-t border-white/5 relative z-10">
+          <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-base">📍</div>
           <div class="flex-1 min-w-0">
-             <p class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">모임 장소</p>
+             <p class="text-[8px] font-black text-slate-500 uppercase leading-none mb-1">장소</p>
              <p class="text-xs font-bold text-white truncate"><%= @challenge.meeting_info&.place_name || "장소 정보 없음" %></p>
           </div>
         </div>
       </div>
       
-      <!-- Quick Actions for Gatherings -->
-      <div class="flex items-center gap-2 px-1 mt-3">
-        <button onclick="openNudgeModal('gathering_remind')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-indigo-500/20 active:scale-95 transition-all">
-          <span class="text-sm">📍</span>
-          <span class="text-[10px] font-black text-white italic">리마인드</span>
+      <!-- Quick Actions (Compact) -->
+      <div class="flex items-center gap-2 px-1">
+        <button onclick="openNudgeModal('gathering_remind')" class="flex-1 py-3.5 app-glass-card !rounded-xl flex items-center justify-center gap-2 border-indigo-500/10 active:scale-95 transition-all">
+          <span class="text-xs">📍</span>
+          <span class="text-[9px] font-black text-white italic">리마인드</span>
         </button>
-        <button onclick="openNudgeModal('gathering_prep')" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-amber-500/20 active:scale-95 transition-all">
-          <span class="text-sm">🎒</span>
-          <span class="text-[10px] font-black text-white italic">준비물</span>
+        <button onclick="openNudgeModal('gathering_prep')" class="flex-1 py-3.5 app-glass-card !rounded-xl flex items-center justify-center gap-2 border-amber-500/10 active:scale-95 transition-all">
+          <span class="text-xs">🎒</span>
+          <span class="text-[9px] font-black text-white italic">준비물</span>
         </button>
-        <button type="button" onclick="openAnnouncementModal()" class="flex-1 min-w-[100px] py-4 app-glass-card !rounded-2xl flex items-center justify-center gap-2 border-emerald-500/20 active:scale-95 transition-all">
-          <span class="text-sm">📢</span>
-          <span class="text-[10px] font-black text-white italic">단체 공지</span>
+        <button type="button" onclick="openAnnouncementModal()" class="flex-1 py-3.5 app-glass-card !rounded-xl flex items-center justify-center gap-2 border-emerald-500/10 active:scale-95 transition-all">
+          <span class="text-xs">📢</span>
+          <span class="text-[9px] font-black text-white italic">공지발송</span>
         </button>
       </div>
     <% else %>
@@ -99,33 +102,33 @@
     <% end %>
   </header>
 
-  <!-- 2. Performance HUD (Grid) -->
-  <section class="grid grid-cols-2 gap-3 px-1">
-    <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
-      <span class="text-2xl font-black italic text-white mb-1"><%= @stats[:total_participants] %></span>
-      <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "최종 참여자" : "누적 루퍼" %></span>
+  <!-- 2. Performance HUD (Compact Grid) -->
+  <section class="grid grid-cols-2 gap-2.5 px-1">
+    <div class="app-glass-card py-3.5 px-2 flex flex-col items-center justify-center text-center">
+      <span class="text-xl font-black italic text-white leading-none mb-1"><%= @stats[:total_participants] %></span>
+      <span class="text-[7px] font-black text-slate-500 uppercase tracking-wider"><%= @challenge.offline? ? "최종 참여자" : "누적 루퍼" %></span>
     </div>
-    <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
+    <div class="app-glass-card py-3.5 px-2 flex flex-col items-center justify-center text-center">
       <% if @challenge.offline? %>
-        <span class="text-2xl font-black italic text-indigo-400 mb-1"><%= @challenge.meeting_info&.max_attendees %></span>
-        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">모임 정원</span>
+        <span class="text-xl font-black italic text-indigo-400 leading-none mb-1"><%= @challenge.meeting_info&.max_attendees %></span>
+        <span class="text-[7px] font-black text-slate-500 uppercase tracking-wider">모임 정원</span>
       <% else %>
-        <span class="text-2xl font-black italic text-emerald-400 mb-1"><%= @stats[:active_today] %></span>
-        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">오늘 성공</span>
+        <span class="text-xl font-black italic text-emerald-400 leading-none mb-1"><%= @stats[:active_today] %></span>
+        <span class="text-[7px] font-black text-slate-500 uppercase tracking-wider">오늘 성공</span>
       <% end %>
     </div>
-    <div class="app-glass-card p-4 flex flex-col items-center justify-center text-center">
+    <div class="app-glass-card py-3.5 px-2 flex flex-col items-center justify-center text-center">
       <% if @challenge.offline? %>
-        <span class="text-2xl font-black italic text-white mb-1"><%= ( (@challenge.current_participants.to_f / (@challenge.meeting_info&.max_attendees || 1)) * 100).to_i %><span class="text-lg">%</span></span>
-        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">참여 점유율</span>
+        <span class="text-xl font-black italic text-white leading-none mb-1"><%= ( (@challenge.current_participants.to_f / (@challenge.meeting_info&.max_attendees || 1)) * 100).to_i %><span class="text-xs">%</span></span>
+        <span class="text-[7px] font-black text-slate-500 uppercase tracking-wider">참여 점유율</span>
       <% else %>
-        <span class="text-2xl font-black italic text-indigo-400 mb-1"><%= @stats[:avg_completion_rate] %><span class="text-lg">%</span></span>
-        <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">평균 달성률</span>
+        <span class="text-xl font-black italic text-indigo-400 leading-none mb-1"><%= @stats[:avg_completion_rate] %><span class="text-xs">%</span></span>
+        <span class="text-[7px] font-black text-slate-500 uppercase tracking-wider">평균 달성률</span>
       <% end %>
     </div>
-    <div class="app-glass-card p-4 <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'bg-amber-500/5 border-amber-500/20' : '' %> flex flex-col items-center justify-center text-center">
-      <span class="text-2xl font-black italic <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-700' %> mb-1"><%= @challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications] %></span>
-      <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest"><%= @challenge.offline? ? "신청 대기" : "인증 검토" %></span>
+    <div class="app-glass-card py-3.5 px-2 <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'bg-amber-500/5 border-amber-500/20' : '' %> flex flex-col items-center justify-center text-center">
+      <span class="text-xl font-black italic <%= (@challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications]) > 0 ? 'text-amber-500 animate-pulse' : 'text-slate-700' %> leading-none mb-1"><%= @challenge.offline? ? @stats[:pending_applications] : @stats[:pending_verifications] %></span>
+      <span class="text-[7px] font-black text-slate-500 uppercase tracking-wider"><%= @challenge.offline? ? "신청 대기" : "인증 검토" %></span>
     </div>
   </section>
 

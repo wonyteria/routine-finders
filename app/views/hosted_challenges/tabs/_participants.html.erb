@@ -1,28 +1,27 @@
-<div class="space-y-6 md:space-y-10">
-  <!-- Search & Filter Area -->
-  <div class="flex flex-col md:flex-row gap-4">
-    <div class="flex-1 relative">
-      <input type="text" id="participant-search" placeholder="참가자 닉네임 검색..." 
-             class="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-2xl text-xs md:text-sm text-white focus:border-indigo-500 outline-none transition-all"
+<div class="space-y-4">
+  <!-- Search & Filter Area (Compact) -->
+  <div class="flex flex-col gap-3">
+    <div class="relative">
+      <input type="text" id="participant-search" placeholder="닉네임 검색..." 
+             class="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-xs text-white focus:border-indigo-500/50 outline-none transition-all placeholder:text-slate-600"
              oninput="filterParticipants(this.value)">
-      <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
     </div>
   </div>
 
-  <!-- Filter & Sort Controls (Prototype) - Ultra Compact for Mobile -->
-  <div class="app-glass-card p-4 md:p-5">
-    <div class="grid grid-cols-2 gap-3">
+  <div class="app-glass-card p-3">
+    <div class="grid grid-cols-2 gap-2">
       <!-- Status Filter Dropdown -->
       <div class="relative">
         <select onchange="window.location.href = this.value" 
-                class="w-full bg-white/5 border border-white/10 rounded-xl text-[9px] md:text-[10px] font-black py-3 px-4 pr-9 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:status].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-400' %>">
-          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status].blank? %>>전체</option>
+                class="w-full bg-white/5 border border-white/10 rounded-lg text-[9px] font-black py-2.5 px-3 pr-8 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:status].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-500' %>">
+          <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status].blank? %>>전체 상태</option>
           <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'achieving', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'achieving' %>>달성 중</option>
           <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'lagging', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'lagging' %>>관리 대상</option>
           <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'inactive', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'inactive' %>>미참여</option>
           <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: 'failed', sort: params[:sort], source: 'prototype') %>" <%= 'selected' if params[:status] == 'failed' %>>최종 탈락</option>
         </select>
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
         </svg>
       </div>
@@ -30,48 +29,47 @@
       <!-- Sort Dropdown -->
       <div class="relative">
         <select onchange="window.location.href = this.value" 
-                class="w-full bg-white/5 border border-white/10 rounded-xl text-[9px] md:text-[10px] font-black py-3 px-4 pr-9 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:sort].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-400' %>">
+                class="w-full bg-white/5 border border-white/10 rounded-lg text-[9px] font-black py-2.5 px-3 pr-8 hover:bg-white/10 focus:bg-white/10 focus:border-indigo-500/30 transition-all outline-none cursor-pointer appearance-none text-center <%= params[:sort].present? ? 'text-white bg-indigo-600/15 border-indigo-500/30' : 'text-slate-500' %>">
           <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], source: 'prototype') %>" <%= 'selected' if params[:sort].blank? %>>최신 가입순</option>
           <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'achievement_low', source: 'prototype') %>" <%= 'selected' if params[:sort] == 'achievement_low' %>>달성률 낮은 순</option>
           <option value="<%= hosted_challenge_path(@challenge, tab: 'participants', status: params[:status], sort: 'missed_recent', source: 'prototype') %>" <%= 'selected' if params[:sort] == 'missed_recent' %>>최근 미인증 순</option>
         </select>
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
         </svg>
       </div>
     </div>
   </div>
 
-  <!-- Participants Table (Prototype) -->
-  <div class="app-glass-card overflow-hidden">
-    <div class="p-4 md:p-6 border-b border-white/5 flex items-center justify-between">
+  <div class="app-glass-card">
+    <div class="p-4 border-b border-white/5 flex items-center justify-between">
       <div>
-        <h2 class="text-base md:text-lg font-black text-white italic">참가자 목록</h2>
-        <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest mt-0.5">
-          총 <%= participants.count %>명의 <%= @challenge.gathering? ? '멤버' : '루퍼' %>가 <%= @challenge.gathering? ? '참여' : '활동' %> 중입니다
+        <h2 class="text-sm font-black text-white italic">참가자 목록</h2>
+        <p class="text-[7px] font-black text-slate-600 uppercase tracking-widest mt-0.5">
+          총 <%= participants.count %>명의 <%= @challenge.gathering? ? '멤버' : '루퍼' %> 참여 중
         </p>
       </div>
       <%= link_to new_challenge_announcement_path(@challenge, source: "prototype"), 
                   data: { turbo_frame: "_top" },
-                  class: "glass-btn px-4 py-2 text-[9px] font-black text-indigo-400 hover:text-white uppercase tracking-widest flex items-center gap-2" do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-        단체 공지 발송
+                  class: "px-3 py-1.5 rounded-lg bg-indigo-500/10 text-[8px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-1.5 border border-indigo-500/10" do %>
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        공지 발송
       <% end %>
     </div>
 
     <% if participants.any? %>
       <!-- Participants Compact List View -->
-      <div class="flex flex-col gap-2 px-4 pb-4 md:px-5 md:pb-5" id="participants-list">
+      <div class="flex flex-col gap-1.5 px-3 pb-3" id="participants-list">
         <% participants.each do |participant| %>
-          <div class="participant-item bg-white/5 hover:bg-white/10 p-3 rounded-xl flex items-center justify-between gap-3 transition-colors group/p border border-white/5" data-nickname="<%= participant.user.nickname.downcase %>">
+          <div class="participant-item bg-white/5 hover:bg-white/10 p-2.5 rounded-lg flex items-center justify-between gap-3 transition-colors group/p border border-white/5" data-nickname="<%= participant.user.nickname.downcase %>">
             
             <!-- Left: Profile & Info -->
-            <div class="flex items-center gap-3 overflow-hidden min-w-0">
+            <div class="flex items-center gap-2.5 overflow-hidden min-w-0">
               <div class="relative shrink-0">
-                <img src="<%= participant.user.profile_image %>" class="w-10 h-10 rounded-full object-cover bg-slate-800 border border-white/10">
+                <img src="<%= participant.user.profile_image %>" class="w-9 h-9 rounded-full object-cover bg-slate-800 border border-white/10">
                 <% unless @challenge.gathering? %>
                   <% if participant.today_verified %>
-                    <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[#1a1b1e] flex items-center justify-center shadow-sm" title="오늘 인증 완료">
+                    <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border border-[#1a1b1e] flex items-center justify-center shadow-sm" title="오늘 인증 완료">
                       <svg class="w-2 h-2 text-[#1a1b1e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
                     </div>
                   <% end %>
@@ -79,14 +77,12 @@
               </div>
               
               <div class="flex flex-col min-w-0 justify-center">
-                <div class="flex items-center gap-2">
-                  <span class="font-bold text-white text-sm truncate"><%= participant.user.nickname %></span>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-white text-[13px] truncate"><%= participant.user.nickname %></span>
                   
                   <% if @challenge.gathering? %>
-                    <!-- Gathering: Simple Member Badge -->
-                    <span class="px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">멤버</span>
+                    <span class="px-1 py-0.5 rounded-[4px] text-[7px] font-black bg-emerald-500/10 text-emerald-400 border border-emerald-500/10 uppercase">Member</span>
                   <% else %>
-                    <!-- Challenge: Status Dot -->
                     <% badge = participant.status_badge_info %>
                     <% badge_color_class = badge[:class].scan(/text-\w+-\d+/).first || 'text-slate-400' %>
                     <% bg_color_class = badge_color_class.gsub('text-', 'bg-') %>
@@ -94,43 +90,39 @@
                   <% end %>
                 </div>
 
-                <div class="text-[10px] text-slate-500 font-medium truncate flex items-center gap-1.5">
+                <div class="text-[9px] text-slate-500 font-bold truncate flex items-center gap-1.5">
                   <% if @challenge.gathering? %>
-                    <!-- Gathering: Simple Info -->
-                    <span class="text-slate-500">가입: <%= participant.joined_at&.strftime("%y.%m.%d") %></span>
+                    <span class="text-slate-600">Joined: <%= participant.joined_at&.strftime("%y.%m.%d") %></span>
                   <% else %>
-                    <!-- Challenge: Detailed Status -->
                     <% badge = participant.status_badge_info %>
                     <span class="<%= badge[:class] %> opacity-90"><%= badge[:label] %></span>
-                    <span class="text-slate-700">|</span>
-                    <span class="text-orange-500 font-bold">🔥 <%= participant.current_streak %>일</span>
+                    <span class="text-slate-800">|</span>
+                    <span class="text-orange-500 font-black italic">🔥 <%= participant.current_streak %>d</span>
                   <% end %>
                 </div>
               </div>
             </div>
 
             <!-- Right: Stats & Actions -->
-            <div class="flex items-center gap-4 shrink-0">
+            <div class="flex items-center gap-3 shrink-0">
               
               <% unless @challenge.gathering? %>
-                <!-- Completion Rate (Challenge Only) -->
                 <div class="text-right hidden xs:block">
-                  <div class="text-xs font-black text-white"><%= participant.completion_rate.to_i %>%</div>
-                  <div class="text-[9px] text-slate-600 font-bold">달성률</div>
+                  <div class="text-[11px] font-black text-white leading-none"><%= participant.completion_rate.to_i %>%</div>
+                  <div class="text-[7px] text-slate-600 font-black uppercase mt-0.5">Rate</div>
                 </div>
               <% end %>
 
-              <!-- Action Buttons (Icon Only) -->
-              <div class="flex items-center gap-1 pl-3 border-l border-white/5">
-                <button class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-slate-400 flex items-center justify-center transition-all" title="공지/알림 보내기">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+              <!-- Action Buttons (Ultra Compact) -->
+              <div class="flex items-center gap-1 pl-2.5 border-l border-white/5">
+                <button class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-slate-500 flex items-center justify-center transition-all" title="공지/알림 보내기">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 </button>
-                <button class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-slate-400 flex items-center justify-center transition-all" title="채팅하기">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <button class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-slate-500 flex items-center justify-center transition-all" title="채팅하기">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                 </button>
               </div>
             </div>
-
           </div>
         <% end %>
       </div>
