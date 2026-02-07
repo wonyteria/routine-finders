@@ -121,10 +121,33 @@
         <% if @challenge.offline? && @challenge.meeting_info %>
         <div class="space-y-4">
              <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">장소 정보</h3>
-             <div class="w-full h-40 bg-slate-800 rounded-3xl flex items-center justify-center text-slate-500 font-medium border border-white/5">
-                지도 데이터를 로딩 중...
+             <div class="w-full h-56 bg-slate-800 rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative group">
+                <% if @challenge.meeting_info&.address.present? %>
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    frameborder="0" style="border:0;"
+                    src="https://www.google.com/maps/embed/v1/place?key=<%= ENV['GOOGLE_MAPS_API_KEY'] || 'AIzaSyA_placeholder' %>&q=<%= CGI.escape(@challenge.meeting_info.address) %>"
+                    allowfullscreen>
+                  </iframe>
+                  <!-- Overlay for Interaction -->
+                  <a href="https://www.google.com/maps/search/?api=1&query=<%= CGI.escape(@challenge.meeting_info.address) %>" 
+                     target="_blank"
+                     class="absolute inset-0 bg-transparent z-10"></a>
+                <% else %>
+                  <div class="flex items-center justify-center h-full text-slate-500 font-medium">
+                    등록된 장소 주소가 없습니다.
+                  </div>
+                <% end %>
              </div>
-             <p class="text-xs font-bold text-white px-2"><%= @challenge.meeting_info&.address %></p>
+             <div class="flex items-center justify-between px-2">
+               <p class="text-xs font-bold text-white"><%= @challenge.meeting_info&.address %></p>
+               <a href="https://www.google.com/maps/search/?api=1&query=<%= CGI.escape(@challenge.meeting_info&.address || '') %>" 
+                  target="_blank"
+                  class="text-[10px] font-black text-indigo-400 underline decoration-indigo-400/30 underline-offset-4">
+                 큰 지도로 보기
+               </a>
+             </div>
           </div>
         <% end %>
       </div>
