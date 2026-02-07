@@ -70,30 +70,28 @@
 
               <!-- Action Form (Hidden by default) -->
               <div id="action-form-div-<%= application.id %>" class="hidden mt-2 animate-slide-up" onclick="event.stopPropagation();">
-                <%= form_with url: "#", method: :post, local: true, id: "form-#{application.id}" do |f| %>
-                  <%= hidden_field_tag :source, "prototype" %>
-                  <div class="space-y-2">
-                    <%= text_area_tag :message, nil, id: "message-#{application.id}", placeholder: "메시지 (선택)", class: "w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 outline-none transition-all resize-none", rows: 2 %>
-                    <div class="flex gap-2">
-                      <button type="submit" id="submit-approve-<%= application.id %>" 
-                              formaction="<%= approve_challenge_application_path(challenge, application) %>"
-                              class="hidden flex-1 py-3 bg-indigo-600 text-white rounded-lg font-black text-[10px] hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20">
-                        승인 확정
-                      </button>
-                      <button type="submit" id="submit-reject-<%= application.id %>" 
-                              formaction="<%= reject_challenge_application_path(challenge, application) %>"
-                              class="hidden flex-1 py-3 bg-rose-600 text-white rounded-lg font-black text-[10px] hover:bg-rose-500 transition-all shadow-lg shadow-rose-600/20">
-                        거절 확정
-                      </button>
-                      
-                      <button type="button" 
-                              onclick="document.getElementById('action-form-div-<%= application.id %>').classList.add('hidden'); document.getElementById('action-buttons-<%= application.id %>').classList.remove('hidden');" 
-                              class="px-3 py-3 bg-white/5 text-slate-500 rounded-lg font-black text-[10px] hover:bg-white/10">
-                        취소
-                      </button>
-                    </div>
+                <!-- Removed nested form tag to fix HTML validity -->
+                <div class="space-y-2">
+                  <textarea id="message-<%= application.id %>" name="message" placeholder="메시지 (선택)" class="w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 outline-none transition-all resize-none" rows="2"></textarea>
+                  <div class="flex gap-2">
+                    <button type="button" id="submit-approve-<%= application.id %>" 
+                            onclick="submitApplicationAction('<%= application.id %>', '<%= approve_challenge_application_path(challenge, application) %>')"
+                            class="hidden flex-1 py-3 bg-indigo-600 text-white rounded-lg font-black text-[10px] hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20">
+                      승인 확정
+                    </button>
+                    <button type="button" id="submit-reject-<%= application.id %>" 
+                            onclick="submitApplicationAction('<%= application.id %>', '<%= reject_challenge_application_path(challenge, application) %>')"
+                            class="hidden flex-1 py-3 bg-rose-600 text-white rounded-lg font-black text-[10px] hover:bg-rose-500 transition-all shadow-lg shadow-rose-600/20">
+                      거절 확정
+                    </button>
+                    
+                    <button type="button" 
+                            onclick="document.getElementById('action-form-div-<%= application.id %>').classList.add('hidden'); document.getElementById('action-buttons-<%= application.id %>').classList.remove('hidden');" 
+                            class="px-3 py-3 bg-white/5 text-slate-500 rounded-lg font-black text-[10px] hover:bg-white/10">
+                      취소
+                    </button>
                   </div>
-                <% end %>
+                </div>
               </div>
             </div>
           <% end %>
@@ -183,5 +181,41 @@
       input.value = cb.value;
       container.appendChild(input);
     });
+  }
+
+  function submitApplicationAction(appId, url) {
+    const message = document.getElementById('message-' + appId).value;
+    
+    // Create a dynamic form
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    document.body.appendChild(form);
+
+    // CSRF Token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'authenticity_token';
+    csrfInput.value = csrfToken;
+    form.appendChild(csrfInput);
+
+    // Source
+    const sourceInput = document.createElement('input');
+    sourceInput.type = 'hidden';
+    sourceInput.name = 'source';
+    sourceInput.value = 'prototype';
+    form.appendChild(sourceInput);
+
+    // Message
+    if (message) {
+      const messageInput = document.createElement('input');
+      messageInput.type = 'hidden';
+      messageInput.name = 'message';
+      messageInput.value = message;
+      form.appendChild(messageInput);
+    }
+
+    form.submit();
   }
 </script>
