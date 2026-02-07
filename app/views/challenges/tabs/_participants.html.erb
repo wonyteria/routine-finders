@@ -21,8 +21,13 @@
             <% end %>
           </div>
           <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
-              <span class="text-sm font-black text-white truncate flex-1"><%= p.user.nickname %></span>
+            <div class="flex items-center gap-1.5">
+              <div class="flex items-center gap-1 flex-1 min-w-0">
+                <% if p.user.is_rufa_club_member? %>
+                  <span class="shrink-0 w-4 h-4 rounded-full bg-indigo-500 flex items-center justify-center text-[9px] font-black text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]" title="루파 클럽 정회원">R</span>
+                <% end %>
+                <span class="text-sm font-black text-white truncate"><%= p.user.nickname %></span>
+              </div>
               <span class="shrink-0 text-[10px] font-black text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20">Lv.<%= p.user.level %></span>
             </div>
             <p class="text-[10px] text-slate-500 font-bold mt-1.5 flex items-center gap-1.5">

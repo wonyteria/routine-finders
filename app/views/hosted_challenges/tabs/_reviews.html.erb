@@ -54,7 +54,12 @@
                 </div>
               </div>
               <div class="flex-1">
-                <p class="font-black text-white italic"><%= review.user.nickname %></p>
+                <div class="flex items-center gap-1.5">
+                  <% if review.user.is_rufa_club_member? %>
+                    <span class="shrink-0 w-3.5 h-3.5 rounded-full bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white shadow-[0_0_8px_rgba(99,102,241,0.5)]" title="루파 클럽 정회원">R</span>
+                  <% end %>
+                  <p class="font-black text-white italic"><%= review.user.nickname %></p>
+                </div>
                 <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-0.5"><%= review.created_at.in_time_zone('Asia/Seoul').strftime('%Y.%m.%d %H:%M') %></p>
               </div>
             </div>
