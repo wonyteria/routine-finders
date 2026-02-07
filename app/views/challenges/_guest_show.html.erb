@@ -72,12 +72,21 @@
   <div class="sticky top-0 z-40 bg-[#0C0B12]/80 backdrop-blur-3xl border-b border-white/5 py-4">
     <div class="flex justify-between items-center px-4 gap-1">
       <% 
-        main_tabs = [
-          { id: "intro", label: "상세설명" },
-          { id: "rules", label: "진행방법" },
-          { id: "rewards", label: "리워드" },
-          { id: "community", label: "커뮤니티" }
-        ]
+        if @challenge.offline?
+          main_tabs = [
+            { id: "intro", label: "상세설명" },
+            { id: "rules", label: "장소안내" },
+            { id: "guide", label: "참여안내" },
+            { id: "community", label: "커뮤니티" }
+          ]
+        else
+          main_tabs = [
+            { id: "intro", label: "상세설명" },
+            { id: "rules", label: "진행방법" },
+            { id: "rewards", label: "리워드" },
+            { id: "community", label: "커뮤니티" }
+          ]
+        end
       %>
       <% main_tabs.each do |t| %>
         <%= link_to challenge_path(@challenge, tab: t[:id], source: 'prototype'), 
@@ -152,9 +161,42 @@
         <% end %>
       </div>
 
-    <% when "rewards" %>
-      <div class="animate-fade-in">
-        <%= render "challenges/tabs/rewards", challenge: @challenge %>
+    <% when "rewards", "guide" %>
+      <div class="animate-fade-in space-y-8">
+        <% if @challenge.offline? %>
+          <!-- Preparation Items -->
+          <div class="space-y-4">
+             <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">준비물 및 유의사항</h3>
+             <div class="p-6 bg-amber-500/5 border border-amber-500/10 rounded-3xl">
+                <% if @challenge.preparation_items.present? %>
+                  <p class="text-sm font-medium text-slate-200 leading-relaxed whitespace-pre-wrap"><%= @challenge.preparation_items %></p>
+                <% else %>
+                  <p class="text-xs font-bold text-slate-500 italic text-center py-4 text-white">특별한 준비물 없이 편하게 참석해 주세요!</p>
+                <% end %>
+             </div>
+          </div>
+
+          <!-- Application Question -->
+          <% if @challenge.requires_application_message? %>
+            <div class="space-y-4">
+               <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">신청 시 질문</h3>
+               <div class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
+                  <p class="text-xs font-black text-indigo-400 mb-2 leading-relaxed">신청 시 아래 질문에 대한 답변을 함께 적어주셔야 합니다.</p>
+                  <p class="text-sm font-bold text-white italic">"<%= @challenge.application_question.presence || "모임에 참여하고 싶은 이유를 간단히 적어주세요." %>"</p>
+               </div>
+            </div>
+          <% end %>
+
+          <!-- Refund Policy -->
+          <div class="space-y-4">
+             <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">환불 및 취소 규정</h3>
+             <div class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
+                <p class="text-xs font-medium text-slate-400 leading-relaxed whitespace-pre-wrap"><%= @challenge.refund_policy.presence || "모임 시작 24시간 전까지 100% 환불 가능하며, 이후에는 장소 예약 등의 사유로 환불이 어려울 수 있습니다." %></p>
+             </div>
+          </div>
+        <% else %>
+          <%= render "challenges/tabs/rewards", challenge: @challenge %>
+        <% end %>
       </div>
 
      <% when "community" %>
