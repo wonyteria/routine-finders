@@ -439,8 +439,9 @@ class User < ApplicationRecord
     is_club_member = is_rufa_club_member_on?(date)
 
     todays_active_routines = all_routines.select do |r|
-      # 클럽 멤버라면 오늘 루틴이 생성되었더라도 무조건 수행해야 함
-      created_condition = is_club_member || r.created_at.to_date <= date
+      # [수정] 클럽 멤버 여부와 상관없이, 실제 루틴이 생성된 날 이후부터만 달성률 계산에 포함
+      created_condition = r.created_at.to_date <= date
+
       days_list = r.days
       if days_list.is_a?(String)
         begin
@@ -485,8 +486,8 @@ class User < ApplicationRecord
 
       # 해당 날짜(date)에 설정되어 있던 루틴 합산
       active_count_for_day = loaded_routines.count do |r|
-        # 루파 클럽 멤버라면 생성일과 무관하게 멤버십 기간 동안은 루틴이 있었어야 함 (User Request)
-        created_condition = is_club_member || r.created_at.to_date <= date
+        # [수정] 루파 클럽 멤버십 여부보다 실제 데이터 생성 시점이 우선됨 (소급 적용 방지)
+        created_condition = r.created_at.to_date <= date
 
         days_list = r.days
         if days_list.is_a?(String)
