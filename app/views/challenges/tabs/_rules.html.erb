@@ -1,139 +1,213 @@
-<div class="space-y-12">
-  <!-- 1. Daily Mission & Schedule -->
-  <div class="space-y-6">
-    <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
-      <span class="w-1 h-3 bg-indigo-400 rounded-full"></span>
-      데일리 미션 및 일정
-    </h2>
-
-    <div class="space-y-4">
-      <!-- Active Days -->
-      <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5">
-        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">활동 요일</p>
-        <div class="flex gap-1.5">
-          <% (challenge.days || []).each do |day| %>
-            <span class="px-2.5 py-1 bg-indigo-500 text-white text-[10px] font-bold rounded-lg"><%= day %></span>
-          <% end %>
-        </div>
-      </div>
-
-      <!-- Mission Goals -->
-      <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 space-y-3">
-        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">미션 목표</p>
-        
-        <% if challenge.daily_goals.present? %>
-          <div class="space-y-4">
-            <% challenge.daily_goals.each do |day, goals| %>
-              <div class="space-y-2">
-                <p class="text-xs font-black text-indigo-600 underline underline-offset-4 decoration-2"><%= day %>요일</p>
-                <div class="pl-2 space-y-1">
-                  <% Array(goals).each do |goal| %>
-                    <p class="text-sm font-medium text-slate-300 flex items-start gap-2">
-                      <span class="text-indigo-500 mt-1">•</span>
-                      <%= goal %>
-                    </p>
-                  <% end %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        <% elsif challenge.certification_goal.present? %>
-          <div class="space-y-2">
-            <% Array(challenge.certification_goal).each do |goal| %>
-              <p class="text-sm font-bold text-slate-800 flex items-start gap-2">
-                <span class="text-indigo-400 mt-1">•</span>
-                <%= goal %>
-              </p>
-            <% end %>
-          </div>
-        <% else %>
-          <p class="text-sm font-medium text-slate-400 italic">상세 미션 내용이 설정되지 않았습니다.</p>
-        <% end %>
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. Verification Details -->
-  <div class="space-y-6">
-    <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
-      <span class="w-1 h-3 bg-emerald-400 rounded-full"></span>
-      인증 및 달성 기준
-    </h2>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Verification Method -->
-      <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4 shadow-sm">
-        <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-400">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        </div>
-        <div>
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">인증 방식</p>
-          <p class="font-bold text-white">
-            <%= { simple: '간단 완료 체크', metric: '수치 데이터 입력', photo: '사진 업로드 인증', url: '공유 URL 링크 인증' }[challenge.verification_type&.to_sym] || '기본 인증' %>
-          </p>
-          <p class="text-[11px] text-slate-400 mt-1"><%= challenge.verification_start_time&.strftime('%H:%M') %> ~ <%= challenge.verification_end_time&.strftime('%H:%M') %></p>
-        </div>
-      </div>
-
-      <!-- Achievement Threshold -->
-      <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4 shadow-sm">
-        <div class="w-10 h-10 rounded-2xl bg-rose-500/10 flex items-center justify-center shrink-0 text-rose-400">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-        </div>
-        <div>
-          <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">성공 및 환급 기준</p>
-          <p class="font-bold text-white">달성률 <%= challenge.full_refund_threshold %>% 이상</p>
-          <p class="text-[11px] text-slate-400 mt-1">최대 <%= challenge.failure_tolerance %>회 실패까지 전액 환급</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Payment & Settlement -->
-  <% unless challenge.cost_type_free? %>
+<% if challenge.offline? %>
+  <div class="space-y-12">
+    <!-- 1. Meeting Schedule & Place -->
     <div class="space-y-6">
       <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
-        <span class="w-1 h-3 bg-amber-400 rounded-full"></span>
-        비용 및 정산 안내
+        <span class="w-1 h-3 bg-emerald-400 rounded-full"></span>
+        참여 및 일정 안내
       </h2>
 
       <div class="space-y-4">
-        <!-- Bank Info -->
+        <!-- Date & Time -->
+        <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center justify-between">
+          <div>
+            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">모임 일시</p>
+            <p class="text-base font-bold text-white tracking-tight">
+              <%= challenge.start_date.strftime('%Y년 %m월 %d일') %> 
+              <span class="text-emerald-400 ml-1"><%= challenge.meeting_info&.meeting_time.presence || "시간 미정" %></span>
+            </p>
+          </div>
+          <div class="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-xl">📅</div>
+        </div>
+
+        <!-- Place -->
+        <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center justify-between">
+          <div class="flex-1 min-w-0 pr-4">
+            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">상세 장소</p>
+            <p class="text-base font-bold text-white tracking-tight truncate">
+              <%= challenge.meeting_info&.place_name || "장소 정보 없음" %>
+            </p>
+            <p class="text-[10px] text-slate-400 mt-1 truncate"><%= challenge.meeting_info&.place_address %></p>
+          </div>
+          <div class="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-xl">📍</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Capacity & Fee -->
+    <div class="space-y-6">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+        <span class="w-1 h-3 bg-indigo-400 rounded-full"></span>
+        예약 및 비용 정보
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Capacity -->
+        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">모집 정원</p>
+            <p class="font-bold text-white"><%= challenge.meeting_info&.max_attendees || '∞' %>명</p>
+            <p class="text-[11px] text-slate-400 mt-1">현재 <%= challenge.current_participants %>명 예약됨</p>
+          </div>
+        </div>
+
+        <!-- Entry Fee -->
+        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0 text-amber-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">참가 비용</p>
+            <p class="font-bold text-white"><%= challenge.cost_type_free? ? "무료 참여" : "#{number_with_delimiter(challenge.amount)}원" %></p>
+            <p class="text-[11px] text-slate-400 mt-1"><%= challenge.cost_type_deposit? ? "참여 완료 시 환불" : "모임 운영비" %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Info if paid -->
+      <% unless challenge.cost_type_free? %>
         <% if challenge.host_bank.present? && challenge.host_account.present? %>
-          <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center justify-between">
-            <div>
-              <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">정산 계좌 정보</p>
-              <p class="text-base font-bold text-white tracking-tight">
-                <%= challenge.host_bank %> <span class="text-indigo-400"><%= challenge.host_account %></span>
-              </p>
-              <p class="text-[10px] font-medium text-slate-400 mt-1">예금주: <%= challenge.host_account_holder %></p>
+          <div class="p-5 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 flex items-center justify-between">
+            <div class="min-w-0 pr-4">
+              <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1.5">입금 계좌</p>
+              <p class="text-sm font-bold text-white truncate"><%= challenge.host_bank %> <span class="text-indigo-400 ml-1"><%= challenge.host_account %></span></p>
+              <p class="text-[10px] text-slate-400 mt-0.5">예금주: <%= challenge.host_account_holder %></p>
             </div>
-            <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl border border-white/5">🏦</div>
+            <button class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white" onclick="navigator.clipboard.writeText('<%= challenge.host_account %>')">📋</button>
           </div>
         <% end %>
+      <% end %>
+    </div>
 
-        <!-- Refund Policy -->
+    <!-- 3. Gathering Policy -->
+    <div class="space-y-6">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+        <span class="w-1 h-3 bg-rose-400 rounded-full"></span>
+        모임 유의사항
+      </h2>
+
+      <div class="space-y-4">
         <% if challenge.refund_policy.present? %>
           <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 space-y-2">
-            <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest leading-none">환불 정책</p>
+            <p class="text-[9px] font-bold text-rose-400 uppercase tracking-widest leading-none">환불/취소 정책</p>
             <p class="text-xs font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= challenge.refund_policy %></p>
           </div>
         <% end %>
+
+        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-slate-500/10 flex items-center justify-center text-slate-400 shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0 pt-0.5">
+            <p class="text-[10px] font-bold leading-relaxed text-slate-300">
+              호스트의 승인 후 최종 참여가 확정됩니다. 모임 성격에 맞지 않는 참여자는 승인이 거절될 수 있습니다.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  <% end %>
-
-  <!-- Important Notes -->
-  <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
-    <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400 shrink-0">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+  </div>
+<% else %>
+  <div class="space-y-12">
+    <!-- Existing Challenge Content (Condensed for readability in replace call) -->
+    <!-- 1. Daily Mission & Schedule -->
+    <div class="space-y-6">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+        <span class="w-1 h-3 bg-indigo-400 rounded-full"></span>
+        데일리 미션 및 일정
+      </h2>
+      <div class="space-y-4">
+        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5">
+          <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">활동 요일</p>
+          <div class="flex gap-1.5">
+            <% (challenge.days || []).each do|day| %><span class="px-2.5 py-1 bg-indigo-500 text-white text-[10px] font-bold rounded-lg"><%= day %></span><% end %>
+          </div>
+        </div>
+        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 space-y-3">
+          <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">미션 목표</p>
+          <% if challenge.daily_goals.present? %>
+            <div class="space-y-4">
+              <% challenge.daily_goals.each do |day, goals| %>
+                <div class="space-y-2">
+                  <p class="text-xs font-black text-indigo-600 underline underline-offset-4 decoration-2"><%= day %>요일</p>
+                  <div class="pl-2 space-y-1">
+                    <% Array(goals).each do |goal| %><p class="text-sm font-medium text-slate-300 flex items-start gap-2"><span class="text-indigo-500 mt-1">•</span><%= goal %></p><% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% elsif challenge.certification_goal.present? %>
+            <div class="space-y-2">
+              <% Array(challenge.certification_goal).each do |goal| %><p class="text-sm font-bold text-slate-800 flex items-start gap-2"><span class="text-indigo-400 mt-1">•</span><%= goal %></p><% end %>
+            </div>
+          <% else %>
+            <p class="text-sm font-medium text-slate-400 italic">상세 미션 내용이 설정되지 않았습니다.</p>
+          <% end %>
+        </div>
+      </div>
     </div>
-    <div class="flex-1 min-w-0 pt-0.5">
-      <p class="text-[10px] font-bold leading-none whitespace-nowrap overflow-hidden text-ellipsis">
-        <span class="text-slate-300">중도 포기 시 환불 불가</span>
-        <span class="mx-1.5 text-slate-700">·</span>
-        <span class="text-slate-500">부적절 인증 시 즉시 탈락 처리</span>
-      </p>
+
+    <!-- 2. Verification Details -->
+    <div class="space-y-6">
+      <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+        <span class="w-1 h-3 bg-emerald-400 rounded-full"></span>
+        인증 및 달성 기준
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">인증 방식</p>
+            <p class="font-bold text-white"><%= { simple: '간단 완료 체크', metric: '수치 데이터 입력', photo: '사진 업로드 인증', url: '공유 URL 링크 인증' }[challenge.verification_type&.to_sym] || '기본 인증' %></p>
+            <p class="text-[11px] text-slate-400 mt-1"><%= challenge.verification_start_time&.strftime('%H:%M') %> ~ <%= challenge.verification_end_time&.strftime('%H:%M') %></p>
+          </div>
+        </div>
+        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-2xl bg-rose-500/10 flex items-center justify-center shrink-0 text-rose-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div>
+          <div>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">성공 및 환급 기준</p>
+            <p class="font-bold text-white">달성률 <%= challenge.full_refund_threshold %>% 이상</p>
+            <p class="text-[11px] text-slate-400 mt-1">최대 <%= challenge.failure_tolerance %>회 실패까지 전액 환급</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Payment -->
+    <% unless challenge.cost_type_free? %>
+      <div class="space-y-6">
+        <h2 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] px-1 flex items-center gap-2">
+          <span class="w-1 h-3 bg-amber-400 rounded-full"></span>
+          비용 및 정산 안내
+        </h2>
+        <div class="space-y-4">
+          <% if challenge.host_bank.present? && challenge.host_account.present? %>
+            <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center justify-between">
+              <div>
+                <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">정산 계좌 정보</p>
+                <p class="text-base font-bold text-white tracking-tight"><%= challenge.host_bank %> <span class="text-indigo-400"><%= challenge.host_account %></span></p>
+                <p class="text-[10px] font-medium text-slate-400 mt-1">예금주: <%= challenge.host_account_holder %></p>
+              </div>
+              <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl border border-white/5">🏦</div>
+            </div>
+          <% end %>
+          <% if challenge.refund_policy.present? %>
+            <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 space-y-2">
+              <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-widest leading-none">환불 정책</p>
+              <p class="text-xs font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= challenge.refund_policy %></p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- 4. Important Notes -->
+    <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
+      <div class="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400 shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg></div>
+      <div class="flex-1 min-w-0 pt-0.5"><p class="text-[10px] font-bold leading-none whitespace-nowrap overflow-hidden text-ellipsis"><span class="text-slate-300">중도 포기 시 환급 불가</span><span class="mx-1.5 text-slate-700">·</span><span class="text-slate-500">부적절 인증 시 즉시 탈락 처리</span></p></div>
     </div>
   </div>
-</div>
+<% end %>

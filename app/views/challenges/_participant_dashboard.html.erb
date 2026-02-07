@@ -477,15 +477,21 @@
               </div>
             </div>
 
-            <!-- Extra Stats if needed (keeping original for consistency) -->
+            <!-- Extra Stats -->
             <div class="grid grid-cols-2 gap-4">
-              <div class="glass-card p-6">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Frequency</p>
-                <p class="text-sm font-black text-white"><%= @challenge.mission_frequency %></p>
+              <div class="glass-card p-6 text-center">
+                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1"><%= @challenge.offline? ? "Date" : "Frequency" %></p>
+                <p class="text-sm font-black text-white italic"><%= @challenge.offline? ? @challenge.start_date.strftime('%m.%d') : @challenge.mission_frequency %></p>
               </div>
-              <div class="glass-card p-6">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Deposit</p>
-                <p class="text-sm font-black text-white"><%= number_with_delimiter(@challenge.amount || 0) %>원</p>
+              <div class="glass-card p-6 text-center">
+                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1"><%= @challenge.offline? ? "Entry Fee" : "Deposit" %></p>
+                <p class="text-sm font-black text-white italic">
+                  <% if @challenge.cost_type_free? %>
+                    FREE
+                  <% else %>
+                    <%= number_with_delimiter(@challenge.amount || 0) %>원
+                  <% end %>
+                </p>
               </div>
             </div>
           </div>
