@@ -59,9 +59,15 @@ class ChallengeApplicationsController < ApplicationController
     @application.user = current_user
 
     if @application.save
-      # 승인제가 아닌 경우 즉시 참여 완료
-      if !@challenge.requires_approval?
-        begin
+      redirect_target = if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+        challenge_path(@challenge, source: "prototype")
+      else
+        @challenge
+      end
+
+      begin
+        if !@challenge.requires_approval?
+          # [Case 1] 즉시 참여 (No Approval Required)
           ActiveRecord::Base.transaction do
             @application.approve!
 
@@ -79,27 +85,25 @@ class ChallengeApplicationsController < ApplicationController
 
             @challenge.increment!(:current_participants)
           end
-          if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
-            redirect_to challenge_path(@challenge, source: "prototype"), notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
-          else
-            redirect_to @challenge, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
-          end
-        rescue => e
-          @application.destroy
-          if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
-            redirect_to challenge_path(@challenge, source: "prototype"), alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
-          else
-            redirect_to @challenge, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
-          end
-        end
-      else
-        # 승인제인 경우 호스트에게 알림
-        create_notification_for_host
-        if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
-          redirect_to challenge_path(@challenge, source: "prototype"), notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+
+          redirect_to redirect_target, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
         else
-          redirect_to @challenge, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+          # [Case 2] 승인 필요 (Approval Required)
+          # 알림 발송 실패가 신청 자체를 막지 않도록 처리
+          begin
+            create_notification_for_host
+          rescue => e
+            Rails.logger.error "Failed to create host notification for application #{@application.id}: #{e.message}"
+          end
+
+          redirect_to redirect_target, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
         end
+
+      rescue => e
+        # 즉시 참여 과정(트랜잭션 내부)에서 실패한 경우 신청서 삭제 후 에러 반환
+        @application.destroy
+        Rails.logger.error "Application processing failed: #{e.message}"
+        redirect_to redirect_target, alert: "참여 처리 중 오류가 발생했습니다. 다시 시도해주세요."
       end
     else
       if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
@@ -179,7 +183,7 @@ class ChallengeApplicationsController < ApplicationController
       user: @challenge.host,
       notification_type: :application,
       title: @challenge.offline? ? "새로운 모임 참가 신청" : "새로운 챌린지 신청",
-      message: "#{@challenge.offline? ? current_user.nickname + '님이 ' + @challenge.title + ' 모임에 참가 신청했습니다.' : current_user.nickname + '님이 ' + @challenge.title + ' 챌린지에 신청했습니다.'}",
+      message: "#{@challenge.offline? ? "#{current_user.nickname}님이 #{@challenge.title} 모임에 참가 신청했습니다." : "#{current_user.nickname}님이 #{@challenge.title} 챌린지에 신청했습니다."}",
       link: "/challenges/#{@challenge.id}?tab=applications&source=prototype",
       data: {
         challenge_id: @challenge.id,
