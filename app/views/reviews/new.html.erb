@@ -1,28 +1,39 @@
-<div class="max-w-2xl mx-auto space-y-8 pb-32">
+<% 
+  is_proto = params[:source] == "prototype"
+  bg_class = is_proto ? "bg-[#0C0B12] -mx-4 px-4 min-h-screen pt-12" : "max-w-2xl mx-auto"
+  card_class = is_proto ? "bg-white/[0.04] border-white/5 shadow-2xl" : "bg-white border-slate-200 shadow-sm"
+  text_main = is_proto ? "text-white" : "text-slate-900"
+  text_sub = is_proto ? "text-slate-400" : "text-slate-400"
+%>
+
+<div class="<%= bg_class %> space-y-8 pb-32">
   <!-- Header -->
   <div class="flex items-center gap-4">
-    <%= link_to challenge_path(@challenge), class: "w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-all" do %>
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <%= link_to challenge_path(@challenge, source: params[:source]), class: "w-12 h-12 rounded-2xl #{is_proto ? 'bg-white/5 border border-white/10 text-white' : 'bg-slate-100 text-slate-500'} flex items-center justify-center hover:scale-95 transition-all" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
     <% end %>
     <div>
-      <h1 class="text-2xl font-black text-slate-900">리뷰 작성</h1>
-      <p class="text-sm text-slate-400 mt-1">Write a Review</p>
+      <h1 class="text-2xl font-black <%= text_main %>">리뷰 작성</h1>
+      <p class="text-sm <%= text_sub %> mt-1 uppercase tracking-widest">Share your experience</p>
     </div>
   </div>
 
-  <!-- Challenge Info -->
-  <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm p-6">
-    <div class="flex items-center gap-4">
-      <img src="<%= @challenge.thumbnail %>" class="w-16 h-16 rounded-2xl object-cover" alt="">
-      <div>
-        <h3 class="font-black text-slate-900"><%= @challenge.title %></h3>
-        <p class="text-sm text-slate-400 mt-1">호스트: <%= @challenge.host.nickname %></p>
+  <!-- Challenge Info Card -->
+  <div class="<%= card_class %> rounded-[32px] border p-6 flex items-center gap-5">
+    <div class="relative shrink-0">
+      <img src="<%= @challenge.thumbnail %>" class="w-16 h-16 rounded-2xl object-cover shadow-2xl" alt="">
+      <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-indigo-500 rounded-full border-2 border-[#0C0B12] flex items-center justify-center">
+        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
       </div>
     </div>
+    <div class="min-w-0">
+      <h3 class="font-black <%= text_main %> truncate"><%= @challenge.title %></h3>
+      <p class="text-xs <%= text_sub %> mt-1">호스트: <span class="<%= is_proto ? 'text-indigo-400' : 'text-slate-700' %> font-bold"><%= @challenge.host.nickname %></span></p>
+    </div>
   </div>
 
-  <!-- Form -->
-  <div class="bg-white rounded-[40px] border border-slate-200 shadow-sm p-8">
+  <!-- Form Container -->
+  <div class="<%= card_class %> rounded-[40px] border p-8">
     <%= render "form" %>
   </div>
 </div>
