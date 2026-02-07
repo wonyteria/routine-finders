@@ -59,54 +59,65 @@
 
     <% if participants.any? %>
       <!-- Participants Responsive List -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-5" id="participants-grid">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-4 md:p-5" id="participants-grid">
         <% participants.each do |participant| %>
-          <div class="participant-card app-glass-card p-5 group/p overflow-hidden" data-nickname="<%= participant.user.nickname.downcase %>">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <img src="<%= participant.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover">
-                <div>
-                  <p class="font-black text-white text-sm"><%= participant.user.nickname %></p>
-                  <p class="text-[9px] font-black text-slate-600 uppercase">가입일: <%= participant.joined_at&.strftime("%Y.%m.%d") %></p>
+          <div class="participant-card app-glass-card p-4 md:p-5 group/p overflow-hidden flex flex-col justify-between h-full" data-nickname="<%= participant.user.nickname.downcase %>">
+            
+            <!-- Profile Header -->
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-center gap-3 min-w-0">
+                <img src="<%= participant.user.profile_image %>" class="w-10 h-10 md:w-11 md:h-11 rounded-xl object-cover shrink-0 border border-white/10">
+                <div class="min-w-0">
+                  <h3 class="font-black text-white text-sm truncate"><%= participant.user.nickname %></h3>
+                  <p class="text-[9px] font-bold text-slate-500 uppercase tracking-tight mt-0.5">가입: <%= participant.joined_at&.strftime("%y.%m.%d") %></p>
                 </div>
               </div>
               <% badge = participant.status_badge_info %>
-              <span class="px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest border <%= badge[:class].gsub('bg-', 'bg-').gsub('text-', 'text-') %>">
+              <span class="px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border shrink-0 <%= badge[:class].gsub('bg-', 'bg-').gsub('text-', 'text-') %>">
                 <%= badge[:label] %>
               </span>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mt-5">
-              <div class="bg-white/5 rounded-2xl p-4 flex flex-col items-center justify-center gap-2">
-                <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">오늘 인증</p>
-                <% if participant.today_verified %>
-                  <div class="w-8 h-8 bg-emerald-500/20 text-emerald-500 rounded-xl flex items-center justify-center border border-emerald-500/20">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+            <div class="space-y-3">
+              <!-- Stats Grid -->
+              <div class="grid grid-cols-2 gap-2">
+                <!-- Today Verification -->
+                <div class="bg-black/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 border border-white/5">
+                  <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">오늘 인증</span>
+                  <% if participant.today_verified %>
+                    <div class="text-emerald-500 flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                      <span class="text-[10px] font-black">완료</span>
+                    </div>
+                  <% else %>
+                    <div class="text-slate-600 flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      <span class="text-[10px] font-bold">미완료</span>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- Achievement Rate -->
+                <div class="bg-black/20 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 border border-white/5">
+                  <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">달성률</span>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-sm font-black text-white italic"><%= participant.completion_rate.to_i %>%</span>
+                    <span class="text-[9px] font-black text-orange-500">🔥 <%= participant.current_streak %></span>
                   </div>
-                <% else %>
-                  <div class="w-8 h-8 bg-white/5 text-slate-700 rounded-xl flex items-center justify-center">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  </div>
-                <% end %>
-              </div>
-              <div class="bg-white/5 rounded-2xl p-4 flex flex-col items-center justify-center gap-2">
-                <p class="text-[8px] font-black text-slate-500 uppercase tracking-widest">달성률</p>
-                <div class="flex items-baseline gap-1">
-                  <span class="text-lg font-black text-white italic"><%= participant.completion_rate.to_i %>%</span>
-                  <span class="text-[9px] font-black text-orange-400">🔥 <%= participant.current_streak %>일</span>
                 </div>
               </div>
-            </div>
 
-            <div class="flex gap-2 mt-5">
-              <button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                알림
-              </button>
-              <button class="flex-1 py-3 bg-white/5 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center justify-center gap-2">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                채팅
-              </button>
+              <!-- Action Buttons -->
+              <div class="grid grid-cols-2 gap-2">
+                <button class="py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black text-slate-400 hover:text-white uppercase tracking-widest flex items-center justify-center gap-2 transition-colors border border-white/5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                  알림
+                </button>
+                <button class="py-2.5 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black text-slate-400 hover:text-white uppercase tracking-widest flex items-center justify-center gap-2 transition-colors border border-white/5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                  채팅
+                </button>
+              </div>
             </div>
           </div>
         <% end %>
