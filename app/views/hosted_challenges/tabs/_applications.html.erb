@@ -49,24 +49,20 @@
                 <button type="button" 
                         onclick="event.stopPropagation(); 
                                  document.getElementById('action-buttons-<%= application.id %>').classList.add('hidden');
-                                 const formDiv = document.getElementById('action-form-div-<%= application.id %>');
-                                 formDiv.classList.remove('hidden');
-                                 const submitBtn = document.getElementById('submit-btn-<%= application.id %>');
-                                 submitBtn.textContent = '승인 확정';
-                                 submitBtn.className = 'flex-1 py-3 bg-indigo-600 text-white rounded-lg font-black text-[10px] hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20';
-                                 submitBtn.setAttribute('formaction', '<%= approve_challenge_application_path(challenge, application) %>');"
+                                 document.getElementById('action-form-div-<%= application.id %>').classList.remove('hidden');
+                                 document.getElementById('submit-approve-<%= application.id %>').classList.remove('hidden');
+                                 document.getElementById('submit-reject-<%= application.id %>').classList.add('hidden');
+                                 document.getElementById('message-<%= application.id %>').focus();"
                         class="py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20">
                   승인
                 </button>
                 <button type="button" 
                         onclick="event.stopPropagation(); 
                                  document.getElementById('action-buttons-<%= application.id %>').classList.add('hidden');
-                                 const formDiv = document.getElementById('action-form-div-<%= application.id %>');
-                                 formDiv.classList.remove('hidden');
-                                 const submitBtn = document.getElementById('submit-btn-<%= application.id %>');
-                                 submitBtn.textContent = '거절 확정';
-                                 submitBtn.className = 'flex-1 py-3 bg-rose-600 text-white rounded-lg font-black text-[10px] hover:bg-rose-500 transition-all shadow-lg shadow-rose-600/20';
-                                 submitBtn.setAttribute('formaction', '<%= reject_challenge_application_path(challenge, application) %>');"
+                                 document.getElementById('action-form-div-<%= application.id %>').classList.remove('hidden');
+                                 document.getElementById('submit-reject-<%= application.id %>').classList.remove('hidden');
+                                 document.getElementById('submit-approve-<%= application.id %>').classList.add('hidden');
+                                 document.getElementById('message-<%= application.id %>').focus();"
                         class="py-2 bg-white/5 hover:bg-white/10 text-slate-400 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all border border-white/5">
                   거절
                 </button>
@@ -77,12 +73,19 @@
                 <%= form_with url: "#", method: :post, local: true, id: "form-#{application.id}" do |f| %>
                   <%= hidden_field_tag :source, "prototype" %>
                   <div class="space-y-2">
-                    <%= text_area_tag :message, nil, placeholder: "메시지 (선택)", class: "w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 outline-none transition-all resize-none", rows: 2 %>
+                    <%= text_area_tag :message, nil, id: "message-#{application.id}", placeholder: "메시지 (선택)", class: "w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 outline-none transition-all resize-none", rows: 2 %>
                     <div class="flex gap-2">
-                      <button type="submit" id="submit-btn-<%= application.id %>" 
-                              class="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-black text-[10px] hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20">
-                        확정
+                      <button type="submit" id="submit-approve-<%= application.id %>" 
+                              formaction="<%= approve_challenge_application_path(challenge, application) %>"
+                              class="hidden flex-1 py-3 bg-indigo-600 text-white rounded-lg font-black text-[10px] hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20">
+                        승인 확정
                       </button>
+                      <button type="submit" id="submit-reject-<%= application.id %>" 
+                              formaction="<%= reject_challenge_application_path(challenge, application) %>"
+                              class="hidden flex-1 py-3 bg-rose-600 text-white rounded-lg font-black text-[10px] hover:bg-rose-500 transition-all shadow-lg shadow-rose-600/20">
+                        거절 확정
+                      </button>
+                      
                       <button type="button" 
                               onclick="document.getElementById('action-form-div-<%= application.id %>').classList.add('hidden'); document.getElementById('action-buttons-<%= application.id %>').classList.remove('hidden');" 
                               class="px-3 py-3 bg-white/5 text-slate-500 rounded-lg font-black text-[10px] hover:bg-white/10">
