@@ -1,5 +1,3 @@
-<% content_for :hide_nav, true %>
-
 <style>
   /* Premium Dark Mode Overrides */
   .detail-content-env h2, .detail-content-env h3 { color: #ffffff !important; font-weight: 900 !important; }
@@ -218,33 +216,35 @@
     <% end %>
   </section>
 
-  <!-- 4. Fixed Final Action Bar -->
-  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[500]">
-    <div class="app-glass-card p-3 !rounded-[28px] border-white/5 bg-[#16151D]/98 backdrop-blur-3xl shadow-2xl flex items-center gap-4">
+  <!-- 4. Fixed Final Action Bar (Floating above Bottom Nav) -->
+  <div class="fixed bottom-[130px] left-1/2 -translate-x-1/2 w-[92%] max-w-[360px] z-[500]">
+    <div class="app-glass-card p-2 !rounded-[24px] border border-white/10 bg-[#16151D]/90 backdrop-blur-2xl shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex items-center gap-3">
       <div class="flex-1 pl-4">
-        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-0.5 leading-none">Total Fee</p>
+        <p class="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5 leading-none">Entry Fee</p>
         <div class="flex items-baseline gap-1">
-          <span class="text-base font-bold text-white"><%= @challenge.cost_type_free? ? '0' : number_with_delimiter(@challenge.total_payment_amount) %></span>
-          <span class="text-[9px] font-bold text-slate-500">원</span>
+          <span class="text-lg font-black text-white italic"><%= @challenge.cost_type_free? ? 'FREE' : number_with_delimiter(@challenge.total_payment_amount) %></span>
+          <% unless @challenge.cost_type_free? %>
+            <span class="text-[9px] font-bold text-slate-500">원</span>
+          <% end %>
         </div>
       </div>
       
       <% if @is_host %>
-         <%= link_to hosted_challenge_path(@challenge, source: params[:source]), class: "px-8 py-3.5 app-fab-gradient rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all" do %>
+         <%= link_to hosted_challenge_path(@challenge, source: params[:source]), class: "px-7 py-3 app-fab-gradient rounded-[18px] text-[11px] font-black text-white active:scale-95 transition-all shadow-lg shadow-indigo-500/20" do %>
            관리하기
          <% end %>
       <% elsif @is_joined %>
-         <%= link_to challenge_path(@challenge, tab: 'records', source: 'prototype'), class: "px-8 py-3.5 bg-emerald-600 rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all" do %>
+         <%= link_to challenge_path(@challenge, tab: 'records', source: 'prototype'), class: "px-7 py-3 bg-emerald-600 rounded-[18px] text-[11px] font-black text-white active:scale-95 transition-all shadow-lg shadow-emerald-500/20" do %>
            대시보드
          <% end %>
       <% else %>
         <% if logged_in? %>
-          <button data-action="click->modal#open" class="px-8 py-3.5 app-fab-gradient rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all cursor-pointer">
+          <button data-action="click->modal#open" class="px-7 py-3 app-fab-gradient rounded-[18px] text-[11px] font-black text-white active:scale-95 transition-all cursor-pointer shadow-lg shadow-indigo-500/20">
             지금 참여
           </button>
         <% else %>
           <%= link_to prototype_login_path, 
-                      class: "px-8 py-3.5 app-fab-gradient rounded-[20px] text-xs font-bold text-white active:scale-95 transition-all text-center cursor-pointer flex items-center justify-center" do %>
+                      class: "px-7 py-3 app-fab-gradient rounded-[18px] text-[11px] font-black text-white active:scale-95 transition-all text-center cursor-pointer flex items-center justify-center shadow-lg shadow-indigo-500/20" do %>
             지금 참여
           <% end %>
         <% end %>
