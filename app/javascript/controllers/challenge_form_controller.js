@@ -105,7 +105,7 @@ export default class extends Controller {
     }
 
     next() {
-        if (this.currentStep < 7) {
+        if (this.currentStep < this.stepTargets.length) {
             this.currentStep++
             this.showStep()
         }
@@ -120,8 +120,20 @@ export default class extends Controller {
 
     goToStep(event) {
         const step = parseInt(event.currentTarget.dataset.step)
-        // Only allow going to previous steps or the very next step
-        if (step < this.currentStep || step === this.currentStep + 1) {
+        // Adjust step validation for dynamic step count
+        // Note: data-step in HTML might correspond to original step numbers (1,3,5,6 for offline)
+        // But logic relies on sequential 1-based index matching stepTargets array order.
+        // The side navigation modification in ERB maps visual step to internal logical step correctly?
+        // Actually, the ERB side nav generates buttons with explicit data-step attributes.
+        // For offline: buttons likely have data-step="1", "2", "3", "4" because of the loop index or logic there.
+        // Let's verify the ERB side nav generation logic.
+
+        // Wait, in ERB we used:
+        // steps = [ { step: 1, ... }, { step: 2, ... } ] for offline.
+        // So the data-step will be 1, 2, 3, 4 sequentially.
+        // This matches the this.stepTargets order (since hidden steps are not rendered).
+
+        if (step <= this.currentStep + 1) {
             this.currentStep = step
             this.showStep()
         }
@@ -129,14 +141,26 @@ export default class extends Controller {
 
     showStep() {
         // Step titles mapping
-        const stepTitles = {
-            1: "기본 정보",
-            2: "인증 목표",
-            3: "일정 설정",
-            4: "인증 방식",
-            5: "참여 조건",
-            6: "비용 및 계좌",
-            7: "혜택 설계"
+        let stepTitles = {}
+        const isOffline = this.stepTargets.length === 4
+
+        if (isOffline) {
+            stepTitles = {
+                1: "기본 정보",
+                2: "일정 및 장소",
+                3: "조건 및 인원",
+                4: "회비 및 계좌"
+            }
+        } else {
+            stepTitles = {
+                1: "기본 정보",
+                2: "인증 목표",
+                3: "일정 설정",
+                4: "인증 방식",
+                5: "참여 조건",
+                6: "비용 및 계좌",
+                7: "혜택 설계"
+            }
         }
 
         // Show current step div, hide others

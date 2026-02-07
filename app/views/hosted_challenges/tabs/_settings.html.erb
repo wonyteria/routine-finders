@@ -224,24 +224,26 @@
         </div>
       </section>
 
-      <!-- 07. 혜택 설계 -->
-      <section class="space-y-3 md:space-y-4">
-        <div class="flex items-center gap-2 pb-2 border-b border-white/5">
-          <span class="text-green-400 font-black italic text-xs md:text-sm">07.</span>
-          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">혜택 설계</h3>
-        </div>
+      <% unless challenge.offline? %>
+        <!-- 07. 혜택 설계 -->
+        <section class="space-y-3 md:space-y-4">
+          <div class="flex items-center gap-2 pb-2 border-b border-white/5">
+            <span class="text-green-400 font-black italic text-xs md:text-sm">07.</span>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">혜택 설계</h3>
+          </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">전액 환급 기준 (%)</label>
-            <%= f.number_field :full_refund_threshold, value: (f.object.full_refund_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">전액 환급 기준 (%)</label>
+              <%= f.number_field :full_refund_threshold, value: (f.object.full_refund_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보너스 지급 기준 (%)</label>
+              <%= f.number_field :bonus_threshold, value: (f.object.bonus_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
+            </div>
           </div>
-          <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보너스 지급 기준 (%)</label>
-            <%= f.number_field :bonus_threshold, value: (f.object.bonus_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
-          </div>
-        </div>
-      </section>
+        </section>
+      <% end %>
 
       <!-- Danger Zone -->
       <section class="mt-6 md:mt-8 p-4 md:p-5 bg-rose-500/5 rounded-xl md:rounded-2xl border border-rose-500/10 flex items-center justify-between">
