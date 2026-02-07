@@ -130,21 +130,42 @@
           <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">미션 목표</p>
           <% if challenge.daily_goals.present? %>
             <div class="space-y-4">
-              <% challenge.daily_goals.each do |day, goals| %>
-                <div class="space-y-2">
-                  <p class="text-xs font-black text-indigo-600 underline underline-offset-4 decoration-2"><%= day %>요일</p>
-                  <div class="pl-2 space-y-1">
-                    <% Array(goals).each do |goal| %><p class="text-sm font-medium text-slate-300 flex items-start gap-2"><span class="text-indigo-500 mt-1">•</span><%= goal %></p><% end %>
+              <% if challenge.daily_goals.is_a?(Hash) %>
+                <% challenge.daily_goals.each do |day, goals| %>
+                  <div class="space-y-2">
+                    <p class="text-xs font-black text-indigo-400 underline underline-offset-4 decoration-2"><%= day %>요일</p>
+                    <div class="pl-2 space-y-1">
+                      <% Array(goals).each do |goal| %>
+                        <p class="text-sm font-medium text-slate-300 flex items-start gap-2">
+                          <span class="text-indigo-500 mt-1">•</span>
+                          <%= goal %>
+                        </p>
+                      <% end %>
+                    </div>
                   </div>
+                <% end %>
+              <% else %>
+                <div class="space-y-2">
+                  <% Array(challenge.daily_goals).each do |goal| %>
+                    <p class="text-sm font-medium text-slate-300 flex items-start gap-2">
+                      <span class="text-indigo-500 mt-1">•</span>
+                      <%= goal %>
+                    </p>
+                  <% end %>
                 </div>
               <% end %>
             </div>
           <% elsif challenge.certification_goal.present? %>
             <div class="space-y-2">
-              <% Array(challenge.certification_goal).each do |goal| %><p class="text-sm font-bold text-slate-800 flex items-start gap-2"><span class="text-indigo-400 mt-1">•</span><%= goal %></p><% end %>
+              <% Array(challenge.certification_goal).each do |goal| %>
+                <p class="text-sm font-medium text-slate-300 flex items-start gap-2">
+                  <span class="text-indigo-500 mt-1">•</span>
+                  <%= goal %>
+                </p>
+              <% end %>
             </div>
           <% else %>
-            <p class="text-sm font-medium text-slate-400 italic">상세 미션 내용이 설정되지 않았습니다.</p>
+            <p class="text-sm font-medium text-slate-500 italic">상세 미션 내용이 설정되지 않았습니다.</p>
           <% end %>
         </div>
       </div>
@@ -162,7 +183,11 @@
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">인증 방식</p>
             <p class="font-bold text-white"><%= { simple: '간단 완료 체크', metric: '수치 데이터 입력', photo: '사진 업로드 인증', url: '공유 URL 링크 인증' }[challenge.verification_type&.to_sym] || '기본 인증' %></p>
-            <p class="text-[11px] text-slate-400 mt-1"><%= challenge.verification_start_time&.strftime('%H:%M') %> ~ <%= challenge.verification_end_time&.strftime('%H:%M') %></p>
+            <p class="text-[11px] text-slate-400 mt-1">
+              <%= challenge.verification_start_time&.respond_to?(:strftime) ? challenge.verification_start_time.strftime('%H:%M') : "00:00" %> 
+              ~ 
+              <%= challenge.verification_end_time&.respond_to?(:strftime) ? challenge.verification_end_time.strftime('%H:%M') : "23:59" %>
+            </p>
           </div>
         </div>
         <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
