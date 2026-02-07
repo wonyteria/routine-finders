@@ -47,19 +47,19 @@
         <% reviews.each do |review| %>
           <div class="p-6 rounded-[32px] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group relative overflow-hidden">
             <div class="flex items-start gap-4 mb-6">
-              <div class="relative shrink-0">
-                <img src="<%= review.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover shadow-2xl">
+              <%= link_to prototype_user_card_path(review.user), data: { turbo_frame: "user-profile-modal-frame" }, class: "relative shrink-0 group" do %>
+                <img src="<%= review.user.profile_image %>" class="w-12 h-12 rounded-2xl object-cover shadow-2xl transition-transform group-hover:scale-105">
                 <div class="absolute -top-1 -right-1 w-5 h-5 bg-indigo-500 rounded-full border-2 border-[#0C0B12] flex items-center justify-center text-[10px] font-black text-white">
                   <%= review.rating %>
                 </div>
-              </div>
+              <% end %>
               <div class="flex-1">
-                <div class="flex items-center gap-1.5">
+                <%= link_to prototype_user_card_path(review.user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center gap-1.5 group" do %>
                   <% if review.user.is_rufa_club_member? %>
-                    <span class="shrink-0 w-3.5 h-3.5 rounded-full bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white shadow-[0_0_8px_rgba(99,102,241,0.5)]" title="루파 클럽 정회원">R</span>
+                    <span class="shrink-0 w-3.5 h-3.5 rounded-full bg-indigo-500 flex items-center justify-center text-[8px] font-black text-white shadow-[0_0_8px_rgba(99,102,241,0.5)]">R</span>
                   <% end %>
-                  <p class="font-black text-white italic"><%= review.user.nickname %></p>
-                </div>
+                  <p class="font-black text-white italic transition-colors group-hover:text-indigo-400"><%= review.user.nickname %></p>
+                <% end %>
                 <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-0.5"><%= review.created_at.in_time_zone('Asia/Seoul').strftime('%Y.%m.%d %H:%M') %></p>
               </div>
             </div>
