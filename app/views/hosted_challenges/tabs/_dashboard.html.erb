@@ -48,82 +48,70 @@
         </div>
       </div>
 
-  <!-- Card 2: Settlement / Memo -->
-  <% if challenge.offline? %>
-        <div class="app-glass-card p-6 border-white/10 bg-white/[0.02] flex flex-col w-full">
-          <div class="flex items-center justify-between mb-6">
-            <div class="min-w-0 flex-1">
-              <h3 class="text-xs font-black text-white italic truncate">운영자 메모</h3>
-              <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">중요 사항</p>
-            </div>
-            <span class="p-2 bg-white/5 rounded-xl flex-shrink-0 ml-2">📝</span>
+  <!-- Card 2: Settlement (Challenge Only) -->
+  <% unless challenge.offline? %>
+    <% if challenge.cost_type_deposit? %>
+      <div class="app-glass-card p-6 overflow-hidden relative flex flex-col w-full">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
+        <div class="flex items-center justify-between mb-6">
+          <div class="min-w-0 flex-1">
+            <h3 class="text-xs font-black text-white italic truncate">실시간 정산</h3>
+            <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">예상 배분액</p>
           </div>
-          <div class="flex-1 flex flex-col justify-between space-y-4">
-            <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-              <p class="text-[11px] font-medium text-slate-400 leading-relaxed">준비물: <%= challenge.preparation_items.presence || "없음" %></p>
-            </div>
-            <%= link_to hosted_challenge_path(challenge, tab: "announcements", source: 'prototype'), class: "block w-full py-3 rounded-xl bg-indigo-600/20 text-indigo-400 text-[10px] font-black text-center uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all" do %>공지사항 작성하기<% end %>
-          </div>
+          <span class="p-2 bg-emerald-500/10 rounded-xl flex-shrink-0 ml-2">💰</span>
         </div>
-      <% elsif challenge.cost_type_deposit? %>
-        <div class="app-glass-card p-6 overflow-hidden relative flex flex-col w-full">
-          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
-          <div class="flex items-center justify-between mb-6">
-            <div class="min-w-0 flex-1">
-              <h3 class="text-xs font-black text-white italic truncate">실시간 정산</h3>
-              <p class="text-[8px] font-black text-slate-500 uppercase tracking-wider mt-0.5 truncate">예상 배분액</p>
-            </div>
-            <span class="p-2 bg-emerald-500/10 rounded-xl flex-shrink-0 ml-2">💰</span>
-          </div>
 
-          <div class="flex-1 flex flex-col justify-center space-y-5 relative z-10">
-            <div class="flex items-end justify-between border-b border-white/5 pb-3">
-              <p class="text-[10px] font-black text-slate-400 uppercase">예상 상금 풀</p>
-              <p class="text-lg font-black text-white italic"><%= number_with_delimiter(@potential_prize_pool) %>원</p>
-            </div>
-            <div class="flex items-end justify-between">
-              <p class="text-[10px] font-black text-slate-400 uppercase">인당 추가 보너스</p>
-              <div class="text-right">
-                <p class="text-xl font-black text-emerald-400 italic">+ <%= number_with_delimiter(@estimated_bonus) %>원</p>
-                <p class="text-[8px] font-black text-slate-600 mt-0.5">최종 성공 루퍼 1인 기준</p>
-              </div>
+        <div class="flex-1 flex flex-col justify-center space-y-5 relative z-10">
+          <div class="flex items-end justify-between border-b border-white/5 pb-3">
+            <p class="text-[10px] font-black text-slate-400 uppercase">예상 상금 풀</p>
+            <p class="text-lg font-black text-white italic"><%= number_with_delimiter(@potential_prize_pool) %>원</p>
+          </div>
+          <div class="flex items-end justify-between">
+            <p class="text-[10px] font-black text-slate-400 uppercase">인당 추가 보너스</p>
+            <div class="text-right">
+              <p class="text-xl font-black text-emerald-400 italic">+ <%= number_with_delimiter(@estimated_bonus) %>원</p>
+              <p class="text-[8px] font-black text-slate-600 mt-0.5">최종 성공 루퍼 1인 기준</p>
             </div>
           </div>
         </div>
-      <% else %>
-        <div class="app-glass-card p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-50 w-full">
-          <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl">🛡️</div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">보증금이 없는 챌린지는<br>정산 데이터가 생성되지 않습니다</p>
-        </div>
+      </div>
+    <% else %>
+      <div class="app-glass-card p-6 flex flex-col items-center justify-center text-center space-y-3 opacity-50 w-full">
+        <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-xl">🛡️</div>
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">보증금이 없는 챌린지는<br>정산 데이터가 생성되지 않습니다</p>
+      </div>
     <% end %>
+  <% end %>
 
   <!-- Card 3: Activity Log -->
-    <!-- Recent Activity Log -->
-    <div class="app-glass-card p-5 md:p-6">
-      <h3 class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-6 md:mb-8 italic">최근 활동 로그</h3>
-      <% if recent_verifications.any? %>
-        <div class="space-y-6">
-          <% recent_verifications.each do |log| %>
-            <div class="flex items-start gap-4 group">
-              <div class="relative">
-                <img src="<%= log.participant.user.profile_image %>" class="w-8 h-8 rounded-xl object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
-                <div class="absolute -right-1 -bottom-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0C0B12]"></div>
+    <!-- Recent Activity Log (Challenge Only) -->
+    <% unless challenge.offline? %>
+      <div class="app-glass-card p-5 md:p-6">
+        <h3 class="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-6 md:mb-8 italic">최근 활동 로그</h3>
+        <% if recent_verifications.any? %>
+          <div class="space-y-6">
+            <% recent_verifications.each do |log| %>
+              <div class="flex items-start gap-4 group">
+                <div class="relative">
+                  <img src="<%= log.participant.user.profile_image %>" class="w-8 h-8 rounded-xl object-cover grayscale opacity-50 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
+                  <div class="absolute -right-1 -bottom-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#0C0B12]"></div>
+                </div>
+                <div class="flex-1 border-b border-white/5 pb-4 group-last:border-0">
+                  <p class="text-[11px] font-black text-slate-300 group-hover:text-white transition-colors">
+                    <span class="text-white"><%= log.participant.user.nickname %></span>님이 인증을 업데이트했습니다
+                  </p>
+                  <p class="text-[9px] font-black text-slate-600 uppercase mt-1"><%= time_ago_in_words(log.created_at) %> 전</p>
+                </div>
               </div>
-              <div class="flex-1 border-b border-white/5 pb-4 group-last:border-0">
-                <p class="text-[11px] font-black text-slate-300 group-hover:text-white transition-colors">
-                  <span class="text-white"><%= log.participant.user.nickname %></span>님이 인증을 업데이트했습니다
-                </p>
-                <p class="text-[9px] font-black text-slate-600 uppercase mt-1"><%= time_ago_in_words(log.created_at) %> 전</p>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="py-10 text-center">
-          <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">검출된 활동이 없습니다</p>
-        </div>
-      <% end %>
-    </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="py-10 text-center">
+            <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest italic">검출된 활동이 없습니다</p>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 
   <!-- Verification Section (Full Width) -->
