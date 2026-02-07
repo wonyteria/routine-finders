@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   post "admin_center/reset_users", to: "prototype#reset_users", as: :prototype_reset_users
   patch "admin_center/update_club_lounge", to: "prototype#update_club_lounge", as: :prototype_update_club_lounge
   post "admin_center/create_club_announcement", to: "prototype#create_club_announcement", as: :prototype_create_club_announcement
+  patch "admin_center/update_club_announcement/:id", to: "prototype#update_club_announcement", as: :prototype_update_club_announcement
   post "admin_center/confirm_club_payment", to: "prototype#confirm_club_payment", as: :prototype_confirm_club_payment
   post "admin_center/reject_club_payment", to: "prototype#reject_club_payment", as: :prototype_reject_club_payment
   get "admin_center/clubs/weekly_report", to: "prototype#admin_weekly_check", as: :prototype_admin_weekly_check

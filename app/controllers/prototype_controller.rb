@@ -911,6 +911,15 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def update_club_announcement
+    @announcement = Announcement.find(params[:id])
+    if @announcement.update(title: params[:title], content: params[:content])
+      redirect_to prototype_admin_clubs_path(tab: "announcements"), notice: "공지사항이 수정되었습니다."
+    else
+      redirect_to prototype_admin_clubs_path(tab: "announcements"), alert: "공지 수정 실패: #{@announcement.errors.full_messages.join(', ')}"
+    end
+  end
+
   def confirm_club_payment
     member = RoutineClubMember.find(params[:member_id])
 
