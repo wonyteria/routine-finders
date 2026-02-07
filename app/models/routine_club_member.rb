@@ -333,17 +333,28 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def calculate_routine_rate(start_date, end_date)
-    # 삭제된 루틴은 철저히 배제 (User Request)
-    routines = user.personal_routines.where(deleted_at: nil).to_a
-    # 해당 기간 내 패스(휴식/세이브)를 사용한 날짜들 확보
+    # [Fix] 루틴 유효성(생성일, 삭제일)과 완료 기록을 일별로 정확히 대조하여 계산
+    # 삭제된 루틴을 포함하여 조회를 하되, 각 날짜별로 active_on? 여부를 판단해야 함
+    all_routines = user.personal_routines.to_a
+    completions = PersonalRoutineCompletion
+                   .where(personal_routine_id: all_routines.map(&:id))
+                   .where(completed_on: start_date..end_date)
+                   .to_a
+                   .group_by(&:completed_on)
+
+    # 해당 기간 내 패스(휴식/세이브)를 사용한 날짜들
     excused_dates = attendances.where(attendance_date: start_date..end_date, status: :excused).pluck(:attendance_date)
 
     total_required = 0
-    pass_completed_count = 0
+    total_completed = 0
 
     (start_date..end_date).each do |date|
-      # 해당 요일에 설정된 루틴들의 개수
-      routines_on_day = routines.count do |r|
+      # 1. 해당 일자에 유효했던 루틴들 필터링
+      # - 해당 요일에 설정됨
+      # - 해당 일자 이전에 생성됨
+      # - 해당 일자 이후에 삭제되었거나 아직 삭제 안 됨
+      routines_on_day = all_routines.select do |r|
+        # 요일 조건
         days_list = r.days
         if days_list.is_a?(String)
           begin
@@ -352,29 +363,30 @@ class RoutineClubMember < ApplicationRecord
             days_list = []
           end
         end
-        # 클럽 멤버십 달성률 계산 시에는 루틴 생성일(active_on?)을 따지지 않고,
-        # 멤버십 기간 내라면 해당 루틴이 있었어야 하는 것으로 간주함 (User Request)
-        # 단, 루틴이 date 이후에 삭제된 경우는 제외해야 함 (이미 query에서 deleted_at: nil로 필터링됨)
-        (days_list || []).include?(date.wday.to_s)
-      end
-      total_required += routines_on_day
+        is_scheduled = (days_list || []).include?(date.wday.to_s)
 
-      # 패스를 사용한 날이라면 해당 날의 모든 루틴을 '완료점수'로 인정 (경고 방어용)
+        # 날짜 조건 (생성 및 삭제)
+        is_alive = r.created_at.to_date <= date && (r.deleted_at.nil? || r.deleted_at.to_date > date)
+
+        is_scheduled && is_alive
+      end
+
+      day_count = routines_on_day.size
+      total_required += day_count
+
       if excused_dates.include?(date)
-        pass_completed_count += routines_on_day
+        # 패스 사용일은 해당 일의 모든 루틴을 완료 처리
+        total_completed += day_count
+      else
+        # 실제 완료된 루틴 개수 (해당 날짜에 유효했던 루틴 ID 기준)
+        active_routine_ids = routines_on_day.map(&:id)
+        day_completions = completions[date] || []
+        actual_day_completed = day_completions.count { |c| active_routine_ids.include?(c.personal_routine_id) }
+        total_completed += actual_day_completed
       end
     end
 
     return 0.0 if total_required == 0
-
-    # 실제 루틴 완료 기록(체크박스 클릭) 개수
-    actual_completed_count = PersonalRoutineCompletion
-                             .joins(:personal_routine)
-                             .where(personal_routines: { user_id: user.id })
-                             .where(completed_on: start_date..end_date)
-                             .count
-
-    total_completed = actual_completed_count + pass_completed_count
 
     rate = (total_completed.to_f / total_required * 100).round(1)
     [ rate, 100.0 ].min
