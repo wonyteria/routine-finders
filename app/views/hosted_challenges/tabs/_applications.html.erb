@@ -21,59 +21,78 @@
         
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
           <% pending_applications.each do |application| %>
-            <div class="bg-white/[0.03] rounded-2xl md:rounded-[28px] p-4 md:p-6 border border-white/10 group/card hover:bg-white/[0.05] transition-all cursor-pointer relative"
+            <div class="bg-white/[0.03] rounded-2xl p-3 md:p-4 border border-white/10 group/card hover:bg-white/[0.05] transition-all cursor-pointer relative"
                  onclick="const cb = this.querySelector('input[type=checkbox]'); cb.checked = !cb.checked; this.classList.toggle('ring-2'); this.classList.toggle('ring-indigo-500'); this.classList.toggle('bg-indigo-500/5'); updateAppBatchActions();">
               <input type="checkbox" name="application_ids[]" value="<%= application.id %>" class="hidden app-checkbox">
               
-              <div class="flex items-start justify-between gap-3 md:gap-4 mb-4 md:mb-5">
-                <div class="flex items-center gap-3">
-                  <img src="<%= application.user.profile_image %>" class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl object-cover shadow-xl grayscale group-hover/card:grayscale-0 transition-all duration-700">
-                  <div>
-                    <h3 class="text-sm md:text-base font-black text-white italic"><%= application.user.nickname %></h3>
-                    <p class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-tighter mt-0.5"><%= time_ago_in_words(application.applied_at) %> 전</p>
-                  </div>
-                </div>
-              </div>
-              
-              <% if application.message.present? %>
-                <div class="p-3 md:p-4 bg-black/20 rounded-xl md:rounded-2xl border border-white/5 mb-4 md:mb-5">
-                  <p class="text-xs md:text-sm font-medium text-slate-300 leading-relaxed italic">"<%= application.message %>"</p>
-                </div>
-              <% end %>
-
-              <div class="grid grid-cols-2 gap-2 md:gap-3">
-                <button type="button" 
-                        onclick="event.stopPropagation(); document.getElementById('action-form-<%= application.id %>').classList.remove('hidden'); this.parentElement.classList.add('hidden'); document.getElementById('action-type-<%= application.id %>').value = 'approve'; document.getElementById('form-submit-<%= application.id %>').innerText = '승인 확정'; document.getElementById('form-submit-<%= application.id %>').className = 'w-full py-3 md:py-3.5 bg-indigo-600 text-white rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs hover:bg-indigo-500';"
-                        class="px-4 md:px-5 py-3 md:py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all shadow-xl shadow-indigo-600/20">
-                  승인하기
-                </button>
-                <button type="button" 
-                        onclick="event.stopPropagation(); document.getElementById('action-form-<%= application.id %>').classList.remove('hidden'); this.parentElement.classList.add('hidden'); document.getElementById('action-type-<%= application.id %>').value = 'reject'; document.getElementById('form-submit-<%= application.id %>').innerText = '거절 확정'; document.getElementById('form-submit-<%= application.id %>').className = 'w-full py-3 md:py-3.5 bg-rose-600 text-white rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs hover:bg-rose-700';"
-                        class="px-4 md:px-5 py-3 md:py-3.5 bg-white/5 hover:bg-white/10 text-slate-400 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all">
-                  거절하기
-                </button>
-              </div>
-
-              <!-- Personal Message Form -->
-              <div id="action-form-<%= application.id %>" class="hidden mt-3 md:mt-4 animate-slide-up" onclick="event.stopPropagation();">
-                <%= form_with url: "#", method: :post, local: true, id: "form-#{application.id}" do |f| %>
-                  <%= hidden_field_tag :source, "prototype" %>
-                  <input type="hidden" name="_method" id="action-type-<%= application.id %>" value="post">
-                  <div class="space-y-3">
-                    <%= text_area_tag :message, nil, placeholder: "참가자에게 보낼 개인 메시지 (선택)", class: "w-full p-3 md:p-4 bg-black/40 border border-white/10 rounded-xl md:rounded-2xl text-xs md:text-sm text-white placeholder:text-slate-600 focus:border-indigo-500 outline-none transition-all", rows: 3 %>
-                    <div class="flex gap-2">
-                      <button type="submit" id="form-submit-<%= application.id %>" 
-                              onclick="this.form.action = (document.getElementById('action-type-<%= application.id %>').value === 'approve') ? '<%= approve_challenge_application_path(challenge, application) %>' : '<%= reject_challenge_application_path(challenge, application) %>';"
-                              class="flex-1 py-3 md:py-3.5 bg-indigo-600 text-white rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20">
-                        확정하기
-                      </button>
-                      <button type="button" onclick="this.closest('.animate-slide-up').classList.add('hidden'); this.closest('.group\\/card').querySelector('.grid').classList.remove('hidden');" 
-                              class="px-4 md:px-5 py-3 md:py-3.5 bg-white/5 text-slate-500 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs hover:bg-white/10">
-                        취소
-                      </button>
+              <div class="flex gap-3 md:gap-4">
+                <img src="<%= application.user.profile_image %>" class="w-10 h-10 rounded-xl object-cover shadow-lg grayscale group-hover/card:grayscale-0 transition-all duration-500 shrink-0">
+                
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 class="text-sm font-black text-white italic truncate"><%= application.user.nickname %></h3>
+                      <p class="text-[9px] font-bold text-slate-500 uppercase tracking-tight"><%= time_ago_in_words(application.applied_at) %> 전</p>
                     </div>
                   </div>
-                <% end %>
+
+                  <% if application.message.present? %>
+                    <div class="p-2.5 bg-black/20 rounded-xl border border-white/5 mb-3">
+                      <p class="text-xs font-medium text-slate-300 leading-relaxed italic line-clamp-2">"<%= application.message %>"</p>
+                    </div>
+                  <% end %>
+
+                  <div class="grid grid-cols-2 gap-2">
+                    <button type="button" 
+                            onclick="event.stopPropagation(); 
+                                     const form = document.getElementById('action-form-<%= application.id %>');
+                                     const submitBtn = document.getElementById('form-submit-<%= application.id %>');
+                                     form.classList.remove('hidden'); 
+                                     this.closest('.grid').classList.add('hidden'); 
+                                     document.getElementById('action-type-<%= application.id %>').value = 'approve';
+                                     submitBtn.textContent = '승인 확정';
+                                     submitBtn.classList.remove('bg-rose-600', 'hover:bg-rose-500', 'shadow-rose-600/20');
+                                     submitBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-500', 'shadow-indigo-600/20');"
+                            class="py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-indigo-600/20">
+                      승인
+                    </button>
+                    <button type="button" 
+                            onclick="event.stopPropagation(); 
+                                     const form = document.getElementById('action-form-<%= application.id %>');
+                                     const submitBtn = document.getElementById('form-submit-<%= application.id %>');
+                                     form.classList.remove('hidden'); 
+                                     this.closest('.grid').classList.add('hidden'); 
+                                     document.getElementById('action-type-<%= application.id %>').value = 'reject';
+                                     submitBtn.textContent = '거절 확정';
+                                     submitBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-500', 'shadow-indigo-600/20');
+                                     submitBtn.classList.add('bg-rose-600', 'hover:bg-rose-500', 'shadow-rose-600/20');"
+                            class="py-2 bg-white/5 hover:bg-white/10 text-slate-400 rounded-lg font-black text-[10px] uppercase tracking-widest transition-all border border-white/5">
+                      거절
+                    </button>
+                  </div>
+
+                  <!-- Personal Message Form -->
+                  <div id="action-form-<%= application.id %>" class="hidden mt-3 animate-slide-up" onclick="event.stopPropagation();">
+                    <%= form_with url: "#", method: :post, local: true, id: "form-#{application.id}" do |f| %>
+                      <%= hidden_field_tag :source, "prototype" %>
+                      <input type="hidden" name="_method" id="action-type-<%= application.id %>" value="post">
+                      <div class="space-y-2">
+                        <%= text_area_tag :message, nil, placeholder: "메시지 (선택)", class: "w-full p-3 bg-black/40 border border-white/10 rounded-xl text-xs text-white placeholder:text-slate-600 focus:border-indigo-500 outline-none transition-all", rows: 2 %>
+                        <div class="flex gap-2">
+                          <button type="submit" id="form-submit-<%= application.id %>" 
+                                  onclick="this.form.action = (document.getElementById('action-type-<%= application.id %>').value === 'approve') ? '<%= approve_challenge_application_path(challenge, application) %>' : '<%= reject_challenge_application_path(challenge, application) %>';"
+                                  class="flex-1 py-2 bg-indigo-600 text-white rounded-lg font-black text-[10px] hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20">
+                            확정
+                          </button>
+                          <button type="button" onclick="this.closest('.animate-slide-up').classList.add('hidden'); this.closest('.flex-1').querySelector('.grid').classList.remove('hidden');" 
+                                  class="px-3 py-2 bg-white/5 text-slate-500 rounded-lg font-black text-[10px] hover:bg-white/10">
+                            취소
+                          </button>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
               </div>
             </div>
           <% end %>
