@@ -12,41 +12,54 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <% participants.each do |p| %>
-      <div class="p-5 bg-white/[0.03] border border-white/5 rounded-2xl hover:border-indigo-500/30 transition-all group">
+      <div class="p-6 bg-white/[0.04] border border-white/5 rounded-3xl hover:border-indigo-500/30 transition-all group overflow-hidden relative">
         <div class="flex items-center gap-4">
           <div class="relative shrink-0">
-            <img src="<%= p.user.profile_image %>" class="w-14 h-14 rounded-2xl object-cover shadow-sm bg-slate-50" alt="">
-            <% if p.completion_rate.to_i >= 90 %>
-              <div class="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full border-2 border-white flex items-center justify-center text-[10px] shadow-sm">👑</div>
+            <img src="<%= p.user.profile_image %>" class="w-14 h-14 rounded-2xl object-cover bg-white/5 shadow-2xl">
+            <% if !challenge.offline? && p.completion_rate.to_i >= 90 %>
+              <div class="absolute -top-1 -right-1 w-6 h-6 bg-amber-400 rounded-full border-2 border-[#0C0B12] flex items-center justify-center text-[10px] shadow-lg">👑</div>
             <% end %>
           </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-white truncate"><%= p.user.nickname %></p>
-            <div class="flex items-center gap-2 mt-1">
-              <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-md">Lv.<%= p.user.level %></span>
-              <span class="text-[9px] text-slate-400 font-bold"><%= time_ago_in_words(p.joined_at) %>전</span>
+          <div class="flex-1 min-w-0 overflow-hidden">
+            <div class="flex items-baseline gap-1.5 flex-wrap">
+              <span class="text-sm font-black text-white truncate"><%= p.user.nickname %></span>
+              <span class="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded-md border border-indigo-500/20">Lv.<%= p.user.level %></span>
             </div>
+            <p class="text-[10px] text-slate-500 font-bold mt-1.5 flex items-center gap-1.5">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <%= p.joined_at.strftime('%Y.%m.%d') %> 가입
+            </p>
           </div>
         </div>
 
-        <div class="mt-4 space-y-2">
-          <div class="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest">
-            <span class="text-slate-400">Completion</span>
-            <span class="text-indigo-600"><%= p.completion_rate.to_i %>%</span>
+        <% if challenge.offline? %>
+          <!-- Gathering Mode: Identity & Motivation -->
+          <div class="mt-4 pt-4 border-t border-white/5">
+            <p class="text-[11px] font-medium text-slate-400 leading-relaxed line-clamp-2 italic">
+              "<%= p.user.bio.present? ? p.user.bio : "함께 멋진 루틴을 만들어가고 싶은 루퍼입니다." %>"
+            </p>
           </div>
-          <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
-            <div class="h-full bg-indigo-500 transition-all duration-1000" style="width: <%= p.completion_rate.to_i %>%"></div>
-          </div>
-          <div class="flex items-center justify-between mt-2">
-            <div class="flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-              <span class="text-xs font-bold text-slate-300"><%= p.current_streak %>일 연속</span>
+        <% else %>
+          <!-- Challenge Mode: Performance Stats -->
+          <div class="mt-4 space-y-2.5">
+            <div class="flex items-center justify-between text-[9px] font-black uppercase tracking-widest">
+              <span class="text-slate-500">Progress</span>
+              <span class="text-indigo-400"><%= p.completion_rate.to_i %>%</span>
             </div>
-            <% if p.status == "failed" %>
-              <span class="text-[10px] font-black text-rose-500 uppercase tracking-widest">Failed</span>
-            <% end %>
+            <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-1000" style="width: <%= p.completion_rate.to_i %>%"></div>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs">🔥</span>
+                <span class="text-[11px] font-black text-slate-300"><%= p.current_streak %>일 연속</span>
+              </div>
+              <% if p.status == "failed" %>
+                <span class="text-[9px] font-black text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">FAILED</span>
+              <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
       </div>
     <% end %>
 
