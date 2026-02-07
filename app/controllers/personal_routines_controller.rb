@@ -119,8 +119,8 @@ class PersonalRoutinesController < ApplicationController
     @daily_achievement_rate = current_user.daily_achievement_rate(@selected_date)
     @total_completions = current_user.total_routine_completions
     @member_days = current_user.rufa_member_days
-    current_day_name = Date::DAYNAMES[Date.current.wday]
-    @todays_routines = current_user.personal_routines.select { |r| (r.days || []).include?(current_day_name) }
+    current_wday = Date.current.wday.to_s
+    @todays_routines = current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).map(&:to_s).include?(current_wday) }
 
     # Permission Service for Unified View
     @permission = PermissionService.new(current_user)
@@ -173,8 +173,8 @@ class PersonalRoutinesController < ApplicationController
             days_list = []
           end
         end
-        day_name = Date::DAYNAMES[date.wday]
-        (days_list || []).include?(day_name)
+        wday_str = date.wday.to_s
+        (days_list || []).map(&:to_s).include?(wday_str)
       end.count
       total > 0 ? (completions.to_f / total * 100).round : 0
     end.reverse

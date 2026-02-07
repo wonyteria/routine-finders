@@ -221,8 +221,8 @@
 
       <div class="relative z-10 flex-1 flex flex-col gap-4 w-full">
         <% 
-          current_day_name = Date::DAYNAMES[Date.current.wday]
-          todays_routines = @personal_routines.select { |r| (r.days || []).map(&:to_s).include?(current_day_name) }
+          current_wday = Date.current.wday.to_s
+          todays_routines = @personal_routines.select { |r| (r.days || []).map(&:to_s).include?(current_wday) }
         %>
         
         <% if todays_routines.any? %>
