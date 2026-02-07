@@ -544,8 +544,21 @@ class User < ApplicationRecord
   end
 
   def rufa_club_score
-    # 랭킹 산정용 점수 (기록률 30% + 달성률 70% 가중치)
-    (monthly_routine_log_rate * 0.3 + monthly_achievement_rate * 0.7).round(1)
+    # 랭킹 산정용 점수 (기증 방식 개선)
+    # 1. 비율 점수 (기존: 100점 만점 기준)
+    ratio_score = (monthly_routine_log_rate * 0.3 + monthly_achievement_rate * 0.5)
+
+    # 2. 절대량 점수 (추가: 루틴을 많이 수행할수록 유리)
+    # 이번 달 실제 완료한 총 루틴 횟수
+    monthly_count = personal_routines.joins(:completions)
+                                    .where(personal_routine_completions: {
+                                      completed_on: Date.current.beginning_of_month..Date.current
+                                    }).count
+
+    # 완료 1회당 0.5점의 가중치 부여 (30일간 하루 5개 완료 시 75점 추가)
+    volume_score = monthly_count * 0.5
+
+    (ratio_score + volume_score).round(1)
   end
 
   # 누적 통계 (All-time)
