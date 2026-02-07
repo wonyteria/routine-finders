@@ -20,17 +20,35 @@
           <div class="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-xl">📅</div>
         </div>
 
-        <!-- Place -->
-        <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center justify-between">
-          <div class="flex-1 min-w-0 pr-4">
-            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">상세 장소</p>
-            <p class="text-base font-bold text-white tracking-tight truncate">
-              <%= challenge.meeting_info&.place_name || "장소 정보 없음" %>
-            </p>
-            <p class="text-[10px] text-slate-400 mt-1 truncate"><%= challenge.meeting_info&.address %></p>
+        <!-- Online Link (if virtual) -->
+        <% if challenge.virtual_gathering? %>
+          <div class="p-6 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 flex items-center justify-between">
+            <div class="flex-1 min-w-0 pr-4">
+              <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1.5">온라인 접속 정보</p>
+              <p class="text-base font-bold text-white tracking-tight truncate">
+                온라인(Zoom/Google Meet 등) 예정
+              </p>
+              <p class="text-[10px] text-slate-400 mt-1 truncate">참여 확정 후 링크가 공개됩니다.</p>
+            </div>
+            <div class="w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center text-xl text-indigo-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            </div>
           </div>
-          <div class="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-xl">📍</div>
-        </div>
+        <% end %>
+
+        <!-- Physical Place (if offline) -->
+        <% if challenge.physical_gathering? %>
+          <div class="p-6 bg-white/[0.03] rounded-2xl border border-white/5 flex items-center justify-between">
+            <div class="flex-1 min-w-0 pr-4">
+              <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">상세 장소</p>
+              <p class="text-base font-bold text-white tracking-tight truncate">
+                <%= challenge.meeting_info&.place_name || "장소 정보 없음" %>
+              </p>
+              <p class="text-[10px] text-slate-400 mt-1 truncate"><%= challenge.meeting_info&.address %></p>
+            </div>
+            <div class="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-xl">📍</div>
+          </div>
+        <% end %>
       </div>
     </div>
 

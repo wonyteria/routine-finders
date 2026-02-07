@@ -72,10 +72,11 @@
   <div class="sticky top-0 z-40 bg-[#0C0B12]/80 backdrop-blur-3xl border-b border-white/5 py-4">
     <div class="flex justify-between items-center px-4 gap-1">
       <% 
-        if @challenge.offline?
+        if @challenge.gathering?
+          rules_label = @challenge.virtual_gathering? ? "접속안내" : "장소안내"
           main_tabs = [
             { id: "intro", label: "상세설명" },
-            { id: "rules", label: "장소안내" },
+            { id: "rules", label: rules_label },
             { id: "guide", label: "참여안내" },
             { id: "community", label: "커뮤니티" }
           ]
@@ -127,7 +128,7 @@
            </p>
         </div>
         <%= render "challenges/tabs/rules", challenge: @challenge %>
-        <% if @challenge.offline? && @challenge.meeting_info %>
+        <% if @challenge.physical_gathering? %>
         <div class="space-y-4">
              <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">장소 정보</h3>
              <div class="w-full h-56 bg-slate-800 rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative group">

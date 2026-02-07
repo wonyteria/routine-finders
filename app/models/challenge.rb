@@ -81,6 +81,14 @@ class Challenge < ApplicationRecord
     offline?
   end
 
+  def virtual_gathering?
+    gathering? && online_meeting_link.present?
+  end
+
+  def physical_gathering?
+    gathering? && meeting_info&.address.present?
+  end
+
   def online?
     mode_online?
   end
