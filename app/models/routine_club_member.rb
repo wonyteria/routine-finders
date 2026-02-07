@@ -301,33 +301,41 @@ class RoutineClubMember < ApplicationRecord
   private
 
   def calculate_period_rate(start_date, end_date)
-    # 사용자의 루틴 설정 요일 가져오기 (active 루틴만)
-    routines = user.personal_routines
-    target_routine_wdays = []
-    routines.each do |r|
-      d = r.days
-      if d.is_a?(String)
-        begin
-          d = JSON.parse(d)
-        rescue JSON::ParserError
-          d = []
+    # [Fix] 출석률 또한 해당 일에 실제 '해야 할 루틴'이 있었는지 일별로 체크하여 계산
+    all_routines = user.personal_routines.to_a
+    attendance_map = attendances.where(attendance_date: start_date..end_date).index_by(&:attendance_date)
+
+    total_target_days = 0
+    actual_attendance_count = 0
+
+    (start_date..end_date).each do |date|
+      # 해당 일자에 유효했던(살아있었던) 루틴이 하나라도 있는지 확인
+      has_active_routine = all_routines.any? do |r|
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        is_scheduled = (days_list || []).include?(date.wday.to_s)
+        is_alive = r.created_at.to_date <= date && (r.deleted_at.nil? || r.deleted_at.to_date > date)
+
+        is_scheduled && is_alive
+      end
+
+      if has_active_routine
+        total_target_days += 1
+        att = attendance_map[date]
+        if att && (att.status_present? || att.status_excused?)
+          actual_attendance_count += 1
         end
       end
-      target_routine_wdays.concat(d || [])
     end
-    target_routine_wdays = target_routine_wdays.compact.map(&:to_i).uniq
-
-    return 0.0 if target_routine_wdays.empty?
-
-    # 기간 내의 날짜 중 루틴 설정 요일과 일치하는 날들의 수 (분모 - 전체 기간 기준)
-    total_target_days = (start_date..end_date).count { |date| target_routine_wdays.include?(date.wday) }
 
     return 0.0 if total_target_days == 0
 
-    # 기간 내 출석 인정 횟수 (분자 - 현재까지 달성한 횟수)
-    actual_attendance_count = attendances.where(attendance_date: start_date..end_date, status: [ :present, :excused ]).count
-
-    # 100%를 초과하지 않도록 (데이터 정합성 보장)
     rate = (actual_attendance_count.to_f / total_target_days * 100).round(1)
     [ rate, 100.0 ].min
   end
