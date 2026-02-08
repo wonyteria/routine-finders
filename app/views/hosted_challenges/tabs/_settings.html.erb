@@ -89,6 +89,29 @@
           <% end %>
         </div>
 
+        <% if challenge.offline? %>
+          <%= f.fields_for :meeting_info do |mf| %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="space-y-2">
+                <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모임 시간</label>
+                <%= mf.time_field :meeting_time, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+              </div>
+              <div class="space-y-2">
+                <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">장소명</label>
+                <%= mf.text_field :place_name, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">상세 주소 (선택)</label>
+              <%= mf.text_field :address, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">상세 장소 URL (선택)</label>
+              <%= mf.text_field :place_url, placeholder: "지도 공유 링크", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-purple-500 outline-none transition-all" %>
+            </div>
+          <% end %>
+        <% end %>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="space-y-2">
             <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">모집 시작일</label>

@@ -275,6 +275,10 @@
                  <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Address</label>
                  <%= m.text_field :address, class: "glass-input w-full p-4 text-sm focus:scale-[1.01]", placeholder: "상세 주소를 입력해주세요" %>
                </div>
+               <div id="div_place_url" class="space-y-2 p-1 overflow-visible">
+                 <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Detailed Place URL (Optional)</label>
+                 <%= m.text_field :place_url, class: "glass-input w-full p-4 text-xs focus:scale-[1.01]", placeholder: "네이버/카카오 지도 공유 링크" %>
+               </div>
              <% end %>
              
              <div class="space-y-2 p-1 overflow-visible">
@@ -641,14 +645,17 @@
            const isOnline = btn.dataset.val === 'online';
            const placeLabel = document.getElementById('lbl_place_name');
            const addrDiv = document.getElementById('div_address');
+           const urlDiv = document.getElementById('div_place_url');
            
            if(isOnline) {
              placeLabel.textContent = "Platform / Link";
              if(addrDiv) addrDiv.style.display = 'none';
+             if(urlDiv) urlDiv.style.display = 'none';
              document.querySelector('input[name="challenge[meeting_info_attributes][place_name]"]').placeholder = "예: Zoom, Discord, Google Meet";
            } else {
              placeLabel.textContent = "Place Name";
              if(addrDiv) addrDiv.style.display = 'block';
+             if(urlDiv) urlDiv.style.display = 'block';
              document.querySelector('input[name="challenge[meeting_info_attributes][place_name]"]').placeholder = "예: 투썸플레이스 강남대로점";
            }
         });

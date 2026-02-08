@@ -1,35 +1,4 @@
-  <% if challenge.offline? && challenge.meeting_info %>
-    <!-- Offline Meeting Info (Prominent) -->
-    <div class="bg-white/[0.03] rounded-[32px] border border-white/5 p-6 lg:p-8 space-y-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xs font-bold text-orange-600/80 uppercase tracking-[0.2em] flex items-center gap-2">
-          <span class="w-1 h-3 bg-orange-400 rounded-full"></span>
-          오프라인 모임 정보
-        </h2>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="space-y-1">
-          <p class="text-[9px] font-bold text-orange-600/40 uppercase tracking-widest">장소 및 주소</p>
-          <p class="text-base font-bold text-orange-900"><%= challenge.meeting_info.place_name %></p>
-          <p class="text-xs font-medium text-orange-800/60"><%= challenge.meeting_info.address %></p>
-        </div>
-        <div class="space-y-1 border-l border-orange-200/50 pl-6">
-          <p class="text-[9px] font-bold text-orange-600/40 uppercase tracking-widest">정기 모임 시간</p>
-          <p class="text-base font-bold text-orange-900"><%= challenge.meeting_info.meeting_time %></p>
-          <p class="text-xs font-medium text-orange-800/60">최대 정원: <%= challenge.max_participants || challenge.meeting_info.max_attendees %>명</p>
-        </div>
-      </div>
-
-      <% if challenge.meeting_info.description.present? %>
-        <div class="p-5 bg-white/[0.05] rounded-2xl border border-white/5">
-          <p class="text-sm font-medium text-slate-400 leading-relaxed italic">
-            "<%= challenge.meeting_info.description %>"
-          </p>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+<%# Removed redundant offline meeting info as requested %>
 
   <!-- Summary (One-line intro) -->
   <% if challenge.summary.present? %>
@@ -66,5 +35,11 @@
     </div>
   <% end %>
 
-<%# Bottom section removed as it's now at the top %>
+<%# Bottom section: CTA for joining %>
+<div class="pt-10 pb-6 text-center space-y-4">
+  <p class="text-xs font-bold text-slate-500">이 챌린지에 함께하고 싶나요?</p>
+  <button data-action="click->modal#open" class="w-full py-4.5 bg-white text-[#0C0B12] rounded-[24px] font-black text-sm active:scale-95 transition-all shadow-xl shadow-white/5">
+    지금 바로 참여하기
+  </button>
+</div>
 </div>

@@ -341,7 +341,8 @@ class HostedChallengesController < ApplicationController
       :chat_link, :is_private, :admission_type,
       :recruitment_start_date, :recruitment_end_date,
       :participation_fee,
-      days: []
+      days: [],
+      meeting_info_attributes: [ :id, :place_name, :address, :meeting_time, :description, :max_attendees, :place_url ]
     )
   end
 

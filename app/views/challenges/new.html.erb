@@ -407,6 +407,17 @@
                             <%= meeting_form.text_field :address, placeholder: "예: 서울 강남구 강남대로 364 미왕빌딩 12층", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-medium text-sm text-slate-700 focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", id: "gathering_address" %>
                           </div>
                         </div>
+
+                        <div class="space-y-3">
+                          <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">상세 장소 URL (선택)</label>
+                          <div class="relative group">
+                            <%= meeting_form.text_field :place_url, placeholder: "예: 네이버 지도/카카오 맵 공유 링크", class: "w-full p-6 bg-slate-50 border-2 border-transparent rounded-[28px] font-medium text-sm text-slate-700 focus:bg-white focus:border-indigo-500/20 focus:ring-4 focus:ring-indigo-500/5 transition-all outline-none", id: "gathering_place_url" %>
+                            <div class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none">
+                              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </div>
+                          </div>
+                          <p class="text-[10px] font-bold text-slate-400 pl-2">🔗 장소 이름을 눌렀을 때 이동할 지도의 주소를 넣어주세요.</p>
+                        </div>
                       <% end %>
                       
                       <!-- Auto-set hidden fields for consistency -->

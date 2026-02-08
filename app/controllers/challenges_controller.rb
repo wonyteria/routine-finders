@@ -338,7 +338,7 @@ class ChallengesController < ApplicationController
       :full_refund_threshold, :refund_date, :recruitment_start_date, :recruitment_end_date,
       :chat_link, :host_phone, :application_question, :requires_application_message, :preparation_items, :refund_policy,
       days: [],
-      meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees ]
+      meeting_info_attributes: [ :place_name, :address, :meeting_time, :description, :max_attendees, :place_url ]
     )
   end
 end

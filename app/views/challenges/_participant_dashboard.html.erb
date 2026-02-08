@@ -114,12 +114,29 @@
             <% end %>
             
             <div class="pt-2 flex gap-3">
-              <button class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-sm font-black text-white transition-all border border-white/10">
-                지도 보기
-              </button>
-              <button class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-black text-white transition-all shadow-lg shadow-emerald-600/20">
-                오픈채팅
-              </button>
+              <% if @challenge.meeting_info&.place_url.present? %>
+                <%= link_to @challenge.meeting_info.place_url, target: "_blank", class: "flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-sm font-black text-white transition-all border border-white/10 flex items-center justify-center" do %>
+                  지도 보기
+                <% end %>
+              <% elsif @challenge.meeting_info&.address.present? %>
+                <%= link_to "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(@challenge.meeting_info.address)}", target: "_blank", class: "flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-sm font-black text-white transition-all border border-white/10 flex items-center justify-center" do %>
+                  지도 보기
+                <% end %>
+              <% else %>
+                <button class="flex-1 py-4 bg-white/5 opacity-50 rounded-2xl text-sm font-black text-white border border-white/10 cursor-not-allowed" disabled>
+                  지도 미등록
+                </button>
+              <% end %>
+              
+              <% if @challenge.chat_link.present? %>
+                <%= link_to @challenge.chat_link, target: "_blank", class: "flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-black text-white transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center" do %>
+                  오픈채팅
+                <% end %>
+              <% else %>
+                <button class="flex-1 py-4 bg-white/5 opacity-50 rounded-2xl text-sm font-black text-white border border-white/10 cursor-not-allowed" disabled>
+                  채팅 미등록
+                </button>
+              <% end %>
             </div>
           </div>
         </div>
