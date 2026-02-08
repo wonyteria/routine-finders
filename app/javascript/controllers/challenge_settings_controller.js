@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["form", "modal", "summaryContent", "announcementSection", "announcementCheckbox", "announcementTitle", "announcementContent", "costType", "costInput", "participationFeeInput", "amountLabel", "participationFeeContainer"]
+    static targets = ["form", "modal", "summaryContent", "announcementSection", "announcementCheckbox", "announcementTitle", "announcementContent", "costType", "costInput", "participationFeeInput", "amountLabel", "participationFeeContainer", "submitButton"]
     static values = { isGathering: Boolean }
 
     connect() {
@@ -12,6 +12,10 @@ export default class extends Controller {
         this.formTarget.querySelectorAll('input[type="number"][step]').forEach(input => {
             this.validateStep({ target: input })
         })
+
+        // Listen for all input changes to toggle submit button
+        this.formTarget.addEventListener("input", () => this.checkChanges())
+        this.toggleSubmitButton(false) // Initially disabled
 
         // Define field names for summary display
         const typeLabel = this.isGatheringValue ? "모임" : "챌린지"
@@ -75,8 +79,10 @@ export default class extends Controller {
         const currentValues = this.captureCurrentValues()
         const changes = this.getChanges(this.initialValues, currentValues)
 
-        // If no changes or modal missing, submit immediately via Turbo
-        if (Object.keys(changes).length === 0 || !this.hasModalTarget) {
+        // If no changes, submit button should already be disabled, but just in case
+        if (Object.keys(changes).length === 0) return
+
+        if (!this.hasModalTarget) {
             if (this.hasFormTarget) {
                 this.isSubmitting = true
                 this.formTarget.requestSubmit()
@@ -89,6 +95,24 @@ export default class extends Controller {
         this.modalTarget.style.display = 'flex'
 
         this.updateAnnouncementPreview(changes)
+    }
+
+    checkChanges() {
+        const currentValues = this.captureCurrentValues()
+        const changes = this.getChanges(this.initialValues, currentValues)
+        const hasChanges = Object.keys(changes).length > 0
+        this.toggleSubmitButton(hasChanges)
+    }
+
+    toggleSubmitButton(enabled) {
+        this.submitButtonTargets.forEach(button => {
+            button.disabled = !enabled
+            if (enabled) {
+                button.classList.remove("opacity-50", "cursor-not-allowed", "grayscale-[0.5]")
+            } else {
+                button.classList.add("opacity-50", "cursor-not-allowed", "grayscale-[0.5]")
+            }
+        })
     }
 
     getChanges(oldValues, newValues) {
@@ -254,6 +278,9 @@ export default class extends Controller {
             flagInput.value = "true"
             this.formTarget.appendChild(flagInput)
         }
+
+        // Scroll to top as requested
+        window.scrollTo({ top: 0, behavior: 'smooth' })
 
         this.isSubmitting = true
         this.formTarget.requestSubmit()
