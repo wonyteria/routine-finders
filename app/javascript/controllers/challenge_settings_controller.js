@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
     static targets = ["form", "modal", "summaryContent", "announcementSection", "announcementCheckbox", "announcementTitle", "announcementContent", "costType", "costInput", "participationFeeInput", "amountLabel", "participationFeeContainer"]
+    static values = { isGathering: Boolean }
 
     connect() {
         this.initialValues = this.captureCurrentValues()
@@ -13,12 +14,13 @@ export default class extends Controller {
         })
 
         // Define field names for summary display
+        const typeLabel = this.isGatheringValue ? "모임" : "챌린지"
         this.fieldNames = {
-            "challenge[title]": "챌린지 제목",
+            "challenge[title]": `${typeLabel} 제목`,
             "challenge[summary]": "한 줄 요약",
             "challenge[description]": "상세 설명",
             "challenge[custom_host_bio]": "호스트 소개",
-            "challenge[start_date]": "시작일",
+            "challenge[start_date]": this.isGatheringValue ? "모임일" : "시작일",
             "challenge[end_date]": "종료일",
             "challenge[recruitment_start_date]": "모집 시작일",
             "challenge[recruitment_end_date]": "모집 마감일",
@@ -32,7 +34,7 @@ export default class extends Controller {
             "challenge[chat_link]": "채팅방 링크",
             "challenge[is_private]": "공개 여부",
             "challenge[admission_type]": "승인 방식",
-            "challenge[amount]": "보증금/참가비",
+            "challenge[amount]": this.isGatheringValue ? "참가비" : "보증금/참가비",
             "challenge[participation_fee]": "추가 참가비",
             "challenge[max_participants]": "최대 참여 인원",
             "challenge[full_refund_threshold]": "전액 환급 기준",
@@ -40,7 +42,11 @@ export default class extends Controller {
             "challenge[certification_goal]": "인증 목표",
             "challenge[host_bank]": "은행",
             "challenge[host_account]": "계좌번호",
-            "challenge[host_account_holder]": "예금주"
+            "challenge[host_account_holder]": "예금주",
+            "challenge[meeting_info_attributes][meeting_time]": "모임 시간",
+            "challenge[meeting_info_attributes][place_name]": "장소명",
+            "challenge[meeting_info_attributes][address]": "상세 주소",
+            "challenge[meeting_info_attributes][place_url]": "상세 장소 URL"
         }
     }
 
@@ -163,11 +169,15 @@ export default class extends Controller {
     updateAnnouncementPreview(changes) {
         if (!this.hasAnnouncementContentTarget || !this.hasAnnouncementTitleTarget) return
 
-        let content = "챌린지 운영 정책이 다음과 같이 변경되었습니다.\n\n"
+        const typeLabel = this.isGatheringValue ? "모임" : "챌린지"
+        let content = `루티너님들! 즐거운 소식을 전해드려요. 🎉\n${typeLabel} 운영 정책이 더욱 원활한 진행을 위해 다음과 같이 보완되었습니다.\n\n`
         Object.entries(changes).forEach(([key, value]) => {
-            const label = this.fieldNames[key] || key.replace('challenge[', '').replace(']', '')
-            let oldText = value.old || "없음"
-            let newText = value.new || "없음"
+            const label = this.fieldNames[key] || this.formatKeyToLabel(key)
+            let oldText = value.old || "미지정"
+            let newText = value.new || "미지정"
+
+            if (oldText === "없음") oldText = "미지정"
+            if (newText === "없음") newText = "미지정"
 
             if (key === "challenge[re_verification_allowed]" || key === "challenge[mission_requires_host_approval]") {
                 oldText = (oldText === "1" || oldText === "true") ? "허용" : "미허용"
@@ -188,10 +198,22 @@ export default class extends Controller {
                 newText = costs[newText] || newText
             }
 
-            content += `- ${label}: ${oldText} -> ${newText}\n`
+            if (value.old === undefined || value.old === "" || value.old === null) {
+                content += `📌 ${label}이(가) [${newText}] (으)로 새롭게 설정되었습니다.\n`
+            } else {
+                content += `✅ ${label}: ${oldText} -> ${newText}\n`
+            }
         })
+        content += "\n더욱 알찬 활동을 위해 최선을 다하겠습니다. 궁금한 점은 호스트에게 문의해 주세요! 🌿"
         this.announcementContentTarget.value = content
-        this.announcementTitleTarget.value = "[공지] 챌린지 운영 정책 변경 안내"
+        this.announcementTitleTarget.value = `[공지] ${typeLabel} 운영 정책 변경 안내`
+    }
+
+    formatKeyToLabel(key) {
+        return key.replace('challenge[', '')
+            .replace('meeting_info_attributes][', '장소 ')
+            .replace(']', '')
+            .replace('_', ' ')
     }
 
     toggleAnnouncementSection() {

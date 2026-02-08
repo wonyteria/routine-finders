@@ -110,7 +110,8 @@ class HostedChallengesController < ApplicationController
             "host_bank" => "은행", "host_account" => "계좌번호", "host_account_holder" => "예금주",
             "max_participants" => "최대 인원", "is_private" => "공개 여부", "admission_type" => "승인 방식",
             "re_verification_allowed" => "재인증 허용", "mission_requires_host_approval" => "인증 승인제",
-            "chat_link" => "채팅방 링크", "custom_host_bio" => "호스트 소개", "status" => "상태"
+            "chat_link" => "채팅방 링크", "custom_host_bio" => "호스트 소개", "status" => "상태",
+            "place_name" => "장소명", "address" => "상세 주소", "place_url" => "상세 장소 URL"
           }
           # Compact data to prevent CookieOverflow (4KB limit)
           change_logs = saved_changes.first(12).map do |attr, vals|
