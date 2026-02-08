@@ -80,6 +80,7 @@ class RoutineClub < ApplicationRecord
   end
 
   def recruitment_open?(date = Date.current)
+    return true if status_recruiting?
     self.class.recruitment_open?(date)
   end
 

@@ -554,12 +554,12 @@ class PrototypeController < ApplicationController
 
   def club_join
     # Ensure we load the official club first to reflect admin settings
-    @routine_club = RoutineClub.official.first || RoutineClub.order(created_at: :desc).first
-    # Force dates for 7th generation prototype if needed
-    if @routine_club && @routine_club.generation_number == 7
-      @routine_club.start_date = Date.new(2026, 1, 1)
-      @routine_club.end_date = Date.new(2026, 3, 31)
-    end
+    # Prioritize recruiting clubs, then future clubs, then falls back to latest
+    @routine_club = RoutineClub.official.recruiting_clubs.first ||
+                    RoutineClub.official.where("start_date > ?", Date.current).order(start_date: :asc).first ||
+                    RoutineClub.official.order(start_date: :desc).first ||
+                    RoutineClub.order(created_at: :desc).first
+
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
   end
 
