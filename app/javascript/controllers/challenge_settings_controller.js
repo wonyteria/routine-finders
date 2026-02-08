@@ -170,7 +170,7 @@ export default class extends Controller {
         if (!this.hasAnnouncementContentTarget || !this.hasAnnouncementTitleTarget) return
 
         const typeLabel = this.isGatheringValue ? "모임" : "챌린지"
-        let content = `루티너님들! 즐거운 소식을 전해드려요. 🎉\n${typeLabel} 운영 정책이 더욱 원활한 진행을 위해 다음과 같이 보완되었습니다.\n\n`
+        let content = `${typeLabel} 운영 정책이 더욱 원활한 진행을 위해 다음과 같이 보완되었습니다.\n\n`
         Object.entries(changes).forEach(([key, value]) => {
             const label = this.fieldNames[key] || this.formatKeyToLabel(key)
             let oldText = value.old || "미지정"
