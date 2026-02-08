@@ -111,7 +111,7 @@
               Total Fee (<%= @routine_club.duration_in_days %> Days)
             </p>
             <p class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
-              ₩<%= number_with_delimiter(@routine_club.calculate_quarterly_fee) %>
+              ₩<%= number_with_delimiter(@routine_club.calculate_cycle_fee) %>
             </p>
           </div>
 
