@@ -21,7 +21,7 @@ class RoutineClub < ApplicationRecord
   validates :start_date, presence: true
   validates :end_date, presence: true
   validates :monthly_fee, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :min_duration_months, presence: true, numericality: { greater_than_or_equal_to: 3 }
+  validates :min_duration_months, presence: true, numericality: { greater_than_or_equal_to: 2 }
   validate :end_date_after_start_date
 
   # Nested attributes
@@ -55,8 +55,9 @@ class RoutineClub < ApplicationRecord
     base_date = Date.new(2026, 1, 1)
     return 7 if date < base_date
 
-    quarters_passed = ((date.year - base_date.year) * 4) + ((date.month - 1) / 3) - ((base_date.month - 1) / 3)
-    7 + quarters_passed
+    months_passed = ((date.year - base_date.year) * 12) + (date.month - base_date.month)
+    periods_passed = (months_passed / 2).floor
+    7 + periods_passed
   end
 
   def generation_number(date = Date.current)
@@ -66,33 +67,38 @@ class RoutineClub < ApplicationRecord
   # 모집 기간 여부 확인 (분기 시작 14일 전 ~ 시작일 당일)
   # 2026년 2월 1일까지 특별 연장
   def self.recruitment_open?(date = Date.current)
-    # 현재 분기 시작일 계산 (시작 14일 전 ~ 시작일 당일)
-    current_quarter_start = date.beginning_of_quarter
+    # 현재 2개월 주기 시작일 계산 (홀수달 1일: 1, 3, 5, 7, 9, 11)
+    period_start = date.month.odd? ? date.beginning_of_month : (date - 1.month).beginning_of_month
 
-    # 2026년 1분기(1월~3월)에 한해 2월 1일까지 모집 기간 연장
-    if current_quarter_start == Date.new(2026, 1, 1)
+    # 2026년 1분기(1월~2월)에 한해 연장된 모집 기간 (시스템 전환기 예외)
+    if period_start == Date.new(2026, 1, 1)
       deadline = Date.new(2026, 2, 6)
-      return date >= (current_quarter_start - 14.days) && date <= deadline
+      return date >= (period_start - 14.days) && date <= deadline
     end
 
-    date >= (current_quarter_start - 14.days) && date <= current_quarter_start
+    date >= (period_start - 14.days) && date <= period_start
   end
 
   def recruitment_open?(date = Date.current)
     self.class.recruitment_open?(date)
   end
 
-  # 고정 분기 요금 계산 (하루 300원 기준, 해당 분기 전체 일수 계산)
-  def self.calculate_quarterly_fee(date = Date.current)
-    start_of_q = date.beginning_of_quarter
-    end_of_q = date.end_of_quarter
-    days_in_q = (end_of_q - start_of_q).to_i + 1
+  # 고정 2개월 요금 계산 (하루 300원 기준)
+  def self.calculate_cycle_fee(date = Date.current)
+    start_of_period = date.month.odd? ? date.beginning_of_month : (date - 1.month).beginning_of_month
+    end_of_period = (start_of_period + 1.month).end_of_month
+    days_in_period = (end_of_period - start_of_period).to_i + 1
 
-    days_in_q * 300
+    days_in_period * 300
   end
 
+  def calculate_cycle_fee(date = Date.current)
+    self.class.calculate_cycle_fee(date)
+  end
+
+  # 하위 호환성을 위해 유지
   def calculate_quarterly_fee(date = Date.current)
-    self.class.calculate_quarterly_fee(date)
+    calculate_cycle_fee(date)
   end
 
   # 하위 호환성을 위해 유지하되 로직은 고정가로 변경
@@ -100,14 +106,24 @@ class RoutineClub < ApplicationRecord
     calculate_quarterly_fee(join_date)
   end
 
-  # 주어진 날짜가 속한 분기의 마지막 날 반환
-  def get_quarter_end_date(date)
-    date.to_date.end_of_quarter
+  # 주어진 날짜가 속한 주기의 마지막 날 반환
+  def get_cycle_end_date(date)
+    start = date.to_date.month.odd? ? date.to_date.beginning_of_month : (date.to_date - 1.month).beginning_of_month
+    (start + 1.month).end_of_month
   end
 
-  # 분기 시작일 반환
+  # 주기 시작일 반환
+  def get_cycle_start_date(date)
+    date.to_date.month.odd? ? date.to_date.beginning_of_month : (date.to_date - 1.month).beginning_of_month
+  end
+
+  # 하위 호환성
+  def get_quarter_end_date(date)
+    get_cycle_end_date(date)
+  end
+
   def get_quarter_start_date(date)
-    date.to_date.beginning_of_quarter
+    get_cycle_start_date(date)
   end
 
   def is_full?
@@ -161,14 +177,14 @@ class RoutineClub < ApplicationRecord
       return latest_club
     end
 
-    # 2026년 1분기 기준 공식 클라이언트 설정 (시스템 고유 자산)
+    # 2026년 1기(1월~2월) 기준 공식 클라이언트 설정
     self.create!(
       title: "루파 클럽 공식",
       description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",
       monthly_fee: 3000,
-      min_duration_months: 3,
+      min_duration_months: 2,
       start_date: Date.new(2026, 1, 1),
-      end_date: Date.new(2026, 3, 31),
+      end_date: Date.new(2026, 2, 28),
       is_official: true,
       category: "건강·운동",
       status: :active
