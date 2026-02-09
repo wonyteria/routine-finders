@@ -10,21 +10,21 @@
   legends = @reports.select { |r| r.achievement_rate >= 100.0 }
   if legends.any?
     summary_text += "💯 100% Perfect (Legend)\n"
-    summary_text += legends.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n\n"
+    summary_text += legends.map { |r| "• #{r.user.nickname} (100%)" }.join("\n") + "\n\n"
   end
 
   # 1-2. 90% 이상 (Super Achiever)
   supers = @reports.select { |r| r.achievement_rate >= 90.0 && r.achievement_rate < 100.0 }
   if supers.any?
     summary_text += "🔥 90% 이상 (Super Achiever)\n"
-    summary_text += supers.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n\n"
+    summary_text += supers.map { |r| "• #{r.user.nickname} (#{r.achievement_rate.to_i}%)" }.join("\n") + "\n\n"
   end
 
   # 1-3. 70% ~ 89% (Safe Zone)
   safes = @reports.select { |r| r.achievement_rate >= 70.0 && r.achievement_rate < 90.0 }
   if safes.any?
     summary_text += "✅ 70% ~ 89% (Safe Zone)\n"
-    summary_text += safes.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n\n"
+    summary_text += safes.map { |r| "• #{r.user.nickname} (#{r.achievement_rate.to_i}%)" }.join("\n") + "\n\n"
   end
 
   # 1-4. 70% 미만 (Manager's Care)
@@ -33,13 +33,13 @@
     summary_text += "⚠️ 70% 미만 (Manager's Care)\n"
     summary_text += cares.map { |r| 
       status_label = if r.is_eligible
-        " (경고부여)"
+        " / 경고부여"
       elsif !r.is_eligible_date
-        " (신규유예)"
+        " / 신규유예"
       else
-        " (평가제외)"
+        " / 평가제외"
       end
-      "• #{r.user.nickname}#{status_label}" 
+      "• #{r.user.nickname} (#{r.achievement_rate.to_i}%#{status_label})" 
     }.join("\n") + "\n\n"
   end
   
