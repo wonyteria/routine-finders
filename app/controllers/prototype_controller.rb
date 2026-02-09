@@ -900,20 +900,28 @@ class PrototypeController < ApplicationController
       @target_end = @target_start.end_of_month
     end
 
-    # 유효한 클럽 멤버(confirmed)의 리포트만 조회하도록 필터링 강화
-    @reports = RoutineClubReport.where(
-      report_type: @report_type,
-      start_date: @target_start,
-      routine_club: @official_club
-    ).joins(user: :routine_club_members)
-     .where(routine_club_members: { routine_club_id: @official_club.id, payment_status: :confirmed })
-     .includes(:user)
-     .order("achievement_rate DESC")
-     .distinct
+    # 유효한 클럽 멤버(confirmed + active/warned)이면서
+    # 운영진이 아니고(is_moderator: false),
+    # 평가 기준일(월요일) 이전에 가입한 회원만 대상으로 필터링 (System Inspection 로직과 통일)
+    @reports = @official_club.members.confirmed
+                             .where(status: [ :active, :warned ], is_moderator: false)
+                             .where("joined_at <= ?", @target_start.end_of_day)
+                             .map do |member|
+                               RoutineClubReport.find_by(
+                                 user: member.user,
+                                 routine_club: @official_club,
+                                 report_type: @report_type,
+                                 start_date: @target_start
+                               )
+                             end.compact.sort_by { |r| -(r.achievement_rate || 0) }
 
-    # If no reports exist yet, auto-trigger generation for confirmed members
+    # If no reports exist yet, auto-trigger generation for eligible members
     if @reports.empty? && @official_club
-      @official_club.members.confirmed.each do |member|
+      eligible_members = @official_club.members.confirmed
+                                      .where(status: [ :active, :warned ], is_moderator: false)
+                                      .where("joined_at <= ?", @target_start.end_of_day)
+
+      eligible_members.each do |member|
         RoutineClubReportService.new(
           user: member.user,
           routine_club: @official_club,
@@ -923,13 +931,19 @@ class PrototypeController < ApplicationController
         ).generate_or_find
       end
 
-      # Reload reports with the same strict filtering
+      # Reload reports
       @reports = RoutineClubReport.where(
         report_type: @report_type,
         start_date: @target_start,
         routine_club: @official_club
       ).joins(user: :routine_club_members)
-       .where(routine_club_members: { routine_club_id: @official_club.id, payment_status: :confirmed })
+       .where(routine_club_members: {
+         routine_club_id: @official_club.id,
+         payment_status: :confirmed,
+         status: [ :active, :warned ],
+         is_moderator: false
+       })
+       .where("routine_club_members.joined_at <= ?", @target_start.end_of_day)
        .includes(:user)
        .order("achievement_rate DESC")
        .distinct
