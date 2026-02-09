@@ -900,8 +900,8 @@ class PrototypeController < ApplicationController
       @target_end = @target_start.end_of_month
     end
 
-    # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되 운영진은 제외
-    confirmed_members = @official_club.members.confirmed.where(is_moderator: false).joins(:user).where(users: { deleted_at: nil }).includes(:user)
+    # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되, '루파' 닉네임 유저만 제외
+    confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).where.not(users: { nickname: "루파" }).includes(:user)
 
     # 1. 존재하는 리포트들 가져오기
     existing_reports = RoutineClubReport.where(
