@@ -131,6 +131,9 @@
                  <div class="flex items-center gap-2 mt-0.5">
                    <p class="text-[9px] font-bold text-slate-500"><%= report.identity_title %></p>
                    <div class="flex items-center gap-1 opacity-60">
+                     <% if report.score.to_i > 0 %>
+                       <span class="text-[8px] font-bold px-1 rounded bg-amber-500/10 text-amber-500/80 border border-amber-500/10"><%= report.score.to_i %> pts</span>
+                     <% end %>
                      <% if report.relax_pass_count.to_i > 0 %>
                        <span class="text-[8px] font-bold px-1 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/20">R:<%= report.relax_pass_count %></span>
                      <% end %>

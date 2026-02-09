@@ -435,8 +435,7 @@ class User < ApplicationRecord
     # 현재 활성화된(삭제되지 않은) 루틴만 조회
     all_routines = personal_routines.where(deleted_at: nil)
 
-    # 루파 클럽 멤버 여부 확인
-    is_club_member = is_rufa_club_member_on?(date)
+    # 루틴 활성 여부 확인
 
     todays_active_routines = all_routines.select do |r|
       # [수정] 클럽 멤버 여부와 상관없이, 실제 루틴이 생성된 날 이후부터만 달성률 계산에 포함
@@ -475,14 +474,9 @@ class User < ApplicationRecord
     loaded_routines = all_routines.to_a
 
     # 루파 클럽 멤버십 기간 확인 (N+1 방지)
-    memberships = routine_club_members.confirmed.where(status: [ :active, :warned ])
-                                     .where("membership_start_date <= ? AND membership_end_date >= ?", end_date, start_date)
-                                     .to_a
-
     total_required = 0
     (start_date..end_date).each do |date|
-      # 해당 날짜에 루파 클럽 멤버였는지 확인
-      is_club_member = admin? || memberships.any? { |m| date >= m.membership_start_date && date <= m.membership_end_date }
+      # 해당 날짜에 루파 클럽 멤버였는지 확인 (로깅/디버깅 필요시 유지)
 
       # 해당 날짜(date)에 설정되어 있던 루틴 합산
       active_count_for_day = loaded_routines.count do |r|
@@ -544,19 +538,21 @@ class User < ApplicationRecord
     completed_count >= todays_active_routines.size
   end
 
-  def rufa_club_score
+  def rufa_club_score(date = Date.current)
     # 랭킹 산정용 점수 (기증 방식 개선)
     # 1. 비율 점수 (기존: 100점 만점 기준)
-    ratio_score = (monthly_routine_log_rate * 0.3 + monthly_achievement_rate * 0.5)
+    ratio_score = (monthly_routine_log_rate(date) * 0.3 + monthly_achievement_rate(date) * 0.5)
 
     # 2. 절대량 점수 (추가: 루틴을 많이 수행할수록 유리)
-    # 이번 달 실제 완료한 총 루틴 횟수
+    start_date = date.beginning_of_month
+    end_date = [ date.end_of_month, Date.current ].min
+
     monthly_count = personal_routines.joins(:completions)
                                     .where(personal_routine_completions: {
-                                      completed_on: Date.current.beginning_of_month..Date.current
+                                      completed_on: start_date..end_date
                                     }).count
 
-    # 완료 1회당 0.5점의 가중치 부여 (30일간 하루 5개 완료 시 75점 추가)
+    # 완료 1회당 0.5점의 가중치 부여
     volume_score = monthly_count * 0.5
 
     (ratio_score + volume_score).round(1)

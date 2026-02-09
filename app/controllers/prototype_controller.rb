@@ -929,14 +929,17 @@ class PrototypeController < ApplicationController
 
       has_low_rate = report.achievement_rate < 70.0
 
+      # 시너지 랭킹 반영을 위한 점수 산출
+      score = member.user.rufa_club_score(@target_start)
+
       # 리포트 오브젝트에 동적 속성 주입 (View에서 사용)
-      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user, :is_eligible_date).new(*report.attributes.values, is_eligible, has_low_rate, report.user, is_eligible_date)
+      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user, :is_eligible_date, :score).new(*report.attributes.values, is_eligible, has_low_rate, report.user, is_eligible_date, score)
 
       @reports << decorated_report
     end
 
-    # 달성률 순 정렬
-    @reports = @reports.sort_by { |r| -(r.achievement_rate || 0) }
+    # 시너지 점수 순 정렬 (사용자 요청: 시너지 페이지 랭킹 순)
+    @reports = @reports.sort_by { |r| -(r.score || 0) }
   end
 
   def create_club_announcement
