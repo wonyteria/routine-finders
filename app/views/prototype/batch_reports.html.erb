@@ -35,17 +35,56 @@
       </div>
     </div>
 
-    <!-- Actions -->
+    <!-- Text Summary (Restored Feature) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+          <span class="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+          Text Summary
+        </h3>
+        <button onclick="copyReportText()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+          전체 복사
+        </button>
+      </div>
+      
+      <div class="app-glass-card p-6 border-white/5 bg-black/40">
+        <div id="report-text-source" class="text-[11px] font-medium text-slate-400 leading-relaxed font-mono whitespace-pre-wrap">[루파 클럽 <%= @report_type == 'weekly' ? '주간' : '월간' %> 성과 집계]
+기간: <%= @target_start.strftime("%Y.%m.%d") %> ~ <%= @target_end.strftime("%Y.%m.%d") %>
+
+<% @reports.each_with_index do |report, index| %>
+[<%= report.user.nickname %>님의 리포트]
+- 등급: <%= report.identity_title %>
+- 달성률: <%= report.achievement_rate.to_i %>%
+- 요약: <%= report.summary %>
+- 패스: R(<%= report.relax_pass_count.to_i %>), S(<%= report.save_pass_count.to_i %>)
+---------------------------------
+<% end %></div>
+      </div>
+    </section>
+
+    <script>
+      function copyReportText() {
+        const text = document.getElementById('report-text-source').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          alert('전체 리포트 요약이 클립보드에 복사되었습니다.');
+        });
+      }
+
+      function copyIndividualReport(nickname, rate, identity) {
+        const text = `[${nickname}님의 리포트]\n- 등급: ${identity}\n- 달성률: ${rate}%`;
+        navigator.clipboard.writeText(text).then(() => {
+          alert(`${nickname}님의 리포트가 복사되었습니다.`);
+        });
+      }
+    </script>
+
+    <!-- Visual Dashboard -->
     <div class="flex items-center justify-between">
       <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
         <span class="w-1 h-1 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]"></span>
         Ranking & Status
       </h3>
-      <div class="flex gap-2">
-         <button class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-colors">
-           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
-         </button>
-      </div>
     </div>
 
     <div class="space-y-3" id="reports-container">
@@ -61,19 +100,26 @@
                  <h4 class="text-sm font-black text-white"><%= report.user.nickname %></h4>
                  <div class="flex items-center gap-2 mt-0.5">
                    <p class="text-[9px] font-bold text-slate-500"><%= report.identity_title %></p>
-                   <div class="flex items-center gap-1 opacity-60">
-                     <% if report.relax_pass_count.to_i > 0 %>
-                       <span class="text-[8px] font-bold px-1 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/20">R:<%= report.relax_pass_count %></span>
-                     <% end %>
-                     <% if report.save_pass_count.to_i > 0 %>
-                       <span class="text-[8px] font-bold px-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">S:<%= report.save_pass_count %></span>
-                     <% end %>
-                   </div>
-                 </div>
-               </div>
-            </div>
+                    <div class="flex items-center gap-1 opacity-60">
+                      <% if report.relax_pass_count.to_i > 0 %>
+                        <span class="text-[8px] font-bold px-1 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/20">R:<%= report.relax_pass_count %></span>
+                      <% end %>
+                      <% if report.save_pass_count.to_i > 0 %>
+                        <span class="text-[8px] font-bold px-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">S:<%= report.save_pass_count %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+             </div>
 
-            <div class="text-right">
+             <div class="flex items-center gap-4">
+                <button onclick="copyIndividualReport('<%= report.user.nickname %>', '<%= report.achievement_rate.to_i %>', '<%= report.identity_title %>')" 
+                        class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-white transition-all active:scale-90"
+                        title="텍스트 복사">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                </button>
+                
+                <div class="text-right">
               <p class="text-lg font-black <%= report.achievement_rate >= 80 ? 'text-emerald-400' : (report.achievement_rate < 70 ? 'text-rose-500' : 'text-white') %> tabular-nums">
                 <%= report.achievement_rate.to_i %><small class="text-xs font-bold opacity-50 ml-0.5">%</small>
               </p>
