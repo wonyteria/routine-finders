@@ -904,6 +904,25 @@ class PrototypeController < ApplicationController
       report_type: @report_type,
       start_date: @target_start
     ).includes(:user).order("achievement_rate DESC")
+
+    # If no reports exist yet, auto-trigger generation for confirmed members
+    if @reports.empty? && @official_club
+      @official_club.members.confirmed.each do |member|
+        RoutineClubReportService.new(
+          user: member.user,
+          routine_club: @official_club,
+          report_type: @report_type,
+          start_date: @target_start,
+          end_date: @target_end
+        ).generate_or_find
+      end
+
+      # Reload reports
+      @reports = RoutineClubReport.where(
+        report_type: @report_type,
+        start_date: @target_start
+      ).includes(:user).order("achievement_rate DESC")
+    end
   end
 
   def create_club_announcement
