@@ -4,9 +4,7 @@
     <!-- Premium Promotion View for Non-members (Strictly for Official Club) -->
     <% 
       is_recruiting = @official_club&.recruitment_open?
-      current_cycle_start = Date.current.month.odd? ? Date.current.beginning_of_month : (Date.current - 1.month).beginning_of_month
-      next_cycle_start = current_cycle_start + 2.months
-      recruitment_start = next_cycle_start - 14.days
+      recruitment_start = RoutineClub.recruitment_start_date
     %>
 
     <% unless is_recruiting %>

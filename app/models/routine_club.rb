@@ -50,6 +50,26 @@ class RoutineClub < ApplicationRecord
     end
   end
 
+  # 현재 모집 중인 기수 번호
+  def self.current_recruiting_generation(date = Date.current)
+    # 7기 전환기 특별 연장 기간 (2/6까지)
+    if date <= Date.new(2026, 2, 6) && date >= Date.new(2025, 12, 17)
+      return 7
+    end
+
+    # 다음 기수 모집 기간 (D-15) 인 경우 다음 기수 번호 반환
+    if date >= (next_cycle_start_date(date) - 15.days)
+      return generation_number(next_cycle_start_date(date))
+    end
+
+    # 그 외에는 현재 기수 번호
+    generation_number(date)
+  end
+
+  def recruiting_generation_number
+    self.class.current_recruiting_generation
+  end
+
   # 기수 계산 (2026년 1월 1일 시작 = 7기 기준)
   def self.generation_number(date = Date.current)
     base_date = Date.new(2026, 1, 1)
@@ -64,19 +84,44 @@ class RoutineClub < ApplicationRecord
     self.class.generation_number(date)
   end
 
-  # 모집 기간 여부 확인 (분기 시작 14일 전 ~ 시작일 당일)
-  # 2026년 2월 1일까지 특별 연장
-  def self.recruitment_open?(date = Date.current)
-    # 현재 2개월 주기 시작일 계산 (홀수달 1일: 1, 3, 5, 7, 9, 11)
-    period_start = date.month.odd? ? date.beginning_of_month : (date - 1.month).beginning_of_month
+  # 주어진 날짜가 포함된 기수의 시작일
+  def self.current_cycle_start_date(date = Date.current)
+    date.month.odd? ? date.beginning_of_month : date.prev_month.beginning_of_month
+  end
 
-    # 2026년 1분기(1월~2월)에 한해 연장된 모집 기간 (시스템 전환기 예외)
-    if period_start == Date.new(2026, 1, 1)
-      deadline = Date.new(2026, 2, 6)
-      return date >= (period_start - 14.days) && date <= deadline
+  # 다음 기수의 시작일
+  def self.next_cycle_start_date(date = Date.current)
+    current_cycle_start_date(date) + 2.months
+  end
+
+  # 모집이 시작되는 날짜 (주기 시작 15일 전)
+  def self.recruitment_start_date(date = Date.current)
+    # 현재 기수가 이미 시작되었고, 다음 기수 모집이 아직 시작되지 않았다면 다음 기수 모집 시작일을 반환
+    # 만약 현재 기수 모집 기간 중이라면 현재 기수 모집 시작일을 반환할 수도 있으나,
+    # 안내 페이지 목적상 '가장 가까운 미래의 시작일'을 반환하는 것이 좋음.
+    next_start = next_cycle_start_date(date)
+    next_start - 15.days
+  end
+
+  # 모집 기간 여부 확인 (주기 시작 15일 전 ~ 시작일 당일)
+  # 2026년 2월 6일까지 특별 연장 (7기 전환기 예외)
+  def self.recruitment_open?(date = Date.current)
+    # 1. 7기 전환기 특별 연장 (2026년 2월 6일까지)
+    # 7기 시작일은 2026-01-01
+    if date <= Date.new(2026, 2, 6) && date >= Date.new(2025, 12, 17)
+      return true
     end
 
-    date >= (period_start - 14.days) && date <= period_start
+    # 2. 표준 D-15 로직
+    # 어떤 주기 S에 대해 [S - 15.days, S] 사이에 있으면 모집 중
+    candidate_starts = [
+      current_cycle_start_date(date),
+      next_cycle_start_date(date)
+    ]
+
+    candidate_starts.any? do |start_date|
+      date >= (start_date - 15.days) && date <= start_date
+    end
   end
 
   def recruitment_open?(date = Date.current)
@@ -86,7 +131,7 @@ class RoutineClub < ApplicationRecord
 
   # 고정 2개월 요금 계산 (하루 300원 기준)
   def self.calculate_cycle_fee(date = Date.current)
-    start_of_period = date.month.odd? ? date.beginning_of_month : (date - 1.month).beginning_of_month
+    start_of_period = current_cycle_start_date(date)
     end_of_period = (start_of_period + 1.month).end_of_month
     days_in_period = (end_of_period - start_of_period).to_i + 1
 
@@ -109,13 +154,13 @@ class RoutineClub < ApplicationRecord
 
   # 주어진 날짜가 속한 주기의 마지막 날 반환
   def get_cycle_end_date(date)
-    start = date.to_date.month.odd? ? date.to_date.beginning_of_month : (date.to_date - 1.month).beginning_of_month
+    start = self.class.current_cycle_start_date(date.to_date)
     (start + 1.month).end_of_month
   end
 
   # 주기 시작일 반환
   def get_cycle_start_date(date)
-    date.to_date.month.odd? ? date.to_date.beginning_of_month : (date.to_date - 1.month).beginning_of_month
+    self.class.current_cycle_start_date(date.to_date)
   end
 
   # 하위 호환성

@@ -8,7 +8,7 @@
     
     <div class="space-y-2">
       <h1 class="text-4xl font-black text-white tracking-tight leading-tight">
-        루파클럽 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"><%= @routine_club.generation_number %>기</span><br>
+        루파클럽 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"><%= @routine_club.recruiting_generation_number %>기</span><br>
         멤버십 모집
       </h1>
       <p class="text-sm text-slate-400 font-bold leading-relaxed px-4">
@@ -67,9 +67,7 @@
   <div id="join-section" class="px-4">
     <% 
       is_recruiting = @routine_club.recruitment_open?
-      current_cycle_start = Date.current.month.odd? ? Date.current.beginning_of_month : (Date.current - 1.month).beginning_of_month
-      next_cycle_start = current_cycle_start + 2.months
-      recruitment_start = next_cycle_start - 14.days
+      recruitment_start = RoutineClub.recruitment_start_date
     %>
     
     <!-- Recruitment Status Notice (Only shown when closed) -->
@@ -91,7 +89,7 @@
     <% end %>
     <div class="app-glass-card p-6 space-y-6 bg-gradient-to-b from-[#1B1A24] to-[#16151D]">
       <div class="text-center space-y-1">
-        <h2 class="text-2xl font-black text-white"><%= @routine_club.generation_number %>기 멤버십 신청</h2>
+        <h2 class="text-2xl font-black text-white"><%= @routine_club.recruiting_generation_number %>기 멤버십 신청</h2>
         <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Membership Application Form</p>
       </div>
 
@@ -136,7 +134,7 @@
       <% if @is_member %>
          <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-[28px] p-8 text-center space-y-3">
            <div class="text-4xl">🎊</div>
-           <p class="text-emerald-400 font-black text-base">이미 <%= @routine_club.generation_number %>기 멤버입니다!</p>
+           <p class="text-emerald-400 font-black text-base">이미 <%= @routine_club.recruiting_generation_number %>기 멤버입니다!</p>
            <p class="text-xs font-bold text-emerald-400/60 leading-relaxed">준비된 시스템과 함께<br/>최고의 성장을 만들어보세요.</p>
            <%= link_to "나의 대시보드 가기", prototype_home_path(tab: 'club'), class: "inline-block mt-4 px-6 py-3 bg-emerald-500 text-white rounded-xl font-black text-xs" %>
          </div>
