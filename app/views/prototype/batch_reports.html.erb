@@ -6,10 +6,16 @@
   summary_text = "[루틴 파인더스 #{@report_type == 'weekly' ? '주간' : '월간'} 정산]\n"
   summary_text += "평가 기간: #{period_str}\n\n"
   
-  top_3 = @reports.first(3)
-  summary_text += "🏆 상위 성취자 (TOP 3)\n"
-  top_3.each_with_index do |r, i|
-    summary_text += "#{i+1}. #{r.user.nickname} (#{r.achievement_rate.to_i}%)\n"
+  perfect_achievers = @reports.select { |r| r.achievement_rate >= 100.0 }
+  
+  if perfect_achievers.any?
+    summary_text += "💯 100% 달성자 (#{perfect_achievers.count}명)\n"
+    summary_text += perfect_achievers.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n"
+  else
+    max_rate = @reports.map(&:achievement_rate).max || 0
+    top_performers = @reports.select { |r| r.achievement_rate == max_rate }
+    summary_text += "🏆 상위 성취자 (#{max_rate.to_i}%)\n"
+    summary_text += top_performers.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n"
   end
   
   risks = @reports.select { |r| r.has_low_rate && r.is_eligible }
