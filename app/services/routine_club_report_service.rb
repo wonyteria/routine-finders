@@ -14,40 +14,28 @@ class RoutineClubReportService
   end
 
   # 리포트 생성 또는 조회
-  def generate_or_find
-    existing_report = find_existing_report
-    return existing_report if existing_report
-
-    create_new_report
-  end
-
-  # 강제로 새 리포트 생성
-  def create_new_report
-    report_data = calculate_report_data
-
-    RoutineClubReport.create!(
-      user: user,
-      routine_club: routine_club,
-      report_type: report_type,
-      start_date: start_date,
-      end_date: end_date,
-      log_rate: report_data[:log_rate],
-      achievement_rate: report_data[:achievement_rate],
-      identity_title: report_data[:identity_title],
-      summary: report_data[:summary],
-      cheering_message: report_data[:cheering_message]
-    )
-  end
-
-  private
-
-  def find_existing_report
-    RoutineClubReport.find_by(
+  def generate_or_find(force: false)
+    report = RoutineClubReport.find_or_initialize_by(
       user: user,
       routine_club: routine_club,
       report_type: report_type,
       start_date: start_date
     )
+
+    if report.new_record? || force
+      data = calculate_report_data
+      report.assign_attributes(
+        end_date: end_date,
+        log_rate: data[:log_rate],
+        achievement_rate: data[:achievement_rate],
+        identity_title: data[:identity_title],
+        summary: data[:summary],
+        cheering_message: data[:cheering_message]
+      )
+      report.save!
+    end
+
+    report
   end
 
   def calculate_start_date

@@ -903,39 +903,34 @@ class PrototypeController < ApplicationController
     # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되, '루파' 닉네임 유저만 제외
     confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).where.not(users: { nickname: "루파" }).includes(:user)
 
-    # 1. 존재하는 리포트들 가져오기
-    existing_reports = RoutineClubReport.where(
-      report_type: @report_type,
-      start_date: @target_start,
-      routine_club: @official_club
-    ).index_by(&:user_id)
-
     @reports = []
 
     confirmed_members.each do |member|
-      report = existing_reports[member.user_id]
+      # Force recalculation to ensure consistency with latest logic and eliminate stale data
+      # [IMPORTANT] Always re-generate to sync with performance_stats logic
+      service = RoutineClubReportService.new(
+        user: member.user,
+        routine_club: @official_club,
+        report_type: @report_type,
+        start_date: @target_start,
+        end_date: @target_end
+      )
 
-      # 리포트가 없으면 즉석 생성
-      unless report
-        report = RoutineClubReportService.new(
-          user: member.user,
-          routine_club: @official_club,
-          report_type: @report_type,
-          start_date: @target_start,
-          end_date: @target_end
-        ).generate_or_find
-      end
+      report = service.generate_or_find(force: true)
 
       next unless report
 
-      # [Logic] 경고 적합성 판단 및 부가 정보 추가
-      # 주간 점검 로직과 동일: 70% 미만일 때, 기준일(월요일) 이전에 가입했는지 체크
-      is_eligible = member.joined_at.to_date <= @target_start
+      # [Logic Sync] 경고 적합성 판단 (admin_weekly_check와 100% 일치)
+      # 1. 가입일 유예 기간 체크
+      # 2. 운영진 여부 체크 (운영진은 경고 면제)
+      # 3. 상태 체크 (active/warned 상태인 정식 멤버만 경고 대상)
+      is_eligible_date = member.joined_at.to_date <= @target_start
+      is_eligible = is_eligible_date && !member.is_moderator && (member.status_active? || member.status_warned?)
+
       has_low_rate = report.achievement_rate < 70.0
 
       # 리포트 오브젝트에 동적 속성 주입 (View에서 사용)
-      # Ruby의 singleton_class를 이용하거나 Hash/OpenStruct로 래핑
-      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user).new(*report.attributes.values, is_eligible, has_low_rate, report.user)
+      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user, :is_eligible_date).new(*report.attributes.values, is_eligible, has_low_rate, report.user, is_eligible_date)
 
       @reports << decorated_report
     end
