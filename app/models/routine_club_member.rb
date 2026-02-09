@@ -55,6 +55,7 @@ class RoutineClubMember < ApplicationRecord
     transaction do
       penalties.create!(
         routine_club: routine_club,
+        title: "주간 점검 경고",
         reason: reason,
         created_at: date # 월 귀속을 위해 날짜 강제 지정
       )
@@ -298,53 +299,6 @@ class RoutineClubMember < ApplicationRecord
     calculate_routine_rate(start_date, end_date)
   end
 
-  private
-
-  def calculate_period_rate(start_date, end_date)
-    # [Fix] 출석률 또한 해당 일에 실제 '해야 할 루틴'이 있었는지 일별로 체크하여 계산
-    all_routines = user.personal_routines.to_a
-    attendance_map = attendances.where(attendance_date: start_date..end_date).index_by(&:attendance_date)
-
-    total_target_days = 0
-    actual_attendance_count = 0
-
-    (start_date..end_date).each do |date|
-      # 해당 일자에 유효했던(살아있었던) 루틴이 하나라도 있는지 확인
-      has_active_routine = all_routines.any? do |r|
-        days_list = r.days
-        if days_list.is_a?(String)
-          begin
-            days_list = JSON.parse(days_list)
-          rescue JSON::ParserError
-            days_list = []
-          end
-        end
-        is_scheduled = (days_list || []).include?(date.wday.to_s)
-        is_alive = r.created_at.to_date <= date && (r.deleted_at.nil? || r.deleted_at.to_date > date)
-
-        is_scheduled && is_alive
-      end
-
-      if has_active_routine
-        total_target_days += 1
-        att = attendance_map[date]
-        if att && (att.status_present? || att.status_excused?)
-          actual_attendance_count += 1
-        end
-      end
-    end
-
-    return 0.0 if total_target_days == 0
-
-    rate = (actual_attendance_count.to_f / total_target_days * 100).round(1)
-    [ rate, 100.0 ].min
-  end
-
-  def calculate_routine_rate(start_date, end_date)
-    stats = performance_stats(start_date, end_date)
-    stats[:rate]
-  end
-
   def performance_stats(start_date, end_date)
     # [Fix] 루틴 유효성(생성일, 삭제일)과 완료 기록을 일별로 정확히 대조하여 계산
     all_routines = user.personal_routines.to_a
@@ -396,12 +350,59 @@ class RoutineClubMember < ApplicationRecord
     }
   end
 
-  # 70% 달석을 위해 남은 루틴 개수 계산
   def routines_needed_for_70_percent(start_date, end_date)
     stats = performance_stats(start_date, end_date)
     target = (stats[:total_required] * 0.7).ceil
     [ target - stats[:total_completed], 0 ].max
   end
+
+  private
+
+  def calculate_routine_rate(start_date, end_date)
+    stats = performance_stats(start_date, end_date)
+    stats[:rate]
+  end
+
+  def calculate_period_rate(start_date, end_date)
+    # [Fix] 출석률 또한 해당 일에 실제 '해야 할 루틴'이 있었는지 일별로 체크하여 계산
+    all_routines = user.personal_routines.to_a
+    attendance_map = attendances.where(attendance_date: start_date..end_date).index_by(&:attendance_date)
+
+    total_target_days = 0
+    actual_attendance_count = 0
+
+    (start_date..end_date).each do |date|
+      # 해당 일자에 유효했던(살아있었던) 루틴이 하나라도 있는지 확인
+      has_active_routine = all_routines.any? do |r|
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        is_scheduled = (days_list || []).include?(date.wday.to_s)
+        is_alive = r.created_at.to_date <= date && (r.deleted_at.nil? || r.deleted_at.to_date > date)
+
+        is_scheduled && is_alive
+      end
+
+      if has_active_routine
+        total_target_days += 1
+        att = attendance_map[date]
+        if att && (att.status_present? || att.status_excused?)
+          actual_attendance_count += 1
+        end
+      end
+    end
+
+    return 0.0 if total_target_days == 0
+
+    rate = (actual_attendance_count.to_f / total_target_days * 100).round(1)
+    [ rate, 100.0 ].min
+  end
+
 
   def set_membership_dates
     self.joined_at ||= Time.current
