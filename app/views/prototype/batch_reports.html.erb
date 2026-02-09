@@ -6,27 +6,45 @@
   summary_text = "[루틴 파인더스 #{@report_type == 'weekly' ? '주간' : '월간'} 정산]\n"
   summary_text += "평가 기간: #{period_str}\n\n"
   
-  perfect_achievers = @reports.select { |r| r.achievement_rate >= 100.0 }
-  
-  if perfect_achievers.any?
-    summary_text += "💯 100% 달성자 (#{perfect_achievers.count}명)\n"
-    summary_text += perfect_achievers.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n"
-  else
-    max_rate = @reports.map(&:achievement_rate).max || 0
-    top_performers = @reports.select { |r| r.achievement_rate == max_rate }
-    summary_text += "🏆 상위 성취자 (#{max_rate.to_i}%)\n"
-    summary_text += top_performers.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n"
+  # 1-1. 100% Perfect (Legend)
+  legends = @reports.select { |r| r.achievement_rate >= 100.0 }
+  if legends.any?
+    summary_text += "💯 100% Perfect (Legend)\n"
+    summary_text += legends.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n\n"
+  end
+
+  # 1-2. 90% 이상 (Super Achiever)
+  supers = @reports.select { |r| r.achievement_rate >= 90.0 && r.achievement_rate < 100.0 }
+  if supers.any?
+    summary_text += "🔥 90% 이상 (Super Achiever)\n"
+    summary_text += supers.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n\n"
+  end
+
+  # 1-3. 70% ~ 89% (Safe Zone)
+  safes = @reports.select { |r| r.achievement_rate >= 70.0 && r.achievement_rate < 90.0 }
+  if safes.any?
+    summary_text += "✅ 70% ~ 89% (Safe Zone)\n"
+    summary_text += safes.map { |r| "• #{r.user.nickname}" }.join("\n") + "\n\n"
+  end
+
+  # 1-4. 70% 미만 (Manager's Care)
+  cares = @reports.select { |r| r.achievement_rate < 70.0 }
+  if cares.any?
+    summary_text += "⚠️ 70% 미만 (Manager's Care)\n"
+    summary_text += cares.map { |r| 
+      status_label = if r.is_eligible
+        " (경고부여)"
+      elsif !r.is_eligible_date
+        " (신규유예)"
+      else
+        " (평가제외)"
+      end
+      "• #{r.user.nickname}#{status_label}" 
+    }.join("\n") + "\n\n"
   end
   
-  risks = @reports.select { |r| r.has_low_rate && r.is_eligible }
-  if risks.any?
-    summary_text += "\n⚠️ 경고 대상자\n"
-    risks.each do |r|
-      summary_text += "- #{r.user.nickname} (#{r.achievement_rate.to_i}%)\n"
-    end
-  end
-  
-  summary_text += "\n꾸준함이 비범함을 만듭니다. 오늘도 파이팅! 🚀"
+  summary_text += "*시너지 포인트 순으로 정렬되었습니다.*\n"
+  summary_text += "꾸준함이 비범함을 만듭니다. 오늘도 파이팅! 🚀"
   
   # 2. 상세형 리포트 전체 복사
   detailed_text = "[상세 성취 리포트 - #{@report_type == 'weekly' ? '주간' : '월간'}]\n"
