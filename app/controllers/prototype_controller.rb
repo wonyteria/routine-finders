@@ -920,11 +920,10 @@ class PrototypeController < ApplicationController
 
       next unless report
 
-      # [Logic Sync] 경고 적합성 판단 (admin_weekly_check와 100% 일치)
-      # 1. 가입일 유예 기간 체크
-      # 2. 운영진 여부 체크 (운영진은 경고 면제)
-      # 3. 상태 체크 (active/warned 상태인 정식 멤버만 경고 대상)
-      is_eligible_date = member.joined_at.to_date <= @target_start
+      # [Logic Sync] 경고 적합성 판단
+      # 1. 가입일 체크 (해당 기간 내에 가입되어 있었으면 대상)
+      # 2. 상태 체크 (active/warned 상태인 정식 멤버만 경고 대상)
+      is_eligible_date = member.joined_at.to_date <= @target_end
       is_eligible = is_eligible_date && (member.status_active? || member.status_warned?)
 
       has_low_rate = report.achievement_rate < 70.0
@@ -1034,8 +1033,7 @@ class PrototypeController < ApplicationController
     # 탭 B: 이번 주 실시간 현황 (현재 달성률 70% 미만인 유저들)
     @live_risks = []
     base_members.find_each do |member|
-      # 가입일이 이번 주 월요일보다 늦으면 이번 주 평가에서는 제외될 예정이므로 모니터링에서도 일단 제외하거나 표시만 함
-      next if member.joined_at && member.joined_at.to_date > @this_week_start
+      # 가입 즉시 모니터링 대상에 포함 (performance_stats가 가입일 이후부터 계산함)
 
       stats = member.performance_stats(@this_week_start, [ @evaluation_date, @this_week_end ].min)
       # 현재까지 해야 할 루틴이 있는 경우에만 체크

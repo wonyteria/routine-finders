@@ -96,10 +96,10 @@ class RoutineClubMember < ApplicationRecord
     # 규칙: 한 주는 해당 주의 ‘월요일이 속한 월’에 귀속된다.
     attribution_date = last_week_start
 
-    # [신규 회원 평가 시작 규칙]
-    # 가입일이 평가 대상 주차의 월요일보다 늦으면 평가 제외 (가입 주차 제외)
-    # 단, 가입일이 월요일인 경우 해당 주부터 평가 포함 (joined_at <= attribution_date)
-    if joined_at && joined_at.to_date > attribution_date
+    # [신규 회원 평가 규칙 변경]
+    # 가입일이 평가 대상 주차 '종료일'보다 늦으면 평가 제외
+    # (주 중간에 가입했더라도 가입한 순간부터의 달성률로 평가 진행)
+    if joined_at && joined_at.to_date > last_week_end
       return false
     end
 
@@ -321,7 +321,10 @@ class RoutineClubMember < ApplicationRecord
     total_required = 0
     total_completed = 0
 
-    (start_date..end_date).each do |date|
+    # [수정] 가입일 이후부터만 모수에 포함 (User Request 반영)
+    effective_start = [ start_date, joined_at.to_date ].max
+
+    (effective_start..end_date).each do |date|
       routines_on_day = all_routines.select do |r|
         days_list = r.days
         if days_list.is_a?(String)
@@ -381,7 +384,10 @@ class RoutineClubMember < ApplicationRecord
     total_target_days = 0
     actual_attendance_count = 0
 
-    (start_date..end_date).each do |date|
+    # [수정] 가입일 이후부터만 모수에 포함
+    effective_start = [ start_date, joined_at.to_date ].max
+
+    (effective_start..end_date).each do |date|
       # 해당 일자에 유효했던(살아있었던) 루틴이 하나라도 있는지 확인
       has_active_routine = all_routines.any? do |r|
         days_list = r.days
