@@ -900,9 +900,8 @@ class PrototypeController < ApplicationController
       @target_end = @target_start.end_of_month
     end
 
-    # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되 운영진은 제외할 수 있음
-    # 단, 리포트 자체는 전체 다 보여주기 위해 confirmed 멤버 전체 조회
-    confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(:user)
+    # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되 운영진은 제외
+    confirmed_members = @official_club.members.confirmed.where(is_moderator: false).joins(:user).where(users: { deleted_at: nil }).includes(:user)
 
     # 1. 존재하는 리포트들 가져오기
     existing_reports = RoutineClubReport.where(
