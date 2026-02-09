@@ -925,7 +925,7 @@ class PrototypeController < ApplicationController
       # 2. 운영진 여부 체크 (운영진은 경고 면제)
       # 3. 상태 체크 (active/warned 상태인 정식 멤버만 경고 대상)
       is_eligible_date = member.joined_at.to_date <= @target_start
-      is_eligible = is_eligible_date && !member.is_moderator && (member.status_active? || member.status_warned?)
+      is_eligible = is_eligible_date && (member.status_active? || member.status_warned?)
 
       has_low_rate = report.achievement_rate < 70.0
 
@@ -1015,7 +1015,6 @@ class PrototypeController < ApplicationController
     base_members = @official_club.members
                                 .where(status: [ :active, :warned ])
                                 .where(payment_status: :confirmed)
-                                .where(is_moderator: false)
                                 .includes(:attendances, user: :personal_routines)
 
     # 탭 A: 지난주 결과 기반 (오늘 경고 대상자들)
@@ -1049,8 +1048,8 @@ class PrototypeController < ApplicationController
     # 달성률 낮은 순으로 정렬
     @live_risks = @live_risks.sort_by { |r| r[:stats][:rate] }
 
-    # 3. 이번 달 누적 경고 현황 (운영진 제외)
-    all_members = @official_club.members.where(is_moderator: false).includes(:user, :penalties)
+    # 3. 이번 달 누적 경고 현황
+    all_members = @official_club.members.includes(:user, :penalties)
     @warned_members_this_month = all_members.select { |m| m.current_month_penalty_count > 0 }
            .sort_by { |m| -m.current_month_penalty_count }
   end
