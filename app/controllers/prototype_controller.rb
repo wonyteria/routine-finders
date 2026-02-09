@@ -900,10 +900,16 @@ class PrototypeController < ApplicationController
       @target_end = @target_start.end_of_month
     end
 
+    # 유효한 클럽 멤버(confirmed)의 리포트만 조회하도록 필터링 강화
     @reports = RoutineClubReport.where(
       report_type: @report_type,
-      start_date: @target_start
-    ).includes(:user).order("achievement_rate DESC")
+      start_date: @target_start,
+      routine_club: @official_club
+    ).joins(user: :routine_club_members)
+     .where(routine_club_members: { routine_club_id: @official_club.id, payment_status: :confirmed })
+     .includes(:user)
+     .order("achievement_rate DESC")
+     .distinct
 
     # If no reports exist yet, auto-trigger generation for confirmed members
     if @reports.empty? && @official_club
@@ -917,11 +923,16 @@ class PrototypeController < ApplicationController
         ).generate_or_find
       end
 
-      # Reload reports
+      # Reload reports with the same strict filtering
       @reports = RoutineClubReport.where(
         report_type: @report_type,
-        start_date: @target_start
-      ).includes(:user).order("achievement_rate DESC")
+        start_date: @target_start,
+        routine_club: @official_club
+      ).joins(user: :routine_club_members)
+       .where(routine_club_members: { routine_club_id: @official_club.id, payment_status: :confirmed })
+       .includes(:user)
+       .order("achievement_rate DESC")
+       .distinct
     end
   end
 

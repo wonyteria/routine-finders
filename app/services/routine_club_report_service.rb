@@ -67,7 +67,6 @@ class RoutineClubReportService
     total_days = target_period.count
 
     # 1. 일별 성취율 계산 및 통계 수집
-    daily_rates = []
     active_days_count = 0
     completions_by_hour = Hash.new(0)
 
@@ -75,9 +74,21 @@ class RoutineClubReportService
     total_target_count_period = 0
     total_completed_count_period = 0
 
+    member = routine_club.members.find_by(user: user)
+    attendance_map = member ? member.attendances.where(attendance_date: start_date..end_date).index_by(&:attendance_date) : {}
+    excused_dates = attendance_map.values.select(&:status_excused?).map(&:attendance_date)
+
+    # 루틴 완료 기록 미리 가져오기 (N+1 방지)
+    completions = PersonalRoutineCompletion
+                   .where(personal_routine_id: routines.map(&:id))
+                   .where(completed_on: start_date..end_date)
+                   .to_a
+                   .group_by(&:completed_on)
+
     target_period.each do |date|
-      # 해당 요일에 수행해야 하는 루틴들
+      # 해당 요일에 수행해야 하는 루틴 중 그날 당시에 유효했던 루틴들만 필터링
       target_routines_for_day = routines.select do |r|
+        # 1. 요일 체크
         days_list = r.days
         if days_list.is_a?(String)
           begin
@@ -86,29 +97,39 @@ class RoutineClubReportService
             days_list = []
           end
         end
-        (days_list || []).include?(date.wday.to_s)
+        is_scheduled = (days_list || []).include?(date.wday.to_s)
+
+        # 2. 유효성 체크 (생성일/삭제일)
+        is_alive = r.created_at.to_date <= date && (r.deleted_at.nil? || r.deleted_at.to_date > date)
+
+        is_scheduled && is_alive
       end
+
       target_count = target_routines_for_day.count
       total_target_count_period += target_count
 
       if target_count > 0
-        completed_for_day = target_routines_for_day.select { |r| r.completions.exists?(completed_on: date) }
-        completed_count = completed_for_day.count
-        total_completed_count_period += completed_count
+        # 패스 사용일인 경우 해당 일의 모든 루틴을 완료한 것으로 간주 (Performance Stats와 로직 통일)
+        day_completions = completions[date] || []
 
-        date_rate = (completed_count.to_f / target_count) * 100
-        daily_rates << date_rate
+        if excused_dates.include?(date)
+          day_completed_count = target_count
+        else
+          active_routine_ids = target_routines_for_day.map(&:id)
+          day_completed_count = day_completions.count { |c| active_routine_ids.include?(c.personal_routine_id) }
+        end
 
-        if completed_count > 0
+        total_completed_count_period += day_completed_count
+
+        # 성실도(log_rate)를 위한 활동일 카운트: 실제 루틴을 하나라도 했거나 패스를 썼을 때
+        if day_completed_count > 0
           active_days_count += 1
-          # 시간대 분석
-          completed_for_day.each do |r|
-             completion = r.completions.find { |c| c.completed_on == date }
-             completions_by_hour[completion.created_at.hour] += 1 if completion
+
+          # 시간대 분석 (실제 기록이 있는 경우에만)
+          day_completions.each do |completion|
+            completions_by_hour[completion.created_at.hour] += 1
           end
         end
-      else
-        # 목표 루틴이 없는 날은 통계에서 제외
       end
     end
 
