@@ -111,9 +111,15 @@
         <div class="relative group/warning">
           <% 
             # Current User Penalty Status
-            club_member_nav = current_user&.routine_club_members&.where(status: [:active, :warned])&.first
-            penalty_count = club_member_nav&.current_month_penalty_count || 0
-            is_member = club_member_nav.present?
+            # 우선 컨트롤러에서 넘겨준 @my_membership을 사용하고, 없으면 공식 클럽 멤버십을 찾음
+            active_membership = local_assigns[:my_membership]
+            unless active_membership
+              official_club = RoutineClub.official.first
+              active_membership = current_user&.routine_club_members&.find_by(routine_club: official_club)
+            end
+            
+            penalty_count = active_membership&.current_month_penalty_count || 0
+            is_member = active_membership.present?
           %>
           
           <div class="relative flex items-center gap-1 px-2 py-1.5 rounded-xl backdrop-blur-sm cursor-pointer transition-all duration-300 group-hover/warning:shadow-[0_0_20px_rgba(244,63,94,0.4)]
