@@ -968,23 +968,58 @@ class PrototypeController < ApplicationController
       redirect_to prototype_admin_clubs_path, alert: "공식 클럽을 찾을 수 없습니다." and return
     end
 
-    # 1. 이번 주차 경고 위험군 시뮬레이션 (지난주 성과 기준)
-    # active 또는 warned 상태인 멤버 대상
-    @at_risk_members = []
-    target_members = @official_club.members.where(status: [ :active, :warned ]).includes(:attendances, user: :personal_routines)
+    @evaluation_date = Date.current
 
-    target_members.find_each do |member|
-      # dry_run: true로 실제 경고 생성 없이 판정만 수행
-      if member.check_weekly_performance!(Date.current, dry_run: true)
-        @at_risk_members << member
+    # 1. 지난주 결과 (확정 점검 대상)
+    @last_week_start = @evaluation_date.last_week.beginning_of_week
+    @last_week_end = @evaluation_date.last_week.end_of_week
+
+    # 2. 이번 주 현황 (실시간 모니터링)
+    @this_week_start = @evaluation_date.beginning_of_week
+    @this_week_end = @evaluation_date.end_of_week
+
+    # 공통 대상: 결제 완료된 정식 멤버이며, 운영진이 아닌 경우
+    base_members = @official_club.members
+                                .where(status: [ :active, :warned ])
+                                .where(payment_status: :confirmed)
+                                .where(is_moderator: false)
+                                .includes(:attendances, user: :personal_routines)
+
+    # 탭 A: 지난주 결과 기반 (오늘 경고 대상자들)
+    @confirmed_risks = []
+    base_members.find_each do |member|
+      if member.check_weekly_performance!(@evaluation_date, dry_run: true)
+        @confirmed_risks << {
+          member: member,
+          stats: member.performance_stats(@last_week_start, @last_week_end)
+        }
       end
     end
 
-    # 2. 이번 달 경고 보유자 (1회 이상인 멤버들)
-    # 이미 제명된 멤버(kicked)도 포함하여 이번 달 현황을 보여줌
-    all_members = @official_club.members.includes(:user, :penalties)
+    # 탭 B: 이번 주 실시간 현황 (현재 달성률 70% 미만인 유저들)
+    @live_risks = []
+    base_members.find_each do |member|
+      # 가입일이 이번 주 월요일보다 늦으면 이번 주 평가에서는 제외될 예정이므로 모니터링에서도 일단 제외하거나 표시만 함
+      next if member.joined_at && member.joined_at.to_date > @this_week_start
+
+      stats = member.performance_stats(@this_week_start, [ @evaluation_date, @this_week_end ].min)
+      # 현재까지 해야 할 루틴이 있는 경우에만 체크
+      if stats[:total_required] > 0 && stats[:rate] < 70.0
+        @live_risks << {
+          member: member,
+          stats: stats,
+          needed: member.routines_needed_for_70_percent(@this_week_start, @this_week_end)
+        }
+      end
+    end
+
+    # 달성률 낮은 순으로 정렬
+    @live_risks = @live_risks.sort_by { |r| r[:stats][:rate] }
+
+    # 3. 이번 달 누적 경고 현황 (운영진 제외)
+    all_members = @official_club.members.where(is_moderator: false).includes(:user, :penalties)
     @warned_members_this_month = all_members.select { |m| m.current_month_penalty_count > 0 }
-           .sort_by { |m| -m.current_month_penalty_count } # 경고 많은 순 정렬
+           .sort_by { |m| -m.current_month_penalty_count }
   end
 
   def broadcast
