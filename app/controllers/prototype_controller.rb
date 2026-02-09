@@ -900,29 +900,25 @@ class PrototypeController < ApplicationController
       @target_end = @target_start.end_of_month
     end
 
-    # 유효한 클럽 멤버(confirmed + active/warned)이면서
-    # 운영진이 아니고(is_moderator: false),
-    # 평가 기준일(월요일) 이전에 가입한 회원만 대상으로 필터링 (System Inspection 로직과 통일)
-    @reports = @official_club.members.confirmed
-                             .where(status: [ :active, :warned ], is_moderator: false)
-                             .where("joined_at <= ?", @target_start.end_of_day)
-                             .map do |member|
-                               RoutineClubReport.find_by(
-                                 user: member.user,
-                                 routine_club: @official_club,
-                                 report_type: @report_type,
-                                 start_date: @target_start
-                               )
-                             end.compact.sort_by { |r| -(r.achievement_rate || 0) }
+    # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되 운영진은 제외할 수 있음
+    # 단, 리포트 자체는 전체 다 보여주기 위해 confirmed 멤버 전체 조회
+    confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(:user)
 
-    # If no reports exist yet, auto-trigger generation for eligible members
-    if @reports.empty? && @official_club
-      eligible_members = @official_club.members.confirmed
-                                      .where(status: [ :active, :warned ], is_moderator: false)
-                                      .where("joined_at <= ?", @target_start.end_of_day)
+    # 1. 존재하는 리포트들 가져오기
+    existing_reports = RoutineClubReport.where(
+      report_type: @report_type,
+      start_date: @target_start,
+      routine_club: @official_club
+    ).index_by(&:user_id)
 
-      eligible_members.each do |member|
-        RoutineClubReportService.new(
+    @reports = []
+
+    confirmed_members.each do |member|
+      report = existing_reports[member.user_id]
+
+      # 리포트가 없으면 즉석 생성
+      unless report
+        report = RoutineClubReportService.new(
           user: member.user,
           routine_club: @official_club,
           report_type: @report_type,
@@ -931,23 +927,22 @@ class PrototypeController < ApplicationController
         ).generate_or_find
       end
 
-      # Reload reports
-      @reports = RoutineClubReport.where(
-        report_type: @report_type,
-        start_date: @target_start,
-        routine_club: @official_club
-      ).joins(user: :routine_club_members)
-       .where(routine_club_members: {
-         routine_club_id: @official_club.id,
-         payment_status: :confirmed,
-         status: [ :active, :warned ],
-         is_moderator: false
-       })
-       .where("routine_club_members.joined_at <= ?", @target_start.end_of_day)
-       .includes(:user)
-       .order("achievement_rate DESC")
-       .distinct
+      next unless report
+
+      # [Logic] 경고 적합성 판단 및 부가 정보 추가
+      # 주간 점검 로직과 동일: 70% 미만일 때, 기준일(월요일) 이전에 가입했는지 체크
+      is_eligible = member.joined_at.to_date <= @target_start
+      has_low_rate = report.achievement_rate < 70.0
+
+      # 리포트 오브젝트에 동적 속성 주입 (View에서 사용)
+      # Ruby의 singleton_class를 이용하거나 Hash/OpenStruct로 래핑
+      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user).new(*report.attributes.values, is_eligible, has_low_rate, report.user)
+
+      @reports << decorated_report
     end
+
+    # 달성률 순 정렬
+    @reports = @reports.sort_by { |r| -(r.achievement_rate || 0) }
   end
 
   def create_club_announcement

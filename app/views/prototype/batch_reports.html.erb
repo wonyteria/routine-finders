@@ -68,7 +68,18 @@
               <p class="text-lg font-black <%= report.achievement_rate >= 80 ? 'text-emerald-400' : (report.achievement_rate < 70 ? 'text-rose-500' : 'text-white') %> tabular-nums">
                 <%= report.achievement_rate.to_i %>%
               </p>
-              <div class="w-12 h-1 bg-white/5 rounded-full mt-1 ml-auto overflow-hidden">
+              
+              <% if report.has_low_rate %>
+                <div class="mt-1">
+                  <% if report.is_eligible %>
+                    <span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-[8px] font-black text-rose-500 uppercase tracking-tighter border border-rose-500/30">경고 부여됨</span>
+                  <% else %>
+                    <span class="px-1.5 py-0.5 rounded bg-slate-500/20 text-[8px] font-black text-slate-400 uppercase tracking-tighter border border-white/5">신규 유예 기간</span>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="w-12 h-1 bg-white/5 rounded-full mt-1.5 ml-auto overflow-hidden">
                 <div class="h-full <%= report.achievement_rate >= 80 ? 'bg-emerald-500' : (report.achievement_rate < 70 ? 'bg-rose-500' : 'bg-indigo-500') %>" style="width: <%= report.achievement_rate %>%"></div>
               </div>
             </div>
