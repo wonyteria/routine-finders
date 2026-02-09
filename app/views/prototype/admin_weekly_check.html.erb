@@ -68,12 +68,26 @@
               </div>
 
               <!-- Stats Grid -->
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-3 gap-2">
                 <div class="p-3 rounded-xl bg-white/5 border border-white/5 group">
                   <p class="text-[9px] font-black text-slate-500 uppercase tracking-tighter mb-1">최종 달성률</p>
                   <div class="flex items-end gap-1">
                     <span class="text-lg font-black text-rose-500 leading-none"><%= stats[:rate] %></span>
                     <span class="text-[10px] font-bold text-slate-600 mb-0.5">%</span>
+                  </div>
+                </div>
+                <!-- Pass Usage (Confirmed Risk) -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-tighter mb-1">패스 사용</p>
+                  <div class="flex flex-col gap-0.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[8px] font-bold text-slate-500">휴식</span>
+                      <span class="text-[10px] font-black text-white"><%= stats[:relax_count] || 0 %></span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-[8px] font-bold text-slate-500">세이브</span>
+                      <span class="text-[10px] font-black text-white"><%= stats[:save_count] || 0 %></span>
+                    </div>
                   </div>
                 </div>
                 <div class="p-3 rounded-xl bg-white/5 border border-white/5">
@@ -136,7 +150,7 @@
               </div>
 
               <!-- Stats Grid -->
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-3 gap-2">
                 <div class="p-3 rounded-xl bg-white/5 border border-white/5">
                   <p class="text-[9px] font-black text-slate-500 uppercase tracking-tighter mb-1">현재 달성률</p>
                   <div class="flex items-end gap-1">
@@ -144,11 +158,25 @@
                     <span class="text-[10px] font-bold text-slate-600 mb-0.5">%</span>
                   </div>
                 </div>
+                <!-- Pass Usage (Live Risk) -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-tighter mb-1">이번주 패스</p>
+                  <div class="flex flex-col gap-0.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[8px] font-bold text-slate-500">휴식</span>
+                      <span class="text-[10px] font-black text-white"><%= stats[:relax_count] || 0 %></span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <span class="text-[8px] font-bold text-slate-500">세이브</span>
+                      <span class="text-[10px] font-black text-white"><%= stats[:save_count] || 0 %></span>
+                    </div>
+                  </div>
+                </div>
                 <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
                   <p class="text-[9px] font-black text-indigo-400 uppercase tracking-tighter mb-1">만회 필요분</p>
                   <div class="flex items-end gap-1">
                     <span class="text-lg font-black text-indigo-400 leading-none"><%= needed %></span>
-                    <span class="text-[10px] font-bold text-indigo-400/60 mb-0.5">개 남음</span>
+                    <span class="text-[10px] font-bold text-indigo-400/60 mb-0.5">개</span>
                   </div>
                 </div>
               </div>

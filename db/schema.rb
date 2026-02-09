@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_08_051330) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_09_052726) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -305,6 +305,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_051330) do
     t.integer "cheers_count", default: 0
     t.json "cheers_from_users", default: []
     t.datetime "created_at", null: false
+    t.string "pass_type"
     t.string "proof_image"
     t.text "proof_text"
     t.integer "routine_club_id", null: false
@@ -404,10 +405,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_08_051330) do
     t.string "identity_title"
     t.float "log_rate"
     t.integer "received_cheers_count", default: 0
+    t.integer "relax_pass_count"
     t.integer "report_type", default: 0, null: false
     t.integer "routine_club_id", null: false
+    t.integer "save_pass_count"
     t.date "start_date", null: false
     t.text "summary"
+    t.integer "unknown_pass_count"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["report_type", "start_date"], name: "index_routine_club_reports_on_report_type_and_start_date"

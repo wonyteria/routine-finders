@@ -29,6 +29,9 @@ class RoutineClubReportService
         log_rate: data[:log_rate],
         achievement_rate: data[:achievement_rate],
         identity_title: data[:identity_title],
+        relax_pass_count: data[:relax_pass_count],
+        save_pass_count: data[:save_pass_count],
+        unknown_pass_count: data[:unknown_pass_count],
         summary: data[:summary],
         cheering_message: data[:cheering_message]
       )
@@ -139,10 +142,16 @@ class RoutineClubReportService
     summary = generate_summary(peak_hour, active_days_count)
     cheering_message = generate_cheering_message(achievement_rate, peak_hour)
 
+    # 7. Pass Usage (성능 일관성을 위해 member.performance_stats 사용)
+    stats = member ? member.performance_stats(start_date, end_date) : { relax_count: 0, save_count: 0, unknown_pass_count: 0 }
+
     {
       log_rate: log_rate,
       achievement_rate: achievement_rate,
       identity_title: identity_title,
+      relax_pass_count: stats[:relax_count],
+      save_pass_count: stats[:save_count],
+      unknown_pass_count: stats[:unknown_pass_count],
       summary: summary,
       cheering_message: cheering_message
     }

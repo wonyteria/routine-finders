@@ -171,7 +171,7 @@ class RoutineClubMember < ApplicationRecord
     return false if attendance.persisted? && (attendance.status_present? || attendance.status_excused?)
 
     transaction do
-      attendance.update!(status: :excused)
+      attendance.update!(status: :excused, pass_type: "relax")
       increment!(:used_relax_passes_count)
       update_attendance_stats!
     end
@@ -186,7 +186,7 @@ class RoutineClubMember < ApplicationRecord
     return false if attendance.persisted? && (attendance.status_present? || attendance.status_excused?)
 
     transaction do
-      attendance.update!(status: :excused)
+      attendance.update!(status: :excused, pass_type: "save")
       increment!(:used_save_passes_count)
       update_attendance_stats!
     end
@@ -308,8 +308,15 @@ class RoutineClubMember < ApplicationRecord
                    .to_a
                    .group_by(&:completed_on)
 
-    # 해당 기간 내 패스(휴식/세이브)를 사용한 날짜들
-    excused_dates = attendances.where(attendance_date: start_date..end_date, status: :excused).pluck(:attendance_date)
+    # 해당 기간 내 패스(휴식/세이브)를 사용한 기록들
+    excused_attendances = attendances.where(attendance_date: start_date..end_date, status: :excused)
+    excused_dates = excused_attendances.pluck(:attendance_date)
+
+    # 패스 종류별 카운트
+    # [Note] pass_type 컬럼이 없는 기존 기록은 일단 구분 불가 (all 'relax' or 'unknown'으로 보일 수 있음)
+    relax_count = excused_attendances.where(pass_type: "relax").count
+    save_count = excused_attendances.where(pass_type: "save").count
+    unknown_count = excused_attendances.where(pass_type: [ nil, "" ]).count
 
     total_required = 0
     total_completed = 0
@@ -346,7 +353,10 @@ class RoutineClubMember < ApplicationRecord
     {
       total_required: total_required,
       total_completed: total_completed,
-      rate: [ rate, 100.0 ].min
+      rate: [ rate, 100.0 ].min,
+      relax_count: relax_count,
+      save_count: save_count,
+      unknown_pass_count: unknown_count
     }
   end
 
