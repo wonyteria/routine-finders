@@ -1,4 +1,5 @@
 class ChallengesController < ApplicationController
+  include PrototypeErrorHandler
   before_action :set_challenge, only: [ :show, :join, :leave ]
   before_action :require_login, only: [ :new, :create, :join, :leave ]
   before_action :require_can_create_challenge, only: [ :new, :create ]
@@ -16,6 +17,7 @@ class ChallengesController < ApplicationController
   end
 
   def show
+    store_location unless logged_in?
     @is_joined = current_user&.participations&.exists?(challenge: @challenge)
     @participant = current_user&.participations&.find_by(challenge: @challenge)
     @is_host = current_user&.id == @challenge.host_id

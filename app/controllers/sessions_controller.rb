@@ -7,7 +7,7 @@ class SessionsController < ApplicationController
   # 개발 환경 전용 자동 로그인
   def dev_login
     unless Rails.env.development?
-      redirect_to root_path, alert: "이 기능은 개발 환경에서만 사용할 수 있습니다."
+      redirect_to prototype_home_path, alert: "이 기능은 개발 환경에서만 사용할 수 있습니다."
       return
     end
 
@@ -26,7 +26,7 @@ class SessionsController < ApplicationController
     auth = request.env["omniauth.auth"]
     unless auth
       Rails.logger.error "OmniAuth: Request environment 'omniauth.auth' is nil"
-      redirect_to root_path, alert: "인증 정보를 가져오지 못했습니다. 다시 시도해 주세요."
+      redirect_to prototype_home_path, alert: "인증 정보를 가져오지 못했습니다. 다시 시도해 주세요."
       return
     end
 
@@ -55,15 +55,15 @@ class SessionsController < ApplicationController
         flash[:show_daily_greeting] = true
       end
 
-      redirect_back_or root_path
+      redirect_back_or prototype_home_path
     else
       error_msg = user ? user.errors.full_messages.to_sentence : "사용자를 생성하거나 찾을 수 없습니다."
       Rails.logger.error "OmniAuth login failed for #{auth.provider}: #{error_msg}"
-      redirect_to root_path, alert: "로그인에 실패했습니다: #{error_msg}"
+      redirect_to prototype_home_path, alert: "로그인에 실패했습니다: #{error_msg}"
     end
   rescue => e
     Rails.logger.error "OmniAuth Critical Error: #{e.class} - #{e.message}\n#{e.backtrace.first(10).join("\n")}"
-    redirect_to root_path, alert: "로그인 과정에서 시스템 오류가 발생했습니다: #{e.message}. 잠시 후 다시 시도해 주세요."
+    redirect_to prototype_home_path, alert: "로그인 과정에서 시스템 오류가 발생했습니다: #{e.message}. 잠시 후 다시 시도해 주세요."
   end
 
   def omniauth_failure
@@ -86,11 +86,11 @@ class SessionsController < ApplicationController
 
     if user&.authenticate(params[:password])
       session[:user_id] = user.id
-      redirect_back_or root_path
+      redirect_back_or prototype_home_path
       flash[:notice] = "로그인되었습니다!"
     else
       respond_to do |format|
-        format.html { redirect_to root_path, alert: "이메일 또는 비밀번호가 올바르지 않습니다." }
+        format.html { redirect_to prototype_home_path, alert: "이메일 또는 비밀번호가 올바르지 않습니다." }
         format.turbo_stream do
           render turbo_stream: turbo_stream.update(
             "login_error",
@@ -104,7 +104,7 @@ class SessionsController < ApplicationController
   def restore_account
     @user = User.find_by(id: session[:deleted_user_id])
     unless @user&.deleted?
-      redirect_to root_path, alert: "복구할 계정을 찾을 수 없습니다."
+      redirect_to prototype_home_path, alert: "복구할 계정을 찾을 수 없습니다."
     end
   end
 
@@ -116,9 +116,10 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       session.delete(:deleted_user_id)
       session.delete(:auth_provider)
-      redirect_to root_path, notice: "계정이 복구되었습니다. 다시 오신 것을 환영합니다!"
+      redirect_back_or prototype_home_path
+      flash[:notice] = "계정이 복구되었습니다. 다시 오신 것을 환영합니다!"
     else
-      redirect_to root_path, alert: "계정 복구에 실패했습니다."
+      redirect_to prototype_home_path, alert: "계정 복구에 실패했습니다."
     end
   end
 

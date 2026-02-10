@@ -3,7 +3,7 @@ class PersonalRoutinesController < ApplicationController
   before_action :set_routine, only: [ :edit, :update, :toggle, :destroy ]
 
   def index
-    return redirect_to login_path unless logged_in?
+    return redirect_to prototype_login_path unless logged_in?
 
     # 개인 루틴 (무료)
     current_user.user_badges.where(is_viewed: false).update_all(is_viewed: true)

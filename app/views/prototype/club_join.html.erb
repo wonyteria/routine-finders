@@ -168,87 +168,99 @@
            </button>
          </div>
       <% else %>
-        <%= form_with url: join_routine_club_path(@routine_club), method: :post, 
-                      data: { 
-                        controller: "club-join",
-                        club_join_target: "form",
-                        action: "submit->club-join#review" 
-                      },
-                      class: "space-y-6" do |f| %>
-          <div class="space-y-2">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
-            <%= f.text_field :depositor_name, required: true, placeholder: "홍길동", 
-                            data: { club_join_target: "depositorInput" },
-                            class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
-          </div>
+      <% else %>
+        <% if logged_in? %>
+          <%= form_with url: join_routine_club_path(@routine_club), method: :post, 
+                        data: { 
+                          controller: "club-join",
+                          club_join_target: "form",
+                          action: "submit->club-join#review" 
+                        },
+                        class: "space-y-6" do |f| %>
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
+              <%= f.text_field :depositor_name, required: true, placeholder: "홍길동", 
+                              data: { club_join_target: "depositorInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            </div>
 
-          <div class="space-y-2">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">연락처 (오픈채팅/전화번호)</label>
-            <%= f.text_field :contact_info, required: true, placeholder: "010-1234-5678", 
-                            data: { club_join_target: "contactInput" },
-                            class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
-          </div>
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">연락처 (오픈채팅/전화번호)</label>
+              <%= f.text_field :contact_info, required: true, placeholder: "010-1234-5678", 
+                              data: { club_join_target: "contactInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            </div>
 
-          <div class="space-y-2">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">THREADS NICKNAME (ID)</label>
-            <%= f.text_field :threads_nickname, placeholder: "@nickname", 
-                            data: { club_join_target: "threadsInput" },
-                            class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
-          </div>
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">THREADS NICKNAME (ID)</label>
+              <%= f.text_field :threads_nickname, placeholder: "@nickname", 
+                              data: { club_join_target: "threadsInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            </div>
 
-          <div class="space-y-2">
-            <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">이번 기수 가입 포부</label>
-            <%= f.text_area :goal, rows: 4, placeholder: "목표와 다짐을 적어주세요. (최소 10자)", 
-                            data: { club_join_target: "goalInput" },
-                            class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold resize-none", required: true %>
-          </div>
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">이번 기수 가입 포부</label>
+              <%= f.text_area :goal, rows: 4, placeholder: "목표와 다짐을 적어주세요. (최소 10자)", 
+                              data: { club_join_target: "goalInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold resize-none", required: true %>
+            </div>
 
-          <div class="pt-6">
-            <button type="submit" class="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-[28px] font-black text-white text-lg shadow-2xl shadow-indigo-600/40 active:scale-95 transition-all">
-              참여 신청 및 정보 확인
-            </button>
-          </div>
+            <div class="pt-6">
+              <button type="submit" class="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-[28px] font-black text-white text-lg shadow-2xl shadow-indigo-600/40 active:scale-95 transition-all">
+                참여 신청 및 정보 확인
+              </button>
+            </div>
 
-          <!-- Confirmation Modal -->
-          <!-- Confirmation Modal -->
-          <div data-club-join-target="confirmModal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" style="margin: 0;">
-            <div class="relative w-[calc(100%-2rem)] max-w-[340px] mx-auto app-glass-card border-white/10 p-6 space-y-6 animate-badge-pop bg-[#16151D]">
-              <div class="text-center space-y-1">
-                <div class="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">🧐</div>
-                <h3 class="text-xl font-black text-white">입력 정보를 확인해주세요</h3>
-                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Please Verify Your Info</p>
-              </div>
-
-              <div class="space-y-4 py-2 border-y border-white/5">
-                <div class="flex justify-between items-start">
-                  <span class="text-[10px] font-black text-slate-500 shrink-0">입금자명</span>
-                  <span data-club-join-target="confirmName" class="text-xs font-black text-white text-right break-all"></span>
+            <!-- Confirmation Modal -->
+            <div data-club-join-target="confirmModal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" style="margin: 0;">
+              <div class="relative w-[calc(100%-2rem)] max-w-[340px] mx-auto app-glass-card border-white/10 p-6 space-y-6 animate-badge-pop bg-[#16151D]">
+                <div class="text-center space-y-1">
+                  <div class="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">🧐</div>
+                  <h3 class="text-xl font-black text-white">입력 정보를 확인해주세요</h3>
+                  <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Please Verify Your Info</p>
                 </div>
-                <div class="flex justify-between items-start">
-                  <span class="text-[10px] font-black text-slate-500 shrink-0">연락처</span>
-                  <span data-club-join-target="confirmContact" class="text-xs font-black text-white text-right truncate max-w-[160px]"></span>
-                </div>
-                <div class="flex justify-between items-start">
-                  <span class="text-[10px] font-black text-slate-500 shrink-0">ID</span>
-                  <span data-club-join-target="confirmThreads" class="text-xs font-black text-white text-right break-all"></span>
-                </div>
-                <div class="space-y-1">
-                  <span class="text-[10px] font-black text-slate-500">가입 포부</span>
-                  <p data-club-join-target="confirmGoal" class="text-[11px] font-bold text-slate-400 leading-relaxed text-left break-words line-clamp-3"></p>
-                </div>
-              </div>
 
-              <div class="pt-2 space-y-3">
-                <button type="button" data-action="click->club-join#submit" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">
-                  이 내용으로 신청 완료
-                </button>
-                <button type="button" data-action="click->club-join#close" class="w-full py-4 text-slate-500 font-bold text-xs hover:text-white transition-colors">
-                  수정할게요 (입력창으로 이동)
-                </button>
+                <div class="space-y-4 py-2 border-y border-white/5">
+                  <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-black text-slate-500 shrink-0">입금자명</span>
+                    <span data-club-join-target="confirmName" class="text-xs font-black text-white text-right break-all"></span>
+                  </div>
+                  <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-black text-slate-500 shrink-0">연락처</span>
+                    <span data-club-join-target="confirmContact" class="text-xs font-black text-white text-right truncate max-w-[160px]"></span>
+                  </div>
+                  <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-black text-slate-500 shrink-0">ID</span>
+                    <span data-club-join-target="confirmThreads" class="text-xs font-black text-white text-right break-all"></span>
+                  </div>
+                  <div class="space-y-1">
+                    <span class="text-[10px] font-black text-slate-500">가입 포부</span>
+                    <p data-club-join-target="confirmGoal" class="text-[11px] font-bold text-slate-400 leading-relaxed text-left break-words line-clamp-3"></p>
+                  </div>
+                </div>
+
+                <div class="pt-2 space-y-3">
+                  <button type="button" data-action="click->club-join#submit" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">
+                    이 내용으로 신청 완료
+                  </button>
+                  <button type="button" data-action="click->club-join#close" class="w-full py-4 text-slate-500 font-bold text-xs hover:text-white transition-colors">
+                    수정할게요 (입력창으로 이동)
+                  </button>
+                </div>
               </div>
             </div>
+          <% end %>
+        <% else %>
+          <div class="space-y-6">
+            <div class="p-6 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl text-center">
+              <p class="text-xs font-bold text-slate-400 leading-relaxed">신청서를 작성하시려면 로그인이 필요합니다.</p>
+            </div>
+            <%= link_to prototype_login_path, class: "block w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-[28px] font-black text-white text-lg text-center shadow-2xl shadow-indigo-600/40 active:scale-95 transition-all" do %>
+              로그인하고 신청하기
+            <% end %>
           </div>
         <% end %>
+      <% end %>
       <% end %>
     </div>
   </div>

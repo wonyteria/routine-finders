@@ -4,7 +4,7 @@ class PrototypeController < ApplicationController
 
   layout "prototype"
   before_action :set_shared_data
-  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :club_join, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports, :confirm_club_payment, :reject_club_payment, :create_club_announcement, :update_club_lounge ]
+  before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports, :confirm_club_payment, :reject_club_payment, :create_club_announcement, :update_club_lounge ]
   before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :confirm_club_payment, :reject_club_payment, :create_club_announcement, :update_club_lounge ]
   before_action :require_super_admin, only: [ :broadcast, :update_user_role, :update_user_status, :approve_challenge, :purge_cache, :reset_users, :delete_content, :notify_host, :update_content_basic ]
   before_action :require_can_create_challenge, only: [ :challenge_builder ]
@@ -287,6 +287,8 @@ class PrototypeController < ApplicationController
 
     # 4. Growth Analytics (Fixed Period Logic)
 
+    return unless current_user
+
     # [Weekly]: 월~일 (7일 고정)
     @weekly_labels = [ "월", "화", "수", "목", "금", "토", "일" ]
     @weekly_data = Array.new(7, 0)
@@ -471,6 +473,7 @@ class PrototypeController < ApplicationController
   end
 
   def user_profile
+    store_location unless logged_in?
     @target_user = User.find(params[:id])
     @achievements = @target_user.user_badges.includes(:badge).order(created_at: :desc).limit(6)
     @routines = @target_user.personal_routines.where(deleted_at: nil).order(created_at: :desc)
@@ -553,6 +556,7 @@ class PrototypeController < ApplicationController
   end
 
   def club_join
+    store_location unless logged_in?
     # Ensure we load the official club first to reflect admin settings
     # Prioritize recruiting clubs, then future clubs, then falls back to latest
     @routine_club = RoutineClub.official.recruiting_clubs.first ||
@@ -561,6 +565,7 @@ class PrototypeController < ApplicationController
                     RoutineClub.order(created_at: :desc).first
 
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
+    @is_pending = current_user&.routine_club_members&.exists?(routine_club: @routine_club, payment_status: :pending) if current_user
   end
 
   def mark_badges_viewed
