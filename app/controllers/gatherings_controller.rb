@@ -50,6 +50,15 @@ class GatheringsController < ApplicationController
   end
 
   def create
+    # Parse JSON fields if they come as strings
+    if params[:challenge] && params[:challenge][:application_questions].is_a?(String)
+      begin
+        params[:challenge][:application_questions] = JSON.parse(params[:challenge][:application_questions])
+      rescue JSON::ParserError
+        params[:challenge][:application_questions] = []
+      end
+    end
+
     @gathering = Challenge.new(gathering_params)
     @gathering.host = current_user
     @gathering.mode = :offline # Force offline mode for gatherings
@@ -76,7 +85,9 @@ class GatheringsController < ApplicationController
       :host_bank, :host_account, :host_account_holder,
       :meeting_type, :meeting_frequency, :duration_minutes,
       :preparation_items, :online_meeting_link, :chat_link, :host_phone, :refund_policy,
-      meeting_info_attributes: [ :place_name, :address, :description, :place_url ]
+      :requires_application_message, :rufa_only,
+      application_questions: [],
+      meeting_info_attributes: [ :place_name, :address, :description, :place_url, :meeting_time ]
     )
   end
 end
