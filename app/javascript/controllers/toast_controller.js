@@ -39,36 +39,48 @@ export default class extends Controller {
     }
 
     show(message, type = "info") {
+        // Prevent duplicate toasts
+        const existing = document.querySelector('.global-toast');
+        if (existing) existing.remove();
+
         const toast = document.createElement("div")
+        toast.className = "global-toast fixed inset-0 z-[100000] flex items-center justify-center p-8 pointer-events-none"
 
-        // Dynamic styles based on type
-        const bgClass = {
-            success: "bg-emerald-500",
-            error: "bg-rose-500",
-            info: "bg-indigo-600"
-        }[type] || "bg-indigo-600"
-
-        toast.className = `fixed top-1/2 left-1/2 z-[100000] px-8 py-5 rounded-[32px] ${bgClass} text-white font-black text-sm shadow-[0_20px_60px_rgba(0,0,0,0.5)] animate-toast-pop flex flex-col items-center gap-4 min-w-[280px] text-center backdrop-blur-xl border border-white/20`
-
-        const icon = {
-            success: "✨",
-            error: "⚠️",
-            info: "ℹ️"
-        }[type] || "✨"
+        const iconConfigs = {
+            success: { icon: "✨", bg: "bg-emerald-500", shadow: "shadow-emerald-500/40" },
+            error: { icon: "⚠️", bg: "bg-rose-500", shadow: "shadow-rose-500/40" },
+            info: { icon: "ℹ️", bg: "bg-indigo-600", shadow: "shadow-indigo-600/40" }
+        }
+        const config = iconConfigs[type] || iconConfigs.info
 
         toast.innerHTML = `
-            <span>${icon}</span>
-            <p>${message.replace(/\n/g, '<br>')}</p>
+            <div class="relative w-full max-w-sm bg-[#16151D]/90 backdrop-blur-2xl border border-white/10 p-10 rounded-[48px] shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col items-center text-center space-y-6 animate-center-pop pointer-events-auto">
+                <div class="w-24 h-24 ${config.bg} rounded-[32px] flex items-center justify-center text-5xl shadow-2xl ${config.shadow} mb-2 animate-bounce-subtle">
+                    ${config.icon}
+                </div>
+                <div class="space-y-2">
+                    <p class="text-lg font-black text-white leading-tight">${message.replace(/\n/g, '<br>')}</p>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">${type === 'success' ? 'Completed' : 'System Message'}</p>
+                </div>
+            </div>
         `
 
         document.body.appendChild(toast)
+        document.body.classList.add('overflow-hidden') // Lock background scrolling optionally
 
-        // Fade out and remove
+        // Automatic dismissal
         setTimeout(() => {
-            toast.classList.add("opacity-0", "translate-y-2")
-            toast.classList.remove("animate-slide-up")
-            toast.style.transition = "all 0.5s ease-in-out"
-            setTimeout(() => toast.remove(), 500)
+            const inner = toast.querySelector('div');
+            if (inner) {
+                inner.classList.add('opacity-0', 'scale-95');
+                inner.style.transition = "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)";
+            }
+            setTimeout(() => {
+                toast.remove();
+                if (!document.querySelector('.global-toast') && !document.querySelector('.fixed.inset-0:not(.hidden)')) {
+                    document.body.classList.remove('overflow-hidden');
+                }
+            }, 500);
         }, 3000)
     }
 }

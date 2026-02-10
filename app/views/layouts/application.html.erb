@@ -99,7 +99,7 @@
   </head>
 
   <body class="min-h-screen bg-[#0C0B12]" 
-        data-controller="modal inapp-browser" 
+        data-controller="modal inapp-browser toast" 
         data-modal-auto-open-value="<%= alert == '로그인이 필요합니다.' %>"
         style="font-family: 'Outfit', sans-serif;">
     
@@ -112,60 +112,9 @@
     <%= render "shared/bottom_nav" %>
 
 
-    <!-- Trendy Flash Notifications -->
-    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 w-full max-w-sm px-4">
-      <% if notice %>
-        <div data-controller="flash" 
-             data-flash-timeout-value="3000"
-             class="group relative overflow-hidden bg-white/80 backdrop-blur-xl border border-emerald-500/20 shadow-[0_8px_32px_rgba(16,185,129,0.15)] rounded-2xl p-4 flex items-center gap-4 transition-all duration-500
-                    opacity-0 translate-y-[-10px] scale-95 group-[.visible]:opacity-100 group-[.visible]:translate-y-0 group-[.visible]:scale-100
-                    hover:scale-[1.02] active:scale-95">
-          <div class="flex-shrink-0 w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m5 13 4 4L19 7"/>
-            </svg>
-          </div>
-          <div class="flex-1">
-            <p class="text-emerald-900 font-bold text-sm tracking-tight"><%= notice %></p>
-            <p class="text-emerald-600/70 text-[11px] font-medium uppercase tracking-wider mt-0.5">Success</p>
-          </div>
-          <button data-action="click->flash#dismiss" class="text-emerald-300 hover:text-emerald-500 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-          
-          <!-- Progress Bar -->
-          <div class="absolute bottom-0 left-0 h-1 bg-emerald-500/30 w-full">
-            <div class="h-full bg-emerald-500 transition-all duration-[3000ms] ease-linear w-0 group-[.visible]:w-full"></div>
-          </div>
-        </div>
-      <% end %>
-
-      <% if alert %>
-        <div data-controller="flash" 
-             data-flash-timeout-value="4000"
-             class="group relative overflow-hidden bg-white/80 backdrop-blur-xl border border-rose-500/20 shadow-[0_8px_32px_rgba(244,63,94,0.15)] rounded-2xl p-4 flex items-center gap-4 transition-all duration-500
-                    opacity-0 translate-y-[-10px] scale-95 group-[.visible]:opacity-100 group-[.visible]:translate-y-0 group-[.visible]:scale-100
-                    hover:scale-[1.02] active:scale-95">
-          <div class="flex-shrink-0 w-10 h-10 bg-rose-500 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
-          </div>
-          <div class="flex-1">
-            <p class="text-rose-900 font-bold text-sm tracking-tight"><%= alert %></p>
-            <p class="text-rose-600/70 text-[11px] font-medium uppercase tracking-wider mt-0.5">Alert</p>
-          </div>
-          <button data-action="click->flash#dismiss" class="text-rose-300 hover:text-rose-500 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
-
-          <!-- Progress Bar -->
-          <div class="absolute bottom-0 left-0 h-1 bg-rose-500/30 w-full">
-            <div class="h-full bg-rose-500 transition-all duration-[4000ms] ease-linear w-0 group-[.visible]:w-full"></div>
-          </div>
-        </div>
-      <% end %>
-    </div>
+    <!-- Unified Toast Notifications (JS Controlled) -->
+    <meta name="flash-notice" content="<%= notice %>">
+    <meta name="flash-alert" content="<%= alert %>">
 
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32 lg:pb-8">
       <%= yield %>
