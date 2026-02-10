@@ -409,8 +409,29 @@ class User < ApplicationRecord
   def monthly_routine_log_rate(date = Date.current)
     start_date = date.beginning_of_month
     end_date = [ date.end_of_month, Date.current ].min
-    total_days = (end_date - start_date).to_i + 1
-    return 0 if total_days <= 0
+    # 해당 기간 내에 실제로 루틴이 설정되어 있었던 날의 수(target_days)를 계산
+    active_routines = personal_routines.where(deleted_at: nil).to_a
+    target_days = 0
+
+    (start_date..end_date).each do |d|
+      has_routine = active_routines.any? do |r|
+        next false if r.created_at.to_date > d
+
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        (days_list || []).map(&:to_s).include?(d.wday.to_s)
+      end
+
+      target_days += 1 if has_routine
+    end
+
+    return 0 if target_days <= 0
 
     # 해당 월에 완료 기록이 있는 고유한 날짜 수
     logged_days = personal_routines.joins(:completions)
@@ -418,7 +439,10 @@ class User < ApplicationRecord
                                   .distinct
                                   .count("personal_routine_completions.completed_on")
 
-    (logged_days.to_f / total_days * 100).round(1)
+    # 분자가 분모보다 클 수 없도록 조정
+    logged_days = [ logged_days, target_days ].min
+
+    (logged_days.to_f / target_days * 100).round(1)
   end
 
   # ② 루틴 달성률 (작성한 루틴 중 하루에 하나 이상 실천한 날 기준 70% 이상)
