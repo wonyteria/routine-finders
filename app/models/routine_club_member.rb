@@ -90,11 +90,10 @@ class RoutineClubMember < ApplicationRecord
     # 1. 평가 대상 주차 확정 (지난주 월요일 ~ 일요일)
     # date가 월요일이면 지난주 전체를 본다.
     last_week_end = date.last_week.end_of_week
-    last_week_start = date.last_week.beginning_of_week
 
-    # 2. 월 귀속 기준일 (평가 대상 주차의 "월요일")
-    # 규칙: 한 주는 해당 주의 ‘월요일이 속한 월’에 귀속된다.
-    attribution_date = last_week_start
+    # 2. 월 귀속 기준일 (평가 대상 주차의 "일요일")
+    # 규칙: 한 주는 해당 주의 ‘일요일이 속한 월’에 귀속된다.
+    attribution_date = last_week_end
 
     # [신규 회원 평가 규칙 변경]
     # 가입일이 평가 대상 주차 '종료일'보다 늦으면 평가 제외
@@ -252,7 +251,7 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def ensure_monthly_refill!
-    return unless payment_status_confirmed? && status_active?
+    return unless payment_status_confirmed? && (status_active? || status_warned?)
 
     # If never refilled or last refill was in a previous month
     if last_pass_refill_at.nil? || last_pass_refill_at.beginning_of_month < Time.current.beginning_of_month
@@ -260,7 +259,8 @@ class RoutineClubMember < ApplicationRecord
         used_relax_passes_count: 0,
         used_save_passes_count: 0,
         used_passes_count: 0, # Keep for legacy
-        last_pass_refill_at: Time.current
+        last_pass_refill_at: Time.current,
+        status: :active
       )
     end
   end
