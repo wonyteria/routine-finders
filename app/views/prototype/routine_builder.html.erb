@@ -306,5 +306,33 @@
     });
 
     update();
+
+    // Prevent accidental exit
+    setTimeout(() => {
+      let isFormDirty = false;
+      const form = document.querySelector('form');
+      if (form) {
+        form.addEventListener('change', () => { isFormDirty = true; });
+        form.addEventListener('input', () => { isFormDirty = true; });
+        form.addEventListener('submit', () => { isFormDirty = false; });
+        
+        window.addEventListener('beforeunload', (e) => {
+          if (isFormDirty) {
+            e.preventDefault();
+            e.returnValue = '';
+          }
+        });
+        
+        document.addEventListener('turbo:before-visit', (e) => {
+          if (isFormDirty && document.body.contains(form)) {
+             if (!confirm('작성 중인 내용이 저장되지 않았습니다. 정말 나가시겠습니까?')) {
+               e.preventDefault();
+             } else {
+               isFormDirty = false;
+             }
+          }
+        });
+      }
+    }, 500);
   })();
 </script>
