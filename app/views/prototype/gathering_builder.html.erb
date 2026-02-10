@@ -400,8 +400,17 @@
               </div>
               
               <div id="participant_question_box" class="hidden space-y-3 pt-2 border-t border-white/5">
-                <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Question to Participant</label>
-                <%= f.text_area :application_question, class: "glass-input w-full p-5 text-sm min-h-[120px] focus:scale-[1.01]", placeholder: "예: 이 모임에 참여하고 싶은 특별한 이유가 있으신가요? 본인의 관심사를 적어주세요." %>
+                <%= f.hidden_field :application_questions, id: 'h_app_questions', value: "[]" %>
+                
+                <div id="questions_list" class="space-y-3">
+                  <!-- Dynamic questions will be added here via JS -->
+                </div>
+                
+                <button type="button" id="add_question_btn" class="w-full py-3.5 rounded-2xl border border-dashed border-white/10 text-slate-500 font-bold text-xs hover:border-emerald-500/40 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all flex items-center justify-center gap-2 group mt-2">
+                  <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                  질문 추가하기
+                </button>
+                <p class="text-[9px] font-bold text-slate-500 pl-1">질문을 추가하면 신청자가 각 질문에 대해 답변을 작성하게 됩니다.</p>
               </div>
            </div>
 
@@ -723,6 +732,62 @@
       document.querySelectorAll('input, textarea').forEach(el => {
         el.addEventListener('focus', () => smartScroll(el));
       });
+
+      // >>> [NEW] Multiple Questions Logic
+      const questionsList = document.getElementById('questions_list');
+      const addQuestionBtn = document.getElementById('add_question_btn');
+      const questionsHidden = document.getElementById('h_app_questions');
+
+      function updateQuestionsJson() {
+        if (!questionsHidden) return;
+        const inputs = document.querySelectorAll('.question-input');
+        const questions = Array.from(inputs)
+          .map(input => input.value.trim())
+          .filter(val => val !== "");
+        questionsHidden.value = JSON.stringify(questions);
+      }
+
+      function createQuestionInput(value = "") {
+        const div = document.createElement('div');
+        div.className = "flex gap-2 items-start group";
+        div.innerHTML = `
+          <div class="flex-1">
+            <input type="text" class="glass-input w-full p-4 text-sm focus:scale-[1.01] question-input bg-white/5 border border-white/10 rounded-xl" placeholder="질문을 입력해주세요 (예: 신청 동기가 무엇인가요?)" value="${value.replace(/"/g, '&quot;')}">
+          </div>
+          <button type="button" class="w-[50px] h-[50px] rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all remove-question-btn shrink-0 mt-0.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        `;
+        
+        div.querySelector('.remove-question-btn').addEventListener('click', () => {
+          div.remove();
+          updateQuestionsJson();
+        });
+        
+        const input = div.querySelector('input');
+        input.addEventListener('input', updateQuestionsJson);
+        input.addEventListener('focus', () => smartScroll(input));
+        
+        return div;
+      }
+
+      if (addQuestionBtn) {
+        addQuestionBtn.addEventListener('click', () => {
+          const newQ = createQuestionInput();
+          questionsList.appendChild(newQ);
+          setTimeout(() => newQ.querySelector('input').focus(), 50);
+          updateQuestionsJson();
+        });
+      }
+
+      // Initial Question
+      if (questionsList && questionsList.children.length === 0) {
+         // Default empty question
+         const initial = createQuestionInput("");
+         questionsList.appendChild(initial);
+         updateQuestionsJson();
+      }
+      // <<< End Multiple Questions Logic
 
       update();
     })();

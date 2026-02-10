@@ -38,8 +38,19 @@
               </div>
               
               <!-- Middle Section: Message -->
-              <% if application.message.present? %>
+              <!-- Middle Section: Message / Answers -->
+              <% if application.application_answers.present? && !application.application_answers.empty? %>
+                <div class="p-3 bg-black/20 rounded-xl border border-white/5 mb-3 space-y-3">
+                   <% application.application_answers.each do |question, answer| %>
+                      <div>
+                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-tight mb-0.5 truncate">Q. <%= question %></p>
+                        <p class="text-xs font-bold text-slate-300 leading-relaxed italic">"<%= answer %>"</p>
+                      </div>
+                   <% end %>
+                </div>
+              <% elsif application.message.present? %>
                 <div class="p-3 bg-black/20 rounded-xl border border-white/5 mb-3">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-tight mb-0.5">Message</p>
                   <p class="text-xs font-medium text-slate-300 leading-relaxed italic line-clamp-2">"<%= application.message %>"</p>
                 </div>
               <% end %>

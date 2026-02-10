@@ -59,24 +59,34 @@
 
         <!-- Application Question Session (DYNAMIC) -->
         <div class="space-y-4">
-          <div class="space-y-3">
-            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1" style="white-space: pre-line;">
-              <%= @challenge.application_question.presence || "Message to Host" %>
-              <% if @challenge.requires_application_message? %><span class="text-rose-500">*</span><% end %>
-            </label>
-            
-            <% if @challenge.application_question.present? %>
-              <div class="p-5 rounded-3xl bg-indigo-500/10 border border-indigo-500/20">
-                <p class="text-xs font-bold text-indigo-200 leading-relaxed italic" style="white-space: pre-line;">"<%= @challenge.application_question %>"</p>
+          <% if @challenge.application_questions.present? && @challenge.application_questions.any? %>
+            <% @challenge.application_questions.each do |question| %>
+              <div class="space-y-3">
+                 <div class="p-5 rounded-3xl bg-indigo-500/10 border border-indigo-500/20">
+                   <p class="text-xs font-bold text-indigo-200 leading-relaxed italic" style="white-space: pre-line;">Q. <%= question %></p>
+                 </div>
+                 
+                 <%= text_area_tag "challenge_application[application_answers][#{question}]", nil,
+                     placeholder: "질문에 대한 답변을 입력해주세요.", 
+                     required: true,
+                     class: "glass-input w-full px-6 py-5 text-sm min-h-[100px] focus:scale-[1.01] resize-none leading-relaxed",
+                     oninput: "this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'"
+                  %>
               </div>
             <% end %>
-
-            <%= f.text_area :message, 
-                placeholder: @challenge.application_question.present? ? "호스트의 질문에 대한 답변을 정성껏 입력해주세요." : "호스트에게 전달할 메시지나 각오를 적어주세요.", 
-                rows: 3, 
-                required: @challenge.requires_application_message?,
-                class: "glass-input w-full px-6 py-5 text-sm min-h-[140px] focus:scale-[1.01] resize-none leading-relaxed" %>
-          </div>
+            <%= f.hidden_field :message, value: "Answers Provided via JSON" %>
+          <% else %>
+            <div class="space-y-3">
+              <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">
+                Message to Host <span class="text-slate-300">(Optional)</span>
+              </label>
+              <%= f.text_area :message, 
+                  placeholder: "호스트에게 전달할 메시지나 각오를 적어주세요.", 
+                  rows: 3, 
+                  required: @challenge.requires_application_message?,
+                  class: "glass-input w-full px-6 py-5 text-sm min-h-[140px] focus:scale-[1.01] resize-none leading-relaxed" %>
+            </div>
+          <% end %>
 
           <div class="space-y-3">
             <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Threads Account (Optional)</label>
@@ -295,21 +305,38 @@
           신청 메시지
         </h2>
 
-        <div class="space-y-2">
-          <%= f.label :message, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1", style: "white-space: pre-line;" do %>
-            <%= @challenge.application_question.presence || "자기소개 및 참여 동기" %>
-            <% if @challenge.requires_application_message? %>
-              <span class="text-red-500">*</span>
-            <% else %>
-              <span class="text-slate-300">(선택)</span>
-            <% end %>
+        <% if @challenge.application_questions.present? && @challenge.application_questions.any? %>
+          <% @challenge.application_questions.each do |question| %>
+            <div class="space-y-2 mb-6">
+               <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" style="white-space: pre-line;">Q. <%= question %></p>
+               
+               <%= text_area_tag "challenge_application[application_answers][#{question}]", nil,
+                   placeholder: "답변을 입력해주세요.", 
+                   required: true,
+                   rows: 3,
+                   class: "w-full bg-slate-50 border-none rounded-[24px] p-6 font-medium focus:ring-2 focus:ring-indigo-500 resize-none",
+                   oninput: "this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'"
+                %>
+            </div>
           <% end %>
-          <%= f.text_area :message, 
-              placeholder: @challenge.application_question.present? ? "질문에 대한 성실한 답변을 입력해주세요." : "호스트에게 전달할 메시지를 작성해주세요. 참여 동기, 목표, 자기소개 등을 적어주시면 좋아요!", 
-              rows: 4, 
-              required: @challenge.requires_application_message?,
-              class: "w-full bg-slate-50 border-none rounded-[24px] p-6 font-medium focus:ring-2 focus:ring-indigo-500" %>
-        </div>
+          <%= f.hidden_field :message, value: "Answers Provided via JSON" %>
+        <% else %>
+          <div class="space-y-2">
+            <%= f.label :message, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1", style: "white-space: pre-line;" do %>
+              <%= "자기소개 및 참여 동기" %>
+              <% if @challenge.requires_application_message? %>
+                <span class="text-red-500">*</span>
+              <% else %>
+                <span class="text-slate-300">(선택)</span>
+              <% end %>
+            <% end %>
+            <%= f.text_area :message, 
+                placeholder: "호스트에게 전달할 메시지를 작성해주세요. 참여 동기, 목표, 자기소개 등을 적어주시면 좋아요!", 
+                rows: 4, 
+                required: @challenge.requires_application_message?,
+                class: "w-full bg-slate-50 border-none rounded-[24px] p-6 font-medium focus:ring-2 focus:ring-indigo-500" %>
+          </div>
+        <% end %>
       </div>
 
       <!-- Depositor Info (for paid challenges) -->

@@ -175,7 +175,7 @@ class ChallengeApplicationsController < ApplicationController
   end
 
   def application_params
-    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info, :threads_nickname, :source, :refund_bank_name, :refund_account_number, :refund_account_name)
+    params.require(:challenge_application).permit(:message, :depositor_name, :contact_info, :threads_nickname, :source, :refund_bank_name, :refund_account_number, :refund_account_name, application_answers: {})
   end
 
   def create_notification_for_host

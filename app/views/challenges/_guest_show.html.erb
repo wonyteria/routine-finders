@@ -157,12 +157,23 @@
           </div>
 
           <!-- Application Question -->
+          <!-- Application Question -->
           <% if @challenge.requires_application_message? %>
             <div class="space-y-4">
                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">신청 시 질문</h3>
-               <div class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
+               <div class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl space-y-4">
                   <p class="text-xs font-black text-indigo-400 mb-2 leading-relaxed">신청 시 아래 질문에 대한 답변을 함께 적어주셔야 합니다.</p>
-                  <p class="text-sm font-bold text-white italic" style="white-space: pre-line;">"<%= @challenge.application_question.presence || "모임에 참여하고 싶은 이유를 간단히 적어주세요." %>"</p>
+                  
+                  <% if @challenge.application_questions.present? && @challenge.application_questions.any? %>
+                    <% @challenge.application_questions.each_with_index do |question, i| %>
+                       <div class="space-y-1 pb-3 border-b border-white/5 last:border-0 last:pb-0">
+                          <span class="text-[10px] font-black text-slate-500 uppercase">Question <%= i + 1 %></span>
+                          <p class="text-sm font-bold text-white italic leading-relaxed" style="white-space: pre-line;">"<%= question %>"</p>
+                       </div>
+                    <% end %>
+                  <% else %>
+                     <p class="text-sm font-bold text-white italic" style="white-space: pre-line;">"<%= @challenge.application_question.presence || "모임에 참여하고 싶은 이유를 간단히 적어주세요." %>"</p>
+                  <% end %>
                </div>
             </div>
           <% end %>
