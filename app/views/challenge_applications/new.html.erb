@@ -60,14 +60,14 @@
         <!-- Application Question Session (DYNAMIC) -->
         <div class="space-y-4">
           <div class="space-y-3">
-            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">
+            <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1" style="white-space: pre-line;">
               <%= @challenge.application_question.presence || "Message to Host" %>
               <% if @challenge.requires_application_message? %><span class="text-rose-500">*</span><% end %>
             </label>
             
             <% if @challenge.application_question.present? %>
               <div class="p-5 rounded-3xl bg-indigo-500/10 border border-indigo-500/20">
-                <p class="text-xs font-bold text-indigo-200 leading-relaxed italic">"<%= @challenge.application_question %>"</p>
+                <p class="text-xs font-bold text-indigo-200 leading-relaxed italic" style="white-space: pre-line;">"<%= @challenge.application_question %>"</p>
               </div>
             <% end %>
 
@@ -296,7 +296,7 @@
         </h2>
 
         <div class="space-y-2">
-          <%= f.label :message, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1" do %>
+          <%= f.label :message, class: "text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1", style: "white-space: pre-line;" do %>
             <%= @challenge.application_question.presence || "자기소개 및 참여 동기" %>
             <% if @challenge.requires_application_message? %>
               <span class="text-red-500">*</span>
