@@ -799,6 +799,7 @@
     const questionsHidden = document.getElementById('h_application_questions');
 
     let currentStep = 0;
+    let isFormDirty = false; // Moved to top scope
 
     function generateRandomCode() {
       const code = 'RF-' + Math.floor(1000 + Math.random() * 9000);
@@ -1094,6 +1095,7 @@
 
     submitBtn.addEventListener('click', (e) => {
       if(validateChallengeStep(currentStep)) {
+        isFormDirty = false; // Reset dirty flag
         submitBtn.closest('form').submit();
       } else {
         e.preventDefault();
@@ -1455,7 +1457,6 @@
 
     // Prevent accidental exit
     setTimeout(() => {
-      let isFormDirty = false;
       const form = document.querySelector('form');
       if (form) {
         form.addEventListener('change', () => { isFormDirty = true; });

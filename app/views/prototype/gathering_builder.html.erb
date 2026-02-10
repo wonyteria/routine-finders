@@ -504,6 +504,8 @@
   <script>
     (function() {
       let currentStep = 0;
+      let isFormDirty = false; // Moved to top scope
+      
       const sections = document.querySelectorAll('.step-section');
       const dots = document.querySelectorAll('.step-dot');
       const stepCounter = document.getElementById('stepCounter');
@@ -609,11 +611,13 @@
         if (currentStep < 4) { 
            if(validateStep(currentStep)) {
              currentStep++; 
+             updateQuestionsJson(); // Ensure questions are synced
              update();
            }
         }
       });
       submitBtn.addEventListener('click', () => {
+        isFormDirty = false; // Reset dirty flag before submission
         document.querySelector('form').submit();
       });
       prevBtn.addEventListener('click', () => {
@@ -793,7 +797,6 @@
 
       // Prevent accidental exit
       setTimeout(() => {
-        let isFormDirty = false;
         const form = document.querySelector('form');
         if (form) {
           form.addEventListener('change', () => { isFormDirty = true; });
