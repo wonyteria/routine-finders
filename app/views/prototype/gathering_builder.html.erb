@@ -125,14 +125,13 @@
   </header>
 
   <%= form_with model: @gathering, url: challenges_path(source: 'prototype'), class: "flex-1 flex flex-col px-8 min-h-0 relative" do |f| %>
-    <%= f.hidden_field :cost_type, value: 'free', id: 'h_cost_type' %>
-    <%= f.hidden_field :admission_type, value: 'approval', id: 'h_admission' %>
-    <%= f.hidden_field :host_bank, value: '신한', id: 'h_bank' %>
+    <%= f.hidden_field :cost_type, id: 'h_cost_type' %>
+    <%= f.hidden_field :admission_type, id: 'h_admission' %>
     <%= f.hidden_field :end_date, id: 'h_end_date' %>
     <%= f.hidden_field :mode, value: 'offline', id: 'h_mode' %>
-    <%= f.hidden_field :meeting_type, value: 'single', id: 'h_meeting_type' %>
-    <%= f.hidden_field :category, value: 'HOBBY', id: 'h_category' %>
-    <%= f.hidden_field :requires_application_message, id: "h_requires_msg", value: "false" %>
+    <%= f.hidden_field :meeting_type, id: 'h_meeting_type' %>
+    <%= f.hidden_field :category, id: 'h_category' %>
+    <%= f.hidden_field :requires_application_message, id: "h_requires_msg" %>
 
     <div class="flex-1 min-h-0 py-4 flex flex-col relative z-10 overflow-y-auto hide-scrollbar pb-10">
       
@@ -361,10 +360,11 @@
                   <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Settlement Account (정산 계좌)</label>
                     <div class="grid grid-cols-4 gap-2">
+                      <% default_bank = @gathering.host_bank || current_user.saved_bank_name || '신한' %>
                       <% @banks.each do |bank| %>
-                        <button type="button" class="bank-opt py-2 rounded-lg border text-[9px] font-black transition-all <%= bank == (@gathering.host_bank || '신한') ? 'selected-cat' : 'unselected-opt' %>" data-val="<%= bank %>"><%= bank %></button>
+                        <button type="button" class="bank-opt py-2 rounded-lg border text-[9px] font-black transition-all <%= bank == default_bank ? 'selected-cat' : 'unselected-opt' %>" data-val="<%= bank %>"><%= bank %></button>
                       <% end %>
-                      <%= f.hidden_field :host_bank, id: "h_bank", value: (@gathering.host_bank || "신한") %>
+                      <%= f.hidden_field :host_bank, id: "h_bank", value: default_bank %>
                     </div>
                   </div>
                   <div class="grid grid-cols-2 gap-3">

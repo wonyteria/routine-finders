@@ -556,10 +556,11 @@
            <div id="cost_bank_box" class="space-y-4 p-1 overflow-visible">
              <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Settlement Account (정산 계좌)</label>
              <div class="grid grid-cols-5 gap-2 p-1 overflow-visible">
-               <% @banks.each do |bank| %>
-                 <button type="button" class="bank-opt py-2 rounded-lg border text-[10px] font-black transition-all <%= bank == (@challenge.host_bank || '신한') ? 'selected-cat' : 'unselected-opt' %>" data-val="<%= bank %>"><%= bank %></button>
-               <% end %>
-               <%= f.hidden_field :host_bank, id: "h_bank", value: (@challenge.host_bank || "신한") %>
+                <% default_bank = @challenge.host_bank || current_user.saved_bank_name || '신한' %>
+                <% @banks.each do |bank| %>
+                  <button type="button" class="bank-opt py-2 rounded-lg border text-[10px] font-black transition-all <%= bank == default_bank ? 'selected-cat' : 'unselected-opt' %>" data-val="<%= bank %>"><%= bank %></button>
+                <% end %>
+                <%= f.hidden_field :host_bank, id: "h_bank", value: default_bank %>
              </div>
              <div class="grid grid-cols-2 gap-3">
                 <%= f.text_field :host_account_holder, class: "glass-input w-full p-4 text-xs focus:scale-[1.01]", placeholder: "예금주 성함" %>

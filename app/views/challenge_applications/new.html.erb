@@ -196,31 +196,43 @@
                 
                 <!-- Refund Policy Details -->
                 <% if @challenge.cost_type_fee? || @challenge.cost_type_deposit? %>
-                  <div class="mt-3 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl space-y-2">
-                    <p class="text-[10px] font-black text-indigo-300 uppercase tracking-wide">📋 환불 정책</p>
+                  <div class="mt-3 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl space-y-3">
+                    <div class="flex items-center gap-2">
+                       <span class="text-lg">📋</span>
+                       <p class="text-[11px] font-black text-indigo-300 uppercase tracking-wide">환불 정책 안내</p>
+                    </div>
                     
-                    <% if @challenge.cost_type_fee? %>
-                      <!-- 참가비 환불 정책 -->
-                      <div class="space-y-1.5 text-[9px] font-bold text-slate-300 leading-relaxed">
-                        <p>• <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 <span class="text-white">3일 전까지</span>: 전액 환불</p>
-                        <p>• <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 <span class="text-white">1~2일 전</span>: 50% 환불</p>
-                        <p>• <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 <span class="text-white">당일 및 이후</span>: 환불 불가</p>
-                        <% if @challenge.refund_policy.present? %>
-                          <p class="pt-2 border-t border-indigo-500/20 text-indigo-200">💬 호스트 추가 안내: <%= @challenge.refund_policy %></p>
-                        <% end %>
-                      </div>
-                    <% elsif @challenge.cost_type_deposit? %>
-                      <!-- 보증금 환급 정책 -->
-                      <div class="space-y-1.5 text-[9px] font-bold text-slate-300 leading-relaxed">
-                        <p>• 달성률 <span class="text-emerald-400"><%= (@challenge.full_refund_threshold * 100).to_i %>% 이상</span>: 보증금 전액 환급</p>
-                        <p>• 미인증 시 회당 <span class="text-rose-400"><%= number_to_currency(@challenge.penalty_per_failure) %></span> 차감</p>
-                        <p>• 최대 실패 허용: <span class="text-white"><%= @challenge.failure_tolerance %>회</span></p>
-                        <p>• 중도 포기 시: <span class="text-rose-400">환급 불가</span></p>
-                        <% if @challenge.refund_policy.present? %>
-                          <p class="pt-2 border-t border-indigo-500/20 text-indigo-200">💬 호스트 추가 안내: <%= @challenge.refund_policy %></p>
-                        <% end %>
+                    <% if @challenge.refund_policy.present? %>
+                      <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                        <p class="text-[11px] font-bold text-white leading-relaxed" style="white-space: pre-line;"><%= @challenge.refund_policy %></p>
+                        <p class="text-[9px] font-medium text-indigo-400/60 mt-3 italic">* 호스트가 직접 설정한 정책입니다.</p>
                       </div>
                     <% end %>
+
+                    <div class="space-y-2 pt-2 <%= 'border-t border-white/5 mt-2 opacity-60' if @challenge.refund_policy.present? %>">
+                      <% if @challenge.cost_type_fee? %>
+                        <!-- 참가비 환불 정책 (Standard) -->
+                        <% unless @challenge.refund_policy.present? %>
+                          <p class="text-[10px] font-black text-slate-400 mb-2 uppercase tracking-tight">공통 환불 기준</p>
+                        <% end %>
+                        <div class="space-y-1.5 text-[10px] font-bold text-slate-300 leading-relaxed">
+                          <p>• <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 <span class="text-white">3일 전까지</span>: 전액 환불</p>
+                          <p>• <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 <span class="text-white">1~2일 전</span>: 50% 환불</p>
+                          <p>• <%= @challenge.offline? ? "모임" : "챌린지" %> 시작 <span class="text-white">당일 및 이후</span>: 환불 불가</p>
+                        </div>
+                      <% elsif @challenge.cost_type_deposit? %>
+                        <!-- 보증금 환급 정책 (Standard) -->
+                        <% unless @challenge.refund_policy.present? %>
+                          <p class="text-[10px] font-black text-slate-400 mb-2 uppercase tracking-tight">보증금 환급 기준</p>
+                        <% end %>
+                        <div class="space-y-1.5 text-[10px] font-bold text-slate-300 leading-relaxed">
+                          <p>• 달성률 <span class="text-emerald-400"><%= (@challenge.full_refund_threshold * 100).to_i %>% 이상</span>: 보증금 전액 환급</p>
+                          <p>• 미인증 시 회당 <span class="text-rose-400"><%= number_to_currency(@challenge.penalty_per_failure) %></span> 차감</p>
+                          <p>• 최대 실패 허용: <span class="text-white"><%= @challenge.failure_tolerance %>회</span></p>
+                          <p>• 중도 포기 시: <span class="text-rose-400">환급 불가</span></p>
+                        </div>
+                      <% end %>
+                    </div>
                   </div>
                 <% end %>
              </div>
