@@ -162,7 +162,7 @@
                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest px-2">신청 시 질문</h3>
                <div class="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
                   <p class="text-xs font-black text-indigo-400 mb-2 leading-relaxed">신청 시 아래 질문에 대한 답변을 함께 적어주셔야 합니다.</p>
-                  <p class="text-sm font-bold text-white italic">"<%= @challenge.application_question.presence || "모임에 참여하고 싶은 이유를 간단히 적어주세요." %>"</p>
+                  <p class="text-sm font-bold text-white italic" style="white-space: pre-line;">"<%= @challenge.application_question.presence || "모임에 참여하고 싶은 이유를 간단히 적어주세요." %>"</p>
                </div>
             </div>
           <% end %>
