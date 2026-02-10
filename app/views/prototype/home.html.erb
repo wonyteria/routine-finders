@@ -34,7 +34,7 @@
           <p class="text-sm font-bold text-slate-400">새로운 도약의 시작입니다.<br/>호스트 센터에서 관리해보세요.</p>
         </div>
         <div class="w-full pt-4">
-          <button onclick="this.closest('#challenge-success-modal').remove()" class="w-full py-4 bg-emerald-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none">확인했습니다</button>
+          <%= link_to "확인했습니다", prototype_home_path, class: "block w-full py-4 bg-emerald-500 text-white font-black rounded-2xl active:scale-95 transition-all focus:outline-none text-center" %>
         </div>
     </div>
   <% end %>
@@ -598,6 +598,8 @@
       </div>
     </section>
   <% end %>
+</div>
+
 
   <%# Legacy PWA modal removed in favor of integrated onboarding flow %>
 
