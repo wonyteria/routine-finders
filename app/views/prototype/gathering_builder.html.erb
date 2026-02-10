@@ -362,9 +362,9 @@
                     <label class="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-1">Settlement Account (정산 계좌)</label>
                     <div class="grid grid-cols-4 gap-2">
                       <% @banks.each do |bank| %>
-                        <button type="button" class="bank-opt py-2 rounded-lg border text-[9px] font-black transition-all unselected-opt <%= bank == '신한' ? 'selected-cat' : '' %>" data-val="<%= bank %>"><%= bank %></button>
+                        <button type="button" class="bank-opt py-2 rounded-lg border text-[9px] font-black transition-all <%= bank == (@gathering.host_bank || '신한') ? 'selected-cat' : 'unselected-opt' %>" data-val="<%= bank %>"><%= bank %></button>
                       <% end %>
-                      <%= f.hidden_field :host_bank, id: "h_bank", value: "신한" %>
+                      <%= f.hidden_field :host_bank, id: "h_bank", value: (@gathering.host_bank || "신한") %>
                     </div>
                   </div>
                   <div class="grid grid-cols-2 gap-3">
@@ -473,15 +473,19 @@
                   <p id="rev_max" class="text-xs font-black text-white">최대 4명</p>
                 </div>
                 <div class="space-y-1">
-                  <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Cost</p>
-                  <p id="rev_cost" class="text-sm font-black text-white">무료</p>
-                </div>
-              </div>
-              <div id="rev_refund_box" class="pt-4 border-t border-white/5 relative z-10 hidden">
-                <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Refund Policy</p>
-                <p id="rev_refund" class="text-[10px] font-bold text-slate-400 leading-relaxed line-clamp-2"></p>
-              </div>
-           </div>
+                   <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest">Cost</p>
+                   <p id="rev_cost" class="text-sm font-black text-white">무료</p>
+                 </div>
+               </div>
+               <div id="rev_bank_box" class="pt-4 border-t border-white/5 relative z-10 hidden">
+                 <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Settlement Account</p>
+                 <p id="rev_bank" class="text-[10px] font-bold text-slate-400"></p>
+               </div>
+               <div id="rev_refund_box" class="pt-4 border-t border-white/5 relative z-10 hidden">
+                 <p class="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Refund Policy</p>
+                 <p id="rev_refund" class="text-[10px] font-bold text-slate-400 leading-relaxed line-clamp-2"></p>
+               </div>
+            </div>
            
            <div class="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-[32px]">
               <p class="text-[10px] font-bold text-slate-500 text-center leading-relaxed">
@@ -512,6 +516,13 @@
       const nextBtn = document.getElementById('nextBtn');
       const submitBtn = document.getElementById('submitBtn');
       const prevBtn = document.getElementById('prevBtn');
+
+      function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+      function unformatNumber(str) {
+        return str.replace(/,/g, "");
+      }
 
       function smartScroll(el) {
         if (!el) return;
@@ -566,12 +577,24 @@
           document.getElementById('rev_recruitment').textContent = `${rStart.slice(5)} ~ ${rEnd.slice(5)}`;
           
           const costType = document.getElementById('h_cost_type').value;
-          const amount = document.getElementById('amount_display').value;
-          document.getElementById('rev_cost').textContent = costType === 'free' ? "무료" : amount + "원";
+           const amount = document.getElementById('h_amount').value; // Use hidden field for actual value
+           document.getElementById('rev_cost').textContent = costType === 'free' ? "무료" : formatNumber(amount) + "원";
 
-          const refund = document.querySelector('textarea[name="challenge[refund_policy]"]').value;
-          document.getElementById('rev_refund_box').classList.toggle('hidden', costType === 'free' || !refund);
-          document.getElementById('rev_refund').textContent = refund;
+           // Settlement Account
+           const bank = document.getElementById('h_bank').value;
+           const holder = document.querySelector('input[name="challenge[host_account_holder]"]').value;
+           const account = document.querySelector('input[name="challenge[host_account]"]').value;
+           
+           if (costType !== 'free' && bank) {
+             document.getElementById('rev_bank').textContent = `${bank}${account ? ' ' + account : ''}${holder ? ' (' + holder + ')' : ''}`;
+             document.getElementById('rev_bank_box').classList.remove('hidden');
+           } else {
+             document.getElementById('rev_bank_box').classList.add('hidden');
+           }
+
+           const refund = document.querySelector('textarea[name="challenge[refund_policy]"]').value;
+           document.getElementById('rev_refund_box').classList.toggle('hidden', costType === 'free' || !refund);
+           document.getElementById('rev_refund').textContent = refund;
         } else {
           nextBtn.classList.remove('hidden');
           submitBtn.classList.add('hidden');
@@ -648,13 +671,14 @@
              });
              btn.classList.add(activeClass);
              btn.classList.remove('unselected-opt');
-             document.getElementById(hiddenId).value = btn.dataset.val;
-             
-             if (hiddenId === 'h_cost_type') {
-               document.getElementById('cost_box').classList.toggle('hidden', btn.dataset.val === 'free');
-             }
-             smartScroll(btn);
-          });
+              document.getElementById(hiddenId).value = btn.dataset.val;
+              
+              if (hiddenId === 'h_cost_type') {
+                document.getElementById('cost_box').classList.toggle('hidden', btn.dataset.val === 'free');
+              }
+              smartScroll(btn);
+              update(); // Call update to refresh review section
+           });
         });
       };
 
@@ -703,9 +727,6 @@
       // Amount Formatting
       const amountDisplay = document.getElementById('amount_display');
       const amountHidden = document.getElementById('h_amount');
-
-      const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      const unformatNumber = (str) => str.replace(/,/g, "");
 
       amountDisplay.addEventListener('input', (e) => {
         let value = unformatNumber(e.target.value);
