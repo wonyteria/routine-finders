@@ -197,4 +197,30 @@ class RoutineClubReportService
       "작은 실천이 모여 위대한 변화를 만듭니다. 오늘도 응원해요! ✨"
     end
   end
+
+  # --- Class Methods for Batch Jobs ---
+
+  def self.generate_weekly_reports
+    official_club = RoutineClub.official.first
+    return unless official_club
+
+    start_date = Date.current.last_week.beginning_of_week
+    end_date = Date.current.last_week.end_of_week
+
+    official_club.members.confirmed.each do |member|
+      new(user: member.user, routine_club: official_club, report_type: "weekly", start_date: start_date, end_date: end_date).generate_or_find(force: true)
+    end
+  end
+
+  def self.generate_monthly_reports
+    official_club = RoutineClub.official.first
+    return unless official_club
+
+    start_date = Date.current.last_month.beginning_of_month
+    end_date = Date.current.last_month.end_of_month
+
+    official_club.members.confirmed.each do |member|
+      new(user: member.user, routine_club: official_club, report_type: "monthly", start_date: start_date, end_date: end_date).generate_or_find(force: true)
+    end
+  end
 end

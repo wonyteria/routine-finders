@@ -27,3 +27,7 @@ production:
   club_push_checker:
     class: ClubPushNotificationJob
     schedule: "*/1 * * * *" # 1분마다 실행하여 HH:MM 스케줄 정시에 체크
+
+  club_performance_check:
+    class: ClubPerformanceCheckJob
+    schedule: "at 00:01 every Monday"
