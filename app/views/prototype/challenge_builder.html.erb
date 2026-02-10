@@ -815,6 +815,19 @@
       }, 100);
     }
 
+    function previewImage(input, previewId) {
+      const preview = document.getElementById(previewId);
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-2xl">`;
+          preview.classList.remove('border-dashed', 'bg-white/5');
+          preview.classList.add('border-solid', 'border-indigo-500/30');
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
     function update() {
       sections.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep));
       dots.forEach((d, i) => {
