@@ -6,6 +6,9 @@ class ChallengeApplication < ApplicationRecord
   belongs_to :challenge
   belongs_to :user
 
+  # Attributes
+  attribute :application_answers, :json, default: -> { {} }
+
   # Validations
   validates :user_id, uniqueness: { scope: :challenge_id, message: "has already applied to this challenge" }
   validates :depositor_name, presence: true, if: -> { challenge&.cost_type_deposit? || challenge&.cost_type_fee? }

@@ -30,6 +30,7 @@ class Challenge < ApplicationRecord
   attribute :certification_goal, :string
   attribute :daily_goals, :json, default: -> { {} }
   attribute :reward_policy, :json, default: -> { [] }
+  attribute :application_questions, :json, default: -> { [] }
 
   # Validations
   validates :title, presence: true
