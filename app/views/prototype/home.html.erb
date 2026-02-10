@@ -745,3 +745,58 @@
 <!-- Daily Greeting Modal for Existing Users -->
 <%# Daily Greeting is now rendered in the global layout to ensure correct z-index %>
 
+<% content_for :modal_container do %>
+  <!-- Weekly Goal Reminder Modal (Monday Only) -->
+  <div id="weekly-goal-modal" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 flex flex-col items-center text-center space-y-6 animate-badge-celebration-pop bg-[#16151D]">
+       <div class="w-20 h-20 bg-indigo-500 rounded-[28px] flex items-center justify-center text-4xl shadow-2xl shadow-indigo-500/40 mb-2">🚀</div>
+       
+       <div class="space-y-2">
+         <h3 class="text-xl font-black text-white">이번 주도 힘차게 시작해볼까요?</h3>
+         <p class="text-xs font-bold text-slate-400 leading-relaxed">
+           새로운 한 주가 시작되었습니다.<br/>
+           이번 주의 목표를 설정하고 몰입을 시작해보세요!
+         </p>
+       </div>
+
+       <div class="w-full space-y-3 pt-2">
+         <%= link_to prototype_my_path, 
+             onclick: "closeWeeklyGoalModal(true)",
+             class: "block w-full py-4 bg-indigo-500 text-white font-black rounded-2xl active:scale-95 transition-all shadow-lg shadow-indigo-500/30" do %>
+           주간 목표 설정하러 가기
+         <% end %>
+         <button onclick="closeWeeklyGoalModal(true)" class="text-xs font-bold text-slate-500 hover:text-white py-2">
+           나중에 할게요
+         </button>
+       </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const modal = document.getElementById('weekly-goal-modal');
+      const today = new Date();
+      // Get local day of week (0-6)
+      const dayOfWeek = today.getDay(); 
+      // Format YYYY-MM-DD in local time
+      const dateString = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      const storageKey = 'weeklyGoalShown_' + dateString;
+
+      // Check if it is Monday (1) AND popup not shown yet today
+      if (dayOfWeek === 1 && !localStorage.getItem(storageKey)) {
+        // Show modal with a slight delay
+        setTimeout(() => {
+          modal.classList.remove('hidden');
+        }, 1500);
+      }
+
+      window.closeWeeklyGoalModal = function(saveHistory) {
+        modal.classList.add('hidden');
+        if (saveHistory) {
+          localStorage.setItem(storageKey, 'true');
+        }
+      }
+    })();
+  </script>
+<% end %>
+
