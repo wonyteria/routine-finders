@@ -923,15 +923,16 @@
 
         <div>
           <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4 mb-2 block">타임존 (Time Zone)</label>
-          <div class="relative">
-            <select name="user[time_zone]" 
-                    class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all appearance-none cursor-pointer">
-              <%= options_for_select(user_friendly_time_zones.map { |d, v, c| [d, v] }, current_user&.time_zone || "Seoul") %>
-            </select>
-            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-          </div>
+          <input type="hidden" name="user[time_zone]" id="user_time_zone" value="<%= current_user&.time_zone || 'Seoul' %>">
+          <button type="button" 
+                  onclick="document.getElementById('timezone-selector-sheet').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
+                  class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold flex justify-between items-center hover:border-indigo-500/50 outline-none transition-all cursor-pointer">
+            <span id="selected-timezone-display" class="truncate pr-4">
+              <% current_tz = user_friendly_time_zones.find { |d, v, c| v == (current_user&.time_zone || 'Seoul') } %>
+              <%= current_tz ? current_tz[0] : "[대한민국] Seoul (GMT+09:00)" %>
+            </span>
+            <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
           <p class="text-[9px] font-bold text-slate-600 mt-2 pl-4">설정한 타임존 기준으로 루틴 체크 및 알림이 제공됩니다.</p>
         </div>
 
@@ -999,21 +1000,6 @@
       </button>
     <% end %>
 
-    <script>
-      // Auto-detect time zone if it matches default and browser has something else
-      document.addEventListener('DOMContentLoaded', () => {
-        const select = document.querySelector('select[name="user[time_zone]"]');
-        if (select && select.value === "Seoul") {
-          const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const options = Array.from(select.options).map(o => o.value);
-          if (browserTz && browserTz !== "Seoul" && options.includes(browserTz)) {
-            // Optional: You could auto-select it, but maybe just show a hint or leave it to the user.
-            // For convenience, let's auto-select it if the user hasn't interacted yet.
-            // select.value = browserTz; 
-          }
-        }
-      });
-    </script>
   </div>
 </div>
 
@@ -1158,3 +1144,60 @@
     <% end %>
   </div>
 </div>
+
+<!-- Time Zone Selector Custom Sheet -->
+<div id="timezone-selector-sheet" class="hidden fixed inset-0 z-[700]">
+  <div onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+       class="absolute inset-0 bg-black/80 backdrop-blur-sm shadow-2xl"></div>
+  <div class="absolute bottom-0 left-0 right-0 bg-[#0f172a] rounded-t-[32px] border-t border-white/10 p-6 space-y-4 max-h-[85vh] flex flex-col">
+    <!-- Handle for visual cue -->
+    <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-2 shrink-0"></div>
+    
+    <div class="flex justify-between items-center mb-2 shrink-0">
+      <h4 class="text-lg font-black text-white px-2">타임존 선택</h4>
+      <button type="button" 
+              onclick="this.closest('#timezone-selector-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+              class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar pb-10">
+      <% user_friendly_time_zones.each do |display, value, country| %>
+        <button type="button"
+                onclick="document.getElementById('user_time_zone').value = '<%= value %>';
+                         document.getElementById('selected-timezone-display').innerText = '<%= display %>';
+                         document.querySelectorAll('.selection-indicator').forEach(el => el.classList.add('opacity-0'));
+                         this.querySelector('.selection-indicator').classList.remove('opacity-0');
+                         document.getElementById('timezone-selector-sheet').classList.add('hidden');
+                         document.body.classList.remove('overflow-hidden')"
+                class="w-full text-left p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-indigo-500/50 transition-all flex items-center justify-between group active:scale-[0.98]">
+          <span class="text-sm font-bold text-slate-300 group-hover:text-white"><%= display %></span>
+          <div class="w-5 h-5 rounded-full border-2 border-slate-700 flex items-center justify-center group-hover:border-indigo-500">
+            <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 transition-opacity selection-indicator <%= (current_user&.time_zone || 'Seoul') == value ? 'opacity-100' : 'opacity-0' %>"></div>
+          </div>
+        </button>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto-detect time zone if it matches default and browser has something else
+  document.addEventListener('DOMContentLoaded', () => {
+    const hiddenInput = document.getElementById('user_time_zone');
+    const displaySpan = document.getElementById('selected-timezone-display');
+    const sheetOptions = <%= user_friendly_time_zones.map { |d, v, c| [v, d] }.to_json.html_safe %>;
+
+    if (hiddenInput && hiddenInput.value === "Seoul") {
+      const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // We need to check both IANA names and Rails names if possible, but our sheetOptions has Rails names.
+      // Let's just a simple match for now.
+      const match = sheetOptions.find(opt => opt[0] === browserTz);
+      if (match && browserTz !== "Seoul") {
+        // hiddenInput.value = match[0];
+        // displaySpan.innerText = match[1];
+      }
+    }
+  });
+</script>
