@@ -38,7 +38,67 @@
         </div>
     </div>
   <% end %>
+<% end %>
 
+<% content_for :modal_container do %>
+  <!-- Global Update Announcement Modal -->
+  <div id="global-update-modal" class="hidden fixed inset-0 z-[43000] flex items-center justify-center p-6">
+    <div onclick="dismissUpdateModal()" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+    <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 flex flex-col items-center text-center space-y-6 animate-badge-celebration-pop bg-[#121118]">
+      <div class="w-20 h-20 bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-[28px] flex items-center justify-center text-4xl shadow-2xl shadow-indigo-500/30">🚀</div>
+      
+      <div class="space-y-4 w-full">
+        <div class="space-y-1">
+          <h3 class="text-xl font-black text-white">더욱 똑똑해진 루틴 파인더스!</h3>
+          <p class="text-xs font-bold text-slate-400">루퍼들을 위한 새로운 기능들이 추가되었어요.</p>
+        </div>
+
+        <div class="space-y-3 text-left">
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-start gap-3">
+            <span class="text-lg">🌍</span>
+            <div>
+              <p class="text-[13px] font-black text-white">글로벌 타임존 설정</p>
+              <p class="text-[10px] font-bold text-slate-500 leading-relaxed">전 세계 어디서든 내 현지 시간에 맞춰<br/>인생 루틴을 이어가세요!</p>
+            </div>
+          </div>
+          
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/5 flex items-start gap-3">
+            <span class="text-lg">🔔</span>
+            <div>
+              <p class="text-[13px] font-black text-white">알림 상세 설정</p>
+              <p class="text-[10px] font-bold text-slate-500 leading-relaxed">원하는 알림만 골라 받으세요.<br/>매일 새로운 랜덤 응원 메시지는 덤!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full pt-2">
+        <%= link_to "지금 확인하기", prototype_my_path, onclick: "dismissUpdateModal()", class: "block w-full py-4 bg-indigo-500 text-white font-black rounded-2xl active:scale-95 transition-all text-center shadow-lg shadow-indigo-500/20" %>
+        <button onclick="dismissUpdateModal()" class="w-full py-3 text-[11px] font-bold text-slate-500 hover:text-slate-400 transition-colors">다음에 보기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function dismissUpdateModal() {
+      const modal = document.getElementById('global-update-modal');
+      modal.classList.add('hidden');
+      // Set cookie for 30 days
+      const date = new Date();
+      date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+      document.cookie = "update_notice_seen_20260211=true; expires=" + date.toUTCString() + "; path=/";
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Small delay to let other things load
+      setTimeout(() => {
+        const cookie = document.cookie.split('; ').find(row => row.startsWith('update_notice_seen_20260211='));
+        if (!cookie) {
+          document.getElementById('global-update-modal')?.classList.remove('hidden');
+        }
+      }, 1200);
+    });
+  </script>
 <% end %>
 
 <% content_for :modal_container do %>
