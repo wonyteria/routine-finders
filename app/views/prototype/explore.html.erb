@@ -120,7 +120,7 @@
             <div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
                <div class="flex items-center gap-1">
                  <div class="w-1 h-1 rounded-full bg-emerald-500"></div>
-                 <span class="text-[9px] font-bold text-white/80"><%= challenge.current_participants %>명 참여 중</span>
+                 <span class="text-[9px] font-bold text-white/80"><%= challenge.current_participants %>명 <%= challenge.offline? ? '참여' : '활동 중' %></span>
                </div>
             </div>
           </div>

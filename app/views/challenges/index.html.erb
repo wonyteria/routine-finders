@@ -215,7 +215,7 @@
                    <% end %>
                 </div>
                 <div class="flex items-center justify-between text-[8px] font-bold text-slate-400 border-t border-slate-50 pt-2">
-                  <span><%= challenge.current_participants %>명 도전 중</span>
+                  <span><%= challenge.current_participants %>명 <%= challenge.offline? ? '참여' : '활동 중' %></span>
                 </div>
               </div>
             </div>
