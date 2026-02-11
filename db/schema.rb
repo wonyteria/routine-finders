@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_10_074325) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_11_073821) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -677,6 +677,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_10_074325) do
     t.datetime "threads_expires_at"
     t.string "threads_refresh_token"
     t.string "threads_token"
+    t.string "time_zone", default: "Asia/Seoul", null: false
     t.integer "total_exp", default: 0, null: false
     t.integer "total_refunded", default: 0, null: false
     t.string "uid"

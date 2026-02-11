@@ -8,10 +8,16 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
   before_action :set_unviewed_badges
   before_action :set_pending_welcome_membership
+  around_action :set_time_zone
 
   helper_method :current_user, :logged_in?, :pending_welcome_membership
 
   private
+
+  def set_time_zone(&block)
+    tz = current_user&.time_zone || "Asia/Seoul"
+    Time.use_zone(tz, &block)
+  end
 
   def set_unviewed_badges
     if logged_in?

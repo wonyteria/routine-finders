@@ -921,6 +921,20 @@
                     class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all resize-none"><%= current_user&.bio %></textarea>
         </div>
 
+        <div>
+          <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4 mb-2 block">타임존 (Time Zone)</label>
+          <div class="relative">
+            <select name="user[time_zone]" 
+                    class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500/50 outline-none transition-all appearance-none cursor-pointer">
+              <%= options_for_select(ActiveSupport::TimeZone.all.map { |tz| ["(GMT#{tz.formatted_offset}) #{tz.name}", tz.name] }, current_user&.time_zone || "Asia/Seoul") %>
+            </select>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <p class="text-[9px] font-bold text-slate-600 mt-2 pl-4">설정한 타임존 기준으로 루틴 체크 및 알림이 제공됩니다.</p>
+        </div>
+
         <!-- SNS Links Section -->
         <div>
           <div class="flex justify-between items-center mb-3">
@@ -984,6 +998,22 @@
         저장하기
       </button>
     <% end %>
+
+    <script>
+      // Auto-detect time zone if it matches default and browser has something else
+      document.addEventListener('DOMContentLoaded', () => {
+        const select = document.querySelector('select[name="user[time_zone]"]');
+        if (select && select.value === "Asia/Seoul") {
+          const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const options = Array.from(select.options).map(o => o.value);
+          if (browserTz && browserTz !== "Asia/Seoul" && options.includes(browserTz)) {
+            // Optional: You could auto-select it, but maybe just show a hint or leave it to the user.
+            // For convenience, let's auto-select it if the user hasn't interacted yet.
+            // select.value = browserTz; 
+          }
+        }
+      });
+    </script>
   </div>
 </div>
 

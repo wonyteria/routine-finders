@@ -1190,7 +1190,7 @@ class PrototypeController < ApplicationController
     # View에서 name="user[nickname]" 형태로 보내므로 user 키가 반드시 존재해야 함을 가정하되,
     # 예외 상황(직접 요청 등)을 대비해 안전하게 처리
     begin
-      user_params = params.require(:user).permit(:nickname, :bio, :profile_image, :avatar, sns_links: [])
+      user_params = params.require(:user).permit(:nickname, :bio, :profile_image, :avatar, :time_zone, sns_links: [])
     rescue ActionController::ParameterMissing
       # user 키가 없는 경우 (예: 잘못된 요청)
       user_params = ActionController::Parameters.new
@@ -1202,6 +1202,7 @@ class PrototypeController < ApplicationController
     # permit을 통과한 파라미터 객체는 key? 메서드를 지원함
     update_params[:nickname] = user_params[:nickname] if user_params.key?(:nickname)
     update_params[:bio] = user_params[:bio] if user_params.key?(:bio)
+    update_params[:time_zone] = user_params[:time_zone] if user_params.key?(:time_zone)
 
     # 3. Image Handling
     img = user_params[:profile_image] || user_params[:avatar]
