@@ -112,8 +112,9 @@ class PrototypeController < ApplicationController
         # Show if club member + not dismissed + not subscribed
         if @is_club_member
           subscribed = current_user.web_push_subscriptions.exists?
-          # Show if not subscribed yet.
-          @show_push_onboarding = !subscribed
+          dismissed = current_user.notification_preferences&.dig("push_onboarding_dismissed") == true
+          # Show if not subscribed yet AND not dismissed.
+          @show_push_onboarding = !subscribed && !dismissed
         end
     else
       @hosted_challenges = []
