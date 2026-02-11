@@ -602,6 +602,29 @@ class PrototypeController < ApplicationController
     end
   end
 
+  def update_notification_preferences
+    if current_user
+      # 파라미터로 넘어온 값들 업데이트 (checkbox는 'on' 또는 '1'로 넘어올 수 있음)
+      new_prefs = {
+        morning_affirmation: params[:morning_affirmation] == "1",
+        evening_reminder: params[:evening_reminder] == "1",
+        night_check: params[:night_check] == "1",
+        club_status: params[:club_status] == "1",
+        club_operations: params[:club_operations] == "1",
+        community: params[:community] == "1",
+        achievements: params[:achievements] == "1"
+      }
+
+      if current_user.update(notification_preferences: new_prefs)
+        redirect_to prototype_my_path, notice: "알림 설정이 저장되었습니다."
+      else
+        redirect_to prototype_my_path, alert: "알림 설정 저장에 실패했습니다."
+      end
+    else
+      redirect_to prototype_login_path, alert: "로그인이 필요합니다."
+    end
+  end
+
   def admin_dashboard
     # 1. System-Wide Dashboard Stats (Overview)
     @total_users = User.count

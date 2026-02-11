@@ -22,26 +22,15 @@ class ClubPushNotificationJob < ApplicationJob
   private
 
   def send_general_reminders(config)
-    club = RoutineClub.official.first
-    unless club
-      Rails.logger.error "[ClubPushNotificationJob] Official club not found"
-      return
-    end
-
-    club.members.confirmed.active.find_each do |membership|
-      send_to_user(membership.user, config)
+    # 가입한 모든 활성 유저에게 발송
+    User.where(deleted_at: nil).find_each do |user|
+      send_to_user(user, config)
     end
   end
 
   def send_completion_checks(config)
-    club = RoutineClub.official.first
-    unless club
-      Rails.logger.error "[ClubPushNotificationJob] Official club not found"
-      return
-    end
-
-    club.members.confirmed.active.find_each do |membership|
-      user = membership.user
+    # 가입한 모든 활성 유저 중 오늘 루틴 인증이 없는 유저에게 발송
+    User.where(deleted_at: nil).find_each do |user|
       # 오늘 완료한 루틴이 없는 경우에만 발송
       unless user.personal_routines.joins(:completions).where(personal_routine_completions: { completed_on: Date.current }).exists?
         send_to_user(user, config)
@@ -50,9 +39,15 @@ class ClubPushNotificationJob < ApplicationJob
   end
 
   def send_to_user(user, config)
+    # 알림 설정 확인
+    unless user.notification_enabled?(config.config_type)
+      Rails.logger.info "[ClubPushNotificationJob] Skipping push for User #{user.id} due to preferences (#{config.config_type})"
+      return
+    end
+
     nickname = user.nickname.presence || "멤버"
     title = config.title.gsub("{{nickname}}", nickname)
-    content = config.content.gsub("{{nickname}}", nickname)
+    content = config.random_content(nickname)
 
     Rails.logger.info "[ClubPushNotificationJob] Sending push to User #{user.id} (#{nickname}): #{title}"
     WebPushService.send_notification(user, title, content, config.link_url || "/")

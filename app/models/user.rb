@@ -32,12 +32,20 @@ class User < ApplicationRecord
 
   def set_default_preferences
     self.notification_preferences ||= {
-      routine_reminder: true,
-      challenge_updates: true,
-      community_alerts: true,
-      marketing: true
+      morning_affirmation: true,
+      evening_reminder: true,
+      night_check: true,
+      club_status: true,
+      club_operations: true,
+      community: true,
+      achievements: true
     }
   end
+  def notification_enabled?(pref_key)
+    prefs = self.notification_preferences || {}
+    prefs[pref_key.to_s] != false && prefs[pref_key.to_sym] != false
+  end
+
   has_secure_password
   has_one_attached :avatar
 

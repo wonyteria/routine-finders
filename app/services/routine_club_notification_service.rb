@@ -54,7 +54,7 @@ class RoutineClubNotificationService
   def self.notify_warning(membership, warning_count, reason = nil)
     content = "루파 클럽 운영 수칙에 따라 경고가 부여되었습니다. (현재 누적: #{warning_count}회)"
     content += "\n사유: #{reason}" if reason.present?
-    content += "\n\n누적 경고가 #{membership.routine_club.auto_kick_threshold}회가 될 경우 시스템에 의해 자동 제명(Kick)되오니 성실한 참여를 부탁드립니다."
+    content += "\n\n누적 경고가 #{membership.routine_club.auto_kick_threshold}회가 될 경우 시스템에 의해 자동 제명(강퇴)되오니 성실한 참여를 부탁드립니다."
 
     Notification.create!(
       user: membership.user,

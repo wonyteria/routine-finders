@@ -36,4 +36,37 @@ class Notification < ApplicationRecord
   def mark_as_read!
     update(is_read: true)
   end
+
+  # Push Notification Mapping
+  PREFERENCE_MAPPING = {
+    announcement: :community,
+    approval: :club_status,
+    rejection: :club_status,
+    application: :club_status,
+    badge_award: :achievements,
+    club_payment_confirmed: :club_status,
+    club_payment_rejected: :club_status,
+    club_kicked: :club_operations,
+    club_attendance_reminder: :community,
+    club_warning: :club_operations,
+    club_message: :community,
+    challenge_approval: :club_status,
+    challenge_rejection: :club_status,
+    nudge: :community
+  }.freeze
+
+  after_create_commit :send_push_notification
+
+  private
+
+  def send_push_notification
+    pref_key = PREFERENCE_MAPPING[notification_type.to_sym]
+    return unless pref_key
+
+    if user.notification_enabled?(pref_key)
+      WebPushService.send_notification(user, title, content, link || "/")
+    end
+  rescue => e
+    Rails.logger.error "Failed to send push notification for Notification #{id}: #{e.message}"
+  end
 end

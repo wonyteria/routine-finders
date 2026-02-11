@@ -435,9 +435,16 @@
           <p class="text-[9px] font-medium text-slate-500 mt-0.5" data-push-subscription-target="statusText">알림 상태 확인 중...</p>
         </div>
       </div>
-      <div class="relative inline-flex items-center cursor-pointer pointer-events-none">
-        <input type="checkbox" class="sr-only peer" data-push-subscription-target="toggle" disabled>
-        <div class="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+      <div class="flex items-center gap-2">
+        <button type="button" 
+                onclick="event.stopPropagation(); document.getElementById('notification-settings').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
+                class="px-2 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-black text-indigo-400 transition-all border border-white/5">
+          상세 설정
+        </button>
+        <div class="relative inline-flex items-center cursor-pointer pointer-events-none">
+          <input type="checkbox" class="sr-only peer" data-push-subscription-target="toggle" disabled>
+          <div class="w-8 h-4 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-500"></div>
+        </div>
       </div>
 
       <!-- Push Notification Guide Modal (Moved Inside Controller Scope) -->
@@ -976,6 +983,148 @@
       <button type="submit" class="w-full py-4 rounded-2xl bg-indigo-500 text-white font-black text-sm active:scale-95 transition-all cursor-pointer shadow-lg shadow-indigo-500/20">
         저장하기
       </button>
+    <% end %>
+  </div>
+</div>
+
+<!-- Notification Settings Modal -->
+<div id="notification-settings" class="hidden fixed inset-0 z-[600]">
+  <div onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+       class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
+  
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md app-glass-card border-white/20 p-8 space-y-6 max-h-[85vh] overflow-y-auto modal-content-safe">
+    <div class="flex justify-between items-center">
+      <h3 class="text-xl font-black text-white">알림 상세 설정</h3>
+      <button type="button" 
+              onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+              class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <%= form_with url: prototype_update_notification_preferences_path, method: :patch, class: "space-y-6" do |f| %>
+      <div class="space-y-4">
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2">푸시 알림 (Daily)</p>
+        
+        <div class="space-y-3">
+          <!-- Morning Affirmation -->
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">☀️</span>
+              <div>
+                <p class="text-sm font-bold text-white">아침 확언 알림</p>
+                <p class="text-[10px] text-slate-500">매일 오전 8:30 발송</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :morning_affirmation, { checked: current_user.notification_enabled?(:morning_affirmation), class: "sr-only peer" }, "1", "0" %>
+              <div class="w-9 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+            </label>
+          </div>
+
+          <!-- Evening Reminder -->
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🌆</span>
+              <div>
+                <p class="text-sm font-bold text-white">저녁 리마인더</p>
+                <p class="text-[10px] text-slate-500">매일 오후 7:00 발송</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :evening_reminder, { checked: current_user.notification_enabled?(:evening_reminder), class: "sr-only peer" }, "1", "0" %>
+              <div class="w-9 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+            </label>
+          </div>
+
+          <!-- Night Check -->
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🌙</span>
+              <div>
+                <p class="text-sm font-bold text-white">밤의 기록 체크</p>
+                <p class="text-[10px] text-slate-500">매일 밤 10:00 발송 (인증 미완료 시)</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :night_check, { checked: current_user.notification_enabled?(:night_check), class: "sr-only peer" }, "1", "0" %>
+              <div class="w-9 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-2 pt-4">서비스 알림</p>
+        
+        <div class="space-y-3">
+          <!-- Club Status -->
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">✅</span>
+              <div>
+                <p class="text-sm font-bold text-white">클럽/챌린지 승인 및 결제</p>
+                <p class="text-[10px] text-slate-500">신청 승인, 입금 확인 알림 등</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :club_status, { checked: current_user.notification_enabled?(:club_status), class: "sr-only peer" }, "1", "0" %>
+              <div class="w-9 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+            </label>
+          </div>
+
+          <!-- Club Operations -->
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">⚠️</span>
+              <div>
+                <p class="text-sm font-bold text-white">경고 및 제명 안내</p>
+                <p class="text-[10px] text-slate-500">활동 미비 경고, 강퇴 알림 등</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :club_operations, { checked: current_user.notification_enabled?(:club_operations), class: "sr-only peer" }, "1", "0" %>
+              <div class="w-9 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+            </label>
+          </div>
+
+          <!-- Community -->
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">📣</span>
+              <div>
+                <p class="text-sm font-bold text-white">커뮤니티 및 소통</p>
+                <p class="text-[10px] text-slate-500">공지사항, 호스트의 독려 등</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :community, { checked: current_user.notification_enabled?(:community), class: "sr-only peer" }, "1", "0" %>
+              <div class="w-9 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+            </label>
+          </div>
+
+          <!-- Achievements -->
+          <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🏆</span>
+              <div>
+                <p class="text-sm font-bold text-white">성취 및 배지 배부</p>
+                <p class="text-[10px] text-slate-500">새로운 배지 획득 알림</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <%= f.check_box :achievements, { checked: current_user.notification_enabled?(:achievements), class: "sr-only peer" }, "1", "0" %>
+              <div class="w-9 h-5 bg-white/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-500"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <%= f.submit "설정 저장하기", class: "w-full py-4 rounded-2xl bg-indigo-500 text-white font-black text-sm active:scale-95 transition-all cursor-pointer shadow-lg shadow-indigo-500/20" %>
+        <p class="text-center text-[10px] text-slate-600 mt-4 leading-relaxed">
+          PWA 권한이 차단된 경우, 개별 설정을 켜도 알림이 오지 않을 수 있습니다.<br/>
+          (앱 설치 가이드를 확인해 주세요)
+        </p>
+      </div>
     <% end %>
   </div>
 </div>

@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   post "mark_badges_viewed_legacy", to: "prototype#mark_badges_viewed", as: :mark_badges_viewed_prototype
   patch "update_goals_main", to: "prototype#update_goals", as: :prototype_update_goals
   patch "update_profile_main", to: "prototype#update_profile", as: :prototype_update_profile
+  patch "update_notification_preferences", to: "prototype#update_notification_preferences", as: :prototype_update_notification_preferences
   get "lecture_intro", to: "prototype#lecture_intro", as: :prototype_lecture_intro
   get "user_card/:id", to: "prototype#user_profile", as: :prototype_user_card
 
