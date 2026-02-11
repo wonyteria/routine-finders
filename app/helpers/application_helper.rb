@@ -33,4 +33,27 @@ module ApplicationHelper
       (glow || "") + img + (badge || "")
     end
   end
+
+  def user_friendly_time_zones
+    iana_to_country = {}
+    TZInfo::Country.all.each do |c|
+      c.zone_identifiers.each { |z| iana_to_country[z] ||= c.name }
+    end
+
+    # 주요 국가 한국어 매핑
+    ko_countries = {
+      "South Korea" => "대한민국", "United States" => "미국", "Japan" => "일본",
+      "China" => "중국", "United Kingdom" => "영국", "Vietnam" => "베트남",
+      "Thailand" => "태국", "Philippines" => "필리핀", "Australia" => "호주",
+      "Canada" => "캐나다", "Germany" => "독일", "France" => "프랑스",
+      "Italy" => "이탈리아", "Spain" => "스페인", "Brazil" => "브라질",
+      "Singapore" => "싱가포르", "Taiwan" => "대만", "Hong Kong" => "홍콩", "Indonesia" => "인도네시아"
+    }
+
+    ActiveSupport::TimeZone.all.map do |tz|
+      en_country = iana_to_country[tz.tzinfo.name] || "기타"
+      display_country = ko_countries[en_country] || en_country
+      [ "[#{display_country}] #{tz.name} (GMT#{tz.formatted_offset})", tz.name, display_country ]
+    end.sort_by { |disp, val, country| [ country, disp ] }
+  end
 end
