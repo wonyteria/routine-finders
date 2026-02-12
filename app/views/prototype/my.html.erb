@@ -1165,12 +1165,7 @@
     <div class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar pb-32">
       <% user_friendly_time_zones.each do |display, value, country| %>
         <button type="button"
-                onclick="document.getElementById('user_time_zone').value = '<%= value %>';
-                         document.getElementById('selected-timezone-display').innerText = '<%= display %>';
-                         document.querySelectorAll('.selection-indicator').forEach(el => el.classList.add('opacity-0'));
-                         this.querySelector('.selection-indicator').classList.remove('opacity-0');
-                         document.getElementById('timezone-selector-sheet').classList.add('hidden');
-                         document.body.classList.remove('overflow-hidden')"
+                onclick="selectTimezone('<%= value %>', '<%= display %>', this)"
                 class="w-full text-left p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-indigo-500/50 transition-all flex items-center justify-between group active:scale-[0.98]">
           <span class="text-sm font-bold text-slate-300 group-hover:text-white"><%= display %></span>
           <div class="w-5 h-5 rounded-full border-2 border-slate-700 flex items-center justify-center group-hover:border-indigo-500">
@@ -1183,11 +1178,20 @@
 </div>
 
 <script>
+  // Track unsaved changes for timezone
+  let timezoneChanged = false;
+  let originalTimezone = '';
+
   // Auto-detect time zone if it matches default and browser has something else
   document.addEventListener('DOMContentLoaded', () => {
     const hiddenInput = document.getElementById('user_time_zone');
     const displaySpan = document.getElementById('selected-timezone-display');
     const sheetOptions = <%= user_friendly_time_zones.map { |d, v, c| [v, d] }.to_json.html_safe %>;
+
+    // Store original timezone value
+    if (hiddenInput) {
+      originalTimezone = hiddenInput.value;
+    }
 
     if (hiddenInput && hiddenInput.value === "Seoul") {
       const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1197,6 +1201,7 @@
       if (match && browserTz !== "Seoul") {
         hiddenInput.value = match[0];
         displaySpan.innerText = match[1];
+        originalTimezone = match[0]; // Update original timezone after auto-detection
         console.log(`Auto-detected timezone: ${match[1]} (${match[0]})`);
       }
     }
@@ -1210,5 +1215,53 @@
         document.body.classList.add('overflow-hidden');
       }
     }
+
+    // Add event listener to profile form submission to clear dirty flag
+    const profileForm = document.querySelector('form[action*="update_profile"]');
+    if (profileForm) {
+      profileForm.addEventListener('submit', () => {
+        timezoneChanged = false;
+      });
+    }
   });
+
+  // Warn user before leaving page with unsaved timezone changes
+  window.addEventListener('beforeunload', (e) => {
+    if (timezoneChanged) {
+      e.preventDefault();
+      e.returnValue = ''; // Modern browsers require this
+      return ''; // For older browsers
+    }
+  });
+
+  // Function to handle timezone selection
+  function selectTimezone(value, display, button) {
+    const hiddenInput = document.getElementById('user_time_zone');
+    const displaySpan = document.getElementById('selected-timezone-display');
+    
+    // Update hidden input and display
+    hiddenInput.value = value;
+    displaySpan.innerText = display;
+    
+    // Update selection indicators - remove all first
+    document.querySelectorAll('.selection-indicator').forEach(el => el.classList.add('opacity-0'));
+    
+    // Add to the clicked button's indicator
+    const indicator = button.querySelector('.selection-indicator');
+    if (indicator) {
+      indicator.classList.remove('opacity-0');
+    }
+    
+    // Set dirty flag if value changed
+    if (value !== originalTimezone) {
+      timezoneChanged = true;
+    } else {
+      timezoneChanged = false;
+    }
+    
+    // Close the sheet
+    document.getElementById('timezone-selector-sheet').classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }
 </script>
+
