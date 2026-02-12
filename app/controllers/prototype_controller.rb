@@ -37,14 +37,9 @@ class PrototypeController < ApplicationController
     # Fix: Filter out finished challenges from 'Today's Tasks'
     @joined_participations = current_user ? current_user.participations.active.joins(:challenge).where("challenges.start_date <= ? AND challenges.end_date >= ?", Date.current, Date.current) : Participant.none
 
-    # Progress Calculation
-    routine_total = @todays_routines.count
-    participation_total = @joined_participations.count
-    @total_task_count = routine_total + participation_total
-
-    routine_done = @todays_routines.select(&:completed_today?).count
-    participation_done = current_user ? VerificationLog.where(participant: @joined_participations, created_at: Date.current.all_day).pluck(:participant_id).uniq.count : 0
-    @completed_count = routine_done + participation_done
+    # Progress Calculation (Routine Only - User Request)
+    @total_task_count = routine_total
+    @completed_count = routine_done
 
     @progress = @total_task_count.positive? ? (@completed_count.to_f / @total_task_count * 100).to_i : 0
 
