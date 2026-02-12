@@ -560,6 +560,14 @@ class PrototypeController < ApplicationController
                     RoutineClub.official.order(start_date: :desc).first ||
                     RoutineClub.order(created_at: :desc).first
 
+    # Override dates with dynamic calculation to ensure 2-month periods
+    # This fixes any incorrect database values and ensures consistency
+    if @routine_club
+      current_gen_start = RoutineClub.current_cycle_start_date(Date.current)
+      @routine_club.start_date = current_gen_start
+      @routine_club.end_date = @routine_club.get_cycle_end_date(Date.current)
+    end
+
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
     @is_pending = current_user&.routine_club_members&.exists?(routine_club: @routine_club, payment_status: :pending) if current_user
   end
