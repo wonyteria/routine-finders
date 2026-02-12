@@ -1195,8 +1195,9 @@
       // Let's just a simple match for now.
       const match = sheetOptions.find(opt => opt[0] === browserTz);
       if (match && browserTz !== "Seoul") {
-        // hiddenInput.value = match[0];
-        // displaySpan.innerText = match[1];
+        hiddenInput.value = match[0];
+        displaySpan.innerText = match[1];
+        console.log(`Auto-detected timezone: ${match[1]} (${match[0]})`);
       }
     }
 
