@@ -27,6 +27,62 @@
         <p class="text-xs font-black text-indigo-400">일 300원 (기수제)</p>
       </div>
     </div>
+
+    <!-- Recruitment Status Info -->
+    <% if @recruiting_gen && @current_gen %>
+      <div class="px-6">
+        <div class="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-3xl p-5 space-y-4">
+          <!-- Current Generation Status -->
+          <% if @recruiting_gen != @current_gen %>
+            <div class="flex items-center justify-between pb-3 border-b border-white/5">
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">현재 진행 중</span>
+              </div>
+              <span class="text-sm font-black text-emerald-400"><%= @current_gen %>기</span>
+            </div>
+          <% end %>
+
+          <!-- Activity Start Date -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">활동 시작일</span>
+            </div>
+            <span class="text-sm font-black text-white"><%= @activity_starts_at.strftime("%Y년 %m월 %d일") %></span>
+          </div>
+
+          <!-- Recruitment Deadline -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">모집 마감</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-black text-white"><%= @recruitment_deadline.strftime("%m월 %d일") %></span>
+              <% if @days_until_deadline > 0 %>
+                <span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-[9px] font-black text-rose-400">D-<%= @days_until_deadline %></span>
+              <% elsif @days_until_deadline == 0 %>
+                <span class="px-2 py-0.5 rounded-full bg-rose-500/20 text-[9px] font-black text-rose-400">오늘 마감</span>
+              <% else %>
+                <span class="px-2 py-0.5 rounded-full bg-slate-500/20 text-[9px] font-black text-slate-400">마감</span>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Info Note -->
+          <div class="pt-3 border-t border-white/5">
+            <p class="text-[10px] font-bold text-slate-500 leading-relaxed text-center">
+              <%= @recruiting_gen %>기 신청 후, 활동은 <%= @activity_starts_at.strftime("%m월 %d일") %>부터 시작됩니다
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <!-- 2. Operating Rules: The Standard -->

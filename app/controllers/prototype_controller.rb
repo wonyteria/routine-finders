@@ -566,6 +566,13 @@ class PrototypeController < ApplicationController
       current_gen_start = RoutineClub.current_cycle_start_date(Date.current)
       @routine_club.start_date = current_gen_start
       @routine_club.end_date = @routine_club.get_cycle_end_date(Date.current)
+
+      # Additional info for better UX
+      @recruiting_gen = @routine_club.recruiting_generation_number
+      @current_gen = RoutineClub.generation_number(Date.current)
+      @recruitment_deadline = current_gen_start + 5.days
+      @days_until_deadline = (@recruitment_deadline - Date.current).to_i
+      @activity_starts_at = current_gen_start
     end
 
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
