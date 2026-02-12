@@ -103,7 +103,7 @@ class RoutineClub < ApplicationRecord
     next_start - 15.days
   end
 
-  # 모집 기간 여부 확인 (주기 시작 15일 전 ~ 시작일 당일)
+  # 모집 기간 여부 확인 (주기 시작 15일 전 ~ 시작일 +5일)
   # 2026년 2월 6일까지 특별 연장 (7기 전환기 예외)
   def self.recruitment_open?(date = Date.current)
     # 1. 7기 전환기 특별 연장 (2026년 2월 6일까지)
@@ -112,15 +112,15 @@ class RoutineClub < ApplicationRecord
       return true
     end
 
-    # 2. 표준 D-15 로직
-    # 어떤 주기 S에 대해 [S - 15.days, S] 사이에 있으면 모집 중
+    # 2. 표준 D-15 ~ D+5 로직
+    # 어떤 주기 S에 대해 [S - 15.days, S + 5.days] 사이에 있으면 모집 중
     candidate_starts = [
       current_cycle_start_date(date),
       next_cycle_start_date(date)
     ]
 
     candidate_starts.any? do |start_date|
-      date >= (start_date - 15.days) && date <= start_date
+      date >= (start_date - 15.days) && date <= (start_date + 5.days)
     end
   end
 
