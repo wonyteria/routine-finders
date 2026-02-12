@@ -168,15 +168,14 @@
            </button>
          </div>
       <% else %>
-      <% else %>
         <% if logged_in? %>
-          <%= form_with url: join_routine_club_path(@routine_club), method: :post, 
+          <%= form_with(model: @routine_club, url: join_routine_club_path(@routine_club), method: :post, 
                         data: { 
                           controller: "club-join",
                           club_join_target: "form",
                           action: "submit->club-join#review" 
                         },
-                        class: "space-y-6" do |f| %>
+                        class: "space-y-6") do |f| %>
             <div class="space-y-2">
               <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
               <%= f.text_field :depositor_name, required: true, placeholder: "홍길동", 
@@ -260,7 +259,6 @@
             <% end %>
           </div>
         <% end %>
-      <% end %>
       <% end %>
     </div>
   </div>
