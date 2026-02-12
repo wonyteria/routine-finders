@@ -1294,6 +1294,21 @@ class PrototypeController < ApplicationController
 
   private
 
+  # Helper method to calculate total routines for today
+  def routine_total
+    return 0 unless current_user
+    current_wday = Date.current.wday.to_s
+    current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).map(&:to_s).include?(current_wday) }.size
+  end
+
+  # Helper method to calculate completed routines for today
+  def routine_done
+    return 0 unless current_user
+    current_wday = Date.current.wday.to_s
+    todays_routines = current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).map(&:to_s).include?(current_wday) }
+    todays_routines.count { |r| r.completed_today? }
+  end
+
   def set_shared_data
     @official_club = RoutineClub.ensure_official_club
     @new_badges = current_user ? current_user.user_badges.where(is_viewed: false).includes(:badge) : []
