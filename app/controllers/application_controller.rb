@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Timezone Support: Ensures all controller actions run in the user's selected timezone.
+  # Users can select their timezone in My Page settings (stored in users.time_zone).
+  # This makes Date.current and Time.zone.now return values in the user's local timezone,
+  # preventing date mismatches for international users.
   def set_time_zone(&block)
     tz = current_user&.time_zone || "Seoul"
     Time.use_zone(tz, &block)
