@@ -1,0 +1,265 @@
+<div class="space-y-12 py-10 pb-24">
+  <!-- 1. Hero Section: Generation Focus -->
+  <div class="relative px-6 text-center space-y-6">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+      <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+      <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Official Membership</span>
+    </div>
+    
+    <div class="space-y-2">
+      <h1 class="text-4xl font-black text-white tracking-tight leading-tight">
+        루파클럽 <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"><%= @routine_club.recruiting_generation_number %>기</span><br>
+        멤버십 모집
+      </h1>
+      <p class="text-sm text-slate-400 font-bold leading-relaxed px-4">
+        완벽한 루틴 시스템과 강력한 커뮤니티가<br>당신의 성장을 가속화합니다.
+      </p>
+    </div>
+
+    <!-- Period & Price Tag -->
+    <div class="flex justify-center gap-3">
+      <div class="px-4 py-2 rounded-2xl bg-white/5 border border-white/5 space-y-0.5">
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Duration</p>
+        <p class="text-xs font-black text-white">2개월 정규 기수</p>
+      </div>
+      <div class="px-4 py-2 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-0.5">
+        <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Pricing</p>
+        <p class="text-xs font-black text-indigo-400">일 300원 (기수제)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Operating Rules: The Standard -->
+  <section class="space-y-6 px-6">
+    <div class="space-y-1">
+      <h2 class="text-xl font-black text-white px-1">루파 클럽 운영 규정</h2>
+      <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-1">Rules & Regulations</p>
+    </div>
+
+    <div class="bg-white/5 rounded-[40px] border border-white/10 overflow-hidden">
+      <div class="p-8 space-y-6">
+        <% [
+          { icon: "🚫", title: "3-Strike 자동 제명", desc: "주간 달성률 70% 미만 시 경고가 부여되며, <span class='text-rose-400 font-black'>3회 누적</span>될 경우 시스템에 의해 즉시 자동 제명 처리됩니다." },
+          { icon: "⚖️", title: "환불 불가 원칙", desc: "기수제 정액 운영 특성상, 결제 완료 후에는 개인 변심이나 제명 처분을 포함한 <span class='text-white font-black'>그 어떠한 사유로도 환불이 절대 불가</span>합니다." },
+          { icon: "🏅", title: "제명 처리 및 재가입 제한", desc: "제명 처리되면 해당 기수의 모든 권한이 즉시 박탈되며, 다음 기수 참여가 제한될 수 있습니다. (재도전을 원할 경우 별도 심사 필요)" },
+          { icon: "🤝", title: "커뮤니티 매너 준수", desc: "분위기를 저해하거나 타 멤버에게 불쾌감을 주는 행위 적발 시 호스트 판단 하에 즉시 활동 정지 및 퇴출이 가능합니다." },
+          { icon: "🎟️", title: "휴식권/세이브권의 전략적 사용", desc: "매월 제공되는 3장의 휴식권과 세이브권은 실패를 방어하는 유일한 수단입니다. 휴식권은 미리, 세이브권은 사후에 전략적으로 사용하세요." }
+        ].each do |rule| %>
+          <div class="flex gap-4">
+            <div class="text-xl shrink-0 mt-0.5"><%= rule[:icon] %></div>
+            <div class="space-y-1">
+              <h4 class="text-sm font-black text-indigo-400"><%= rule[:title] %></h4>
+              <p class="text-xs font-bold text-slate-500 leading-relaxed break-keep"><%= rule[:desc].html_safe %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="px-8 py-5 bg-rose-500/10 border-t border-white/5">
+        <p class="text-[10px] font-black text-rose-400 leading-relaxed">
+          ※ 모든 신청자는 위 규정을 충분히 숙지하고 동의한 것으로 간주합니다. 신중한 신청 부탁드립니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Join Application Section -->
+  <div id="join-section" class="px-4">
+    <% 
+      is_recruiting = @routine_club.recruitment_open?
+      recruitment_start = RoutineClub.recruitment_start_date
+    %>
+    
+    <!-- Recruitment Status Notice (Only shown when closed) -->
+    <% unless is_recruiting || @is_member %>
+      <div class="mb-6 p-6 rounded-[28px] bg-amber-500/10 border-2 border-amber-500/30 text-center space-y-3">
+        <div class="text-3xl">⏰</div>
+        <div>
+          <p class="text-amber-400 font-black text-lg">현재 정기 모집 기간이 아닙니다</p>
+          <p class="text-amber-300/60 text-xs font-bold mt-2 leading-relaxed">
+            루파클럽은 2개월 단위 정기 모집으로 운영됩니다.<br/>
+            아래 혜택과 시스템을 확인하시고 다음 모집을 기다려주세요!
+          </p>
+        </div>
+        <div class="pt-3 border-t border-amber-500/20">
+          <p class="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-1">Next Recruitment</p>
+          <p class="text-amber-300 font-black text-base"><%= recruitment_start.strftime("%Y년 %m월 %d일") %> 오픈 예정</p>
+        </div>
+      </div>
+    <% end %>
+    <div class="app-glass-card p-6 space-y-6 bg-gradient-to-b from-[#1B1A24] to-[#16151D]">
+      <div class="text-center space-y-1">
+        <h2 class="text-2xl font-black text-white"><%= @routine_club.recruiting_generation_number %>기 멤버십 신청</h2>
+        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Membership Application Form</p>
+      </div>
+
+      <div class="bg-black/40 rounded-[24px] p-6 space-y-5 border border-white/5 shadow-inner text-center">
+        <div class="space-y-4">
+          <div class="space-y-1">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Membership Period</p>
+            <p class="text-base font-black text-white whitespace-nowrap">
+              <%= @routine_club.start_date.strftime("%Y.%m.%d") %> <span class="text-indigo-500 mx-1">—</span> <%= @routine_club.start_date.year == @routine_club.end_date.year ? @routine_club.end_date.strftime("%m.%d") : @routine_club.end_date.strftime("%Y.%m.%d") %>
+            </p>
+          </div>
+
+          <div class="bg-white/5 h-px w-2/3 mx-auto"></div>
+
+          <div class="space-y-2">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">
+              Total Fee (<%= @routine_club.duration_in_days %> Days)
+            </p>
+            <p class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+              ₩<%= number_with_delimiter(@routine_club.calculate_cycle_fee) %>
+            </p>
+          </div>
+
+          <!-- Bank Account Info -->
+          <div class="pt-4 space-y-2">
+            <div class="inline-block px-4 py-3 rounded-2xl bg-[#16151D] border border-white/10 w-full max-w-[280px]">
+              <p class="text-[10px] font-bold text-slate-400 mb-1">
+                <%= @routine_club.bank_name %> <span class="text-slate-600">|</span> <%= @routine_club.account_holder %>
+              </p>
+              <div class="flex items-center justify-center gap-2 group cursor-pointer" onclick="navigator.clipboard.writeText('<%= @routine_club.account_number %>').then(() => alert('계좌번호가 복사되었습니다!'))">
+                <span class="text-lg font-black text-white tracking-wider font-mono"><%= @routine_club.account_number %></span>
+                <span class="text-indigo-500 group-hover:text-white transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                </span>
+              </div>
+            </div>
+            <p class="text-[9px] font-bold text-slate-600">입금자명을 신청서와 동일하게 입력해주세요.</p>
+          </div>
+        </div>
+      </div>
+
+      <% if @is_member %>
+         <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-[28px] p-8 text-center space-y-3">
+           <div class="text-4xl">🎊</div>
+           <p class="text-emerald-400 font-black text-base">이미 <%= @routine_club.recruiting_generation_number %>기 멤버입니다!</p>
+           <p class="text-xs font-bold text-emerald-400/60 leading-relaxed">준비된 시스템과 함께<br/>최고의 성장을 만들어보세요.</p>
+           <%= link_to "나의 대시보드 가기", prototype_home_path(tab: 'club'), class: "inline-block mt-4 px-6 py-3 bg-emerald-500 text-white rounded-xl font-black text-xs" %>
+         </div>
+      <% elsif @is_pending %>
+         <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-[28px] p-8 text-center space-y-4">
+           <div class="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-2 animate-pulse">⏳</div>
+           <div class="space-y-1">
+             <p class="text-indigo-400 font-black text-base">클럽 가입 확인 중입니다</p>
+             <p class="text-[10px] font-bold text-indigo-400/60 uppercase tracking-widest">Application Pending</p>
+           </div>
+           <p class="text-xs font-bold text-slate-500 leading-relaxed">
+             호스트가 입금 내역을 확인하고 있습니다.<br/>
+             승인이 완료되면 푸시 알림으로 알려드릴게요!<br/>
+             (보통 24시간 내에 처리됩니다.)
+           </p>
+           <%= link_to "안내 페이지로 돌아가기", guide_routine_clubs_path(source: 'prototype'), class: "inline-block px-6 py-3 bg-white/5 border border-white/10 text-white rounded-xl font-black text-xs" %>
+         </div>
+      <% elsif !is_recruiting %>
+         <!-- Recruitment Closed: Show disabled form state -->
+         <div class="opacity-50 pointer-events-none space-y-6">
+           <div class="space-y-2">
+             <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
+             <input type="text" disabled placeholder="모집 기간에 신청 가능합니다" class="w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-600 font-bold" />
+           </div>
+           <div class="space-y-2">
+             <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">연락처</label>
+             <input type="text" disabled placeholder="모집 기간에 신청 가능합니다" class="w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-600 font-bold" />
+           </div>
+           <button disabled class="w-full py-6 bg-slate-700 rounded-[28px] font-black text-white text-lg cursor-not-allowed">
+             <%= recruitment_start.strftime("%m월 %d일") %>부터 신청 가능
+           </button>
+         </div>
+      <% else %>
+        <% if logged_in? %>
+          <%= form_with(url: join_routine_club_path(@routine_club), method: :post, 
+                        data: { 
+                          controller: "club-join",
+                          club_join_target: "form",
+                          action: "submit->club-join#review" 
+                        },
+                        class: "space-y-6") do |f| %>
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
+              <%= f.text_field :depositor_name, required: true, placeholder: "홍길동", 
+                              data: { club_join_target: "depositorInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">연락처 (오픈채팅/전화번호)</label>
+              <%= f.text_field :contact_info, required: true, placeholder: "010-1234-5678", 
+                              data: { club_join_target: "contactInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">THREADS NICKNAME (ID)</label>
+              <%= f.text_field :threads_nickname, placeholder: "@nickname", 
+                              data: { club_join_target: "threadsInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold" %>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">이번 기수 가입 포부</label>
+              <%= f.text_area :goal, rows: 4, placeholder: "목표와 다짐을 적어주세요. (최소 10자)", 
+                              data: { club_join_target: "goalInput" },
+                              class: "w-full bg-black/40 border border-white/5 rounded-2xl p-5 text-white text-sm placeholder-slate-800 focus:border-indigo-500/50 outline-none transition-all font-bold resize-none", required: true %>
+            </div>
+
+            <div class="pt-6">
+              <button type="submit" class="w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-[28px] font-black text-white text-lg shadow-2xl shadow-indigo-600/40 active:scale-95 transition-all">
+                참여 신청 및 정보 확인
+              </button>
+            </div>
+
+            <!-- Confirmation Modal -->
+            <div data-club-join-target="confirmModal" class="hidden fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" style="margin: 0;">
+              <div class="relative w-[calc(100%-2rem)] max-w-[340px] mx-auto app-glass-card border-white/10 p-6 space-y-6 animate-badge-pop bg-[#16151D]">
+                <div class="text-center space-y-1">
+                  <div class="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3">🧐</div>
+                  <h3 class="text-xl font-black text-white">입력 정보를 확인해주세요</h3>
+                  <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Please Verify Your Info</p>
+                </div>
+
+                <div class="space-y-4 py-2 border-y border-white/5">
+                  <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-black text-slate-500 shrink-0">입금자명</span>
+                    <span data-club-join-target="confirmName" class="text-xs font-black text-white text-right break-all"></span>
+                  </div>
+                  <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-black text-slate-500 shrink-0">연락처</span>
+                    <span data-club-join-target="confirmContact" class="text-xs font-black text-white text-right truncate max-w-[160px]"></span>
+                  </div>
+                  <div class="flex justify-between items-start">
+                    <span class="text-[10px] font-black text-slate-500 shrink-0">ID</span>
+                    <span data-club-join-target="confirmThreads" class="text-xs font-black text-white text-right break-all"></span>
+                  </div>
+                  <div class="space-y-1">
+                    <span class="text-[10px] font-black text-slate-500">가입 포부</span>
+                    <p data-club-join-target="confirmGoal" class="text-[11px] font-bold text-slate-400 leading-relaxed text-left break-words line-clamp-3"></p>
+                  </div>
+                </div>
+
+                <div class="pt-2 space-y-3">
+                  <button type="button" data-action="click->club-join#submit" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-indigo-600/20 active:scale-95 transition-all">
+                    이 내용으로 신청 완료
+                  </button>
+                  <button type="button" data-action="click->club-join#close" class="w-full py-4 text-slate-500 font-bold text-xs hover:text-white transition-colors">
+                    수정할게요 (입력창으로 이동)
+                  </button>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="space-y-6">
+            <div class="p-6 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl text-center">
+              <p class="text-xs font-bold text-slate-400 leading-relaxed">신청서를 작성하시려면 로그인이 필요합니다.</p>
+            </div>
+            <%= link_to prototype_login_path, class: "block w-full py-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-[28px] font-black text-white text-lg text-center shadow-2xl shadow-indigo-600/40 active:scale-95 transition-all" do %>
+              로그인하고 신청하기
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
