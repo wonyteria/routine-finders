@@ -113,21 +113,7 @@
             </p>
           </div>
 
-          <!-- Bank Account Info -->
-          <div class="pt-4 space-y-2">
-            <div class="inline-block px-4 py-3 rounded-2xl bg-[#16151D] border border-white/10 w-full max-w-[280px]">
-              <p class="text-[10px] font-bold text-slate-400 mb-1">
-                <%= @routine_club.bank_name %> <span class="text-slate-600">|</span> <%= @routine_club.account_holder %>
-              </p>
-              <div class="flex items-center justify-center gap-2 group cursor-pointer" onclick="navigator.clipboard.writeText('<%= @routine_club.account_number %>').then(() => alert('계좌번호가 복사되었습니다!'))">
-                <span class="text-lg font-black text-white tracking-wider font-mono"><%= @routine_club.account_number %></span>
-                <span class="text-indigo-500 group-hover:text-white transition-colors">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                </span>
-              </div>
-            </div>
-            <p class="text-[9px] font-bold text-slate-600">입금자명을 신청서와 동일하게 입력해주세요.</p>
-          </div>
+
         </div>
       </div>
 
@@ -176,6 +162,26 @@
                           action: "submit->club-join#review" 
                         },
                         class: "space-y-6") do |f| %>
+            
+            <!-- Bank Account Info (Moved Here) -->
+            <div class="space-y-3 pb-2">
+              <div class="flex items-center justify-between px-1">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider">입금 계좌 안내</label>
+                <span class="text-[9px] font-bold text-indigo-400">선착순 마감 주의</span>
+              </div>
+              <div class="w-full px-5 py-4 rounded-2xl bg-[#16151D] border border-indigo-500/20 text-center space-y-2">
+                <p class="text-[10px] font-bold text-slate-400">
+                  <%= @routine_club.bank_name %> <span class="text-slate-600">|</span> <%= @routine_club.account_holder %>
+                </p>
+                <div class="flex items-center justify-center gap-2 group cursor-pointer active:scale-95 transition-transform" onclick="navigator.clipboard.writeText('<%= @routine_club.account_number %>').then(() => alert('계좌번호가 복사되었습니다!'))">
+                  <span class="text-xl font-black text-white tracking-wider font-mono"><%= @routine_club.account_number %></span>
+                  <span class="text-indigo-500 group-hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  </span>
+                </div>
+                <p class="text-[9px] font-bold text-slate-500">터치하여 복사하기</p>
+              </div>
+            </div>
             <div class="space-y-2">
               <label class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-4">입금자성함</label>
               <%= f.text_field :depositor_name, required: true, placeholder: "홍길동", 
