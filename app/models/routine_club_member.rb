@@ -436,10 +436,8 @@ class RoutineClubMember < ApplicationRecord
   end
 
   def award_season_badge
-    # TODO: 기수별로 동적으로 뱃지를 찾도록 개선 가능 (예: routine_club.title 파싱)
-    # 현재는 7기 뱃지 하드코딩 (이름에 '7기'가 포함된 클럽 멤버십 뱃지)
-
-    target_badge_name = "루파 클럽 7기 멤버"
+    gen = routine_club.recruiting_generation_number
+    target_badge_name = "루파 클럽 #{gen}기 멤버"
     badge = Badge.find_by(badge_type: :club_membership, name: target_badge_name)
 
     return unless badge

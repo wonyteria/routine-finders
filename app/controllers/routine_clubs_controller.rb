@@ -84,6 +84,8 @@ class RoutineClubsController < ApplicationController
     end
 
     join_date = Date.current
+    recruiting_start = RoutineClub.recruiting_cycle_start_date(join_date)
+    membership_end = @routine_club.get_cycle_end_date(recruiting_start)
     quarterly_fee = @routine_club.calculate_quarterly_fee(join_date)
 
     join_params = params.require(:routine_club).permit(:depositor_name, :contact_info, :goal, :threads_nickname, :commitment)
@@ -92,6 +94,8 @@ class RoutineClubsController < ApplicationController
       user: current_user,
       paid_amount: quarterly_fee,
       payment_status: :pending,
+      membership_start_date: recruiting_start,
+      membership_end_date: membership_end,
       **join_params.to_h.symbolize_keys
     )
 

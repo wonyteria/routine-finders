@@ -661,14 +661,39 @@ class User < ApplicationRecord
     }
   end
 
-  def category_stats(start_date = Date.current.beginning_of_month, end_date = Date.current.end_of_month)
-    stats = personal_routines.joins(:completions)
-                             .where(personal_routine_completions: { completed_on: start_date..end_date })
-                             .group(:category).count
+  def category_stats(start_date = nil, end_date = nil)
+    # 날짜 범위가 주어지지 않으면 전체 기간(Lifetime) 통계를 반환
+    query = personal_routines.joins(:completions)
+    query = query.where(personal_routine_completions: { completed_on: start_date..end_date }) if start_date && end_date
+
+    stats = query.group(:category).count
 
     categories = [ "HEALTH", "LIFE", "MIND", "STUDY", "HOBBY", "MONEY" ]
     categories.each { |cat| stats[cat] ||= 0 }
     stats
+  end
+
+  # 카테고리별 성취 기반 아이덴티티 타이틀 결정
+  def category_identity_title(category)
+    count = category_stats[category] || 0
+    case
+    when count >= 100 then "#{category_label(category)} 마스터"
+    when count >= 50  then "#{category_label(category)} 전문가"
+    when count >= 20  then "#{category_label(category)} 매니아"
+    when count >= 5   then "#{category_label(category)} 입문자"
+    else "#{category_label(category)} 시작"
+    end
+  end
+
+  def category_label(category)
+    {
+      "HEALTH" => "건강/운동",
+      "LIFE" => "생활/일기",
+      "MIND" => "마음챙김",
+      "STUDY" => "학습/성장",
+      "HOBBY" => "취미/여가",
+      "MONEY" => "자산/금융"
+    }[category] || "기타"
   end
 
 

@@ -281,6 +281,11 @@ class PrototypeController < ApplicationController
         }
       end
 
+      # Identity Stats (Lifetime Category Stats)
+      @lifetime_stats = current_user.category_stats
+      # 성취가 있는 카테고리만 내림차순으로 정렬하여 상위 3개 추출
+      @top_categories = @lifetime_stats.sort_by { |_, v| -v }.take(3).reject { |_, v| v == 0 }
+
     # 4. Growth Analytics (Fixed Period Logic)
 
     return unless current_user

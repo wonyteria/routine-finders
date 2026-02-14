@@ -160,7 +160,7 @@ class RoutineClub < ApplicationRecord
 
   # 하위 호환성을 위해 유지
   def calculate_quarterly_fee(date = Date.current)
-    calculate_cycle_fee(date)
+    calculate_cycle_fee
   end
 
   # 하위 호환성을 위해 유지하되 로직은 고정가로 변경
