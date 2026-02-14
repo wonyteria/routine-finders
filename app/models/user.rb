@@ -245,8 +245,11 @@ class User < ApplicationRecord
         u.provider = auth.provider
         u.uid = auth.uid
         u.email = email.presence || "#{auth.provider}-#{auth.uid}@routinefinders.temp"
-        u.nickname = name.presence || nickname.presence || "#{auth.provider.to_s.titleize} User #{auth.uid.to_s.last(4)}"
-        u.profile_image = image
+        # Truncate nickname/name to 255 chars to prevent DB overflow
+        raw_nickname = name.presence || nickname.presence || "#{auth.provider.to_s.titleize} User #{auth.uid.to_s.last(4)}"
+        u.nickname = raw_nickname.slice(0, 250)
+        # Truncate image URL to 255 chars (DB string limit)
+        u.profile_image = image.to_s.slice(0, 250) if image.present?
         u.password = SecureRandom.hex(16)
       end
     end

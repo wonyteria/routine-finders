@@ -239,7 +239,7 @@ class RoutineClubsController < ApplicationController
       Notification.create!(
         user: recipient,
         title: "#{@routine_club.title} 호스트로부터 메시지",
-        message: message,
+        content: message,
         notification_type: :club_message,
         link: personal_routines_path(tab: "club")
       )

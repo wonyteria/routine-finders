@@ -193,9 +193,8 @@ class ChallengeApplicationsController < ApplicationController
       user: @challenge.host,
       notification_type: :application,
       title: @challenge.offline? ? "새로운 모임 참가 신청" : "새로운 챌린지 신청",
-      message: "#{@challenge.offline? ? "#{current_user.nickname}님이 #{@challenge.title} 모임에 참가 신청했습니다." : "#{current_user.nickname}님이 #{@challenge.title} 챌린지에 신청했습니다."}",
+      content: "#{@challenge.offline? ? "#{current_user.nickname}님이 #{@challenge.title} 모임에 참가 신청했습니다." : "#{current_user.nickname}님이 #{@challenge.title} 챌린지에 신청했습니다."}",
       link: "/challenges/#{@challenge.id}?tab=applications&source=prototype"
-
     )
   end
 
@@ -206,18 +205,16 @@ class ChallengeApplicationsController < ApplicationController
         user: @application.user,
         notification_type: :approval,
         title: "챌린지 신청 승인",
-        message: "'#{@challenge.title}' 챌린지 신청이 승인되었습니다!#{message.present? ? "\n호스트 메시지: #{message}" : ""}",
+        content: "'#{@challenge.title}' 챌린지 신청이 승인되었습니다!#{message.present? ? "\n호스트 메시지: #{message}" : ""}",
         link: "/challenges/#{@challenge.id}?source=prototype"
-
       )
     when :rejection
       Notification.create!(
         user: @application.user,
         notification_type: :rejection,
         title: "챌린지 신청 거절",
-        message: "'#{@challenge.title}' 챌린지 신청이 거절되었습니다.#{message.present? ? " 사유: #{message}" : ""}",
+        content: "'#{@challenge.title}' 챌린지 신청이 거절되었습니다.#{message.present? ? " 사유: #{message}" : ""}",
         link: "/challenges/#{@challenge.id}?source=prototype"
-
       )
     end
   end

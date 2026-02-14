@@ -27,6 +27,13 @@ class Notification < ApplicationRecord
 
   # Validations
   validates :title, presence: true
+  before_validation :truncate_fields
+
+  private
+
+  def truncate_fields
+    self.title = title.to_s.slice(0, 250) if title.present?
+  end
 
   # Scopes
   scope :unread, -> { where(is_read: false) }
