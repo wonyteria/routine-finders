@@ -11,6 +11,10 @@ class Participant < ApplicationRecord
   belongs_to :challenge
   has_many :verification_logs, dependent: :destroy
 
+  def challenge_application
+    @challenge_application ||= challenge.challenge_applications.find_by(user_id: user_id)
+  end
+
   # Validations
   validates :user_id, uniqueness: { scope: :challenge_id, message: "is already participating in this challenge" }
   validates :joined_at, presence: true

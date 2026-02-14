@@ -117,19 +117,61 @@
     <% if processed_applications.any? %>
       <div class="space-y-3">
         <% processed_applications.each do |application| %>
-          <div class="flex items-center justify-between p-4 md:p-5 rounded-xl md:rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
-            <div class="flex items-center gap-3 md:gap-4">
-              <img src="<%= application.user.profile_image %>" class="w-9 h-9 md:w-10 md:h-10 rounded-xl md:rounded-2xl object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
-              <div>
-                <p class="font-black text-slate-300 group-hover:text-white transition-colors text-xs md:text-sm italic"><%= application.user.nickname %></p>
-                <p class="text-[8px] md:text-[9px] font-black text-slate-600 uppercase tracking-widest mt-0.5"><%= application.applied_at.strftime('%Y.%m.%d') %></p>
+          <div class="rounded-xl md:rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
+            <div class="flex items-center justify-between p-4 md:p-5">
+              <div class="flex items-center gap-3 md:gap-4">
+                <img src="<%= application.user.profile_image %>" class="w-9 h-9 md:w-10 md:h-10 rounded-xl md:rounded-2xl object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
+                <div>
+                  <p class="font-black text-slate-300 group-hover:text-white transition-colors text-xs md:text-sm italic"><%= application.user.nickname %></p>
+                  <p class="text-[8px] md:text-[9px] font-black text-slate-600 uppercase tracking-widest mt-0.5"><%= application.applied_at.strftime('%Y.%m.%d') %></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <button type="button" 
+                        onclick="const details = document.getElementById('app-details-<%= application.id %>'); details.classList.toggle('hidden'); this.classList.toggle('text-indigo-400');"
+                        class="text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
+                  답변 보기
+                </button>
+                <% if application.approved? %>
+                  <span class="px-3 md:px-4 py-1.5 md:py-2 bg-emerald-500/10 text-emerald-500 rounded-lg md:rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest border border-emerald-500/20">승인됨</span>
+                <% else %>
+                  <span class="px-3 md:px-4 py-1.5 md:py-2 bg-white/5 text-slate-500 rounded-lg md:rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest border border-white/5">거절됨</span>
+                <% end %>
               </div>
             </div>
-            <% if application.approved? %>
-              <span class="px-3 md:px-4 py-1.5 md:py-2 bg-emerald-500/10 text-emerald-500 rounded-lg md:rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest border border-emerald-500/20">승인됨</span>
-            <% else %>
-              <span class="px-3 md:px-4 py-1.5 md:py-2 bg-white/5 text-slate-500 rounded-lg md:rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest border border-white/5">거절됨</span>
-            <% end %>
+
+            <!-- Detail Drawer (Processed) -->
+            <div id="app-details-<%= application.id %>" class="hidden px-5 pb-5 border-t border-white/5 pt-4 animate-slide-up">
+              <% if application.application_answers.present? && !application.application_answers.empty? %>
+                <div class="space-y-4">
+                   <% application.application_answers.each do |question, answer| %>
+                      <div>
+                        <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">Q. <%= question %></p>
+                        <p class="text-xs font-bold text-slate-300 italic leading-relaxed">"<%= answer %>"</p>
+                      </div>
+                   <% end %>
+                </div>
+              <% elsif application.message.present? %>
+                <div>
+                   <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">Message</p>
+                   <p class="text-xs font-bold text-slate-300 italic leading-relaxed">"<%= application.message %>"</p>
+                </div>
+              <% end %>
+              
+              <% if application.contact_info.present? %>
+                <div class="mt-4 pt-4 border-t border-white/5">
+                  <p class="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">Contact</p>
+                  <p class="text-xs font-bold text-indigo-400 italic"><%= application.contact_info %></p>
+                </div>
+              <% end %>
+
+              <% if application.rejected? && application.reject_reason.present? %>
+                <div class="mt-4 pt-4 border-t border-rose-500/10">
+                  <p class="text-[8px] font-black text-rose-500 uppercase tracking-widest mb-1">Reject Reason</p>
+                  <p class="text-xs font-bold text-slate-500 italic">"<%= application.reject_reason %>"</p>
+                </div>
+              <% end %>
+            </div>
           </div>
         <% end %>
       </div>
