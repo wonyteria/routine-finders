@@ -57,7 +57,7 @@
     <div class="w-10"></div>
   </header>
 
-  <%= form_with model: @routine, url: personal_routines_path(source: 'prototype'), data: { turbo: false }, class: "flex-1 flex flex-col px-6 min-h-0 relative" do |f| %>
+  <%= form_with model: @routine, url: personal_routines_path(source: 'prototype'), data: { turbo: false }, class: "flex-1 flex flex-col min-h-0 relative max-w-lg mx-auto w-full" do |f| %>
     <%= f.hidden_field :icon, id: "routine_icon_hidden", value: "✨" %>
     <%= f.hidden_field :category, id: "routine_category_hidden", value: "LIFE" %>
     <%= f.hidden_field :days, id: "routine_days_hidden", value: '["1","2","3","4","5"]' %>
@@ -194,29 +194,30 @@
     </div>
   <% end %>
   <!-- ROUTINE ROADMAP OVERLAY (Premium App Style) -->
-  <div id="roadmapOverlay" class="fixed inset-0 z-[100] bg-[#0C0B12] transform translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden flex flex-col">
-    <!-- Header -->
-    <header class="pt-6 pb-2 px-6 flex items-center justify-between shrink-0">
-      <h2 class="text-xl font-black text-white italic tracking-tight">루틴 로드맵 🌿</h2>
-      <button id="closeRoadmap" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </header>
-
-    <!-- Category Tabs (Horizontal Scroll) -->
-    <nav class="px-6 py-4 flex gap-3 overflow-x-auto no-scrollbar shrink-0">
-      <% RoutineRoadmapHelper::ROADMAP_DATA.each_with_index do |(key, data), idx| %>
-        <button type="button" data-roadmap-tab="<%= key %>" 
-                class="roadmap-tab px-5 py-2.5 rounded-full border text-[11px] font-black whitespace-nowrap transition-all duration-300
-                       <%= idx == 0 ? 'bg-white text-[#0C0B12] border-white shadow-lg shadow-white/10' : 'bg-white/5 text-slate-500 border-white/10' %>">
-          <%= data[:label] %>
+  <div id="roadmapOverlay" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transform translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden flex justify-center">
+    <div class="w-full max-w-[500px] bg-[#0C0B12] h-full flex flex-col relative shadow-2xl border-x border-white/5">
+      <!-- Header -->
+      <header class="pt-6 pb-2 px-6 flex items-center justify-between shrink-0">
+        <h2 class="text-xl font-black text-white italic tracking-tight">루틴 로드맵 🌿</h2>
+        <button id="closeRoadmap" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
-      <% end %>
-    </nav>
+      </header>
+
+      <!-- Category Tabs (Horizontal Scroll) -->
+      <nav class="px-6 py-4 flex gap-3 overflow-x-auto no-scrollbar shrink-0">
+        <% RoutineRoadmapHelper::ROADMAP_DATA.each_with_index do |(key, data), idx| %>
+          <button type="button" data-roadmap-tab="<%= key %>" 
+                  class="roadmap-tab px-5 py-2.5 rounded-full border text-xs font-black whitespace-nowrap transition-all duration-300
+                         <%= idx == 0 ? 'bg-white text-[#0C0B12] border-white shadow-lg shadow-white/10' : 'bg-white/5 text-slate-500 border-white/10' %>">
+            <%= data[:label] %>
+          </button>
+        <% end %>
+      </nav>
 
     <!-- Content (Growth Path) -->
     <div class="flex-1 overflow-y-auto no-scrollbar relative">
-      <div class="px-8 py-4 pb-32">
+      <div class="px-6 py-4 pb-32">
         <div class="mb-10 text-center">
           <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Growth Journey</p>
           <h3 class="text-xl font-black text-white">관심사를 선택하고<br/>작은 씨앗부터 시작해보세요.</h3>
