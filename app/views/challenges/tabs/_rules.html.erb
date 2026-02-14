@@ -75,28 +75,28 @@
         예약 및 비용 정보
       </h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <!-- Capacity -->
-        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
-          <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <div class="p-6 bg-gradient-to-br from-white/[0.05] to-transparent rounded-[32px] border border-white/5 flex items-center gap-5 group">
+          <div class="w-12 h-12 rounded-[20px] bg-indigo-500/10 flex items-center justify-center shrink-0 text-indigo-400 group-hover:scale-110 transition-transform shadow-lg shadow-indigo-500/5">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           </div>
-          <div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">모집 정원</p>
-            <p class="font-bold text-white"><%= challenge.meeting_info&.max_attendees || '∞' %>명</p>
-            <p class="text-[11px] text-slate-400 mt-1">현재 <%= challenge.current_participants %>명 예약됨</p>
+          <div class="min-w-0">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 whitespace-nowrap">모집 정원</p>
+            <p class="text-xl font-black text-white leading-tight whitespace-nowrap"><%= challenge.meeting_info&.max_attendees || '∞' %>명</p>
+            <p class="text-[11px] text-slate-500 mt-1 font-bold break-keep">현재 <%= challenge.current_participants %>명 예약됨</p>
           </div>
         </div>
 
         <!-- Entry Fee -->
-        <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 flex items-start gap-4">
-          <div class="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0 text-amber-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="p-6 bg-gradient-to-br from-white/[0.05] to-transparent rounded-[32px] border border-white/5 flex items-center gap-5 group">
+          <div class="w-12 h-12 rounded-[20px] bg-amber-500/10 flex items-center justify-center shrink-0 text-amber-400 group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/5">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
-          <div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">참가 비용</p>
-            <p class="font-bold text-white"><%= challenge.cost_type_free? ? "무료 참여" : "#{number_with_delimiter(challenge.amount)}원" %></p>
-            <p class="text-[11px] text-slate-400 mt-1"><%= challenge.cost_type_deposit? ? "참여 완료 시 환불" : "모임 운영비" %></p>
+          <div class="min-w-0">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 whitespace-nowrap">참가 비용</p>
+            <p class="text-xl font-black text-white leading-tight whitespace-nowrap"><%= challenge.cost_type_free? ? "무료 참여" : "#{number_with_delimiter(challenge.amount)}원" %></p>
+            <p class="text-[11px] text-slate-500 mt-1 font-bold break-keep"><%= challenge.cost_type_deposit? ? "참여 완료 시 환불" : "모임 운영비" %></p>
           </div>
         </div>
       </div>
