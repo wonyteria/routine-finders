@@ -32,7 +32,21 @@ class PrototypeController < ApplicationController
     # 2. Routine & Task Progress (Real data)
     # Use numeric string (0-6) to match the stored data in personal_routines.days
     current_wday = Date.current.wday.to_s
-    @todays_routines = current_user ? current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).map(&:to_s).include?(current_wday) } : []
+    @todays_routines = if current_user
+      current_user.personal_routines.where(deleted_at: nil).select do |r|
+        days_list = r.days
+        if days_list.is_a?(String)
+          begin
+            days_list = JSON.parse(days_list)
+          rescue JSON::ParserError
+            days_list = []
+          end
+        end
+        (days_list || []).map(&:to_s).include?(current_wday)
+      end
+    else
+      []
+    end
 
     # Fix: Filter out finished challenges from 'Today's Tasks'
     @joined_participations = current_user ? current_user.participations.active.joins(:challenge).where("challenges.start_date <= ? AND challenges.end_date >= ?", Date.current, Date.current) : Participant.none

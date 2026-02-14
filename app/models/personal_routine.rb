@@ -3,6 +3,9 @@ class PersonalRoutine < ApplicationRecord
   belongs_to :user
   has_many :completions, class_name: "PersonalRoutineCompletion", dependent: :destroy
 
+  # Attributes
+  attribute :days, :json, default: -> { [] }
+
   # Validations
   validates :title, presence: true
   validate :validate_active_routines_limit, on: :create

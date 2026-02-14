@@ -526,8 +526,15 @@
           </div>
         <% end %>
       <% else %>
-        <div class="app-glass-card py-16 text-center border-dashed border-white/10">
-          <p class="text-sm font-bold text-slate-500">아직 루틴이 없습니다.<br/>[+] 버튼으로 추가해보세요!</p>
+        <div class="app-glass-card py-16 text-center border-dashed border-white/10 space-y-4">
+          <div class="text-3xl opacity-20">📅</div>
+          <p class="text-sm font-bold text-slate-500 leading-relaxed">
+            오늘 예정된 루틴이 없습니다.<br/>
+            이미 설정한 루틴은 <span class="text-indigo-400">관리 페이지</span>에서 확인 가능합니다.
+          </p>
+          <%= link_to personal_routines_path(source: 'prototype'), class: "inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[11px] font-black text-slate-300 hover:bg-white/10 active:scale-95 transition-all" do %>
+            <span>📋</span> 전체 루틴 관리하기
+          <% end %>
         </div>
       <% end %>
     </div>
