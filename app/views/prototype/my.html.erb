@@ -181,8 +181,9 @@
 
     <div class="grid grid-cols-1 gap-3">
       <% if @top_categories.any? %>
-        <% @top_categories.each do |category, count| %>
-          <div class="app-glass-card p-5 relative overflow-hidden group">
+        <% @top_categories.each_with_index do |(category, count), idx| %>
+          <div class="app-glass-card p-5 relative overflow-hidden group cursor-pointer active:scale-[0.98] transition-all"
+               onclick="document.getElementById('cat-history-<%= idx %>').classList.remove('hidden'); document.body.classList.add('overflow-hidden')">
             <!-- Background Accent -->
             <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full group-hover:bg-indigo-500/10 transition-all"></div>
             
@@ -201,6 +202,66 @@
                 <div class="mt-1 h-1 w-20 bg-white/5 rounded-full overflow-hidden">
                   <div class="h-full bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" style="width: <%= [count * 2, 100].min %>%"></div>
                 </div>
+              </div>
+            </div>
+            
+            <!-- Tap Hint -->
+            <div class="absolute top-2 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <svg class="w-3 h-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+
+          <!-- Category History Modal -->
+          <div id="cat-history-<%= idx %>" class="hidden fixed inset-0 z-[600]">
+            <div onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')"
+                 class="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"></div>
+            <div class="absolute bottom-0 inset-x-0 bg-[#0C0B12] rounded-t-[40px] border-t border-white/10 p-8 space-y-8 animate-slide-up max-h-[85vh] overflow-y-auto no-scrollbar">
+              <header class="flex justify-between items-start">
+                <div class="space-y-2">
+                  <div class="flex items-center gap-3">
+                    <span class="text-3xl"><%= { "HEALTH" => "🏋️", "LIFE" => "📝", "MIND" => "🧘", "STUDY" => "📚", "HOBBY" => "🎨", "MONEY" => "💰" }[category] || "✨" %></span>
+                    <h3 class="text-2xl font-black text-white italic tracking-tight"><%= current_user.category_label(category) %> 히스토리</h3>
+                  </div>
+                  <p class="text-sm font-black text-indigo-400"><%= current_user.category_identity_title(category) %></p>
+                </div>
+                <button onclick="this.closest('.fixed').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" 
+                        class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </header>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="app-glass-card p-5 bg-white/[0.02] flex flex-col justify-between">
+                  <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Cumulative</p>
+                  <p class="text-2xl font-black text-white"><%= count %><span class="text-xs ml-1 text-slate-400">회 성취</span></p>
+                </div>
+                <div class="app-glass-card p-5 bg-white/[0.02] flex flex-col justify-between">
+                  <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Routines</p>
+                  <p class="text-2xl font-black text-white"><%= @category_history[category]&.size || 0 %><span class="text-xs ml-1 text-slate-400">개 수행</span></p>
+                </div>
+              </div>
+
+              <section class="space-y-4">
+                <h4 class="text-xs font-black text-slate-500 uppercase tracking-wider pl-1">수행했던 루틴 리스트</h4>
+                <div class="space-y-3">
+                  <% if @category_history[category]&.any? %>
+                    <% @category_history[category].each do |title| %>
+                      <div class="flex items-center gap-4 p-5 rounded-3xl bg-white/[0.03] border border-white/5">
+                        <div class="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]"></div>
+                        <span class="text-sm font-bold text-slate-300"><%= title %></span>
+                      </div>
+                    <% end %>
+                  <% else %>
+                    <p class="text-xs text-slate-600 italic text-center py-4">아직 기록된 루틴이 없습니다.</p>
+                  <% end %>
+                </div>
+              </section>
+
+              <div class="py-4 px-6 rounded-3xl bg-indigo-500/10 border border-indigo-500/20 text-center">
+                <p class="text-[11px] font-bold text-indigo-300 leading-relaxed">
+                  루틴을 교체하더라도 당신의 노력은 사라지지 않습니다.<br/>
+                  이 카테고리의 궤적은 계속해서 당신의 정체성을 증명합니다.
+                </p>
               </div>
             </div>
           </div>

@@ -673,6 +673,20 @@ class User < ApplicationRecord
     stats
   end
 
+  def category_routine_history
+    # 카테고리별로 실제 완료 기록이 있는 루틴 제목 목록 추출 (삭제된 루틴 포함)
+    personal_routines.unscoped
+                     .where(user_id: id)
+                     .joins(:completions)
+                     .select("personal_routines.category, personal_routines.title")
+                     .distinct
+                     .each_with_object({}) do |r, hash|
+                       hash[r.category] ||= []
+                       # 제목 중복 제거 및 추가
+                       hash[r.category] << r.title unless hash[r.category].include?(r.title)
+                     end
+  end
+
   # 카테고리별 성취 기반 아이덴티티 타이틀 결정
   def category_identity_title(category)
     count = category_stats[category] || 0
