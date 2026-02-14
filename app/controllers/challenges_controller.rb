@@ -21,7 +21,15 @@ class ChallengesController < ApplicationController
     @is_joined = current_user&.participations&.exists?(challenge: @challenge)
     @participant = current_user&.participations&.find_by(challenge: @challenge)
     @is_host = current_user&.id == @challenge.host_id
-    @tab = params[:tab] || (@is_joined ? "records" : "intro")
+
+    # Set default tab based on challenge type
+    if @challenge.offline?
+      @tab = params[:tab] || "info"
+      # Prevent access to online-only tabs for gatherings
+      @tab = "info" if [ "records", "ranking" ].include?(@tab)
+    else
+      @tab = params[:tab] || (@is_joined ? "records" : "intro")
+    end
 
     # Common data
     @participants_count = @challenge.current_participants
