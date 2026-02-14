@@ -37,9 +37,9 @@ class PrototypeController < ApplicationController
     # Fix: Filter out finished challenges from 'Today's Tasks'
     @joined_participations = current_user ? current_user.participations.active.joins(:challenge).where("challenges.start_date <= ? AND challenges.end_date >= ?", Date.current, Date.current) : Participant.none
 
-    # Progress Calculation (Routine Only - User Request)
-    @total_task_count = routine_total
-    @completed_count = routine_done
+    # Progress Calculation (Strictly Routine Only)
+    @total_task_count = @todays_routines.size
+    @completed_count = @todays_routines.count { |r| r.completed_today? }
 
     @progress = @total_task_count.positive? ? (@completed_count.to_f / @total_task_count * 100).to_i : 0
 
@@ -563,16 +563,17 @@ class PrototypeController < ApplicationController
     # Override dates with dynamic calculation to ensure 2-month periods
     # This fixes any incorrect database values and ensures consistency
     if @routine_club
-      current_gen_start = RoutineClub.current_cycle_start_date(Date.current)
-      @routine_club.start_date = current_gen_start
-      @routine_club.end_date = @routine_club.get_cycle_end_date(Date.current)
+      # 모집 중인 기수의 실제 시작일을 기준으로 날짜를 동적 할당
+      recruiting_start = RoutineClub.recruiting_cycle_start_date(Date.current)
+      @routine_club.start_date = recruiting_start
+      @routine_club.end_date = @routine_club.get_cycle_end_date(recruiting_start)
 
       # Additional info for better UX
       @recruiting_gen = @routine_club.recruiting_generation_number
       @current_gen = RoutineClub.generation_number(Date.current)
-      @recruitment_deadline = current_gen_start + 5.days
+      @recruitment_deadline = recruiting_start + 5.days
       @days_until_deadline = (@recruitment_deadline - Date.current).to_i
-      @activity_starts_at = current_gen_start
+      @activity_starts_at = recruiting_start
     end
 
     @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
@@ -1308,21 +1309,6 @@ class PrototypeController < ApplicationController
   end
 
   private
-
-  # Helper method to calculate total routines for today
-  def routine_total
-    return 0 unless current_user
-    current_wday = Date.current.wday.to_s
-    current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).map(&:to_s).include?(current_wday) }.size
-  end
-
-  # Helper method to calculate completed routines for today
-  def routine_done
-    return 0 unless current_user
-    current_wday = Date.current.wday.to_s
-    todays_routines = current_user.personal_routines.where(deleted_at: nil).select { |r| (r.days || []).map(&:to_s).include?(current_wday) }
-    todays_routines.count { |r| r.completed_today? }
-  end
 
   def set_shared_data
     @official_club = RoutineClub.ensure_official_club

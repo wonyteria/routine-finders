@@ -66,6 +66,22 @@ class RoutineClub < ApplicationRecord
     generation_number(date)
   end
 
+  # 모집 중인 기수의 시작일
+  def self.recruiting_cycle_start_date(date = Date.current)
+    # 7기 전환기 특별 연장 기간 (2/6까지)
+    if date <= Date.new(2026, 2, 6) && date >= Date.new(2025, 12, 17)
+      return Date.new(2026, 1, 1)
+    end
+
+    # 다음 기수 모집 기간 (D-15) 인 경우 다음 기수 시작일 반환
+    if date >= (next_cycle_start_date(date) - 15.days)
+      return next_cycle_start_date(date)
+    end
+
+    # 그 외에는 현재 기수 시작일
+    current_cycle_start_date(date)
+  end
+
   def recruiting_generation_number
     self.class.current_recruiting_generation
   end
@@ -138,8 +154,8 @@ class RoutineClub < ApplicationRecord
     days_in_period * 300
   end
 
-  def calculate_cycle_fee(date = Date.current)
-    self.class.calculate_cycle_fee(date)
+  def calculate_cycle_fee
+    duration_in_days * 300
   end
 
   # 하위 호환성을 위해 유지
