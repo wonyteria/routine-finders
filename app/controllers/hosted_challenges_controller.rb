@@ -234,7 +234,10 @@ class HostedChallengesController < ApplicationController
           app.update!(status: :approved)
           @challenge.participants.create!(
             user: app.user,
+            paid_amount: @challenge.total_payment_amount || 0,
             joined_at: Time.current,
+            contact_info: app.contact_info,
+            threads_nickname: app.threads_nickname,
             refund_bank_name: app.refund_bank_name,
             refund_account_number: app.refund_account_number,
             refund_account_name: app.refund_account_name

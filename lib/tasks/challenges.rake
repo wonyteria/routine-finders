@@ -5,6 +5,10 @@ namespace :challenges do
   task process_daily: :environment do
     puts "Starting daily challenge processing at #{Time.current}"
 
+    # 0. 매일 루치 리셋 (오늘 인증 여부 초기화)
+    puts "Resetting today_verified status for all participants..."
+    Participant.update_all(today_verified: false)
+
     # 1. 상태 업데이트가 필요한 챌린지 찾기
     challenges_to_update = Challenge.needs_status_update
     puts "Found #{challenges_to_update.count} challenges needing status update"
@@ -67,8 +71,8 @@ namespace :challenges do
     challenge = participant.challenge
     total_days = (challenge.end_date - challenge.start_date).to_i + 1
 
-    # 실제 인증 횟수
-    verified_count = participant.verification_logs.where(status: :verified).count
+    # 실제 인증 횟수 (approved 상태인 것만 카운트)
+    verified_count = participant.verification_logs.where(status: :approved).count
 
     # 달성률 계산
     achievement_rate = (verified_count.to_f / total_days * 100).round(2)

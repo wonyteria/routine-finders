@@ -46,9 +46,11 @@ class VerificationLog < ApplicationRecord
   end
 
   def calculate_completion_rate
-    total_days = (Date.current - participant.joined_at.to_date).to_i + 1
+    # 챌린지 전체 기간 기준으로 계산하여 Participant 모델과 로직 통일
+    total_days = (challenge.end_date - challenge.start_date).to_i + 1
+    total_days = 1 if total_days < 1
+
     verified_days = participant.verification_logs.approved.select("DISTINCT DATE(created_at)").count
-    return 0 if total_days.zero?
-    ((verified_days.to_f / total_days) * 100).round(2)
+    ((verified_days.to_f / total_days) * 100).round(1)
   end
 end
