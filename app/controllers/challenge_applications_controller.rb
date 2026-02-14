@@ -74,19 +74,20 @@ class ChallengeApplicationsController < ApplicationController
             # Create participant record
             @challenge.participants.create!(
               user: current_user,
-              paid_amount: @challenge.total_payment_amount,
+              paid_amount: @challenge.total_payment_amount || 0,
               joined_at: Time.current,
-              contact_info: @application.contact_info,
-              threads_nickname: @application.threads_nickname,
-              refund_bank_name: @application.refund_bank_name,
-              refund_account_number: @application.refund_account_number,
-              refund_account_name: @application.refund_account_name
+              contact_info: @application.contact_info.to_s,
+              threads_nickname: @application.threads_nickname.to_s,
+              refund_bank_name: @application.refund_bank_name.to_s,
+              refund_account_number: @application.refund_account_number.to_s,
+              refund_account_name: @application.refund_account_name.to_s
             )
 
             @challenge.increment!(:current_participants)
           end
 
           redirect_to redirect_target, notice: "챌린지 참여가 완료되었습니다! 입금 확인 후 활동을 시작할 수 있습니다."
+          nil
         else
           # [Case 2] 승인 필요 (Approval Required)
           # 알림 발송 실패가 신청 자체를 막지 않도록 처리
@@ -97,25 +98,29 @@ class ChallengeApplicationsController < ApplicationController
           end
 
           redirect_to redirect_target, notice: "신청이 완료되었습니다. 호스트의 승인을 기다려주세요."
+          nil
         end
 
       rescue => e
         # 즉시 참여 과정(트랜잭션 내부)에서 실패한 경우 신청서 삭제 후 에러 반환
         @application.destroy
-        Rails.logger.error "Application processing failed: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
-        redirect_to redirect_target, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
+        msg = e.message || "알 수 없는 오류가 발생했습니다."
+        Rails.logger.error "Application processing failed: #{msg}\n#{e.backtrace.first(10).join("\n")}"
+        redirect_to redirect_target, alert: "참여 처리 중 오류가 발생했습니다: #{msg}"
+        nil
       end
     else
-      msg = @application.errors.full_messages.to_sentence
+      msg = @application.errors.full_messages.to_sentence || "알 수 없는 오류가 발생했습니다."
       Rails.logger.error "Application Save Failed: #{msg}"
 
-      redirect_target = if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+      redirect_target ||= if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
         challenge_path(@challenge, source: "prototype")
       else
         @challenge
       end
 
       redirect_to redirect_target, alert: "신청서 저장에 실패했습니다: #{msg}"
+      nil
     end
   end
 

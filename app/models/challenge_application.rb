@@ -16,6 +16,20 @@ class ChallengeApplication < ApplicationRecord
 
   validate :answers_presence_validation, if: -> { challenge&.requires_application_message? }
 
+  # Callbacks
+  before_create :set_applied_at
+
+  # Scopes
+  scope :recent, -> { order(applied_at: :desc) }
+
+  def approve!
+    update!(status: :approved)
+  end
+
+  def reject!(reason = nil)
+    update!(status: :rejected, reject_reason: reason)
+  end
+
   private
 
   def answers_presence_validation
@@ -32,22 +46,6 @@ class ChallengeApplication < ApplicationRecord
       end
     end
   end
-
-  # Callbacks
-  before_create :set_applied_at
-
-  # Scopes
-  scope :recent, -> { order(applied_at: :desc) }
-
-  def approve!
-    update!(status: :approved)
-  end
-
-  def reject!(reason = nil)
-    update!(status: :rejected, reject_reason: reason)
-  end
-
-  private
 
   def set_applied_at
     self.applied_at ||= Time.current

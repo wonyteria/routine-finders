@@ -98,9 +98,12 @@ class RoutineClubsController < ApplicationController
     if @membership.save
       RoutineClubNotificationService.notify_host_new_payment(@routine_club, @membership)
       redirect_to prototype_club_join_path, notice: "참여 신청이 완료되었습니다. 입금 확인 후 참여가 승인됩니다."
+      nil
     else
-      Rails.logger.error "Membership Save Failed: #{@membership.errors.full_messages.join(', ')}"
-      redirect_to prototype_club_join_path, alert: "참여 신청에 실패했습니다: #{@membership.errors.full_messages.to_sentence}"
+      msg = @membership.errors.full_messages.to_sentence || "알 수 없는 오류가 발생했습니다."
+      Rails.logger.error "Membership Save Failed: #{msg}"
+      redirect_to prototype_club_join_path, alert: "참여 신청에 실패했습니다: #{msg}"
+      nil
     end
   end
 
