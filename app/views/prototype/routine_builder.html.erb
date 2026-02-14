@@ -189,63 +189,85 @@
       </button>
     </div>
   <% end %>
-
-  <!-- ROUTINE ROADMAP OVERLAY -->
+  <!-- ROUTINE ROADMAP OVERLAY (Premium App Style) -->
   <div id="roadmapOverlay" class="fixed inset-0 z-[100] bg-[#0C0B12] transform translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden flex flex-col">
-    <header class="p-6 flex items-center justify-between border-b border-white/5 shrink-0 bg-[#0C0B12]/80 backdrop-blur-md">
-      <h2 class="text-lg font-black text-white italic">루틴 로드맵 🌿</h2>
-      <button id="closeRoadmap" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90">
+    <!-- Header -->
+    <header class="pt-6 pb-2 px-6 flex items-center justify-between shrink-0">
+      <h2 class="text-xl font-black text-white italic tracking-tight">루틴 로드맵 🌿</h2>
+      <button id="closeRoadmap" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </header>
 
-    <div class="flex-1 overflow-y-auto px-6 py-8 space-y-12 pb-24 scroll-smooth">
-      <div class="space-y-2 mb-8">
-        <p class="text-xs font-black text-indigo-400 uppercase tracking-widest">Where to start?</p>
-        <h3 class="text-2xl font-black text-white leading-tight">나만의 성장 경로를<br/>선택해보세요.</h3>
-      </div>
+    <!-- Category Tabs (Horizontal Scroll) -->
+    <nav class="px-6 py-4 flex gap-3 overflow-x-auto no-scrollbar shrink-0">
+      <% RoutineRoadmapHelper::ROADMAP_DATA.each_with_index do |(key, data), idx| %>
+        <button type="button" data-roadmap-tab="<%= key %>" 
+                class="roadmap-tab px-5 py-2.5 rounded-full border text-[11px] font-black whitespace-nowrap transition-all duration-300
+                       <%= idx == 0 ? 'bg-white text-[#0C0B12] border-white shadow-lg shadow-white/10' : 'bg-white/5 text-slate-500 border-white/10' %>">
+          <%= data[:label] %>
+        </button>
+      <% end %>
+    </nav>
 
-      <% RoutineRoadmapHelper::ROADMAP_DATA.each do |key, data| %>
-        <section class="space-y-6">
-          <div class="flex items-center gap-2">
-            <span class="w-1 h-4 bg-indigo-500 rounded-full"></span>
-            <h4 class="text-sm font-black text-white"><%= data[:label] %></h4>
-          </div>
+    <!-- Content (Growth Path) -->
+    <div class="flex-1 overflow-y-auto no-scrollbar relative">
+      <div class="px-8 py-4 pb-32">
+        <div class="mb-10 text-center">
+          <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Growth Journey</p>
+          <h3 class="text-xl font-black text-white">관심사를 선택하고<br/>작은 씨앗부터 시작해보세요.</h3>
+        </div>
 
-          <div class="relative pl-6 space-y-6">
-            <!-- Connector Line -->
-            <div class="absolute left-3 top-2 bottom-2 w-0.5 bg-white/5"></div>
+        <% RoutineRoadmapHelper::ROADMAP_DATA.each_with_index do |(key, data), idx| %>
+          <div id="roadmap-path-<%= key %>" class="roadmap-path space-y-12 relative <%= idx == 0 ? '' : 'hidden' %>">
+            
+            <!-- Vertical Guide Line -->
+            <div class="absolute left-1/2 -translate-x-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-emerald-500/20 via-indigo-500/20 to-purple-500/20"></div>
 
-            <% data[:steps].each_with_index do |step, idx| %>
-              <div class="relative roadmap-item group active:scale-[0.98] transition-all" 
-                   data-title="<%= step[:title] %>" data-icon="<%= step[:icon] %>" data-category="<%= key %>" data-cat-label="<%= data[:label] %>">
-                <!-- Node Icon -->
-                <div class="absolute -left-[22px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-[#0C0B12] z-10 
-                            <%= step[:level] == 'SEED' ? 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]' : 
-                               (step[:level] == 'SPROUT' ? 'bg-indigo-400 shadow-[0_0_10px_rgba(129,140,248,0.5)]' : 'bg-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.5)]') %>">
+            <% data[:steps].each_with_index do |step, s_idx| %>
+              <div class="relative flex flex-col items-center roadmap-item group" 
+                   data-title="<%= step[:title] %>" data-icon="<%= step[:icon] %>" data-category="<%= key %>">
+                
+                <!-- Connection Visuals -->
+                <% if s_idx < data[:steps].size - 1 %>
+                   <div class="absolute top-[80px] left-1/2 -translate-x-1/2 w-4 h-[60px] flex items-center justify-center">
+                      <svg class="w-full h-full text-white/5" viewBox="0 0 24 60" fill="none" stroke="currentColor">
+                         <path d="M12 0V60" stroke-width="2" stroke-dasharray="4 4" />
+                      </svg>
+                   </div>
+                <% end %>
+
+                <!-- Icon Node -->
+                <div class="relative w-24 h-24 rounded-[32px] bg-gradient-to-br <%= step[:level] == 'SEED' ? 'from-emerald-500/10 to-emerald-500/5 border-emerald-500/20' : (step[:level] == 'SPROUT' ? 'from-indigo-500/10 to-indigo-500/5 border-indigo-500/20' : 'from-purple-500/10 to-purple-500/5 border-purple-500/20') %> 
+                            border flex items-center justify-center text-4xl shadow-2xl transition-all duration-500 group-active:scale-95 z-10">
+                  <span><%= step[:icon] %></span>
+                  
+                  <!-- Level Badge -->
+                  <div class="absolute -bottom-2 px-3 py-1 rounded-full border text-[8px] font-black tracking-tighter uppercase
+                             <%= step[:level] == 'SEED' ? 'bg-emerald-500 text-white border-emerald-400 shadow-lg shadow-emerald-500/30' : 
+                                (step[:level] == 'SPROUT' ? 'bg-indigo-500 text-white border-indigo-400 shadow-lg shadow-indigo-500/30' : 'bg-purple-500 text-white border-purple-400 shadow-lg shadow-purple-500/30') %>">
+                    <%= step[:level] %>
+                  </div>
                 </div>
 
-                <div class="p-6 bg-white/[0.03] border border-white/5 rounded-[24px] flex items-center gap-5 hover:bg-white/[0.05] transition-colors">
-                  <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                    <%= step[:icon] %>
-                  </div>
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded border 
-                                   <%= step[:level] == 'SEED' ? 'border-emerald-500/30 text-emerald-400' : 
-                                      (step[:level] == 'SPROUT' ? 'border-indigo-500/30 text-indigo-400' : 'border-purple-500/30 text-purple-400') %>">
-                        <%= step[:level] %>
-                      </span>
-                    </div>
-                    <h5 class="text-base font-black text-white"><%= step[:title] %></h5>
-                    <p class="text-[10px] text-slate-500 mt-1"><%= step[:description] %></p>
-                  </div>
+                <!-- Text Info -->
+                <div class="mt-6 text-center max-w-[180px]">
+                  <h4 class="text-base font-black text-white mb-1"><%= step[:title] %></h4>
+                  <p class="text-[10px] font-bold text-slate-500 leading-tight"><%= step[:description] %></p>
                 </div>
               </div>
             <% end %>
           </div>
-        </section>
-      <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Bottom Action Tip -->
+    <div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-[#0C0B12] via-[#0C0B12]/90 to-transparent pointer-events-none">
+      <div class="py-4 px-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center gap-3 pointer-events-auto">
+        <span class="text-base animate-pulse">✨</span>
+        <p class="text-[10px] font-bold text-indigo-300">원하는 루틴 단계를 탭하여 바로 시작하세요.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -294,10 +316,9 @@
         submitBtn.classList.add('hidden');
       }
 
-      document.getElementById('sum-title').textContent = titleInput.value;
-      document.getElementById('sum-icon').textContent = iconHidden.value;
+      if (titleInput.value) document.getElementById('sum-title').textContent = titleInput.value;
+      if (iconHidden.value) document.getElementById('sum-icon').textContent = iconHidden.value;
       
-      // Update summary category label from current selection
       const activeCat = document.querySelector('.cat-opt.selected-cat');
       if (activeCat) {
         document.getElementById('sum-cat').textContent = '#' + activeCat.dataset.label;
@@ -374,7 +395,7 @@
 
     update();
     
-    // ROADMAP LOGIC
+    // ROADMAP LOGIC (Premium App Style)
     const roadmapBtn = document.getElementById('roadmapBtn');
     const roadmapOverlay = document.getElementById('roadmapOverlay');
     const closeRoadmap = document.getElementById('closeRoadmap');
@@ -385,6 +406,23 @@
 
     closeRoadmap.addEventListener('click', () => {
       roadmapOverlay.classList.replace('translate-y-0', 'translate-y-full');
+    });
+
+    // Roadmap Tab Switching
+    document.querySelectorAll('[data-roadmap-tab]').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.roadmapTab;
+        
+        // Update Tabs UI
+        document.querySelectorAll('[data-roadmap-tab]').forEach(t => {
+          t.className = "roadmap-tab px-5 py-2.5 rounded-full border text-[11px] font-black whitespace-nowrap transition-all duration-300 bg-white/5 text-slate-500 border-white/10";
+        });
+        tab.className = "roadmap-tab px-5 py-2.5 rounded-full border text-[11px] font-black whitespace-nowrap transition-all duration-300 bg-white text-[#0C0B12] border-white shadow-lg shadow-white/10";
+
+        // Update Paths Visibility
+        document.querySelectorAll('.roadmap-path').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`roadmap-path-${target}`).classList.remove('hidden');
+      });
     });
 
     document.querySelectorAll('.roadmap-item').forEach(item => {
@@ -401,7 +439,6 @@
           if (badge) badge.remove();
         });
         
-        // Find if this icon exists in the pre-defined list
         const targetIconBtn = document.querySelector(`.icon-opt[data-icon="${item.dataset.icon}"]`);
         if (targetIconBtn) {
           targetIconBtn.classList.replace('unselected-opt', 'premium-selection');
@@ -423,7 +460,7 @@
         // Update components and Go to next step
         update();
         if (currentStep === 0) {
-          currentStep = 1; // Direct jump to category check or even days if we want
+          currentStep = 1; 
           update();
         }
       });
