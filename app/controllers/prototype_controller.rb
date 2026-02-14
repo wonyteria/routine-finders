@@ -595,8 +595,8 @@ class PrototypeController < ApplicationController
       @activity_starts_at = recruiting_start
     end
 
-    @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active)
-    @is_pending = current_user&.routine_club_members&.exists?(routine_club: @routine_club, payment_status: :pending) if current_user
+    @is_member = current_user&.routine_club_members&.exists?(routine_club: @routine_club, status: :active, membership_start_date: @activity_starts_at)
+    @is_pending = current_user&.routine_club_members&.exists?(routine_club: @routine_club, payment_status: :pending, membership_start_date: @activity_starts_at) if current_user
   end
 
   def mark_badges_viewed
