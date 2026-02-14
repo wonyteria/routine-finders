@@ -102,15 +102,20 @@ class ChallengeApplicationsController < ApplicationController
       rescue => e
         # 즉시 참여 과정(트랜잭션 내부)에서 실패한 경우 신청서 삭제 후 에러 반환
         @application.destroy
-        Rails.logger.error "Application processing failed: #{e.message}"
-        redirect_to redirect_target, alert: "참여 처리 중 오류가 발생했습니다. 다시 시도해주세요."
+        Rails.logger.error "Application processing failed: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
+        redirect_to redirect_target, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
       end
     else
-      if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
-        render :new, status: :unprocessable_entity, layout: "prototype"
+      msg = @application.errors.full_messages.to_sentence
+      Rails.logger.error "Application Save Failed: #{msg}"
+
+      redirect_target = if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+        challenge_path(@challenge, source: "prototype")
       else
-        render :new, status: :unprocessable_entity
+        @challenge
       end
+
+      redirect_to redirect_target, alert: "신청서 저장에 실패했습니다: #{msg}"
     end
   end
 

@@ -86,22 +86,21 @@ class RoutineClubsController < ApplicationController
     join_date = Date.current
     quarterly_fee = @routine_club.calculate_quarterly_fee(join_date)
 
+    join_params = params.require(:routine_club).permit(:depositor_name, :contact_info, :goal, :threads_nickname, :commitment)
+
     @membership = @routine_club.members.build(
       user: current_user,
       paid_amount: quarterly_fee,
-      depositor_name: params[:depositor_name],
-      contact_info: params[:contact_info],
-      goal: params[:goal],
-      threads_nickname: params[:threads_nickname],
-      commitment: params[:commitment],
-      payment_status: :pending
+      payment_status: :pending,
+      **join_params.to_h.symbolize_keys
     )
 
     if @membership.save
       RoutineClubNotificationService.notify_host_new_payment(@routine_club, @membership)
       redirect_to prototype_club_join_path, notice: "참여 신청이 완료되었습니다. 입금 확인 후 참여가 승인됩니다."
     else
-      redirect_to prototype_club_join_path, alert: "참여 신청에 실패했습니다."
+      Rails.logger.error "Membership Save Failed: #{@membership.errors.full_messages.join(', ')}"
+      redirect_to prototype_club_join_path, alert: "참여 신청에 실패했습니다: #{@membership.errors.full_messages.to_sentence}"
     end
   end
 
