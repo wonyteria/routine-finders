@@ -24,9 +24,9 @@ class ChallengesController < ApplicationController
 
     # Set default tab based on challenge type
     if @challenge.offline?
-      @tab = params[:tab] || "info"
+      @tab = params[:tab] || "intro"
       # Prevent access to online-only tabs for gatherings
-      @tab = "info" if [ "records", "ranking" ].include?(@tab)
+      @tab = "intro" if [ "records", "ranking" ].include?(@tab)
     else
       @tab = params[:tab] || (@is_joined ? "records" : "intro")
     end
