@@ -103,7 +103,7 @@ class RoutineClubMember < ApplicationRecord
     end
 
     # [Fix] 시스템 계정(루파) 및 관리자 계정 평가 제외
-    if user.nickname == "루파" || user.admin? || user.email.include?("routinefinders.temp")
+    if [ "루파", "wony quokka", "byteria won" ].include?(user.nickname) || user.admin? || user.email.include?("routinefinders.temp")
       return false
     end
 

@@ -1099,7 +1099,8 @@ class PrototypeController < ApplicationController
     base_members = @official_club.members
                                 .where(status: [ :active, :warned ])
                                 .where(payment_status: :confirmed)
-                                .includes(:attendances, user: :personal_routines)
+                            .includes(:attendances, user: :personal_routines)
+                            .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.admin? || m.user.email.include?("routinefinders.temp") }
 
     # 탭 A: 지난주 결과 기반 (오늘 경고 대상자들)
     @confirmed_risks = []
@@ -1133,6 +1134,8 @@ class PrototypeController < ApplicationController
 
     # 3. 이번 달 누적 경고 현황
     all_members = @official_club.members.includes(:user, :penalties)
+                                .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.admin? || m.user.email.include?("routinefinders.temp") }
+
     @warned_members_this_month = all_members.select { |m| m.current_month_penalty_count > 0 }
            .sort_by { |m| -m.current_month_penalty_count }
   end
