@@ -16,8 +16,11 @@ class PrototypeController < ApplicationController
   def home
     # 1. Permission & Membership
     @permission = PermissionService.new(current_user)
-    @official_club = RoutineClub.official.first
-    @my_membership = current_user&.routine_club_members&.confirmed&.find_by(routine_club: @official_club)
+
+    # [Fix] Prioritize the official club the user is actually a member of
+    @my_membership = current_user&.routine_club_members&.confirmed&.joins(:routine_club)&.where(routine_clubs: { is_official: true })&.order("routine_club_members.created_at DESC")&.first
+    @official_club = @my_membership&.routine_club || RoutineClub.official.first
+
     @is_club_member = @permission.is_premium_member?
 
     # Check for newly approved members who haven't seen the welcome popup
@@ -655,6 +658,24 @@ class PrototypeController < ApplicationController
       end
     else
       redirect_to prototype_login_path, alert: "로그인이 필요합니다."
+    end
+  end
+
+  def admin_user_show
+    @target_user = User.find(params[:id])
+
+    # 1. Activities & Stats
+    @routines = @target_user.personal_routines.where(deleted_at: nil).order(created_at: :desc)
+    @joined_challenges = @target_user.participations.active.includes(:challenge).order("challenges.created_at DESC")
+    @hosted_challenges = Challenge.where(host: @target_user).order(created_at: :desc)
+
+    # 2. Club Info
+    @club_membership = @target_user.routine_club_members.active.first
+
+    if request.headers["Turbo-Frame"]
+      render layout: false
+    else
+      render layout: "prototype"
     end
   end
 
