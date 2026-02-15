@@ -102,6 +102,11 @@ class RoutineClubMember < ApplicationRecord
       return false
     end
 
+    # [Fix] 시스템 계정(루파) 및 관리자 계정 평가 제외
+    if user.nickname == "루파" || user.admin? || user.email.include?("routinefinders.temp")
+      return false
+    end
+
     # 3. 중복 실행 방지 (Dry run일 때는 스킵하지 않음)
     # 해당 주차(attribution_date)에 해당하는 경고가 이미 있는지 확인
     unless dry_run
