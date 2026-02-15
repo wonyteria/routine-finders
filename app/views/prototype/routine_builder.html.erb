@@ -194,10 +194,10 @@
     </div>
   <% end %>
   <!-- ROUTINE ROADMAP OVERLAY (Premium App Style) -->
-  <div id="roadmapOverlay" class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm transform translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden flex justify-center">
+  <div id="roadmapOverlay" class="fixed inset-0 z-[11000] bg-black/60 backdrop-blur-sm transform translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-hidden flex justify-center">
     <div class="w-full max-w-[500px] bg-[#0C0B12] h-full flex flex-col relative shadow-2xl border-x border-white/5">
       <!-- Header -->
-      <header class="pt-6 pb-2 px-6 flex items-center justify-between shrink-0">
+      <header class="pt-6 pb-2 px-4 flex items-center justify-between shrink-0">
         <h2 class="text-xl font-black text-white italic tracking-tight">루틴 로드맵 🌿</h2>
         <button id="closeRoadmap" class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 active:scale-90 transition-all">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -205,7 +205,7 @@
       </header>
 
       <!-- Category Tabs (Horizontal Scroll) -->
-      <nav class="px-6 py-4 flex gap-3 overflow-x-auto no-scrollbar shrink-0">
+      <nav class="px-4 py-4 flex gap-3 overflow-x-auto no-scrollbar shrink-0">
         <% RoutineRoadmapHelper::ROADMAP_DATA.each_with_index do |(key, data), idx| %>
           <button type="button" data-roadmap-tab="<%= key %>" 
                   class="roadmap-tab px-5 py-2.5 rounded-full border text-xs font-black whitespace-nowrap transition-all duration-300
@@ -217,7 +217,7 @@
 
     <!-- Content (Growth Path) -->
     <div class="flex-1 overflow-y-auto no-scrollbar relative">
-      <div class="px-6 py-4 pb-32">
+      <div class="px-4 py-4 pb-40">
         <div class="mb-10 text-center">
           <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Growth Journey</p>
           <h3 class="text-xl font-black text-white">관심사를 선택하고<br/>작은 씨앗부터 시작해보세요.</h3>
@@ -268,7 +268,7 @@
     </div>
 
     <!-- Bottom Action Tip -->
-    <div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-[#0C0B12] via-[#0C0B12]/90 to-transparent pointer-events-none">
+    <div class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-[#0C0B12] via-[#0C0B12]/90 to-transparent pointer-events-none">
       <div class="py-4 px-6 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center gap-3 pointer-events-auto">
         <span class="text-base animate-pulse">✨</span>
         <p class="text-[10px] font-bold text-indigo-300">원하는 루틴 단계를 탭하여 바로 시작하세요.</p>
