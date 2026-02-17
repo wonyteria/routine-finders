@@ -80,16 +80,7 @@
             <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">루파 클럽 관리</span>
           <% end %>
 
-          <!-- DANGER ZONE: Reset Users -->
-          <% if current_user.super_admin? %>
-            <%= button_to prototype_reset_users_path, 
-                          method: :post, 
-                          data: { turbo_confirm: "jorden00@naver.com 계정을 제외한 모든 회원이 삭제됩니다. 정말 진행할까요?" },
-                          class: "p-5 rounded-2xl bg-red-600/10 border border-red-600 flex flex-col items-center gap-2 group active:scale-95 transition-all text-center w-full col-span-2" do %>
-              <span class="text-2xl group-hover:scale-110 transition-transform">💀</span>
-              <span class="text-[10px] font-black text-red-500 uppercase tracking-widest">전체 유저 초기화</span>
-            <% end %>
-          <% end %>
+
         </div>
       </section>
     </div>

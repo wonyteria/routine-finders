@@ -32,3 +32,4 @@
 - [x] Bug Fixes
   - [x] Fix `find_each` error in `admin_weekly_check` <!-- id: 99 -->
   - [x] Fix infinite loading in User Card (System Command Center) <!-- id: 100 -->
+  - [x] Remove 'Reset All Users' button <!-- id: 101 -->
