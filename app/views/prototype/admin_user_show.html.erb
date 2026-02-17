@@ -98,7 +98,7 @@
               </div>
               <div>
                 <h5 class="text-xs font-bold text-white line-clamp-1"><%= c.title %></h5>
-                <p class="text-[9px] text-slate-500">참여자 <%= c.current_participants %>명 • <%= c.status_label %></p>
+                <p class="text-[9px] text-slate-500">참여자 <%= c.current_participants %>명 • <%= c.status_label[:text] %></p>
               </div>
             </div>
           <% end %>
@@ -118,7 +118,7 @@
               </div>
               <div>
                 <h5 class="text-xs font-bold text-white line-clamp-1"><%= p.challenge.title %></h5>
-                <p class="text-[9px] text-slate-500">인증율 <%= p.verification_rate %>% • <%= p.challenge.status_label %></p>
+                <p class="text-[9px] text-slate-500">인증율 <%= p.completion_rate %>% • <%= p.challenge.status_label[:text] rescue p.challenge.status %></p>
               </div>
             </div>
           <% end %>

@@ -31,3 +31,4 @@
   - [x] Document Data Flow <!-- id: 8 -->
 - [x] Bug Fixes
   - [x] Fix `find_each` error in `admin_weekly_check` <!-- id: 99 -->
+  - [x] Fix infinite loading in User Card (System Command Center) <!-- id: 100 -->
