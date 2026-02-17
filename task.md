@@ -1,0 +1,33 @@
+- [x] Analyze Homepage Architecture <!-- id: 0 -->
+  - [x] `root` route in `config/routes.rb` <!-- id: 1 -->
+  - [x] Root controller and action logic <!-- id: 2 -->
+  - [x] Core view templates and partials <!-- id: 3 -->
+  - [x] JavaScript/Client-side logic <!-- id: 4 -->
+- [x] Global & Layout Deep Dive <!-- id: 9 -->
+  - [x] Analyze `prototype` layout (`app/views/layouts/prototype.html.erb`) <!-- id: 10 -->
+  - [x] Analyze `set_shared_data` in `ApplicationController` <!-- id: 11 -->
+  - [x] Identify hidden/conditional features (Admin, Club, etc.) <!-- id: 12 -->
+  - [x] Document key partials (`daily_greeting`, etc.) <!-- id: 13 -->
+- [x] Rufa Club System Analysis <!-- id: 16 -->
+  - [x] Analyze Models (`RoutineClub`, `RoutineClubMember`) <!-- id: 17 -->
+  - [x] Analyze Controllers (`RoutineClubsController`, `PrototypeController` club actions) <!-- id: 18 -->
+  - [x] Analyze Views (`live` - Lounge, `club_join`, `club_management`) <!-- id: 19 -->
+  - [x] Analyze Membership Logic (Penalty, Items, Payments) <!-- id: 20 -->
+- [x] Personal Routine System Analysis <!-- id: 21 -->
+  - [x] Analyze `PrototypeController#my` & `routines` <!-- id: 22 -->
+  - [x] Analyze `PersonalRoutinesController` & `RoutineBuilder` <!-- id: 23 -->
+  - [x] Document routine creation, execution, and tracking logic <!-- id: 24 -->
+- [x] Challenge & Verification Analysis <!-- id: 25 -->
+  - [x] Analyze `PrototypeController#explore` & `ChallengesController` <!-- id: 26 -->
+  - [x] Analyze `VerificationLogs` & Host Management (`HostedChallengesController`) <!-- id: 27 -->
+- [x] Community & Synergy Analysis <!-- id: 28 -->
+  - [x] Analyze `PrototypeController#synergy` & `Ranking` <!-- id: 29 -->
+- [ ] Draft Functional Specification <!-- id: 5 -->
+  - [x] Document features (Homepage, Global, Club) <!-- id: 6 -->
+  - [ ] Document Personal Routines <!-- id: 30 -->
+  - [ ] Document Challenges <!-- id: 31 -->
+  - [ ] Document Community/Synergy <!-- id: 32 -->
+  - [x] Document UI interactions <!-- id: 7 -->
+  - [x] Document Data Flow <!-- id: 8 -->
+- [x] Bug Fixes
+  - [x] Fix `find_each` error in `admin_weekly_check` <!-- id: 99 -->

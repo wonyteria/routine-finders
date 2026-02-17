@@ -1104,7 +1104,7 @@ class PrototypeController < ApplicationController
 
     # 탭 A: 지난주 결과 기반 (오늘 경고 대상자들)
     @confirmed_risks = []
-    base_members.find_each do |member|
+    base_members.each do |member|
       if member.check_weekly_performance!(@evaluation_date, dry_run: true)
         @confirmed_risks << {
           member: member,
@@ -1115,7 +1115,7 @@ class PrototypeController < ApplicationController
 
     # 탭 B: 이번 주 실시간 현황 (현재 달성률 70% 미만인 유저들)
     @live_risks = []
-    base_members.find_each do |member|
+    base_members.each do |member|
       # 가입 즉시 모니터링 대상에 포함 (performance_stats가 가입일 이후부터 계산함)
 
       stats = member.performance_stats(@this_week_start, [ @evaluation_date, @this_week_end ].min)
