@@ -171,6 +171,18 @@ class Challenge < ApplicationRecord
     (recruitment_end_date - Date.current).to_i
   end
 
+  def category_display
+    case category&.upcase
+    when "HEALTH" then "건강/운동"
+    when "LIFE"   then "생활습관"
+    when "MIND"   then "마음관리"
+    when "HOBBY"  then "취미/자기계발"
+    when "STUDY"  then "공부/학습"
+    when "MONEY"  then "자산관리"
+    else category.presence || (offline? ? "모임" : "챌린지")
+    end
+  end
+
   def priority_access_for_members?
     return false if recruitment_start_date.blank?
 

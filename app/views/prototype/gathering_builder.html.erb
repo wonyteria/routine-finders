@@ -1,5 +1,23 @@
-<div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none">
+<% content_for :hide_nav, true %>
+
+<div class="h-screen flex flex-col pt-2 bg-[#07060A] overflow-hidden select-none relative">
+  <!-- Dynamic Aurora Background Glow -->
+  <div id="aurora-glow" class="fixed -top-32 -left-32 w-[150%] h-[150%] bg-[#10B981]/10 blur-[130px] rounded-full pointer-events-none transition-all duration-1000 z-0"></div>
+  <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#34D399]/5 blur-[160px] rounded-full pointer-events-none z-0"></div>
+
   <style>
+    /* Step Animation */
+    .step-section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      display: none;
+    }
+    .step-section.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
     /* Premium Selection & Theme */
     .premium-selection {
       border-color: #818cf8 !important;
@@ -544,8 +562,22 @@
         }
       }
 
+      // Aurora Update Logic
+      const aurora = document.getElementById('aurora-glow');
+      const categoryColors = {
+        'HEALTH': '#10B981', // Emerald
+        'LIFE': '#F59E0B',   // Amber
+        'MIND': '#8B5CF6',   // Violet
+        'HOBBY': '#EC4899',  // Pink
+        'STUDY': '#3B82F6',  // Blue
+        'MONEY': '#059669'   // Emerald-dark
+      };
+
       function update() {
-        sections.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep));
+        sections.forEach((s, i) => {
+          s.classList.toggle('active', i === currentStep);
+          s.classList.toggle('hidden', i !== currentStep);
+        });
         dots.forEach((d, i) => {
           d.classList.toggle('active-dot', i === currentStep);
           d.classList.toggle('pending-dot', i > currentStep);
@@ -654,7 +686,20 @@
       });
       submitBtn.addEventListener('click', () => {
         isFormDirty = false; // Reset dirty flag before submission
-        document.querySelector('form').submit();
+        
+        // Premium Completion: Confetti Trigger
+        if (typeof confetti !== 'undefined') {
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#34D399', '#10B981', '#ffffff']
+          });
+        }
+        
+        setTimeout(() => {
+          document.querySelector('form').submit();
+        }, 800);
       });
       prevBtn.addEventListener('click', () => {
         if (currentStep > 0) { currentStep--; update(); }
@@ -676,6 +721,12 @@
               if (hiddenId === 'h_cost_type') {
                 document.getElementById('cost_box').classList.toggle('hidden', btn.dataset.val === 'free');
               }
+
+              // Update Aurora Color on Category Change
+              if (hiddenId === 'h_category' && aurora && categoryColors[btn.dataset.val]) {
+                aurora.style.backgroundColor = categoryColors[btn.dataset.val];
+              }
+
               smartScroll(btn);
               update(); // Call update to refresh review section
            });
