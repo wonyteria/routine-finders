@@ -27,13 +27,13 @@
   .hide-scrollbar::-webkit-scrollbar { display: none; }
 
   /* Theme Overrides for Partials */
-  .bg-white, .bg-slate-50, .bg-indigo-50, .bg-orange-50, .bg-emerald-50, .bg-amber-50 { 
+  .tab-content-env .bg-white, .tab-content-env .bg-slate-50, .tab-content-env .bg-indigo-50, .tab-content-env .bg-orange-50, .tab-content-env .bg-emerald-50, .tab-content-env .bg-amber-50 { 
     background: rgba(255, 255, 255, 0.03) !important; 
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
-  .text-slate-900, .text-orange-900, .text-emerald-900, .text-amber-900 { color: #ffffff !important; }
-  .text-slate-600, .text-slate-700, .text-emerald-600, .text-amber-600 { color: #a1a1aa !important; }
-  .text-slate-500 { color: #71717a !important; }
+  .tab-content-env .text-slate-900, .tab-content-env .text-orange-900, .tab-content-env .text-emerald-900, .tab-content-env .text-amber-900 { color: #ffffff !important; }
+  .tab-content-env .text-slate-600, .tab-content-env .text-slate-700, .tab-content-env .text-emerald-600, .tab-content-env .text-amber-600 { color: #a1a1aa !important; }
+  .tab-content-env .text-slate-500 { color: #71717a !important; }
 
   @keyframes slide-up {
     from { opacity: 0; transform: translateY(10px); }
@@ -244,9 +244,18 @@
             p_tabs.insert(1, { id: "management", label: "관리", icon: "⚙️" }) if @is_host
           %>
           <% p_tabs.each do |t| %>
-            <%= link_to challenge_path(@challenge, tab: t[:id]), 
+            <% 
+              is_active = (@tab == t[:id])
+              active_class = if @challenge.offline?
+                "bg-emerald-500 text-white border-emerald-400/50 shadow-[0_5px_15px_rgba(16,185,129,0.3)]"
+              else
+                "bg-indigo-500 text-white border-indigo-400/50 shadow-[0_5px_15px_rgba(99,102,241,0.3)]"
+              end
+              inactive_class = "text-white/40 border-white/5 bg-white/[0.02] hover:bg-white/5"
+            %>
+            <%= link_to challenge_path(@challenge, tab: t[:id], source: params[:source]), 
                         data: { turbo_frame: "dashboard_tabs" },
-                        class: "shrink-0 px-6 py-3.5 rounded-2xl font-black text-[13px] transition-all flex items-center gap-2 border #{ @tab == t[:id] ? 'bg-white text-black shadow-lg' : 'text-white/40 border-white/5 bg-white/[0.02]' }" do %>
+                        class: "shrink-0 px-6 py-3.5 rounded-2xl font-black text-[13px] transition-all flex items-center gap-2 border #{ is_active ? active_class : inactive_class }" do %>
               <span class="text-sm"><%= t[:icon] %></span>
               <%= t[:label] %>
             <% end %>
@@ -254,7 +263,7 @@
         </div>
 
         <!-- Tab Content -->
-        <div class="min-h-[400px]">
+        <div class="tab-content-env min-h-[400px]">
           <% case @tab %>
         <% when "records" %>
            <!-- Simplified Calendar-like dots -->
@@ -445,7 +454,7 @@
              </div>
           </div>
 
-        <% when "info" %>
+        <% when "info", "intro" %>
           <div class="space-y-8">
             <!-- Summary -->
             <% if @challenge.summary.present? %>
