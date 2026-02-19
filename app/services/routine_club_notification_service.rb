@@ -91,6 +91,43 @@ class RoutineClubNotificationService
     end
   end
 
+  # 만회 독려 넛지 알림
+  def self.notify_nudge(membership, routines_needed)
+    content = "#{membership.user.nickname}님, 이번 주 루틴 달성률이 조금 부족해요! 💦"
+    content += "\n일요일까지 최소 #{routines_needed}개의 루틴을 더 완료하면 다음 주 경고를 피할 수 있습니다."
+    content += "\n패스를 사용하거나 루틴을 완료하여 성취 흐름을 이어가세요! 🔥"
+
+    Notification.create!(
+      user: membership.user,
+      notification_type: :system,
+      title: "⚡ 이번 주 루틴 만회 독려 넛지",
+      content: content,
+      link: "/?tab=club"
+    )
+  end
+
+  # 일괄 넛지 알림 전송 (매주 목요일 등 스케줄러용)
+  def self.send_weekly_nudge_reminders
+    this_week_start = Date.current.beginning_of_week
+    this_week_end = Date.current.end_of_week
+    evaluation_date = Date.current
+
+    RoutineClub.active_clubs.find_each do |club|
+      club.members.where(payment_status: :confirmed, status: [ :active, :warned ]).find_each do |member|
+        # 시스템/관리자 계정 제외
+        next if [ "루파", "wony quokka", "byteria won" ].include?(member.user.nickname) || member.user.admin?
+
+        stats = member.performance_stats(this_week_start, [ evaluation_date, this_week_end ].min)
+
+        # 달성률 70% 미만인 경우 넛지 발송
+        if stats[:total_required] > 0 && stats[:rate] < 70.0
+          needed = member.routines_needed_for_70_percent(this_week_start, this_week_end)
+          notify_nudge(member, needed) if needed > 0
+        end
+      end
+    end
+  end
+
   # 일괄 출석 알림 전송 (스케줄러용)
   def self.send_daily_attendance_reminders
     # 활성화된 클럽의 모든 멤버에게 알림

@@ -31,3 +31,7 @@ production:
   club_performance_check:
     class: ClubPerformanceCheckJob
     schedule: "at 00:01 every Monday"
+
+  weekly_nudge_reminder:
+    command: "RoutineClubNotificationService.send_weekly_nudge_reminders"
+    schedule: "at 14:00 every Thursday"

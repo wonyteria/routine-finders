@@ -59,6 +59,7 @@ Rails.application.routes.draw do
   get "admin_center/analyze_member_performance", to: "prototype#analyze_member_performance", as: :prototype_analyze_member_performance
   get "admin_center/users/:id", to: "prototype#admin_user_show", as: :prototype_admin_user_show
   patch "admin_center/update_push_config", to: "prototype#update_push_config", as: :prototype_update_push_config
+  post "admin_center/send_nudge", to: "prototype#send_nudge", as: :prototype_send_nudge
 
 
 

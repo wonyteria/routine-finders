@@ -1140,6 +1140,23 @@ class PrototypeController < ApplicationController
            .sort_by { |m| -m.current_month_penalty_count }
   end
 
+  def send_nudge
+    member = RoutineClubMember.find(params[:member_id])
+    this_week_start = Date.current.beginning_of_week
+    this_week_end = Date.current.end_of_week
+
+    needed = member.routines_needed_for_70_percent(this_week_start, this_week_end)
+
+    if needed > 0
+      RoutineClubNotificationService.notify_nudge(member, needed)
+      redirect_to prototype_admin_weekly_check_path(tab: "live"), notice: "#{member.user.nickname}님께 만회 독려 넛지를 발송했습니다."
+    else
+      redirect_to prototype_admin_weekly_check_path(tab: "live"), alert: "해당 회원은 현재 만회가 필요하지 않은 상태입니다."
+    end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to prototype_admin_weekly_check_path, alert: "멤버를 찾을 수 없습니다."
+  end
+
   def broadcast
     title = params[:title]
     content = params[:content]
