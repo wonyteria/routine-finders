@@ -1,10 +1,10 @@
 
-c = RoutineClub.order(created_at: :desc).first
-if c
-  puts "Club Title: #{c.title}"
-  puts "Monthly Fee Field: #{c.monthly_fee}"
-  puts "Calculated Quarterly Fee: #{c.calculate_quarterly_fee}"
-  puts "Duration (Days): #{(c.end_date - c.start_date).to_i + 1}"
-else
-  puts "No club found"
+puts "Official Routine Clubs:"
+RoutineClub.where(is_official: true).each do |c|
+  puts "ID: #{c.id}, Title: #{c.title}, Dates: #{c.start_date} ~ #{c.end_date}, Status: #{c.status}"
 end
+
+puts "\nGeneration Info for Today (#{Date.current}):"
+puts "Current Recruiting Gen: #{RoutineClub.current_recruiting_generation}"
+puts "Recruiting Start Date: #{RoutineClub.recruiting_cycle_start_date}"
+puts "Recruitment Open?: #{RoutineClub.recruitment_open?}"

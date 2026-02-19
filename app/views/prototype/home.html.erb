@@ -206,15 +206,17 @@
   <div class="space-y-3">
     <%= form_with url: prototype_record_path, method: :post, 
                   data: { action: "submit->proto-ui#checkLogin" },
-                  class: "app-glass-card flex items-center px-5 py-3.5 gap-4 border-white/5 hover:bg-white/[0.03] transition-colors group" do |f| %>
+                  class: "app-glass-card-premium flex items-center px-6 py-4 gap-4 border-white/10 hover:bg-white/[0.05] transition-all group" do |f| %>
       <%= f.hidden_field :activity_type, value: "reflection" %>
-      <span class="text-xl group-hover:scale-110 transition-transform shrink-0">💪</span>
+      <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+        <span class="text-xl">💪</span>
+      </div>
       <%= f.text_field :body, 
                        placeholder: "오늘의 강력한 확언 한 줄", 
-                       class: "w-full bg-transparent border-none p-0 text-[13px] font-bold text-white placeholder:text-slate-500 focus:ring-0",
+                       class: "w-full bg-transparent border-none p-0 text-sm font-bold text-white placeholder:text-slate-500 focus:ring-0",
                        onkeydown: "if(event.key === 'Enter') { event.preventDefault(); this.form.submit(); }" %>
-      <button type="submit" class="ml-auto shrink-0 app-tap-active">
-        <svg class="w-5 h-5 text-indigo-500 opacity-80" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      <button type="submit" class="ml-auto shrink-0 app-tap-active p-2">
+        <svg class="w-6 h-6 text-indigo-400 group-hover:text-indigo-300 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </button>
     <% end %>
 
@@ -305,8 +307,134 @@
     }
   </style>
 
+  <!-- 2.5. Weekly Goal Card (Refined) -->
+  <% if current_user %>
+    <% goal_empty = current_user.weekly_goal.blank? %>
+    <div class="px-2">
+      <div class="app-glass-card-premium p-6 relative overflow-hidden group">
+        <div class="absolute -right-8 -top-8 w-24 h-24 bg-indigo-500/10 blur-2xl rounded-full"></div>
+        <% if goal_empty %>
+          <%= link_to prototype_my_path, class: "flex items-center justify-between group/goal" do %>
+            <div class="space-y-1">
+              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Weekly Focus</p>
+              <p class="text-sm font-bold text-slate-500">이번 주의 목표를 설정하세요.</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl group-hover/goal:bg-indigo-500/20 group-hover/goal:border-indigo-500/30 transition-all">🎯</div>
+          <% end %>
+        <% else %>
+          <div class="flex items-center justify-between">
+            <div class="space-y-1.5">
+              <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                Weekly Focus
+              </p>
+              <p class="text-base font-black text-white leading-relaxed"><%= current_user.weekly_goal %></p>
+            </div>
+            <div class="text-2xl drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">🎯</div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 4. Routine List (Moved Up for better accessibility) -->
+  <section class="space-y-4 pt-2">
+    <div class="flex justify-between items-center px-2">
+      <div class="flex items-center gap-3">
+        <h3 class="text-[11px] font-black text-white/40 uppercase tracking-[0.2em] leading-none">Today's Routine</h3>
+        <span class="text-[10px] font-black text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full border border-indigo-500/20"><%= Date.current.strftime("%m.%d") %></span>
+      </div>
+      
+      <%# Premium Item Manager Buttons %>
+      <div class="flex items-center gap-2">
+        <!-- Relax Pass -->
+        <button type="button" 
+                onclick="<%= @is_club_member ? "document.getElementById('global-pass-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')" : "showPremiumNudge('relax')" %>"
+                class="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-xl hover:bg-indigo-500/10 hover:border-indigo-500/30 transition-all group overflow-hidden relative">
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter group-hover:text-indigo-400">🎟️</span>
+          <span class="text-[11px] font-black text-white tabular-nums">
+            <%= @is_club_member ? (@my_membership&.remaining_relax_passes || 0) : "-" %>
+          </span>
+          <% unless @is_club_member %>
+            <div class="absolute -right-0.5 -top-0.5 w-2 h-2 bg-slate-600 rounded-full border border-[#0C0B12]"></div>
+          <% end %>
+        </button>
+
+        <!-- Save Pass -->
+        <button type="button" 
+                onclick="<%= @is_club_member ? "document.getElementById('global-pass-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')" : "showPremiumNudge('save')" %>"
+                class="flex items-center gap-1.5 px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-xl hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all group overflow-hidden relative">
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter group-hover:text-emerald-400">🛡️</span>
+          <span class="text-[11px] font-black text-white tabular-nums">
+            <%= @is_club_member ? (@my_membership&.remaining_save_passes || 0) : "-" %>
+          </span>
+          <% unless @is_club_member %>
+            <div class="absolute -right-0.5 -top-0.5 w-2 h-2 bg-slate-600 rounded-full border border-[#0C0B12]"></div>
+          <% end %>
+        </button>
+
+        <%= link_to prototype_routines_path, class: "w-9 h-9 flex items-center justify-center bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all" do %>
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        <% end %>
+      </div>
+    </div>
+
+    <div id="prototype-routine-list" class="space-y-3">
+      <% if @todays_routines.any? %>
+        <% @todays_routines.each do |routine| %>
+          <div id="routine_<%= routine.id %>_prototype" class="relative group">
+            <div class="w-full app-glass-card-premium p-5 flex items-center justify-between border-white/5 hover:border-indigo-500/30 transition-all app-tap-active <%= routine.completed_today? ? 'bg-indigo-500/10' : '' %>">
+              <div class="flex items-center gap-4 flex-1">
+                <div class="w-12 h-12 rounded-2xl bg-[#0C0B12] flex items-center justify-center text-2xl group-active:scale-110 transition-transform shrink-0 shadow-inner">
+                  <%= routine.icon %>
+                </div>
+                <div class="text-left flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-1">
+                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest truncate"><%= routine.category %></p>
+                    <% if @is_club_member %>
+                      <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter px-1.5 py-0.5 bg-indigo-500/10 rounded-md">PREMIUM</span>
+                    <% end %>
+                  </div>
+                  <p class="text-sm font-black text-white leading-none truncate <%= routine.completed_today? ? 'line-through opacity-30 text-indigo-300' : '' %>"><%= routine.title %></p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <!-- Check Button -->
+                <%= button_to toggle_personal_routine_path(routine, date: Date.current, source: 'prototype'), 
+                            method: :post, 
+                            data: { action: "submit->proto-ui#checkLogin", turbo_stream: true },
+                            class: "w-11 h-11 rounded-2xl border-2 flex items-center justify-center transition-all active:scale-90 #{routine.completed_today? ? 'bg-indigo-500 border-indigo-500 shadow-lg shadow-indigo-500/30' : 'border-white/10 bg-white/5 hover:border-white/20'}" do %>
+                   <% if routine.completed_today? %>
+                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                   <% else %>
+                     <svg class="w-6 h-6 text-white/10" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                   <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="app-glass-card-premium py-16 text-center border-dashed border-white/10 space-y-4">
+          <div class="text-3xl opacity-20">📅</div>
+          <p class="text-sm font-bold text-slate-500 leading-relaxed">
+            오늘 예정된 루인이 없네요!<br/>
+            이미 설정한 루틴은 하단 관리 메뉴에서 확인하세요.
+          </p>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
   <!-- 3. Visual Focus: The Digital Garden (Premium Redesign) -->
-  <section id="garden-root-container" class="relative px-2 -mt-8">
+  <section id="garden-root-container" class="relative px-2 pt-4">
+    <div class="mb-4 flex items-center justify-between px-2">
+      <h3 class="text-[11px] font-black text-white/40 uppercase tracking-[0.2em] leading-none">Growth Garden</h3>
+      <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Active Now</span>
+      </div>
+    </div>
     <%= render partial: "prototype/garden", locals: { 
           progress: @progress, 
           completed_count: @completed_count, 
@@ -319,269 +447,42 @@
         } %>
   </section>
 
-  <!-- 3.5. Weekly Goal Card -->
-  <% if current_user %>
-    <% goal_empty = current_user.weekly_goal.blank? %>
-    <div class="app-glass-card p-6 bg-[#1B1A24] border-white/5">
-      <% if goal_empty %>
-        <%= link_to prototype_my_path, class: "flex items-center justify-between p-5 bg-indigo-500/10 border border-dashed border-indigo-500/40 rounded-2xl group hover:bg-indigo-500/20 transition-all w-full" do %>
-          <div class="flex flex-col gap-1">
-            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-tighter">Weekly Goal</p>
-            <p class="text-base font-bold text-indigo-300">목표를 설정해 보세요.</p>
-          </div>
-          <span class="text-[10px] font-black text-indigo-400 shrink-0">작성하러 가기 →</span>
-        <% end %>
-      <% else %>
-        <div class="flex items-center justify-between">
-          <div class="space-y-1">
-            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Weekly Goal</p>
-            <p class="text-base font-black text-white leading-relaxed"><%= current_user.weekly_goal %></p>
-          </div>
-          <div class="text-xl opacity-50">🎯</div>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
-  <!-- 4. Routine List -->
-  <section class="space-y-4">
-    <div class="flex justify-between items-center px-2">
-      <div class="flex items-center gap-2">
-        <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">오늘의 루틴</h3>
-        <span class="text-[10px] font-bold text-slate-600 bg-white/5 px-2 py-0.5 rounded-full"><%= Date.current.strftime("%m월 %d일") %></span>
-      </div>
-      <%= link_to "관리", prototype_routines_path, class: "text-[10px] font-black text-indigo-400 hover:text-white transition-colors" %>
-      
-      <%# 아이템 관리 버튼 (항상 노출하도록 수정) %>
-      <div class="flex items-center gap-1.5">
-
-        <!-- 휴식권 버튼 -->
-        <button type="button" 
-                onclick="<%= @is_club_member ? "document.getElementById('global-pass-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')" : "showPremiumNudge('relax')" %>"
-                class="flex items-center px-2.5 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-lg hover:bg-indigo-500/20 active:scale-95 transition-all group relative">
-          <div class="flex items-baseline gap-1 leading-none">
-            <span class="text-[9px] font-black text-indigo-400 uppercase tracking-tighter">휴식권</span>
-            <span class="text-[10px] font-black text-white tabular-nums">
-              <%= @is_club_member ? (@my_membership&.remaining_relax_passes || 0) : "-" %>
-            </span>
-          </div>
-          <% unless @is_club_member %>
-            <div class="absolute -right-1 -top-1 w-3 h-3 bg-slate-600 rounded-full flex items-center justify-center text-[7px] border border-[#0C0B12]">🔒</div>
-          <% end %>
-        </button>
-
-        <!-- 세이브권 버튼 -->
-        <button type="button" 
-                onclick="<%= @is_club_member ? "document.getElementById('global-pass-modal').classList.remove('hidden'); document.body.classList.add('overflow-hidden')" : "showPremiumNudge('save')" %>"
-                class="flex items-center px-2.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/20 active:scale-95 transition-all group relative">
-          <div class="flex items-baseline gap-1 leading-none">
-            <span class="text-[9px] font-black text-emerald-400 uppercase tracking-tighter">세이브권</span>
-            <span class="text-[10px] font-black text-white tabular-nums">
-              <%= @is_club_member ? (@my_membership&.remaining_save_passes || 0) : "-" %>
-            </span>
-          </div>
-          <% unless @is_club_member %>
-            <div class="absolute -right-1 -top-1 w-3 h-3 bg-slate-600 rounded-full flex items-center justify-center text-[7px] border border-[#0C0B12]">🔒</div>
-          <% end %>
-        </button>
-      </div>
-    </div>
-
-    <div id="prototype-routine-list" class="space-y-3">
-      <% if @todays_routines.any? %>
-        <% @todays_routines.each do |routine| %>
-          <div id="routine_<%= routine.id %>_prototype" class="relative group">
-            <div class="w-full app-glass-card p-5 flex items-center justify-between border-white/5 hover:border-indigo-500/30 transition-all app-tap-active <%= routine.completed_today? ? 'bg-indigo-500/10' : 'bg-[#1B1A24]' %>">
-              <div class="flex items-center gap-4 flex-1">
-                <span class="text-3xl group-active:scale-125 transition-transform shrink-0"><%= routine.icon %></span>
-                <div class="text-left flex-1 min-w-0">
-                  <div class="flex items-center gap-2 mb-0.5">
-                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate"><%= routine.category %></p>
-                    <% if @is_club_member %>
-                      <div class="flex items-center gap-1">
-                        <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
-                        <span class="text-[8px] font-black text-indigo-400 uppercase tracking-tighter">Premium</span>
-                      </div>
-                    <% end %>
-                  </div>
-                  <p class="text-sm font-black text-white leading-none truncate <%= routine.completed_today? ? 'line-through opacity-40' : '' %>"><%= routine.title %></p>
-                </div>
-              </div>
-              <div class="flex items-center gap-3">
-                <!-- Check Button -->
-                <%= button_to toggle_personal_routine_path(routine, date: Date.current, source: 'prototype'), 
-                            method: :post, 
-                            data: { action: "submit->proto-ui#checkLogin", turbo_stream: true },
-                            class: "w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all active:scale-95 #{routine.completed_today? ? 'bg-indigo-500 border-indigo-500 shadow-lg shadow-indigo-500/20' : 'border-white/10 bg-white/5'}" do %>
-                   <% if routine.completed_today? %>
-                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                   <% else %>
-                     <svg class="w-5 h-5 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                   <% end %>
-                <% end %>
-              </div>
-            </div>
-
-            <!-- Pass Usage Modal (Redesigned) -->
-            <% if @is_club_member && !routine.completed_today? %>
-              <div id="pass-confirm-<%= routine.id %>" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
-                <div onclick="document.getElementById('pass-confirm-<%= routine.id %>').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
-                
-                <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 space-y-8 animate-badge-pop bg-[#16151D]">
-                  <div class="text-center space-y-2">
-                    <div class="w-16 h-16 bg-indigo-500/20 rounded-[24px] flex items-center justify-center text-3xl mx-auto mb-4">🪄</div>
-                    <h3 class="text-xl font-black text-white">아이템 사용하기</h3>
-                    <p class="text-xs font-bold text-slate-500">당신의 소중한 스트릭을 보호하세요.</p>
-                  </div>
-
-                  <!-- 1. Date Selection (Calendar Concept) -->
-                  <div class="space-y-3">
-                    <label class="text-[10px] font-black text-indigo-400 uppercase tracking-widest pl-1">언제 사용할까요? (날짜 선택)</label>
-                    <div class="relative">
-                      <input type="date" 
-                             id="date-picker-<%= routine.id %>"
-                             value="<%= Date.current.to_s %>"
-                             max="<%= Date.current.to_s %>"
-                             class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm font-bold focus:border-indigo-500 outline-none transition-all appearance-none"
-                             onchange="document.querySelectorAll('.pass-date-<%= routine.id %>').forEach(input => input.value = this.value)">
-                      <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- 2. Pass Selection Cards -->
-                  <div class="space-y-3">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest pl-1">아이템 종류 선택</label>
-                    
-                    <div class="grid grid-cols-1 gap-3">
-                      <!-- Relax Pass Choice -->
-                      <div class="relative group">
-                        <%= form_with url: use_pass_routine_club_path(@official_club, routine_id: routine.id, pass_type: 'relax', source: 'prototype'), 
-                                      method: :post, id: "routine-#{routine.id}-relax-form", class: "contents" do |f| %>
-                          <%= f.hidden_field :date, value: Date.current, class: "pass-date-#{routine.id}" %>
-                          <button type="button" 
-                                  disabled: (@my_membership&.remaining_relax_passes.to_i <= 0),
-                                  onclick="requestItemUse('routine-<%= routine.id %>-relax-form', '휴식권을 사용하시겠습니까?', '오늘 루틴을 쉰 것으로 처리하고 출석을 유지합니다.', '🎟️')"
-                                  class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
-                            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🎟️</div>
-                            <div class="flex-1 min-w-0">
-                              <div class="flex justify-between items-center mb-0.5">
-                                <span class="text-sm font-black text-white">휴식권</span>
-                                <span class="text-[10px] font-black text-indigo-400"><%= @my_membership&.remaining_relax_passes || 0 %>개 남음</span>
-                              </div>
-                              <p class="text-[10px] font-bold text-slate-500 leading-tight whitespace-nowrap truncate">공식 휴가로 처리되어 출석을 유지해주는 아이템입니다.</p>
-                            </div>
-                          </button>
-                        <% end %>
-                      </div>
-
-                      <!-- Save Pass Choice -->
-                      <div class="relative group">
-                        <%= form_with url: use_pass_routine_club_path(@official_club, routine_id: routine.id, pass_type: 'save', source: 'prototype'), 
-                                      method: :post, id: "routine-#{routine.id}-save-form", class: "contents" do |f| %>
-                          <%= f.hidden_field :date, value: Date.current, class: "pass-date-#{routine.id}" %>
-                          <button type="button" 
-                                  disabled: (@my_membership&.remaining_save_passes.to_i <= 0),
-                                  onclick="requestItemUse('routine-<%= routine.id %>-save-form', '세이브권을 사용하시겠습니까?', '지나간 결석을 출석으로 긴급 복구합니다.', '🛡️')"
-                                  class="w-full p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all text-left flex gap-4 items-center disabled:opacity-30 disabled:grayscale group">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">🛡️</div>
-                            <div class="flex-1 min-w-0">
-                              <div class="flex justify-between items-center mb-0.5">
-                                <span class="text-sm font-black text-white">세이브권</span>
-                                <span class="text-[10px] font-black text-emerald-400"><%= @my_membership&.remaining_save_passes || 0 %>개 남음</span>
-                              </div>
-                              <p class="text-[10px] font-bold text-slate-500 leading-tight whitespace-nowrap truncate">지나간 결석을 출석으로 복구하여 스트릭을 방어합니다.</p>
-                            </div>
-                          </button>
-                        <% end %>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="pt-4">
-                    <button onclick="document.getElementById('pass-confirm-<%= routine.id %>').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" 
-                            class="w-full py-4 text-slate-500 font-bold text-sm hover:text-white transition-colors">
-                      나중에 사용할게요
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <style>
-                input[type="date"]::-webkit-calendar-picker-indicator {
-                  background: transparent;
-                  bottom: 0;
-                  color: transparent;
-                  cursor: pointer;
-                  height: auto;
-                  left: 0;
-                  position: absolute;
-                  right: 0;
-                  top: 0;
-                  width: auto;
-                }
-              </style>
-            <% end %>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="app-glass-card py-16 text-center border-dashed border-white/10 space-y-4">
-          <div class="text-3xl opacity-20">📅</div>
-          <p class="text-sm font-bold text-slate-500 leading-relaxed">
-            오늘 예정된 루틴이 없습니다.<br/>
-            이미 설정한 루틴은 <span class="text-indigo-400">관리 페이지</span>에서 확인 가능합니다.
-          </p>
-          <%= link_to personal_routines_path(source: 'prototype'), class: "inline-flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[11px] font-black text-slate-300 hover:bg-white/10 active:scale-95 transition-all" do %>
-            <span>📋</span> 전체 루틴 관리하기
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  </section>
-  
-
   <!-- 5. RUFA Club Lounge (Unified Member Space) -->
-  <section class="space-y-4 pb-4">
+  <section class="space-y-4 pb-4 pt-4">
     <div class="flex items-center justify-between px-2">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">루파 클럽 라운지</h3>
-      
-      <%# 고대비 클럽 안내 버튼 - 헤더 우측에 배치 %>
-      <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "px-3 py-1.5 rounded-xl bg-indigo-500 text-white text-[10px] font-black shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex items-center gap-1.5 ring-4 ring-indigo-500/10" do %>
-        <span>📖</span> 루파 클럽 안내
+      <h3 class="text-[11px] font-black text-white/40 uppercase tracking-[0.2em] leading-none">RUFA Members Lounge</h3>
+      <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "text-[10px] font-black text-indigo-400 hover:glow-text-primary transition-all" do %>
+        가이드 보기 →
       <% end %>
     </div>
 
     <%= link_to prototype_live_path, class: "block group relative" do %>
-      <div class="app-glass-card p-6 bg-indigo-500/10 border border-indigo-500/20 rounded-[32px] overflow-hidden active:scale-[0.98] transition-all">
-        <%# 장식용 블러 요소가 클릭을 방해하지 않도록 pointer-events-none 추가 %>
-        <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-600/20 blur-3xl rounded-full group-hover:bg-indigo-600/30 transition-all pointer-events-none"></div>
+      <div class="app-glass-card-premium p-8 bg-gradient-to-br from-indigo-500/10 to-transparent border-indigo-500/20 rounded-[40px] overflow-hidden active:scale-[0.98] transition-all">
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full group-hover:bg-indigo-500/20 transition-all pointer-events-none"></div>
         
         <div class="relative z-10 flex items-center justify-between gap-6">
-          <div class="space-y-2 flex-1">
-            <h4 class="text-lg font-black text-white">우리들의 몰입 아지트</h4>
-            <p class="text-[11px] font-bold text-slate-400 leading-tight">라이브 세션과 스페셜 강의가 진행됩니다.<br/>멤버 전용 라운지에서 성장에너지를 충전하세요.</p>
+          <div class="space-y-3 flex-1">
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-500 text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+              Premium Space
+            </div>
+            <h4 class="text-xl font-black text-white">우리들의 몰입 아지트</h4>
+            <p class="text-[11px] font-bold text-slate-400 leading-relaxed">라이브 세션과 스페킹 강의가 매주 진행됩니다.<br/>멤버들과 함께 성장의 에너지를 나누세요.</p>
             
-            <!-- Facepile -->
-            <div class="flex items-center gap-3 pt-2">
-              <div class="flex -space-x-2">
+            <div class="flex items-center gap-4 pt-2">
+              <div class="flex -space-x-3">
                 <% @orbit_users.take(5).each do |user| %>
-                  <div class="w-8 h-8 rounded-full border-2 border-[#1B1A24] overflow-hidden bg-slate-800">
+                  <div class="w-10 h-10 rounded-full border-2 border-[#1B1A24] overflow-hidden bg-slate-800 shadow-xl">
                     <img src="<%= user.profile_image %>" class="w-full h-full object-cover">
                   </div>
                 <% end %>
                 <% if @orbit_users.count > 5 %>
-                  <div class="w-8 h-8 rounded-full border-2 border-[#1B1A24] bg-slate-800 flex items-center justify-center text-[10px] font-black text-indigo-300">
+                  <div class="w-10 h-10 rounded-full border-2 border-[#1B1A24] bg-slate-800 flex items-center justify-center text-[10px] font-black text-indigo-300 shadow-xl">
                     +<%= @orbit_users.count - 5 %>
                   </div>
                 <% end %>
               </div>
-              <span class="text-xs font-black text-indigo-400 uppercase tracking-widest group-hover:translate-x-1 transition-transform whitespace-nowrap">라운지 입장하기 →</span>
+              <span class="text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">Enter Lounge →</span>
             </div>
-          </div>
-          
-          <div class="absolute top-[10px] right-[12px] w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-all duration-500 shadow-lg shadow-indigo-500/20 overflow-hidden p-2">
-            <%= image_tag "rf_official_logo.png", class: "w-full h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity" %>
           </div>
         </div>
       </div>
@@ -590,36 +491,35 @@
 
   <!-- 6. Content Management: Host Center (If applicable) -->
   <% if @hosted_challenges.any? %>
-    <section class="space-y-4 pt-2 mb-6">
+    <section class="space-y-4 pt-4 mb-6">
       <div class="flex justify-between items-end px-2">
-        <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none">호스트 관리 센터</h3>
+        <h3 class="text-[11px] font-black text-white/40 uppercase tracking-[0.2em] leading-none">Host Center</h3>
       </div>
-      <div class="app-glass-card p-5 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 relative overflow-hidden group">
-        <div class="absolute -right-8 -top-8 w-24 h-24 bg-amber-500/10 blur-2xl rounded-full pointer-events-none"></div>
-        <div class="flex items-center justify-between relative z-10">
+      <div class="app-glass-card-premium p-6 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 relative overflow-hidden group">
+        <div class="absolute -right-12 -top-12 w-32 h-32 bg-amber-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+        <div class="flex items-center justify-between relative z-10 mb-6">
           <div class="space-y-1">
-            <h4 class="text-base font-black text-white">운영 중 도전 <%= @hosted_challenges.count %>개</h4>
-            <p class="text-[10px] font-bold text-slate-400">참여자들의 열정을 깨우러 가볼까요?</p>
+            <h4 class="text-lg font-black text-white">운영 중인 도전 <%= @hosted_challenges.count %>개</h4>
+            <p class="text-[11px] font-bold text-slate-400 leading-tight">참여자들의 열정을 깨우고<br/>함께 성장하는 즐거움을 만들어보세요.</p>
           </div>
-          <div class="text-2xl">⚡️</div>
+          <div class="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">⚡️</div>
         </div>
-        <div class="mt-4">
-          <%= link_to hosted_challenges_path(source: 'prototype'), class: "flex items-center justify-center gap-2 py-3 bg-amber-500 text-black font-black text-[11px] rounded-xl shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all" do %>
-            <span>호스트 센터 입장하기</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-          <% end %>
-        </div>
-      </div>
+        <%= link_to hosted_challenges_path(source: 'prototype'), class: "flex items-center justify-center gap-2 py-4 bg-amber-500 text-black font-black text-sm rounded-2xl shadow-xl shadow-amber-500/20 active:scale-95 transition-all w-full" do %>
+          <span>호스트 관리 센터 입장</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        <% end %>
     </section>
   <% end %>
 
   <!-- 7. My Real-time Achievement (Only Joined Content) -->
   <% if @joined_challenges.any? %>
-    <section class="space-y-4">
-      <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] leading-none px-2">참여중인 챌린지&모임</h3>
+    <section class="space-y-4 pb-12">
+      <div class="px-2">
+        <h3 class="text-[11px] font-black text-white/40 uppercase tracking-[0.2em] leading-none">Joined Experiences</h3>
+      </div>
       <div class="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 pb-2">
         <% @joined_challenges.each do |challenge| %>
-          <%= link_to challenge_path(challenge, source: 'prototype'), class: "shrink-0 w-64 app-glass-card p-5 border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden group active:scale-95 transition-all block" do %>
+          <%= link_to challenge_path(challenge, source: 'prototype'), class: "shrink-0 w-72 app-glass-card-premium p-6 border-indigo-500/20 bg-indigo-500/5 relative overflow-hidden group active:scale-95 transition-all block" do %>
             <div class="absolute -right-4 -top-4 w-16 h-16 bg-indigo-500/10 blur-xl rounded-full pointer-events-none"></div>
             <div class="flex items-start justify-between relative z-10 mb-3">
               <span class="px-2 py-0.5 bg-indigo-500/20 rounded-lg text-[8px] font-black text-indigo-400 uppercase">참여 중</span>
