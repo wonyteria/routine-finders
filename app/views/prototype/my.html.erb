@@ -1,15 +1,35 @@
-<div class="space-y-10 pt-2 pb-10">
+<div class="space-y-10 pt-2 pb-24 relative min-h-screen">
+  <!-- Immersive Background Glows -->
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-indigo-500/5 via-transparent to-transparent blur-[120px] pointer-events-none z-0"></div>
+  <div class="fixed top-[40%] right-[-10%] w-[300px] h-[300px] bg-purple-500/5 blur-[100px] rounded-full pointer-events-none z-0"></div>
+  <div class="fixed bottom-[10%] left-[-10%] w-[250px] h-[250px] bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none z-0"></div>
+
+  <div class="relative z-10 space-y-10">
   <!-- 1. Profile Summary -->
-  <section class="text-center space-y-4">
+  <section class="text-center space-y-6 pt-4">
     <div class="relative inline-block">
-      <div class="w-24 h-24 rounded-[32px] border-4 border-indigo-500 overflow-hidden shadow-2xl relative z-10">
-        <img src="<%= current_user&.profile_image %>" class="w-full h-full object-cover">
+      <!-- Animated Aura Ring -->
+      <div class="absolute inset-[-8px] bg-gradient-to-tr from-indigo-500 via-purple-500 to-indigo-400 rounded-[40px] opacity-20 blur-md animate-pulse"></div>
+      
+      <div class="relative w-28 h-28 rounded-[36px] p-1 bg-gradient-to-tr from-indigo-500/50 to-purple-500/50 shadow-2xl">
+        <div class="w-full h-full rounded-[32px] overflow-hidden bg-[#0C0B12]">
+          <img src="<%= current_user&.profile_image %>" class="w-full h-full object-cover">
+        </div>
       </div>
-      <div class="absolute -bottom-2 -right-2 bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-black border-4 border-[#0C0B12] z-20">Lv.<%= current_user&.level || 1 %></div>
+      
+      <div class="absolute -bottom-2 -right-2 bg-gradient-to-br from-indigo-500 to-purple-600 text-white px-3 py-1 rounded-full flex items-center justify-center text-[10px] font-black border-4 border-[#07060A] z-20 shadow-xl shadow-indigo-500/20">
+        Lv.<%= current_user&.level || 1 %>
+      </div>
     </div>
-    <div class="space-y-1.5 px-6">
-      <h2 class="text-xl font-black text-white"><%= current_user&.nickname %></h2>
-      <p class="text-[11px] font-bold text-slate-400 leading-relaxed"><%= current_user&.bio.presence || "나를 표현하는 한 줄을 입력해보세요" %></p>
+    
+    <div class="space-y-2 px-6">
+      <div class="flex items-center justify-center gap-2">
+        <h2 class="text-2xl font-black text-white italic tracking-tight"><%= current_user&.nickname %></h2>
+        <% if current_user&.is_rufa_club_member? %>
+          <span class="px-2 py-0.5 rounded-md bg-indigo-500 text-[8px] font-black text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]">RUFA CLUB</span>
+        <% end %>
+      </div>
+      <p class="text-xs font-bold text-slate-400 leading-relaxed max-w-[240px] mx-auto"><%= current_user&.bio.presence || "나를 표현하는 한 줄을 입력해보세요" %></p>
       
       <% if current_user&.sns_links.present? && current_user.sns_links.values.any?(&:present?) %>
         <div class="flex justify-center gap-2 pt-1">
@@ -42,21 +62,22 @@
       <% end %>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="flex justify-center gap-8 pt-4">
-      <div class="text-center">
-        <p class="text-lg font-black text-white tabular-nums"><%= @total_activities %></p>
-        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">활동 기록</p>
+    <!-- Quick Stats Card -->
+    <div class="mx-4 mt-6 p-6 app-glass-card bg-white/[0.03] border-white/10 grid grid-cols-3 divide-x divide-white/5 relative overflow-hidden group">
+      <!-- Subtle Glow behind stats -->
+      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/[0.02] to-transparent group-hover:via-indigo-500/[0.05] transition-all duration-500"></div>
+      
+      <div class="text-center relative z-10">
+        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Record</p>
+        <p class="text-xl font-black text-white tabular-nums"><%= @total_activities %></p>
       </div>
-      <div class="w-px h-8 bg-white/10"></div>
-      <div class="text-center">
-        <p class="text-lg font-black text-white tabular-nums"><%= @current_streak %>일</p>
-        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">연속 성공</p>
+      <div class="text-center relative z-10">
+        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Streak</p>
+        <p class="text-xl font-black text-indigo-400 tabular-nums"><%= @current_streak %><span class="text-[10px] ml-0.5 text-slate-500 font-bold uppercase">day</span></p>
       </div>
-      <div class="w-px h-8 bg-white/10"></div>
-      <div class="text-center">
-        <p class="text-lg font-black text-white tabular-nums"><%= @current_month_points %><%= current_user&.is_rufa_club_member? ? 'P' : '' %></p>
-        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest"><%= current_user&.is_rufa_club_member? ? '월간 포인트' : '이번 달 점수' %></p>
+      <div class="text-center relative z-10">
+        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Point</p>
+        <p class="text-xl font-black text-white tabular-nums"><%= number_with_delimiter(@current_month_points) %></p>
       </div>
     </div>
   </section>
@@ -179,35 +200,44 @@
       <div class="text-[10px] font-bold text-indigo-400">누적 <%= @total_activities %>회 성취</div>
     </div>
 
-    <div class="grid grid-cols-1 gap-3">
+    <div class="grid grid-cols-1 gap-4">
       <% if @top_categories.any? %>
         <% @top_categories.each_with_index do |(category, count), idx| %>
-          <div class="app-glass-card p-5 relative overflow-hidden group cursor-pointer active:scale-[0.98] transition-all"
+          <% 
+            cat_config = {
+              "HEALTH" => { icon: "🏋️", color: "#10B981", bg: "emerald" },
+              "LIFE"   => { icon: "📝", color: "#F59E0B", bg: "amber" },
+              "MIND"   => { icon: "🧘", color: "#8B5CF6", bg: "violet" },
+              "STUDY"  => { icon: "📚", color: "#3B82F6", bg: "blue" },
+              "HOBBY"  => { icon: "🎨", color: "#EC4899", bg: "pink" },
+              "MONEY"  => { icon: "💰", color: "#059669", bg: "emerald-dark" }
+            }[category] || { icon: "✨", color: "#818CF8", bg: "indigo" }
+          %>
+          <div class="app-glass-card p-6 relative overflow-hidden group cursor-pointer active:scale-[0.98] transition-all border-white/5 bg-white/[0.02]"
                onclick="document.getElementById('cat-history-<%= idx %>').classList.remove('hidden'); document.body.classList.add('overflow-hidden')">
-            <!-- Background Accent -->
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 blur-2xl rounded-full group-hover:bg-indigo-500/10 transition-all"></div>
+            
+            <!-- Category Specific Glow -->
+            <div class="absolute -right-8 -top-8 w-32 h-32 opacity-10 blur-3xl rounded-full transition-all group-hover:opacity-20" style="background-color: <%= cat_config[:color] %>"></div>
             
             <div class="flex items-center justify-between relative z-10">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/5">
-                  <%= { "HEALTH" => "🏋️", "LIFE" => "📝", "MIND" => "🧘", "STUDY" => "📚", "HOBBY" => "🎨", "MONEY" => "💰" }[category] || "✨" %>
+              <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-xl border border-white/10 bg-gradient-to-br from-white/10 to-transparent">
+                  <span class="filter drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"><%= cat_config[:icon] %></span>
                 </div>
-                <div>
-                  <h4 class="text-sm font-black text-white"><%= current_user.category_label(category) %></h4>
-                  <p class="text-[10px] font-bold text-indigo-400 mt-0.5"><%= current_user.category_identity_title(category) %></p>
+                <div class="space-y-1">
+                  <h4 class="text-base font-black text-white italic"><%= current_user.category_label(category) %></h4>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background-color: <%= cat_config[:color] %>"></span>
+                    <p class="text-[10px] font-black uppercase tracking-widest" style="color: <%= cat_config[:color] %>"><%= current_user.category_identity_title(category) %></p>
+                  </div>
                 </div>
               </div>
               <div class="text-right">
-                <p class="text-lg font-black text-white tabular-nums"><%= count %><span class="text-[10px] ml-0.5 text-slate-500 font-bold uppercase">회</span></p>
-                <div class="mt-1 h-1 w-20 bg-white/5 rounded-full overflow-hidden">
-                  <div class="h-full bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" style="width: <%= [count * 2, 100].min %>%"></div>
+                <p class="text-2xl font-black text-white tabular-nums"><%= count %><span class="text-xs ml-1 text-slate-500 font-bold uppercase">exp</span></p>
+                <div class="mt-2 h-1.5 w-24 bg-white/5 rounded-full overflow-hidden">
+                  <div class="h-full rounded-full shadow-lg transition-all duration-1000" style="width: <%= [count * 2, 100].min %>%; background-color: <%= cat_config[:color] %>; box-shadow: 0 0 10px <%= cat_config[:color] %>80"></div>
                 </div>
               </div>
-            </div>
-            
-            <!-- Tap Hint -->
-            <div class="absolute top-2 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg class="w-3 h-3 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
             </div>
           </div>
 
@@ -332,35 +362,43 @@
       <% end %>
     </div>
 
-    <div class="app-glass-card p-6 aspect-video bg-gradient-to-br from-indigo-500/5 to-transparent flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-all"
+    <div class="app-glass-card p-6 aspect-video bg-gradient-to-br from-indigo-500/10 via-white/[0.02] to-transparent flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-all border-white/10 group shadow-2xl"
          data-action="click->proto-ui#openModal" 
          data-modal-id="growth-detail"
          onclick="document.getElementById('growth-detail').classList.remove('hidden'); document.body.classList.add('overflow-hidden')">
-      <div class="flex justify-between items-start">
+      
+      <!-- Top Decorative Glow -->
+      <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-3xl rounded-full pointer-events-none group-hover:bg-indigo-500/10 transition-all"></div>
+
+      <div class="flex justify-between items-start relative z-10">
         <div class="space-y-1">
-          <p class="growth-period-text text-[10px] font-bold text-slate-500">이번 주 달성률</p>
-          <h4 class="growth-main-value text-2xl font-black text-white">
-            <%= @weekly_completion %>% 
+          <p class="growth-period-text text-[10px] font-black text-slate-500 uppercase tracking-widest">Weekly Analytics</p>
+          <h4 class="growth-main-value text-3xl font-black text-white tracking-tighter">
+            <%= @weekly_completion %><span class="text-xs font-bold text-slate-500 ml-1">%</span>
             <% if @weekly_growth > 0 %>
-              <span class="text-xs text-emerald-500 font-bold ml-1">↑ <%= @weekly_growth %>%</span>
+              <span class="text-xs text-emerald-400 font-black ml-2 py-0.5 px-2 bg-emerald-500/10 rounded-full border border-emerald-500/20">↑ <%= @weekly_growth %>%</span>
             <% elsif @weekly_growth < 0 %>
-              <span class="text-xs text-red-500 font-bold ml-1">↓ <%= @weekly_growth.abs %>%</span>
-            <% else %>
-              <span class="text-xs text-slate-500 font-bold ml-1">-</span>
+              <span class="text-xs text-rose-400 font-black ml-2 py-0.5 px-2 bg-rose-500/10 rounded-full border border-rose-500/20">↓ <%= @weekly_growth.abs %>%</span>
             <% end %>
           </h4>
         </div>
-        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">📈</div>
+        <div class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/5">📈</div>
       </div>
       
       <!-- Real Data Graph -->
-      <div class="growth-graph-container flex items-end justify-between h-32 gap-2 mt-4 px-1">
+      <div class="growth-graph-container flex items-end justify-between h-32 gap-2 mt-6 px-1 relative z-10">
          <% @weekly_data.zip(@weekly_labels).each_with_index do |(h, label), i| %>
            <div class="flex-1 h-full relative group/bar flex flex-col justify-end">
-             <div class="rounded-t-lg transition-all duration-700 <%= i == @daily_index ? 'bg-indigo-500 shadow-[0_0_20px_rgba(124,77,255,0.4)]' : 'bg-white/10 group-hover/bar:bg-white/20' %>" style="height: <%= [h, 15].max %>%"></div>
+             <div class="rounded-t-xl transition-all duration-1000 ease-out <%= i == @daily_index ? 'bg-gradient-to-t from-indigo-600 to-indigo-400 shadow-[0_0_25px_rgba(99,102,241,0.5)]' : 'bg-white/10 group-hover/bar:bg-white/20' %>" 
+                  style="height: <%= [h, 15].max %>%; min-height: 8px;">
+               <!-- Glowing End for active bar -->
+               <% if i == @daily_index %>
+                 <div class="absolute top-0 left-0 w-full h-1 bg-white/40 blur-[2px] rounded-full"></div>
+               <% end %>
+             </div>
              <!-- Tooltip -->
-             <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black py-1.5 px-2.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all pointer-events-none z-30 shadow-xl border border-white/10 transform translate-y-2 group-hover/bar:translate-y-0 whitespace-nowrap">
-                <%= label %> • <%= h %>%
+             <div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-[#0C0B12] text-white text-[10px] font-black py-2 px-3 rounded-xl opacity-0 group-hover/bar:opacity-100 transition-all pointer-events-none z-30 shadow-2xl border border-white/10 transform translate-y-3 group-hover/bar:translate-y-0 whitespace-nowrap">
+                <%= label %> <span class="text-indigo-400 mx-1">/</span> <%= h %>%
              </div>
            </div>
          <% end %>
@@ -372,10 +410,10 @@
   <section class="space-y-4">
     <div class="flex justify-between items-end px-2">
       <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">배지 보관함</h3>
-      <span class="text-[10px] font-bold text-indigo-400"><%= @achievements.count %>개 보유 중</span>
+      <span class="text-[10px] font-bold text-indigo-400">성취의 조각 <%= @achievements.count %>개</span>
     </div>
     
-    <div class="app-glass-card p-6 overflow-hidden relative">
+    <div class="app-glass-card p-6 overflow-hidden relative border-white/5 bg-white/[0.01] shadow-inner">
       <!-- Background Decor -->
       <div class="absolute -right-12 -top-12 w-48 h-48 bg-indigo-500/5 blur-3xl rounded-full pointer-events-none"></div>
 
@@ -384,17 +422,17 @@
         <% if @achievements.any? %>
           <% @achievements.each_with_index do |ub, i| %>
             <button onclick="document.getElementById('badge-detail-<%= i %>').classList.remove('hidden'); document.body.classList.add('overflow-hidden')"
-                    class="aspect-square rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 hover:border-indigo-500/40 hover:from-indigo-500/20 hover:to-purple-500/20 transition-all group relative flex flex-col items-center justify-center gap-2 overflow-hidden active:scale-95 ring-1 ring-inset ring-white/5">
+                    class="aspect-square rounded-[24px] bg-gradient-to-br from-white/10 to-white/[0.02] border border-white/10 hover:border-indigo-500/40 hover:from-indigo-500/20 hover:to-purple-500/20 transition-all group relative flex flex-col items-center justify-center gap-2 overflow-hidden active:scale-95 shadow-lg group-hover:shadow-indigo-500/10">
               <!-- Glow -->
-              <div class="absolute inset-0 bg-indigo-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div class="absolute inset-x-2 inset-y-2 bg-indigo-500/30 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
-              <span class="text-3xl relative z-10 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] group-hover:scale-110 transition-transform duration-500"><%= ub.badge.icon_path.presence || "🏆" %></span>
+              <span class="text-4xl relative z-10 filter drop-shadow-[0_0_12px_rgba(255,255,255,0.4)] group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500"><%= ub.badge.icon_path.presence || "🏆" %></span>
               <div class="relative z-10 text-center px-1 w-full">
-                <p class="text-[9px] font-bold text-slate-300 truncate group-hover:text-white transition-colors"><%= ub.badge.name %></p>
+                <p class="text-[10px] font-black text-slate-100 truncate group-hover:text-indigo-200 transition-colors"><%= ub.badge.name %></p>
               </div>
               
-              <!-- Level Tag (Absolute) -->
-              <div class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
+              <!-- Sparkle Effect -->
+              <div class="absolute top-1 right-1 w-1 h-1 rounded-full bg-indigo-300 animate-ping opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </button>
           <% end %>
           
