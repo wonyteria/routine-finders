@@ -54,13 +54,13 @@ export default class extends Controller {
         const config = iconConfigs[type] || iconConfigs.info
 
         toast.innerHTML = `
-            <div class="relative w-full max-w-sm bg-[#16151D]/90 backdrop-blur-2xl border border-white/10 p-10 rounded-[48px] shadow-[0_40px_100px_rgba(0,0,0,0.8)] flex flex-col items-center text-center space-y-6 animate-center-pop pointer-events-auto">
-                <div class="w-24 h-24 ${config.bg} rounded-[32px] flex items-center justify-center text-5xl shadow-2xl ${config.shadow} mb-2 animate-bounce-subtle">
+            <div class="relative w-full max-w-[280px] bg-[#0C0B12]/80 backdrop-blur-3xl border border-white/10 p-8 rounded-[40px] shadow-[0_30px_70px_rgba(0,0,0,0.6)] flex flex-col items-center text-center space-y-4 animate-center-pop pointer-events-auto ring-1 ring-white/5">
+                <div class="w-20 h-20 ${config.bg} rounded-[28px] flex items-center justify-center text-4xl shadow-xl ${config.shadow} mb-2 animate-bounce-subtle">
                     ${config.icon}
                 </div>
-                <div class="space-y-2">
-                    <p class="text-lg font-black text-white leading-tight">${message.replace(/\n/g, '<br>')}</p>
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">${type === 'success' ? 'Completed' : 'System Message'}</p>
+                <div class="space-y-1.5 px-2">
+                    <p class="text-base font-black text-white leading-snug break-keep">${message.replace(/\n/g, '<br>')}</p>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] opacity-60">${type === 'success' ? 'Completed' : 'System Notice'}</p>
                 </div>
             </div>
         `

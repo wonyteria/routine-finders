@@ -174,20 +174,20 @@
       }
     </script>
     <div id="premium-item-nudge" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
-      <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
-      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-center-pop bg-[#16151D]">
-        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[28px] flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-indigo-500/40 nudge-icon">🔒</div>
-        <div class="space-y-2">
-          <h3 class="text-2xl font-black text-white nudge-title">멤버십 전용 기능입니다</h3>
-          <p class="text-sm font-bold text-slate-400 leading-relaxed px-4 nudge-desc">
+      <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
+      <div class="relative w-full max-w-[280px] app-glass-card border-white/10 p-8 text-center space-y-6 animate-center-pop bg-[#0C0B12]/90 ring-1 ring-white/5 shadow-[0_40px_80px_rgba(0,0,0,0.7)]">
+        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[30px] flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-indigo-500/30 nudge-icon">🔒</div>
+        <div class="space-y-2 px-1">
+          <h3 class="text-xl font-black text-white nudge-title break-keep">멤버십 전용 기능입니다</h3>
+          <p class="text-[11px] font-bold text-slate-400 leading-relaxed nudge-desc break-keep">
             휴식권과 세이브권은 루파 클럽 멤버에게만 제공되는 특별한 혜택입니다.
           </p>
         </div>
-        <div class="space-y-3 pt-4">
-          <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "block w-full py-4 bg-white text-black rounded-2xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-white/10" do %>
+        <div class="space-y-2.5 pt-2">
+          <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "block w-full py-4 bg-white text-black rounded-2xl font-black text-xs active:scale-95 transition-all shadow-xl shadow-white/10" do %>
             멤버십 혜택 알아보기
           <% end %>
-          <button onclick="this.closest('#premium-item-nudge').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="w-full py-3 text-slate-500 font-bold text-xs hover:text-white transition-colors">
+          <button onclick="this.closest('#premium-item-nudge').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="w-full py-2 text-slate-600 font-bold text-[10px] hover:text-white transition-colors">
             다음에 할게요
           </button>
         </div>
@@ -208,9 +208,9 @@
     <div id="record-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('record-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
       <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
-        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
-        <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
+        <p class="text-[10px] font-bold text-indigo-400 mb-8 text-center uppercase tracking-[0.2em] leading-none opacity-60">Record your success</p>
         
         <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
           <%= f.hidden_field :activity_type, value: "routine_record" %>
@@ -238,9 +238,9 @@
     <div id="commitment-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('commitment-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
       <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
-        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 다짐</h3>
-        <p class="text-xs font-bold text-rose-400 mb-8 text-center uppercase tracking-widest leading-none">Declare your commitment</p>
+        <p class="text-[10px] font-bold text-rose-400 mb-8 text-center uppercase tracking-[0.2em] leading-none opacity-60">Declare your commitment</p>
         
         <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
           <%= f.hidden_field :activity_type, value: "reflection" %>
@@ -578,10 +578,10 @@
       <div id="rufa-pending-modal" class="fixed inset-0 z-[3000] flex items-center justify-center p-6">
         <div onclick="this.parentElement.remove(); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
         <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-pop bg-[#16151D] m-0">
-          <div class="w-24 h-24 bg-amber-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-amber-500/50">⌛</div>
-          <div class="space-y-2">
-            <h3 class="text-2xl font-black text-white">클럽 가입 확인 중</h3>
-            <p class="text-sm font-bold text-slate-400">호스트가 입금을 확인하고 있습니다.<br/>승인이 완료되면 루파 전용 혜택을<br/>즉시 이용하실 수 있습니다.</p>
+          <div class="w-20 h-20 bg-amber-500 rounded-[30px] flex items-center justify-center text-5xl shadow-2xl shadow-amber-500/40">⌛</div>
+          <div class="space-y-2 px-1">
+            <h3 class="text-xl font-black text-white">클럽 가입 확인 중</h3>
+            <p class="text-[11px] font-bold text-slate-400 leading-relaxed break-keep">호스트가 입금을 확인하고 있습니다. 승인이 완료되면 루파 전용 혜택을 즉시 이용하실 수 있습니다.</p>
           </div>
           <div class="w-full pt-4 space-y-3">
              <button onclick="this.closest('#rufa-pending-modal').remove(); document.body.classList.remove('overflow-hidden')" 
