@@ -1,3 +1,19 @@
+<%# Open Graph Metadata for Sharing %>
+<% content_for :og_title, @challenge.title %>
+<% content_for :title, @challenge.title %>
+<% content_for :og_description, @challenge.summary.presence || "함께 성장하는 루틴 챌린지에 참여해보세요!" %>
+<% content_for :description, @challenge.summary.presence || "함께 성장하는 루틴 챌린지에 참여해보세요!" %>
+<% 
+  if @challenge.thumbnail_image.attached?
+    content_for :og_image, rails_blob_url(@challenge.thumbnail_image)
+  elsif @challenge.thumbnail.present?
+    # Ensure absolute URL for string thumbnails (e.g. assets)
+    thumb_url = @challenge.thumbnail
+    thumb_url = "#{request.base_url}#{thumb_url}" unless thumb_url.start_with?('http')
+    content_for :og_image, thumb_url
+  end
+%>
+
 <% if @is_joined %>
   <%= render "challenges/participant_dashboard" %>
 <% else %>

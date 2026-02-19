@@ -20,6 +20,20 @@
     <meta name="apple-mobile-web-app-title" content="루파">
     <link rel="apple-touch-icon" href="<%= asset_path('rf_official_logo.png') %>">
     <meta name="theme-color" content="#7C4DFF">
+
+    <!-- Open Graph / SNS 공유 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= content_for(:og_title) || "루틴 파인더스 | 성장 루틴 플랫폼" %>">
+    <meta property="og:description" content="<%= content_for(:og_description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
+    <meta property="og:image" content="<%= content_for(:og_image) || asset_url('rf_official_logo.png') %>">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:site_name" content="Routine Finders">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:og_title) || "루틴 파인더스 | 성장 루틴 플랫폼" %>">
+    <meta name="twitter:description" content="<%= content_for(:og_description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
+    <meta name="twitter:image" content="<%= content_for(:og_image) || asset_url('rf_official_logo.png') %>">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

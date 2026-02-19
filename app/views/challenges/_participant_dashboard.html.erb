@@ -230,7 +230,7 @@
           <% 
             if @challenge.offline?
               p_tabs = [
-                { id: "info", label: "안내", icon: "✨" },
+                { id: "intro", label: "안내", icon: "✨" },
                 { id: "dashboard", label: "공지", icon: "📢" }
               ]
             else
@@ -238,7 +238,7 @@
                 { id: "records", label: "기록", icon: "📅" },
                 { id: "dashboard", label: "피드", icon: "🔥" },
                 { id: "ranking", label: "랭킹", icon: "🏆" },
-                { id: "info", label: "정보", icon: "✨" }
+                { id: "intro", label: "정보", icon: "✨" }
               ]
             end
             p_tabs.insert(1, { id: "management", label: "관리", icon: "⚙️" }) if @is_host
