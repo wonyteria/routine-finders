@@ -481,8 +481,22 @@
             <div class="space-y-8 relative z-10">
               <div class="relative group">
                 <div class="absolute inset-0 bg-gradient-to-br <%= tier_colors[:from] %> <%= tier_colors[:to] %> rounded-[48px] opacity-20 blur-2xl group-hover:opacity-40 transition-opacity"></div>
-                <div class="w-36 h-36 rounded-[48px] bg-gradient-to-br <%= tier_colors[:from] %> <%= tier_colors[:to] %> flex items-center justify-center text-7xl mx-auto shadow-2xl <%= tier_colors[:glow] %> animate-float ring-2 ring-white/20 relative overflow-hidden">
-                  <span class="relative z-10 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]"><%= ub.badge.icon_path.presence || "🏆" %></span>
+                <div class="w-36 h-36 rounded-[48px] bg-[#0C0B12]/80 flex items-center justify-center mx-auto shadow-2xl <%= tier_colors[:glow] %> animate-float ring-2 ring-white/20 relative overflow-hidden">
+                  <% if ub.badge.icon_path.start_with?("RF:") %>
+                    <% 
+                      gen_num = ub.badge.icon_path.split(":").last
+                    %>
+                    <div class="relative z-10 w-24 h-24 flex items-center justify-center">
+                      <%= image_tag "rf_official_logo.png", class: "w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" %>
+                      
+                      <!-- Generation Number Label -->
+                      <div class="absolute -bottom-2 -right-2 bg-white px-3 py-1 rounded-xl shadow-2xl ring-4 ring-[#0C0B12] transform rotate-12">
+                        <span class="text-xl font-black text-slate-900"><%= gen_num %>TH</span>
+                      </div>
+                    </div>
+                  <% else %>
+                    <span class="relative z-10 text-7xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]"><%= ub.badge.icon_path.presence || "🏆" %></span>
+                  <% end %>
                   <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none"></div>
                 </div>
                 <div class="absolute -top-4 -right-4 text-2xl animate-ping opacity-60">✨</div>

@@ -74,6 +74,7 @@ Rails.application.routes.draw do
   get "host_ranking", to: "home#host_ranking"
   get "users/:id", to: "home#user_profile", as: :user_profile
   post "mark_badges_viewed", to: "home#mark_badges_viewed"
+  post "track_share", to: "home#track_share"
   resources :routine_club_reports, only: [ :index, :show ] do
     collection do
       post :generate_current

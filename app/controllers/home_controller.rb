@@ -153,6 +153,23 @@ class HomeController < ApplicationController
     head :ok
   end
 
+  def track_share
+    return head :unauthorized unless current_user
+
+    current_user.increment!(:share_count)
+
+    RufaActivity.create!(
+      user: current_user,
+      activity_type: "share",
+      body: "루파 클럽의 성취 에너지를 주변에 공유했습니다! 🔗"
+    )
+
+    # Check for share-related badges
+    BadgeService.check_share_badges(current_user)
+
+    head :ok
+  end
+
   private
 
   def set_activity_data
