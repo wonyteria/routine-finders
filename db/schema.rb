@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_11_073821) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_19_062913) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -684,6 +684,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_11_073821) do
     t.string "saved_account_holder"
     t.string "saved_account_number"
     t.string "saved_bank_name"
+    t.integer "share_count", default: 0
     t.json "sns_links", default: {}
     t.datetime "suspended_at"
     t.datetime "threads_expires_at"

@@ -15,7 +15,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="<%= content_for(:title) || "Routine Finders" %>">
     <meta property="og:description" content="<%= content_for(:description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
-    <meta property="og:image" content="<%= request.base_url %>/og-image.png">
+    <meta property="og:image" content="<%= content_for(:og_image) || "#{request.base_url}/og-image.png" %>">
     <meta property="og:url" content="<%= request.original_url %>">
     <meta property="og:site_name" content="Routine Finders">
 
@@ -23,7 +23,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<%= content_for(:title) || "Routine Finders" %>">
     <meta name="twitter:description" content="<%= content_for(:description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
-    <meta name="twitter:image" content="<%= request.base_url %>/og-image.png">
+    <meta name="twitter:image" content="<%= content_for(:og_image) || "#{request.base_url}/og-image.png" %>">
 
     <%= yield :head %>
 

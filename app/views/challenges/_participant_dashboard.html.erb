@@ -1,4 +1,5 @@
 <%# Always use prototype experience %>
+<% content_for :hide_nav, true %>
 <style>
   .glass-card {
     background: rgba(255, 255, 255, 0.03);
@@ -26,13 +27,13 @@
   .hide-scrollbar::-webkit-scrollbar { display: none; }
 
   /* Theme Overrides for Partials */
-  .bg-white, .bg-slate-50, .bg-indigo-50, .bg-orange-50, .bg-emerald-50, .bg-amber-50 { 
+  .tab-content-env .bg-white, .tab-content-env .bg-slate-50, .tab-content-env .bg-indigo-50, .tab-content-env .bg-orange-50, .tab-content-env .bg-emerald-50, .tab-content-env .bg-amber-50 { 
     background: rgba(255, 255, 255, 0.03) !important; 
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
   }
-  .text-slate-900, .text-orange-900, .text-emerald-900, .text-amber-900 { color: #ffffff !important; }
-  .text-slate-600, .text-slate-700, .text-emerald-600, .text-amber-600 { color: #a1a1aa !important; }
-  .text-slate-500 { color: #71717a !important; }
+  .tab-content-env .text-slate-900, .tab-content-env .text-orange-900, .tab-content-env .text-emerald-900, .tab-content-env .text-amber-900 { color: #ffffff !important; }
+  .tab-content-env .text-slate-600, .tab-content-env .text-slate-700, .tab-content-env .text-emerald-600, .tab-content-env .text-amber-600 { color: #a1a1aa !important; }
+  .tab-content-env .text-slate-500 { color: #71717a !important; }
 
   @keyframes slide-up {
     from { opacity: 0; transform: translateY(10px); }
@@ -43,15 +44,18 @@
   }
 </style>
 
-<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 -mt-8 pb-32">
-  <!-- Top Nav -->
-  <header class="sticky top-0 z-50 px-8 py-6 bg-[#0C0B12]/80 backdrop-blur-md flex items-center justify-between">
-    <%= link_to root_path, class: "glass-btn w-11 h-11 flex items-center justify-center text-slate-400" do %>
+<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 pb-32 selection:bg-indigo-500/30">
+  <!-- Top Nav (Floating Glass) -->
+  <header class="sticky top-0 z-[100] px-6 py-8 bg-[#0C0B12]/80 backdrop-blur-3xl border-b border-white/5 flex items-center justify-between">
+    <%= link_to (params[:source] == 'prototype' ? prototype_explore_path : :back), class: "w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/60 active:scale-90 transition-all shadow-inner" do %>
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
     <% end %>
-    <div class="flex-1 text-center px-4">
-      <h1 class="text-sm font-black truncate"><%= @challenge.title %></h1>
-      <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5"><%= @d_day %></p>
+    <div class="flex-1 text-center px-4 min-w-0">
+      <h1 class="text-[15px] font-black truncate tracking-tight text-white"><%= @challenge.title %></h1>
+      <div class="flex items-center justify-center gap-1.5 mt-1">
+        <span class="w-1 h-1 rounded-full bg-indigo-500 shadow-[0_0_5px_rgba(99,102,241,1)]"></span>
+        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest"><%= @d_day %></p>
+      </div>
     </div>
     <div class="flex items-center gap-2">
       <% if current_user&.admin? %>
@@ -59,9 +63,9 @@
                     method: :delete,
                     data: { 
                       turbo_method: :delete,
-                      turbo_confirm: "'#{@challenge.title}' 챌린지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다." 
+                      turbo_confirm: "'#{@challenge.title}' 챌린지를 삭제하시겠습니까?" 
                     },
-                    class: "glass-btn w-11 h-11 flex items-center justify-center text-red-400 hover:bg-red-500/10 transition-all" do %>
+                    class: "w-11 h-11 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 active:scale-90 transition-all shadow-lg shadow-rose-500/5" do %>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
         <% end %>
       <% end %>
@@ -71,121 +75,106 @@
         data-share-text-value="루틴 파인더에서 '<%= @challenge.title %>' 도전에 함께해요! 🌿"
         data-share-url-value="<%= challenge_url(@challenge) %>"
         data-action="click->share#share"
-        class="glass-btn w-11 h-11 flex items-center justify-center text-slate-400">
+        class="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/60 active:scale-90 transition-all">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
       </button>
     </div>
   </header>
 
-  <div class="px-8 space-y-8">
-    <!-- 1. Hero: Today's Mission or Gathering Info -->
-    <section class="relative pt-4">
+  <div class="px-6 space-y-10 pt-6">
+    <!-- 1. Hero: Strategic Mission Center -->
+    <section class="relative">
       <% if @challenge.offline? %>
-        <!-- GATHERING MODE -->
-        <div class="absolute -top-12 -left-12 w-64 h-64 bg-emerald-500/10 blur-[100px] pointer-events-none"></div>
-        <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
-
-        <div class="glass-card p-8 relative overflow-hidden group border-emerald-500/20">
-          <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-700">
-             <span class="text-6xl">📍</span>
+        <!-- GATHERING MODE (Premium Event Card) -->
+        <div class="absolute -top-10 -left-10 w-48 h-48 bg-emerald-500/10 blur-[80px] pointer-events-none"></div>
+        <div class="app-glass-card-premium p-8 relative overflow-hidden group border-emerald-500/20 bg-emerald-500/5">
+          <div class="absolute top-0 right-[-10%] p-6 opacity-5 group-hover:scale-110 transition-transform duration-1000 grayscale">
+             <span class="text-9xl">📍</span>
           </div>
 
-          <div class="space-y-6 relative z-10">
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest">Upcoming Gathering</span>
+          <div class="space-y-8 relative z-10">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+              <span class="text-[11px] font-black text-emerald-400 uppercase tracking-[0.2em] leading-none">Upcoming Event</span>
             </div>
 
-            <div class="space-y-2">
-              <h2 class="text-2xl font-black leading-tight text-white mb-1">
+            <div class="space-y-3">
+              <p class="text-[11px] font-black text-white/40 uppercase tracking-widest leading-none">Next Meeting</p>
+              <h2 class="text-3xl font-black leading-none text-white tracking-tighter">
                 <%= @challenge.start_date.strftime('%m.%d') %> 
-                <span class="text-emerald-400"><%= @challenge.meeting_info&.meeting_time %></span>
+                <span class="text-emerald-400 ml-1"><%= @challenge.meeting_info&.meeting_time %></span>
               </h2>
-              <div class="flex items-center gap-2 text-slate-300">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <p class="text-sm font-bold"><%= @challenge.meeting_info&.place_name || "장소 미정" %></p>
+              <div class="flex items-center gap-2.5 text-white/60">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <p class="text-[15px] font-bold"><%= @challenge.meeting_info&.place_name || "장소 조율 중" %></p>
               </div>
             </div>
             
-            <% if @challenge.preparation_items.present? %>
-              <div class="pt-4 border-t border-white/10">
-                <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">준비물</p>
-                <p class="text-sm font-medium text-white"><%= @challenge.preparation_items %></p>
-              </div>
-            <% end %>
-            
-            <div class="pt-2 flex gap-3">
-              <% if @challenge.meeting_info&.place_url.present? %>
-                <%= link_to @challenge.meeting_info.place_url, target: "_blank", class: "flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-sm font-black text-white transition-all border border-white/10 flex items-center justify-center" do %>
-                  지도 보기
+            <div class="flex gap-3">
+              <% if @challenge.meeting_info&.place_url.present? || @challenge.meeting_info&.address.present? %>
+                <% 
+                  map_url = @challenge.meeting_info.place_url.presence || 
+                  "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(@challenge.meeting_info.address)}"
+                %>
+                <%= link_to map_url, target: "_blank", class: "flex-1 py-4.5 bg-white/5 hover:bg-white/10 rounded-2xl text-[13px] font-black text-white transition-all border border-white/5 flex items-center justify-center gap-2 active:scale-95 shadow-xl" do %>
+                   📍 가이드 맵
                 <% end %>
-              <% elsif @challenge.meeting_info&.address.present? %>
-                <%= link_to "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(@challenge.meeting_info.address)}", target: "_blank", class: "flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-sm font-black text-white transition-all border border-white/10 flex items-center justify-center" do %>
-                  지도 보기
-                <% end %>
-              <% else %>
-                <button class="flex-1 py-4 bg-white/5 opacity-50 rounded-2xl text-sm font-black text-white border border-white/10 cursor-not-allowed" disabled>
-                  지도 미등록
-                </button>
               <% end %>
               
               <% if @challenge.chat_link.present? %>
-                <%= link_to @challenge.chat_link, target: "_blank", class: "flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-black text-white transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center" do %>
-                  오픈채팅
+                <%= link_to @challenge.chat_link, target: "_blank", class: "flex-1 py-4.5 bg-emerald-500 rounded-2xl text-[13px] font-black text-white transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-95" do %>
+                   💬 커뮤니티 입방
                 <% end %>
-              <% else %>
-                <button class="flex-1 py-4 bg-white/5 opacity-50 rounded-2xl text-sm font-black text-white border border-white/10 cursor-not-allowed" disabled>
-                  채팅 미등록
-                </button>
               <% end %>
             </div>
           </div>
         </div>
 
       <% else %>
-        <!-- CHALLENGE MODE -->
-        <div class="absolute -top-12 -left-12 w-64 h-64 bg-indigo-500/10 blur-[100px] pointer-events-none"></div>
-        <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-purple-500/10 blur-[100px] pointer-events-none"></div>
-
-        <div class="glass-card p-8 relative overflow-hidden group">
-          <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-700">
-             <span class="text-6xl">🔥</span>
+        <!-- CHALLENGE MODE (Strategic Mission Dashboard) -->
+        <div class="absolute -top-10 -left-10 w-48 h-48 bg-indigo-500/10 blur-[80px] pointer-events-none"></div>
+        <div class="app-glass-card-premium p-10 relative overflow-hidden group min-h-[220px] flex flex-col justify-center">
+          <!-- Background Decoration -->
+          <div class="absolute top-0 right-[-5%] p-6 opacity-5 group-hover:scale-110 transition-transform duration-1000 grayscale pointer-events-none">
+             <span class="text-[120px]">🔥</span>
           </div>
 
-          <div class="space-y-6 relative z-10">
-            <div class="flex items-center gap-3">
-              <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-widest">Today's Focus</span>
+          <div class="space-y-8 relative z-10">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,1)]"></span>
+                <span class="text-[11px] font-black text-indigo-400 uppercase tracking-[0.2em] leading-none">Victory Objective</span>
+              </div>
               <% unless @today_verified %>
-                <span class="flex items-center gap-1.5 text-[10px] font-black text-rose-500 animate-pulse">
-                  <span class="w-1 h-1 bg-current rounded-full"></span>
-                  MISSING RECORD
-                </span>
+                <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 text-[9px] font-black tracking-tighter animate-pulse border border-rose-500/20">AWAITING ACTION</span>
               <% end %>
             </div>
 
-            <div class="space-y-2">
-              <h2 class="text-2xl font-black leading-tight">
-                <%= @challenge.summary.presence || "매일 꾸준히 목표를 달성해보세요!" %>
+            <div class="space-y-3">
+              <h2 class="text-2xl font-black leading-tight text-white tracking-tight">
+                <%= @challenge.summary.presence || "오늘의 성취를 향해 나아가세요" %>
               </h2>
-              <p class="text-xs font-medium text-slate-400 leading-relaxed italic">
-                "작은 습관이 모여 위대한 변화를 만듭니다."
+              <p class="text-xs font-bold text-white/30 italic leading-relaxed">
+                "위대한 여정도 오늘 하나의 루틴에서 시작됩니다."
               </p>
             </div>
 
             <% if @today_verified %>
-              <div class="pt-2 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              <div class="pt-4 flex items-center gap-5">
+                <div class="w-14 h-14 rounded-[22px] bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
+                  <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                 </div>
                 <div>
-                  <p class="text-sm font-black text-white">오늘의 루틴 완료!</p>
-                  <p class="text-[10px] font-bold text-slate-500">연속 <%= @participant.current_streak %>일째 달성 중입니다.</p>
+                  <p class="text-base font-black text-white leading-none mb-2">오늘의 미션 완료</p>
+                  <p class="text-[11px] font-bold text-indigo-400/60">현재 연속 <span class="text-white"><%= @participant.current_streak %>일째</span> 달성 중!</p>
                 </div>
               </div>
             <% else %>
-              <div class="pt-4">
-                <%= link_to "오늘의 성취 기록하기", new_challenge_verification_log_path(@challenge), 
-                            class: "block w-full py-5 bg-indigo-500 text-white text-center rounded-2xl font-black text-sm shadow-xl shadow-indigo-500/20 active:scale-95 transition-all" %>
-                <p class="text-[10px] font-bold text-slate-500 text-center mt-3 uppercase tracking-widest italic opacity-50">Capture your victory of the day</p>
+              <div class="pt-2">
+                <%= link_to new_challenge_verification_log_path(@challenge), 
+                            class: "block w-full py-5 app-fab-gradient text-white text-center rounded-3xl font-black text-[15px] shadow-xl shadow-indigo-500/30 active:scale-[0.98] transition-all border border-white/10" do %>
+                   인증 기록 남기기 ⚡
+                <% end %>
               </div>
             <% end %>
           </div>
@@ -234,37 +223,47 @@
       </section>
     <% end %>
 
-    <!-- 3. Tabs Navigation -->
+    <!-- 3. Tabs Navigation (Premium Floating Glass) -->
     <turbo-frame id="dashboard_tabs" target="_top">
-      <section class="space-y-6">
-        <div class="flex items-center justify-around border-b border-white/5 px-2">
+      <section class="space-y-10">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2">
           <% 
             if @challenge.offline?
               p_tabs = [
-                ["info", "INFO"],
-                ["dashboard", "NOTICE"] # Reusing dashboard logic for feed/notice
+                { id: "intro", label: "안내", icon: "✨" },
+                { id: "dashboard", label: "공지", icon: "📢" }
               ]
             else
               p_tabs = [
-                ["records", "MY LOG"],
-                ["dashboard", "FEED"],
-                ["ranking", "RANK"],
-                ["info", "INFO"]
+                { id: "records", label: "기록", icon: "📅" },
+                { id: "dashboard", label: "피드", icon: "🔥" },
+                { id: "ranking", label: "랭킹", icon: "🏆" },
+                { id: "intro", label: "정보", icon: "✨" }
               ]
             end
-            p_tabs.insert(1, ["management", "MANAGE"]) if @is_host
+            p_tabs.insert(1, { id: "management", label: "관리", icon: "⚙️" }) if @is_host
           %>
-          <% p_tabs.each do |id, label| %>
-            <%= link_to challenge_path(@challenge, tab: id), 
+          <% p_tabs.each do |t| %>
+            <% 
+              is_active = (@tab == t[:id])
+              active_class = if @challenge.offline?
+                "bg-emerald-500 text-white border-emerald-400/50 shadow-[0_5px_15px_rgba(16,185,129,0.3)]"
+              else
+                "bg-indigo-500 text-white border-indigo-400/50 shadow-[0_5px_15px_rgba(99,102,241,0.3)]"
+              end
+              inactive_class = "text-white/40 border-white/5 bg-white/[0.02] hover:bg-white/5"
+            %>
+            <%= link_to challenge_path(@challenge, tab: t[:id], source: params[:source]), 
                         data: { turbo_frame: "dashboard_tabs" },
-                        class: "py-4 text-[11px] font-black tracking-widest transition-all #{ @tab == id ? 'tab-active' : 'text-slate-500' }" do %>
-              <%= label %>
+                        class: "shrink-0 px-6 py-3.5 rounded-2xl font-black text-[13px] transition-all flex items-center gap-2 border #{ is_active ? active_class : inactive_class }" do %>
+              <span class="text-sm"><%= t[:icon] %></span>
+              <%= t[:label] %>
             <% end %>
           <% end %>
         </div>
 
         <!-- Tab Content -->
-        <div class="min-h-[400px]">
+        <div class="tab-content-env min-h-[400px]">
           <% case @tab %>
         <% when "records" %>
            <!-- Simplified Calendar-like dots -->
@@ -455,7 +454,7 @@
              </div>
           </div>
 
-        <% when "info" %>
+        <% when "info", "intro" %>
           <div class="space-y-8">
             <!-- Summary -->
             <% if @challenge.summary.present? %>

@@ -36,8 +36,25 @@ class BadgeService
       calculate_participation_metric(badge, mode: :offline)
     when :challenge
       calculate_participation_metric(badge, entry_type: :season, mode: :online)
+    when :club
+      calculate_club_metric(badge)
     else
       calculate_participation_metric(badge) # default to all participations
+    end
+  end
+
+  def self.check_share_badges(user)
+    new(user).check_and_award_all!
+  end
+
+  private
+
+  def calculate_club_metric(badge)
+    case badge.badge_type.to_sym
+    when :club_share_count
+      @user.share_count || 0
+    else
+      0
     end
   end
 

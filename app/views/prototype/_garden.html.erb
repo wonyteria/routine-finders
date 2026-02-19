@@ -26,40 +26,44 @@
       </p>
     </div>
 
-    <!-- 🌌 Ambient Depth -->
-    <div class="absolute inset-0">
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-b from-indigo-500/5 to-transparent opacity-50"></div>
+    <!-- 🌌 Youngja's Aurora Glow (Premium Depth) -->
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-[-20%] left-[-10%] w-[120%] h-[120%] bg-gradient-to-br from-indigo-600/10 via-transparent to-purple-600/10 blur-[80px] opacity-60"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-full bg-indigo-500/5 blur-[100px] animate-pulse"></div>
     </div>
 
     <!-- 🦋 Fine Particle Dust (Fireflies replacement) -->
     <div class="absolute inset-0 pointer-events-none z-10">
-      <% 12.times do |i| %>
-        <div class="aura-particle absolute w-0.5 h-0.5 bg-white/20 rounded-full"
-             style="--delay: <%= rand(0..5) %>s; --duration: <%= rand(10..20) %>s; top: <%= rand(20..80) %>%; left: <%= rand(20..80) %>%"></div>
+      <% 16.times do |i| %>
+        <div class="aura-particle absolute w-1 h-1 bg-indigo-400/20 rounded-full blur-[1px]"
+             style="--delay: <%= rand(0..5) %>s; --duration: <%= rand(15..25) %>s; top: <%= rand(10..90) %>%; left: <%= rand(10..90) %>%"></div>
       <% end %>
     </div>
 
     <!-- 🔮 The Central Aura Sphere (Energy Seed) -->
-    <div class="relative z-20 flex items-center justify-center w-[60%] aspect-square">
+    <div class="relative z-20 flex items-center justify-center w-[65%] aspect-square">
       <!-- Outer Glow Layers -->
-      <div class="absolute inset-0 rounded-full blur-[40px] transition-all duration-1000 <%= progress >= 100 ? 'bg-emerald-500/20 scale-125' : 'bg-indigo-500/10' %>"></div>
-      <div class="absolute inset-0 rounded-full blur-[20px] transition-all duration-1000 <%= progress >= 100 ? 'bg-emerald-400/30' : 'bg-indigo-400/20 shadow-[0_0_40px_rgba(99,102,241,0.2)]' %>"></div>
+      <div class="absolute inset-0 rounded-full blur-[50px] transition-all duration-1000 <%= progress >= 100 ? 'bg-emerald-500/30 scale-125' : 'bg-indigo-500/20 scale-110 shadow-[0_0_60px_rgba(124,77,255,0.3)]' %>"></div>
+      <div class="absolute inset-0 rounded-full blur-[25px] transition-all duration-1000 <%= progress >= 100 ? 'bg-emerald-400/40' : 'bg-indigo-400/30' %>"></div>
       
-      <!-- Core Sphere (Glassmorphism) -->
-      <div class="relative w-full h-full rounded-full border border-white/10 bg-white/[0.05] backdrop-blur-2xl flex flex-col items-center justify-center shadow-inner overflow-hidden">
-        <!-- Pulse Animation Inside Core -->
-        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.02] to-transparent animate-shimmer"></div>
+      <!-- Core Sphere (Premium Glassmorphism) -->
+      <div class="relative w-full h-full rounded-full border border-white/20 bg-white/[0.03] backdrop-blur-3xl flex flex-col items-center justify-center shadow-[inset_0_0_30px_rgba(255,255,255,0.05)] overflow-hidden">
+        <!-- Shine Animation -->
+        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.05] to-transparent animate-shimmer scale-150"></div>
         
         <div class="text-center relative z-10">
-          <p class="text-[9px] font-black tracking-[0.2em] text-white/40 uppercase mb-1">성장 달성률</p>
-          <h2 class="text-5xl font-extralight text-white tracking-tighter tabular-nums">
-            <%= progress %><span class="text-sm ml-0.5 opacity-20">%</span>
-          </h2>
+          <p class="text-[10px] font-black tracking-[0.3em] text-white/30 uppercase mb-2">Growth Rate</p>
+          <div class="flex items-baseline justify-center">
+            <h2 class="text-6xl font-light text-white tracking-tighter tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+              <%= progress %>
+            </h2>
+            <span class="text-lg font-black text-white/20 ml-1">%</span>
+          </div>
         </div>
 
         <!-- Wave effect inside core based on progress -->
-        <div class="absolute bottom-0 w-full bg-indigo-500/10 transition-all duration-1000"
-             style="height: <%= progress %>%; background-color: <%= progress >= 100 ? 'rgba(16, 185, 129, 0.15)' : 'rgba(79, 70, 229, 0.1)' %>"></div>
+        <div class="absolute bottom-0 w-full bg-gradient-to-t from-indigo-500/20 to-transparent transition-all duration-1000"
+             style="height: <%= progress %>%; background-color: <%= progress >= 100 ? 'rgba(16, 185, 129, 0.2)' : '' %>"></div>
       </div>
 
       <!-- 🌸 The Glass Petals (Bloom Aura) -->

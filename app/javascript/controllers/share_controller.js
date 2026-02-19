@@ -18,6 +18,16 @@ export default class extends Controller {
         this.showModal(url)
     }
 
+    recordShare() {
+        fetch('/track_share', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
     showModal(url) {
         // 모달 HTML 동적 생성
         const modal = document.createElement('div')
@@ -41,14 +51,7 @@ export default class extends Controller {
                                onclick="this.select()">
                     </div>
                     
-                    <button onclick="navigator.clipboard.writeText('${url}').then(() => {
-                                this.innerHTML = '✅ 복사 완료!';
-                                this.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
-                                this.classList.add('bg-emerald-600');
-                                setTimeout(() => {
-                                    this.closest('.fixed').remove();
-                                }, 1500);
-                            })"
+                    <button id="copy-share-url"
                             class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-sm transition-all shadow-lg active:scale-95">
                         📋 클립보드에 복사하기
                     </button>
@@ -62,6 +65,23 @@ export default class extends Controller {
         `
 
         document.body.appendChild(modal)
+
+        // 버튼 이벤트 바인딩
+        const copyButton = modal.querySelector('#copy-share-url')
+        copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(url).then(() => {
+                copyButton.innerHTML = '✅ 복사 완료!';
+                copyButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+                copyButton.classList.add('bg-emerald-600');
+
+                // 활동 기록
+                this.recordShare()
+
+                setTimeout(() => {
+                    modal.remove();
+                }, 1500);
+            });
+        })
 
         // 모달 외부 클릭시 닫기
         modal.addEventListener('click', (e) => {

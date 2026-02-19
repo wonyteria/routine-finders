@@ -1,0 +1,48 @@
+    <!-- 3. Badge Celebration Modal -->
+    <% if @new_badges&.any? %>
+      <% @new_badges.each_with_index do |ub, idx| %>
+        <div id="badge-celebration-<%= idx %>" class="fixed inset-0 z-[99990] flex items-center justify-center p-6 bg-[#0C0B12] <%= 'hidden' if idx > 0 %>">
+          <div class="absolute inset-0 bg-[#0C0B12] animate-fade-in"></div>
+          
+          <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 text-center space-y-8 animate-badge-celebration-pop">
+            <!-- Particle Effect Decoration -->
+            <div class="absolute inset-0 overflow-hidden rounded-[32px] pointer-events-none">
+              <div class="absolute top-0 left-1/4 w-20 h-20 bg-indigo-500/20 blur-3xl animate-pulse"></div>
+              <div class="absolute bottom-0 right-1/4 w-20 h-20 bg-purple-500/20 blur-3xl animate-pulse delay-700"></div>
+            </div>
+
+            <div class="space-y-6 relative z-10">
+              <div class="w-32 h-32 rounded-[40px] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-6xl mx-auto shadow-[0_20px_50px_rgba(124,77,255,0.5)] animate-float">
+                <%= ub.badge.icon_path.presence || "🏆" %>
+              </div>
+              
+              <div class="space-y-2">
+                <p class="text-xs font-black text-indigo-400 uppercase tracking-[0.3em] animate-fade-in">New Identity Earned</p>
+                <h3 class="text-3xl font-black text-white leading-tight"><%= ub.badge.name %></h3>
+              </div>
+              
+              <p class="text-sm font-bold text-slate-400 leading-relaxed px-4">
+                "<%= ub.badge.description %>"<br/>
+                루파님의 성장이 새로운 증거를 남겼습니다!
+              </p>
+            </div>
+
+            <div class="pt-4 relative z-10">
+              <button onclick="this.closest('.fixed').classList.add('hidden'); 
+                               const next = document.getElementById('badge-celebration-<%= idx + 1 %>');
+                               if(next) { next.classList.remove('hidden'); } 
+                               else { document.body.classList.remove('overflow-hidden'); }"
+                      class="w-full py-4 bg-indigo-500 text-white font-black text-sm rounded-2xl shadow-xl active:scale-95 transition-all">
+                확인했어요
+              </button>
+            </div>
+          </div>
+          
+          <!-- Confetti Overlay (CSS Only) -->
+          <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <% 20.times do %>
+              <div class="confetti" style="left: <%= rand(100) %>%; animation-delay: <%= rand(3000) %>ms; background-color: <%= ['#7C4DFF', '#FFD700', '#00E676', '#FF1744'].sample %>;"></div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>

@@ -19,11 +19,11 @@
                   class: "px-3 py-1.5 rounded-lg text-[10px] transition-all #{params[:rank_type] == 'club' ? 'bg-indigo-500 text-white font-black shadow-lg shadow-indigo-500/20' : 'text-slate-500 font-bold hover:text-slate-300 hover:bg-white/5'}" %>
   </div>
 
-  <div class="app-glass-card divide-y divide-white/5 overflow-hidden">
+  <div class="app-glass-card divide-y divide-white/5 overflow-hidden border-none shadow-2xl">
     <% rankings.take(10).each_with_index do |ranking, index| %>
       <% user = ranking[:user] %>
       <% score = ranking[:score] %>
-      <%= link_to prototype_user_card_path(user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors #{index < 3 ? 'bg-indigo-500/5' : ''}" do %>
+      <%= link_to prototype_user_card_path(user), data: { turbo_frame: "user-profile-modal-frame" }, class: "flex items-center justify-between p-4 hover:bg-indigo-500/5 active:scale-[0.98] transition-all duration-300 group #{index < 3 ? 'bg-indigo-500/[0.03]' : ''}" do %>
         <div class="flex items-center gap-3">
           <div class="w-8 text-center">
             <% if index == 0 %>
@@ -61,21 +61,30 @@
     <!-- My Rank & View All Actions -->
     <div class="p-3 bg-white/[0.02] space-y-3">
       <% if defined?(@my_ranking) && @my_ranking %>
-        <%= link_to prototype_user_card_path(current_user), 
-                    data: { turbo_frame: "user-profile-modal-frame" },
-                    class: "flex items-center justify-between p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-600/20 active:scale-95 transition-all" do %>
-          <div class="flex items-center gap-3">
-            <div class="w-8 text-center text-xs font-black text-white/50"><%= @my_ranking[:rank] %></div>
-            <div class="w-9 h-9 rounded-lg overflow-hidden border border-white/20">
-              <img src="<%= current_user.profile_image %>" class="w-full h-full object-cover">
+        <div class="relative group">
+          <div class="absolute inset-0 bg-indigo-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <%= link_to prototype_user_card_path(current_user), 
+                      data: { turbo_frame: "user-profile-modal-frame" },
+                      class: "relative flex items-center justify-between p-4 bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl shadow-xl shadow-indigo-600/30 active:scale-95 transition-all duration-300" do %>
+            <div class="flex items-center gap-3">
+              <div class="w-8 text-center text-xs font-black text-white/50">#<%= @my_ranking[:rank] %></div>
+              <div class="w-10 h-10 rounded-xl overflow-hidden border-2 border-white/20 shadow-inner">
+                <img src="<%= current_user.profile_image %>" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <p class="text-[10px] font-black text-indigo-100/80 uppercase tracking-wider mb-0.5">My Rank</p>
+                <p class="text-sm font-black text-white"><%= current_user.nickname %></p>
+              </div>
             </div>
-            <div>
-              <p class="text-xs font-black text-white">나의 순위</p>
-              <p class="text-[9px] font-bold text-indigo-100"><%= current_user.nickname %></p>
+            <div class="text-right">
+              <p class="text-lg font-black text-white tabular-nums"><%= @my_ranking[:score].round(0) %>P</p>
+              <div class="flex items-center justify-end gap-1">
+                <span class="w-1 h-1 rounded-full bg-indigo-300"></span>
+                <p class="text-[8px] font-bold text-indigo-200">개인 최고 기록</p>
+              </div>
             </div>
-          </div>
-          <p class="text-sm font-black text-white"><%= @my_ranking[:score] %>P</p>
-        <% end %>
+          <% end %>
+        </div>
       <% end %>
 
       <button type="button" 

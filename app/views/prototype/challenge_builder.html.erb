@@ -1,5 +1,23 @@
-<div class="h-[calc(100vh-100px)] flex flex-col pt-2 bg-[#0C0B12] overflow-hidden select-none" data-controller="prototype-wizard">
+<% content_for :hide_nav, true %>
+
+<div class="h-screen flex flex-col bg-[#07060A] overflow-hidden select-none relative" data-controller="prototype-wizard">
+  <!-- Dynamic Aurora Background Glow -->
+  <div id="aurora-glow" class="fixed -top-24 -left-24 w-[150%] h-[150%] bg-[#4F46E5]/10 blur-[120px] rounded-full pointer-events-none transition-all duration-1000 z-0"></div>
+  <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#7C4DFF]/5 blur-[150px] rounded-full pointer-events-none z-0"></div>
+
   <style>
+    /* Step Animation */
+    .step-section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      display: none;
+    }
+    .step-section.active {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
     /* Premium Selection & Theme */
     .premium-selection {
       border-color: #818cf8 !important;
@@ -834,16 +852,28 @@
       }
     }
 
+    // Aurora Update Logic
+    const aurora = document.getElementById('aurora-glow');
+    const categoryColors = {
+      'HEALTH': '#10B981', // Emerald
+      'LIFE': '#F59E0B',   // Amber
+      'MIND': '#8B5CF6',   // Violet
+      'HOBBY': '#EC4899',  // Pink
+      'STUDY': '#3B82F6',  // Blue
+      'MONEY': '#059669'   // Emerald-dark
+    };
+
     function update() {
-      sections.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep));
+      sections.forEach((s, i) => {
+        s.classList.toggle('active', i === currentStep);
+      });
       dots.forEach((d, i) => {
         d.classList.toggle('active-dot', i === currentStep);
         d.classList.toggle('pending-dot', i > currentStep);
         d.classList.toggle('completed-dot', i < currentStep);
       });
-      stepCounter.textContent = `${currentStep + 1}/10`; 
-
-      // Auto scroll to top of section on step change
+      stepCounter.textContent = `${currentStep+1}/10`;
+      
       const activeSection = sections[currentStep];
       if (activeSection) {
         activeSection.parentElement.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1116,7 +1146,21 @@
     submitBtn.addEventListener('click', (e) => {
       if(validateChallengeStep(currentStep)) {
         isFormDirty = false; // Reset dirty flag
-        submitBtn.closest('form').submit();
+        
+        // Premium Completion: Confetti Trigger
+        if (typeof confetti !== 'undefined') {
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#818cf8', '#c084fc', '#ffffff']
+          });
+        }
+        
+        // Slight delay for effect
+        setTimeout(() => {
+          submitBtn.closest('form').submit();
+        }, 800);
       } else {
         e.preventDefault();
       }
@@ -1179,7 +1223,13 @@
           });
           btn.classList.add(activeClass);
           btn.classList.remove('unselected-opt');
-          if(hiddenId) document.getElementById(hiddenId).value = btn.dataset.val || btn.textContent.trim();
+          if(hiddenId) document.getElementById(hiddenId).value = btn.dataset.val;
+
+          // Update Aurora Color on Category Change
+          if (hiddenId === 'h_category' && aurora && categoryColors[btn.dataset.val]) {
+            aurora.style.backgroundColor = categoryColors[btn.dataset.val];
+          }
+
           if(callback) callback(btn.dataset.val);
           smartScroll(btn);
           update();

@@ -20,6 +20,20 @@
     <meta name="apple-mobile-web-app-title" content="루파">
     <link rel="apple-touch-icon" href="<%= asset_path('rf_official_logo.png') %>">
     <meta name="theme-color" content="#7C4DFF">
+
+    <!-- Open Graph / SNS 공유 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= content_for(:og_title) || "루틴 파인더스 | 성장 루틴 플랫폼" %>">
+    <meta property="og:description" content="<%= content_for(:og_description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
+    <meta property="og:image" content="<%= content_for(:og_image) || asset_url('rf_official_logo.png') %>">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:site_name" content="Routine Finders">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:og_title) || "루틴 파인더스 | 성장 루틴 플랫폼" %>">
+    <meta name="twitter:description" content="<%= content_for(:og_description) || "함께 습관을 만들어가는 루틴 챌린지 플랫폼" %>">
+    <meta name="twitter:image" content="<%= content_for(:og_image) || asset_url('rf_official_logo.png') %>">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -174,20 +188,20 @@
       }
     </script>
     <div id="premium-item-nudge" class="hidden fixed inset-0 z-[42000] flex items-center justify-center p-6">
-      <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
-      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 text-center space-y-6 animate-center-pop bg-[#16151D]">
-        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[28px] flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-indigo-500/40 nudge-icon">🔒</div>
-        <div class="space-y-2">
-          <h3 class="text-2xl font-black text-white nudge-title">멤버십 전용 기능입니다</h3>
-          <p class="text-sm font-bold text-slate-400 leading-relaxed px-4 nudge-desc">
+      <div onclick="this.parentElement.classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/95 backdrop-blur-xl"></div>
+      <div class="relative w-full max-w-[280px] app-glass-card border-white/10 p-8 text-center space-y-6 animate-center-pop bg-[#0C0B12]/90 ring-1 ring-white/5 shadow-[0_40px_80px_rgba(0,0,0,0.7)]">
+        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[30px] flex items-center justify-center text-4xl mx-auto shadow-2xl shadow-indigo-500/30 nudge-icon">🔒</div>
+        <div class="space-y-2 px-1">
+          <h3 class="text-xl font-black text-white nudge-title break-keep">멤버십 전용 기능입니다</h3>
+          <p class="text-[11px] font-bold text-slate-400 leading-relaxed nudge-desc break-keep">
             휴식권과 세이브권은 루파 클럽 멤버에게만 제공되는 특별한 혜택입니다.
           </p>
         </div>
-        <div class="space-y-3 pt-4">
-          <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "block w-full py-4 bg-white text-black rounded-2xl font-black text-sm active:scale-95 transition-all shadow-xl shadow-white/10" do %>
+        <div class="space-y-2.5 pt-2">
+          <%= link_to guide_routine_clubs_path(source: 'prototype'), class: "block w-full py-4 bg-white text-black rounded-2xl font-black text-xs active:scale-95 transition-all shadow-xl shadow-white/10" do %>
             멤버십 혜택 알아보기
           <% end %>
-          <button onclick="this.closest('#premium-item-nudge').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="w-full py-3 text-slate-500 font-bold text-xs hover:text-white transition-colors">
+          <button onclick="this.closest('#premium-item-nudge').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="w-full py-2 text-slate-600 font-bold text-[10px] hover:text-white transition-colors">
             다음에 할게요
           </button>
         </div>
@@ -208,9 +222,9 @@
     <div id="record-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('record-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
       <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
-        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 루틴 기록</h3>
-        <p class="text-xs font-bold text-indigo-400 mb-8 text-center uppercase tracking-widest leading-none">Record your success</p>
+        <p class="text-[10px] font-bold text-indigo-400 mb-8 text-center uppercase tracking-[0.2em] leading-none opacity-60">Record your success</p>
         
         <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
           <%= f.hidden_field :activity_type, value: "routine_record" %>
@@ -238,9 +252,9 @@
     <div id="commitment-sheet" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4">
       <div onclick="document.getElementById('commitment-sheet').classList.add('hidden'); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"></div>
       <div class="relative w-full max-w-md bg-[#1B1A24] rounded-[40px] p-8 pb-10 animate-slide-up border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-10 max-h-[90vh] overflow-y-auto hide-scrollbar modal-content-safe">
-        <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8"></div>
+        <div class="w-12 h-1 bg-white/10 rounded-full mx-auto mb-8"></div>
         <h3 class="text-xl font-black text-white mb-2 text-center">오늘의 다짐</h3>
-        <p class="text-xs font-bold text-rose-400 mb-8 text-center uppercase tracking-widest leading-none">Declare your commitment</p>
+        <p class="text-[10px] font-bold text-rose-400 mb-8 text-center uppercase tracking-[0.2em] leading-none opacity-60">Declare your commitment</p>
         
         <%= form_with url: prototype_record_path, method: :post, class: "space-y-6" do |f| %>
           <%= f.hidden_field :activity_type, value: "reflection" %>
@@ -461,30 +475,59 @@
     <!-- 3. Badge Celebration Modal -->
     <% if @new_badges&.any? %>
       <% @new_badges.each_with_index do |ub, idx| %>
-        <div id="badge-celebration-<%= idx %>" class="fixed inset-0 z-[99990] flex items-center justify-center p-6 bg-[#0C0B12] <%= 'hidden' if idx > 0 %>">
-          <div class="absolute inset-0 bg-[#0C0B12] animate-fade-in"></div>
+        <% 
+          tier_colors = {
+            "bronze" => { from: "from-amber-700/80", to: "to-orange-900/80", glow: "shadow-amber-900/40", text: "text-amber-500" },
+            "silver" => { from: "from-slate-400/80", to: "to-slate-600/80", glow: "shadow-slate-500/40", text: "text-slate-300" },
+            "gold"   => { from: "from-amber-400/80", to: "to-yellow-600/80", glow: "shadow-yellow-500/50", text: "text-amber-400" },
+            "platinum" => { from: "from-indigo-400/80", to: "to-cyan-500/80", glow: "shadow-indigo-500/40", text: "text-indigo-300" },
+            "diamond" => { from: "from-purple-500/80", to: "to-indigo-600/80", glow: "shadow-purple-500/60", text: "text-purple-400" }
+          }[ub.badge.level.to_s] || { from: "from-indigo-500", to: "to-purple-600", glow: "shadow-indigo-500/40", text: "text-indigo-400" }
+        %>
+        <div id="badge-celebration-<%= idx %>" class="fixed inset-0 z-[99990] flex items-center justify-center p-6 bg-[#0C0B12]/80 backdrop-blur-3xl <%= 'hidden' if idx > 0 %>">
+          <div class="absolute inset-0 bg-[#0C0B12]/40 animate-fade-in"></div>
           
-          <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 text-center space-y-8 animate-badge-celebration-pop">
-            <!-- Particle Effect Decoration -->
-            <div class="absolute inset-0 overflow-hidden rounded-[32px] pointer-events-none">
-              <div class="absolute top-0 left-1/4 w-20 h-20 bg-indigo-500/20 blur-3xl animate-pulse"></div>
-              <div class="absolute bottom-0 right-1/4 w-20 h-20 bg-purple-500/20 blur-3xl animate-pulse delay-700"></div>
+          <div class="relative w-full max-w-sm app-glass-card border-white/10 p-10 text-center space-y-8 animate-badge-celebration-pop bg-[#16151D]/80 shadow-[0_40px_100px_rgba(0,0,0,0.8)] ring-1 ring-white/5">
+            <div class="absolute inset-0 overflow-hidden rounded-[40px] pointer-events-none">
+              <div class="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-gradient-to-tr <%= tier_colors[:from] %> to-transparent opacity-10 blur-[100px] animate-pulse"></div>
             </div>
 
-            <div class="space-y-6 relative z-10">
-              <div class="w-32 h-32 rounded-[40px] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-6xl mx-auto shadow-[0_20px_50px_rgba(124,77,255,0.5)] animate-float">
-                <%= ub.badge.icon_path.presence || "🏆" %>
+            <div class="space-y-8 relative z-10">
+              <div class="relative group">
+                <div class="absolute inset-0 bg-gradient-to-br <%= tier_colors[:from] %> <%= tier_colors[:to] %> rounded-[48px] opacity-20 blur-2xl group-hover:opacity-40 transition-opacity"></div>
+                <div class="w-36 h-36 rounded-[48px] bg-[#0C0B12]/80 flex items-center justify-center mx-auto shadow-2xl <%= tier_colors[:glow] %> animate-float ring-2 ring-white/20 relative overflow-hidden">
+                  <% if ub.badge.icon_path.start_with?("RF:") %>
+                    <% 
+                      gen_num = ub.badge.icon_path.split(":").last
+                    %>
+                    <div class="relative z-10 w-24 h-24 flex items-center justify-center">
+                      <%= image_tag "rf_official_logo.png", class: "w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" %>
+                      
+                      <!-- Generation Number Label -->
+                      <div class="absolute -bottom-2 -right-2 bg-white px-3 py-1 rounded-xl shadow-2xl ring-4 ring-[#0C0B12] transform rotate-12">
+                        <span class="text-xl font-black text-slate-900"><%= gen_num %>TH</span>
+                      </div>
+                    </div>
+                  <% else %>
+                    <span class="relative z-10 text-7xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]"><%= ub.badge.icon_path.presence || "🏆" %></span>
+                  <% end %>
+                  <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none"></div>
+                </div>
+                <div class="absolute -top-4 -right-4 text-2xl animate-ping opacity-60">✨</div>
+                <div class="absolute -bottom-4 -left-4 text-xl animate-pulse delay-700">⭐</div>
               </div>
               
-              <div class="space-y-2">
-                <p class="text-xs font-black text-indigo-400 uppercase tracking-[0.3em] animate-fade-in">New Identity Earned</p>
-                <h3 class="text-3xl font-black text-white leading-tight"><%= ub.badge.name %></h3>
+              <div class="space-y-3">
+                <p class="text-[10px] font-black <%= tier_colors[:text] %> uppercase tracking-[0.4em] animate-fade-in drop-shadow-sm"><%= ub.badge.level.to_s.upcase %> IDENTITY UNLOCKED</p>
+                <h3 class="text-3xl font-black text-white leading-tight italic break-keep tracking-tight"><%= ub.badge.name %></h3>
               </div>
               
-              <p class="text-sm font-bold text-slate-400 leading-relaxed px-4">
-                "<%= ub.badge.description %>"<br/>
-                루파님의 성장이 새로운 증거를 남겼습니다!
-              </p>
+              <div class="relative py-2">
+                <div class="absolute left-0 right-0 top-1/2 h-px bg-white/5"></div>
+                <p class="relative z-10 text-sm font-bold text-slate-400 leading-relaxed px-4 bg-[#16151D] mx-auto w-fit break-keep italic text-center">
+                  "<%= ub.badge.description %>"
+                </p>
+              </div>
             </div>
 
             <div class="pt-4 relative z-10">
@@ -492,16 +535,15 @@
                                const next = document.getElementById('badge-celebration-<%= idx + 1 %>');
                                if(next) { next.classList.remove('hidden'); } 
                                else { document.body.classList.remove('overflow-hidden'); }"
-                      class="w-full py-4 bg-indigo-500 text-white font-black text-sm rounded-2xl shadow-xl active:scale-95 transition-all">
-                확인했어요
+                      class="w-full py-4 bg-white text-[#0C0B12] font-black text-sm rounded-2xl shadow-[0_15px_30px_rgba(255,255,255,0.1)] active:scale-95 transition-all">
+                확인했습니다
               </button>
             </div>
           </div>
           
-          <!-- Confetti Overlay (CSS Only) -->
-          <div class="absolute inset-0 pointer-events-none overflow-hidden">
-            <% 20.times do %>
-              <div class="confetti" style="left: <%= rand(100) %>%; animation-delay: <%= rand(3000) %>ms; background-color: <%= ['#7C4DFF', '#FFD700', '#00E676', '#FF1744'].sample %>;"></div>
+          <div class="absolute inset-0 pointer-events-none overflow-hidden h-full w-full">
+            <% 24.times do %>
+              <div class="confetti" style="left: <%= rand(100) %>%; animation-duration: <%= rand(2000..4000) %>ms; background-color: <%= ['#ffffff', '#818CF8', '#FBBF24', '#F472B6'].sample %>; opacity: 0.6;"></div>
             <% end %>
           </div>
         </div>
@@ -578,10 +620,10 @@
       <div id="rufa-pending-modal" class="fixed inset-0 z-[3000] flex items-center justify-center p-6">
         <div onclick="this.parentElement.remove(); document.body.classList.remove('overflow-hidden')" class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
         <div class="relative w-full max-w-sm app-glass-card border-white/20 p-10 flex flex-col items-center text-center space-y-6 animate-badge-pop bg-[#16151D] m-0">
-          <div class="w-24 h-24 bg-amber-500 rounded-[32px] flex items-center justify-center text-5xl shadow-2xl shadow-amber-500/50">⌛</div>
-          <div class="space-y-2">
-            <h3 class="text-2xl font-black text-white">클럽 가입 확인 중</h3>
-            <p class="text-sm font-bold text-slate-400">호스트가 입금을 확인하고 있습니다.<br/>승인이 완료되면 루파 전용 혜택을<br/>즉시 이용하실 수 있습니다.</p>
+          <div class="w-20 h-20 bg-amber-500 rounded-[30px] flex items-center justify-center text-5xl shadow-2xl shadow-amber-500/40">⌛</div>
+          <div class="space-y-2 px-1">
+            <h3 class="text-xl font-black text-white">클럽 가입 확인 중</h3>
+            <p class="text-[11px] font-bold text-slate-400 leading-relaxed break-keep">호스트가 입금을 확인하고 있습니다. 승인이 완료되면 루파 전용 혜택을 즉시 이용하실 수 있습니다.</p>
           </div>
           <div class="w-full pt-4 space-y-3">
              <button onclick="this.closest('#rufa-pending-modal').remove(); document.body.classList.remove('overflow-hidden')" 
@@ -968,8 +1010,11 @@
         return true;
       };
     </script>
-    <!-- App Bottom Navigation Bar (Standalone Fixed Layer - Moved to Bottom for Z-Index Safety) -->
+    <!-- App Bottom Navigation Bar (Standalone Fixed Layer) -->
     <% unless content_for?(:hide_nav) %>
+      <!-- Bottom Safe Area Mask (Premium Content Fade) -->
+      <div class="fixed bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#0C0B12] via-[#0C0B12]/90 to-transparent pointer-events-none z-[55000]"></div>
+
       <div class="fixed bottom-10 inset-x-0 z-[60000] flex justify-center pointer-events-none">
         <div class="w-full max-w-md mx-auto px-4 flex justify-center">
           <nav class="pointer-events-auto w-[92%] max-w-[360px] h-20 bg-[#16151D]/98 backdrop-blur-3xl rounded-[32px] border border-white/10 flex items-center justify-between px-2 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
