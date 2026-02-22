@@ -1127,15 +1127,22 @@ class PrototypeController < ApplicationController
     # 탭 B: 이번 주 실시간 현황 (현재 달성률 70% 미만인 유저들)
     @live_risks = []
     base_members.each do |member|
-      # 가입 즉시 모니터링 대상에 포함 (performance_stats가 가입일 이후부터 계산함)
+      # [Fix] "오늘(진행 중인 일자)"은 억울한 감점(분모 추가)에서 제외하기 위해 어제(yesterday)까지의 누적 데이터만 평가합니다.
+      # 만약 평가 당일이 이번 주의 첫날(월요일)이라면, 이번 주의 활동을 측정할 과거 데이터가 하루도 없으므로 스킵하거나 100% 진행 대기로 취급.
+      target_eval_end_date = @evaluation_date > @this_week_start ? @evaluation_date - 1.day : @evaluation_date
 
-      stats = member.performance_stats(@this_week_start, [ @evaluation_date, @this_week_end ].min)
-      # 현재까지 해야 할 루틴이 있는 경우에만 체크
+      stats = member.performance_stats(@this_week_start, target_eval_end_date)
+      
+      # [Note] 여태까지 부여된 전체 주간(월~일) 목표치 기준으로 이번 주 내에 70%를 극복하기 위해 몇 개가 필요한지는 전체 주간을 계산합니다.
+      needed = member.routines_needed_for_70_percent(@this_week_start, @this_week_end)
+      
+      # 어제까지 해야 했던 누적 루틴이 존재하고 && 그 기준 달성률이 70% 미만인 사람만 위험군에 표시
       if stats[:total_required] > 0 && stats[:rate] < 70.0
+        # 화면 출력을 더 세밀하게 보정 (체감상 억울함 해소)
         @live_risks << {
           member: member,
           stats: stats,
-          needed: member.routines_needed_for_70_percent(@this_week_start, @this_week_end)
+          needed: needed
         }
       end
     end
