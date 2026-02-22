@@ -246,12 +246,14 @@
     document.body.appendChild(form);
 
     // CSRF Token
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-    const csrfInput = document.createElement('input');
-    csrfInput.type = 'hidden';
-    csrfInput.name = 'authenticity_token';
-    csrfInput.value = csrfToken;
-    form.appendChild(csrfInput);
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    if (csrfMeta) {
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'authenticity_token';
+      csrfInput.value = csrfMeta.content;
+      form.appendChild(csrfInput);
+    }
 
     // Source
     const sourceInput = document.createElement('input');

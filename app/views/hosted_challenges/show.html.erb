@@ -358,6 +358,7 @@
     <p class="text-[10px] font-bold text-emerald-400 text-center uppercase tracking-widest leading-none mb-6">모든 참가자에게 중요 소식을 알립니다</p>
     
     <%= form_with model: [@challenge, Announcement.new], class: "space-y-4" do |f| %>
+      <%= hidden_field_tag :source, 'prototype' %>
       <div class="space-y-3">
         <%= f.text_field :title, placeholder: "공지 제목을 입력하세요", required: true, class: "w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-sm font-black focus:border-emerald-500 outline-none" %>
         <%= f.text_area :content, placeholder: "공지 상세 내용을 입력하세요...", required: true, class: "w-full min-h-[120px] bg-white/5 border border-white/10 rounded-3xl p-5 text-white text-sm font-bold focus:border-emerald-500 outline-none resize-none" %>

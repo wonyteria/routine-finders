@@ -16,7 +16,30 @@ class AnnouncementsController < ApplicationController
     @routine_club = @parent if @parent.is_a?(RoutineClub)
 
     if @announcement.save
-      redirect_to (params[:source] == "prototype" && @challenge) ? hosted_challenge_path(@challenge, tab: "announcements", source: "prototype") : request.referer || root_path, notice: "공지사항이 등록되었습니다."
+      # Send Notifications to all participants/members
+      if @challenge
+        @challenge.participants.each do |participant|
+          Notification.create!(
+            user: participant.user,
+            title: "[공지] #{@challenge.title}",
+            content: @announcement.title,
+            link: challenge_path(@challenge, tab: "announcements", source: "prototype"),
+            notification_type: :announcement
+          )
+        end
+      elsif @routine_club
+        @routine_club.routine_club_members.where(status: :active).each do |member|
+          Notification.create!(
+            user: member.user,
+            title: "[공지] #{@routine_club.title}",
+            content: @announcement.title,
+            link: routine_club_path(@routine_club, tab: "announcements", source: "prototype"),
+            notification_type: :announcement
+          )
+        end
+      end
+
+      redirect_to (params[:source] == "prototype" && @challenge) ? hosted_challenge_path(@challenge, tab: "announcements", source: "prototype") : request.referer || root_path, notice: "공지사항이 등록 및 알림 발송되었습니다."
     else
       render :new, status: :unprocessable_entity
     end

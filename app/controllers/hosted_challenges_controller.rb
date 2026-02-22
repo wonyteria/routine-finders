@@ -294,6 +294,8 @@ class HostedChallengesController < ApplicationController
     end
 
     target_participants = case group
+    when "individual"
+      @challenge.participants.where(id: params[:participant_id])
     when "sluggish"
       @challenge.participants.where(status: :lagging)
     when "unverified_today"
