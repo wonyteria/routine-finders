@@ -62,8 +62,19 @@
                     <p class="text-[10px] font-bold text-slate-500">ID: <%= m.user.id %></p>
                   </div>
                 </div>
-                <div class="px-2 py-1 rounded bg-rose-500/20 border border-rose-500/30">
-                  <span class="text-[9px] font-black text-rose-500">경고 부여됨</span>
+                <div class="flex items-center gap-1.5">
+                  <div class="px-2 py-1 rounded bg-rose-500/20 border border-rose-500/30">
+                    <span class="text-[9px] font-black text-rose-500">경고 부여됨</span>
+                  </div>
+                  <% if m.status_kicked? %>
+                    <div class="px-1.5 py-1 rounded bg-rose-600/30 border border-rose-500/50">
+                      <span class="text-[8px] font-black text-rose-300">제명됨</span>
+                    </div>
+                  <% elsif m.status_left? || m.user.deleted_at.present? %>
+                    <div class="px-1.5 py-1 rounded bg-slate-500/20 border border-slate-500/30">
+                      <span class="text-[8px] font-black text-slate-400">탈퇴/나감</span>
+                    </div>
+                  <% end %>
                 </div>
               </div>
 

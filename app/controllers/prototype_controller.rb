@@ -1102,16 +1102,27 @@ class PrototypeController < ApplicationController
                             .includes(:attendances, user: :personal_routines)
                             .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.admin? || m.user.email.include?("routinefinders.temp") }
 
-    # 탭 A: 지난주 결과 기반 (오늘 경고 대상자들)
+    # 탭 A: 지난주 결과 기반 (실제 경고 대상자들)
     @confirmed_risks = []
-    base_members.each do |member|
-      if member.check_weekly_performance!(@evaluation_date, dry_run: true)
-        @confirmed_risks << {
-          member: member,
-          stats: member.performance_stats(@last_week_start, @last_week_end)
-        }
-      end
+    
+    # [Fix] 동적으로 재계산하지 않고, 실제로 해당 일자(last_week_end)에 시스템이 부여한 '주간 점검 경고' 기록을 참조합니다.
+    # 이렇게 하면 주중에 만회하거나 탈퇴/제명된 유저가 명단에서 사라지거나 왜곡되는 버그를 방지할 수 있습니다.
+    target_penalties = @official_club.penalties.where(
+      title: "주간 점검 경고",
+      created_at: @last_week_end.all_day
+    )
+    
+    warned_member_ids = target_penalties.pluck(:routine_club_member_id)
+    warned_members = @official_club.members.includes(user: :personal_routines).where(id: warned_member_ids).reject { |m| m.user.nil? || m.user.deleted_at.present? }
+    
+    warned_members.each do |member|
+      @confirmed_risks << {
+        member: member,
+        stats: member.performance_stats(@last_week_start, @last_week_end)
+      }
     end
+    
+    @confirmed_risks = @confirmed_risks.sort_by { |r| r[:stats][:rate] }
 
     # 탭 B: 이번 주 실시간 현황 (현재 달성률 70% 미만인 유저들)
     @live_risks = []
