@@ -982,8 +982,9 @@ class PrototypeController < ApplicationController
       @target_end = @target_start.end_of_month
     end
 
-    # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되, '루파' 닉네임 유저만 제외
-    confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).where.not(users: { nickname: "루파" }).includes(:user)
+    # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되, 지정된 예외 시스템 계정이 아닌 경우
+    confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(:user)
+                                      .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp") }
 
     @reports = []
 
@@ -1018,9 +1019,7 @@ class PrototypeController < ApplicationController
 
       exclusion_reason = nil
       if has_low_rate && !actual_penalty_issued
-        if [ "루파", "wony quokka", "byteria won" ].include?(member.user.nickname) || member.user.email.include?("routinefinders.temp")
-          exclusion_reason = "시스템계정"
-        elsif !is_eligible_date
+        if !is_eligible_date
           exclusion_reason = "신규가입"
         elsif member.status_kicked? || member.status_left?
           exclusion_reason = "탈퇴/제명"
