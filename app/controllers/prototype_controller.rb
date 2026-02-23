@@ -1005,8 +1005,14 @@ class PrototypeController < ApplicationController
       # [Logic Sync] 경고 적합성 판단
       # 1. 가입일 체크 (해당 기간 내에 가입되어 있었으면 대상)
       # 2. 상태 체크 (active/warned 상태인 정식 멤버만 경고 대상)
+      # 3. 실제 패널티 (warning) 부과 여부 확인
       is_eligible_date = member.joined_at.to_date <= @target_end
-      is_eligible = is_eligible_date && (member.status_active? || member.status_warned?)
+
+      # 해당 타겟의 종료일자(일요일 자정 점검 시점)에 '주간 점검 경고' 페널티가 부여되었는지 실제 DB 조회
+      actual_penalty_issued = member.penalties.where(title: "주간 점검 경고", created_at: @target_end.all_day).exists?
+
+      # is_eligible은 이제 "단순 조건 충족 여부"가 아니라 "실제로 이번 주간 평가에서 시스템 경고를 받았는가"를 의미함.
+      is_eligible = actual_penalty_issued
 
       has_low_rate = report.achievement_rate < 70.0
 
@@ -1014,7 +1020,7 @@ class PrototypeController < ApplicationController
       score = member.user.rufa_club_score(@target_start)
 
       # 리포트 오브젝트에 동적 속성 주입 (View에서 사용)
-      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user, :is_eligible_date, :score).new(*report.attributes.values, is_eligible, has_low_rate, report.user, is_eligible_date, score)
+      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user, :is_eligible_date, :score, :actual_penalty_issued).new(*report.attributes.values, is_eligible, has_low_rate, report.user, is_eligible_date, score, actual_penalty_issued)
 
       @reports << decorated_report
     end
@@ -1104,24 +1110,24 @@ class PrototypeController < ApplicationController
 
     # 탭 A: 지난주 결과 기반 (실제 경고 대상자들)
     @confirmed_risks = []
-    
+
     # [Fix] 동적으로 재계산하지 않고, 실제로 해당 일자(last_week_end)에 시스템이 부여한 '주간 점검 경고' 기록을 참조합니다.
     # 이렇게 하면 주중에 만회하거나 탈퇴/제명된 유저가 명단에서 사라지거나 왜곡되는 버그를 방지할 수 있습니다.
     target_penalties = @official_club.penalties.where(
       title: "주간 점검 경고",
       created_at: @last_week_end.all_day
     )
-    
+
     warned_member_ids = target_penalties.pluck(:routine_club_member_id)
     warned_members = @official_club.members.includes(user: :personal_routines).where(id: warned_member_ids).reject { |m| m.user.nil? || m.user.deleted_at.present? }
-    
+
     warned_members.each do |member|
       @confirmed_risks << {
         member: member,
         stats: member.performance_stats(@last_week_start, @last_week_end)
       }
     end
-    
+
     @confirmed_risks = @confirmed_risks.sort_by { |r| r[:stats][:rate] }
 
     # 탭 B: 이번 주 실시간 현황 (현재 달성률 70% 미만인 유저들)
@@ -1132,10 +1138,10 @@ class PrototypeController < ApplicationController
       target_eval_end_date = @evaluation_date > @this_week_start ? @evaluation_date - 1.day : @evaluation_date
 
       stats = member.performance_stats(@this_week_start, target_eval_end_date)
-      
+
       # [Note] 여태까지 부여된 전체 주간(월~일) 목표치 기준으로 이번 주 내에 70%를 극복하기 위해 몇 개가 필요한지는 전체 주간을 계산합니다.
       needed = member.routines_needed_for_70_percent(@this_week_start, @this_week_end)
-      
+
       # 어제까지 해야 했던 누적 루틴이 존재하고 && 그 기준 달성률이 70% 미만인 사람만 위험군에 표시
       if stats[:total_required] > 0 && stats[:rate] < 70.0
         # 화면 출력을 더 세밀하게 보정 (체감상 억울함 해소)

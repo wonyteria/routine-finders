@@ -35,9 +35,9 @@
       status_label = if r.is_eligible
         " / 경고부여"
       elsif !r.is_eligible_date
-        " / 신규유예"
+        " / 신규가입 유예"
       else
-        " / 평가제외"
+        " / 평가제외(혹은 관리자)"
       end
       "• #{r.user.nickname} (#{r.achievement_rate.to_i}%#{status_label})" 
     }.join("\n") + "\n\n"
