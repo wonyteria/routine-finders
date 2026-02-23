@@ -207,9 +207,9 @@
                   end
                 %>
                 <div class="app-glass-card p-4 transition-all <%= status_styles %> flex items-center justify-between gap-4">
-                  <div class="flex-1 min-w-0">
+                  <div class="flex-1 min-w-0 cursor-pointer group" onclick="openAnalysisModal(<%= member.user.id %>, 'weekly')">
                     <div class="flex items-center gap-2">
-                      <p class="text-sm font-black text-white leading-tight truncate"><%= member.user.nickname %></p>
+                      <p class="text-sm font-black text-white leading-tight truncate group-hover:text-indigo-400 transition-colors"><%= member.user.nickname %></p>
                       <% if monthly_rate < 30 %>
                         <span class="px-1.5 py-0.5 rounded-md bg-rose-500 text-[8px] font-black text-white whitespace-nowrap">재분발</span>
                       <% end %>
