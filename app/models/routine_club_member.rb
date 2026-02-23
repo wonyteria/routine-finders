@@ -102,8 +102,8 @@ class RoutineClubMember < ApplicationRecord
       return false
     end
 
-    # [Fix] 시스템 계정(루파) 및 관리자 계정 평가 제외
-    if [ "루파", "wony quokka", "byteria won" ].include?(user.nickname) || user.admin? || user.email.include?("routinefinders.temp")
+    # [Fix] 시스템 계정(루파) 및 약속된 계정만 평가 제외 (관리자 포함)
+    if [ "루파", "wony quokka", "byteria won" ].include?(user.nickname) || user.email.include?("routinefinders.temp")
       return false
     end
 

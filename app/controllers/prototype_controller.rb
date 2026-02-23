@@ -1016,11 +1016,25 @@ class PrototypeController < ApplicationController
 
       has_low_rate = report.achievement_rate < 70.0
 
+      exclusion_reason = nil
+      if has_low_rate && !actual_penalty_issued
+        if [ "루파", "wony quokka", "byteria won" ].include?(member.user.nickname) || member.user.email.include?("routinefinders.temp")
+          exclusion_reason = "시스템계정"
+        elsif !is_eligible_date
+          exclusion_reason = "신규가입"
+        elsif member.status_kicked? || member.status_left?
+          exclusion_reason = "탈퇴/제명"
+        else
+          # 과거에 user.admin? 때문에 예외된 경우 등
+          exclusion_reason = "미부여(기존 관리자 면제)"
+        end
+      end
+
       # 시너지 랭킹 반영을 위한 점수 산출
       score = member.user.rufa_club_score(@target_start)
 
       # 리포트 오브젝트에 동적 속성 주입 (View에서 사용)
-      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user, :is_eligible_date, :score, :actual_penalty_issued).new(*report.attributes.values, is_eligible, has_low_rate, report.user, is_eligible_date, score, actual_penalty_issued)
+      decorated_report = Struct.new(*report.attributes.keys.map(&:to_sym), :is_eligible, :has_low_rate, :user, :is_eligible_date, :score, :actual_penalty_issued, :exclusion_reason).new(*report.attributes.values, is_eligible, has_low_rate, report.user, is_eligible_date, score, actual_penalty_issued, exclusion_reason)
 
       @reports << decorated_report
     end
@@ -1101,12 +1115,12 @@ class PrototypeController < ApplicationController
     @this_week_start = @evaluation_date.beginning_of_week
     @this_week_end = @evaluation_date.end_of_week
 
-    # 공통 대상: 결제 완료된 정식 멤버이며, 운영진이 아닌 경우
+    # 공통 대상: 결제 완료된 정식 멤버이며, 지정된 예외 시스템 계정이 아닌 경우
     base_members = @official_club.members
                                 .where(status: [ :active, :warned ])
                                 .where(payment_status: :confirmed)
                             .includes(:attendances, user: :personal_routines)
-                            .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.admin? || m.user.email.include?("routinefinders.temp") }
+                            .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp") }
 
     # 탭 A: 지난주 결과 기반 (실제 경고 대상자들)
     @confirmed_risks = []

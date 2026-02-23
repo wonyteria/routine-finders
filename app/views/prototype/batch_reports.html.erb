@@ -32,12 +32,12 @@
   if cares.any?
     summary_text += "⚠️ 70% 미만 (Manager's Care)\n"
     summary_text += cares.map { |r| 
-      status_label = if r.is_eligible
+      status_label = if r.actual_penalty_issued
         " / 경고부여"
-      elsif !r.is_eligible_date
-        " / 신규가입 유예"
+      elsif r.exclusion_reason.present?
+        " / 평가제외(#{r.exclusion_reason})"
       else
-        " / 평가제외(혹은 관리자)"
+        " / 평가제외"
       end
       "• #{r.user.nickname} (#{r.achievement_rate.to_i}%#{status_label})" 
     }.join("\n") + "\n\n"
