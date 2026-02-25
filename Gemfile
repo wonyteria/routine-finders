@@ -20,7 +20,7 @@ gem "tailwindcss-rails"
 gem "jbuilder"
 
 # Authentication
-gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.21"
 gem "omniauth"
 gem "omniauth-rails_csrf_protection"
 gem "omniauth-threads-api"
