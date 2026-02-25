@@ -1,8 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["modal"]
-
     dismiss() {
         this.hideModal()
         this.sendDismissToServer()
@@ -15,16 +13,18 @@ export default class extends Controller {
     }
 
     hideModal() {
-        this.modalTarget.classList.add("hidden")
+        this.element.classList.add("hidden")
     }
 
     async sendDismissToServer() {
         try {
+            const csrfTokenElem = document.querySelector('meta[name="csrf-token"]')
+            const csrfToken = csrfTokenElem ? csrfTokenElem.content : ''
             await fetch('/pwa/dismiss_notice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-Token': csrfToken
                 }
             })
         } catch (error) {
