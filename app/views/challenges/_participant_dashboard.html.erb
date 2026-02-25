@@ -44,7 +44,7 @@
   }
 </style>
 
-<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 pb-32 selection:bg-indigo-500/30">
+<div class="flex flex-col bg-[#0C0B12] text-white min-h-screen relative -mx-4 pb-60 selection:bg-indigo-500/30">
   <!-- Top Nav (Floating Glass) -->
   <header class="sticky top-0 z-[100] px-6 py-8 bg-[#0C0B12]/80 backdrop-blur-3xl border-b border-white/5 flex items-center justify-between">
     <%= link_to (params[:source] == 'prototype' ? prototype_explore_path : :back), class: "w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-white/60 active:scale-90 transition-all shadow-inner" do %>
@@ -98,19 +98,41 @@
               <span class="text-[11px] font-black text-emerald-400 uppercase tracking-[0.2em] leading-none">Upcoming Event</span>
             </div>
 
-            <div class="space-y-3">
-              <p class="text-[11px] font-black text-white/40 uppercase tracking-widest leading-none">Next Meeting</p>
-              <h2 class="text-3xl font-black leading-none text-white tracking-tighter">
-                <%= @challenge.start_date.strftime('%m.%d') %> 
-                <span class="text-emerald-400 ml-1"><%= @challenge.meeting_info&.meeting_time %></span>
-              </h2>
-              <div class="flex items-center gap-2.5 text-white/60">
-                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <p class="text-[15px] font-bold"><%= @challenge.meeting_info&.place_name || "장소 조율 중" %></p>
+            <div class="space-y-6">
+              <div class="space-y-3">
+                <p class="text-[11px] font-black text-white/40 uppercase tracking-widest leading-none">Next Meeting</p>
+                <div class="flex items-baseline gap-2">
+                  <h2 class="text-3xl font-black leading-none text-white tracking-tighter">
+                    <%= @challenge.start_date.strftime('%m.%d') %> 
+                  </h2>
+                  <span class="text-xl font-black text-emerald-400 italic"><%= @challenge.meeting_info&.meeting_time %></span>
+                </div>
+                
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2.5 text-white">
+                    <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <p class="text-[17px] font-black italic tracking-tight"><%= @challenge.meeting_info&.place_name || "장소 조율 중" %></p>
+                  </div>
+                  <% if @challenge.meeting_info&.address.present? %>
+                    <p class="text-[11px] font-bold text-slate-500 pl-6.5 break-all"><%= @challenge.meeting_info.address %></p>
+                  <% end %>
+                </div>
               </div>
+
+              <!-- Participants Row -->
+              <% if @participants.any? %>
+                <div class="flex items-center gap-2 group-hover:translate-x-1 transition-transform cursor-pointer" onclick="document.querySelector('[data-action=\"click->modal#open\"]').click()">
+                  <div class="flex -space-x-2">
+                    <% @participants.limit(5).each do |p| %>
+                      <img src="<%= p.user.profile_image %>" class="w-6 h-6 rounded-lg border-2 border-[#0C0B12] object-cover">
+                    <% end %>
+                  </div>
+                  <p class="text-[10px] font-black text-emerald-400 italic">+<%= @challenge.current_participants %> 루파 참여 중</p>
+                </div>
+              <% end %>
             </div>
             
-            <div class="flex gap-3">
+            <div class="flex gap-3 pt-2">
               <% if @challenge.meeting_info&.place_url.present? || @challenge.meeting_info&.address.present? %>
                 <% 
                   map_url = @challenge.meeting_info.place_url.presence || 
@@ -125,6 +147,10 @@
                 <%= link_to @challenge.chat_link, target: "_blank", class: "flex-1 py-4.5 bg-emerald-500 rounded-2xl text-[13px] font-black text-white transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-95" do %>
                    💬 커뮤니티 입방
                 <% end %>
+              <% else %>
+                 <div class="flex-1 py-4.5 bg-white/[0.03] border border-white/10 rounded-2xl text-[11px] font-bold text-slate-600 flex items-center justify-center gap-2">
+                   💬 채팅방 준비 중
+                 </div>
               <% end %>
             </div>
           </div>
@@ -369,30 +395,83 @@
              </div>
            </div>
 
-        <% when "dashboard" %>
-          <% if @challenge.offline? %>
-            <!-- GATHERING: Announcements Feed -->
-            <% if @challenge.announcements.any? %>
-              <div class="space-y-4">
-                <% @challenge.announcements.order(created_at: :desc).each do |notice| %>
-                  <div class="glass-card p-6 space-y-3 border-emerald-500/20 bg-emerald-500/5">
-                    <div class="flex items-center justify-between">
-                      <span class="px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest">NOTICE</span>
-                      <span class="text-[10px] text-slate-500 font-bold"><%= time_ago_in_words(notice.created_at) %> 전</span>
-                    </div>
-                    <div>
-                      <h3 class="text-sm font-black text-white mb-2"><%= notice.title %></h3>
-                      <p class="text-xs text-slate-300 leading-relaxed"><%= notice.content %></p>
-                    </div>
+            <!-- GATHERING: Hybrid Dashboard (Info + Notices) -->
+            <div class="space-y-10">
+              <!-- Essential Meeting Memo -->
+              <div class="glass-card p-8 border-emerald-500/20 bg-emerald-500/5 space-y-8 relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                
+                <div class="space-y-6 relative z-10">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                      <span class="text-base text-white">📝</span> MEETING MEMO
+                    </h3>
                   </div>
-                <% end %>
+
+                  <div class="space-y-6 divide-y divide-white/5">
+                    <% if @challenge.meeting_info&.description.present? %>
+                      <div class="space-y-3 pt-2">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">About this gathering</p>
+                        <p class="text-[13px] font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= @challenge.meeting_info.description %></p>
+                      </div>
+                    <% end %>
+
+                    <% if @challenge.preparation_items.present? %>
+                      <div class="space-y-3 pt-6">
+                        <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
+                          Checklist
+                          <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </p>
+                        <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                          <p class="text-[13px] font-black text-white leading-relaxed whitespace-pre-wrap"><%= @challenge.preparation_items %></p>
+                        </div>
+                      </div>
+                    <% end %>
+
+                    <% if @challenge.chat_link.blank? %>
+                      <div class="pt-6">
+                        <div class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center space-y-2">
+                          <p class="text-xs font-black text-amber-500 italic">"채팅방 입장이 대기 중입니다"</p>
+                          <p class="text-[10px] font-bold text-slate-500">호스트가 링크를 등록하면 정보가 업데이트됩니다.</p>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
               </div>
-            <% else %>
-              <div class="py-20 text-center glass-card">
-                <span class="text-3xl block mb-4">📢</span>
-                <p class="text-xs font-bold text-slate-500 italic">"등록된 공지사항이 없습니다"</p>
+
+              <!-- Notices Feed -->
+              <div class="space-y-6">
+                 <div class="flex items-center justify-between px-2">
+                   <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest italic">Announcements</h3>
+                   <% if @challenge.announcements.any? %>
+                     <span class="text-[9px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full"><%= @challenge.announcements.count %> Notices</span>
+                   <% end %>
+                 </div>
+
+                 <% if @challenge.announcements.any? %>
+                   <div class="space-y-4">
+                     <% @challenge.announcements.order(created_at: :desc).each do |notice| %>
+                       <div class="glass-card p-6 space-y-3 border-emerald-500/20 bg-emerald-500/5 group">
+                         <div class="flex items-center justify-between">
+                           <span class="px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest">NOTICE</span>
+                           <span class="text-[10px] text-slate-500 font-bold"><%= time_ago_in_words(notice.created_at) %> 전</span>
+                         </div>
+                         <div>
+                           <h3 class="text-sm font-black text-white mb-2 group-hover:text-emerald-400 transition-colors"><%= notice.title %></h3>
+                           <p class="text-xs text-slate-400 leading-relaxed font-medium"><%= notice.content %></p>
+                         </div>
+                       </div>
+                     <% end %>
+                   </div>
+                 <% else %>
+                   <div class="py-12 text-center glass-card border-dashed">
+                     <span class="text-2xl block mb-3 opacity-30">📢</span>
+                     <p class="text-[11px] font-bold text-slate-600 italic">활동 관련 공지사항이 아직 없습니다.</p>
+                   </div>
+                 <% end %>
               </div>
-            <% end %>
+            </div>
           <% else %>
             <!-- CHALLENGE: Verification Feed -->
             <% if @challenge.verification_logs.any? %>
@@ -455,60 +534,72 @@
           </div>
 
         <% when "info", "intro" %>
-          <div class="space-y-8">
-            <!-- Summary -->
-            <% if @challenge.summary.present? %>
-              <div class="glass-card p-8 bg-indigo-500/5">
-                <p class="text-sm font-bold text-slate-300 italic">"<%= @challenge.summary %>"</p>
+          <div class="space-y-10">
+            <!-- Host Profile Card -->
+            <div class="glass-card p-6 border-white/10 bg-white/[0.02] flex items-center gap-5">
+              <div class="relative shrink-0">
+                <img src="<%= @challenge.host.profile_image %>" class="w-16 h-16 rounded-2xl object-cover bg-white/5 border border-white/10">
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-indigo-500 rounded-lg border-2 border-[#0C0B12] flex items-center justify-center text-[10px] text-white shadow-xl">
+                  👑
+                </div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest leading-none">Organizer</span>
+                  <span class="px-1.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-[8px] font-black text-indigo-400">HOST</span>
+                </div>
+                <h4 class="text-[15px] font-black text-white truncate"><%= @challenge.host.nickname %></h4>
+                <p class="text-[11px] text-slate-500 font-medium truncate mt-0.5"><%= @challenge.custom_host_bio.presence || @challenge.host.bio.presence || "루틴으로 변화를 만드는 호스트입니다." %></p>
+              </div>
+              <%= link_to user_profile_path(@challenge.host), class: "w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors shrink-0" do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              <% end %>
+            </div>
+
+            <!-- Invitation Code (if private) -->
+            <% if @challenge.is_private? && @challenge.invitation_code.present? %>
+              <div class="glass-card p-6 border-indigo-500/20 bg-indigo-500/5 flex items-center justify-between group">
+                <div>
+                  <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1.5">Invitation Code</p>
+                  <code class="text-xl font-black text-white tracking-widest uppercase"><%= @challenge.invitation_code %></code>
+                </div>
+                <button onclick="navigator.clipboard.writeText('<%= @challenge.invitation_code %>'); alert('초대 코드가 복사되었습니다.')" class="px-4 py-2.5 rounded-xl bg-indigo-500 text-white text-[11px] font-black active:scale-95 transition-all shadow-lg shadow-indigo-500/20">
+                  코드 복사
+                </button>
               </div>
             <% end %>
 
-            <!-- Description -->
-            <div class="glass-card p-8 space-y-6">
-              <h3 class="text-sm font-black flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                <%= @challenge.offline? ? "GATHERING GUIDE" : "CHALLENGE GUIDE" %>
-              </h3>
-              <div class="text-sm font-medium text-slate-400 leading-relaxed whitespace-pre-wrap"><%= @challenge.description %></div>
+            <!-- Summary & Description -->
+            <div class="space-y-6">
+              <% if @challenge.summary.present? %>
+                <p class="text-[17px] font-black text-white leading-relaxed italic tracking-tight italic">"<%= @challenge.summary %>"</p>
+              <% end %>
+              
+              <div class="space-y-4">
+                <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                  <%= @challenge.offline? ? "GATHERING GUIDE" : "CHALLENGE GUIDE" %>
+                </h3>
+                <div class="text-[14px] font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= @challenge.description %></div>
+              </div>
             </div>
 
-            <!-- Preparation -->
-            <% if @challenge.preparation_items.present? %>
-              <div class="glass-card p-8 border-amber-500/20 bg-amber-500/5">
-                 <h3 class="text-xs font-black text-amber-500 mb-4 uppercase tracking-widest flex items-center gap-2">
-                   <span class="text-base">📋</span> PREPARATION & NOTICE
+            <!-- Preparation for Offline -->
+            <% if @challenge.offline? && @challenge.preparation_items.present? %>
+              <div class="space-y-4">
+                 <h3 class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                   PREPARATION
                  </h3>
-                 <p class="text-sm font-medium text-slate-300 leading-relaxed whitespace-pre-wrap"><%= @challenge.preparation_items %></p>
+                 <div class="glass-card p-8 border-emerald-500/10 bg-emerald-500/[0.03]">
+                   <p class="text-[15px] font-black text-white leading-relaxed whitespace-pre-wrap"><%= @challenge.preparation_items %></p>
+                 </div>
               </div>
             <% end %>
 
-            <!-- Rules Partial -->
-            <div class="glass-card p-8 space-y-6">
-              <h3 class="text-sm font-black flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                RULES & SCHEDULE
-              </h3>
-              <div class="text-white/80">
-                <%= render "challenges/tabs/rules", challenge: @challenge %>
-              </div>
-            </div>
-
-            <!-- Extra Stats -->
-            <div class="grid grid-cols-2 gap-4">
-              <div class="glass-card p-6 text-center">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1"><%= @challenge.offline? ? "Date" : "Frequency" %></p>
-                <p class="text-sm font-black text-white italic"><%= @challenge.offline? ? @challenge.start_date.strftime('%m.%d') : @challenge.mission_frequency %></p>
-              </div>
-              <div class="glass-card p-6 text-center">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1"><%= @challenge.offline? ? "Entry Fee" : "Deposit" %></p>
-                <p class="text-sm font-black text-white italic">
-                  <% if @challenge.cost_type_free? %>
-                    FREE
-                  <% else %>
-                    <%= number_with_delimiter(@challenge.amount || 0) %>원
-                  <% end %>
-                </p>
-              </div>
+            <!-- Rules Partial (Extra info & Stats) -->
+            <div class="pt-2">
+              <%= render "challenges/tabs/rules" %>
             </div>
           </div>
 

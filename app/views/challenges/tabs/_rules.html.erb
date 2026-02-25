@@ -97,66 +97,69 @@
           </div>
         </div>
 
-        <!-- Participants List Modal (Bottom Sheet Style) -->
-        <div data-modal-target="container" 
-             data-action="click->modal#closeOnBackground"
-             class="fixed inset-0 z-[100000] hidden bg-black/80 backdrop-blur-xl flex items-end justify-center">
-          <div class="w-full max-w-md bg-[#0C0B12] rounded-t-[40px] border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[85vh] animate-slide-up">
-            <!-- Handle -->
-            <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mt-4 mb-2"></div>
-            
-            <!-- Header -->
-            <div class="px-8 py-6 border-b border-white/5 flex items-center justify-between">
-              <div>
-                <h3 class="text-xl font-black text-white italic">Who's Joining?</h3>
-                <p class="text-[11px] font-bold text-slate-500 mt-1 uppercase tracking-widest">Confirmed 루파들 (<%= @participants.count %>)</p>
+        <!-- Participants List Modal (Hoisted) -->
+        <% content_for :modal_container do %>
+          <div data-modal-target="container" 
+               data-action="click->modal#closeOnBackground"
+               class="fixed inset-0 z-[100000] hidden bg-black/80 backdrop-blur-xl flex items-end justify-center px-4">
+            <div class="w-full max-w-md bg-[#0C0B12] rounded-t-[40px] border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[85vh] max-h-[85dvh] animate-slide-up">
+              <!-- Handle -->
+              <div class="w-12 h-1.5 bg-white/10 rounded-full mx-auto mt-4 mb-2 shrink-0"></div>
+              
+              <!-- Header -->
+              <div class="px-8 py-6 border-b border-white/5 flex items-center justify-between shrink-0">
+                <div>
+                  <h3 class="text-xl font-black text-white italic">Who's Joining?</h3>
+                  <p class="text-xs font-bold text-slate-500 mt-1 uppercase tracking-widest">Confirmed 루파들 (<%= @participants&.count || 0 %>)</p>
+                </div>
+                <button data-action="click->modal#close" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
               </div>
-              <button data-action="click->modal#close" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-              </button>
-            </div>
 
-            <!-- List Body -->
-            <div class="flex-1 overflow-y-auto px-6 py-4 no-scrollbar">
-              <% if @participants.any? %>
-                <div class="space-y-3">
-                  <% @participants.each do |p| %>
-                    <%= link_to user_profile_path(p.user), class: "flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/5 active:scale-[0.98] transition-all group" do %>
-                      <div class="relative shrink-0">
-                        <img src="<%= p.user.profile_image %>" class="w-12 h-12 rounded-xl object-cover bg-white/5 border border-white/10 group-hover:border-indigo-500/50 transition-colors">
-                        <% if p.user.is_rufa_club_member? %>
-                          <div class="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 rounded-md border border-[#0C0B12] flex items-center justify-center text-[7px] font-black text-white shadow-lg">R</div>
-                        <% end %>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2">
-                          <p class="text-sm font-black text-white"><%= p.nickname %></p>
-                          <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[8px] font-black text-slate-400 italic">Lv.<%= p.user.level %></span>
+              <!-- List Body -->
+              <div class="flex-1 overflow-y-auto px-6 py-6 no-scrollbar modal-content-safe min-h-[300px]">
+                <% if @participants&.any? %>
+                  <div class="space-y-3">
+                    <% @participants.each do |p| %>
+                      <% next unless p.user %>
+                      <%= link_to user_profile_path(p.user), class: "flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/5 active:scale-[0.98] transition-all group" do %>
+                        <div class="relative shrink-0">
+                          <img src="<%= p.user.profile_image %>" class="w-12 h-12 rounded-xl object-cover bg-white/5 border border-white/10 group-hover:border-indigo-500/50 transition-colors">
+                          <% if p.user.is_rufa_club_member? %>
+                            <div class="absolute -top-1 -right-1 w-4 h-4 bg-indigo-500 rounded-md border border-[#0C0B12] flex items-center justify-center text-[7px] font-black text-white shadow-lg">R</div>
+                          <% end %>
                         </div>
-                        <p class="text-[10px] text-slate-500 font-medium truncate mt-0.5"><%= p.user.bio.presence || "루틴으로 성장하는 중" %></p>
-                      </div>
-                      <div class="text-white/10 group-hover:text-indigo-500 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                      </div>
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2">
+                            <p class="text-sm font-black text-white"><%= p.nickname %></p>
+                            <span class="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[8px] font-black text-slate-400 italic">Lv.<%= p.user.level %></span>
+                          </div>
+                          <p class="text-[10px] text-slate-500 font-medium truncate mt-0.5"><%= p.user.bio.presence || "루틴으로 성장하는 중" %></p>
+                        </div>
+                        <div class="text-white/10 group-hover:text-indigo-500 transition-colors">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                      <% end %>
                     <% end %>
-                  <% end %>
-                </div>
-              <% else %>
-                <div class="py-20 text-center">
-                  <span class="text-4xl block mb-4 grayscale opacity-30">🤝</span>
-                  <p class="text-xs font-bold text-slate-500 italic leading-relaxed">아직 참여자가 없습니다.<br/>첫 번째 주인공이 되어보세요!</p>
-                </div>
-              <% end %>
-            </div>
+                  </div>
+                <% else %>
+                  <div class="py-20 text-center">
+                    <span class="text-4xl block mb-4 grayscale opacity-30">🤝</span>
+                    <p class="text-xs font-bold text-slate-500 italic leading-relaxed">아직 참여자가 없습니다.<br/>첫 번째 주인공이 되어보세요!</p>
+                  </div>
+                <% end %>
+              </div>
 
-            <!-- Footer Action -->
-            <div class="p-8 border-t border-white/5">
-              <button data-action="click->modal#close" class="w-full py-4.5 bg-white/5 border border-white/10 rounded-2xl text-xs font-black text-slate-400 group-hover:text-white transition-all">
-                닫기
-              </button>
+              <!-- Footer Action -->
+              <div class="p-8 border-t border-white/5 shrink-0">
+                <button data-action="click->modal#close" class="w-full py-4.5 bg-white/5 border border-white/10 rounded-2xl text-xs font-black text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                  닫기
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        <% end %>
 
         <!-- Entry Fee -->
         <div class="p-6 bg-gradient-to-br from-white/[0.05] to-transparent rounded-[32px] border border-white/5 flex items-center gap-5 group">

@@ -128,5 +128,8 @@
 
     <!-- Badge Award Modal -->
     <%= render "shared/badge_award" if logged_in? %>
+    
+    <!-- Hoisted Modals -->
+    <%= yield :modal_container %>
   </body>
 </html>
