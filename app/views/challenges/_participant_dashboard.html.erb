@@ -395,6 +395,8 @@
              </div>
            </div>
 
+        <% when "dashboard" %>
+          <% if @challenge.offline? %>
             <!-- GATHERING: Hybrid Dashboard (Info + Notices) -->
             <div class="space-y-10">
               <!-- Essential Meeting Memo -->
