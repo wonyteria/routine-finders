@@ -175,19 +175,23 @@ class ChallengesController < ApplicationController
   end
 
   def create
+    params_hash = challenge_params.to_h
+
+    # Parse JSON attributes from the raw params since strong parameters might drop strings for array-permitted fields
     [ :days, :daily_goals, :reward_policy, :certification_goal, :application_questions ].each do |attr|
-    if params[:challenge] && params[:challenge][attr].is_a?(String)
-      begin
-        params[:challenge][attr] = JSON.parse(params[:challenge][attr])
-        if attr == :days && params[:challenge][attr].is_a?(Array)
-          params[:challenge][attr] = params[:challenge][attr].map(&:to_s)
+      if params[:challenge] && params[:challenge][attr].is_a?(String) && params[:challenge][attr].present?
+        begin
+          parsed_val = JSON.parse(params[:challenge][attr])
+          if attr == :days && parsed_val.is_a?(Array)
+            parsed_val = parsed_val.map(&:to_s)
+          end
+          params_hash[attr.to_s] = parsed_val
+        rescue JSON::ParserError
+          # Fallback to string if parsing fails
+          params_hash[attr.to_s] = params[:challenge][attr]
         end
-      rescue JSON::ParserError
       end
     end
-  end
-
-  params_hash = challenge_params
 
     # Convert full_refund_threshold from percentage (0-100) to decimal (0-1)
     if params_hash[:full_refund_threshold].present?
