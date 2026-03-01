@@ -57,17 +57,47 @@
         </div>
       </section>
 
-      <!-- 02. 인증 목표 -->
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">커버 이미지 변경 (선택)</label>
+            <%= f.file_field :thumbnail_image, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-300 focus:border-indigo-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20" %>
+          </div>
+        </div>
+      </section>
+
+      <!-- 02. 인증 목표 및 요일 설정 -->
       <section class="space-y-3 md:space-y-4">
         <div class="flex items-center gap-2 pb-2 border-b border-white/5">
           <span class="text-emerald-400 font-black italic text-xs md:text-sm">02.</span>
-          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= challenge.offline? ? "모임 활동" : "인증" %> 목표</h3>
+          <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest"><%= challenge.offline? ? "모임 활동" : "인증" %> 목표 및 요일</h3>
         </div>
 
         <div class="space-y-2">
           <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1"><%= challenge.offline? ? "활동" : "인증" %> 목표</label>
           <%= f.text_field :certification_goal, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-emerald-500 outline-none transition-all" %>
         </div>
+
+        <div class="space-y-2">
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">일일 상세 가이드 (선택: JSON/텍스트)</label>
+          <%= f.text_area :daily_goals, value: f.object.daily_goals.is_a?(String) ? f.object.daily_goals : f.object.daily_goals.to_json, placeholder: "{\"1\": \"물 1리터 마시기\", \"2\": \"명상 10분\"}", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-emerald-500 outline-none transition-all", rows: 3 %>
+        </div>
+
+        <% unless challenge.offline? %>
+          <div class="space-y-3 mt-4">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">수행 요일 변경</label>
+            <div class="flex flex-wrap gap-2">
+              <% ['월', '화', '수', '목', '금', '토', '일'].each do |day| %>
+                <label class="cursor-pointer">
+                  <%= check_box_tag "challenge[days][]", day, (f.object.days || []).include?(day), 
+                      id: "challenge_days_#{day}", 
+                      class: "peer sr-only" %>
+                  <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl border border-white/10 flex items-center justify-center font-black text-xs md:text-sm text-slate-400 peer-checked:bg-emerald-500/20 peer-checked:text-emerald-400 peer-checked:border-emerald-500/50 transition-all hover:bg-white/5">
+                    <%= day %>
+                  </div>
+                </label>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </section>
 
       <!-- 03. 일정 설정 -->
@@ -209,24 +239,35 @@
           <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">비용 및 계좌</h3>
         </div>
 
+        <% if challenge.participants.exists? %>
+          <div class="p-3 md:p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl md:rounded-2xl mb-4">
+            <p class="text-[10px] md:text-xs font-bold text-rose-400">참여자가 이미 존재하여 비용 정보(보증금/참가비)를 변경할 수 없습니다.</p>
+          </div>
+        <% end %>
+
         <div class="space-y-2">
           <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">비용 방식</label>
           <%= f.select :cost_type,
                        [['무료', 'free'], ['참가비', 'fee'], ['보증금', 'deposit']],
                        {},
-                       class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-rose-500 outline-none transition-all appearance-none cursor-pointer",
-                        data: { challenge_settings_target: "costType", action: "change->challenge-settings#toggleCostInputs" } %>
+                       class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-slate-200 focus:border-rose-500 outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed",
+                       disabled: challenge.participants.exists?,
+                       data: { challenge_settings_target: "costType", action: "change->challenge-settings#toggleCostInputs" } %>
         </div>
 
          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
            <div class="space-y-2">
               <label data-challenge-settings-target="amountLabel" class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보증금/참가비 (원)</label>
-              <%= f.number_field :amount, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
+              <%= f.number_field :amount, step: 1000, 
+                                 disabled: challenge.participants.exists?,
+                                 class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed",
                                  data: { challenge_settings_target: "costInput", action: "change->challenge-settings#validateStep" } %>
             </div>
             <div data-challenge-settings-target="participationFeeContainer" class="space-y-2">
               <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">추가 참가비 (원)</label>
-              <%= f.number_field :participation_fee, step: 1000, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all",
+              <%= f.number_field :participation_fee, step: 1000, 
+                                 disabled: challenge.participants.exists?,
+                                 class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-rose-500 outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed",
                                  data: { challenge_settings_target: "participationFeeInput", action: "change->challenge-settings#validateStep" } %>
             </div>
          </div>
@@ -249,11 +290,11 @@
       </section>
 
       <% unless challenge.offline? %>
-        <!-- 07. 혜택 설계 -->
+        <!-- 07. 혜택 및 승인 질문 설계 -->
         <section class="space-y-3 md:space-y-4">
           <div class="flex items-center gap-2 pb-2 border-b border-white/5">
             <span class="text-green-400 font-black italic text-xs md:text-sm">07.</span>
-            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">혜택 설계</h3>
+            <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">추가 운영 설정 (혜택/신청 질문)</h3>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -265,6 +306,17 @@
               <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">보너스 지급 기준 (%)</label>
               <%= f.number_field :bonus_threshold, value: (f.object.bonus_threshold.to_f * 100).to_i, min: 0, max: 100, step: 10, class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-bold text-xs md:text-sm text-white focus:border-green-500 outline-none transition-all" %>
             </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">리워드 정책 가이드 (선택: JSON/텍스트)</label>
+            <%= f.text_area :reward_policy, value: f.object.reward_policy.is_a?(String) ? f.object.reward_policy : f.object.reward_policy.to_json, placeholder: "[\"100% 달성시 커피 쿠폰\", \"우수자 뱃지 지급\"]", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-green-500 outline-none transition-all", rows: 2 %>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">사전 승인 질문 (선택: JSON 배열형태)</label>
+            <%= f.text_area :application_questions, value: f.object.application_questions.is_a?(String) ? f.object.application_questions : f.object.application_questions.to_json, placeholder: "[\"왜 참여하고 싶으신가요?\", \"각오 한마디 부탁드려요.\"]", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-green-500 outline-none transition-all", rows: 2 %>
+            <p class="text-[8px] text-slate-500 pl-1">※ 승인제 챌린지일 경우, 지원자에게 위 질문을 묻습니다. 포맷: ["질문1", "질문2"]</p>
           </div>
         </section>
       <% end %>

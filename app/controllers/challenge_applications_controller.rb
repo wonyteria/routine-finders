@@ -52,6 +52,17 @@ class ChallengeApplicationsController < ApplicationController
 
   # POST /challenges/:challenge_id/applications
   def create
+    redirect_target = if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
+      challenge_path(@challenge, source: "prototype")
+    else
+      @challenge
+    end
+
+    # Prevent Duplicate Pending Applications (Ghost Data Bug)
+    if @challenge.challenge_applications.exists?(user: current_user, status: :pending)
+      return redirect_to redirect_target, alert: "이미 승인 대기 중인 신청서가 존재합니다. 호스트의 승인을 기다려주세요."
+    end
+    
     # First, handle re-application by cleaning up previous rejected application
     @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all
 
@@ -59,11 +70,6 @@ class ChallengeApplicationsController < ApplicationController
     @application.user = current_user
 
     if @application.save
-      redirect_target = if params[:source] == "prototype" || (params[:challenge_application] && params[:challenge_application][:source] == "prototype")
-        challenge_path(@challenge, source: "prototype")
-      else
-        @challenge
-      end
 
       begin
         if !@challenge.requires_approval?

@@ -82,6 +82,40 @@ class HostedChallengesController < ApplicationController
     @challenge = current_user.hosted_challenges.find(params[:id])
 
     params_hash = challenge_params
+    
+    # 1) JSON Data Parsing Fix
+    if params_hash[:daily_goals].is_a?(String)
+      begin
+        params_hash[:daily_goals] = JSON.parse(params_hash[:daily_goals])
+      rescue JSON::ParserError
+        params_hash[:daily_goals] = {}
+      end
+    end
+
+    if params_hash[:reward_policy].is_a?(String)
+      begin
+        params_hash[:reward_policy] = JSON.parse(params_hash[:reward_policy])
+      rescue JSON::ParserError
+        params_hash[:reward_policy] = []
+      end
+    end
+
+    if params_hash[:application_questions].is_a?(String)
+      begin
+        parsed = JSON.parse(params_hash[:application_questions])
+        # Only permit an array of strings
+        params_hash[:application_questions] = parsed.is_a?(Array) ? parsed.select { |q| q.is_a?(String) } : []
+      rescue JSON::ParserError
+        params_hash[:application_questions] = []
+      end
+    end
+
+    # 2) Protect cost and amount if participants exist
+    if @challenge.participants.exists?
+      params_hash.delete(:cost_type)
+      params_hash.delete(:amount)
+      params_hash.delete(:participation_fee)
+    end
 
     # Convert percentage thresholds (0-100) to decimal (0-1) for DB storage
     [ :full_refund_threshold, :bonus_threshold ].each do |attr|
@@ -348,6 +382,7 @@ class HostedChallengesController < ApplicationController
       :recruitment_start_date, :recruitment_end_date,
       :participation_fee,
       days: [],
+      application_questions: [],
       meeting_info_attributes: [ :id, :place_name, :address, :meeting_time, :description, :max_attendees, :place_url ]
     )
   end
