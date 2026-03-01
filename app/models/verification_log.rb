@@ -9,6 +9,7 @@ class VerificationLog < ApplicationRecord
 
   # Validations
   validates :verification_type, presence: true
+  validate :one_verification_per_day, on: :create
 
   # Scopes
   scope :today, -> { where("DATE(created_at) = ?", Date.current) }
@@ -37,12 +38,15 @@ class VerificationLog < ApplicationRecord
     return unless approved?
 
     participant.update(
-      today_verified: true,
-      consecutive_failures: 0,
-      completion_rate: calculate_completion_rate
+      today_verified: true
     )
     participant.update_streak!
-    BadgeService.new(participant.user).check_and_award_all!
+  end
+
+  def one_verification_per_day
+    if participant && participant.verification_logs.where("DATE(created_at) = ?", Date.current).where(status: [:pending, :approved]).exists?
+      errors.add(:base, "오늘 이미 인증을 제출하셨습니다.")
+    end
   end
 
   def calculate_completion_rate

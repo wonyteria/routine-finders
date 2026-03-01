@@ -18,6 +18,7 @@ class Participant < ApplicationRecord
   # Validations
   validates :user_id, uniqueness: { scope: :challenge_id, message: "is already participating in this challenge" }
   validates :joined_at, presence: true
+  validate :validate_max_participants, on: :create
 
   # Callbacks
   before_validation :set_defaults, on: :create
@@ -97,6 +98,12 @@ class Participant < ApplicationRecord
     self.joined_at ||= Time.current
     self.nickname ||= user&.nickname
     self.profile_image ||= user&.profile_image
+  end
+
+  def validate_max_participants
+    if challenge && challenge.participants.count >= challenge.max_participants
+      errors.add(:base, "챌린지 모집 정원이 꽉 찼습니다.")
+    end
   end
 
   def sync_user_info

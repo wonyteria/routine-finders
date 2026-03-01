@@ -17,9 +17,9 @@ class VerificationLogsController < ApplicationController
   def create
     return redirect_to redirect_path_for_challenge, alert: "이 챌린지에 참여하고 있지 않습니다." unless @participant
 
-    # 탈락 여부 확인
-    if @participant.failed?
-      return redirect_to redirect_path_for_challenge, alert: "죄송합니다. 최대 실패 횟수를 초과하여 더 이상 인증에 참여하실 수 없습니다."
+    # 참여 중지/탈락/포기 상태 확인
+    unless @participant.active?
+      return redirect_to redirect_path_for_challenge, alert: "현재 활성 참여 상태가 아니므로 인증을 진행할 수 없습니다."
     end
 
     # 오늘 이미 인증했는지 확인 (성공 또는 대기중인 인증이 있으면 차단)
