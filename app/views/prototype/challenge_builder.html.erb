@@ -1,6 +1,6 @@
 <% content_for :hide_nav, true %>
 
-<div class="h-screen flex flex-col bg-[#07060A] overflow-hidden select-none relative" data-controller="prototype-wizard">
+<div class="h-[100dvh] flex flex-col bg-[#07060A] overflow-hidden select-none relative" data-controller="prototype-wizard">
   <!-- Dynamic Aurora Background Glow -->
   <div id="aurora-glow" class="fixed -top-24 -left-24 w-[150%] h-[150%] bg-[#4F46E5]/10 blur-[120px] rounded-full pointer-events-none transition-all duration-1000 z-0"></div>
   <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#7C4DFF]/5 blur-[150px] rounded-full pointer-events-none z-0"></div>
@@ -44,17 +44,24 @@
       transition: all 0.5s cubic-bezier(0.2, 1, 0.2, 1); 
     }
     .glass-input {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.08); /* Increased opacity for better visibility */
+      border: 1px solid rgba(255, 255, 255, 0.15); /* Stronger border */
       border-radius: 1.25rem;
-      color: white;
+      color: #ffffff !important; /* Ensure text is explicitly white */
       font-weight: 700;
       transition: all 0.3s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .glass-input::placeholder {
+      color: rgba(255, 255, 255, 0.4) !important;
+      font-weight: 500;
     }
     .glass-input:focus {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.12);
       border-color: #818cf8;
-      box-shadow: 0 0 15px rgba(129, 140, 248, 0.2);
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
+      outline: none;
     }
     /* Stepper Dots */
     .step-dot {
@@ -792,11 +799,11 @@
     </div>
 
     <!-- Global Footer Button -->
-    <div class="py-4 pb-24 shrink-0 z-20">
-      <button id="nextBtn" type="button" class="w-full py-5 rounded-3xl bg-indigo-500 text-white font-black text-base shadow-2xl shadow-indigo-500/40 active:scale-95 transition-all">
+    <div class="py-4 pb-8 shrink-0 z-20">
+      <button id="nextBtn" type="button" class="w-full py-5 rounded-3xl bg-indigo-500 text-white font-black text-base shadow-lg shadow-indigo-500/40 active:scale-95 transition-all">
         다음 단계로
       </button>
-      <button id="submitBtn" type="button" class="hidden w-full py-5 rounded-3xl bg-indigo-500 text-white font-black text-lg shadow-2xl shadow-indigo-500/40 active:scale-90 transition-all">
+      <button id="submitBtn" type="button" class="hidden w-full py-5 rounded-3xl bg-indigo-500 text-white font-black text-lg shadow-lg shadow-indigo-500/40 active:scale-90 transition-all">
         챌린지 개설 완료
       </button>
     </div>
@@ -854,14 +861,6 @@
 
     // Aurora Update Logic
     const aurora = document.getElementById('aurora-glow');
-    const categoryColors = {
-      'HEALTH': '#10B981', // Emerald
-      'LIFE': '#F59E0B',   // Amber
-      'MIND': '#8B5CF6',   // Violet
-      'HOBBY': '#EC4899',  // Pink
-      'STUDY': '#3B82F6',  // Blue
-      'MONEY': '#059669'   // Emerald-dark
-    };
 
     function update() {
       sections.forEach((s, i) => {
@@ -1224,11 +1223,6 @@
           btn.classList.add(activeClass);
           btn.classList.remove('unselected-opt');
           if(hiddenId) document.getElementById(hiddenId).value = btn.dataset.val;
-
-          // Update Aurora Color on Category Change
-          if (hiddenId === 'h_category' && aurora && categoryColors[btn.dataset.val]) {
-            aurora.style.backgroundColor = categoryColors[btn.dataset.val];
-          }
 
           if(callback) callback(btn.dataset.val);
           smartScroll(btn);

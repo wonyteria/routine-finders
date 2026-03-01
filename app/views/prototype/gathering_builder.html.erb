@@ -1,6 +1,6 @@
 <% content_for :hide_nav, true %>
 
-<div class="h-screen flex flex-col pt-2 bg-[#07060A] overflow-hidden select-none relative">
+<div class="h-[100dvh] flex flex-col pt-2 bg-[#07060A] overflow-hidden select-none relative">
   <!-- Dynamic Aurora Background Glow -->
   <div id="aurora-glow" class="fixed -top-32 -left-32 w-[150%] h-[150%] bg-[#10B981]/10 blur-[130px] rounded-full pointer-events-none transition-all duration-1000 z-0"></div>
   <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#34D399]/5 blur-[160px] rounded-full pointer-events-none z-0"></div>
@@ -41,17 +41,24 @@
       z-index: 1;
     }
     .glass-input {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 1.25rem;
-      color: white;
+      color: #ffffff !important;
       font-weight: 700;
       transition: all 0.3s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .glass-input::placeholder {
+      color: rgba(255, 255, 255, 0.4) !important;
+      font-weight: 500;
     }
     .glass-input:focus {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.12);
       border-color: #818cf8;
-      box-shadow: 0 0 15px rgba(129, 140, 248, 0.2);
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
+      outline: none;
     }
     function previewImage(input, previewId) {
       if (input.files && input.files[0]) {
@@ -517,9 +524,9 @@
     </div>
 
     <!-- Footer Buttons -->
-    <div class="py-4 pb-12 shrink-0 z-20">
-      <button id="nextBtn" type="button" class="w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-base shadow-2xl shadow-emerald-500/40 active:scale-95 transition-all">다음 단계로</button>
-      <button id="submitBtn" type="button" class="hidden w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-lg shadow-2xl shadow-emerald-500/40 active:scale-90 transition-all">모임 개설 완료</button>
+    <div class="py-4 pb-8 shrink-0 z-20">
+      <button id="nextBtn" type="button" class="w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-base shadow-xl shadow-emerald-500/40 active:scale-95 transition-all">다음 단계로</button>
+      <button id="submitBtn" type="button" class="hidden w-full py-5 rounded-3xl bg-emerald-500 text-white font-black text-lg shadow-xl shadow-emerald-500/40 active:scale-90 transition-all">모임 개설 완료</button>
     </div>
   <% end %>
 
@@ -564,14 +571,6 @@
 
       // Aurora Update Logic
       const aurora = document.getElementById('aurora-glow');
-      const categoryColors = {
-        'HEALTH': '#10B981', // Emerald
-        'LIFE': '#F59E0B',   // Amber
-        'MIND': '#8B5CF6',   // Violet
-        'HOBBY': '#EC4899',  // Pink
-        'STUDY': '#3B82F6',  // Blue
-        'MONEY': '#059669'   // Emerald-dark
-      };
 
       function update() {
         sections.forEach((s, i) => {
@@ -720,11 +719,6 @@
               
               if (hiddenId === 'h_cost_type') {
                 document.getElementById('cost_box').classList.toggle('hidden', btn.dataset.val === 'free');
-              }
-
-              // Update Aurora Color on Category Change
-              if (hiddenId === 'h_category' && aurora && categoryColors[btn.dataset.val]) {
-                aurora.style.backgroundColor = categoryColors[btn.dataset.val];
               }
 
               smartScroll(btn);
