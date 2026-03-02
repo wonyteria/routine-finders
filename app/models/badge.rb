@@ -26,8 +26,9 @@ class Badge < ApplicationRecord
     club_rank_top_3: "club_rank_top_3",
     club_rank_top_10: "club_rank_top_10",
     club_share_count: "club_share_count",
-    cheer_count: "cheer_count"
+    cheer_count: "cheer_count",
+    season_reward: "season_reward"
   }
   enum :level, { bronze: 1, silver: 2, gold: 3, platinum: 4, diamond: 5, master: 6, legend: 7, mythic: 8 }
-  enum :target_type, { all: "all", challenge: "challenge", routine: "routine", gathering: "gathering", host: "host", club: "club" }, prefix: true
+  enum :target_type, { all: "all", challenge: "challenge", routine: "routine", gathering: "gathering", host: "host", club: "club", season_reward: "season_reward" }, prefix: true
 end

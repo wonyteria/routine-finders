@@ -574,23 +574,8 @@ class User < ApplicationRecord
   end
 
   def rufa_club_score(date = Date.current)
-    # 랭킹 산정용 점수 (기증 방식 개선)
-    # 1. 비율 점수 (기존: 100점 만점 기준)
-    ratio_score = (monthly_routine_log_rate(date) * 0.3 + monthly_achievement_rate(date) * 0.5)
-
-    # 2. 절대량 점수 (추가: 루틴을 많이 수행할수록 유리)
-    start_date = date.beginning_of_month
-    end_date = [ date.end_of_month, Date.current ].min
-
-    monthly_count = personal_routines.joins(:completions)
-                                    .where(personal_routine_completions: {
-                                      completed_on: start_date..end_date
-                                    }).count
-
-    # 완료 1회당 0.5점의 가중치 부여
-    volume_score = monthly_count * 0.5
-
-    (ratio_score + volume_score).round(1)
+    # 신규 게이미피케이션 RP 시스템으로 랭킹 산정 기준 통일
+    monthly_routine_points(date)
   end
 
   # 누적 통계 (All-time)
@@ -618,16 +603,30 @@ class User < ApplicationRecord
     total_routine_completions
   end
 
-  def current_growth_identity
-    log = monthly_routine_log_rate
-    ach = monthly_achievement_rate
-    score = (log + ach) / 2
+  def monthly_routine_points(date = Date.current)
+    start_date = date.beginning_of_month
+    end_date = [date.end_of_month, Date.current].min
 
-    case
-    when score >= 90 then "루파 로드 마스터"
-    when score >= 70 then "정진하는 가이드"
-    when score >= 40 then "성장의 개척자"
-    else "시작하는 루파"
+    routine_count = personal_routines.joins(:completions)
+                                     .where(personal_routine_completions: { completed_on: start_date..end_date })
+                                     .count
+                                     
+    # 루틴 1회 완료 = 10 RP
+    routine_count * 10
+  end
+
+  def current_growth_identity(date = Date.current)
+    ach_rate = monthly_achievement_rate(date)
+    rp = monthly_routine_points(date)
+
+    if rp >= 3000 && ach_rate >= 85
+      "루파 로드 마스터"
+    elsif rp >= 1500 && ach_rate >= 70
+      "정진하는 가이드"
+    elsif rp >= 500
+      "성장의 개척자"
+    else
+      "시작하는 루파"
     end
   end
 

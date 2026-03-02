@@ -6,9 +6,7 @@ class PrototypeController < ApplicationController
   before_action :set_shared_data
   before_action :require_login, only: [ :my, :routine_builder, :challenge_builder, :gathering_builder, :record, :notifications, :clear_notifications, :pwa, :admin_dashboard, :club_management, :member_reports, :batch_reports, :confirm_club_payment, :reject_club_payment, :create_club_announcement, :update_club_lounge ]
   before_action :require_admin, only: [ :admin_dashboard, :club_management, :member_reports, :batch_reports, :confirm_club_payment, :reject_club_payment, :create_club_announcement, :update_club_lounge ]
-  before_action :require_super_admin, only: [ :broadcast, :update_user_role, :update_user_status, :approve_challenge, :purge_cache, :reset_users, :delete_content, :notify_host, :update_content_basic ]
-  before_action :require_can_create_challenge, only: [ :challenge_builder ]
-  before_action :require_can_create_gathering, only: [ :gathering_builder ]
+  before_action :block_unauthorized_admin, only: [ :system_command_center, :toggle_temp_access ]
 
   def login
   end
@@ -221,6 +219,17 @@ class PrototypeController < ApplicationController
     end
 
     @top_users = @monthly_rankings.take(3).map { |r| r[:user] }
+
+    # 지난 달 Top 3 (명예의 전당)
+    prev_month = 1.month.ago
+    @prev_top_rankings = relevant_users.map { |u|
+      score = if @period == "total"
+                u.total_platform_score
+              else
+                u.rufa_club_score(prev_month)
+              end
+      { user: u, score: score }
+    }.select { |r| r[:score] > 0 }.sort_by { |r| -r[:score] }.take(3)
   end
 
   def my

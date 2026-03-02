@@ -60,24 +60,69 @@
           <% end %>
         </div>
       <% end %>
+    <div class="px-6 mt-6">
+      <% 
+        rp = current_user.monthly_routine_points
+        tier_name = current_user.current_growth_identity
+        
+        # Calculate thresholds
+        case tier_name
+        when "루파 로드 마스터"
+          tier_icon = "💎"
+          tier_color = "from-cyan-400 to-blue-500"
+          next_tier_rp = rp # Max tier
+          progress_percent = 100
+        when "정진하는 가이드"
+          tier_icon = "🥇"
+          tier_color = "from-yellow-400 to-amber-500"
+          next_tier_rp = 3000
+          progress_percent = [(rp.to_f / next_tier_rp) * 100, 100].min
+        when "성장의 개척자"
+          tier_icon = "🥈"
+          tier_color = "from-slate-300 to-slate-400"
+          next_tier_rp = 1500
+          progress_percent = [(rp.to_f / next_tier_rp) * 100, 100].min
+        else
+          tier_icon = "🥉"
+          tier_color = "from-amber-600 to-orange-700"
+          next_tier_rp = 500
+          progress_percent = [(rp.to_f / next_tier_rp) * 100, 100].min
+        end
+      %>
+      <div class="app-glass-card p-4 bg-white/[0.02] border-white/5 relative overflow-hidden group">
+        <div class="absolute inset-0 bg-gradient-to-r <%= tier_color %> opacity-5 group-hover:opacity-10 transition-opacity"></div>
+        <div class="flex justify-between items-center mb-2 relative z-10">
+          <div class="flex items-center gap-2">
+            <span class="text-xl"><%= tier_icon %></span>
+            <div class="text-left">
+              <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Season Tier</p>
+              <p class="text-sm font-black text-white"><%= tier_name %></p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] font-bold text-slate-400">Monthly RP</p>
+            <p class="text-base font-black text-indigo-400 tabular-nums"><%= number_with_delimiter(rp) %><span class="text-[9px] text-slate-500 ml-1">/ <%= next_tier_rp == rp ? 'MAX' : next_tier_rp %></span></p>
+          </div>
+        </div>
+        
+        <div class="relative z-10 mt-3 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full rounded-full bg-gradient-to-r <%= tier_color %> shadow-[0_0_10px_currentColor] transition-all duration-1000" style="width: <%= progress_percent %>%"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Quick Stats Card -->
-    <div class="mx-4 mt-6 p-6 app-glass-card bg-white/[0.03] border-white/10 grid grid-cols-3 divide-x divide-white/5 relative overflow-hidden group">
+    <div class="mx-4 mt-4 p-6 app-glass-card bg-white/[0.03] border-white/10 grid grid-cols-2 divide-x divide-white/5 relative overflow-hidden group">
       <!-- Subtle Glow behind stats -->
       <div class="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/[0.02] to-transparent group-hover:via-indigo-500/[0.05] transition-all duration-500"></div>
       
       <div class="text-center relative z-10">
-        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Record</p>
-        <p class="text-xl font-black text-white tabular-nums"><%= @total_activities %></p>
+        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Activities</p>
+        <p class="text-xl font-black text-white tabular-nums"><%= @total_activities || 0 %></p>
       </div>
       <div class="text-center relative z-10">
         <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Streak</p>
-        <p class="text-xl font-black text-indigo-400 tabular-nums"><%= @current_streak %><span class="text-[10px] ml-0.5 text-slate-500 font-bold uppercase">day</span></p>
-      </div>
-      <div class="text-center relative z-10">
-        <p class="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1.5">Point</p>
-        <p class="text-xl font-black text-white tabular-nums"><%= number_with_delimiter(@current_month_points) %></p>
+        <p class="text-xl font-black text-indigo-400 tabular-nums"><%= @current_streak || 0 %><span class="text-[10px] ml-0.5 text-slate-500 font-bold uppercase">day</span></p>
       </div>
     </div>
   </section>
