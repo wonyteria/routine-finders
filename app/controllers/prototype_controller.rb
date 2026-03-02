@@ -995,6 +995,9 @@ class PrototypeController < ApplicationController
     confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(:user)
                                       .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp") }
 
+    # [Diagnostic] 모든 멤버 상태 확인을 위해 전체 목록 수집 (어드민용)
+    @all_members_diagnostic = @official_club.members.includes(:user).order("users.nickname ASC")
+
     @reports = []
 
     confirmed_members.each do |member|

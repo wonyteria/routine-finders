@@ -190,5 +190,69 @@
         </div>
       <% end %>
     </div>
+    <!-- Admin Diagnostic Section -->
+    <% if current_user&.admin? %>
+      <div class="h-px bg-white/5 mx-2 my-12"></div>
+      
+      <section class="space-y-6">
+        <div class="flex items-center justify-between px-2">
+          <div class="space-y-1">
+            <h3 class="text-xs font-black text-rose-500 uppercase tracking-[0.2em] flex items-center gap-2">
+              <span class="w-1 h-1 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"></span>
+              Admin Diagnostic Mode
+            </h3>
+            <p class="text-[10px] text-slate-500 font-bold">전체 멤버 상태 및 리포트 제외 여부 점검</p>
+          </div>
+        </div>
+
+        <div class="overflow-hidden rounded-3xl border border-white/5 bg-white/[0.01]">
+          <table class="w-full text-left text-[10px] border-collapse">
+            <thead>
+              <tr class="bg-white/5 text-slate-400 font-black uppercase tracking-tighter">
+                <th class="px-4 py-3">Nickname</th>
+                <th class="px-4 py-3">Payment</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Joined</th>
+                <th class="px-4 py-3">Excl. Logic</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/[0.02]">
+              <% @all_members_diagnostic.each do |m| %>
+                <% 
+                  is_excluded_name = [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp")
+                  is_confirmed = m.payment_status == "confirmed"
+                  is_deleted = m.user.deleted_at.present?
+                  
+                  exclusion_reason = []
+                  exclusion_reason << "운영진/시스템" if is_excluded_name
+                  exclusion_reason << "미확정" unless is_confirmed
+                  exclusion_reason << "탈퇴" if is_deleted
+                %>
+                <tr class="<%= m.user.nickname == '집노트' ? 'bg-indigo-500/10' : '' %>">
+                  <td class="px-4 py-3 font-bold text-white">
+                    <%= m.user.nickname %>
+                    <% if m.user.nickname == "집노트" %><span class="ml-1 text-[8px] text-indigo-400 font-black px-1 rounded bg-indigo-500/20">TARGET</span><% end %>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="px-1.5 py-0.5 rounded <%= is_confirmed ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500' %> font-black">
+                      <%= m.payment_status.upcase %>
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-slate-400 font-bold"><%= m.status %></td>
+                  <td class="px-4 py-3 text-slate-500 font-mono"><%= m.joined_at&.strftime('%m-%d %H:%M') %></td>
+                  <td class="px-4 py-3">
+                    <% if exclusion_reason.any? %>
+                      <span class="text-rose-400 font-bold"><%= exclusion_reason.join(", ") %></span>
+                    <% else %>
+                      <span class="text-emerald-500 font-black">IN REPORT</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    <% end %>
   </main>
 </div>

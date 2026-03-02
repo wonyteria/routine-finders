@@ -428,7 +428,8 @@ class RoutineClubMember < ApplicationRecord
   def set_membership_dates
     self.joined_at ||= Time.current
     self.membership_start_date ||= routine_club.start_date
-    self.membership_end_date ||= routine_club.end_date
+    # Set a far-future date to ensure continuous membership for active users
+    self.membership_end_date ||= Date.new(2099, 12, 31)
   end
 
   def update_club_member_count

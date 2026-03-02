@@ -112,7 +112,11 @@
                 <% end %>
               </div>
               <p class="text-xs md:text-sm text-white/70 font-medium">
-                루파클럽 멤버십 종료일: <span class="font-black text-yellow-300"><%= membership.membership_end_date.strftime("%Y년 %m월 %d일") %></span>
+                <% if membership.membership_end_date > Date.new(2090, 1, 1) %>
+                  루파클럽 멤버십: <span class="font-black text-yellow-300">상시 회원권 활성화됨</span>
+                <% else %>
+                  루파클럽 멤버십 종료일: <span class="font-black text-yellow-300"><%= membership.membership_end_date.strftime("%Y년 %m월 %d일") %></span>
+                <% end %>
               </p>
             </div>
           </div>

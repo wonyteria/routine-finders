@@ -109,18 +109,18 @@ class User < ApplicationRecord
     begin
       member = routine_club_members.find_or_initialize_by(routine_club: official_club)
 
-      # Admin은 항상 Active Confirmed 상태 유지
-      member.status = :active
-      member.payment_status = :confirmed
-      member.membership_start_date ||= official_club.start_date
-      member.membership_end_date ||= official_club.end_date
-      member.depositor_name ||= (nickname.presence || "Admin-#{id}")
-      member.contact_info ||= (phone_number.presence || "Admin-Contact")
-      member.goal ||= "관리자로서 루파 클럽을 운영하고 리딩합니다."
-      member.is_moderator = true
-      member.paid_amount ||= 0
+      if member.changed? || member.new_record?
+        # Admin은 항상 Active Confirmed 상태 유지
+        member.status = :active
+        member.payment_status = :confirmed
+        member.membership_start_date ||= official_club.start_date
+        member.membership_end_date ||= official_club.end_date
+        member.depositor_name ||= (nickname.presence || "Admin-#{id}")
+        member.contact_info ||= (phone_number.presence || "Admin-Contact")
+        member.goal ||= "관리자로서 루파 클럽을 운영하고 리딩합니다."
+        member.is_moderator = true
+        member.paid_amount ||= 0
 
-      if member.changed?
         unless member.save
           Rails.logger.error "Admin membership auto-update failed for User #{id}: #{member.errors.full_messages.join(', ')}"
         end
@@ -376,9 +376,9 @@ class User < ApplicationRecord
     return true if admin?
 
     # Everyone else must have a confirmed payment and active status
+    # Date constraint removed to allow continuous membership for active members
     routine_club_members.where(status: [ :active, :warned ])
                        .where(payment_status: :confirmed)
-                       .where("membership_start_date <= ? AND membership_end_date >= ?", Date.current, Date.current)
                        .exists?
   end
 
@@ -386,6 +386,7 @@ class User < ApplicationRecord
   def is_rufa_club_member_on?(date)
     return true if admin?
 
+    # For historical checks, we still verify if they were members during that period
     routine_club_members.where(status: [ :active, :warned ])
                        .where(payment_status: :confirmed)
                        .where("membership_start_date <= ? AND membership_end_date >= ?", date, date)
@@ -399,9 +400,8 @@ class User < ApplicationRecord
 
   def has_active_rufa_membership?
     return true if admin?
-    routine_club_members.where(status: [ :active, :warned ], payment_status: :confirmed)
-                       .where("membership_start_date <= ? AND membership_end_date >= ?", Date.current, Date.current)
-                       .exists?
+    # Active/Warned and Confirmed is enough for ongoing membership
+    routine_club_members.where(status: [ :active, :warned ], payment_status: :confirmed).exists?
   end
 
   def pending_rufa_membership
