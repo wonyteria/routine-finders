@@ -84,8 +84,8 @@ class PersonalRoutine < ApplicationRecord
   private
 
   def validate_active_routines_limit
-    if user && user.personal_routines.where(deleted_at: nil).count >= 6
-      errors.add(:base, "루틴은 최대 6개까지만 설정할 수 있습니다. 이미 6개의 루틴이 설정되어 있습니다.")
+    if user && user.personal_routines.where(deleted_at: nil).count >= 20
+      errors.add(:base, "루틴은 최대 20개까지만 설정할 수 있습니다. 이미 20개의 루틴이 설정되어 있습니다.")
     end
   end
 end
