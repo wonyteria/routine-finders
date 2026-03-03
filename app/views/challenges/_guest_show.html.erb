@@ -223,7 +223,7 @@
       <div class="flex-1 pl-6">
         <p class="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mb-1.5 leading-none">Participation Fee</p>
         <div class="flex items-baseline gap-1.5">
-          <span class="text-2xl font-black text-white italic tracking-tighter"><%= @challenge.cost_type_free? ? '무료 참여' : number_with_delimiter(@challenge.total_payment_amount) %></span>
+          <span class="text-2xl font-black text-white italic tracking-tighter"><%= @challenge.cost_type_free? || (@challenge.total_payment_amount == 0) ? '무료' : number_with_delimiter(@challenge.total_payment_amount) %></span>
           <% unless @challenge.cost_type_free? %>
             <span class="text-[11px] font-black text-white/40 uppercase">KRW</span>
           <% end %>
@@ -272,9 +272,10 @@
         </div>
 
         <div class="space-y-4 pt-4">
-          <% if @challenge.cost_type_free? %>
+          <% needs_application = !@challenge.cost_type_free? || @challenge.requires_approval? || @challenge.requires_application_message? || @challenge.application_questions.present? %>
+          <% if !needs_application %>
             <% if logged_in? %>
-              <%= button_to join_challenge_path(@challenge, source: 'prototype'), 
+              <%= button_to join_challenge_path(@challenge, source: 'prototype', invitation_code: params[:invitation_code]), 
                             method: :post, 
                             class: "w-full py-5 app-fab-gradient text-white rounded-3xl font-black text-base active:scale-95 transition-all cursor-pointer shadow-xl shadow-indigo-500/20" do %>
                 무료로 시작하기
@@ -287,7 +288,7 @@
             <% end %>
           <% else %>
             <% if logged_in? %>
-              <%= link_to new_challenge_application_path(@challenge, source: 'prototype'), 
+              <%= link_to new_challenge_application_path(@challenge, source: 'prototype', invitation_code: params[:invitation_code]), 
                           class: "block w-full py-5 app-fab-gradient text-white rounded-3xl font-black text-base active:scale-95 transition-all text-center cursor-pointer shadow-xl shadow-indigo-500/20" do %>
                 신청서 작성하기
               <% end %>

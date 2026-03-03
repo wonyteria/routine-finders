@@ -62,7 +62,7 @@ class ChallengeApplicationsController < ApplicationController
     if @challenge.challenge_applications.exists?(user: current_user, status: :pending)
       return redirect_to redirect_target, alert: "이미 승인 대기 중인 신청서가 존재합니다. 호스트의 승인을 기다려주세요."
     end
-    
+
     # First, handle re-application by cleaning up previous rejected application
     @challenge.challenge_applications.where(user: current_user, status: :rejected).destroy_all
 
@@ -107,6 +107,11 @@ class ChallengeApplicationsController < ApplicationController
           nil
         end
 
+      rescue ActiveRecord::RecordInvalid => e
+        @application.destroy
+        msg = e.record.errors.full_messages.join(", ")
+        redirect_to redirect_target, alert: "참여 불가: #{msg}"
+        nil
       rescue => e
         # 즉시 참여 과정(트랜잭션 내부)에서 실패한 경우 신청서 삭제 후 에러 반환
         @application.destroy
@@ -157,6 +162,9 @@ class ChallengeApplicationsController < ApplicationController
     redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "applications", source: "prototype") : challenge_applications_path(@challenge)
     redirect_to redirect_path, notice: "신청을 승인했습니다."
   rescue ActiveRecord::RecordInvalid => e
+    redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "applications", source: "prototype") : challenge_applications_path(@challenge)
+    redirect_to redirect_path, alert: "승인 불가: #{e.record.errors.full_messages.join(', ')}"
+  rescue => e
     redirect_path = params[:source] == "prototype" ? hosted_challenge_path(@challenge, tab: "applications", source: "prototype") : challenge_applications_path(@challenge)
     redirect_to redirect_path, alert: "승인 처리 중 오류가 발생했습니다: #{e.message}"
   end

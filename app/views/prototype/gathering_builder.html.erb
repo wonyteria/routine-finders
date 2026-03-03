@@ -718,7 +718,12 @@
               document.getElementById(hiddenId).value = btn.dataset.val;
               
               if (hiddenId === 'h_cost_type') {
-                document.getElementById('cost_box').classList.toggle('hidden', btn.dataset.val === 'free');
+                const isFree = btn.dataset.val === 'free';
+                document.getElementById('cost_box').classList.toggle('hidden', isFree);
+                if (isFree) {
+                  document.getElementById('h_amount').value = 0;
+                  document.getElementById('amount_display').value = "";
+                }
               }
 
               smartScroll(btn);

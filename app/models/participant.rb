@@ -101,8 +101,11 @@ class Participant < ApplicationRecord
   end
 
   def validate_max_participants
-    if challenge && challenge.participants.count >= challenge.max_participants
-      errors.add(:base, "챌린지 모집 정원이 꽉 찼습니다.")
+    limit = challenge&.offline? ? challenge.meeting_info&.max_attendees : challenge&.max_participants
+    limit ||= 100 # Fallback
+
+    if challenge && challenge.participants.count >= limit
+      errors.add(:base, "모집 정원이 꽉 찼습니다.")
     end
   end
 

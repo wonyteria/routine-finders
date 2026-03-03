@@ -249,6 +249,10 @@ class ChallengesController < ApplicationController
       end
     end
 
+    if !@challenge.cost_type_free? || @challenge.requires_approval? || @challenge.requires_application_message? || @challenge.application_questions.present?
+      return redirect_to new_challenge_application_path(@challenge, source: params[:source]), alert: "신청서 작성이 필요합니다."
+    end
+
     begin
       ActiveRecord::Base.transaction do
         @challenge.participants.create!(
@@ -260,6 +264,8 @@ class ChallengesController < ApplicationController
       end
       path = params[:source] == "prototype" ? challenge_path(@challenge, source: "prototype") : @challenge
       redirect_to path, notice: "챌린지에 참여했습니다!"
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to @challenge, alert: "참여 불가: #{e.record.errors.full_messages.join(', ')}"
     rescue => e
       redirect_to @challenge, alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
     end

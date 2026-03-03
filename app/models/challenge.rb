@@ -59,6 +59,7 @@ class Challenge < ApplicationRecord
   # Callbacks
   before_save :set_host_name
   before_save :update_status_based_on_dates
+  before_save :clear_cost_if_free
   before_create :generate_invitation_code, if: :is_private?
 
   # Nested attributes
@@ -142,6 +143,8 @@ class Challenge < ApplicationRecord
 
   # Calculate total payment amount (participation_fee + deposit)
   def total_payment_amount
+    return 0 if cost_type_free?
+
     total = 0
     total += participation_fee if participation_fee.present? && participation_fee > 0
     total += amount if amount.present? && amount > 0
@@ -150,7 +153,7 @@ class Challenge < ApplicationRecord
 
   # Display text for cost type
   def cost_display_text
-    return "무료" if cost_type_free?
+    return "무료" if cost_type_free? || total_payment_amount == 0
 
     parts = []
     parts << "참가비 #{number_with_delimiter(participation_fee)}원" if participation_fee.present? && participation_fee > 0
@@ -225,6 +228,14 @@ class Challenge < ApplicationRecord
   end
 
   private
+
+  def clear_cost_if_free
+    if cost_type_free?
+      self.amount = 0
+      self.participation_fee = 0
+      self.penalty_per_failure = 0
+    end
+  end
 
   def end_date_after_start_date
     return if end_date.blank? || start_date.blank?

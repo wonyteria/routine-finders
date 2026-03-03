@@ -168,7 +168,7 @@
           </div>
           <div class="min-w-0">
             <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 whitespace-nowrap">참가 비용</p>
-            <p class="text-xl font-black text-white leading-tight whitespace-nowrap"><%= challenge.cost_type_free? ? "무료 참여" : "#{number_with_delimiter(challenge.amount)}원" %></p>
+            <p class="text-xl font-black text-white leading-tight whitespace-nowrap"><%= challenge.cost_type_free? || (challenge.total_payment_amount == 0) ? "무료" : "#{number_with_delimiter(challenge.total_payment_amount)}원" %></p>
             <p class="text-[11px] text-slate-500 mt-1 font-bold break-keep"><%= challenge.cost_type_deposit? ? "참여 완료 시 환불" : "모임 운영비" %></p>
           </div>
         </div>

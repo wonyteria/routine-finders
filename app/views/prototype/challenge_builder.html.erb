@@ -969,7 +969,7 @@
         const costTypeMap = { free: "무료", fee: "참가비", deposit: "보증금" };
         
         if (costType === 'free') {
-          document.getElementById('review_cost').textContent = "무료 참여";
+          document.getElementById('review_cost').textContent = "무료";
           document.getElementById('review_penalty_box').classList.add('hidden');
           document.getElementById('review_achievement_box').classList.add('hidden');
           document.getElementById('review_bank_box').classList.add('hidden');
@@ -1386,8 +1386,22 @@
     };
 
     handleSelect(document.querySelectorAll('.cost-opt'), 'h_cost_type', 'selected-cat', (val) => {
-      document.getElementById('cost_amount_box').classList.toggle('hidden', val === 'free');
-      document.getElementById('cost_bank_box').classList.toggle('hidden', val === 'free');
+      const amountInput = document.querySelector('input[name="challenge[amount]"]');
+      if (val === 'free') {
+        amountInput.value = 0;
+        const feeInput = document.querySelector('input[name="challenge[participation_fee]"]');
+        const penaltyInput = document.querySelector('input[name="challenge[penalty_per_failure]"]');
+        if (feeInput) feeInput.value = 0;
+        if (penaltyInput) penaltyInput.value = 0;
+        document.getElementById('cost_amount_box').classList.add('hidden');
+        document.getElementById('cost_bank_box').classList.add('hidden');
+      } else {
+        if (!amountInput.value || parseInt(amountInput.value) === 0) {
+          amountInput.value = 10000;
+        }
+        document.getElementById('cost_amount_box').classList.remove('hidden');
+        document.getElementById('cost_bank_box').classList.remove('hidden');
+      }
       document.getElementById('deposit_options').classList.toggle('hidden', val !== 'deposit');
       document.getElementById('cost_guide_text').textContent = costGuides[val];
       
