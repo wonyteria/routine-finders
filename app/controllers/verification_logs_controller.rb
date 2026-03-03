@@ -40,7 +40,7 @@ class VerificationLogsController < ApplicationController
       # 호스트 승인이 필요없는 경우 자동 승인
       unless @challenge.mission_requires_host_approval
         @verification_log.update(status: :approved)
-        @participant.update_streak!
+        # Note: update_streak! is handled via after_save callback in VerificationLog model
       end
 
       notice_msg = "인증이 완료되었습니다!"

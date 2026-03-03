@@ -43,11 +43,15 @@ class Participant < ApplicationRecord
 
     # Completion Rate Calculation
     # Total effective days for the challenge
-    total_days = (challenge.end_date - challenge.start_date).to_i + 1
-    total_days = 1 if total_days < 1
+    if challenge.start_date.present? && challenge.end_date.present?
+      total_days = (challenge.end_date - challenge.start_date).to_i + 1
+      total_days = 1 if total_days < 1
+    else
+      total_days = 1
+    end
 
     # Unique approved days count
-    approved_days_count = verification_logs.approved.pluck(:created_at).map(&:to_date).uniq.count
+    approved_days_count = verification_logs.approved.pluck(:created_at).compact.map(&:to_date).uniq.count
 
     new_rate = (approved_days_count.to_f / total_days.to_f * 100).round(1)
 

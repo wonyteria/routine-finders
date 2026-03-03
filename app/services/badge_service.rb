@@ -7,12 +7,17 @@ class BadgeService
     new_badges = []
 
     Badge.all.each do |badge|
-      unless @user.badges.include?(badge)
-        current_value = calculate_metric(badge)
-        if current_value >= badge.requirement_value
-          @user.user_badges.create!(badge: badge, granted_at: Time.current)
-          new_badges << badge
+      begin
+        unless @user.badges.include?(badge)
+          current_value = calculate_metric(badge)
+          if current_value >= badge.requirement_value
+            @user.user_badges.create!(badge: badge, granted_at: Time.current)
+            new_badges << badge
+          end
         end
+      rescue => e
+        Rails.logger.error "[BadgeService] Failed to check badge #{badge.id}: #{e.message}"
+        next
       end
     end
 
@@ -94,7 +99,7 @@ class BadgeService
     when :host_participants
       hosted.sum(:current_participants)
     when :host_completion
-      hosted.average(:host_avg_completion_rate) || 0.0
+      hosted.average(:completion_rate) || 0.0
     when :host_count
       hosted.where(status: :ended).count
     else
