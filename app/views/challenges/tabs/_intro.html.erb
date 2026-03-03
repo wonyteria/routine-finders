@@ -2,10 +2,38 @@
 
   <!-- Summary (One-line intro) -->
   <% if challenge.summary.present? %>
-    <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5">
+    <div class="p-5 bg-white/[0.03] rounded-2xl border border-white/5 mb-6">
       <p class="text-sm font-bold text-slate-300 leading-relaxed italic">"<%= challenge.summary %>"</p>
     </div>
   <% end %>
+
+  <!-- Schedule Details -->
+  <div class="space-y-4 pt-2 mb-6">
+    <div class="grid grid-cols-2 gap-3">
+      <div class="p-5 bg-gradient-to-br from-white/[0.05] to-transparent rounded-2xl border border-white/5 flex flex-col justify-center relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-amber-500/10 blur-xl rounded-full group-hover:bg-amber-500/20 transition-colors"></div>
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5 relative z-10"><span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]"></span>모집 기간</p>
+        <p class="text-xs font-bold text-white leading-tight relative z-10">
+          <% if challenge.recruitment_start_date && challenge.recruitment_end_date %>
+            <%= challenge.recruitment_start_date.strftime('%m.%d') %> ~ <%= challenge.recruitment_end_date.strftime('%m.%d') %>
+          <% else %>
+            상시 모집
+          <% end %>
+        </p>
+      </div>
+      <div class="p-5 bg-gradient-to-br from-white/[0.05] to-transparent rounded-2xl border border-white/5 flex flex-col justify-center relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-emerald-500/10 blur-xl rounded-full group-hover:bg-emerald-500/20 transition-colors"></div>
+        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5 relative z-10"><span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"></span><%= challenge.offline? ? "모임/진행 일자" : "진행 기간" %></p>
+        <p class="text-xs font-bold text-white leading-tight relative z-10">
+          <% if challenge.start_date == challenge.end_date %>
+             <%= challenge.start_date.strftime('%y.%m.%d') %> 하루
+          <% else %>
+             <%= challenge.start_date.strftime('%y.%m.%d') %> ~ <%= challenge.end_date.strftime('%y.%m.%d') %>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </div>
 
   <!-- Main Description -->
   <% if challenge.description.present? %>

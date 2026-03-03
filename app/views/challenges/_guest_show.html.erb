@@ -148,7 +148,15 @@
            <div class="absolute -left-6 -top-6 w-20 h-20 bg-indigo-500/10 blur-2xl"></div>
            <p class="text-indigo-300 text-[13px] font-bold leading-relaxed relative z-10 flex gap-3">
              <span class="text-lg">💡</span>
-             <%= @challenge.offline? ? "모임 시간과 장소를 사전에 숙지하여 노쇼가 발생하지 않도록 주의해주세요." : "매일 정해진 가이드에 맞춰 인증샷을 남겨주시면 성실함 지수가 올라갑니다." %>
+             <%
+               verification_text = case @challenge.verification_type&.to_sym
+               when :url then "가이드에 맞춰 공유 URL 링크를 남겨주시면 성실함 지수가 올라갑니다."
+               when :metric then "가이드에 맞춰 매일 수치를 기록해주시면 성실함 지수가 올라갑니다."
+               when :simple then "가이드에 맞춰 매일 간단히 완료 체크를 해주시면 성실함 지수가 올라갑니다."
+               else "매일 정해진 가이드에 맞춰 인증샷을 남겨주시면 성실함 지수가 올라갑니다."
+               end
+             %>
+             <%= @challenge.offline? ? "모임 시간과 장소를 사전에 숙지하여 노쇼가 발생하지 않도록 주의해주세요." : verification_text %>
            </p>
         </div>
         <%= render "challenges/tabs/rules", challenge: @challenge %>
