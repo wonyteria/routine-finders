@@ -3,9 +3,9 @@
   <!-- 1. Header (Aligned with Prototype Home) -->
   <header class="flex items-center justify-between">
     <div class="flex items-center gap-4">
-      <button onclick="history.back()" class="w-11 h-11 app-glass-card flex items-center justify-center text-slate-400 app-tap-active">
+      <%= link_to prototype_my_path, class: "w-11 h-11 app-glass-card flex items-center justify-center text-slate-400 app-tap-active" do %>
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
-      </button>
+      <% end %>
       <div>
         <div class="flex items-center gap-2 mb-0.5">
           <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
