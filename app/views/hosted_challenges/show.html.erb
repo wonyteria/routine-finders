@@ -18,9 +18,19 @@
           </div>
       </div>
       
-      <%= link_to challenge_path(@challenge), target: "_blank", class: "w-11 h-11 app-glass-card flex items-center justify-center text-white app-tap-active" do %>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-      <% end %>
+      <div class="flex items-center gap-3">
+        <% unless @is_joined %>
+          <%= button_to join_as_host_hosted_challenge_path(@challenge, source: "prototype"), 
+                        method: :post,
+                        class: "px-6 py-2.5 bg-indigo-600 rounded-2xl text-[11px] font-black text-white hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20 active:scale-95" do %>
+            나도 참여하기
+          <% end %>
+        <% end %>
+
+        <%= link_to challenge_path(@challenge), target: "_blank", class: "w-11 h-11 app-glass-card flex items-center justify-center text-white app-tap-active" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        <% end %>
+      </div>
     </div>
 
     <% if @challenge.offline? %>

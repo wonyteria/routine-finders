@@ -19,8 +19,30 @@ class HostedChallengesController < ApplicationController
       .count
   end
 
+  def join_as_host
+    @challenge = current_user.hosted_challenges.find(params[:id])
+
+    if current_user.participations.exists?(challenge_id: @challenge.id)
+      return redirect_to hosted_challenge_path(@challenge, source: "prototype"), alert: "이미 참여 중입니다."
+    end
+
+    ActiveRecord::Base.transaction do
+      @challenge.participants.create!(
+        user: current_user,
+        paid_amount: 0, # 호스트는 무료 참여
+        joined_at: Time.current
+      )
+      @challenge.increment!(:current_participants)
+    end
+
+    redirect_to hosted_challenge_path(@challenge, source: "prototype"), notice: "참여자로 등록되었습니다! 이제 본인의 챌린지 대시보드에서 인증이 가능합니다."
+  rescue => e
+    redirect_to hosted_challenge_path(@challenge, source: "prototype"), alert: "참여 처리 중 오류가 발생했습니다: #{e.message}"
+  end
+
   def show
     @challenge = current_user.hosted_challenges.find(params[:id])
+    @is_joined = current_user.participations.exists?(challenge_id: @challenge.id)
     @tab = params[:tab] || "dashboard"
 
     # 공통 데이터 - 최적화된 쿼리
@@ -82,7 +104,7 @@ class HostedChallengesController < ApplicationController
     @challenge = current_user.hosted_challenges.find(params[:id])
 
     params_hash = challenge_params
-    
+
     # 1) JSON Data Parsing Fix
     if params_hash[:daily_goals].is_a?(String)
       begin

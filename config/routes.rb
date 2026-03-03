@@ -153,6 +153,7 @@ Rails.application.routes.draw do
       post :batch_approve_applications
       post :batch_reject_applications
       post :nudge_participants
+      post :join_as_host
     end
   end
 
