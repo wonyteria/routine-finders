@@ -44,17 +44,22 @@ class VerificationLog < ApplicationRecord
   end
 
   def one_verification_per_day
-    if participant && participant.verification_logs.where("DATE(created_at) = ?", Date.current).where(status: [:pending, :approved]).exists?
+    if participant && participant.verification_logs.where("DATE(created_at) = ?", Date.current).where(status: [ :pending, :approved ]).exists?
       errors.add(:base, "오늘 이미 인증을 제출하셨습니다.")
     end
   end
 
   def calculate_completion_rate
     # 챌린지 전체 기간 기준으로 계산하여 Participant 모델과 로직 통일
+    return 0.0 unless challenge.start_date.present? && challenge.end_date.present?
+
     total_days = (challenge.end_date - challenge.start_date).to_i + 1
     total_days = 1 if total_days < 1
 
     verified_days = participant.verification_logs.approved.select("DISTINCT DATE(created_at)").count
     ((verified_days.to_f / total_days) * 100).round(1)
+  rescue => e
+    Rails.logger.error "[VerificationLog] completion rate calculation failed: #{e.message}"
+    0.0
   end
 end

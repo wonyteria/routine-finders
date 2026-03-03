@@ -106,7 +106,10 @@ class VerificationLogsController < ApplicationController
   end
 
   def valid_verification_data?(log)
-    case log.verification_type.to_sym
+    v_type = log.verification_type
+    return false if v_type.blank?
+
+    case v_type.to_s.to_sym
     when :photo
       # 사진 인증: image_url 필수
       log.image_url.present?
@@ -122,6 +125,9 @@ class VerificationLogsController < ApplicationController
     else
       false
     end
+  rescue => e
+    Rails.logger.error "[VerificationLogsController] Validation failed: #{e.message}"
+    false
   end
 
   def redirect_path_for_challenge

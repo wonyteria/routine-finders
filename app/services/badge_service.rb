@@ -10,7 +10,7 @@ class BadgeService
       begin
         unless @user.badges.include?(badge)
           current_value = calculate_metric(badge)
-          if current_value >= badge.requirement_value
+          if badge.requirement_value.present? && current_value >= badge.requirement_value
             @user.user_badges.create!(badge: badge, granted_at: Time.current)
             new_badges << badge
           end
