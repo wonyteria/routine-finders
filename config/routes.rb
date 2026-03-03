@@ -184,6 +184,7 @@ Rails.application.routes.draw do
       post :record
       post :send_message
       post :mark_welcomed
+      post :join_as_host
     end
     resources :announcements, only: [ :create, :destroy ]
     resources :gatherings, only: [ :create, :destroy ], controller: "routine_club_gatherings"

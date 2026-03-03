@@ -1,7 +1,7 @@
 class RoutineClubsController < ApplicationController
   before_action :require_login, except: [ :index, :show, :guide ]
   before_action :require_admin, only: [ :new, :create ]
-  before_action :set_routine_club, only: [ :show, :edit, :update, :join, :manage, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member, :mark_welcomed ]
+  before_action :set_routine_club, only: [ :show, :edit, :update, :join, :manage, :use_pass, :record, :confirm_payment, :reject_payment, :kick_member, :mark_welcomed, :join_as_host ]
   before_action :set_my_membership, only: [ :show, :use_pass ]
 
   def index
@@ -108,6 +108,29 @@ class RoutineClubsController < ApplicationController
       Rails.logger.error "Membership Save Failed: #{msg}"
       redirect_to prototype_club_join_path, alert: "참여 신청에 실패했습니다: #{msg}"
       nil
+    end
+  end
+
+  def join_as_host
+    return redirect_to prototype_home_path(tab: "club"), alert: "이미 참여 중입니다." if @routine_club.members.exists?(user: current_user)
+    return redirect_to prototype_home_path(tab: "club"), alert: "호스트만 사용할 수 있는 기능입니다." unless @routine_club.host_id == current_user.id
+
+    membership = @routine_club.members.build(
+      user: current_user,
+      paid_amount: 0,
+      payment_status: :confirmed,
+      status: :active,
+      membership_start_date: @routine_club.start_date,
+      membership_end_date: @routine_club.end_date || Date.new(2099, 12, 31),
+      joined_at: Time.current,
+      depositor_name: "HOST", # Required by validation if pending? but good to have
+      contact_info: current_user.phone_number || "HOST"
+    )
+
+    if membership.save
+      redirect_to prototype_home_path(tab: "club"), notice: "클럽 멤버로 등록되었습니다. 이제 루틴을 기록할 수 있습니다!"
+    else
+      redirect_to prototype_admin_clubs_path(id: @routine_club.id), alert: "멤버 등록에 실패했습니다: #{membership.errors.full_messages.to_sentence}"
     end
   end
 

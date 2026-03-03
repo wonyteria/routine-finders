@@ -23,7 +23,11 @@ class RoutineClubMember < ApplicationRecord
 
   # Callbacks
   before_create :set_membership_dates
-  after_update :update_club_member_count, if: :saved_change_to_payment_status?
+  after_save :update_club_member_count, if: :saved_change_to_payment_status?
+
+  def is_host_membership?
+    routine_club.host_id == user_id
+  end
 
   # Methods
   def confirm_payment!
