@@ -61,6 +61,14 @@ class Challenge < ApplicationRecord
   before_save :update_status_based_on_dates
   before_save :clear_cost_if_free
   before_create :generate_invitation_code, if: :is_private?
+  before_validation :set_default_thresholds
+
+  # Validations
+  validates :title, :start_date, :end_date, presence: true
+  validates :failure_tolerance, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :sluggish_rate_threshold, :active_rate_threshold, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
+  validate :end_date_after_start_date
+  validate :recruitment_period_validity
 
   # Nested attributes
   accepts_nested_attributes_for :meeting_info, allow_destroy: true
@@ -228,6 +236,12 @@ class Challenge < ApplicationRecord
   end
 
   private
+
+  def set_default_thresholds
+    self.failure_tolerance ||= 3
+    self.sluggish_rate_threshold ||= 0.4
+    self.active_rate_threshold ||= 0.8
+  end
 
   def clear_cost_if_free
     if cost_type_free?

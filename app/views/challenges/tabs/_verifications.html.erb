@@ -69,7 +69,7 @@
                 <p class="font-bold text-slate-900"><%= log.participant.user.nickname %></p>
                 <p class="text-sm text-slate-500"><%= log.created_at.in_time_zone('Asia/Seoul').strftime('%m/%d %H:%M') %></p>
                 <% if log.value.present? %>
-                  <p class="text-sm text-slate-600 mt-1"><%= log.value %></p>
+                  <p class="text-sm text-slate-600 mt-1"><%= linkify_urls(log.value) %></p>
                 <% end %>
                 <% if log.image_url.present? %>
                   <a href="<%= log.image_url %>" target="_blank" class="text-sm text-indigo-600 hover:underline">사진 보기</a>
@@ -112,7 +112,7 @@
                   <% end %>
                 </div>
                 <% if log.value.present? %>
-                  <p class="text-slate-600 mt-2"><%= log.value %></p>
+                  <p class="text-slate-600 mt-2"><%= linkify_urls(log.value) %></p>
                 <% end %>
                 <% if log.image_url.present? %>
                   <img src="<%= log.image_url %>" alt="" class="mt-3 rounded-xl max-h-64 object-cover">

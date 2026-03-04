@@ -62,4 +62,22 @@ module ApplicationHelper
       [ "[#{country}] #{tz.name} (GMT#{tz.formatted_offset})", tz.name, country ]
     end.sort_by { |disp, val, country| [ country == "대한민국" ? 0 : 1, country ] }
   end
+
+  def linkify_urls(text)
+    return text if text.blank?
+
+    # Escape the entire text first to prevent XSS
+    escaped_text = h(text)
+
+    # Find all URLs and replace them with link_to tags
+    urls = URI.extract(text, [ "http", "https" ]).uniq
+    urls.each do |url|
+      escaped_url = h(url)
+      # Replace globally in the escaped text
+      link_html = link_to(escaped_url, url, target: "_blank", class: "text-indigo-600 hover:underline break-all")
+      escaped_text = escaped_text.gsub(escaped_url, link_html)
+    end
+
+    escaped_text.html_safe
+  end
 end

@@ -119,11 +119,17 @@ class Participant < ApplicationRecord
   end
 
   def check_status!
-    if total_failures >= challenge.failure_tolerance
+    # Providing safe defaults if challenge thresholds are nil to prevent 500 errors
+    tolerance = challenge.failure_tolerance || 3
+    sluggish_threshold = challenge.sluggish_rate_threshold || 0.4
+    active_threshold = challenge.active_rate_threshold || 0.8
+    non_participating_threshold = challenge.non_participating_failures_threshold || 5
+
+    if total_failures >= tolerance
       update(status: :failed)
-    elsif consecutive_failures >= (challenge.non_participating_failures_threshold || 5) || completion_rate < (challenge.sluggish_rate_threshold || 0.4)
+    elsif consecutive_failures >= non_participating_threshold || completion_rate < sluggish_threshold
       update(status: :inactive)
-    elsif consecutive_failures > 0 || completion_rate < (challenge.active_rate_threshold || 0.8)
+    elsif consecutive_failures > 0 || completion_rate < active_threshold
       update(status: :lagging)
     else
       update(status: :achieving)
