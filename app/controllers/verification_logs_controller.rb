@@ -7,6 +7,8 @@ class VerificationLogsController < ApplicationController
 
   def new
     return redirect_to redirect_path_for_challenge, alert: "이 챌린지에 참여하고 있지 않습니다." unless @participant
+    return redirect_to redirect_path_for_challenge, alert: "챌린지 진행 기간에만 인증할 수 있습니다." unless @challenge.active_period?
+
     @verification_log = @participant.verification_logs.build
 
     if params[:source] == "prototype"
@@ -16,6 +18,7 @@ class VerificationLogsController < ApplicationController
 
   def create
     return redirect_to redirect_path_for_challenge, alert: "이 챌린지에 참여하고 있지 않습니다." unless @participant
+    return redirect_to redirect_path_for_challenge, alert: "챌린지 진행 기간에만 인증할 수 있습니다." unless @challenge.active_period?
 
     # 참여 중지/탈락/포기 상태 확인
     unless @participant.active?

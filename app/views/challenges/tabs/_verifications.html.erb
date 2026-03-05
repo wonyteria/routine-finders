@@ -18,6 +18,26 @@
             </p>
           </div>
         </div>
+      <% elsif !challenge.active_period? %>
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-slate-100 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+            <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-xl font-black text-slate-900 mb-2">
+            <% if Date.current < (challenge.start_date || Date.current) %>
+              챌린지가 아직 시작되지 않았습니다
+            <% else %>
+              종료된 <%= challenge.offline? ? "모임" : "챌린지" %>입니다
+            <% end %>
+          </h3>
+          <p class="text-slate-500 font-medium">
+            <% if Date.current < (challenge.start_date || Date.current) %>
+              <%= challenge.start_date&.strftime('%m월 %d일') %>부터 인증할 수 있습니다.
+            <% else %>
+              더 이상 인증을 등록할 수 없습니다.
+            <% end %>
+          </p>
+        </div>
       <% else %>
         <h3 class="text-xl font-black text-slate-900 mb-6"><%= challenge.offline? ? "오늘의 추억 공유하기" : "오늘의 인증하기" %></h3>
         <%= form_with url: challenge_verification_logs_path(challenge), method: :post, class: "space-y-4" do |f| %>

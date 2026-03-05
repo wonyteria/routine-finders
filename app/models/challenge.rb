@@ -139,6 +139,11 @@ class Challenge < ApplicationRecord
     current_time_only >= start_time && current_time_only <= end_time
   end
 
+  def active_period?(date = Date.current)
+    return false if start_date.blank? || end_date.blank?
+    date >= start_date && date <= end_date
+  end
+
   # Pending applications count
   def pending_applications_count
     challenge_applications.pending.count
