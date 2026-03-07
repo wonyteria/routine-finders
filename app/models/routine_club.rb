@@ -239,14 +239,18 @@ class RoutineClub < ApplicationRecord
       return latest_club
     end
 
-    # 2026년 1기(1월~2월) 기준 공식 클라이언트 설정
+    # Use dynamic dates based on the current cycle
+    current_date = Date.current
+    start_date = self.current_cycle_start_date(current_date)
+    end_date = self.next_cycle_start_date(current_date) - 1.day # End of the 2-month cycle
+
     self.create!(
       title: "루파 클럽 공식",
       description: "루틴 파인더스가 직접 운영하는 단 하나의 공식 루파 클럽입니다. 압도적 성장을 위한 최적의 시스템!",
       monthly_fee: 3000,
       min_duration_months: 2,
-      start_date: Date.new(2026, 1, 1),
-      end_date: Date.new(2026, 2, 28),
+      start_date: start_date,
+      end_date: end_date,
       is_official: true,
       category: "건강·운동",
       status: :active
