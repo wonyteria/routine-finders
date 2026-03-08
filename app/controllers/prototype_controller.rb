@@ -225,9 +225,9 @@ class PrototypeController < ApplicationController
     @prev_top_rankings = relevant_users.map { |u|
       score = if @period == "total"
                 u.total_platform_score
-              else
+      else
                 u.rufa_club_score(prev_month)
-              end
+      end
       { user: u, score: score }
     }.select { |r| r[:score] > 0 }.sort_by { |r| -r[:score] }.take(3)
   end
@@ -758,8 +758,9 @@ class PrototypeController < ApplicationController
       # Ensure current admin has membership before loading the page (Fix for admins not being members)
       current_user.ensure_rufa_club_membership_for_admin if current_user&.admin?
 
-      # Real members of the official club (Exclude deleted users)
-      @club_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(user: { personal_routines: :completions })
+      # Real members of the official club (Exclude deleted users, kicked/left, and system accounts)
+      @club_members = @official_club.members.confirmed.where(status: [ :active, :warned ]).joins(:user).where(users: { deleted_at: nil }).includes(user: { personal_routines: :completions })
+                                    .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp") }
 
       # [Sorting Logic]
       @member_sort = params[:member_sort] || "weekly_high"
