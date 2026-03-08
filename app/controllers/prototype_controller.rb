@@ -760,7 +760,7 @@ class PrototypeController < ApplicationController
 
       # Real members of the official club (Exclude deleted users, kicked/left, and system accounts)
       @club_members = @official_club.members.confirmed.where(status: [ :active, :warned ]).joins(:user).where(users: { deleted_at: nil }).includes(user: { personal_routines: :completions })
-                                    .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp") }
+                                    .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) }
 
       # [Sorting Logic]
       @member_sort = params[:member_sort] || "weekly_high"
@@ -994,7 +994,7 @@ class PrototypeController < ApplicationController
 
     # 모든 확정 멤버(payment_status: :confirmed)를 대상으로 하되, 지정된 예외 시스템 계정이 아닌 경우
     confirmed_members = @official_club.members.confirmed.joins(:user).where(users: { deleted_at: nil }).includes(:user)
-                                      .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp") }
+                                      .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) }
 
     # [Diagnostic] 모든 멤버 상태 확인을 위해 전체 목록 수집 (어드민용)
     @all_members_diagnostic = @official_club.members.includes(:user).order("users.nickname ASC")
@@ -1132,7 +1132,7 @@ class PrototypeController < ApplicationController
                                 .where(status: [ :active, :warned ])
                                 .where(payment_status: :confirmed)
                             .includes(:attendances, user: :personal_routines)
-                            .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp") }
+                            .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) }
 
     # 탭 A: 지난주 결과 기반 (실제 경고 대상자들)
     @confirmed_risks = []
@@ -1184,7 +1184,7 @@ class PrototypeController < ApplicationController
 
     # 3. 이번 달 누적 경고 현황
     all_members = @official_club.members.includes(:user, :penalties)
-                                .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.admin? || m.user.email.include?("routinefinders.temp") }
+                                .reject { |m| [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.admin? }
 
     @warned_members_this_month = all_members.select { |m| m.current_month_penalty_count > 0 }
            .sort_by { |m| -m.current_month_penalty_count }

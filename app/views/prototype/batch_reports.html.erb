@@ -219,7 +219,7 @@
             <tbody class="divide-y divide-white/[0.02]">
               <% @all_members_diagnostic.each do |m| %>
                 <% 
-                  is_excluded_name = [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname) || m.user.email.include?("routinefinders.temp")
+                  is_excluded_name = [ "루파", "wony quokka", "byteria won" ].include?(m.user.nickname)
                   is_confirmed = m.payment_status == "confirmed"
                   is_deleted = m.user.deleted_at.present?
                   
