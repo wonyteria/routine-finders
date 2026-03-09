@@ -54,7 +54,11 @@ class RoutineClubReportService
 
   def calculate_report_data
     routines = user.personal_routines.includes(:completions).to_a
-    target_period = (start_date..end_date).to_a
+    member = routine_club.members.find_by(user: user)
+
+    # [Fix] 가입일(joined_at)을 고려하여 계산 시작일자를 조정합니다 (performance_stats 로직과 동기화)
+    effective_start = member && member.joined_at ? [ start_date, member.joined_at.to_date ].max : start_date
+    target_period = (effective_start..end_date).to_a
     total_days = target_period.count
 
     # 1. 일별 성취율 계산 및 통계 수집
@@ -65,8 +69,7 @@ class RoutineClubReportService
     total_target_count_period = 0
     total_completed_count_period = 0
 
-    member = routine_club.members.find_by(user: user)
-    attendance_map = member ? member.attendances.where(attendance_date: start_date..end_date).index_by(&:attendance_date) : {}
+    attendance_map = member ? member.attendances.where(attendance_date: effective_start..end_date).index_by(&:attendance_date) : {}
     excused_dates = attendance_map.values.select(&:status_excused?).map(&:attendance_date)
 
     # 루틴 완료 기록 미리 가져오기 (N+1 방지)

@@ -28,6 +28,10 @@ production:
     class: ClubPushNotificationJob
     schedule: "*/1 * * * *" # 1분마다 실행하여 HH:MM 스케줄 정시에 체크
 
+  content_push_checker:
+    class: ContentPushNotificationJob
+    schedule: "*/1 * * * *" # 매 분마다 챌린지 및 모임 푸시 알림 체크
+
   club_performance_check:
     class: ClubPerformanceCheckJob
     schedule: "at 00:01 every Monday"
