@@ -25,6 +25,10 @@ class Participant < ApplicationRecord
   before_save :sync_user_info
 
   # Methods
+  def active?
+    achieving? || lagging? || inactive?
+  end
+
   def update_streak!
     logs = verification_logs.order(created_at: :desc)
 
