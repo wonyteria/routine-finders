@@ -45,7 +45,8 @@ class ChallengesController < ApplicationController
         @remaining_days = 0
         @d_day = "설정 전"
       end
-      @today_verified = @participant.verification_logs.today.exists?
+      @today_log = @participant.verification_logs.today.order(created_at: :desc).first
+    @today_verified = @today_log&.approved?
       @recent_verifications = @challenge.verification_logs.includes(participant: :user).recent.limit(5)
       @announcements = @challenge.announcements.order(is_pinned: :desc, created_at: :desc).limit(3)
 
