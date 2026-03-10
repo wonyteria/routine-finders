@@ -188,7 +188,11 @@
                 <p class="font-black text-xs text-white">재인증 허용</p>
                 <p class="text-[8px] font-bold text-slate-500 mt-0.5">실패 시 재시도 기회</p>
               </div>
-              <%= f.check_box :re_verification_allowed, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-indigo-600 transition-colors" %>
+              <label class="relative inline-block w-10 h-6 cursor-pointer">
+                <%= f.check_box :re_verification_allowed, class: "peer sr-only" %>
+                <div class="w-full h-full bg-slate-700 rounded-full peer-checked:bg-indigo-500 transition-colors"></div>
+                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4 shadow"></div>
+              </label>
             </div>
 
             <div class="p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 flex items-center justify-between">
@@ -196,7 +200,11 @@
                 <p class="font-black text-xs text-white">인증 승인제</p>
                 <p class="text-[8px] font-bold text-slate-500 mt-0.5">호스트가 직접 승인</p>
               </div>
-              <%= f.check_box :mission_requires_host_approval, class: "w-10 h-5 bg-slate-200 rounded-full appearance-none cursor-pointer relative checked:bg-amber-500 transition-colors" %>
+              <label class="relative inline-block w-10 h-6 cursor-pointer">
+                <%= f.check_box :mission_requires_host_approval, class: "peer sr-only" %>
+                <div class="w-full h-full bg-slate-700 rounded-full peer-checked:bg-amber-500 transition-colors"></div>
+                <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4 shadow"></div>
+              </label>
             </div>
           </div>
         </section>
