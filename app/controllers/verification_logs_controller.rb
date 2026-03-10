@@ -25,10 +25,17 @@ class VerificationLogsController < ApplicationController
       return redirect_to redirect_path_for_challenge, alert: "현재 활성 참여 상태가 아니므로 인증을 진행할 수 없습니다."
     end
 
-    # 오늘 이미 인증했는지 확인 (성공 또는 대기중인 인증이 있으면 차단)
-    if @participant.verification_logs.today.where.not(status: :rejected).exists?
-      return redirect_to redirect_path_for_challenge, alert: "오늘 이미 인증을 완료했습니다."
-    end
+    today_logs = @participant.verification_logs.today
+
+  # 1. 이미 승인되거나 대기중인 인증이 있는 경우 차단
+  if today_logs.where(status: [ :pending, :approved ]).exists?
+    return redirect_to redirect_path_for_challenge, alert: "오늘 이미 인증을 제출하셨거나 확인 대기 중입니다."
+  end
+
+  # 2. 반려당했는데 호스트가 재인증을 미허용한 경우 차단
+  if !@challenge.re_verification_allowed && today_logs.where(status: :rejected).exists?
+    return redirect_to redirect_path_for_challenge, alert: "인증 기록이 반려되었으며, 안타깝게도 재인증 기회가 제공되지 않는 챌린지입니다."
+  end
 
     @verification_log = @participant.verification_logs.build(verification_log_params)
     @verification_log.challenge = @challenge

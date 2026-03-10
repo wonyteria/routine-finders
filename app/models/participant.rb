@@ -30,18 +30,33 @@ class Participant < ApplicationRecord
   end
 
   def update_streak!
-    logs = verification_logs.order(created_at: :desc)
+    # DB에 저장된 승인된 로그들만 가져와 날짜(date) 기준으로 고유하게 정렬
+    approved_dates = verification_logs
+                       .where(status: :approved)
+                       .pluck(:created_at)
+                       .compact
+                       .map(&:to_date)
+                       .uniq
+                       .sort
+                       .reverse
 
     # Streak Calculation
     streak = 0
-    if logs.any?
-      # Simple consecutive day check logic could be sophisticated,
-      # but for now rely on existing logs order or just verification count for prototype simplicity if dates are messy
-      # Actually, let's just count consecutive days backwards from today/yesterday
-      # For prototype, let's keep the existing loop which might be roughly correct if logs are sorted
-      logs.each do |log|
-        break unless log.approved?
-        streak += 1
+    if approved_dates.any?
+      base_date = Date.current
+      # 오늘 인증이 안 되어 있다면 (어제까지 연속 달성 중일 수도 있음)
+      base_date = Date.yesterday unless approved_dates.include?(Date.current)
+
+      expected_date = base_date
+      approved_dates.each do |date|
+        # 승인된 기록이 예상되는 날짜보다 이전(과거)이면, 연속이 끊어진 것.
+        # (예: 어제 승인되었어야 했는데, 엊그제 것이 나온 경우)
+        if date == expected_date
+          streak += 1
+          expected_date -= 1.day
+        elsif date < expected_date
+          break
+        end
       end
     end
 

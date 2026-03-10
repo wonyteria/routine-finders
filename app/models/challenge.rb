@@ -136,7 +136,13 @@ class Challenge < ApplicationRecord
     start_time = verification_start_time&.strftime("%H:%M:%S") || "00:00:00"
     end_time = verification_end_time&.strftime("%H:%M:%S") || "23:59:59"
 
-    current_time_only >= start_time && current_time_only <= end_time
+    if start_time <= end_time
+      # 일반적인 경우 (예: 10:00 ~ 18:00)
+      current_time_only >= start_time && current_time_only <= end_time
+    else
+      # 자정을 넘기는 경우 (예: 22:00 ~ 02:00)
+      current_time_only >= start_time || current_time_only <= end_time
+    end
   end
 
   def active_period?(date = Date.current)

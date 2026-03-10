@@ -37,15 +37,23 @@ class VerificationLog < ApplicationRecord
   def update_participant_verification
     return unless approved?
 
-    participant.update(
-      today_verified: true
-    )
+    # 지연 승인 버그 픽스: 작성 날짜가 '오늘'일 때만 당일 완료 UI 토글 업데이트
+    if created_at.to_date == Date.current
+      participant.update(today_verified: true)
+    end
+
+    # 연속 달성일수(streak)는 어제/과거 소급 승인 시에도 전체 재계산이 필요하므로 항상 호출
     participant.update_streak!
   end
 
   def one_verification_per_day
-    if participant && participant.verification_logs.where("DATE(created_at) = ?", Date.current).where(status: [ :pending, :approved ]).exists?
+    return unless participant && challenge
+    today_logs = participant.verification_logs.where("DATE(created_at) = ?", Date.current)
+
+    if today_logs.where(status: [ :pending, :approved ]).exists?
       errors.add(:base, "오늘 이미 인증을 제출하셨습니다.")
+    elsif !challenge.re_verification_allowed && today_logs.where(status: :rejected).exists?
+      errors.add(:base, "이전에 제출한 인증이 반려되었으며, 재인증을 허용하지 않는 챌린지입니다.")
     end
   end
 
