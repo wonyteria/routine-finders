@@ -292,12 +292,13 @@
             if @challenge.offline?
               p_tabs = [
                 { id: "intro", label: "안내", icon: "✨" },
-                { id: "dashboard", label: "공지", icon: "📢" }
+                { id: "dashboard", label: "공지", icon: "📢" },
+                { id: "verifications", label: "인증게시판", icon: "🔥" }
               ]
             else
               p_tabs = [
                 { id: "records", label: "기록", icon: "📅" },
-                { id: "dashboard", label: "피드", icon: "🔥" },
+                { id: "verifications", label: "인증게시판", icon: "🔥" },
                 { id: "ranking", label: "랭킹", icon: "🏆" },
                 { id: "intro", label: "정보", icon: "✨" }
               ]
@@ -509,11 +510,17 @@
                  <% end %>
               </div>
             </div>
-          <% else %>
-            <!-- CHALLENGE: Verification Feed -->
-            <% if @challenge.verification_logs.any? %>
+          <% end %>
+
+        <% when "verifications" %>
+          <div class="space-y-6">
+            <% 
+              feed_logs = @verification_logs || @challenge.verification_logs.includes(participant: :user).recent.limit(50) 
+              feed_logs = feed_logs.select { |l| l.approved? || (l.participant.user_id == current_user&.id) }
+            %>
+            <% if feed_logs.any? %>
               <div class="space-y-6">
-                <% @challenge.verification_logs.includes(participant: :user).recent.limit(20).each do |log| %>
+                <% feed_logs.each do |log| %>
                   <div class="glass-card p-6 space-y-4">
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-3">
@@ -524,25 +531,29 @@
                         </div>
                       </div>
                       <% if log.approved? %>
-                        <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px]">SUCCESS</span>
+                        <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-black tracking-widest uppercase">SUCCESS</span>
+                      <% elsif log.pending? %>
+                        <span class="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 text-[10px] font-black tracking-widest uppercase">PENDING</span>
+                      <% else %>
+                        <span class="p-2 rounded-lg bg-rose-500/10 text-rose-400 text-[10px] font-black tracking-widest uppercase">REJECTED</span>
                       <% end %>
                     </div>
                     <% if log.image_url.present? %>
-                      <div class="rounded-2xl overflow-hidden aspect-video bg-white/5">
+                      <div class="rounded-2xl overflow-hidden aspect-video bg-white/5 border border-white/10 shadow-lg">
                         <img src="<%= log.image_url %>" class="w-full h-full object-cover" />
                       </div>
                     <% end %>
-                    <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= log.value %></p>
+                    <p class="text-sm font-medium text-slate-300 leading-relaxed"><%= linkify_urls(log.value) %></p>
                   </div>
                 <% end %>
               </div>
             <% else %>
-              <div class="py-20 text-center glass-card">
+              <div class="py-20 text-center glass-card border-white/5 bg-white/[0.02]">
                 <span class="text-3xl block mb-4">🌱</span>
                 <p class="text-xs font-bold text-slate-500 italic">"아직 등록된 인증 피드가 없습니다.<br>첫 번째 주인공이 되어보세요!"</p>
               </div>
             <% end %>
-          <% end %>
+          </div>
         <% when "ranking" %>
           <div class="glass-card overflow-hidden">
              <div class="p-6 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">

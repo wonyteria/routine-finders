@@ -122,11 +122,9 @@ class ChallengesController < ApplicationController
 
     # Specific tab data (for non-prototype web view)
     case @tab
-    when "verifications"
-      if @is_joined || @is_host
-        @verification_logs = @challenge.verification_logs.includes(participant: :user).order(created_at: :desc).limit(50)
-        @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user) if @is_host
-      end
+    when "verifications", "dashboard"
+      @verification_logs = @challenge.verification_logs.includes(participant: :user).order(created_at: :desc).limit(50)
+      @pending_verifications = @challenge.verification_logs.pending.includes(participant: :user) if @is_host
     end
 
     # Can write review? Improved for Offline Gatherings
