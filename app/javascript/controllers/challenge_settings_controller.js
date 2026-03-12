@@ -80,7 +80,10 @@ export default class extends Controller {
         const changes = this.getChanges(this.initialValues, currentValues)
 
         // If no changes, submit button should already be disabled, but just in case
-        if (Object.keys(changes).length === 0) return
+        if (Object.keys(changes).length === 0) {
+            window.showToast("변경된 사항이 없습니다.", "info")
+            return
+        }
 
         if (!this.hasModalTarget) {
             if (this.hasFormTarget) {

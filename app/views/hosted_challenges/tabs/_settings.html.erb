@@ -12,7 +12,7 @@
     </div>
 
     <%= form_with model: challenge, url: hosted_challenge_path(challenge, tab: "settings", source: "prototype"), method: :patch, class: "space-y-6 md:space-y-8", 
-                     data: { challenge_settings_target: "form", action: "submit->challenge-settings#showSummary" } do |f| %>
+                     data: { turbo_frame: "_top", challenge_settings_target: "form", action: "submit->challenge-settings#showSummary" } do |f| %>
       
       <!-- 01. 기본 정보 -->
       <section class="space-y-3 md:space-y-4">
