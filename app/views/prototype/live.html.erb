@@ -202,9 +202,62 @@
     </a>
   </section>
 
-  <!-- User Profile Modal Frame -->
+<!-- User Profile Modal Frame -->
   <turbo-frame id="user-profile-modal-frame"></turbo-frame>
 </div>
+
+<% content_for :modal_container do %>
+  <% if @march_gathering && !@already_joined_gathering %>
+    <div id="march-gathering-modal" class="hidden fixed inset-0 z-[50000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
+      <div onclick="dismissGatheringModal()" class="absolute inset-0"></div>
+      <div class="relative w-full max-w-sm app-glass-card border-white/20 p-8 flex flex-col items-center text-center space-y-6 animate-badge-celebration-pop bg-[#16151D]">
+         <button onclick="dismissGatheringModal()" class="absolute right-4 top-4 text-slate-500 hover:text-white p-2 z-10 bg-[#16151D]/50 rounded-full backdrop-blur">✕</button>
+         
+         <div class="w-20 h-20 bg-emerald-500/20 rounded-[28px] flex items-center justify-center text-4xl shadow-2xl shadow-emerald-500/40 mb-2 border border-emerald-500/30">🍻</div>
+         
+         <div class="space-y-4 w-full">
+           <h3 class="text-xl font-black text-white"><%= @march_gathering.title %></h3>
+           <p class="text-[13px] font-bold text-slate-300 leading-relaxed break-keep">
+             드디어 오프라인 모임의 모집이 시작되었습니다!<br/><br/>
+             일정: <%= @march_gathering.start_date&.strftime('%m.%d') %> <%= @march_gathering.meeting_time&.strftime('%H:%M') %><br/>
+             장소: <%= @march_gathering.place_name.presence || "판교 고등동 일상찻집" %>
+           </p>
+         </div>
+
+         <div class="w-full space-y-3 pt-4">
+           <%= link_to challenge_path(@march_gathering, source: "prototype"), 
+               class: "block w-full py-4 bg-emerald-500 text-white font-black rounded-2xl active:scale-95 transition-all shadow-lg shadow-emerald-500/30",
+               onclick: "dismissGatheringModal(true)" do %>
+             지금 바로 신청하기
+           <% end %>
+           <button onclick="dismissGatheringModal()" class="text-xs font-bold text-slate-500 hover:text-white py-2">
+             나중에 할게요
+           </button>
+         </div>
+      </div>
+    </div>
+
+    <script>
+      function dismissGatheringModal(apply = false) {
+        document.getElementById('march-gathering-modal').classList.add('hidden');
+        if (!apply) {
+          const date = new Date();
+          date.setHours(23, 59, 59, 999);
+          document.cookie = "march_gathering_seen_v1=true; expires=" + date.toUTCString() + "; path=/";
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+          const cookie = document.cookie.split('; ').find(row => row.startsWith('march_gathering_seen_v1='));
+          if (!cookie) {
+            document.getElementById('march-gathering-modal')?.classList.remove('hidden');
+          }
+        }, 800);
+      });
+    </script>
+  <% end %>
+<% end %>
 
 <style>
   @keyframes slow-pulse {

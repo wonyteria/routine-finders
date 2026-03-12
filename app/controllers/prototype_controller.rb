@@ -118,7 +118,7 @@ class PrototypeController < ApplicationController
       @long_term_goal = @user_goals["long_term"]&.body
       @weekly_goal = current_user.weekly_goal
 
-        # [Push Notification Onboarding]
+      # [Push Notification Onboarding]
         # Show if club member + not dismissed + not subscribed
         if @is_club_member
           subscribed = current_user.web_push_subscriptions.exists?
@@ -129,6 +129,11 @@ class PrototypeController < ApplicationController
     else
       @hosted_challenges = []
       @joined_challenges = []
+    end
+
+    if params[:tab] == "club" && current_user
+      @march_gathering = Challenge.where(mode: :offline).where("title LIKE ?", "%3월%루파%오프모임%").order(created_at: :desc).first
+      @already_joined_gathering = current_user.participations.exists?(challenge: @march_gathering) if @march_gathering
     end
   end
 
@@ -477,6 +482,12 @@ class PrototypeController < ApplicationController
     # Collective Data for RUFA Club
     @confirmed_members = @current_club&.members&.joins(:user)&.where(users: { deleted_at: nil }, payment_status: :confirmed) || []
     @club_total_members_count = @confirmed_members.count
+
+    # March Gathering logic for Popup
+    @march_gathering = Challenge.where(mode: :offline).where("title LIKE ?", "%3월%루파%오프모임%").order(created_at: :desc).first
+    if current_user && @march_gathering
+      @already_joined_gathering = current_user.participations.exists?(challenge: @march_gathering)
+    end
 
     # 1. Today's Average Achievement for Club Members
     @club_today_avg_achievement = Rails.cache.fetch("club_today_avg_#{Date.current}", expires_in: 30.minutes) do
