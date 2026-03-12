@@ -208,7 +208,7 @@
                    <div class="relative group aspect-[16/9] rounded-[28px] overflow-hidden bg-slate-50 border-2 border-dashed border-slate-200 flex flex-col items-center justify-center hover:border-orange-400 transition-all cursor-pointer">
                     <%= f.file_field :thumbnail_image, class: "absolute inset-0 opacity-0 cursor-pointer z-10", data: { action: "change->gathering-form#previewThumbnail" } %>
                     <img src="" class="absolute inset-0 w-full h-full object-cover hidden" data-gathering-form-target="thumbnailPreview">
-                    <div class="text-center space-y-2 pointer-events-none text-slate-300 group-hover:text-orange-500"><div class="text-2xl">📸</div><p class="text-[10px] font-black uppercase">이미지 업로드</p></div>
+                    <div id="thumbnail-placeholder" class="text-center space-y-2 pointer-events-none text-slate-300 group-hover:text-orange-500"><div class="text-2xl">📸</div><p class="text-[10px] font-black uppercase">이미지 업로드</p></div>
                   </div>
                 </div>
 

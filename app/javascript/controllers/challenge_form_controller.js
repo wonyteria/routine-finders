@@ -463,7 +463,22 @@ export default class extends Controller {
 
     previewThumbnail(event) {
         const file = event.target.files[0]
-        if (file && this.hasThumbnailPreviewTarget) {
+        if (!file) return
+
+        if (!file.type.match('image.*')) {
+            alert("이미지 파일(JPG, PNG 등)만 등록할 수 있습니다.")
+            event.target.value = ""
+            return
+        }
+
+        const maxSize = 5 * 1024 * 1024
+        if (file.size > maxSize) {
+            alert("이미지 크기는 5MB를 초과할 수 없습니다.")
+            event.target.value = ""
+            return
+        }
+
+        if (this.hasThumbnailPreviewTarget) {
             const reader = new FileReader()
             reader.onload = (e) => {
                 this.thumbnailPreviewTarget.src = e.target.result

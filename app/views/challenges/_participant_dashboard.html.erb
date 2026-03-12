@@ -122,7 +122,7 @@
 
               <!-- Participants Row -->
               <% if @participants.any? %>
-                <div class="flex items-center gap-2 group-hover:translate-x-1 transition-transform cursor-pointer" onclick="document.querySelector('[data-action=\"click->modal#open\"]').click()">
+                <div class="flex items-center gap-2 group-hover:translate-x-1 transition-transform cursor-pointer" onclick='document.querySelector("[data-action=\"click->modal#open\"]").click()'>
                   <div class="flex -space-x-2">
                     <% @participants.limit(5).each do |p| %>
                       <img src="<%= p.user.profile_image %>" class="w-6 h-6 rounded-lg border-2 border-[#0C0B12] object-cover">

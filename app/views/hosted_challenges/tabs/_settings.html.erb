@@ -77,8 +77,13 @@
         </div>
 
         <div class="space-y-2">
-          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">일일 상세 가이드 (선택: JSON/텍스트)</label>
-          <%= f.text_area :daily_goals, value: f.object.daily_goals.is_a?(String) ? f.object.daily_goals : f.object.daily_goals.to_json, placeholder: "{\"1\": \"물 1리터 마시기\", \"2\": \"명상 10분\"}", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-emerald-500 outline-none transition-all", rows: 3 %>
+          <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">일일 상세 가이드 (선택)</label>
+          <% 
+            dg_val = f.object.daily_goals
+            dg_str = dg_val.is_a?(String) ? dg_val : (dg_val.blank? ? "" : (dg_val.is_a?(Hash) && dg_val.empty? ? "" : dg_val.to_json))
+            dg_str = "" if dg_str == "{}" || dg_str == "[]" || dg_str == '""'
+          %>
+          <%= f.text_area :daily_goals, value: dg_str, placeholder: "예: 물 1리터 마시기, 명상 10분 등 가이드를 자유롭게 남겨주세요.", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-emerald-500 outline-none transition-all", rows: 3 %>
         </div>
 
         <% unless challenge.offline? %>
@@ -317,14 +322,24 @@
           </div>
 
           <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">리워드 정책 가이드 (선택: JSON/텍스트)</label>
-            <%= f.text_area :reward_policy, value: f.object.reward_policy.is_a?(String) ? f.object.reward_policy : f.object.reward_policy.to_json, placeholder: "[\"100% 달성시 커피 쿠폰\", \"우수자 뱃지 지급\"]", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-green-500 outline-none transition-all", rows: 2 %>
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">리워드 정책 가이드 (선택)</label>
+            <% 
+              rp_val = f.object.reward_policy
+              rp_str = rp_val.is_a?(String) ? rp_val : (rp_val.is_a?(Array) ? rp_val.join("\n") : (rp_val.blank? ? "" : rp_val.to_json))
+              rp_str = "" if rp_str == "{}" || rp_str == "[]" || rp_str == '""'
+            %>
+            <%= f.text_area :reward_policy, value: rp_str, placeholder: "예:\n100% 달성시 커피 쿠폰\n우수자 뱃지 지급", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-green-500 outline-none transition-all", rows: 2 %>
           </div>
 
           <div class="space-y-2">
-            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">사전 승인 질문 (선택: JSON 배열형태)</label>
-            <%= f.text_area :application_questions, value: f.object.application_questions.is_a?(String) ? f.object.application_questions : f.object.application_questions.to_json, placeholder: "[\"왜 참여하고 싶으신가요?\", \"각오 한마디 부탁드려요.\"]", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-green-500 outline-none transition-all", rows: 2 %>
-            <p class="text-[8px] text-slate-500 pl-1">※ 승인제 챌린지일 경우, 지원자에게 위 질문을 묻습니다. 포맷: ["질문1", "질문2"]</p>
+            <label class="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-widest pl-1">사전 승인 질문 (선택)</label>
+            <% 
+              aq_val = f.object.application_questions
+              aq_str = aq_val.is_a?(String) ? aq_val : (aq_val.is_a?(Array) ? aq_val.join("\n") : (aq_val.blank? ? "" : aq_val.to_json))
+              aq_str = "" if aq_str == "{}" || aq_str == "[]" || aq_str == '""'
+            %>
+            <%= f.text_area :application_questions, value: aq_str, placeholder: "예:\n왜 참여하고 싶으신가요?\n각오 한마디 부탁드려요.", class: "w-full p-3 md:p-4 bg-white/5 border border-white/10 rounded-xl md:rounded-2xl font-medium text-xs text-slate-300 focus:border-green-500 outline-none transition-all", rows: 2 %>
+            <p class="text-[8px] text-slate-500 pl-1">※ 승인제일 경우, 지원자에게 위 질문을 묻습니다. (각 줄마다 하나의 질문으로 인식됩니다)</p>
           </div>
         </section>
       <% end %>

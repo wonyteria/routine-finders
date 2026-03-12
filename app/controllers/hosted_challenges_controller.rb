@@ -110,7 +110,7 @@ class HostedChallengesController < ApplicationController
       begin
         params_hash[:daily_goals] = JSON.parse(params_hash[:daily_goals])
       rescue JSON::ParserError
-        params_hash[:daily_goals] = {}
+        params_hash[:daily_goals] = params_hash[:daily_goals].present? ? params_hash[:daily_goals] : {}
       end
     end
 
@@ -118,7 +118,7 @@ class HostedChallengesController < ApplicationController
       begin
         params_hash[:reward_policy] = JSON.parse(params_hash[:reward_policy])
       rescue JSON::ParserError
-        params_hash[:reward_policy] = []
+        params_hash[:reward_policy] = params_hash[:reward_policy].present? ? params_hash[:reward_policy] : []
       end
     end
 
@@ -128,7 +128,7 @@ class HostedChallengesController < ApplicationController
         # Only permit an array of strings
         params_hash[:application_questions] = parsed.is_a?(Array) ? parsed.select { |q| q.is_a?(String) } : []
       rescue JSON::ParserError
-        params_hash[:application_questions] = []
+        params_hash[:application_questions] = params_hash[:application_questions].present? ? params_hash[:application_questions].split("\n").map(&:strip).reject(&:blank?) : []
       end
     end
 
@@ -167,7 +167,8 @@ class HostedChallengesController < ApplicationController
             "max_participants" => "최대 인원", "is_private" => "공개 여부", "admission_type" => "승인 방식",
             "re_verification_allowed" => "재인증 허용", "mission_requires_host_approval" => "인증 승인제",
             "chat_link" => "채팅방 링크", "custom_host_bio" => "호스트 소개", "status" => "상태",
-            "place_name" => "장소명", "address" => "상세 주소", "place_url" => "상세 장소 URL"
+            "place_name" => "장소명", "address" => "상세 주소", "place_url" => "상세 장소 URL",
+            "daily_goals" => "상세 가이드", "reward_policy" => "리워드 정책", "application_questions" => "사전 승인 질문"
           }
           # Compact data to prevent CookieOverflow (4KB limit)
           change_logs = saved_changes.first(12).map do |attr, vals|
