@@ -219,8 +219,8 @@
            <h3 class="text-xl font-black text-white"><%= @march_gathering.title %></h3>
            <p class="text-[13px] font-bold text-slate-300 leading-relaxed break-keep">
              드디어 오프라인 모임의 모집이 시작되었습니다!<br/><br/>
-             일정: <%= @march_gathering.start_date&.strftime('%m.%d') %> <%= @march_gathering.meeting_time&.strftime('%H:%M') %><br/>
-             장소: <%= @march_gathering.place_name.presence || "판교 고등동 일상찻집" %>
+             일정: <%= @march_gathering.start_date&.strftime('%m.%d') %> <%= @march_gathering.meeting_info&.meeting_time %><br/>
+             장소: <%= @march_gathering.meeting_info&.place_name.presence || "판교 고등동 일상찻집" %>
            </p>
          </div>
 
