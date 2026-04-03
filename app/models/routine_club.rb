@@ -57,6 +57,11 @@ class RoutineClub < ApplicationRecord
       return 7
     end
 
+    # 9기 조기 모집 특별 기간 (4/4부터)
+    if date >= Date.new(2026, 4, 4) && date < Date.new(2026, 4, 16)
+      return 9
+    end
+
     # 다음 기수 모집 기간 (D-15) 인 경우 다음 기수 번호 반환
     if date >= (next_cycle_start_date(date) - 15.days)
       return generation_number(next_cycle_start_date(date))
@@ -71,6 +76,11 @@ class RoutineClub < ApplicationRecord
     # 7기 전환기 특별 연장 기간 (2/6까지)
     if date <= Date.new(2026, 2, 6) && date >= Date.new(2025, 12, 17)
       return Date.new(2026, 1, 1)
+    end
+
+    # 9기 조기 모집 특별 기간 (4/4부터)
+    if date >= Date.new(2026, 4, 4) && date < Date.new(2026, 4, 16)
+      return Date.new(2026, 5, 1)
     end
 
     # 다음 기수 모집 기간 (D-15) 인 경우 다음 기수 시작일 반환
@@ -112,6 +122,11 @@ class RoutineClub < ApplicationRecord
 
   # 모집이 시작되는 날짜 (주기 시작 15일 전)
   def self.recruitment_start_date(date = Date.current)
+    # 9기 조기 모집 예외 (4/4부터)
+    if date >= Date.new(2026, 4, 4) && date < Date.new(2026, 4, 16)
+      return Date.new(2026, 4, 4)
+    end
+
     # 현재 기수가 이미 시작되었고, 다음 기수 모집이 아직 시작되지 않았다면 다음 기수 모집 시작일을 반환
     # 만약 현재 기수 모집 기간 중이라면 현재 기수 모집 시작일을 반환할 수도 있으나,
     # 안내 페이지 목적상 '가장 가까운 미래의 시작일'을 반환하는 것이 좋음.
@@ -128,7 +143,12 @@ class RoutineClub < ApplicationRecord
       return true
     end
 
-    # 2. 표준 D-15 ~ D+5 로직
+    # 2. 9기 조기 모집 특별 기간 (2026년 4월 4일부터)
+    if date >= Date.new(2026, 4, 4) && date < Date.new(2026, 4, 16)
+      return true
+    end
+
+    # 3. 표준 D-15 ~ D+5 로직
     # 어떤 주기 S에 대해 [S - 15.days, S + 5.days] 사이에 있으면 모집 중
     candidate_starts = [
       current_cycle_start_date(date),
