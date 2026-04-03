@@ -185,6 +185,10 @@
                          id="sub-tab-btn-analysis"
                          onclick="switchSubTab('analysis')"
                          class="px-3 py-1 text-[9px] font-black rounded transition-all text-slate-500 whitespace-nowrap">성과지표</button>
+                 <button type="button" 
+                         id="sub-tab-btn-blocked"
+                         onclick="switchSubTab('blocked')"
+                         class="px-3 py-1 text-[9px] font-black rounded transition-all text-slate-500 whitespace-nowrap">제명/거부</button>
                  <%= link_to "⚡ 주간 점검", prototype_admin_weekly_check_path, class: "px-3 py-1 text-[9px] font-black rounded transition-all text-amber-500 hover:text-amber-400 border border-amber-500/20 hover:bg-amber-500/10 ml-2 whitespace-nowrap" %>
               </div>
             </div>
@@ -278,6 +282,45 @@
                    <button onclick="openPenaltyModal(<%= stat[:member].id %>, '<%= stat[:member].user.nickname %>', 'warn')" class="px-3 py-1.5 border border-white/10 rounded-lg text-[9px] font-black text-slate-400 hover:text-amber-500 transition-colors">경고</button>
                    <button onclick="openPenaltyModal(<%= stat[:member].id %>, '<%= stat[:member].user.nickname %>', 'kick')" class="px-3 py-1.5 border border-white/10 rounded-lg text-[9px] font-black text-slate-400 hover:text-rose-500 transition-colors">강퇴</button>
                 </div>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Sub-Tab: 제명/거부 (Pardon System) -->
+          <div id="sub-panel-blocked" class="space-y-4 hidden">
+            <div class="p-4 bg-rose-500/5 border border-rose-500/10 rounded-2xl">
+              <p class="text-[10px] font-bold text-rose-400 leading-relaxed">
+                제명되거나 입금이 거부된 회원은 기록이 남아있어 재신청이 불가능합니다. <br>
+                아래 목록에서 '기록 삭제'를 클릭하면 해당 회원이 다시 클럽에 가입 신청을 할 수 있습니다.
+              </p>
+            </div>
+            
+            <% if @blocked_memberships.any? %>
+              <% @blocked_memberships.each do |membership| %>
+                <div class="app-glass-card p-4 flex items-center justify-between border-white/5 bg-white/2">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                       <p class="text-xs font-black text-white truncate"><%= membership.user.nickname %></p>
+                       <span class="px-1.5 py-0.5 rounded bg-slate-800 text-[8px] font-black text-slate-500 uppercase">
+                         <%= membership.status_kicked? ? '제명됨' : (membership.status_left? ? '탈퇴함' : '거부됨') %>
+                       </span>
+                    </div>
+                    <p class="text-[9px] font-bold text-slate-500 mt-1">업데이트: <%= membership.updated_at.strftime('%Y.%m.%d %H:%M') %></p>
+                  </div>
+                  <div class="shrink-0">
+                    <%= form_with url: prototype_pardon_member_path(membership), method: :post do %>
+                      <button type="submit" 
+                              onclick="return confirm('<%= membership.user.nickname %>님의 가입 제한 기록을 삭제하시겠습니까?\n삭제 후 해당 회원은 다시 가입 신청이 가능해집니다.')" 
+                              class="px-4 py-2 bg-indigo-500 text-white font-black text-[10px] rounded-xl shadow-lg shadow-indigo-500/20 hover:bg-indigo-600 transition-all">
+                        기록 삭제 (재가입 허용)
+                      </button>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="py-12 text-center bg-white/2 rounded-[32px] border border-dashed border-white/5">
+                <p class="text-xs font-bold text-slate-600">제명되거나 거부된 인원이 없습니다.</p>
               </div>
             <% end %>
           </div>
@@ -583,26 +626,24 @@
 
   // Sub Tab Switcher (Live Data)
   function switchSubTab(tabName) {
-    const listBtn = document.getElementById('sub-tab-btn-list');
-    const analysisBtn = document.getElementById('sub-tab-btn-analysis');
-    const listPanel = document.getElementById('sub-panel-list');
-    const analysisPanel = document.getElementById('sub-panel-analysis');
-    
+    const tabs = ['list', 'analysis', 'blocked'];
     const activeClass = "bg-white/10 text-white";
     const inactiveClass = "text-slate-500";
     const baseClass = "px-3 py-1 text-[9px] font-black rounded transition-all whitespace-nowrap";
 
-    if (tabName === 'list') {
-      listBtn.className = `${baseClass} ${activeClass}`;
-      analysisBtn.className = `${baseClass} ${inactiveClass}`;
-      listPanel.classList.remove('hidden');
-      analysisPanel.classList.add('hidden');
-    } else {
-      analysisBtn.className = `${baseClass} ${activeClass}`;
-      listBtn.className = `${baseClass} ${inactiveClass}`;
-      analysisPanel.classList.remove('hidden');
-      listPanel.classList.add('hidden');
-    }
+    tabs.forEach(t => {
+      const btn = document.getElementById(`sub-tab-btn-${t}`);
+      const panel = document.getElementById(`sub-panel-${t}`);
+      if (!btn || !panel) return;
+
+      if (t === tabName) {
+        btn.className = `${baseClass} ${activeClass}`;
+        panel.classList.remove('hidden');
+      } else {
+        btn.className = `${baseClass} ${inactiveClass}`;
+        panel.classList.add('hidden');
+      }
+    });
 
     // Persist sub-tab state in URL
     const url = new URL(window.location.href);
@@ -620,8 +661,8 @@
   document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const subTab = urlParams.get('sub_tab');
-    if (subTab === 'analysis') {
-      switchSubTab('analysis');
+    if (subTab) {
+      switchSubTab(subTab);
     }
   });
 

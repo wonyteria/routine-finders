@@ -816,8 +816,28 @@ class PrototypeController < ApplicationController
       @announcements = []
     end
 
+    # [New] Blocked or Rejected members for pardon system (RE-ADMISSION)
+    @blocked_memberships = @official_club.members.where(status: [ :kicked, :left ])
+                                          .or(@official_club.members.where(payment_status: :rejected))
+                                          .joins(:user).where(users: { deleted_at: nil })
+                                          .includes(:user)
+                                          .order(updated_at: :desc)
+                                          
     # Include both club_admin and super_admin in staff list (Exclude deleted users)
     @club_admins = User.where(role: [ :club_admin, :super_admin ]).where(deleted_at: nil).order(created_at: :desc)
+  end
+
+  def pardon_member
+    @membership = RoutineClubMember.find(params[:id])
+    user_name = @membership.user.nickname
+    
+    if @membership.destroy
+      redirect_to prototype_admin_clubs_path(tab: "members", sub_tab: "blocked"), notice: "#{user_name}님의 제명/거부 기록이 삭제되었습니다. 이제 다시 가입 신청이 가능합니다."
+    else
+      redirect_to prototype_admin_clubs_path(tab: "members", sub_tab: "blocked"), alert: "기록 삭제에 실패했습니다."
+    end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to prototype_admin_clubs_path, alert: "멤버 기록을 찾을 수 없습니다."
   end
 
   def member_reports
